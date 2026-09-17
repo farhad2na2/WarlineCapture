@@ -157,7 +157,10 @@ namespace Game.Runtime
 
             Vector3 worldCenter = placement.WorldCenter;
             int2 centerCell = GridUtils.WorldToCell(grid, new float3(worldCenter.x, worldCenter.y, worldCenter.z));
-            int2 originCell = CenterCellToOrigin(centerCell, footprint, grid);
+            // Mission overlays use geometric centres; legacy baked entries retain their cell-centre convention.
+            int2 originCell = placement.UseGeometricFootprintCenter
+                ? new int2(centerCell.x - footprint.x / 2, centerCell.y - footprint.y / 2)
+                : CenterCellToOrigin(centerCell, footprint, grid);
             if (TrySpawnAuthoredPlacement(context, placement, new Vector2Int(originCell.x, originCell.y), footprint))
                 return true;
 
@@ -257,6 +260,7 @@ namespace Game.Runtime
 
             bool useExistingStaticPresentation =
                 !hasAuthoringVisual &&
+                !placement.InstantiateVisualWhenSourceMissing &&
                 context.Config != null &&
                 context.Config.UseExistingStaticPresentationWhenAuthoringVisualMissing;
             if (!useExistingStaticPresentation)

@@ -1,0 +1,16 @@
+Wrapper exit 1. M1/M2 passed; M3 test attempted Pause behind an intentionally modal threat report. Adjusted recovery sequencing, not modal input behavior. Separate Burst query-array error corrected with EntityQueryBuilder. No full-run pass claimed.
+
+/private/tmp/warline-readiness-validation/Assets/Game/Scripts/Systems/PathPoolMaintenanceSystem.cs(17,13): Burst error BC1028: Creating a managed array `Unity.Entities.ComponentType[]` is not supported
+[CampaignContinuity] deploy=chain-01-m1-en available=1 completed=0 action=Start
+[ReadinessRecovery] rejected=TargetNotAttackable message=Target cannot be attacked.
+[CampaignContinuity] settled=chain-01-m1-en token=campaign-m01-0000000000000001:1 replayCount=0 xp=260 credits=1200
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=en
+[ReadinessRecovery] coverage=Passed entry=chain-01-m1-en
+[CampaignContinuity] disk-reload-return=chain-01-m1-en
+[CampaignContinuity] deploy=chain-02-m2-en available=3 completed=1 action=Start
+[CampaignContinuity] settled=chain-02-m2-en token=campaign-m02-0000000000000002:1 replayCount=0 xp=580 credits=2700
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=en
+[ReadinessRecovery] coverage=Passed entry=chain-02-m2-en
+[CampaignContinuity] disk-reload-return=chain-02-m2-en
+[CampaignContinuity] deploy=chain-03-m3-en available=7 completed=3 action=Start
+[CampaignTutorialEntry] result=Failed Visible guide points to an occluded button: PauseButton

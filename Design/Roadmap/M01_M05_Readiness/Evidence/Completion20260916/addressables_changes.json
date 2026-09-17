@@ -1,0 +1,30 @@
+[
+  {
+    "path": "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+    "sha256": "1cc328f210c2f115dc0a24e2a5adcd41c0b847db1a57d69b75ad252c2898e5cd"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Duplicate Asset Isolation.asset.meta",
+    "sha256": "74cd610e142fed60146f2bd97cf534bf18582759684e810500311c575bd4b641"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Duplicate Asset Isolation.asset",
+    "sha256": "8f00f0562a17091c3f13271b46772b7ac6ecdb27f2831e95f495dcec8103084a"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Duplicate Asset Isolation_ContentUpdateGroupSchema.asset.meta",
+    "sha256": "77fb3d7223591b72af1b99a2e0fa660d870309e35a4de03e99c04f2dd75bede0"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Duplicate Asset Isolation_ContentUpdateGroupSchema.asset",
+    "sha256": "2d5e34c2534ae34a736f662433adf0081908fe9d5cab7985891330ad1ebadcc0"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Duplicate Asset Isolation_BundledAssetGroupSchema.asset",
+    "sha256": "e0d1f3c5335554bc689c98fe9d51dc1d601a85a60f7538a3f27bd5110e644e5a"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Duplicate Asset Isolation_BundledAssetGroupSchema.asset.meta",
+    "sha256": "6691bf55eab07664e5a764cd9bac4fb11fa387ed34f9bd291cdb7580c3b08d28"
+  }
+]

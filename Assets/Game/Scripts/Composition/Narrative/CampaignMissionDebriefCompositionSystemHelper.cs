@@ -28,6 +28,7 @@ namespace Game.Composition
 
         private readonly FirstLaunchNarrativeSequencePresentationSystemHelper presentation = new();
         private NarrativeSequenceConfig[] configs = Array.Empty<NarrativeSequenceConfig>();
+        private NarrativeSequenceConfig firstContactOpening;
         private NarrativeSequenceView view;
         private NarrativeSpeakerCatalog speakers;
         private NarrativePunctuationConfig punctuation;
@@ -55,6 +56,7 @@ namespace Game.Composition
             punctuation = menuView?.FirstLaunchPunctuationProfile;
             persianLocale = menuView?.FirstLaunchPersianLocale;
             configs = menuView?.CampaignMissionNarrativeConfigs ?? Array.Empty<NarrativeSequenceConfig>();
+            firstContactOpening = menuView?.FirstLaunchNarrativeConfig;
             baseTextResolver = textResolver ?? FallbackGameTextResolver.Instance;
             presentation.HandoffRequested -= HandleHandoff;
             presentation.HandoffRequested += HandleHandoff;
@@ -109,15 +111,28 @@ namespace Game.Composition
                 : baseTextResolver;
             IGameTextResolver resolver =
                 new FirstLaunchNarrativeCompositionSystemHelper.SharedLocaleCompositionSystemHelper(legacyResolver);
-            if (!presentation.Initialize(
+            bool started = presentation.Initialize(
                     config,
                     speakers,
                     punctuation,
                     view,
                     resolver,
                     SettingsService.Load(),
-                    locale) ||
-                !presentation.Start())
+                    locale,
+                    storyOnly: CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime));
+            if (started)
+            {
+                // A new sequence player starts without a selected commander. Restore the
+                // identity before any dialogue can choose the neutral fallback portrait/voice.
+                var profile = SaveService.CreateDefault().LoadProfile();
+                presentation.ApplyCommanderIdentity(new NarrativeCommanderIdentityData
+                {
+                    Callsign = profile.firstLaunchCommanderCallsign,
+                    DisplayName = profile.firstLaunchCommanderDisplayName
+                }, profile.firstLaunchCommanderPortraitIndex);
+                started = presentation.Start();
+            }
+            if (!started)
             {
                 ReleasePause(entityManager);
                 if (!configurationFailureLogged)
@@ -149,6 +164,7 @@ namespace Game.Composition
             presentation.Cancel();
             DisposeQueries();
             configs = Array.Empty<NarrativeSequenceConfig>();
+            firstContactOpening = null;
             view = null;
             speakers = null;
             punctuation = null;
@@ -181,7 +197,8 @@ namespace Game.Composition
 
             Entity root = missionRootQuery.GetSingletonEntity();
             runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
-            if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId))
+            if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId) &&
+                !CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime))
                 return false;
             CampaignMissionAttemptFactsComponent facts =
                 entityManager.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
@@ -194,6 +211,12 @@ namespace Game.Composition
             bool commsConsumed = IsSameAttempt(
                 in runtime, in completedCommsSession, completedCommsAttemptOrdinal);
             stage = ResolveStage(in runtime, in facts, briefConsumed, commsConsumed);
+            if (CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime))
+            {
+                sequenceId = stage == SequenceStage.Brief && firstContactOpening != null
+                    ? new FixedString64Bytes(firstContactOpening.SequenceId) : default;
+                return !sequenceId.IsEmpty;
+            }
             ref CampaignMissionDefinitionBlob definition =
                 ref catalog.Blob.Value.Missions[definitionIndex];
             sequenceId = stage switch
@@ -212,6 +235,9 @@ namespace Game.Composition
             bool briefConsumed,
             bool commsConsumed)
         {
+            if (CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime))
+                return runtime.Phase == MissionPhaseKind.InteractiveBrief && !briefConsumed
+                    ? SequenceStage.Brief : SequenceStage.None;
             if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId))
                 return SequenceStage.None;
             if (runtime.Phase == MissionPhaseKind.DebriefFirstClear)
@@ -361,6 +387,11 @@ namespace Game.Composition
             out NarrativeSequenceConfig config)
         {
             string expected = sequenceId.ToString();
+            if (firstContactOpening != null && firstContactOpening.SequenceId == expected)
+            {
+                config = firstContactOpening;
+                return true;
+            }
             for (int index = 0; index < configs.Length; index++)
             {
                 NarrativeSequenceConfig candidate = configs[index];

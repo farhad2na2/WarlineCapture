@@ -147,7 +147,6 @@ namespace Game.Editor
             advance.gameObject.SetActive(false);
 
             NarrativeCommanderIdentityView identityView = BuildIdentitySurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
-            NarrativeGuidanceChoiceView guidanceView = BuildGuidanceSurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
             NarrativeSkipConfirmationView skipConfirmationView = BuildSkipConfirmationSurface(safeArea, hudPanel, hudButton, hudPrimaryButton, bold, medium);
 
             RectTransform controls = CreateRect("PlaybackControls", safeArea);
@@ -192,7 +191,7 @@ namespace Game.Editor
             SetObject(sequenceView, "locationIntroView", locationIntroView);
             SetObject(sequenceView, "playbackControls", controlsView);
             SetObject(sequenceView, "commanderIdentityView", identityView);
-            SetObject(sequenceView, "guidanceChoiceView", guidanceView);
+            SetObject(sequenceView, "guidanceChoiceView", null);
             SetObject(sequenceView, "skipConfirmationView", skipConfirmationView);
             SetObject(sequenceView, "reviewerControlsView", reviewerView);
             SetObject(sequenceView, "safeAreaPreview", safeAreaPreview);
@@ -300,12 +299,12 @@ namespace Game.Editor
                 FindText(root, "SafeArea/CommanderIdentitySurface/Instruction"),
                 FindText(root, "SafeArea/CommanderIdentitySurface/CallsignLabel"),
                 FindText(root, "SafeArea/CommanderIdentitySurface/ContinueButton/Label"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/Title"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/Instruction"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/FullGuidanceButton/Label"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/ContextualGuidanceButton/Label"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/MinimalGuidanceButton/Label"),
-                FindText(root, "SafeArea/GuidanceChoiceSurface/ContinueButton/Label"),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/Title"),
                 FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/Body"),
                 FindText(root, "SafeArea/SkipConfirmationSurface/Confirmation/CancelButton/Label"),
@@ -575,52 +574,6 @@ namespace Game.Editor
             return view;
         }
 
-        private static NarrativeGuidanceChoiceView BuildGuidanceSurface(Transform parent, Sprite hudPanel, Sprite hudButton, Sprite hudPrimaryButton, TMP_FontAsset bold, TMP_FontAsset medium)
-        {
-            RectTransform surface = CreateRect("GuidanceChoiceSurface", parent);
-            SetRect(surface, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1480f, 760f), Vector2.zero);
-            ApplyLiveMenuScale(surface);
-            Image backing = surface.gameObject.AddComponent<Image>();
-            backing.sprite = hudPanel;
-            backing.type = Image.Type.Sliced;
-            NarrativeGuidanceChoiceView view = surface.gameObject.AddComponent<NarrativeGuidanceChoiceView>();
-
-            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA'S GUIDANCE LEVEL", bold, 44f, TextAlignmentOptions.Center, new Color(0.96f, 0.78f, 0.3f, 1f));
-            SetRect(title.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 66f), new Vector2(0f, -100f));
-            TMP_Text instruction = CreateText("Instruction", surface, "This can be changed later in Command Settings.", medium, 30f, TextAlignmentOptions.Center, new Color(0.9f, 0.88f, 0.8f, 1f));
-            SetRect(instruction.rectTransform, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(900f, 50f), new Vector2(0f, -154f));
-
-            Button full = CreateFramedButton("FullGuidanceButton", surface, hudButton, bold, "FULL GUIDANCE", new Vector2(360f, 200f));
-            Button contextual = CreateFramedButton("ContextualGuidanceButton", surface, hudButton, bold, "TACTICAL HINTS", new Vector2(360f, 200f));
-            Button minimal = CreateFramedButton("MinimalGuidanceButton", surface, hudButton, bold, "MINIMAL GUIDANCE", new Vector2(360f, 200f));
-            SetRect(full.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(-410f, 10f));
-            SetRect(contextual.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(0f, 10f));
-            SetRect(minimal.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(360f, 200f), new Vector2(410f, 10f));
-            Image fullSelection = CreateSelectionRail(full.transform);
-            Image contextualSelection = CreateSelectionRail(contextual.transform);
-            Image minimalSelection = CreateSelectionRail(minimal.transform);
-
-            Button continueButton = CreateFramedButton("ContinueButton", surface, hudPrimaryButton, bold, "CONTINUE", new Vector2(430f, 112f));
-            SetRect(continueButton.GetComponent<RectTransform>(), new Vector2(0.5f, 0f), new Vector2(0.5f, 0f), new Vector2(430f, 112f), new Vector2(0f, 104f));
-            TMP_Text fullAccess = CreateHiddenAccessibilityText("FullAccessibilityLabel", full.transform, medium);
-            TMP_Text contextualAccess = CreateHiddenAccessibilityText("ContextualAccessibilityLabel", contextual.transform, medium);
-            TMP_Text minimalAccess = CreateHiddenAccessibilityText("MinimalAccessibilityLabel", minimal.transform, medium);
-            TMP_Text continueAccess = CreateHiddenAccessibilityText("ContinueAccessibilityLabel", continueButton.transform, medium);
-            SetObject(view, "fullButton", full);
-            SetObject(view, "contextualButton", contextual);
-            SetObject(view, "minimalButton", minimal);
-            SetObject(view, "fullSelectionImage", fullSelection);
-            SetObject(view, "contextualSelectionImage", contextualSelection);
-            SetObject(view, "minimalSelectionImage", minimalSelection);
-            SetObject(view, "continueButton", continueButton);
-            SetObject(view, "fullAccessibilityLabel", fullAccess);
-            SetObject(view, "contextualAccessibilityLabel", contextualAccess);
-            SetObject(view, "minimalAccessibilityLabel", minimalAccess);
-            SetObject(view, "continueAccessibilityLabel", continueAccess);
-            surface.gameObject.SetActive(false);
-            return view;
-        }
-
         private static NarrativeSkipConfirmationView BuildSkipConfirmationSurface(Transform parent, Sprite hudPanel, Sprite hudButton, Sprite hudPrimaryButton, TMP_FontAsset bold, TMP_FontAsset medium)
         {
             RectTransform surface = CreateRect("SkipConfirmationSurface", parent);
@@ -718,7 +671,6 @@ namespace Game.Editor
                 "Families, clinic staff, municipal crews, and road-repair teams remain trapped beyond the blocked clinic route. Civilian evacuation access must remain visible and unobstructed throughout the response.",
                 evidenceRoot + "/dialogue_max_expansion_2400x1080.png");
             CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png", NarrativeInteractiveStateKind.CommanderIdentity, false, evidenceRoot + "/live_identity_1920x1080.png");
-            CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png", NarrativeInteractiveStateKind.GuidanceChoice, false, evidenceRoot + "/live_guidance_1920x1080.png");
             CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", NarrativeInteractiveStateKind.None, true, evidenceRoot + "/live_skip_confirmation_1920x1080.png");
             Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Accessibility evidence written to {evidenceRoot}.");
         }
@@ -791,7 +743,6 @@ namespace Game.Editor
             Capture(1920, 1200, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, text, evidenceRoot + "/dialogue_tablet_1920x1200.png");
             Capture(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P01.png", UISubtitleSize.Standard, UISubtitleBackgroundOpacity.SeventyFivePercent, string.Empty, evidenceRoot + "/location_intro_1920x1080.png", true, false);
             CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png", NarrativeInteractiveStateKind.CommanderIdentity, false, evidenceRoot + "/identity_1920x1080.png");
-            CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P09.png", NarrativeInteractiveStateKind.GuidanceChoice, false, evidenceRoot + "/guidance_1920x1080.png");
             CaptureInteractive(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png", NarrativeInteractiveStateKind.None, true, evidenceRoot + "/skip_confirmation_1920x1080.png");
             CaptureReviewer(1920, 1080, "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P16.png", "FL-P16", 17, false, evidenceRoot + "/reviewer_controls_1920x1080.png");
             Debug.Log($"[FirstLaunchNarrativePresentationPrefabBuilder] Phase 10R revision evidence written to {evidenceRoot}.");

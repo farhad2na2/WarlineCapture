@@ -11,8 +11,8 @@ namespace Game.Runtime
             if (placement != null &&
                 context.TryGetGridData(out _, out GridConfig grid, out _, out _))
             {
-                context.DependencySystem.SmoothMoveCameraGroundCenterTo(
-                    ResolveCurrentPlacementFocusWorldPosition(context, placement, grid));
+                context.DependencySystem.FocusPlacementImmediately(
+                    ResolveCurrentPlacementFocusWorldPosition(context, placement, grid), placement.IsValid);
             }
         }
 

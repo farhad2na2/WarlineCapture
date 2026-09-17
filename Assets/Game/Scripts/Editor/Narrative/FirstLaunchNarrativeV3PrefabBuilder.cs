@@ -139,8 +139,8 @@ namespace Game.Editor
             RequireAsset<Sprite>(IdentityBackgroundPath);
             if (identity.Find("Background") != null)
                 throw new UnityException("First Launch V3 identity background must use the full-canvas narrative panel, not a composition-limited duplicate.");
-            if (narrative.transform.Find("SafeArea/GuidanceChoiceSurface/AriaPortrait") == null)
-                throw new UnityException("First Launch V3 ARIA guidance portrait is missing.");
+            if (narrative.transform.Find("SafeArea/GuidanceChoiceSurface") != null)
+                throw new UnityException("The retired guidance-choice screen must not be authored.");
             Transform skip = narrative.transform.Find("SafeArea/SkipConfirmationSurface");
             if (skip == null || skip.GetComponent<NarrativeSkipConfirmationView>() == null)
                 throw new UnityException("First Launch V3 skip confirmation surface is missing its runtime view.");
@@ -233,8 +233,6 @@ namespace Game.Editor
                 RequireWideEdge(safeArea, "CommanderIdentitySurface/AuthenticationHeader", minimumRight: 2070f);
                 RequireWideEdge(safeArea, "CommanderIdentitySurface/PortraitButton_06", minimumRight: 2020f);
                 RequireWideEdge(safeArea, "CommanderIdentitySurface/ContinueButton", minimumRight: 2070f);
-                RequireWideEdge(safeArea, "GuidanceChoiceSurface/AriaPortrait", minimumRight: 2070f);
-                RequireWideEdge(safeArea, "GuidanceChoiceSurface/ContinueButton", minimumRight: 2070f);
             });
         }
 
@@ -470,7 +468,6 @@ namespace Game.Editor
                 NarrativeLocationIntroView location = BuildComicHeader(safeArea, out NarrativePlaybackControlsView controls);
                 NarrativeDialogueView dialogue = BuildComicDialogue(safeArea);
                 NarrativeCommanderIdentityView identity = BuildIdentitySurface(safeArea);
-                NarrativeGuidanceChoiceView guidance = BuildGuidanceSurface(safeArea);
                 NarrativeSkipConfirmationView skip = BuildSkipConfirmationSurface(safeArea);
                 ConfigureResponsiveFirstLaunchLayout(layout, safeArea, controls, dialogue);
                 Transform reviewer = safeArea.Find("DevelopmentReviewerControls");
@@ -481,7 +478,7 @@ namespace Game.Editor
                 SetObject(sequence, "locationIntroView", location);
                 SetObject(sequence, "playbackControls", controls);
                 SetObject(sequence, "commanderIdentityView", identity);
-                SetObject(sequence, "guidanceChoiceView", guidance);
+                SetObject(sequence, "guidanceChoiceView", null);
                 SetObject(sequence, "skipConfirmationView", skip);
                 AssignLocalizedBindings(sequence, safeArea);
                 MissionUiSerializedBindingsAuthoring.Apply(root);
@@ -543,21 +540,6 @@ namespace Game.Editor
                 Responsive(safeArea, "CommanderIdentitySurface/PreviousButton", 0f, .5f),
                 Responsive(safeArea, "CommanderIdentitySurface/ContinueButton", .5f, .5f),
 
-                Responsive(safeArea, "GuidanceChoiceSurface", 0f, 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/Eyebrow", 0f, .5f),
-                Responsive(safeArea, "GuidanceChoiceSurface/Title", 0f, .5f),
-                Responsive(safeArea, "GuidanceChoiceSurface/Instruction", 0f, .5f),
-                Responsive(safeArea, "GuidanceChoiceSurface/Step", 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment0", 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment1", 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/StepSegment2", 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/FullGuidanceButton", 0f, 1f / 3f),
-                Responsive(safeArea, "GuidanceChoiceSurface/ContextualGuidanceButton", 1f / 3f, 1f / 3f),
-                Responsive(safeArea, "GuidanceChoiceSurface/MinimalGuidanceButton", 2f / 3f, 1f / 3f),
-                Responsive(safeArea, "GuidanceChoiceSurface/AriaPortrait", 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/AccessibilityStrip", 0f, 1f),
-                Responsive(safeArea, "GuidanceChoiceSurface/PreviousButton", 0f, .5f),
-                Responsive(safeArea, "GuidanceChoiceSurface/ContinueButton", .5f, .5f),
 
                 Responsive(safeArea, "SkipConfirmationSurface", 0f, 1f),
                 Responsive(safeArea, "SkipConfirmationSurface/Confirmation", .5f)
@@ -569,22 +551,6 @@ namespace Game.Editor
                     safeArea,
                     $"CommanderIdentitySurface/PortraitButton_{index + 1:00}",
                     index / 5f));
-            }
-
-            string[] guidanceCards =
-            {
-                "FullGuidanceButton",
-                "ContextualGuidanceButton",
-                "MinimalGuidanceButton"
-            };
-            for (int index = 0; index < guidanceCards.Length; index++)
-            {
-                string card = $"GuidanceChoiceSurface/{guidanceCards[index]}";
-                horizontalRules.Add(Responsive(safeArea, card + "/Icon", 1f / 6f));
-                horizontalRules.Add(Responsive(safeArea, card + "/Label", 0f, 1f / 3f));
-                horizontalRules.Add(Responsive(safeArea, card + "/Rule", 0f, 1f / 3f));
-                horizontalRules.Add(Responsive(safeArea, card + "/Description", 0f, 1f / 3f));
-                horizontalRules.Add(Responsive(safeArea, card + "/LevelPanel", 1f / 6f));
             }
 
             // The comic art is a physical-canvas cover layer. At ultrawide ratios the
@@ -819,7 +785,7 @@ namespace Game.Editor
             BuildWarningTriangle(auth, 18f, 23f, 30f, Orange);
             TMP_Text authText = CreateText("AuthText", auth, "EMERGENCY CONTINUITY AUTHENTICATION", 24f, bold, TextAlignmentOptions.MidlineLeft, Orange);
             SetTopLeft(authText.rectTransform, 58f, 8f, 930f, 60f);
-            TMP_Text step = CreateText("Step", auth, "2 / 3", 25f, bold, TextAlignmentOptions.MidlineRight, Orange);
+            TMP_Text step = CreateText("Step", auth, "2 / 2", 25f, bold, TextAlignmentOptions.MidlineRight, Orange);
             SetTopLeft(step.rectTransform, 1130f, 8f, 170f, 60f);
             TMP_Text title = CreateText("Title", surface, "CHOOSE YOUR COMMANDER IDENTITY", 44f, bold, TextAlignmentOptions.MidlineLeft, White);
             SetTopLeft(title.rectTransform, 53f, 119f, 1080f, 62f);
@@ -907,79 +873,6 @@ namespace Game.Editor
             SetObject(view, "callsignAccessibilityLabel", callsignAccess);
             SetObject(view, "displayNameAccessibilityLabel", displayAccess);
             SetObject(view, "continueAccessibilityLabel", continueAccess);
-            surface.gameObject.SetActive(false);
-            return view;
-        }
-
-        private static NarrativeGuidanceChoiceView BuildGuidanceSurface(Transform parent)
-        {
-            RectTransform surface = CreateTopLeft("GuidanceChoiceSurface", parent, 0f, 0f, Reference.x, Reference.y);
-            CreateGradientOn(surface, new Color32(12, 20, 23, 255), new Color32(1, 5, 7, 255), Color.clear, 0f);
-            NarrativeGuidanceChoiceView view = surface.gameObject.AddComponent<NarrativeGuidanceChoiceView>();
-            BuildBrandLogo(surface, 20f, 14f, 450f, 150f);
-            TMP_Text eyebrow = CreateText("Eyebrow", surface, "FIRST-LAUNCH SETUP", 25f, bold, TextAlignmentOptions.MidlineLeft, Cyan);
-            SetTopLeft(eyebrow.rectTransform, 510f, 23f, 560f, 38f);
-            TMP_Text title = CreateText("Title", surface, "CHOOSE ARIA'S GUIDANCE LEVEL", 43f, bold, TextAlignmentOptions.MidlineLeft, White);
-            SetTopLeft(title.rectTransform, 510f, 61f, 900f, 56f);
-            TMP_Text instruction = CreateText("Instruction", surface, "Aria will support you based on the level you choose.", 23f, medium, TextAlignmentOptions.MidlineLeft, White);
-            SetTopLeft(instruction.rectTransform, 510f, 118f, 900f, 38f);
-            TMP_Text step = CreateText("Step", surface, "3 / 3", 25f, bold, TextAlignmentOptions.MidlineRight, Cyan);
-            SetTopLeft(step.rectTransform, 1475f, 30f, 150f, 42f);
-            for (int i = 0; i < 3; i++)
-                CreateSolid("StepSegment" + i, surface, 1417f + i * 68f, 98f, 62f, 22f, i < 2 ? Cyan : new Color32(38, 48, 52, 255));
-
-            Button full = BuildGuidanceCard(surface, "FullGuidanceButton", 25f, Cyan, "FULL GUIDANCE", "Complete support for\nnew commanders.", "HIGH", 3, V3UiFoundationBuilder.FirstLaunchTargetIconPath, out Behaviour fullSelection);
-            Button contextual = BuildGuidanceCard(surface, "ContextualGuidanceButton", 414f, Lime, "TACTICAL HINTS", "Helpful tips in key\nsituations.", "MEDIUM", 2, V3UiFoundationBuilder.FirstLaunchMapIconPath, out Behaviour contextualSelection);
-            Button minimal = BuildGuidanceCard(surface, "MinimalGuidanceButton", 803f, Orange, "MINIMAL GUIDANCE", "Only essential alerts.\nMaximum challenge.", "LOW", 1, V3UiFoundationBuilder.CommanderUpgradesIconPath, out Behaviour minimalSelection);
-
-            Sprite ariaSprite = RequireAsset<Sprite>(V3UiFoundationBuilder.SharedAriaPortraitPath);
-            RectTransform ariaPanel = CreateTopLeft("AriaPortrait", surface, 1184f, 164f, 468f, 625f);
-            CreateGradientOn(ariaPanel, new Color32(2, 15, 23, 255), new Color32(0, 4, 8, 255), Color.clear, 0f);
-            ariaPanel.gameObject.AddComponent<RectMask2D>();
-            Image aria = CreateImage("PortraitArt", ariaPanel, ariaSprite, Color.white, false);
-            SetTopLeft(aria.rectTransform, 34f, 13f, 400f, 600f);
-            aria.preserveAspect = true;
-            CreateSolid("PortraitCyanWash", ariaPanel, 34f, 13f, 400f, 600f, new Color(0f, .32f, .48f, .075f));
-            BuildAriaTelemetry(ariaPanel);
-
-            RectTransform accessibility = CreateTopLeft("AccessibilityStrip", surface, 20f, 706f, 1112f, 83f);
-            CreateGradientOn(accessibility, DarkTop, DarkBottom, Border, 3f);
-            RectTransform ccFrame = CreateTopLeft("CCIcon", accessibility, 24f, 16f, 64f, 50f);
-            CreateGradientOn(ccFrame, new Color32(12, 28, 34, 255), new Color32(2, 10, 13, 255), Cyan, 3f);
-            TMP_Text cc = CreateText("Label", ccFrame, "CC", 25f, bold, TextAlignmentOptions.Center, Cyan);
-            Stretch(cc.rectTransform);
-            TMP_Text subtitles = CreateText("SubtitlesLabel", accessibility, "SUBTITLES", 22f, bold, TextAlignmentOptions.MidlineLeft, White);
-            SetTopLeft(subtitles.rectTransform, 112f, 8f, 210f, 36f);
-            TMP_Text subHint = CreateText("SubtitlesHint", accessibility, "Show dialogue subtitles.", 16f, medium, TextAlignmentOptions.MidlineLeft, Muted);
-            SetTopLeft(subHint.rectTransform, 112f, 40f, 260f, 31f);
-            BuildToggle("SubtitlesOn", accessibility, 390f, 15f, Cyan);
-            Image motionIcon = CreateImage("MotionIcon", accessibility, RequireAsset<Sprite>(V3UiFoundationBuilder.FirstLaunchMotionIconPath), Cyan, false);
-            SetTopLeft(motionIcon.rectTransform, 585f, 15f, 61f, 52f);
-            motionIcon.preserveAspect = true;
-            TMP_Text motion = CreateText("ReducedMotionLabel", accessibility, "REDUCED MOTION", 21f, bold, TextAlignmentOptions.MidlineLeft, White);
-            SetTopLeft(motion.rectTransform, 675f, 8f, 250f, 36f);
-            TMP_Text motionHint = CreateText("ReducedMotionHint", accessibility, "Minimize camera movement.", 16f, medium, TextAlignmentOptions.MidlineLeft, Muted);
-            SetTopLeft(motionHint.rectTransform, 675f, 40f, 270f, 31f);
-            BuildToggle("ReducedMotionOn", accessibility, 950f, 15f, Cyan);
-
-            Button previous = CreateGradientButton("PreviousButton", surface, 20f, 803f, 812f, 114f, DarkTop, DarkBottom, Border, 3f);
-            TMP_Text prev = CreateText("Label", previous.transform, "‹       PREV", 50f, bold, TextAlignmentOptions.Center, White);
-            Stretch(prev.rectTransform);
-            Button continueButton = CreateGradientButton("ContinueButton", surface, 840f, 803f, 812f, 114f, new Color32(43, 157, 62, 255), new Color32(8, 74, 25, 255), Green, 3f);
-            TMP_Text continueText = CreateText("Label", continueButton.transform, "CONTINUE       ›", 52f, bold, TextAlignmentOptions.Center, White);
-            Stretch(continueText.rectTransform);
-
-            SetObject(view, "fullButton", full);
-            SetObject(view, "contextualButton", contextual);
-            SetObject(view, "minimalButton", minimal);
-            SetObject(view, "fullSelectionImage", fullSelection);
-            SetObject(view, "contextualSelectionImage", contextualSelection);
-            SetObject(view, "minimalSelectionImage", minimalSelection);
-            SetObject(view, "continueButton", continueButton);
-            SetObject(view, "fullAccessibilityLabel", HiddenText("FullAccessibilityLabel", full.transform));
-            SetObject(view, "contextualAccessibilityLabel", HiddenText("ContextualAccessibilityLabel", contextual.transform));
-            SetObject(view, "minimalAccessibilityLabel", HiddenText("MinimalAccessibilityLabel", minimal.transform));
-            SetObject(view, "continueAccessibilityLabel", HiddenText("ContinueAccessibilityLabel", continueButton.transform));
             surface.gameObject.SetActive(false);
             return view;
         }
@@ -1097,12 +990,12 @@ namespace Game.Editor
                 FindText(safeArea, "CommanderIdentitySurface/Title"),
                 FindText(safeArea, "CommanderIdentitySurface/CallsignPanel/CallsignLabel"),
                 FindText(safeArea, "CommanderIdentitySurface/ContinueButton/Label"),
-                FindText(safeArea, "GuidanceChoiceSurface/Title"),
-                FindText(safeArea, "GuidanceChoiceSurface/Instruction"),
-                FindText(safeArea, "GuidanceChoiceSurface/FullGuidanceButton/Label"),
-                FindText(safeArea, "GuidanceChoiceSurface/ContextualGuidanceButton/Label"),
-                FindText(safeArea, "GuidanceChoiceSurface/MinimalGuidanceButton/Label"),
-                FindText(safeArea, "GuidanceChoiceSurface/ContinueButton/Label"),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 FindText(safeArea, "SkipConfirmationSurface/Confirmation/Title"),
                 FindText(safeArea, "SkipConfirmationSurface/Confirmation/Body"),
                 FindText(safeArea, "SkipConfirmationSurface/Confirmation/CancelButton/Label"),
@@ -1139,7 +1032,6 @@ namespace Game.Editor
             CaptureComic(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, $"/private/tmp/warline-first-launch-comic-v3-{suffix}.png");
             CaptureSkip(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, false, $"/private/tmp/warline-first-launch-skip-en-v3-{suffix}.png");
             CaptureSkip(width, height, suffix == "20x9" ? ComicBackground20Path : ComicBackground16Path, true, $"/private/tmp/warline-first-launch-skip-fa-v3-{suffix}.png");
-            CaptureInteractive(width, height, NarrativeInteractiveStateKind.GuidanceChoice, $"/private/tmp/warline-first-launch-guidance-v3-{suffix}.png");
             Debug.Log($"[FirstLaunchNarrativeV3PrefabBuilder] capture=Passed size={width}x{height} suffix={suffix}");
         }
 

@@ -5,6 +5,16 @@ namespace Game.Runtime
 {
     public static class ThreatWarningDisplayText
     {
+        public static string BuildCompact(in ThreatWarningRecord record)
+        {
+            string route=GameText.Get(record.ElementIndex==0?"mission.m03.warning.compact.first":"mission.m03.warning.compact.main");
+            string timing=record.ContactWindowOpen!=0?GameText.Get("mission.m03.warning.window"):
+                GameText.Format("mission.m03.warning.compact.eta","Arrival: {0}s",record.EtaSeconds);
+            string confidence=record.KnownVehicleCount<0?GameText.Get("mission.m03.warning.compact.unknown"):
+                GameText.Format("mission.m03.warning.compact.count","{0} vehicles",record.KnownVehicleCount);
+            return route+"\n"+timing+" · "+confidence;
+        }
+
         public static string Build(in ThreatWarningRecord record)
         {
             string sourceKey = record.Source switch

@@ -27,7 +27,7 @@ namespace Game.UI.Runtime
                 // Unavailable commands still report the specific rejection reason through TryAcceptCapability.
                 ApplyButtonInteractable(_view.HoldButton, true);
                 ApplyButtonInteractable(_view.StopButton, true);
-                ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || readModel.FocusedUnitCanStop);
+                ApplyButtonInteractable(_view.CommandWheelStopButton, readModel == null || (readModel.HasAnySelectedUnits && (!readModel.HasFocusedUnit || readModel.FocusedUnitCanStop)));
                 // Keep Scan pressable so unavailable units surface an explicit rejection message.
                 ApplyButtonInteractable(_view.ScanButton, true);
                 // Keep Board pressable so no-selection and invalid-selection states can surface feedback.

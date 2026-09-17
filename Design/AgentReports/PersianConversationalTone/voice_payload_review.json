@@ -1,0 +1,4445 @@
+{
+  "scope": "Approved conversational Persian rollout, first launch, M1-M5, shared ARIA; existing paid account and permanent cast.",
+  "provider": "https://api.elevenlabs.io",
+  "deliveryProfile": "fa-conversational-v1",
+  "clipCount": 261,
+  "requests": [
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_confirm_destroy_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "مطمئنی می‌خوای {0} رو نابود کنی؟",
+      "request": {
+        "text": "[conversational tone] مطمئنی می‌خوای این هدف رو نابود کنی؟",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151000,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_not_enough_money_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اعتبار کافی نداری",
+      "request": {
+        "text": "[conversational tone] اعتبار کافی نداری",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151001,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_create_first_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول {0} رو بساز",
+      "request": {
+        "text": "[conversational tone] اول باید ساختمان مورد نیاز رو بسازی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151002,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_drag_building_to_final_position_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بکشش به جایی که می‌خوای بسازیش",
+      "request": {
+        "text": "[conversational tone] بکشش به جایی که می‌خوای بسازیش",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151003,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "خودروهای دشمن دارن حمله می‌کنن",
+      "request": {
+        "text": "[conversational tone] خودروهای دشمن دارن حمله می‌کنن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151004,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_air_attack_type_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حملهٔ هوایی! آماده باش",
+      "request": {
+        "text": "[conversational tone] حملهٔ هوایی! آماده باش",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151005,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_seconds_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حدود {0} ثانیه تا رسیدن به پایگاه",
+      "request": {
+        "text": "[conversational tone] دشمن داره به پایگاه نزدیک می‌شه. زمان تقریبی رو روی صفحه ببین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151006,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_suffix_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} — حدود {1} ثانیه تا رسیدن",
+      "request": {
+        "text": "[conversational tone] زمان تقریبی رسیدن دشمن روی صفحه‌ست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151007,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_count_suffix_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0}، تعداد: {1}",
+      "request": {
+        "text": "[conversational tone] تعداد دشمن‌ها توی گزارش مشخصه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151008,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_selection_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول نیروهات یا یه ساختمان رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] اول نیروهات یا یه ساختمان رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151009,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_out_of_bounds_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این هدف بیرون محدودهٔ عملیاته.",
+      "request": {
+        "text": "[conversational tone] این هدف بیرون محدودهٔ عملیاته.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151010,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_blocked_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این مسیر بسته‌ست.",
+      "request": {
+        "text": "[conversational tone] این مسیر بسته‌ست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151011,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_unreachable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهات نمی‌تونن به این هدف برسن.",
+      "request": {
+        "text": "[conversational tone] نیروهات نمی‌تونن به این هدف برسن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151012,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_enemy_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این هدف دشمن نیست.",
+      "request": {
+        "text": "[conversational tone] این هدف دشمن نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151013,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_attackable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "به این هدف نمی‌شه حمله کرد.",
+      "request": {
+        "text": "[conversational tone] به این هدف نمی‌شه حمله کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151014,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_command_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌تونی این فرمان رو بدی.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌تونی این فرمان رو بدی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151015,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_build_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌تونی چیزی بسازی.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌تونی چیزی بسازی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151016,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_camera_jump_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه دوربین رو به اونجا برد.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌شه دوربین رو به اونجا برد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151017,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌تونی اسکن کنی.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌تونی اسکن کنی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151018,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_cooldown_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اسکن هنوز آماده نشده؛ یه کم صبر کن.",
+      "request": {
+        "text": "[conversational tone] اسکن هنوز آماده نشده؛ یه کم صبر کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151019,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_resources_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "منابع کافی نداری.",
+      "request": {
+        "text": "[conversational tone] منابع کافی نداری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151020,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_fuel_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بنزین کافی نداری.",
+      "request": {
+        "text": "[conversational tone] بنزین کافی نداری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151021,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_transport_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول یه خودرو یا بالگرد حمل‌ونقل انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] اول یه خودرو یا بالگرد حمل‌ونقل انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151022,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_passenger_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیرو یا باری رو انتخاب کن که بشه سوارش کرد.",
+      "request": {
+        "text": "[conversational tone] نیرو یا باری رو انتخاب کن که بشه سوارش کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151023,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_full_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دیگه جای خالی نداره.",
+      "request": {
+        "text": "[conversational tone] دیگه جای خالی نداره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151024,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_eligible_passengers_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هیچ‌کدوم از نیروهای نزدیک نمی‌تونن سوارش بشن.",
+      "request": {
+        "text": "[conversational tone] هیچ‌کدوم از نیروهای نزدیک نمی‌تونن سوارش بشن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151025,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_disembark_cell_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا جای امنی برای پیاده شدن نیست.",
+      "request": {
+        "text": "[conversational tone] اینجا جای امنی برای پیاده شدن نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151026,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_passenger_missing_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این نیرو داخل وسیله نیست.",
+      "request": {
+        "text": "[conversational tone] این نیرو داخل وسیله نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151027,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_select_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهات یا یه ساختمان رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] نیروهات یا یه ساختمان رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151028,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_move_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "مقصد رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] مقصد رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151029,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_attack_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "روی هدف دشمن بزن.",
+      "request": {
+        "text": "[conversational tone] روی هدف دشمن بزن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151030,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_hold_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "همین‌جا بمون و به دشمنی که نزدیک می‌شه شلیک کن.",
+      "request": {
+        "text": "[conversational tone] همین‌جا بمون و به دشمنی که نزدیک می‌شه شلیک کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151031,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_stop_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهای انتخاب‌شده رو نگه دار و دستورهاشون رو لغو کن.",
+      "request": {
+        "text": "[conversational tone] نیروهای انتخاب‌شده رو نگه دار و دستورهاشون رو لغو کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151032,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_scan_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "روی جایی که می‌خوای اسکن بشه بزن.",
+      "request": {
+        "text": "[conversational tone] روی جایی که می‌خوای اسکن بشه بزن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151033,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_board_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151034,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_build_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمان یا نیرویی رو که می‌خوای بسازی انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] ساختمان یا نیرویی رو که می‌خوای بسازی انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151035,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_special_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان ویژه رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] فرمان ویژه رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151036,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_transport_to_passenger_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151037,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_passenger_to_transport_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151038,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌تونی نیروها رو سوار کنی.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌تونی نیروها رو سوار کنی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151039,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_tap_units_to_board_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151040,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_selected_unit_cannot_board_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این نیرو نمی‌تونه سوار بشه.",
+      "request": {
+        "text": "[conversational tone] این نیرو نمی‌تونه سوار بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151041,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_select_unit_first_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول یه نیرو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] اول یه نیرو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151042,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_hold_no_selection_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول نیروهات رو انتخاب کن، بعد «حفظ» رو بزن.",
+      "request": {
+        "text": "[conversational tone] اول نیروهات رو انتخاب کن، بعد «حفظ» رو بزن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151043,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_stop_no_selection_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول نیروهات رو انتخاب کن، بعد «توقف» رو بزن.",
+      "request": {
+        "text": "[conversational tone] اول نیروهات رو انتخاب کن، بعد «توقف» رو بزن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151044,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_scan_no_selection_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول واحد اسکن یا یه نیروی رزمی رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] اول واحد اسکن یا یه نیروی رزمی رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151045,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه با دوربین دنبالش کرد.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌شه با دوربین دنبالش کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151046,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_active_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دوربین داره دنبالش می‌کنه.",
+      "request": {
+        "text": "[conversational tone] دوربین داره دنبالش می‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151047,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_rts_camera_restored_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "برگشتیم به نمای فرماندهی.",
+      "request": {
+        "text": "[conversational tone] برگشتیم به نمای فرماندهی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151048,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_follow_target_lost_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دیگه نمی‌تونیم هدف رو دنبال کنیم.",
+      "request": {
+        "text": "[conversational tone] دیگه نمی‌تونیم هدف رو دنبال کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151049,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_building_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمونی که انتخاب کردی نابود شد.",
+      "request": {
+        "text": "[conversational tone] ساختمونی که انتخاب کردی نابود شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151050,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_air_defense_auto_engage_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "پدافند هوایی خودش به هواگردها و موشک‌هایی که نزدیک می‌شن شلیک می‌کنه.",
+      "request": {
+        "text": "[conversational tone] پدافند هوایی خودش به هواگردها و موشک‌هایی که نزدیک می‌شن شلیک می‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151051,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_unit_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "داره پیاده می‌شه.",
+      "request": {
+        "text": "[conversational tone] داره پیاده می‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151052,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_passengers_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروها دارن پیاده می‌شن.",
+      "request": {
+        "text": "[conversational tone] نیروها دارن پیاده می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151053,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_loading_transport_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دارن بار رو سوار می‌کنن.",
+      "request": {
+        "text": "[conversational tone] دارن بار رو سوار می‌کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151054,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_boarding_transport_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروها دارن سوار می‌شن.",
+      "request": {
+        "text": "[conversational tone] نیروها دارن سوار می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151055,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_holding_current_position_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهات همین‌جا می‌مونن.",
+      "request": {
+        "text": "[conversational tone] نیروهات همین‌جا می‌مونن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151056,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهایی که انتخاب کردی ایستادن.",
+      "request": {
+        "text": "[conversational tone] نیروهایی که انتخاب کردی ایستادن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151057,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_unit_returning_to_base_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "داره برمی‌گرده پایگاه.",
+      "request": {
+        "text": "[conversational tone] داره برمی‌گرده پایگاه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151058,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_units_returning_to_base_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} نیرو دارن برمی‌گردن پایگاه.",
+      "request": {
+        "text": "[conversational tone] نیروهات دارن برمی‌گردن پایگاه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151059,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_unit_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیرویی که انتخاب کردی نابود شد.",
+      "request": {
+        "text": "[conversational tone] نیرویی که انتخاب کردی نابود شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151060,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_units_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} نیروی انتخاب‌شده نابود شدن.",
+      "request": {
+        "text": "[conversational tone] نیروهای انتخاب‌شده نابود شدن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151061,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_ordered_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اسکن رو شروع می‌کنیم؛ واحد اسکن تو راهه.",
+      "request": {
+        "text": "[conversational tone] اسکن رو شروع می‌کنیم؛ واحد اسکن تو راهه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151062,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_one_contact_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه هدف پیدا شد",
+      "request": {
+        "text": "[conversational tone] یه هدف پیدا شد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151063,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_contacts_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} هدف پیدا شد",
+      "request": {
+        "text": "[conversational tone] هدف پیدا شد؛ نتیجه رو روی صفحه ببین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151064,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_complete_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اسکن تموم شد: {0}",
+      "request": {
+        "text": "[conversational tone] اسکن تموم شد؛ نتیجه رو روی صفحه ببین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151065,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_missile_launched_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "موشک شلیک شد.",
+      "request": {
+        "text": "[conversational tone] موشک شلیک شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151066,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_emergency_drop_visual_missing_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نمای پرتاب اضطراری آماده نیست.",
+      "request": {
+        "text": "[conversational tone] نمای پرتاب اضطراری آماده نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151067,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_parachute_visual_missing_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نمای چتر نجات آماده نیست.",
+      "request": {
+        "text": "[conversational tone] نمای چتر نجات آماده نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151068,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_no_clear_landing_zone_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا جای بازی برای فرود نیست.",
+      "request": {
+        "text": "[conversational tone] اینجا جای بازی برای فرود نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151069,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_cargo_drop_blocked_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا نمی‌شه بار رو پایین انداخت.",
+      "request": {
+        "text": "[conversational tone] اینجا نمی‌شه بار رو پایین انداخت.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151070,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان حرکت",
+      "request": {
+        "text": "[conversational tone] فرمان حرکت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151071,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "مقصد رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] مقصد رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151072,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان حمله",
+      "request": {
+        "text": "[conversational tone] فرمان حمله",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151073,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه هدف دشمن انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه هدف دشمن انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151074,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان اسکن",
+      "request": {
+        "text": "[conversational tone] فرمان اسکن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151075,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "جایی رو که می‌خوای اسکن بشه انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] جایی رو که می‌خوای اسکن بشه انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151076,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان سوار شدن",
+      "request": {
+        "text": "[conversational tone] فرمان سوار شدن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151077,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه وسیلهٔ حمل‌ونقل انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151078,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] نیروهایی رو که می‌خوای سوار بشن انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151079,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان ساخت",
+      "request": {
+        "text": "[conversational tone] فرمان ساخت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151080,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمان رو روی یه جای مناسب بذار.",
+      "request": {
+        "text": "[conversational tone] ساختمان رو روی یه جای مناسب بذار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151081,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان حرکت",
+      "request": {
+        "text": "[conversational tone] فرمان حرکت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151082,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهات دارن می‌رن سمت مقصد.",
+      "request": {
+        "text": "[conversational tone] نیروهات دارن می‌رن سمت مقصد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151083,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان حمله",
+      "request": {
+        "text": "[conversational tone] فرمان حمله",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151084,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "درگیری شروع شد.",
+      "request": {
+        "text": "[conversational tone] درگیری شروع شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151085,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حفظ موضع",
+      "request": {
+        "text": "[conversational tone] حفظ موضع",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151086,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروهایی که انتخاب کردی همین‌جا می‌مونن.",
+      "request": {
+        "text": "[conversational tone] نیروهایی که انتخاب کردی همین‌جا می‌مونن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151087,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان توقف",
+      "request": {
+        "text": "[conversational tone] فرمان توقف",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151088,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دستورهای نیروهای انتخاب‌شده لغو می‌شن.",
+      "request": {
+        "text": "[conversational tone] دستورهای نیروهای انتخاب‌شده لغو می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151089,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان اسکن",
+      "request": {
+        "text": "[conversational tone] فرمان اسکن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151090,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "داریم محدوده رو اسکن می‌کنیم.",
+      "request": {
+        "text": "[conversational tone] داریم محدوده رو اسکن می‌کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151091,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان سوار شدن",
+      "request": {
+        "text": "[conversational tone] فرمان سوار شدن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151092,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیروها دارن سوار می‌شن.",
+      "request": {
+        "text": "[conversational tone] نیروها دارن سوار می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151093,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان ساخت",
+      "request": {
+        "text": "[conversational tone] فرمان ساخت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151094,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "درخواست ساخت ثبت شد.",
+      "request": {
+        "text": "[conversational tone] درخواست ساخت ثبت شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151095,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان بازگشت",
+      "request": {
+        "text": "[conversational tone] فرمان بازگشت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151096,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "داره برمی‌گرده پایگاه.",
+      "request": {
+        "text": "[conversational tone] داره برمی‌گرده پایگاه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151097,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_title_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فرمان نابودی",
+      "request": {
+        "text": "[conversational tone] فرمان نابودی",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151098,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_description_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نیرویی که انتخاب کردی حذف شد.",
+      "request": {
+        "text": "[conversational tone] نیرویی که انتخاب کردی حذف شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151099,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_name_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا چیزی نیست",
+      "request": {
+        "text": "[conversational tone] اینجا چیزی نیست",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151100,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_buildings_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه جا برای {0} انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه جای مناسب برای ساختمان انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151101,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_vehicles_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} رو به صف تولید خودروها اضافه کن.",
+      "request": {
+        "text": "[conversational tone] خودرو رو به صف تولید اضافه کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151102,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_aircraft_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} رو به صف تولید هواگردها اضافه کن.",
+      "request": {
+        "text": "[conversational tone] هواگرد رو به صف تولید اضافه کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151103,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_soldiers_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} رو به صف آموزش اضافه کن.",
+      "request": {
+        "text": "[conversational tone] نیرو رو به صف آموزش اضافه کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151104,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_default_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه مورد انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151105,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_place_pending_confirm_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} رو بکش به جایی که می‌خوای و تأیید کن.",
+      "request": {
+        "text": "[conversational tone] پیش‌نمایش رو بکش به جایی که می‌خوای، بعد تأیید کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151106,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_cannot_place_here_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا نمی‌شه ساخت: {0}.",
+      "request": {
+        "text": "[conversational tone] اینجا نمی‌شه ساخت. دلیلش روی صفحه نوشته شده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151107,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_connecting_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "منوی ساخت داره آماده می‌شه. یه کم صبر کن.",
+      "request": {
+        "text": "[conversational tone] منوی ساخت داره آماده می‌شه. یه کم صبر کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151108,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_not_enough_money_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "برای {1} {2}، هنوز {0} اعتبار کم داری.",
+      "request": {
+        "text": "[conversational tone] اعتبار کافی نداری؛ مقدار مورد نیاز رو روی صفحه ببین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151109,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "برای {0} {1}، اول به {2} نیاز داری.",
+      "request": {
+        "text": "[conversational tone] اول باید ساختمان مورد نیاز رو بسازی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151110,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه {0} {1}: {2}.",
+      "request": {
+        "text": "[conversational tone] ساختمان مورد نیاز برای این کار آماده نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151111,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نمی‌شه {0} {1}؛ همهٔ جایگاه‌های تولید {2} پرن.",
+      "request": {
+        "text": "[conversational tone] همهٔ جایگاه‌های تولید پرن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151112,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نمی‌شه {0} {1}؛ همهٔ جایگاه‌های تولیدش پرن.",
+      "request": {
+        "text": "[conversational tone] همهٔ جایگاه‌های تولید پرن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151113,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_global_queue_full_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نمی‌شه {0} {1}؛ ظرفیت صف تولید {2} تاست.",
+      "request": {
+        "text": "[conversational tone] صف تولید پره؛ صبر کن یه جا خالی بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151114,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_invalid_selection_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول یه مورد از منوی ساخت انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] اول یه مورد از منوی ساخت انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151115,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه {0} {1}؛ این درخواست در دسترس نیست.",
+      "request": {
+        "text": "[conversational tone] این درخواست الان در دسترس نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151116,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_not_enough_money_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اعتبار کافی نداری.",
+      "request": {
+        "text": "[conversational tone] اعتبار کافی نداری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151117,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_requires_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "به {0} نیاز داری.",
+      "request": {
+        "text": "[conversational tone] ساختمان مورد نیاز رو روی صفحه ببین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151118,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_missing_producer_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هنوز ساختمان لازم برای تولیدش رو نداری.",
+      "request": {
+        "text": "[conversational tone] هنوز ساختمان لازم برای تولیدش رو نداری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151119,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "جایگاه‌های تولید {0} پرن.",
+      "request": {
+        "text": "[conversational tone] جایگاه‌های تولید پرن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151120,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "همهٔ جایگاه‌های تولیدش پرن.",
+      "request": {
+        "text": "[conversational tone] همهٔ جایگاه‌های تولیدش پرن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151121,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_global_queue_full_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "صف تولید پره؛ بیشتر از {0} تا جا نداره.",
+      "request": {
+        "text": "[conversational tone] صف تولید پره؛ صبر کن یه جا خالی بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151122,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌تونی درخواست ساخت بدی.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌تونی درخواست ساخت بدی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151123,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_buildings_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان ساختمونی برای ساختن نیست.",
+      "request": {
+        "text": "[conversational tone] الان ساختمونی برای ساختن نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151124,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_vehicles_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان خودرویی برای تولید نیست.",
+      "request": {
+        "text": "[conversational tone] الان خودرویی برای تولید نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151125,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_aircraft_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان هواگردی برای تولید نیست.",
+      "request": {
+        "text": "[conversational tone] الان هواگردی برای تولید نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151126,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_soldiers_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نیرویی برای آموزش نیست.",
+      "request": {
+        "text": "[conversational tone] الان نیرویی برای آموزش نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151127,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_default_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان چیزی برای ساخت یا تولید نیست.",
+      "request": {
+        "text": "[conversational tone] الان چیزی برای ساخت یا تولید نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151128,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_select_item_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "چیزی رو که می‌خوای بسازی یا آموزش بدی انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] چیزی رو که می‌خوای بسازی یا آموزش بدی انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151129,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_placement_invalid_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا نمی‌شه ساخت",
+      "request": {
+        "text": "[conversational tone] اینجا نمی‌شه ساخت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151130,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_action_place_choose_footprint_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه جای مناسب برای {0} انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] یه جای مناسب برای ساختمان انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151131,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_building_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمان رو قرار بده",
+      "request": {
+        "text": "[conversational tone] ساختمان رو قرار بده",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151132,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_requested_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0}: {1}",
+      "request": {
+        "text": "[conversational tone] درخواست تولید ثبت شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151133,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_recruitment_queued_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} به صف آموزش اضافه شد.",
+      "request": {
+        "text": "[conversational tone] به صف آموزش اضافه شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151134,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_production_queued_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} به صف تولید اضافه شد.",
+      "request": {
+        "text": "[conversational tone] به صف تولید اضافه شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151135,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancel_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه تولید رو لغو کرد.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌شه تولید رو لغو کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151136,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} لغو شد.",
+      "request": {
+        "text": "[conversational tone] درخواست لغو شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151137,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "تولید لغو شد",
+      "request": {
+        "text": "[conversational tone] تولید لغو شد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151138,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_empty_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "صف تولید خالیه.",
+      "request": {
+        "text": "[conversational tone] صف تولید خالیه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151139,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_sentence_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "صف تولید خالی شد.",
+      "request": {
+        "text": "[conversational tone] صف تولید خالی شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151140,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_clear_unavailable_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان نمی‌شه صف تولید رو خالی کرد.",
+      "request": {
+        "text": "[conversational tone] الان نمی‌شه صف تولید رو خالی کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151141,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "صف تولید خالی شد",
+      "request": {
+        "text": "[conversational tone] صف تولید خالی شد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151142,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_placement_cancelled_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "قرار دادن ساختمان لغو شد",
+      "request": {
+        "text": "[conversational tone] قرار دادن ساختمان لغو شد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151143,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_rotated_90_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نود درجه چرخید",
+      "request": {
+        "text": "[conversational tone] نود درجه چرخید",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151144,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_no_active_placement_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان ساختمونی در حال قرار دادن نیست.",
+      "request": {
+        "text": "[conversational tone] الان ساختمونی در حال قرار دادن نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151145,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_building_placed_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمان قرار گرفت",
+      "request": {
+        "text": "[conversational tone] ساختمان قرار گرفت",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151146,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_on_valid_ground_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "روی یه جای مناسب بذارش.",
+      "request": {
+        "text": "[conversational tone] روی یه جای مناسب بذارش.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151147,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_drawer_not_ready_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "منوی ساخت هنوز آماده نیست.",
+      "request": {
+        "text": "[conversational tone] منوی ساخت هنوز آماده نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151148,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_drag_to_position_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بکشش به جایی که می‌خوای",
+      "request": {
+        "text": "[conversational tone] بکشش به جایی که می‌خوای",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151149,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_valid_ground_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "زمین مناسب",
+      "request": {
+        "text": "[conversational tone] زمین مناسب",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151150,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_default_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "استقرار ساختمان",
+      "request": {
+        "text": "[conversational tone] استقرار ساختمان",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151151,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_named_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "استقرار {0}",
+      "request": {
+        "text": "[conversational tone] محل استقرار رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151152,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_instruction_confirm_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بکشش به جایی که می‌خوای، بعد ساخت رو تأیید کن",
+      "request": {
+        "text": "[conversational tone] بکشش به جایی که می‌خوای، بعد ساخت رو تأیید کن",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151153,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_fallback_subject_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ساختمان",
+      "request": {
+        "text": "[conversational tone] ساختمان",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151154,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_tactical_map_not_ready_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نقشهٔ تاکتیکی هنوز آماده نیست.",
+      "request": {
+        "text": "[conversational tone] نقشهٔ تاکتیکی هنوز آماده نیست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151155,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_blocked_civilian_zone_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا بسته‌ست؛ محدودهٔ غیرنظامیه",
+      "request": {
+        "text": "[conversational tone] اینجا بسته‌ست؛ محدودهٔ غیرنظامیه",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151156,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_singular_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "واحد",
+      "request": {
+        "text": "[conversational tone] واحد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151157,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_plural_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "واحد",
+      "request": {
+        "text": "[conversational tone] واحد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151158,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_vehicle_singular_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "خودرو",
+      "request": {
+        "text": "[conversational tone] خودرو",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151159,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_soldier_singular_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "سرباز",
+      "request": {
+        "text": "[conversational tone] سرباز",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151160,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_count_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "{0} {1}",
+      "request": {
+        "text": "[conversational tone] گروه انتخاب شد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151161,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_selected_01_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "گروه انتخاب شد",
+      "request": {
+        "text": "[conversational tone] گروه انتخاب شد",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151162,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "برای شروع، گروه فرماندهی رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] برای شروع، گروه فرماندهی رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151163,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
+      "request": {
+        "text": "[conversational tone] «حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151164,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.",
+      "request": {
+        "text": "[conversational tone] حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151165,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«حمله» رو بزن تا دستور حمله انتخاب بشه.",
+      "request": {
+        "text": "[conversational tone] «حمله» رو بزن تا دستور حمله انتخاب بشه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151166,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.",
+      "request": {
+        "text": "[conversational tone] حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151167,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هدفت رو بررسی کن و مسیر مردم رو امن نگه دار.",
+      "request": {
+        "text": "[conversational tone] هدفت رو بررسی کن و مسیر مردم رو امن نگه دار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151168,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_1_fa.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید.",
+      "request": {
+        "text": "[conversational tone] این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151169,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_2_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته.",
+      "request": {
+        "text": "[conversational tone] اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151170,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_3_fa.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه.",
+      "request": {
+        "text": "[conversational tone] امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151171,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_1_fa.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن.",
+      "request": {
+        "text": "[conversational tone] گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151172,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_2_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده.",
+      "request": {
+        "text": "[conversational tone] همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151173,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_3_fa.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده.",
+      "request": {
+        "text": "[conversational tone] جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151174,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_1_fa.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن.",
+      "request": {
+        "text": "[conversational tone] پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151175,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_2_fa.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم.",
+      "request": {
+        "text": "[conversational tone] فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151176,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_3_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن.",
+      "request": {
+        "text": "[conversational tone] شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151177,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_open_build_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "منوی «ساخت» رو باز کن.",
+      "request": {
+        "text": "[conversational tone] منوی «ساخت» رو باز کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151178,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_select_barracks_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.",
+      "request": {
+        "text": "[conversational tone] از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151179,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_place_barracks_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.",
+      "request": {
+        "text": "[conversational tone] سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151180,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.",
+      "request": {
+        "text": "[conversational tone] با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151181,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_train_rifle_squad_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.",
+      "request": {
+        "text": "[conversational tone] بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151182,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_incoming_patrol_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن.",
+      "request": {
+        "text": "[conversational tone] گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151183,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_defend_post_aria_fa.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن.",
+      "request": {
+        "text": "[conversational tone] مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151184,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "شبکهٔ هشدار اینجا قطع شده. دیده‌بان‌ها می‌گن یه کاروان زرهی توی جادهٔ غربیه. وقتی خودروها به محدودهٔ رادارمون برسن، می‌تونیم حضورشون رو تأیید کنیم.",
+      "request": {
+        "text": "[conversational tone] شبکهٔ هشدار اینجا قطع شده. دیده‌بان‌ها می‌گن یه کاروان زرهی توی جادهٔ غربیه. وقتی خودروها به محدودهٔ رادارمون برسن، می‌تونیم حضورشون رو تأیید کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151185,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-02.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "جلوی کاروان رو توی تقاطع بگیرید؛ یا نزدیک‌تر به پاسگاه دفاع کنید. راه درمانگاه باید باز بمونه. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسه.",
+      "request": {
+        "text": "[conversational tone] جلوی کاروان رو توی تقاطع بگیرید؛ یا نزدیک‌تر به پاسگاه دفاع کنید. راه درمانگاه باید باز بمونه. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151186,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حدود یه دقیقه وقت داریم آماده بشیم. دو گروه تفنگدار و یه سربازخانهٔ آماده داری. خودت انتخاب کن: برج، مانع جاده یا نیروی کمکی. هشدار اول فقط یه تخمینه.",
+      "request": {
+        "text": "[conversational tone] حدود یه دقیقه وقت داریم آماده بشیم. دو گروه تفنگدار و یه سربازخانهٔ آماده داری. خودت انتخاب کن: برج، مانع جاده یا نیروی کمکی. هشدار اول فقط یه تخمینه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151187,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-comms-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "طبق گزارش، کاروان درست موقع قطع شبکهٔ هشدار راه افتاده. انگار از قبل خبر داشتن. فعلاً دفاع رو ادامه بده؛ بعد از نبرد، گزارش‌ها رو کنار هم می‌ذاریم.",
+      "request": {
+        "text": "[conversational tone] طبق گزارش، کاروان درست موقع قطع شبکهٔ هشدار راه افتاده. انگار از قبل خبر داشتن. فعلاً دفاع رو ادامه بده؛ بعد از نبرد، گزارش‌ها رو کنار هم می‌ذاریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151188,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-01.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "کاروان متوقف شد، پاسگاه هم سر جاشه. ببینید چقدر آسیب دیدیم و همه چه وضعی دارن. گزارش دقیق می‌خوام.",
+      "request": {
+        "text": "[conversational tone] کاروان متوقف شد، پاسگاه هم سر جاشه. ببینید چقدر آسیب دیدیم و همه چه وضعی دارن. گزارش دقیق می‌خوام.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151189,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "توی دستورهایی که پیدا کردیم، قطع شبکهٔ هشدار از قبل ثبت شده. پس ازش خبر داشتن. هنوز نمی‌دونیم کی این اطلاعات رو داده.",
+      "request": {
+        "text": "[conversational tone] توی دستورهایی که پیدا کردیم، قطع شبکهٔ هشدار از قبل ثبت شده. پس ازش خبر داشتن. هنوز نمی‌دونیم کی این اطلاعات رو داده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151190,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-03.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "یه تیم پزشکی و مهندسی اون‌طرف جاده گیر افتاده. باید با بالگرد بیاریمشون بیرون. یه مسیر امن براشون آماده کنید.",
+      "request": {
+        "text": "[conversational tone] یه تیم پزشکی و مهندسی اون‌طرف جاده گیر افتاده. باید با بالگرد بیاریمشون بیرون. یه مسیر امن براشون آماده کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151191,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-clean.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "کاروان متوقف شد. پاسگاه آسیبی ندیده و همهٔ مردم سالم‌ان. راه درمانگاه رو باز نگه دارید.",
+      "request": {
+        "text": "[conversational tone] کاروان متوقف شد. پاسگاه آسیبی ندیده و همهٔ مردم سالم‌ان. راه درمانگاه رو باز نگه دارید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151192,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-damaged.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "کاروان متوقف شد و همهٔ مردم سالم‌ان. پاسگاه آسیب دیده؛ قبل از عملیات بعدی تعمیرش کنید.",
+      "request": {
+        "text": "[conversational tone] کاروان متوقف شد و همهٔ مردم سالم‌ان. پاسگاه آسیب دیده؛ قبل از عملیات بعدی تعمیرش کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151193,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-civilian-loss.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "کاروان متوقف شد و پاسگاه سالمه، ولی چند نفر از مردم رو از دست دادیم. تلفات رو ثبت کنید و راه درمانگاه رو امن نگه دارید.",
+      "request": {
+        "text": "[conversational tone] کاروان متوقف شد و پاسگاه سالمه، ولی چند نفر از مردم رو از دست دادیم. تلفات رو ثبت کنید و راه درمانگاه رو امن نگه دارید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151194,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-mixed.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "کاروان متوقف شد، ولی پاسگاه آسیب دید و چند نفر از مردم رو از دست دادیم. هر دو رو ثبت کنید. هنوز باید از جاده محافظت کنیم.",
+      "request": {
+        "text": "[conversational tone] کاروان متوقف شد، ولی پاسگاه آسیب دید و چند نفر از مردم رو از دست دادیم. هر دو رو ثبت کنید. هنوز باید از جاده محافظت کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151195,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "ببین گزارش از کجا اومده، کاروان توی کدوم مسیره و حدوداً کی می‌رسه. دیده‌بان هنوز تعداد خودروها رو تأیید نکرده.",
+      "request": {
+        "text": "[conversational tone] ببین گزارش از کجا اومده، کاروان توی کدوم مسیره و حدوداً کی می‌رسه. دیده‌بان هنوز تعداد خودروها رو تأیید نکرده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151196,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.",
+      "request": {
+        "text": "[conversational tone] جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151197,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اگه جلوتر دفاع کنی، وقت بیشتری برای متوقف‌کردن کاروان داری. نزدیک پاسگاه هم می‌تونی دفاع کنی؛ فقط مسیر مرکزی رو پوشش بده.",
+      "request": {
+        "text": "[conversational tone] اگه جلوتر دفاع کنی، وقت بیشتری برای متوقف‌کردن کاروان داری. نزدیک پاسگاه هم می‌تونی دفاع کنی؛ فقط مسیر مرکزی رو پوشش بده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151198,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-04.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.",
+      "request": {
+        "text": "[conversational tone] فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151199,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.",
+      "request": {
+        "text": "[conversational tone] اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151200,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "وقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن. همین کافیه، لازم نیست «توقف» رو بزنی.",
+      "request": {
+        "text": "[conversational tone] وقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن. همین کافیه، لازم نیست «توقف» رو بزنی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151201,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-07.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«توقف» دستورها و شلیک خودکار رو قطع می‌کنه. اگه امتحانش کردی، برای ادامهٔ دفاع دوباره «حفظ» رو بزن. این درس اختیاریه.",
+      "request": {
+        "text": "[conversational tone] «توقف» دستورها و شلیک خودکار رو قطع می‌کنه. اگه امتحانش کردی، برای ادامهٔ دفاع دوباره «حفظ» رو بزن. این درس اختیاریه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151202,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-08.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«اسکن» محدودهٔ خودروی رادار سالمت رو بررسی می‌کنه. دو بار می‌تونی ازش استفاده کنی و بینش باید صبر کنی تا دوباره آماده بشه. حتی اگه چیزی پیدا نکنه، یه نوبت مصرف می‌شه.",
+      "request": {
+        "text": "[conversational tone] «اسکن» محدودهٔ خودروی رادار سالمت رو بررسی می‌کنه. دو بار می‌تونی ازش استفاده کنی و بینش باید صبر کنی تا دوباره آماده بشه. حتی اگه چیزی پیدا نکنه، یه نوبت مصرف می‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151203,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-09.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "تولید تفنگدار رو توی سربازخانهٔ آماده باز کن. هزینهٔ گروه چهارنفری رو ببین، بعد تصمیم بگیر. ساخت‌وساز و نیروی کمکی اختیاریه.",
+      "request": {
+        "text": "[conversational tone] تولید تفنگدار رو توی سربازخانهٔ آماده باز کن. هزینهٔ گروه چهارنفری رو ببین، بعد تصمیم بگیر. ساخت‌وساز و نیروی کمکی اختیاریه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151204,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-10.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "خودروهای مسلح به نیروهات آسیب می‌زنن. نفربر بی‌سلاح هم می‌تونه وارد محدودهٔ مرکزی بشه. هدفی رو انتخاب کن که حضورش تأیید شده.",
+      "request": {
+        "text": "[conversational tone] خودروهای مسلح به نیروهات آسیب می‌زنن. نفربر بی‌سلاح هم می‌تونه وارد محدودهٔ مرکزی بشه. هدفی رو انتخاب کن که حضورش تأیید شده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151205,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-11.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هشدار دوم رو بخون و وضعیت نیروهات رو ببین. اگه لازمه جابه‌جاشون کن؛ راه پاسگاه باید زیر پوششت بمونه.",
+      "request": {
+        "text": "[conversational tone] هشدار دوم رو بخون و وضعیت نیروهات رو ببین. اگه لازمه جابه‌جاشون کن؛ راه پاسگاه باید زیر پوششت بمونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151206,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-12.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "همهٔ خودروهای دشمن رو متوقف کن. تفنگدارها رو روی «حفظ» نگه دار. اگه مردم و پاسگاه سالم بمونن، ستارهٔ اضافه می‌گیری.",
+      "request": {
+        "text": "[conversational tone] همهٔ خودروهای دشمن رو متوقف کن. تفنگدارها رو روی «حفظ» نگه دار. اگه مردم و پاسگاه سالم بمونن، ستارهٔ اضافه می‌گیری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151207,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "caption": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+      "request": {
+        "text": "[conversational tone] من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151208,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+      "request": {
+        "text": "[conversational tone] دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151209,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-03.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "تفنگدارها جاده رو پوشش بدن؛ نفربر تیم رو جابه‌جا کنه. کنار لیلا پیاده‌شون کنید و سوار بالگردش کنید. بیست ثانیه محل رو امن نگه دارید، بعد به محدودهٔ خروج پرواز کنید.",
+      "request": {
+        "text": "[conversational tone] تفنگدارها جاده رو پوشش بدن؛ نفربر تیم رو جابه‌جا کنه. کنار لیلا پیاده‌شون کنید و سوار بالگردش کنید. بیست ثانیه محل رو امن نگه دارید، بعد به محدودهٔ خروج پرواز کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151210,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-comms-01.wav",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "caption": "هر چهار نفر سوار شدن. محل فرود امنه و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از اونجا تیم رو می‌برم.",
+      "request": {
+        "text": "[conversational tone] هر چهار نفر سوار شدن. محل فرود امنه و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از اونجا تیم رو می‌برم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151211,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-01.wav",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "caption": "هر چهار نفر سالم رسیدن. پوششتون بهمون وقت داد. من هم به تیمتون ملحق می‌شم؛ برای نجات بعدی روی بالگردم حساب کنید.",
+      "request": {
+        "text": "[conversational tone] هر چهار نفر سالم رسیدن. پوششتون بهمون وقت داد. من هم به تیمتون ملحق می‌شم؛ برای نجات بعدی روی بالگردم حساب کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151212,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-02.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "مهندس‌ها گزارش‌های تعمیر رو آوردن. چند تا از قطعی‌ها به یه مرکز ارتباطی حفاظت‌شده می‌رسه. بالاخره می‌دونیم کجا رو باید بررسی کنیم.",
+      "request": {
+        "text": "[conversational tone] مهندس‌ها گزارش‌های تعمیر رو آوردن. چند تا از قطعی‌ها به یه مرکز ارتباطی حفاظت‌شده می‌رسه. بالاخره می‌دونیم کجا رو باید بررسی کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151213,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نجات تأیید شد. سروان ناصر هم به تیم پیوست. بعدش باید اون مرکز ارتباطی رو بررسی کنیم. فعلاً بذاریم تیم پزشکی به کارش برسه.",
+      "request": {
+        "text": "[conversational tone] نجات تأیید شد. سروان ناصر هم به تیم پیوست. بعدش باید اون مرکز ارتباطی رو بررسی کنیم. فعلاً بذاریم تیم پزشکی به کارش برسه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151214,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.",
+      "request": {
+        "text": "[conversational tone] باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151215,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نفربر چرخ‌دار کنار تفنگدارها رو انتخاب کن. چهار صندلیش رو برای متخصص‌ها خالی نگه دار. اگه پیداش نکردی، «نشان بده» رو بزن.",
+      "request": {
+        "text": "[conversational tone] نفربر چرخ‌دار کنار تفنگدارها رو انتخاب کن. چهار صندلیش رو برای متخصص‌ها خالی نگه دار. اگه پیداش نکردی، «نشان بده» رو بزن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151216,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.",
+      "request": {
+        "text": "[conversational tone] «حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151217,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد.",
+      "request": {
+        "text": "[conversational tone] هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151218,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.",
+      "request": {
+        "text": "[conversational tone] «سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151219,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.",
+      "request": {
+        "text": "[conversational tone] نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151220,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز.",
+      "request": {
+        "text": "[conversational tone] بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151221,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بالگرد لیلا رو انتخاب کن. کنار متخصص‌ها روی زمین نگهش دار تا هر چهار نفر بتونن سوار بشن.",
+      "request": {
+        "text": "[conversational tone] بالگرد لیلا رو انتخاب کن. کنار متخصص‌ها روی زمین نگهش دار تا هر چهار نفر بتونن سوار بشن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151222,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.",
+      "request": {
+        "text": "[conversational tone] با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151223,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه.",
+      "request": {
+        "text": "[conversational tone] بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151224,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن.",
+      "request": {
+        "text": "[conversational tone] بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151225,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دارم نجات رو تأیید می‌کنم. تا نتیجه بیاد، مسافرها رو سوار نگه دار و از بالگرد محافظت کن.",
+      "request": {
+        "text": "[conversational tone] دارم نجات رو تأیید می‌کنم. تا نتیجه بیاد، مسافرها رو سوار نگه دار و از بالگرد محافظت کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151226,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "مهندس‌ها رد قطعی‌ها رو توی این مرکز ارتباطی پیدا کردن. دروازهٔ جاده رو بشکنید، فرستنده رو از کار بندازید و بایگانی رو امن کنید. شاید این اسناد نشون بدن کی دستور حمله‌ها رو داده.",
+      "request": {
+        "text": "[conversational tone] مهندس‌ها رد قطعی‌ها رو توی این مرکز ارتباطی پیدا کردن. دروازهٔ جاده رو بشکنید، فرستنده رو از کار بندازید و بایگانی رو امن کنید. شاید این اسناد نشون بدن کی دستور حمله‌ها رو داده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151227,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-02.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "دو گروه تفنگدار و یه نفربر سنگین دارید. با زره‌پوش دروازه رو باز کنید، بعد تفنگدارها رو با هم ببرید اون‌طرف. تا می‌تونید نفربر رو سالم نگه دارید؛ اگه از دست رفت هم حمله تموم نشده.",
+      "request": {
+        "text": "[conversational tone] دو گروه تفنگدار و یه نفربر سنگین دارید. با زره‌پوش دروازه رو باز کنید، بعد تفنگدارها رو با هم ببرید اون‌طرف. تا می‌تونید نفربر رو سالم نگه دارید؛ اگه از دست رفت هم حمله تموم نشده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151228,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "تا دوازده دقیقهٔ دیگه بایگانی رو پاک می‌کنن. فرستنده رو متوقف کن، نیروی واکنش دشمن رو شکست بده و محدودهٔ مشخص‌شده رو بیست ثانیه امن نگه دار. قدم‌به‌قدم راهنماییت می‌کنم.",
+      "request": {
+        "text": "[conversational tone] تا دوازده دقیقهٔ دیگه بایگانی رو پاک می‌کنن. فرستنده رو متوقف کن، نیروی واکنش دشمن رو شکست بده و محدودهٔ مشخص‌شده رو بیست ثانیه امن نگه دار. قدم‌به‌قدم راهنماییت می‌کنم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151229,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-comms-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "بایگانی سالمه. قطعهٔ اول پروتکل رو پیدا کردم. یه مجوز به اسم من توی سوابقشه؛ ولی این مجوز قبل از حمله‌ها باطل شده بود.",
+      "request": {
+        "text": "[conversational tone] بایگانی سالمه. قطعهٔ اول پروتکل رو پیدا کردم. یه مجوز به اسم من توی سوابقشه؛ ولی این مجوز قبل از حمله‌ها باطل شده بود.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151230,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-01.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "مرکز ارتباطی خاموش شد و اسناد سالم‌ان. حالا مدرک داریم. به زخمی‌ها برسید؛ شهر به تک‌تک آدم‌هایی که برمی‌گردونیم نیاز داره.",
+      "request": {
+        "text": "[conversational tone] مرکز ارتباطی خاموش شد و اسناد سالم‌ان. حالا مدرک داریم. به زخمی‌ها برسید؛ شهر به تک‌تک آدم‌هایی که برمی‌گردونیم نیاز داره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151231,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "مجوز باطل شده بود، ولی یکی دوباره از امضاش استفاده کرده. یه پیام رمزگذاری‌شده هم مونده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌دونم کی فرستادتش.",
+      "request": {
+        "text": "[conversational tone] مجوز باطل شده بود، ولی یکی دوباره از امضاش استفاده کرده. یه پیام رمزگذاری‌شده هم مونده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌دونم کی فرستادتش.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151232,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-03.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "فصل واکنش نخست تموم شد. تیم شناسایی و قطعات زره به تجهیزاتت اضافه شدن. نتیجه رو ببین و برگرد به نقشهٔ کارزار. رد این مدارک رو دنبال می‌کنیم.",
+      "request": {
+        "text": "[conversational tone] فصل واکنش نخست تموم شد. تیم شناسایی و قطعات زره به تجهیزاتت اضافه شدن. نتیجه رو ببین و برگرد به نقشهٔ کارزار. رد این مدارک رو دنبال می‌کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151233,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.",
+      "request": {
+        "text": "[conversational tone] دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151234,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "نفربر سنگین رو انتخاب کن. اگه از دست رفته، از تفنگدارهای باقی‌مونده استفاده کن. «نشان بده» نیروی مورد نظر رو نشونت می‌ده.",
+      "request": {
+        "text": "[conversational tone] نفربر سنگین رو انتخاب کن. اگه از دست رفته، از تفنگدارهای باقی‌مونده استفاده کن. «نشان بده» نیروی مورد نظر رو نشونت می‌ده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151235,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.",
+      "request": {
+        "text": "[conversational tone] «حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151236,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-04.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.",
+      "request": {
+        "text": "[conversational tone] گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151237,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-05.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.",
+      "request": {
+        "text": "[conversational tone] یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151238,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-06.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "به نگهبان‌های باقی‌مونده حمله کن. «نشان بده» دشمن باقی‌مونده رو نشونت می‌ده. قبل از امن‌کردن بایگانی باید نیروهای پادگان و نیروی کمکی رو شکست بدی.",
+      "request": {
+        "text": "[conversational tone] به نگهبان‌های باقی‌مونده حمله کن. «نشان بده» دشمن باقی‌مونده رو نشونت می‌ده. قبل از امن‌کردن بایگانی باید نیروهای پادگان و نیروی کمکی رو شکست بدی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151239,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-07.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "یه نیروی باقی‌مونده رو انتخاب کن، «حرکت» رو بزن و بفرستش توی محدودهٔ بایگانی. تا اسناد بازیابی بشن، حداقل یه نیرو رو اونجا نگه دار.",
+      "request": {
+        "text": "[conversational tone] یه نیروی باقی‌مونده رو انتخاب کن، «حرکت» رو بزن و بفرستش توی محدودهٔ بایگانی. تا اسناد بازیابی بشن، حداقل یه نیرو رو اونجا نگه دار.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151240,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "محدودهٔ بایگانی رو بیست ثانیه بدون وقفه نگه دار. تا بازیابی رو تأیید نکردم، حداقل یه نیروی زنده باید اونجا بمونه.",
+      "request": {
+        "text": "[conversational tone] محدودهٔ بایگانی رو بیست ثانیه بدون وقفه نگه دار. تا بازیابی رو تأیید نکردم، حداقل یه نیروی زنده باید اونجا بمونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151241,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p02_radio.wav",
+      "voiceId": "W6gzkYnU5Yxt0ihqIa71",
+      "caption": "چند تا انفجار توی بازار قدیم گزارش شده. برق داره قطع می‌شه. راه اصلی درمانگاه هم بسته‌ست.",
+      "request": {
+        "text": "[conversational tone] چند تا انفجار توی بازار قدیم گزارش شده. برق داره قطع می‌شه. راه اصلی درمانگاه هم بسته‌ست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151242,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p03_radio.wav",
+      "voiceId": "W6gzkYnU5Yxt0ihqIa71",
+      "caption": "فرماندهی واکنش مشترک، اینجا مرکز اعزام منطقه‌ست. صدامون رو دارید؟ ارتباطات منطقه از کار افتاده؛ به فرماندهی دسترسی نداریم.",
+      "request": {
+        "text": "[conversational tone] فرماندهی واکنش مشترک، اینجا مرکز اعزام منطقه‌ست. صدامون رو دارید؟ ارتباطات منطقه از کار افتاده؛ به فرماندهی دسترسی نداریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151243,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_dalia.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "مرکز اعزام، دالیا رحیم هستم، فرمانده میدانی. بازمانده‌های کاروان رو پیدا کردیم. داریم از منطقه خارجشون می‌کنیم.",
+      "request": {
+        "text": "[conversational tone] مرکز اعزام، دالیا‌رحیم هستم، فرمانده میدانی. بازمانده‌های کاروان رو پیدا کردیم. داریم از منطقه خارجشون می‌کنیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151244,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_samira.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "فرماندهی میدانی، سمیرا حداد هستم، مهندس زیرساخت شهری. خانواده‌ها و نیروهای راهداری اون‌طرف مسیر درمانگاه گیر افتادن.",
+      "request": {
+        "text": "[conversational tone] فرماندهی میدانی، سمیرا حداد هستم، مهندس زیرساخت شهری. خانواده‌ها و نیروهای راهداری اون‌طرف مسیر درمانگاه گیر افتادن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151245,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p05_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "من آریام، دستیار ارتباط شهری. شبکه آسیب دیده و هنوز نتونستیم به فرماندهی وصل بشیم.",
+      "request": {
+        "text": "[conversational tone] من آریام، دستیار ارتباط شهری. شبکه آسیب دیده و هنوز نتونستیم به فرماندهی وصل بشیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151246,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p06_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "حالت اضطراری رو فعال کردم. فقط یه فرماندهٔ تأییدشده برامون مونده.",
+      "request": {
+        "text": "[conversational tone] حالت اضطراری رو فعال کردم. فقط یه فرماندهٔ تأییدشده برامون مونده.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151247,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p07_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "الان باید به بازار قدیم برسیم. نیروهای مسلح دارن به راه بستهٔ درمانگاه نزدیک می‌شن.",
+      "request": {
+        "text": "[conversational tone] الان باید به بازار قدیم برسیم. نیروهای مسلح دارن به راه بستهٔ درمانگاه نزدیک می‌شن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151248,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p09_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هویتت تأیید شد، فرمانده. من کنارت هستم؛ دستورها رو تو می‌دی.",
+      "request": {
+        "text": "[conversational tone] هویتت تأیید شد، فرمانده. من کنارت هستم؛ دستورها رو تو می‌دی.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151249,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p10_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "این خرابی‌ها اتفاقی نیست. اول برق رو زدن، بعد راه‌ها رو، بعد هم فرماندهی رو.",
+      "request": {
+        "text": "[conversational tone] این خرابی‌ها اتفاقی نیست. اول برق رو زدن، بعد راه‌ها رو، بعد هم فرماندهی رو.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151250,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p11_dalia.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "دو گروه واکنش هنوز آماده‌ان. ولی به نزدیک‌ترین پایگاه جلو دسترسی نداریم.",
+      "request": {
+        "text": "[conversational tone] دو گروه واکنش هنوز آماده‌ان. ولی به نزدیک‌ترین پایگاه جلو دسترسی نداریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151251,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p12_samira.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "caption": "مردم، کارکنان درمانگاه و نیروهای خدمات شهری هنوز اون‌طرف راه‌بندان گیر افتادن.",
+      "request": {
+        "text": "[conversational tone] مردم، کارکنان درمانگاه و نیروهای خدمات شهری هنوز اون‌طرف راه‌بندان گیر افتادن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151252,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p13_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "هنوز مدرک کافی نداریم که بفهمیم کی پشت این حمله‌ست.",
+      "request": {
+        "text": "[conversational tone] هنوز مدرک کافی نداریم که بفهمیم کی پشت این حمله‌ست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151253,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander.wav",
+      "voiceId": "N2yn1e9QeLHJNAg4zbMW",
+      "caption": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "request": {
+        "text": "[conversational tone] تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151254,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p15_dalia.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "دریافت شد. یه گشت مسلح از خط خاکستر داره میاد سمت بازار قدیم. سلاح سنگین ندیدیم.",
+      "request": {
+        "text": "[conversational tone] دریافت شد. یه گشت مسلح از خط خاکستر داره میاد سمت بازار قدیم. سلاح سنگین ندیدیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151255,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p16_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "سه مهاجم مسلح رو شناسایی کردیم. مردم هنوز پشت موانعن. فقط توی مسیر علامت‌گذاری‌شده درگیر شو.",
+      "request": {
+        "text": "[conversational tone] سه مهاجم مسلح رو شناسایی کردیم. مردم هنوز پشت موانعن. فقط توی مسیر علامت‌گذاری‌شده درگیر شو.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151256,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p17_dalia.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "caption": "نیروهام آماده‌ان، فرمانده. کنترل با توئه.",
+      "request": {
+        "text": "[conversational tone] نیروهام آماده‌ان، فرمانده. کنترل با توئه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151257,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "caption": "اول گروه تفنگدار رو انتخاب کن. ببرشون پشت پوشش، بعد مسیر رو امن کن.",
+      "request": {
+        "text": "[conversational tone] اول گروه تفنگدار رو انتخاب کن. ببرشون پشت پوشش، بعد مسیر رو امن کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151258,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav",
+      "voiceId": "CeoZEQcJ58ClpEHgRyKe",
+      "caption": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "request": {
+        "text": "[conversational tone] تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151259,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_neutral.wav",
+      "voiceId": "RaldHBrhNdVemVVS3wAW",
+      "caption": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "request": {
+        "text": "[conversational tone] تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3151260,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    }
+  ]
+}

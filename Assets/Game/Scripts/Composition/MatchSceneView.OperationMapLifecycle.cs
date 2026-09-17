@@ -456,6 +456,12 @@ namespace Game.Composition
 
         private void DisposeOperationMapSourceSceneLoad()
         {
+            if (missionPlacementOverlay != null)
+            {
+                if (Application.isPlaying) Destroy(missionPlacementOverlay);
+                else DestroyImmediate(missionPlacementOverlay);
+                missionPlacementOverlay = null;
+            }
             activeOperationMapSceneView = null;
             loadedOperationMapCanonicalPresentationMode =
                 OperationMapCanonicalPresentationMode.SourceRenderersPresent;

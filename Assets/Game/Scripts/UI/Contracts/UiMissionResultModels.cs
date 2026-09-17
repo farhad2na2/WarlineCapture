@@ -1,5 +1,12 @@
 namespace Game.UI.Contracts
 {
+    public readonly struct UiMissionConstructionResultDetails
+    {
+        public readonly bool Applicable;
+        public readonly int BuildingsCompleted, SquadsRecruited, CivilianLosses;
+        public UiMissionConstructionResultDetails(int buildingsCompleted, int squadsRecruited, int civilianLosses)
+        { Applicable = true; BuildingsCompleted = buildingsCompleted; SquadsRecruited = squadsRecruited; CivilianLosses = civilianLosses; }
+    }
     public readonly struct UiMissionDefenseResultDetails
     {
         public readonly bool Applicable,PostDamaged,PostDestroyed,CoreBreached,IntegrityFault,ReviewTutorial;
@@ -55,6 +62,7 @@ namespace Game.UI.Contracts
         public readonly UiMissionDefenseResultDetails Defense;
         public readonly UiMissionExtractionResultDetails Extraction;
         public readonly UiMissionBreachResultDetails Breach;
+        public readonly UiMissionConstructionResultDetails Construction;
 
         public UiMissionResultPopupModel(
             UiMissionResultOutcome outcome,
@@ -84,6 +92,7 @@ namespace Game.UI.Contracts
             Defense = default;
             Extraction = default;
             Breach = default;
+            Construction = default;
         }
 
         public UiMissionResultPopupModel(
@@ -91,7 +100,7 @@ namespace Game.UI.Contracts
             string subtitle, string summaryBody, byte stars, string elapsedText,
             string squadLossText, string enemiesDefeatedText, string rewardsText,
             string primaryActionLabel, bool primaryActionEnabled, bool retryVisible,
-            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default)
+            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default, UiMissionConstructionResultDetails construction = default)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -114,6 +123,7 @@ namespace Game.UI.Contracts
             Defense = defense;
             Extraction = extraction;
             Breach = breach;
+            Construction = construction;
         }
 
         public static UiMissionResultPopupModel VictoryDefault =>

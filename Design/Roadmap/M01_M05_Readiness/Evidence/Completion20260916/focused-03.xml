@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="70" result="Failed(Child)" total="70" passed="68" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:43Z" duration="1.948535">
+  <test-suite type="TestSuite" id="1000" name="Warline M5 Compound QA" fullname="Warline M5 Compound QA" runstate="Runnable" testcasecount="4575" result="Failed" site="Child" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:43Z" duration="1.948535" total="70" passed="68" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="6193" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-readiness-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4574" result="Failed" site="Child" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:43Z" duration="1.915979" total="70" passed="68" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="44754" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1187" name="AriaTutorialPresentationV3PrefabTests" fullname="AriaTutorialPresentationV3PrefabTests" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:41Z" duration="0.380282" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="1191" name="EnglishAndFarsi_ReuseTheSameFixedPanelFootprint" fullname="AriaTutorialPresentationV3PrefabTests.EnglishAndFarsi_ReuseTheSameFixedPanelFootprint" methodname="EnglishAndFarsi_ReuseTheSameFixedPanelFootprint" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="178689327" result="Failed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:41Z" duration="0.355099" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected: (400.00, 250.00)
+  But was:  (400.00, 305.00)
+]]></message>
+            <stack-trace><![CDATA[at AriaTutorialPresentationV3PrefabTests.EnglishAndFarsi_ReuseTheSameFixedPanelFootprint () [0x0008e] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/AriaTutorialPresentationV3PrefabTests.cs:77
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="1189" name="MatchHud_EmbedsOnlyDoItAndShowMeActions" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_EmbedsOnlyDoItAndShowMeActions" methodname="MatchHud_EmbedsOnlyDoItAndShowMeActions" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="885913903" result="Passed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:41Z" duration="0.002879" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1188" name="MatchHud_OwnsTheOnlyTutorialAriaPanel" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_OwnsTheOnlyTutorialAriaPanel" methodname="MatchHud_OwnsTheOnlyTutorialAriaPanel" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="112874928" result="Passed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:41Z" duration="0.000498" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1190" name="Popup_DoesNotContainASecondTutorialSurface" fullname="AriaTutorialPresentationV3PrefabTests.Popup_DoesNotContainASecondTutorialSurface" methodname="Popup_DoesNotContainASecondTutorialSurface" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="1798823709" result="Passed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:41Z" duration="0.008943" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1333" name="AudioPlaybackPresentationBridgeSystemHelperTests" fullname="AudioPlaybackPresentationBridgeSystemHelperTests" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:42Z" duration="0.389989" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1334" name="AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" methodname="AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1921633886" result="Passed" start-time="2026-09-16 21:24:41Z" end-time="2026-09-16 21:24:42Z" duration="0.145287" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1340" name="DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" methodname="DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1576720509" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.027431" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1336" name="DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" methodname="DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="333841691" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.013521" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1343" name="DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" methodname="DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1217269652" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.024398" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1335" name="DrainAcceptedRequests_PlaysAcceptedRequestOnce" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_PlaysAcceptedRequestOnce" methodname="DrainAcceptedRequests_PlaysAcceptedRequestOnce" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1740484346" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022747" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1342" name="DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" methodname="DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1169352498" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.024057" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1339" name="DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" methodname="DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="985894791" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001083" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1341" name="DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" methodname="DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1275675941" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.003209" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1338" name="DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" methodname="DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1055331662" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000699" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="1347" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.053259" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1345" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Victory)" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Victory)" methodname="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1645594768" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.024202" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1346" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Defeat)" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Defeat)" methodname="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="357541292" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.023035" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+        <test-case id="1337" name="ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" methodname="ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1753224810" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.023878" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1344" name="TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" methodname="TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="486982541" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.040985" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1356" name="AudioPlaybackPresentationSystemHelperTests" fullname="AudioPlaybackPresentationSystemHelperTests" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.216790" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1367" name="ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" fullname="AudioPlaybackPresentationSystemHelperTests.ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" methodname="ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1838089721" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.012040" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1366" name="ApplySettingsToActiveSources_UpdatesMusicLoopVolume" fullname="AudioPlaybackPresentationSystemHelperTests.ApplySettingsToActiveSources_UpdatesMusicLoopVolume" methodname="ApplySettingsToActiveSources_UpdatesMusicLoopVolume" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1899344185" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022886" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1357" name="Helper_PrewarmsPoolWithoutPlaying" fullname="AudioPlaybackPresentationSystemHelperTests.Helper_PrewarmsPoolWithoutPlaying" methodname="Helper_PrewarmsPoolWithoutPlaying" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="301361801" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000443" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1363" name="PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" methodname="PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="206682542" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.023861" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1365" name="PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" methodname="PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1299271824" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022889" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1368" name="PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" methodname="PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="315036623" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.023094" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1359" name="PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" methodname="PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1942023603" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.011713" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1361" name="PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" methodname="PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="467123443" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022993" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1360" name="PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" methodname="PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="989248019" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022823" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1362" name="PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" methodname="PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1869343327" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000486" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1358" name="PlayAcceptedRequest_ReusesPoolAfterStopAll" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ReusesPoolAfterStopAll" methodname="PlayAcceptedRequest_ReusesPoolAfterStopAll" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="631291116" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.022516" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1369" name="PlayAcceptedRequest_SelectsRequestedLocalizedClip" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_SelectsRequestedLocalizedClip" methodname="PlayAcceptedRequest_SelectsRequestedLocalizedClip" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1016126193" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.023003" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1364" name="ResolveLinearVolume_AppliesMasterAndBusSettings" fullname="AudioPlaybackPresentationSystemHelperTests.ResolveLinearVolume_AppliesMasterAndBusSettings" methodname="ResolveLinearVolume_AppliesMasterAndBusSettings" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="2104763222" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000491" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1541" name="BuildingPlacementCommitCompositionSystemHelperTests" fullname="BuildingPlacementCommitCompositionSystemHelperTests" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.013421" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1546" name="InvalidRequestReportsNoCommit" fullname="BuildingPlacementCommitCompositionSystemHelperTests.InvalidRequestReportsNoCommit" methodname="InvalidRequestReportsNoCommit" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="1479838203" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001069" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1542" name="SinglePlacementWithoutAutoSelectReportsCommittedOutcome" fullname="BuildingPlacementCommitCompositionSystemHelperTests.SinglePlacementWithoutAutoSelectReportsCommittedOutcome" methodname="SinglePlacementWithoutAutoSelectReportsCommittedOutcome" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="1637457540" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001365" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1543" name="SingleRegistrationFailureReportsNoCommit" fullname="BuildingPlacementCommitCompositionSystemHelperTests.SingleRegistrationFailureReportsNoCommit" methodname="SingleRegistrationFailureReportsNoCommit" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="1103838607" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000436" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1544" name="WallPlacementCompleteSuccessReportsAllCommittedInstances" fullname="BuildingPlacementCommitCompositionSystemHelperTests.WallPlacementCompleteSuccessReportsAllCommittedInstances" methodname="WallPlacementCompleteSuccessReportsAllCommittedInstances" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="51313650" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001548" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1545" name="WallPlacementRegistrationFailureRollsBackRegisteredSegments" fullname="BuildingPlacementCommitCompositionSystemHelperTests.WallPlacementRegistrationFailureRollsBackRegisteredSegments" methodname="WallPlacementRegistrationFailureRollsBackRegisteredSegments" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="865230474" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000593" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1547" name="BuildingPlacementConstructionTransactionTests" fullname="BuildingPlacementConstructionTransactionTests" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.027693" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1548" name="AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" methodname="AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1790611961" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.018691" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1549" name="CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" fullname="BuildingPlacementConstructionTransactionTests.CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" methodname="CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="133127808" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001061" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1553" name="DuplicateTransaction_DoesNotSpendOrCommitTwice" fullname="BuildingPlacementConstructionTransactionTests.DuplicateTransaction_DoesNotSpendOrCommitTwice" methodname="DuplicateTransaction_DoesNotSpendOrCommitTwice" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1506038719" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000343" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1550" name="InvalidPlacementAndPreviewCancel_SpendNothing" fullname="BuildingPlacementConstructionTransactionTests.InvalidPlacementAndPreviewCancel_SpendNothing" methodname="InvalidPlacementAndPreviewCancel_SpendNothing" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1379696559" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000587" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1552" name="PartialRegistration_RollsBackResourcesExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.PartialRegistration_RollsBackResourcesExactlyOnce" methodname="PartialRegistration_RollsBackResourcesExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="852375817" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000513" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1551" name="RegistrationFailure_RollsBackResourcesExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.RegistrationFailure_RollsBackResourcesExactlyOnce" methodname="RegistrationFailure_RollsBackResourcesExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1773747712" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000309" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1554" name="SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" fullname="BuildingPlacementConstructionTransactionTests.SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" methodname="SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="11506762" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000513" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1818" name="CampaignReadinessLifecycleTests" fullname="CampaignReadinessLifecycleTests" classname="CampaignReadinessLifecycleTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.032528" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1819" name="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" fullname="CampaignReadinessLifecycleTests.ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" methodname="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="617789608" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.002577" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1820" name="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" fullname="CampaignReadinessLifecycleTests.DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" methodname="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1144202938" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.025458" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1829" name="CampaignTutorialClarityTests" fullname="CampaignTutorialClarityTests" classname="CampaignTutorialClarityTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.046932" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1836" name="AttentionPulseRespectsReducedMotion" fullname="CampaignTutorialClarityTests.AttentionPulseRespectsReducedMotion" methodname="AttentionPulseRespectsReducedMotion" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1865987453" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000319" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1834" name="AttentionPulseWaitsResetsAndNeverChangesHitAreas" fullname="CampaignTutorialClarityTests.AttentionPulseWaitsResetsAndNeverChangesHitAreas" methodname="AttentionPulseWaitsResetsAndNeverChangesHitAreas" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1888251257" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.004951" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1832" name="BreachLegacyReplayStartsAndAdvancesFromRealSelection" fullname="CampaignTutorialClarityTests.BreachLegacyReplayStartsAndAdvancesFromRealSelection" methodname="BreachLegacyReplayStartsAndAdvancesFromRealSelection" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1167015841" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.016525" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1833" name="CommandCameraStartsFortyUnitsAboveGround" fullname="CampaignTutorialClarityTests.CommandCameraStartsFortyUnitsAboveGround" methodname="CommandCameraStartsFortyUnitsAboveGround" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1964435951" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000555" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1835" name="EdgeButtonCaptionsStayInsideScreen" fullname="CampaignTutorialClarityTests.EdgeButtonCaptionsStayInsideScreen" methodname="EdgeButtonCaptionsStayInsideScreen" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1795336864" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000624" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1830" name="EveryCampaignEntryAndRetryRequiresFullGuidance" fullname="CampaignTutorialClarityTests.EveryCampaignEntryAndRetryRequiresFullGuidance" methodname="EveryCampaignEntryAndRetryRequiresFullGuidance" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1449055341" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001657" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1831" name="OldEarlyMissionSessionsStillProjectInstructions" fullname="CampaignTutorialClarityTests.OldEarlyMissionSessionsStillProjectInstructions" methodname="OldEarlyMissionSessionsStillProjectInstructions" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="875538116" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.014679" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4867" name="RuntimeGridDeduplicationSystemTests" fullname="RuntimeGridDeduplicationSystemTests" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.029826" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4871" name="ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" fullname="RuntimeGridDeduplicationSystemTests.ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" methodname="ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="1363916689" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.015070" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=1 size=24x18 cellSize=1.25
+]]></output>
+        </test-case>
+        <test-case id="4869" name="Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" fullname="RuntimeGridDeduplicationSystemTests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" methodname="Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="1732632450" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.002111" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4868" name="Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" fullname="RuntimeGridDeduplicationSystemTests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" methodname="Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="230090034" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.004374" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4872" name="RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" fullname="RuntimeGridDeduplicationSystemTests.RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" methodname="RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="1683755426" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001331" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=0 size=4x3 cellSize=1
+]]></output>
+        </test-case>
+        <test-case id="4870" name="RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" fullname="RuntimeGridDeduplicationSystemTests.RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" methodname="RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="678442819" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001430" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=0 size=12x10 cellSize=1.5
+]]></output>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4873" name="RuntimeGridPersistentStorageUtilitySystemHelperTests" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.304804" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4877" name="DisposeStorage_IsIdempotentAndClearsComponentAliases" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.DisposeStorage_IsIdempotentAndClearsComponentAliases" methodname="DisposeStorage_IsIdempotentAndClearsComponentAliases" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="482391868" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000794" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4874" name="EnsureStorage_CreatesEveryContainerWithExpectedInitialization" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_CreatesEveryContainerWithExpectedInitialization" methodname="EnsureStorage_CreatesEveryContainerWithExpectedInitialization" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1952672151" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000784" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4876" name="EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" methodname="EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1333789550" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000588" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4875" name="EnsureStorage_SameSizePreservesLiveContainerContents" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_SameSizePreservesLiveContainerContents" methodname="EnsureStorage_SameSizePreservesLiveContainerContents" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1946509988" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.000846" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4879" name="OwnershipBoundary_HasOneAllocatorResizerAndDisposer" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.OwnershipBoundary_HasOneAllocatorResizerAndDisposer" methodname="OwnershipBoundary_HasOneAllocatorResizerAndDisposer" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="148092697" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.296826" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4878" name="WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" methodname="WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1905945712" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:42Z" duration="0.001277" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5477" name="TutorialAttentionAndContinueTests" fullname="TutorialAttentionAndContinueTests" classname="TutorialAttentionAndContinueTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:24:42Z" end-time="2026-09-16 21:24:43Z" duration="0.092698" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5480" name="ChevronHasRenderableGeometry" fullname="TutorialAttentionAndContinueTests.ChevronHasRenderableGeometry" methodname="ChevronHasRenderableGeometry" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="172408985" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.006671" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5481" name="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" fullname="TutorialAttentionAndContinueTests.ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" methodname="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="1747515189" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.049187" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5479" name="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" fullname="TutorialAttentionAndContinueTests.PlacementPointerFindsOpenCornerBesideMinimapAndFooter" methodname="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="1461547349" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.002612" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5478" name="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" fullname="TutorialAttentionAndContinueTests.PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" methodname="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="1362256966" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.005930" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5482" name="TutorialCueOverlayTests" fullname="TutorialCueOverlayTests" classname="TutorialCueOverlayTests" runstate="Runnable" testcasecount="4" result="Failed" site="Child" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.041252" total="4" passed="3" failed="1" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="5484" name="MinimapLeavesRoomForBottomCornerArrow" fullname="TutorialCueOverlayTests.MinimapLeavesRoomForBottomCornerArrow" methodname="MinimapLeavesRoomForBottomCornerArrow" classname="TutorialCueOverlayTests" runstate="Runnable" seed="1320988874" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.001314" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5486" name="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" fullname="TutorialCueOverlayTests.NextClickFrameIsAbovePopupAndNeverBlocksItsButton" methodname="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" classname="TutorialCueOverlayTests" runstate="Runnable" seed="943518102" result="Failed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.011692" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Caption must stay within the highlighted button column.
+  Expected: less than 120.0f
+  But was:  276.444427f
+]]></message>
+            <stack-trace><![CDATA[at TutorialCueOverlayTests.NextClickFrameIsAbovePopupAndNeverBlocksItsButton () [0x002fa] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/TutorialCueOverlayTests.cs:108
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5483" name="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" fullname="TutorialCueOverlayTests.WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" methodname="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" classname="TutorialCueOverlayTests" runstate="Runnable" seed="268164134" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.006479" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5485" name="WedgeGuideFramesOnlyTheVisibleSector" fullname="TutorialCueOverlayTests.WedgeGuideFramesOnlyTheVisibleSector" methodname="WedgeGuideFramesOnlyTheVisibleSector" classname="TutorialCueOverlayTests" runstate="Runnable" seed="1108265346" result="Passed" start-time="2026-09-16 21:24:43Z" end-time="2026-09-16 21:24:43Z" duration="0.002389" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/Warline M5 Compound QA/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

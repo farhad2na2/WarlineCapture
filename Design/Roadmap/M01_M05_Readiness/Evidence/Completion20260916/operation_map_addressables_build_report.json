@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "buildResultHash": "7458c64eb1a83d9d10af7eb218130b0e",
+  "buildTarget": "Android",
+  "aggregateBundleBytes": 141791457,
+  "maps": [
+    { "mapId": "opmap.skirmish.desert_base_01", "bundleCount": 48, "bundleBytes": 141791457 }
+  ],
+  "partitions": [  ],
+  "requiredAddresses": [
+    "operation-map/catalog",
+    "operation-map/opmap.skirmish.desert_base_01/definition",
+    "operation-map/opmap.skirmish.desert_base_01/entity-scene",
+    "operation-map/opmap.skirmish.desert_base_01/map-surface",
+    "operation-map/opmap.skirmish.desert_base_01/minimap-raster",
+    "operation-map/opmap.skirmish.desert_base_01/source-scene"
+  ],
+  "entitiesArtifacts": [  ],
+  "duplicateDependencies": [
+    { "assetGuid": "da07703fcc09f8d4799221050659bd55", "assetPath": "Packages/com.unity.shadergraph/Editor/Resources/Shaders/FallbackError.shader", "bundleCount": 2, "duplicateBytes": 3556 }
+  ]
+}

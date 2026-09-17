@@ -40,6 +40,7 @@ namespace Game.Editor
                 (NarrativeSpeakerId.Dalia, "debrief.dalia", "The corridor is secure. The patrol was coordinated, not opportunistic."),
                 (NarrativeSpeakerId.Aria, "debrief.aria", "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved."),
                 (NarrativeSpeakerId.Samira, "debrief.samira", "Civilians are moving to safety. Command Base is online; the next operation is ready for review."));
+            M01ComicVoiceImporter.ApplyBindings(false);
             AssetDatabase.SaveAssets();
         }
 

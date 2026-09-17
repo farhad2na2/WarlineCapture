@@ -5,12 +5,13 @@ namespace Game.UI.Contracts
     public readonly struct UiMissionTutorialTarget
     {
         public readonly Vector3 Selection, Destination;
-        public readonly bool NeedsSelection, Moving;
+        public readonly bool NeedsSelection, Moving, ExecutingAttack;
         public readonly int RequiredSelectionCount;
+        public readonly float AreaRadius;
         public readonly UiTutorialBattleAction BattleAction;
         public readonly string SelectionLabelKey;
-        public UiMissionTutorialTarget(Vector3 selection, Vector3 destination, bool needsSelection, bool moving, int requiredSelectionCount=1, UiTutorialBattleAction battleAction=UiTutorialBattleAction.None, string selectionLabelKey="ui.aria.select_group")
-        { Selection=selection; Destination=destination; NeedsSelection=needsSelection; Moving=moving; RequiredSelectionCount=requiredSelectionCount; BattleAction=battleAction; SelectionLabelKey=selectionLabelKey; }
+        public UiMissionTutorialTarget(Vector3 selection, Vector3 destination, bool needsSelection, bool moving, int requiredSelectionCount=1, UiTutorialBattleAction battleAction=UiTutorialBattleAction.None, string selectionLabelKey="ui.aria.select_group", bool executingAttack=false, float areaRadius=0)
+        { Selection=selection; Destination=destination; NeedsSelection=needsSelection; Moving=moving; ExecutingAttack=executingAttack; AreaRadius=areaRadius; RequiredSelectionCount=requiredSelectionCount; BattleAction=battleAction; SelectionLabelKey=selectionLabelKey; }
     }
     public interface IUiMissionTutorialTargetGateway
     {

@@ -34,12 +34,22 @@
       "id": "2",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "منوی ساخت را باز کنید.",
+      "text": "منوی «ساخت» رو باز کن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_open_build_aria_fa.wav",
-      "durationSeconds": 1.92,
-      "sha256": "d61a2024ba4bf193b414f0099283e03ef2f2e0aa0f7714dd8434e3e632f94373"
+      "durationSeconds": 2.24,
+      "sha256": "ebda6891bfb385a2905159fd421160b95f64585275ff7c4a06f97d6a7e4ec85e",
+      "spokenText": "منوی «ساخت» رو باز کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151178,
+      "generatedAtUtc": "2026-09-15T17:51:33.817475+00:00",
+      "captionSha256": "79166f69d1f7f58b76fdbd66dd83a877af24becede11dd2ad56f98b482ca5219"
     },
     {
       "kind": "tutorial",
@@ -58,12 +68,22 @@
       "id": "3",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "سربازخانه را از فهرست ساختمان‌ها انتخاب کنید.",
+      "text": "از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_select_barracks_aria_fa.wav",
-      "durationSeconds": 3.6,
-      "sha256": "34131e90b60d6611fee365569ba4dafba0c664fba91a2daf274ce0d598c1c188"
+      "durationSeconds": 4.24,
+      "sha256": "98639ac65be2b1e89ae8c05100636f0105101c546d31b2536c644f506596b7cd",
+      "spokenText": "از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151179,
+      "generatedAtUtc": "2026-09-15T17:51:35.823121+00:00",
+      "captionSha256": "6d025c36fdaf0ec90179c213585b6a054327a1f293b1687e3bdec8a89a4d090a"
     },
     {
       "kind": "tutorial",
@@ -82,12 +102,22 @@
       "id": "4",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "سربازخانه را داخل محدوده سبز قرار دهید و ساخت را تأیید کنید.",
+      "text": "سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_place_barracks_aria_fa.wav",
-      "durationSeconds": 5.12,
-      "sha256": "38b727cd7e8b36c5abae42ecfbe2896ea38b01a55fdec8fdf5b0844871db4e32"
+      "durationSeconds": 4.64,
+      "sha256": "f08ef216581c48a30be6c9b094a73a96d382333508f802aad397ec6688dbc6c2",
+      "spokenText": "سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151180,
+      "generatedAtUtc": "2026-09-15T17:51:36.748028+00:00",
+      "captionSha256": "c7ea32650cb78c659fb4f66f4c8977be093081b673798061774166f659569ea2"
     },
     {
       "kind": "tutorial",
@@ -106,12 +136,22 @@
       "id": "5",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید.",
+      "text": "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav",
-      "durationSeconds": 11.28,
-      "sha256": "5b2b9b0defb5283daf1e9978ab37a27d1c87bcb9446cc83448404de8a651ff98"
+      "durationSeconds": 10.16,
+      "sha256": "1834867de03572833e2e3abb8454b13759a827e0f36d7f0e6949d850e9c868eb",
+      "spokenText": "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151181,
+      "generatedAtUtc": "2026-09-15T17:51:40.225359+00:00",
+      "captionSha256": "04388bf5646a4f6487f4072363b35b584cdd72e2c3b502fb081075fe95e67b17"
     },
     {
       "kind": "tutorial",
@@ -130,12 +170,22 @@
       "id": "6",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "بخش تولید را باز کنید و یک گروه تفنگدار آموزش دهید.",
+      "text": "بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_train_rifle_squad_aria_fa.wav",
-      "durationSeconds": 4.64,
-      "sha256": "be372866bf075c47e1812a5a62703d54181c09aa06e8d8e3c7ed38ffd22b8883"
+      "durationSeconds": 4.0,
+      "sha256": "679f61ab4ecffaf2da7cfced1807e052142e07332e1c07aa226f8e10265fa6f5",
+      "spokenText": "بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151182,
+      "generatedAtUtc": "2026-09-15T17:51:39.003966+00:00",
+      "captionSha256": "caef8c19fc75e0cb41c6c473e04ab6c1564420b5909b7b9a529f065d6639a219"
     },
     {
       "kind": "tutorial",
@@ -154,12 +204,22 @@
       "id": "7",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "یک گشت دشمن از غرب نزدیک می‌شود. گروه خود را در مسیر علامت‌گذاری‌شده آماده کنید.",
+      "text": "گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_incoming_patrol_aria_fa.wav",
-      "durationSeconds": 8.72,
-      "sha256": "dacea688ade938043ac3890a9eb93f6b0a072b4ff8ad66d33f7ebb7e81c7d192"
+      "durationSeconds": 5.52,
+      "sha256": "3b46d1d423755878b4de59994c0a07c993de409714425807be035706c66689df",
+      "spokenText": "گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151183,
+      "generatedAtUtc": "2026-09-15T17:51:41.780170+00:00",
+      "captionSha256": "34c7ef017e6d77f649ce7f88d804dbda48772e9f0125f5c0764bbbad67139ff2"
     },
     {
       "kind": "tutorial",
@@ -178,12 +238,24 @@
       "id": "8",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "مسیر علامت‌گذاری‌شده را حفظ کنید و از پاسگاه دفاع کنید.",
+      "text": "مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_defend_post_aria_fa.wav",
-      "durationSeconds": 4.56,
-      "sha256": "51dc4c937dda68f896dc7f9f9c23ba5d6e825ed62e95182a229f43168282c972"
+      "durationSeconds": 3.76,
+      "sha256": "d857bd6c15672b954162b5e5cc29aedfeefa524247a738f9fbf130ef0ebeb89c",
+      "spokenText": "مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151184,
+      "generatedAtUtc": "2026-09-15T17:51:42.356942+00:00",
+      "captionSha256": "f9f43f39a6bfb0f8d6161a225b4af8dc05a6fc577d6036fcd6e788c81d6ef6b0"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.091558+00:00"
 }

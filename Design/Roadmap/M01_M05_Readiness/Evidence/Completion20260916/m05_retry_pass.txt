@@ -1,0 +1,3 @@
+Wrapper exit 0. Persian real deadline defeat; normal simulation accelerated to 12x for mechanics only, no health/outcome edits. Visible Retry starts a fresh attempt with restored gate/core, reset clock and lesson 1.
+
+[M05EditorProbe] result=Passed Persian real deadline defeat and visible Retry button create fresh targets, clock and lesson 1; time accelerated, no health/outcome edits

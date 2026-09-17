@@ -35,13 +35,22 @@
       "id": "m05-brief-01",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "مهندسان منشأ قطعی‌ها را در این مرکز ارتباطی مستحکم پیدا کردند. دروازهٔ جاده را بشکنید، فرستنده را از کار بیندازید و بایگانی را امن کنید. این اسناد می‌توانند آمر حمله‌ها را مشخص کنند.",
+      "text": "مهندس‌ها رد قطعی‌ها رو توی این مرکز ارتباطی پیدا کردن. دروازهٔ جاده رو بشکنید، فرستنده رو از کار بندازید و بایگانی رو امن کنید. شاید این اسناد نشون بدن کی دستور حمله‌ها رو داده.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav",
-      "durationSeconds": 16.48,
-      "sha256": "d945d0b31446cb096a67fb88540ed56780c555da422a26b5577722293c506d72",
-      "captionSha256": "a47e0db385eb1c23160853aaeceb2fc695f1272dbe6669b7f757243aff837d03"
+      "durationSeconds": 13.44,
+      "sha256": "fbf88319fa07c4bfd30c26f210f7eeab57de0d0107942c099760989d4ef87965",
+      "captionSha256": "159d8cb10e700f7ffd066bd0b9499499ecb4783b02045b57e6944d9e209085e8",
+      "spokenText": "مهندس‌ها رد قطعی‌ها رو توی این مرکز ارتباطی پیدا کردن. دروازهٔ جاده رو بشکنید، فرستنده رو از کار بندازید و بایگانی رو امن کنید. شاید این اسناد نشون بدن کی دستور حمله‌ها رو داده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151227,
+      "generatedAtUtc": "2026-09-15T17:53:25.572766+00:00"
     },
     {
       "kind": "narrative",
@@ -61,13 +70,22 @@
       "id": "m05-brief-02",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "دو گروه تفنگدار و یک نفربر سنگین در اختیار شماست. با زره‌پوش دروازه را باز کنید، سپس تفنگدارها را با هم عبور دهید. اگر می‌توانید نفربر را حفظ کنید؛ از دست دادن آن به معنای پایان حمله نیست.",
+      "text": "دو گروه تفنگدار و یه نفربر سنگین دارید. با زره‌پوش دروازه رو باز کنید، بعد تفنگدارها رو با هم ببرید اون‌طرف. تا می‌تونید نفربر رو سالم نگه دارید؛ اگه از دست رفت هم حمله تموم نشده.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-02.wav",
-      "durationSeconds": 16.88,
-      "sha256": "670423c44d0194541e1cba54f62face768fe9c12b509fa82b08d232d1a563ad4",
-      "captionSha256": "6957de5c70f3f1a27dcfc5d4926cc990aaab0802519e51e21def1b49d0640b77"
+      "durationSeconds": 15.04,
+      "sha256": "be5ccf8c8ae2cbe833958a32ff82ac7a33097f89d293d695138f066bb6f12521",
+      "captionSha256": "18ec802b4131c0bc52fa6ca1f51261a4c8180bde8b4542a01d10a0d3aeac47f1",
+      "spokenText": "دو گروه تفنگدار و یه نفربر سنگین دارید. با زره‌پوش دروازه رو باز کنید، بعد تفنگدارها رو با هم ببرید اون‌طرف. تا می‌تونید نفربر رو سالم نگه دارید؛ اگه از دست رفت هم حمله تموم نشده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151228,
+      "generatedAtUtc": "2026-09-15T17:53:27.269530+00:00"
     },
     {
       "kind": "narrative",
@@ -87,13 +105,22 @@
       "id": "m05-brief-03",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "این مرکز تا دوازده دقیقهٔ دیگر بایگانی را پاک می‌کند. فرستنده را متوقف کنید، نیروی واکنش دشمن را شکست دهید و محدودهٔ مشخص‌شده را بیست ثانیه امن نگه دارید. هر حرکت را راهنمایی می‌کنم.",
+      "text": "تا دوازده دقیقهٔ دیگه بایگانی رو پاک می‌کنن. فرستنده رو متوقف کن، نیروی واکنش دشمن رو شکست بده و محدودهٔ مشخص‌شده رو بیست ثانیه امن نگه دار. قدم‌به‌قدم راهنماییت می‌کنم.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-03.wav",
-      "durationSeconds": 15.68,
-      "sha256": "36fd41164c92f1a79f8095b96721d859cbfa21185761bfb86cd3d0ede0360fe2",
-      "captionSha256": "83c920c5a1739a060f5ae783715b087110c72057fd85de1a5ee42b3384a2621d"
+      "durationSeconds": 14.8,
+      "sha256": "4abd2b1c52610a32d58e30e571136fda901889f950fb2b078132e323f9f5d866",
+      "captionSha256": "7a3ef551df0a09162eb498ec43568c6d2cfeec04bb3cf3adab65599bbd96b639",
+      "spokenText": "تا دوازده دقیقهٔ دیگه بایگانی رو پاک می‌کنن. فرستنده رو متوقف کن، نیروی واکنش دشمن رو شکست بده و محدودهٔ مشخص‌شده رو بیست ثانیه امن نگه دار. قدم‌به‌قدم راهنماییت می‌کنم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151229,
+      "generatedAtUtc": "2026-09-15T17:53:31.883224+00:00"
     },
     {
       "kind": "narrative",
@@ -113,13 +140,22 @@
       "id": "m05-comms-01",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "بایگانی سالم است. قطعهٔ اول پروتکل را بازیابی کردم. در سابقهٔ مجوز آن، اعتبارنامه‌ای به نام من ثبت شده که پیش از این حمله‌ها لغو شده بود.",
+      "text": "بایگانی سالمه. قطعهٔ اول پروتکل رو پیدا کردم. یه مجوز به اسم من توی سوابقشه؛ ولی این مجوز قبل از حمله‌ها باطل شده بود.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-comms-01.wav",
-      "durationSeconds": 11.92,
-      "sha256": "3fd9e18c849acdb69c5ad600fdf605689b180680ba467103bae358f9d20d6d72",
-      "captionSha256": "d48f598740e387c2b6c101649271d3934534ecafa9f68e26ca98c2704ac67e82"
+      "durationSeconds": 10.48,
+      "sha256": "350530e9cb5d07ba58534e540f85eb39f3c520e612b8b227f86cf0d9337f38c0",
+      "captionSha256": "df3e10fa8e1494d1ce1e3ac8b33d2d895b85822d4faa918337b4ba9d3f89e604",
+      "spokenText": "بایگانی سالمه. قطعهٔ اول پروتکل رو پیدا کردم. یه مجوز به اسم من توی سوابقشه؛ ولی این مجوز قبل از حمله‌ها باطل شده بود.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151230,
+      "generatedAtUtc": "2026-09-15T17:53:31.977672+00:00"
     },
     {
       "kind": "narrative",
@@ -139,13 +175,22 @@
       "id": "m05-debrief-01",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "مرکز ارتباطی خاموش شده و اسناد در امان‌اند. حالا مدرک داریم، نه شایعه‌ای دیگر. به زخمی‌ها رسیدگی کنید؛ شهر به همهٔ کسانی که سالم برمی‌گردانیم نیاز دارد.",
+      "text": "مرکز ارتباطی خاموش شد و اسناد سالم‌ان. حالا مدرک داریم. به زخمی‌ها برسید؛ شهر به تک‌تک آدم‌هایی که برمی‌گردونیم نیاز داره.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-01.wav",
-      "durationSeconds": 13.36,
-      "sha256": "3d65f43c4cf4085bc49de6a6f5ca6c13baf8e19c86511ee6db1e420117c0b334",
-      "captionSha256": "8788809545fc255536a19dc7be0dae82efe89e1b0f2a24178b46d909af084206"
+      "durationSeconds": 9.52,
+      "sha256": "b4025b6f0ac00967a77d6dc9501529454e3697c2d71b029d1154ee3999c5f37a",
+      "captionSha256": "d4206c58934a47a1356570671d8a54109add991e71a8093aafeebc92b3ad5b78",
+      "spokenText": "مرکز ارتباطی خاموش شد و اسناد سالم‌ان. حالا مدرک داریم. به زخمی‌ها برسید؛ شهر به تک‌تک آدم‌هایی که برمی‌گردونیم نیاز داره.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151231,
+      "generatedAtUtc": "2026-09-15T17:53:36.641996+00:00"
     },
     {
       "kind": "narrative",
@@ -165,13 +210,22 @@
       "id": "m05-debrief-02",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "اعتبارنامه لغو شده بود، اما کسی باز هم از امضای آن استفاده کرده است. یک پیام رمزگذاری‌شده باقی مانده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌توانم فرستنده را شناسایی کنم.",
+      "text": "مجوز باطل شده بود، ولی یکی دوباره از امضاش استفاده کرده. یه پیام رمزگذاری‌شده هم مونده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌دونم کی فرستادتش.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-02.wav",
-      "durationSeconds": 16.16,
-      "sha256": "4faf2993b8df3d7abbe65186becdab52d065a4aa959b02ab7d909dffadc5edce",
-      "captionSha256": "d98013997fd110827d518ae567e77cdd35cd3d27db6d73d21b8002e94b46c676"
+      "durationSeconds": 13.04,
+      "sha256": "174a9ccbe4b0deba6c1777b74b7522a04e467897bb141490913190f718a51b1a",
+      "captionSha256": "ee52f7875e5528a6e3cb6a49ad4309b1c0e188c79c2ce5daab5cb3324280b54f",
+      "spokenText": "مجوز باطل شده بود، ولی یکی دوباره از امضاش استفاده کرده. یه پیام رمزگذاری‌شده هم مونده: «قاسم. گرهٔ اول از دست رفت.» هنوز نمی‌دونم کی فرستادتش.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151232,
+      "generatedAtUtc": "2026-09-15T17:53:37.649440+00:00"
     },
     {
       "kind": "narrative",
@@ -191,13 +245,22 @@
       "id": "m05-debrief-03",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "فصل واکنش نخست کامل شد. تیم شناسایی و قطعات زره به تجهیزات شما اضافه شدند. نتیجه را مرور کنید و به نقشهٔ کارزار برگردید. مسیر شواهد را دنبال می‌کنیم.",
+      "text": "فصل واکنش نخست تموم شد. تیم شناسایی و قطعات زره به تجهیزاتت اضافه شدن. نتیجه رو ببین و برگرد به نقشهٔ کارزار. رد این مدارک رو دنبال می‌کنیم.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-03.wav",
-      "durationSeconds": 14.96,
-      "sha256": "084a90aa81cc949325c7475798a36e39a5f8084fb8d62087009541b90652ff8c",
-      "captionSha256": "4e0da92bde9eb7b3d40bcdffe7726f433657bd0a0a053759e56d31c4a4884a1d"
+      "durationSeconds": 12.48,
+      "sha256": "0d3c0a1f59025ccdb8e1b7e9911aa8492367b8e2d7ad9f782e9b98345a2229f5",
+      "captionSha256": "cce7f13f40c87b4c21f8dfc4ebffc38c2705ca355bdfa362d1e6b7a4da99d13d",
+      "spokenText": "فصل واکنش نخست تموم شد. تیم شناسایی و قطعات زره به تجهیزاتت اضافه شدن. نتیجه رو ببین و برگرد به نقشهٔ کارزار. رد این مدارک رو دنبال می‌کنیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151233,
+      "generatedAtUtc": "2026-09-15T17:53:41.723203+00:00"
     },
     {
       "kind": "tutorial",
@@ -217,13 +280,22 @@
       "id": "tutorial-m05-01",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "دروازه را بشکنید، فرستنده را نابود کنید و سپس بایگانی را ۲۰ ثانیه امن نگه دارید. ۱۲ دقیقه فرصت دارید. حفظ نفربر و پایان در کمتر از ۹ دقیقه ستارهٔ اضافی دارند.",
+      "text": "دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-01.wav",
-      "durationSeconds": 15.36,
-      "sha256": "263effce68c2c7b66a5c838bb0191f7b1fce2ced1634c569b53fa552ee6bec23",
-      "captionSha256": "59a86025ed251968ff8335d9a2d25e7de1e32e590131ca6fb011b93e4ee83f1f"
+      "durationSeconds": 12.88,
+      "sha256": "6897a3259a38a1b5c7e228aa5b9325588820ea9583ca2c42bbddb5d2fa3f8054",
+      "captionSha256": "cb378e7f3a239cb25cd580c581b249c4e6f76490446ae7be73e8d87bff67da96",
+      "spokenText": "دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151234,
+      "generatedAtUtc": "2026-09-15T17:53:43.566081+00:00"
     },
     {
       "kind": "tutorial",
@@ -243,13 +315,22 @@
       "id": "tutorial-m05-02",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "نفربر سنگین را انتخاب کنید. اگر از دست رفته، از تفنگدارهای باقی‌مانده استفاده کنید. نشانم بده، نیروی مورد نظر را مشخص می‌کند.",
+      "text": "نفربر سنگین رو انتخاب کن. اگه از دست رفته، از تفنگدارهای باقی‌مونده استفاده کن. «نشان بده» نیروی مورد نظر رو نشونت می‌ده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-02.wav",
-      "durationSeconds": 10.72,
-      "sha256": "f0ff191841ca867629a412c13002e06d7a1dd6fbd2b42cce5704837427d8e521",
-      "captionSha256": "62f345c5f675441680824ed33a9edf5dd4d72a0b8b9349716e6d8e27257aee28"
+      "durationSeconds": 9.28,
+      "sha256": "0beb27d1cba5605ef08c37a39a978496c82b45cd5bd3446a431be20276c3a780",
+      "captionSha256": "09e4a653b367194c6f29058a9d776819d07d1b4752d2b5bfb4bfd72e715606c4",
+      "spokenText": "نفربر سنگین رو انتخاب کن. اگه از دست رفته، از تفنگدارهای باقی‌مونده استفاده کن. «نشان بده» نیروی مورد نظر رو نشونت می‌ده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151235,
+      "generatedAtUtc": "2026-09-15T17:53:46.005796+00:00"
     },
     {
       "kind": "tutorial",
@@ -269,13 +350,22 @@
       "id": "tutorial-m05-03",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "حمله را بزنید و سپس دروازهٔ مشخص‌شدهٔ دشمن را انتخاب کنید. صبر کنید تا نابود شود. نشانم بده، کلیک بعدی را مشخص می‌کند.",
+      "text": "«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-03.wav",
-      "durationSeconds": 10.72,
-      "sha256": "c3016932644f3d5f4b01646a018947353e8c3085d070efcf342d7ea64a3db80c",
-      "captionSha256": "a80f971f9a6f29001bf88dc567a5bf0aa735ef30ceccd438318fafb6187cf212"
+      "durationSeconds": 10.4,
+      "sha256": "9898e8903ee799558a648bcee0a85311e028413c55d5a3dda167fe31b55f42ca",
+      "captionSha256": "055313335b651b7255f69666698c4b00807015e94bd8fcd4545f84f328d314da",
+      "spokenText": "«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151236,
+      "generatedAtUtc": "2026-09-15T17:53:48.184916+00:00"
     },
     {
       "kind": "tutorial",
@@ -295,13 +385,22 @@
       "id": "tutorial-m05-04",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "تفنگدارها را انتخاب کنید، حرکت را بزنید و مقصد مشخص‌شده در آن سوی دروازه را انتخاب کنید. تیم را کنار هم نگه دارید؛ نیروی کمکی دشمن در راه است.",
+      "text": "گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-04.wav",
-      "durationSeconds": 12.72,
-      "sha256": "3e4cbaf6b26ccb27ced26e0b48736c4fd38dc87016c29da7252f0707193387d8",
-      "captionSha256": "8c067c795dea27c875bc94afe904ff721b57df037608a2adca3da7a932813c6a"
+      "durationSeconds": 11.2,
+      "sha256": "9cf6ed0043ae93fbdf1df3d0ec73b08f0e17455af7a72e5610e79debd88b070f",
+      "captionSha256": "33bf73541e74ee9fa9ec1e4857935922c158f4a3327cbca9cfcce61aea392856",
+      "spokenText": "گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151237,
+      "generatedAtUtc": "2026-09-15T17:53:50.854282+00:00"
     },
     {
       "kind": "tutorial",
@@ -321,13 +420,22 @@
       "id": "tutorial-m05-05",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "یک نیروی خودی را انتخاب کنید، حمله را بزنید و فرستندهٔ ماهواره‌ای مشخص‌شده را انتخاب کنید. نابودی آن هدف بایگانی را باز می‌کند.",
+      "text": "یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-05.wav",
-      "durationSeconds": 10.64,
-      "sha256": "c31931a921f26708df6f01ef2c44f2b26e16ca5d8a841e5d87445938acf42ef8",
-      "captionSha256": "d5705566499c6641ee08ed10659775f1b4f3716bf372c087a23b08fda7419bfd"
+      "durationSeconds": 9.44,
+      "sha256": "26457ab3ca87acdbfa85e14bdf5b7d10fa65a3afb6588ad308bb022461ef13ac",
+      "captionSha256": "d47b8d531909a92d441ee455385f494678320588ad121593548f17fb306fad5c",
+      "spokenText": "یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151238,
+      "generatedAtUtc": "2026-09-15T17:53:52.940883+00:00"
     },
     {
       "kind": "tutorial",
@@ -347,13 +455,22 @@
       "id": "tutorial-m05-06",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "به نگهبان‌های باقی‌مانده حمله کنید. نشانم بده، دشمن زنده را مشخص می‌کند. پیش از امن‌کردن بایگانی باید پادگان و نیروی کمکی را شکست دهید.",
+      "text": "به نگهبان‌های باقی‌مونده حمله کن. «نشان بده» دشمن باقی‌مونده رو نشونت می‌ده. قبل از امن‌کردن بایگانی باید نیروهای پادگان و نیروی کمکی رو شکست بدی.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-06.wav",
-      "durationSeconds": 11.84,
-      "sha256": "d3a6521ed7ba4f9f7c4803f0595e644d46c4232e8380ff8fd364afff57336f44",
-      "captionSha256": "68d31614cabdb1ea93a9bcc190189935e8a3731e57203a58997ba83522b37733"
+      "durationSeconds": 12.72,
+      "sha256": "bcefa6c34efd6e29c71fccebe116ce81825e028a9b06f60584ab66d641d18145",
+      "captionSha256": "f77b34d976b0b36e84f645f30b62f9a99f9b914a8a05beaef307b92d18f9940c",
+      "spokenText": "به نگهبان‌های باقی‌مونده حمله کن. «نشان بده» دشمن باقی‌مونده رو نشونت می‌ده. قبل از امن‌کردن بایگانی باید نیروهای پادگان و نیروی کمکی رو شکست بدی.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151239,
+      "generatedAtUtc": "2026-09-15T17:53:56.748842+00:00"
     },
     {
       "kind": "tutorial",
@@ -373,13 +490,22 @@
       "id": "tutorial-m05-07",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "یک نیروی باقی‌مانده را انتخاب کنید، حرکت را بزنید و محدودهٔ مشخص‌شدهٔ بایگانی را انتخاب کنید. هنگام بازیابی اسناد دست‌کم یک نیرو در آنجا نگه دارید.",
+      "text": "یه نیروی باقی‌مونده رو انتخاب کن، «حرکت» رو بزن و بفرستش توی محدودهٔ بایگانی. تا اسناد بازیابی بشن، حداقل یه نیرو رو اونجا نگه دار.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-07.wav",
-      "durationSeconds": 12.48,
-      "sha256": "d7153f5361a8d7122583817942759e884dc546d451d1738b06814c3643d38e03",
-      "captionSha256": "6618e41a4b655bf59fef7b2c1e11599c3f5c1542d152d0a001ce6074972af92f"
+      "durationSeconds": 10.16,
+      "sha256": "1fd0c133e8877a2d59922df2b4a5d3fdb67d3fe9f34c381be3882067cf188f8a",
+      "captionSha256": "833e83d5e176b0ff0f222bbc98bb12e3a85beeb2b9c92f1778863260bc5f9864",
+      "spokenText": "یه نیروی باقی‌مونده رو انتخاب کن، «حرکت» رو بزن و بفرستش توی محدودهٔ بایگانی. تا اسناد بازیابی بشن، حداقل یه نیرو رو اونجا نگه دار.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151240,
+      "generatedAtUtc": "2026-09-15T17:53:57.543228+00:00"
     },
     {
       "kind": "tutorial",
@@ -399,13 +525,24 @@
       "id": "tutorial-m05-08",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "محدودهٔ بایگانی را ۲۰ ثانیهٔ پیوسته حفظ کنید. تا تأیید بازیابی توسط آریا، یک نیروی زنده در محل نگه دارید.",
+      "text": "محدودهٔ بایگانی رو بیست ثانیه بدون وقفه نگه دار. تا بازیابی رو تأیید نکردم، حداقل یه نیروی زنده باید اونجا بمونه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav",
-      "durationSeconds": 9.12,
-      "sha256": "b6ad2e2073af4aafebca38294a5c26833ee1f66b26ac1d6f68ae356f97429ead",
-      "captionSha256": "8071bfbe3c26c79f852827783533bd16181db2ecc2d881efe872b3b3b587bccd"
+      "durationSeconds": 9.36,
+      "sha256": "b5f090c13a357e8a40f050d7446d780221f8f4c32af15e4cb5ef47d778a2bc83",
+      "captionSha256": "f629700a9adfdf763aec3622d6737524ebd4c2d0df95de310d13c7b0cf747528",
+      "spokenText": "محدودهٔ بایگانی رو بیست ثانیه بدون وقفه نگه دار. تا بازیابی رو تأیید نکردم، حداقل یه نیروی زنده باید اونجا بمونه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151241,
+      "generatedAtUtc": "2026-09-15T17:54:01.389678+00:00"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.093295+00:00"
 }

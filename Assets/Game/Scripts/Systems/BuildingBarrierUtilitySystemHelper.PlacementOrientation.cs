@@ -8,7 +8,7 @@ namespace Game.Runtime
         public bool ShouldAlignGateToNearbyWall(Context context, Vector2Int originCell, BuildingDefinition definition, out bool vertical)
         {
             vertical = false;
-            return IsWallGateDefinition(definition) && TryResolveNearbyWallVertical(context, originCell, definition, out vertical);
+            return false; // Road barriers align to the carriageway, never to nearby walls.
         }
 
         public bool ResolvePlacementRotateVertical(Context context, BuildingPlacementInputUiSystemHelper inputSystem, PlacementState placement)

@@ -1,0 +1,2094 @@
+{
+  "clips": 261,
+  "issues": [],
+  "samples": [
+    {
+      "identity": "confirm_destroy",
+      "duration": 2.48,
+      "peakDb": -3.95,
+      "leadingSilence": 0.097,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "not_enough_money",
+      "duration": 2.0,
+      "peakDb": -4.78,
+      "leadingSilence": 0.089,
+      "trailingSilence": 0.002,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "create_first",
+      "duration": 2.88,
+      "peakDb": -3.89,
+      "leadingSilence": 0.068,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "drag_building_to_final_position",
+      "duration": 2.32,
+      "peakDb": -2.51,
+      "leadingSilence": 0.085,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "warning_ground_attack_type",
+      "duration": 2.24,
+      "peakDb": -5.38,
+      "leadingSilence": 0.001,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "warning_air_attack_type",
+      "duration": 2.16,
+      "peakDb": -5.68,
+      "leadingSilence": 0.024,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "warning_attack_eta_seconds",
+      "duration": 4.8,
+      "peakDb": -3.57,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "warning_attack_eta_suffix",
+      "duration": 3.6,
+      "peakDb": -5.1,
+      "leadingSilence": 0.096,
+      "trailingSilence": 0.052,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "warning_attack_count_suffix",
+      "duration": 3.36,
+      "peakDb": -4.43,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.no_selection",
+      "duration": 4.24,
+      "peakDb": -4.08,
+      "leadingSilence": 0.055,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.target_out_of_bounds",
+      "duration": 3.04,
+      "peakDb": -4.16,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.172,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.target_blocked",
+      "duration": 1.68,
+      "peakDb": -4.47,
+      "leadingSilence": 0.18,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.target_unreachable",
+      "duration": 3.68,
+      "peakDb": -3.28,
+      "leadingSilence": 0.107,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.target_not_enemy",
+      "duration": 1.84,
+      "peakDb": -3.49,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.target_not_attackable",
+      "duration": 2.0,
+      "peakDb": -3.61,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.019,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.command_unavailable",
+      "duration": 2.16,
+      "peakDb": -4.21,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.build_unavailable",
+      "duration": 1.92,
+      "peakDb": -4.85,
+      "leadingSilence": 0.102,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.camera_jump_unavailable",
+      "duration": 2.4,
+      "peakDb": -4.33,
+      "leadingSilence": 0.102,
+      "trailingSilence": 0.105,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.scan_unavailable",
+      "duration": 2.08,
+      "peakDb": -3.47,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.239,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.scan_cooldown",
+      "duration": 2.72,
+      "peakDb": -5.08,
+      "leadingSilence": 0.068,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.insufficient_resources",
+      "duration": 2.88,
+      "peakDb": -2.97,
+      "leadingSilence": 0.04,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.insufficient_fuel",
+      "duration": 2.56,
+      "peakDb": -5.65,
+      "leadingSilence": 0.083,
+      "trailingSilence": 0.837,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.invalid_transport",
+      "duration": 4.24,
+      "peakDb": -3.67,
+      "leadingSilence": 0.047,
+      "trailingSilence": 0.585,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.invalid_passenger",
+      "duration": 4.64,
+      "peakDb": -5.33,
+      "leadingSilence": 0.03,
+      "trailingSilence": 1.063,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.transport_full",
+      "duration": 2.72,
+      "peakDb": -5.69,
+      "leadingSilence": 0.116,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.no_eligible_passengers",
+      "duration": 3.579,
+      "peakDb": -4.18,
+      "leadingSilence": 0.198,
+      "trailingSilence": 0.15,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.no_disembark_cell",
+      "duration": 2.72,
+      "peakDb": -5.77,
+      "leadingSilence": 0.085,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.reason.transport_passenger_missing",
+      "duration": 2.08,
+      "peakDb": -6.49,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.006,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.select",
+      "duration": 2.72,
+      "peakDb": -5.18,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.move",
+      "duration": 1.76,
+      "peakDb": -4.29,
+      "leadingSilence": 0.1,
+      "trailingSilence": 0.105,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.attack",
+      "duration": 2.0,
+      "peakDb": -4.56,
+      "leadingSilence": 0.121,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.hold",
+      "duration": 3.76,
+      "peakDb": -4.29,
+      "leadingSilence": 0.109,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.stop",
+      "duration": 4.0,
+      "peakDb": -4.5,
+      "leadingSilence": 0.109,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.scan",
+      "duration": 2.32,
+      "peakDb": -4.82,
+      "leadingSilence": 0.115,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.board",
+      "duration": 2.48,
+      "peakDb": -3.89,
+      "leadingSilence": 0.08,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.build",
+      "duration": 4.72,
+      "peakDb": -4.65,
+      "leadingSilence": 0.07,
+      "trailingSilence": 1.074,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.instruction.special",
+      "duration": 2.16,
+      "peakDb": -3.65,
+      "leadingSilence": 0.062,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.prompt_transport_to_passenger",
+      "duration": 3.04,
+      "peakDb": -4.28,
+      "leadingSilence": 0.079,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.prompt_passenger_to_transport",
+      "duration": 2.32,
+      "peakDb": -4.04,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.unavailable",
+      "duration": 2.4,
+      "peakDb": -2.92,
+      "leadingSilence": 0.131,
+      "trailingSilence": 0.241,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.tap_units_to_board",
+      "duration": 3.44,
+      "peakDb": -3.72,
+      "leadingSilence": 0.082,
+      "trailingSilence": 0.418,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.selected_unit_cannot_board",
+      "duration": 2.08,
+      "peakDb": -5.2,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.099,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.board.select_unit_first",
+      "duration": 2.0,
+      "peakDb": -4.33,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.unavailable.hold_no_selection",
+      "duration": 3.2,
+      "peakDb": -3.56,
+      "leadingSilence": 0.101,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.unavailable.stop_no_selection",
+      "duration": 4.88,
+      "peakDb": -3.7,
+      "leadingSilence": 0.131,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.command.unavailable.scan_no_selection",
+      "duration": 4.88,
+      "peakDb": -4.43,
+      "leadingSilence": 0.054,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.camera_follow_unavailable",
+      "duration": 2.24,
+      "peakDb": -3.8,
+      "leadingSilence": 0.115,
+      "trailingSilence": 0.009,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.camera_follow_active",
+      "duration": 1.92,
+      "peakDb": -4.89,
+      "leadingSilence": 0.086,
+      "trailingSilence": 0.123,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.rts_camera_restored",
+      "duration": 2.08,
+      "peakDb": -3.94,
+      "leadingSilence": 0.199,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.follow_target_lost",
+      "duration": 2.4,
+      "peakDb": -3.91,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.destroyed_selected_building",
+      "duration": 2.48,
+      "peakDb": -3.98,
+      "leadingSilence": 0.091,
+      "trailingSilence": 0.003,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.air_defense_auto_engage",
+      "duration": 5.6,
+      "peakDb": -4.22,
+      "leadingSilence": 0.134,
+      "trailingSilence": 0.1,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.exiting_unit",
+      "duration": 1.6,
+      "peakDb": -5.39,
+      "leadingSilence": 0.129,
+      "trailingSilence": 0.112,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.exiting_passengers",
+      "duration": 1.92,
+      "peakDb": -5.02,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.047,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.loading_transport",
+      "duration": 2.0,
+      "peakDb": -4.42,
+      "leadingSilence": 0.114,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.boarding_transport",
+      "duration": 1.92,
+      "peakDb": -6.03,
+      "leadingSilence": 0.066,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.holding_current_position",
+      "duration": 1.84,
+      "peakDb": -6.38,
+      "leadingSilence": 0.107,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.stopped_selected_units",
+      "duration": 2.32,
+      "peakDb": -4.26,
+      "leadingSilence": 0.113,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.unit_returning_to_base",
+      "duration": 2.24,
+      "peakDb": -4.03,
+      "leadingSilence": 0.116,
+      "trailingSilence": 0.408,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.units_returning_to_base",
+      "duration": 2.4,
+      "peakDb": -4.65,
+      "leadingSilence": 0.092,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.destroyed_selected_unit",
+      "duration": 2.64,
+      "peakDb": -4.91,
+      "leadingSilence": 0.095,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.destroyed_selected_units",
+      "duration": 2.56,
+      "peakDb": -4.95,
+      "leadingSilence": 0.067,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.scan_ordered",
+      "duration": 3.304,
+      "peakDb": -4.37,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.15,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.scan_one_contact",
+      "duration": 1.44,
+      "peakDb": -4.32,
+      "leadingSilence": 0.119,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.scan_contacts",
+      "duration": 3.12,
+      "peakDb": -3.07,
+      "leadingSilence": 0.038,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.scan_complete",
+      "duration": 2.8,
+      "peakDb": -4.24,
+      "leadingSilence": 0.086,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.feedback.missile_launched",
+      "duration": 1.36,
+      "peakDb": -5.39,
+      "leadingSilence": 0.095,
+      "trailingSilence": 0.016,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.airdrop.emergency_drop_visual_missing",
+      "duration": 3.44,
+      "peakDb": -4.01,
+      "leadingSilence": 0.038,
+      "trailingSilence": 0.001,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.airdrop.parachute_visual_missing",
+      "duration": 2.844,
+      "peakDb": -4.0,
+      "leadingSilence": 0.032,
+      "trailingSilence": 0.15,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.airdrop.no_clear_landing_zone",
+      "duration": 2.72,
+      "peakDb": -6.72,
+      "leadingSilence": 0.252,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.airdrop.cargo_drop_blocked",
+      "duration": 2.16,
+      "peakDb": -5.11,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.move.title",
+      "duration": 2.4,
+      "peakDb": -4.66,
+      "leadingSilence": 0.032,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.move.description",
+      "duration": 1.84,
+      "peakDb": -2.76,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.146,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.attack.title",
+      "duration": 1.36,
+      "peakDb": -4.84,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.126,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.attack.description",
+      "duration": 2.24,
+      "peakDb": -4.04,
+      "leadingSilence": 0.119,
+      "trailingSilence": 0.025,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.scan.title",
+      "duration": 1.92,
+      "peakDb": -3.8,
+      "leadingSilence": 0.108,
+      "trailingSilence": 0.616,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.scan.description",
+      "duration": 2.88,
+      "peakDb": -4.47,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.board.title",
+      "duration": 2.48,
+      "peakDb": -5.94,
+      "leadingSilence": 0.075,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.board.description",
+      "duration": 2.64,
+      "peakDb": -3.26,
+      "leadingSilence": 0.055,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.board.description_transport_to_passenger",
+      "duration": 3.52,
+      "peakDb": -3.0,
+      "leadingSilence": 0.099,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.build.title",
+      "duration": 2.56,
+      "peakDb": -4.83,
+      "leadingSilence": 0.089,
+      "trailingSilence": 1.407,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.mode.build.description",
+      "duration": 3.76,
+      "peakDb": -3.13,
+      "leadingSilence": 0.089,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.move.title",
+      "duration": 1.44,
+      "peakDb": -4.43,
+      "leadingSilence": 0.073,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.move.description",
+      "duration": 2.4,
+      "peakDb": -5.06,
+      "leadingSilence": 0.093,
+      "trailingSilence": 0.069,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.attack.title",
+      "duration": 2.64,
+      "peakDb": -4.3,
+      "leadingSilence": 0.1,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.attack.description",
+      "duration": 1.44,
+      "peakDb": -5.16,
+      "leadingSilence": 0.082,
+      "trailingSilence": 0.021,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.hold.title",
+      "duration": 1.6,
+      "peakDb": -5.89,
+      "leadingSilence": 0.023,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.hold.description",
+      "duration": 2.96,
+      "peakDb": -4.4,
+      "leadingSilence": 0.081,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.stop.title",
+      "duration": 1.44,
+      "peakDb": -5.56,
+      "leadingSilence": 0.076,
+      "trailingSilence": 0.032,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.stop.description",
+      "duration": 3.44,
+      "peakDb": -5.32,
+      "leadingSilence": 0.068,
+      "trailingSilence": 0.003,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.scan.title",
+      "duration": 2.08,
+      "peakDb": -4.63,
+      "leadingSilence": 0.03,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.scan.description",
+      "duration": 2.24,
+      "peakDb": -4.36,
+      "leadingSilence": 0.212,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.board.title",
+      "duration": 1.6,
+      "peakDb": -4.64,
+      "leadingSilence": 0.082,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.board.description",
+      "duration": 2.0,
+      "peakDb": -6.16,
+      "leadingSilence": 0.08,
+      "trailingSilence": 0.085,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.build.title",
+      "duration": 2.32,
+      "peakDb": -2.83,
+      "leadingSilence": 0.041,
+      "trailingSilence": 1.106,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.build.description",
+      "duration": 1.92,
+      "peakDb": -3.84,
+      "leadingSilence": 0.121,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.return.title",
+      "duration": 1.52,
+      "peakDb": -5.17,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.return.description",
+      "duration": 2.08,
+      "peakDb": -4.15,
+      "leadingSilence": 0.1,
+      "trailingSilence": 0.054,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.destroy.title",
+      "duration": 1.52,
+      "peakDb": -4.14,
+      "leadingSilence": 0.067,
+      "trailingSilence": 0.134,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tactical.banner.accepted.destroy.description",
+      "duration": 2.48,
+      "peakDb": -5.3,
+      "leadingSilence": 0.105,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.name",
+      "duration": 2.08,
+      "peakDb": -6.82,
+      "leadingSilence": 0.132,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.ready.buildings",
+      "duration": 2.88,
+      "peakDb": -3.6,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.ready.vehicles",
+      "duration": 2.48,
+      "peakDb": -5.11,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.ready.aircraft",
+      "duration": 2.64,
+      "peakDb": -3.01,
+      "leadingSilence": 0.051,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.ready.soldiers",
+      "duration": 2.8,
+      "peakDb": -4.7,
+      "leadingSilence": 0.064,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.ready.default",
+      "duration": 1.68,
+      "peakDb": -5.74,
+      "leadingSilence": 0.09,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.instruction.place_pending_confirm",
+      "duration": 3.76,
+      "peakDb": -4.39,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.instruction.cannot_place_here",
+      "duration": 3.726,
+      "peakDb": -4.02,
+      "leadingSilence": 0.001,
+      "trailingSilence": 0.15,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.connecting",
+      "duration": 3.12,
+      "peakDb": -4.3,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.not_enough_money",
+      "duration": 4.48,
+      "peakDb": -3.24,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.005,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.missing_producer_named",
+      "duration": 3.92,
+      "peakDb": -2.94,
+      "leadingSilence": 0.088,
+      "trailingSilence": 1.029,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.missing_producer",
+      "duration": 5.52,
+      "peakDb": -3.64,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.queue_full_named",
+      "duration": 2.24,
+      "peakDb": -4.27,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.queue_full",
+      "duration": 2.24,
+      "peakDb": -4.13,
+      "leadingSilence": 0.085,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.global_queue_full",
+      "duration": 3.04,
+      "peakDb": -2.9,
+      "leadingSilence": 0.003,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.invalid_selection",
+      "duration": 3.12,
+      "peakDb": -3.44,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.unavailable",
+      "duration": 2.4,
+      "peakDb": -4.55,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.not_enough_money",
+      "duration": 1.76,
+      "peakDb": -5.59,
+      "leadingSilence": 0.061,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.requires_named",
+      "duration": 2.88,
+      "peakDb": -3.18,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.missing_producer",
+      "duration": 2.96,
+      "peakDb": -3.91,
+      "leadingSilence": 0.086,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.queue_full_named",
+      "duration": 2.08,
+      "peakDb": -4.38,
+      "leadingSilence": 0.144,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.queue_full",
+      "duration": 2.56,
+      "peakDb": -3.84,
+      "leadingSilence": 0.104,
+      "trailingSilence": 0.067,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.global_queue_full",
+      "duration": 2.96,
+      "peakDb": -3.96,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.failure.short.unavailable",
+      "duration": 2.32,
+      "peakDb": -3.14,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.buildings",
+      "duration": 2.8,
+      "peakDb": -4.83,
+      "leadingSilence": 0.084,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.vehicles",
+      "duration": 2.48,
+      "peakDb": -4.8,
+      "leadingSilence": 0.116,
+      "trailingSilence": 0.071,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.aircraft",
+      "duration": 2.56,
+      "peakDb": -3.95,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.soldiers",
+      "duration": 2.4,
+      "peakDb": -4.89,
+      "leadingSilence": 0.054,
+      "trailingSilence": 0.005,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.default",
+      "duration": 2.72,
+      "peakDb": -4.2,
+      "leadingSilence": 0.074,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.empty.select_item",
+      "duration": 3.6,
+      "peakDb": -4.51,
+      "leadingSilence": 0.049,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.placement.invalid",
+      "duration": 1.36,
+      "peakDb": -6.41,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.action.place_choose_footprint",
+      "duration": 3.28,
+      "peakDb": -3.26,
+      "leadingSilence": 0.132,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.place_building",
+      "duration": 1.84,
+      "peakDb": -2.97,
+      "leadingSilence": 0.074,
+      "trailingSilence": 0.218,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_requested",
+      "duration": 2.24,
+      "peakDb": -4.05,
+      "leadingSilence": 0.083,
+      "trailingSilence": 0.267,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.success.recruitment_queued",
+      "duration": 2.16,
+      "peakDb": -3.44,
+      "leadingSilence": 0.118,
+      "trailingSilence": 0.101,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.drawer.success.production_queued",
+      "duration": 1.92,
+      "peakDb": -3.13,
+      "leadingSilence": 0.147,
+      "trailingSilence": 0.021,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_cancel_unavailable",
+      "duration": 2.88,
+      "peakDb": -3.86,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.601,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_cancelled_named",
+      "duration": 2.08,
+      "peakDb": -2.75,
+      "leadingSilence": 0.08,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_cancelled",
+      "duration": 1.36,
+      "peakDb": -5.58,
+      "leadingSilence": 0.084,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_queue_empty",
+      "duration": 1.44,
+      "peakDb": -3.44,
+      "leadingSilence": 0.037,
+      "trailingSilence": 0.016,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_queue_cleared_sentence",
+      "duration": 1.6,
+      "peakDb": -3.18,
+      "leadingSilence": 0.072,
+      "trailingSilence": 0.005,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_clear_unavailable",
+      "duration": 2.48,
+      "peakDb": -3.53,
+      "leadingSilence": 0.109,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.production_queue_cleared",
+      "duration": 1.6,
+      "peakDb": -3.01,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.022,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.placement_cancelled",
+      "duration": 2.08,
+      "peakDb": -4.37,
+      "leadingSilence": 0.071,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.rotated_90",
+      "duration": 1.76,
+      "peakDb": -4.62,
+      "leadingSilence": 0.076,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.no_active_placement",
+      "duration": 2.72,
+      "peakDb": -3.98,
+      "leadingSilence": 0.072,
+      "trailingSilence": 0.006,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.building_placed",
+      "duration": 1.68,
+      "peakDb": -3.84,
+      "leadingSilence": 0.028,
+      "trailingSilence": 0.044,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.place_on_valid_ground",
+      "duration": 2.16,
+      "peakDb": -4.6,
+      "leadingSilence": 0.052,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.feedback.drawer_not_ready",
+      "duration": 2.48,
+      "peakDb": -3.28,
+      "leadingSilence": 0.082,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.status.drag_to_position",
+      "duration": 1.92,
+      "peakDb": -4.61,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.status.valid_ground",
+      "duration": 2.24,
+      "peakDb": -4.81,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.857,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.title.default",
+      "duration": 1.68,
+      "peakDb": -3.65,
+      "leadingSilence": 0.116,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.title.named",
+      "duration": 2.24,
+      "peakDb": -4.04,
+      "leadingSilence": 0.044,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.instruction.confirm",
+      "duration": 3.68,
+      "peakDb": -3.65,
+      "leadingSilence": 0.119,
+      "trailingSilence": 0.012,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "build.placement.title.fallback_subject",
+      "duration": 1.04,
+      "peakDb": -4.48,
+      "leadingSilence": 0.09,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "match.feedback.tactical_map_not_ready",
+      "duration": 2.72,
+      "peakDb": -4.49,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.021,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "match.feedback.blocked_civilian_zone",
+      "duration": 3.04,
+      "peakDb": -4.17,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.005,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.unit_singular",
+      "duration": 1.28,
+      "peakDb": -3.06,
+      "leadingSilence": 0.053,
+      "trailingSilence": 0.567,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.unit_plural",
+      "duration": 0.64,
+      "peakDb": -4.88,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.016,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.vehicle_singular",
+      "duration": 2.08,
+      "peakDb": -4.03,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.soldier_singular",
+      "duration": 1.12,
+      "peakDb": -2.47,
+      "leadingSilence": 0.086,
+      "trailingSilence": 0.178,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.squad_count",
+      "duration": 1.44,
+      "peakDb": -5.4,
+      "leadingSilence": 0.078,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "selection.feedback.squad_selected",
+      "duration": 1.44,
+      "peakDb": -4.56,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "1selection",
+      "duration": 3.52,
+      "peakDb": -3.86,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.13,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "2command",
+      "duration": 3.2,
+      "peakDb": -3.59,
+      "leadingSilence": 0.084,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "3worldTarget",
+      "duration": 5.12,
+      "peakDb": -4.47,
+      "leadingSilence": 0.098,
+      "trailingSilence": 1.09,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "4command",
+      "duration": 3.28,
+      "peakDb": -3.19,
+      "leadingSilence": 0.072,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "5worldTarget",
+      "duration": 5.36,
+      "peakDb": -4.78,
+      "leadingSilence": 0.083,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "5missionResolution",
+      "duration": 4.08,
+      "peakDb": -3.71,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.006,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_brief_line_1",
+      "duration": 7.6,
+      "peakDb": -2.0,
+      "leadingSilence": 0.106,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_brief_line_2",
+      "duration": 7.6,
+      "peakDb": -4.69,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_brief_line_3",
+      "duration": 7.68,
+      "peakDb": -4.07,
+      "leadingSilence": 0.057,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_comms_line_1",
+      "duration": 5.76,
+      "peakDb": -2.0,
+      "leadingSilence": 0.087,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_comms_line_2",
+      "duration": 7.04,
+      "peakDb": -4.04,
+      "leadingSilence": 0.049,
+      "trailingSilence": 0.619,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_comms_line_3",
+      "duration": 7.44,
+      "peakDb": -2.81,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_debrief_line_1",
+      "duration": 6.08,
+      "peakDb": -4.57,
+      "leadingSilence": 0.096,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_debrief_line_2",
+      "duration": 5.92,
+      "peakDb": -3.27,
+      "leadingSilence": 0.108,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m02_debrief_line_3",
+      "duration": 5.68,
+      "peakDb": -2.93,
+      "leadingSilence": 0.004,
+      "trailingSilence": 0.001,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "2",
+      "duration": 2.24,
+      "peakDb": -3.73,
+      "leadingSilence": 0.124,
+      "trailingSilence": 0.161,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "3",
+      "duration": 4.24,
+      "peakDb": -2.77,
+      "leadingSilence": 0.052,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "4",
+      "duration": 4.64,
+      "peakDb": -3.47,
+      "leadingSilence": 0.081,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "5",
+      "duration": 10.16,
+      "peakDb": -3.4,
+      "leadingSilence": 0.082,
+      "trailingSilence": 0.001,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "6",
+      "duration": 4.0,
+      "peakDb": -3.5,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "7",
+      "duration": 5.52,
+      "peakDb": -4.21,
+      "leadingSilence": 0.101,
+      "trailingSilence": 0.166,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "8",
+      "duration": 3.76,
+      "peakDb": -3.03,
+      "leadingSilence": 0.08,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-brief-01",
+      "duration": 10.48,
+      "peakDb": -3.71,
+      "leadingSilence": 0.084,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-brief-02",
+      "duration": 11.84,
+      "peakDb": -2.0,
+      "leadingSilence": 0.135,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-brief-03",
+      "duration": 13.2,
+      "peakDb": -3.14,
+      "leadingSilence": 0.045,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-comms-01",
+      "duration": 11.68,
+      "peakDb": -3.62,
+      "leadingSilence": 0.101,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-01",
+      "duration": 8.32,
+      "peakDb": -2.0,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-02",
+      "duration": 8.96,
+      "peakDb": -2.0,
+      "leadingSilence": 0.083,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-03",
+      "duration": 8.32,
+      "peakDb": -3.6,
+      "leadingSilence": 0.055,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-clean",
+      "duration": 8.08,
+      "peakDb": -2.0,
+      "leadingSilence": 0.071,
+      "trailingSilence": 0.001,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-damaged",
+      "duration": 8.32,
+      "peakDb": -2.31,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-civilian-loss",
+      "duration": 9.76,
+      "peakDb": -2.0,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.009,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m03-debrief-mixed",
+      "duration": 9.92,
+      "peakDb": -2.0,
+      "leadingSilence": 0.102,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-01",
+      "duration": 8.64,
+      "peakDb": -3.62,
+      "leadingSilence": 0.1,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-02",
+      "duration": 6.32,
+      "peakDb": -4.18,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-03",
+      "duration": 10.16,
+      "peakDb": -2.97,
+      "leadingSilence": 0.044,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-04",
+      "duration": 16.0,
+      "peakDb": -3.8,
+      "leadingSilence": 0.065,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-05",
+      "duration": 11.84,
+      "peakDb": -3.57,
+      "leadingSilence": 0.069,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-06",
+      "duration": 8.45,
+      "peakDb": -3.17,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.069,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-07",
+      "duration": 9.52,
+      "peakDb": -2.03,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-08",
+      "duration": 12.48,
+      "peakDb": -2.78,
+      "leadingSilence": 0.067,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-09",
+      "duration": 10.64,
+      "peakDb": -3.15,
+      "leadingSilence": 0.088,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-10",
+      "duration": 10.0,
+      "peakDb": -3.11,
+      "leadingSilence": 0.055,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-11",
+      "duration": 8.64,
+      "peakDb": -4.14,
+      "leadingSilence": 0.129,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m03-12",
+      "duration": 9.52,
+      "peakDb": -3.47,
+      "leadingSilence": 0.103,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-brief-01",
+      "duration": 10.16,
+      "peakDb": -2.04,
+      "leadingSilence": 0.058,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-brief-02",
+      "duration": 10.08,
+      "peakDb": -4.58,
+      "leadingSilence": 0.084,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-brief-03",
+      "duration": 12.72,
+      "peakDb": -2.0,
+      "leadingSilence": 0.117,
+      "trailingSilence": 0.014,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-comms-01",
+      "duration": 10.0,
+      "peakDb": -2.02,
+      "leadingSilence": 0.194,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-debrief-01",
+      "duration": 9.12,
+      "peakDb": -2.5,
+      "leadingSilence": 0.075,
+      "trailingSilence": 0.016,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-debrief-02",
+      "duration": 9.76,
+      "peakDb": -2.98,
+      "leadingSilence": 0.059,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m04-debrief-03",
+      "duration": 9.36,
+      "peakDb": -2.8,
+      "leadingSilence": 0.078,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-01",
+      "duration": 13.76,
+      "peakDb": -2.66,
+      "leadingSilence": 0.118,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-02",
+      "duration": 9.84,
+      "peakDb": -2.85,
+      "leadingSilence": 0.034,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-03",
+      "duration": 11.2,
+      "peakDb": -4.55,
+      "leadingSilence": 0.023,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-04",
+      "duration": 12.96,
+      "peakDb": -2.0,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-05",
+      "duration": 9.28,
+      "peakDb": -4.06,
+      "leadingSilence": 0.097,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-06",
+      "duration": 13.36,
+      "peakDb": -4.64,
+      "leadingSilence": 0.062,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-07",
+      "duration": 12.08,
+      "peakDb": -2.91,
+      "leadingSilence": 0.072,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-08",
+      "duration": 7.36,
+      "peakDb": -3.51,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-09",
+      "duration": 12.24,
+      "peakDb": -3.43,
+      "leadingSilence": 0.214,
+      "trailingSilence": 0.006,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-10",
+      "duration": 12.64,
+      "peakDb": -2.88,
+      "leadingSilence": 0.035,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-11",
+      "duration": 11.92,
+      "peakDb": -3.66,
+      "leadingSilence": 0.13,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m04-12",
+      "duration": 7.36,
+      "peakDb": -2.7,
+      "leadingSilence": 0.199,
+      "trailingSilence": 0.021,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-brief-01",
+      "duration": 13.44,
+      "peakDb": -2.98,
+      "leadingSilence": 0.073,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-brief-02",
+      "duration": 15.04,
+      "peakDb": -2.02,
+      "leadingSilence": 0.081,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-brief-03",
+      "duration": 14.8,
+      "peakDb": -2.54,
+      "leadingSilence": 0.086,
+      "trailingSilence": 0.248,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-comms-01",
+      "duration": 10.48,
+      "peakDb": -3.46,
+      "leadingSilence": 0.118,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-debrief-01",
+      "duration": 9.52,
+      "peakDb": -3.4,
+      "leadingSilence": 0.07,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-debrief-02",
+      "duration": 13.04,
+      "peakDb": -3.73,
+      "leadingSilence": 0.071,
+      "trailingSilence": 0.022,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "m05-debrief-03",
+      "duration": 12.48,
+      "peakDb": -2.0,
+      "leadingSilence": 0.073,
+      "trailingSilence": 0.018,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-01",
+      "duration": 12.88,
+      "peakDb": -3.76,
+      "leadingSilence": 0.104,
+      "trailingSilence": 0.004,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-02",
+      "duration": 9.28,
+      "peakDb": -3.84,
+      "leadingSilence": 0.025,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-03",
+      "duration": 10.4,
+      "peakDb": -3.05,
+      "leadingSilence": 0.079,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-04",
+      "duration": 11.2,
+      "peakDb": -2.0,
+      "leadingSilence": 0.083,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-05",
+      "duration": 9.44,
+      "peakDb": -4.33,
+      "leadingSilence": 0.066,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-06",
+      "duration": 12.72,
+      "peakDb": -3.47,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-07",
+      "duration": 10.16,
+      "peakDb": -3.18,
+      "leadingSilence": 0.131,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "tutorial-m05-08",
+      "duration": 9.36,
+      "peakDb": -3.48,
+      "leadingSilence": 0.095,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p02_radio",
+      "duration": 6.307,
+      "peakDb": -2.17,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p03_radio",
+      "duration": 8.375,
+      "peakDb": -2.64,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p04_dalia",
+      "duration": 8.756,
+      "peakDb": -2.01,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p04_samira",
+      "duration": 9.386,
+      "peakDb": -2.02,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p05_aria",
+      "duration": 6.363,
+      "peakDb": -3.18,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p06_aria",
+      "duration": 5.018,
+      "peakDb": -3.12,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p07_aria",
+      "duration": 6.616,
+      "peakDb": -4.14,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p09_aria",
+      "duration": 4.703,
+      "peakDb": -4.02,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p10_aria",
+      "duration": 5.62,
+      "peakDb": -2.63,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p11_dalia",
+      "duration": 5.851,
+      "peakDb": -3.4,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p12_samira",
+      "duration": 6.377,
+      "peakDb": -3.28,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p13_aria",
+      "duration": 3.754,
+      "peakDb": -3.61,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p14_commander",
+      "duration": 7.163,
+      "peakDb": -3.44,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p15_dalia",
+      "duration": 6.853,
+      "peakDb": -2.01,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p16_aria",
+      "duration": 8.323,
+      "peakDb": -3.45,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p17_dalia",
+      "duration": 2.809,
+      "peakDb": -3.15,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p18_aria",
+      "duration": 5.952,
+      "peakDb": -2.92,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p14_commander_female",
+      "duration": 7.175,
+      "peakDb": -3.72,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    },
+    {
+      "identity": "p14_commander_neutral",
+      "duration": 7.173,
+      "peakDb": -4.86,
+      "leadingSilence": 0.0,
+      "trailingSilence": 0.0,
+      "clippedSamples": 0
+    }
+  ]
+}

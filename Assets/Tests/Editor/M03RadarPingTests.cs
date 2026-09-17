@@ -32,6 +32,8 @@ public sealed class M03RadarPingTests
     public void PingUsesDetectorJobAndFiltersFutureInfantryAirAndNeutralTargets()
     {
         using var f=new Fixture();
+        Entity feedbackQueue=f.Em.CreateEntity(typeof(RtsSelectionInputRequestQueueComponent));
+        f.Em.AddBuffer<RtsSelectionCommandResultElement>(feedbackQueue);
         Entity target=f.Unit(2,new int2(75,50),true);
         f.Em.AddComponentData(target,new UnitTarget {Cell=new int2(100,50)}); // Moving away: passive scan does not disclose it.
         Entity future=f.Unit(2,new int2(70,50),true); f.Em.AddComponent<CampaignMissionCombatSuppressedTag>(future);
@@ -51,6 +53,16 @@ public sealed class M03RadarPingTests
         var observations=f.Em.GetBuffer<ThreatWarningObservation>(f.Root);
         Assert.AreEqual(1,observations.Length); Assert.AreEqual(ThreatWarningSourceKind.RadarPing,observations[0].Source);
         Assert.AreEqual(1,observations[0].KnownVehicleCount);
+        var feedback=f.Em.GetBuffer<RtsSelectionCommandResultElement>(feedbackQueue);
+        Assert.AreEqual(1,feedback.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.Scan,feedback[0].Kind);
+        Assert.AreEqual(f.Sensor,feedback[0].SourceEntity);
+        Assert.AreEqual(1,feedback[0].RevealedCount);
+        Assert.AreEqual(40,feedback[0].RadiusCells);
+        Assert.AreEqual(1,feedback[0].ShowWorldMarkers);
+        f.Request(1); f.Update();
+        Assert.AreEqual(1,f.Em.GetBuffer<RtsSelectionCommandResultElement>(feedbackQueue).Length,
+            "Duplicate requests must not publish a second scan marker or feedback.");
     }
 
     [Test]

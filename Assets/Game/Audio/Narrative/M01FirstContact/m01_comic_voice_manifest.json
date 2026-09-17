@@ -1,0 +1,297 @@
+{
+  "schema": "WarlineCapture.M01ComicVoice.v1",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "m01-brief.line.1",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "First contact is confirmed: three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.1.wav",
+      "durationSeconds": 7.04,
+      "sha256": "cfa4ece46434f7f75a0d648313c2c0aa0f7eb3a3dba601aeaa6cdafb49dd9fd3",
+      "textKey": "narrative.m01.brief.dalia"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-brief.line.1",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "تماس تأیید شد. سه نیروی مسلح خط خاکستر، مسیر درمانگاه بازار قدیمی رو بستن.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.1.wav",
+      "durationSeconds": 7.68,
+      "sha256": "c47c9ee30805d3c5908a9854a599f9df262147a14c38bdeb3d9f951bca99e2ee",
+      "textKey": "narrative.m01.brief.dalia"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-brief.line.2",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Threat profiles: Courier carries orders, Warden controls the crossing, and Broker coordinates supplies.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.2.wav",
+      "durationSeconds": 6.96,
+      "sha256": "aff89cdcc871de7acd66e47ae3dee3fed2a1fd37d6e6716d7a6774a9b51100f1",
+      "textKey": "narrative.m01.brief.aria"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-brief.line.2",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پیک دستورها رو می‌رسونه، نگهبان چهارراه رو کنترل می‌کنه و کارگزار تدارکات رو هماهنگ می‌کنه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.2.wav",
+      "durationSeconds": 7.36,
+      "sha256": "30e172e1245143734824d45d3d3122352a3de04be5325875f4e75ac788886b21",
+      "textKey": "narrative.m01.brief.aria"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-brief.line.3",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Civilians are sheltering beyond the patrol. Clear the marked corridor; do not pursue outside the district.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.3.wav",
+      "durationSeconds": 6.4,
+      "sha256": "b4edfd7809296a0abef191f4a3e0d138a8f459017e498f281694fb5c56b337fd",
+      "textKey": "narrative.m01.brief.samira"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-brief.line.3",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "مردم اون طرف گشت پناه گرفتن. مسیر مشخص‌شده رو باز کنید، ولی برای تعقیب از منطقه خارج نشید.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.3.wav",
+      "durationSeconds": 8.24,
+      "sha256": "ae651046a9d515e92c3bb430d8e56b0aca4a01f295cfe6ff20e476f0c0a439d2",
+      "textKey": "narrative.m01.brief.samira"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-comms.line.1",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Command squad, move to cover and confirm the armed patrol before engaging.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.1.wav",
+      "durationSeconds": 4.8,
+      "sha256": "6f3f03a48848cbd79e548aba60d1dca268b69104c483336e874ae51416ef21db",
+      "textKey": "narrative.m01.comms.dalia"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-comms.line.1",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "گروه فرماندهی، برید پشت پوشش. قبل از حمله مطمئن بشید هدف همون گشت مسلحه.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.1.wav",
+      "durationSeconds": 6.72,
+      "sha256": "f85adfc4d9964b12f9ad61f60136e79083f2f75da0e48b896c8fb7c03e77d1cf",
+      "textKey": "narrative.m01.comms.dalia"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-comms.line.2",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Courier, Warden, and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.2.wav",
+      "durationSeconds": 7.44,
+      "sha256": "aba5b6304221c5cf878597c4097e7068e209019644d90a8403ebd2ccf8d89463",
+      "textKey": "narrative.m01.comms.aria"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-comms.line.2",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پیک، نگهبان و کارگزار هنوز توی مسیر مشخص‌شده هستن. وضعیت هدف‌ها با گزارش‌های تأییدشده به‌روز می‌شه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.2.wav",
+      "durationSeconds": 8.48,
+      "sha256": "65e7298a97516dde47f526afbd6c5d3dec11e6d9fdd09b7a369a1fcd55035486",
+      "textKey": "narrative.m01.comms.aria"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-comms.line.3",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The evacuation path is holding. Keep the command squad intact.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.3.wav",
+      "durationSeconds": 3.84,
+      "sha256": "0665c9075d488374d5e5e94ed90e9c610db5771d107b8908d18f306011145148",
+      "textKey": "narrative.m01.comms.samira"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-comms.line.3",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "مسیر تخلیه هنوز بازه. مراقب باشید گروه فرماندهی سالم بمونه.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.3.wav",
+      "durationSeconds": 4.96,
+      "sha256": "20055b427ab0171c9057eceafdfe1a1a20253bea488e5c3031f0c5731dcd9942",
+      "textKey": "narrative.m01.comms.samira"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-debrief.line.1",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The corridor is secure. The patrol was coordinated, not opportunistic.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.1.wav",
+      "durationSeconds": 5.36,
+      "sha256": "6da36b5388a7f93aabbeae2bfb6f85325d2adc38166ff53ebaecd098c96c07f0",
+      "textKey": "narrative.m01.debrief.dalia"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-debrief.line.1",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "مسیر امن شد. این گشت اتفاقی اینجا نبود؛ با هم هماهنگ بودن.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.1.wav",
+      "durationSeconds": 4.96,
+      "sha256": "827b77443048094d38a0053c0c66255032b55b0c92632e511e751aea2dff6a55",
+      "textKey": "narrative.m01.debrief.dalia"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-debrief.line.2",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.2.wav",
+      "durationSeconds": 6.96,
+      "sha256": "8ba89fe6e884fef33393091d553c7cfaf0fb3c8ca64a2f17f0fbae0463c2bfbc",
+      "textKey": "narrative.m01.debrief.aria"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-debrief.line.2",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "توی پیام‌های بازیابی‌شده، بخشی از یک شناسهٔ باطل‌شدهٔ شبکهٔ شهری پیدا کردم. هنوز معلوم نیست مال کیه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.2.wav",
+      "durationSeconds": 7.84,
+      "sha256": "236b5bbd2738c7fb2a2f21d51a2703dcbb58d01184bf3b8eef8d61b09b544690",
+      "textKey": "narrative.m01.debrief.aria"
+    },
+    {
+      "kind": "narrative",
+      "id": "m01-debrief.line.3",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Civilians are moving to safety. Command Base is online; the next operation is ready for review.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.3.wav",
+      "durationSeconds": 6.16,
+      "sha256": "9ed8fab2107ccdc8ec57a5bf6b76a4040d79f156e6d26cd3718c68e32bdeeb45",
+      "textKey": "narrative.m01.debrief.samira"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m01-debrief.line.3",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "مردم دارن به جای امن می‌رن. پایگاه فرماندهی آماده‌ست؛ می‌تونید عملیات بعدی رو بررسی کنید.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.3.wav",
+      "durationSeconds": 6.56,
+      "sha256": "c7b33dc2b203f110ded3010549bb677e3efe1439ecd8425bab4359e856c896ff",
+      "textKey": "narrative.m01.debrief.samira"
+    }
+  ]
+}

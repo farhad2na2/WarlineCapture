@@ -1,0 +1,304 @@
+{
+  "entries": [
+    {
+      "key": "unit.description.chr_bombsuit_male_01",
+      "source": "Armored explosive-ordnance specialist. Slow but durable unit intended for hazardous objectives and high-risk pushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "متخصص خنثی‌سازی بمب با لباس محافظ؛ آهسته حرکت می‌کنه ولی برای مأموریت‌های پرخطر مقاومه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_civilian_female_01",
+      "source": "Non-combatant female civilian. Can be targeted manually but does not automatically engage enemies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شهروند غیرنظامی؛ می‌شه دستی هدفش گرفت، ولی خودش به دشمن حمله نمی‌کنه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_civilian_male_01",
+      "source": "Non-combatant male civilian. Can be targeted manually but does not automatically engage enemies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شهروند غیرنظامی؛ می‌شه دستی هدفش گرفت، ولی خودش به دشمن حمله نمی‌کنه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_contractor_female_01",
+      "source": "Private close-protection specialist armed with a SMG. Flexible support unit for base security and patrol work.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محافظ مجهز به مسلسل سبک، مناسب گشت‌زنی و امنیت پایگاه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_contractor_male_01",
+      "source": "Private sidearm security guard armed with a pistol. Flexible support unit for base security and patrol work.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نگهبان مجهز به تپانچه، مناسب گشت‌زنی و امنیت پایگاه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_contractor_male_02",
+      "source": "Private contract rifleman armed with a rifle. Flexible support unit for base security and patrol work.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تفنگدار پیمانکار، مناسب گشت‌زنی و امنیت پایگاه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_ghillie_male_01",
+      "source": "Concealed heavy-weapons operator armed with a rocket launcher. Best used for ambushes against vehicles and fortified targets.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی استتارشده با راکت‌انداز؛ مناسب کمین برای خودروها و مواضع مستحکم."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_female_01",
+      "source": "Hostile irregular fighter armed with a rifle. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با تفنگ، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_female_02",
+      "source": "Hostile irregular fighter armed with a pistol. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با تپانچه، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_male_01",
+      "source": "Hostile irregular fighter armed with an RPG. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با آرپی‌جی، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_male_02",
+      "source": "Hostile irregular fighter armed with a machine gun. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با تیربار، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_male_03",
+      "source": "Hostile irregular fighter armed with a SMG. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با مسلسل سبک، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_insurgent_male_04",
+      "source": "Hostile irregular fighter armed with a sniper rifle. Built for asymmetric attacks and defensive ambushes.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی نامنظم دشمن با تفنگ تک‌تیرانداز، مناسب حملهٔ غافلگیرانه و کمین."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_leader_male_01",
+      "source": "Command unit armed with a metal pistol. Provides a high-value leadership presence for coordinated infantry operations.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرماندهٔ مجهز به تپانچه؛ برای هماهنگی نیروهای پیاده ارزش زیادی داره."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.chr_pilot_male_01",
+      "source": "Aircraft crew member armed with a compact pistol. Lightly equipped personnel for aviation-related operations.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خدمهٔ پرواز با تپانچه و تجهیزات سبک، برای عملیات هوایی."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_apc_heavy",
+      "source": "Heavy armored personnel carrier with stronger protection for moving squads under fire.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفربر سنگین با زره قوی‌تر، برای جابه‌جایی گروه زیر آتش دشمن."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_apc_slow",
+      "source": "Durable armored personnel carrier designed to safely transport infantry to the front line.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفربر مقاوم برای انتقال امن نیروهای پیاده به خط مقدم."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_drone",
+      "source": "Light unmanned aircraft for scouting, patrol support, and fast battlefield awareness.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پهپاد سبک برای شناسایی، پشتیبانی گشت و بررسی سریع میدان نبرد."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_helicopter_attack",
+      "source": "Armed helicopter built for rapid strike missions and close air support.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بالگرد مسلح برای حملهٔ سریع و پشتیبانی نزدیک نیروهای زمینی."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_helicopter_attack_small",
+      "source": "Agile attack helicopter for quick response, harassment, and light air support.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بالگرد تهاجمی چابک برای واکنش سریع، حمله‌های کوتاه و پشتیبانی هوایی سبک."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_jet_01",
+      "source": "Fast combat aircraft for precision attacks and high-speed battlefield response.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جت رزمی سریع برای حملهٔ دقیق و واکنش فوری در میدان نبرد."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_jet_02",
+      "source": "Advanced jet aircraft for air superiority and rapid strike operations.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "جت پیشرفته برای برتری هوایی و حملهٔ سریع."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_light_armored_car",
+      "source": "Mobile armored vehicle for patrols, flanking maneuvers, and fast fire support.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خودروی زرهی چابک برای گشت‌زنی، دور زدن دشمن و پشتیبانی سریع با آتش."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_missle_launcher_air",
+      "source": "Ground-to-air missile launcher for defending bases against helicopters, drones, and jets.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پرتابگر موشک زمین‌به‌هوا برای دفاع از پایگاه در برابر بالگرد، پهپاد و جت."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_missle_launcher_ground",
+      "source": "Long-range ground-to-ground cruise missile launcher for enemy bases and fortified targets.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پرتابگر موشک کروز زمین‌به‌زمین برای حمله از دور به پایگاه و مواضع مستحکم دشمن."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_plane_transport",
+      "source": "Heavy aircraft used to deliver requested units and equipment to the airfield.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هواپیمای سنگین ترابری که نیروها و تجهیزات درخواستی رو به فرودگاه می‌رسونه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_tank_usa",
+      "source": "Main battle tank with heavy armor and strong firepower for frontline engagements.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تانک رزمی با زره سنگین و قدرت آتش زیاد برای درگیری در خط مقدم."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_truck_canopy",
+      "source": "Carries ammunition supplies or transports soldiers as a light APC-style personnel carrier.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مهمات حمل می‌کنه و می‌تونه مثل یک نفربر سبک سربازها رو جابه‌جا کنه."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_truck_tanker",
+      "source": "Transports fuel to Building_Fuel_Bladder or refuels vehicles directly in the field.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سوخت رو به مخزن پایگاه می‌رسونه یا در میدان مستقیم به خودروها سوخت می‌ده."
+        }
+      ]
+    },
+    {
+      "key": "unit.description.veh_truck_tray",
+      "source": "Transports oil barrels from pumps and storage points to refinery or base resource destinations.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بشکه‌های نفت رو از پمپ‌ها و انبارها به پالایشگاه یا پایگاه می‌رسونه."
+        }
+      ]
+    }
+  ]
+}

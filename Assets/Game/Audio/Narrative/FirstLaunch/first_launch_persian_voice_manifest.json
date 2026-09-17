@@ -29,25 +29,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dispatch-radio",
-      "performanceDirection": null,
-      "durationSeconds": 6.89,
-      "minimumDurationSeconds": 3.478,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 6.306689,
+      "minimumDurationSeconds": 2.8333333333333335,
       "maximumDurationSeconds": 7.45,
       "targetDurationSeconds": 6.889931972789116,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.89,
-        7.013,
-        6.903
+        6.306689
       ],
-      "requestId": "edofvkFkr0KOmJdvE8JP",
-      "characterCost": "47",
-      "generationSeed": 913001,
-      "generatedAtUtc": "2026-07-17T15:50:32.668070+00:00",
-      "sha256": "cce8b3db9d3ccfd31642d67d1adb5d3f29c637a92b73cfb28886e2112b564e13",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p02_radio.wav"
+      "generationSeed": 3151242,
+      "generatedAtUtc": "2026-09-15T17:54:00.890019+00:00",
+      "sha256": "aac9f9fc61117cbd8ed8a930283f9c7bff73e2b9dd75cfdd76cfda4626278fbf",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p02_radio.wav",
+      "text": "چند تا انفجار توی بازار قدیم گزارش شده. برق داره قطع می‌شه. راه اصلی درمانگاه هم بسته‌ست.",
+      "spokenText": "چند تا انفجار توی بازار قدیم گزارش شده. برق داره قطع می‌شه. راه اصلی درمانگاه هم بسته‌ست.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "98d0412e1e171be5ed0e916fc029b88066ac894e176ac03f6d81fbf284204ad8"
     },
     {
       "clipId": "p03_radio",
@@ -57,25 +61,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dispatch-radio",
-      "performanceDirection": null,
-      "durationSeconds": 8.381,
-      "minimumDurationSeconds": 5.217,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 8.375261,
+      "minimumDurationSeconds": 3.1666666666666665,
       "maximumDurationSeconds": 8.45,
       "targetDurationSeconds": 8.380952380952381,
-      "timingCompression": 1.2149,
+      "timingCompression": 1.043,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        8.381,
-        8.383,
-        8.381
+        8.375261
       ],
-      "requestId": "qeBbqmgCfHTJ4j5X3A9e",
-      "characterCost": "73",
-      "generationSeed": 913001,
-      "generatedAtUtc": "2026-08-24T11:18:47.684941+00:00",
-      "sha256": "a37ffbe13ae0d097d5d37e83d02db0cd0ac8f0b0ec29c78449d165aaf1503f1b",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p03_radio.wav"
+      "generationSeed": 3151243,
+      "generatedAtUtc": "2026-09-15T17:54:05.315602+00:00",
+      "sha256": "61a6129d28a0656281e0026ca8563f03d09912723df6e60d326874cb05202706",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p03_radio.wav",
+      "text": "فرماندهی واکنش مشترک، اینجا مرکز اعزام منطقه‌ست. صدامون رو دارید؟ ارتباطات منطقه از کار افتاده؛ به فرماندهی دسترسی نداریم.",
+      "spokenText": "فرماندهی واکنش مشترک، اینجا مرکز اعزام منطقه‌ست. صدامون رو دارید؟ ارتباطات منطقه از کار افتاده؛ به فرماندهی دسترسی نداریم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "b20bb0fa50ba3ce8e60720ff7e6a9c145335da092af4a8c01a61f4eac5ccc062"
     },
     {
       "clipId": "p04_dalia",
@@ -85,25 +93,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dalia-field-comms",
-      "performanceDirection": "[urgent] [speaking quickly]",
-      "durationSeconds": 9.777,
-      "minimumDurationSeconds": 4.348,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 8.755714,
+      "minimumDurationSeconds": 2.6666666666666665,
       "maximumDurationSeconds": 11.25,
       "targetDurationSeconds": 7.4,
-      "timingCompression": 1.04,
-      "selectedCandidate": 2,
-      "candidateCount": 3,
+      "timingCompression": 1.0,
+      "selectedCandidate": 1,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        10.424,
-        9.777,
-        10.621
+        8.755714
       ],
-      "requestId": "idudtufw69hC4PMssl8h",
-      "characterCost": "85",
-      "generationSeed": 913002,
-      "generatedAtUtc": "2026-08-24T11:35:43.228347+00:00",
-      "sha256": "988d0ac784f0f77a1b21b8b3797254ba7adcb0e0313676bc12c0e5e5635200f3",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_dalia.wav"
+      "generationSeed": 3151244,
+      "generatedAtUtc": "2026-09-15T17:54:05.528122+00:00",
+      "sha256": "b4bcb597378238da74b4b4c14684f9723d2219fd17d23a8b4ef9fdc23188528d",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_dalia.wav",
+      "text": "مرکز اعزام، دالیا رحیم هستم، فرمانده میدانی. بازمانده‌های کاروان رو پیدا کردیم. داریم از منطقه خارجشون می‌کنیم.",
+      "spokenText": "مرکز اعزام، دالیا‌رحیم هستم، فرمانده میدانی. بازمانده‌های کاروان رو پیدا کردیم. داریم از منطقه خارجشون می‌کنیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "63985630f0dc79c0e7bf15cc463e916cff39424dbd5cba7d4249fb4b0c0baed9"
     },
     {
       "clipId": "p04_samira",
@@ -113,25 +125,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "field-comms",
-      "performanceDirection": null,
-      "durationSeconds": 10.25,
-      "minimumDurationSeconds": 4.13,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 9.386485,
+      "minimumDurationSeconds": 2.8333333333333335,
       "maximumDurationSeconds": 11.25,
       "targetDurationSeconds": 10.25,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        10.25,
-        9.764,
-        10.896
+        9.386485
       ],
-      "requestId": "n6KpfhXPeMNEakLXPibs",
-      "characterCost": "67",
-      "generationSeed": 913031,
-      "generatedAtUtc": "2026-07-17T15:51:24.830669+00:00",
-      "sha256": "feb93de66e210a5f0ad12366a02f7b6750a8717229778da86eb51ebfc5aec45d",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_samira.wav"
+      "generationSeed": 3151245,
+      "generatedAtUtc": "2026-09-15T17:54:09.503084+00:00",
+      "sha256": "a9dfb6e3b9c14424839e6575bee897312e3b8168bab5d23eb1dbfcbac3db0a72",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_samira.wav",
+      "text": "فرماندهی میدانی، سمیرا حداد هستم، مهندس زیرساخت شهری. خانواده‌ها و نیروهای راهداری اون‌طرف مسیر درمانگاه گیر افتادن.",
+      "spokenText": "فرماندهی میدانی، سمیرا حداد هستم، مهندس زیرساخت شهری. خانواده‌ها و نیروهای راهداری اون‌طرف مسیر درمانگاه گیر افتادن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "78ae6b5b128a006cc8ccf97b03c1a40ed8a123a190c038f8b02ff3b7c2bb7e48"
     },
     {
       "clipId": "p05_aria",
@@ -141,25 +157,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 8.117,
-      "minimumDurationSeconds": 3.913,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 6.363311,
+      "minimumDurationSeconds": 2.5,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 8.11673469387755,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        8.117,
-        8.199,
-        8.416
+        6.363311
       ],
-      "requestId": "2XgdHigHJFQlo9i5lGvH",
-      "characterCost": "56",
-      "generationSeed": 913011,
-      "generatedAtUtc": "2026-08-24T11:35:56.068908+00:00",
-      "sha256": "0fc951362bacbc0bbb0dcb1a0f435f4d2187e13b4133047f688f78cac5235c14",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p05_aria.wav"
+      "generationSeed": 3151246,
+      "generatedAtUtc": "2026-09-15T17:54:08.934503+00:00",
+      "sha256": "093785eda14b6e60a9d74c20ebf1943d64ba35fbcc12e292857a7600afea887f",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p05_aria.wav",
+      "text": "من آریام، دستیار ارتباط شهری. شبکه آسیب دیده و هنوز نتونستیم به فرماندهی وصل بشیم.",
+      "spokenText": "من آریام، دستیار ارتباط شهری. شبکه آسیب دیده و هنوز نتونستیم به فرماندهی وصل بشیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "51cad02de39d280334d51badeb0c267e12d534ea392f689844b4d7df6571302f"
     },
     {
       "clipId": "p06_aria",
@@ -169,25 +189,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 7.096,
-      "minimumDurationSeconds": 2.826,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 5.0178,
+      "minimumDurationSeconds": 1.8333333333333333,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 7.095555555555555,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        7.096,
-        7.228,
-        6.81
+        5.0178
       ],
-      "requestId": "8tvMqQQzozb5YnJONtKo",
-      "characterCost": "43",
-      "generationSeed": 913051,
-      "generatedAtUtc": "2026-07-17T15:51:51.458952+00:00",
-      "sha256": "fb23e114a5275882d00f6813e5d63f1556975ebe021df2a07bda092444932fc2",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p06_aria.wav"
+      "generationSeed": 3151247,
+      "generatedAtUtc": "2026-09-15T17:54:12.118194+00:00",
+      "sha256": "daa30b442a605d07a37b6db583427801d4d8faecd50711fe36ef3cac10868ade",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p06_aria.wav",
+      "text": "حالت اضطراری رو فعال کردم. فقط یه فرماندهٔ تأییدشده برامون مونده.",
+      "spokenText": "حالت اضطراری رو فعال کردم. فقط یه فرماندهٔ تأییدشده برامون مونده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "e366702e5bea4073aa4b3ecdcbc027207e9dbb34f7e948e89bf06f25b7f3132d"
     },
     {
       "clipId": "p07_aria",
@@ -197,25 +221,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 7.863,
-      "minimumDurationSeconds": 3.261,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 6.615964,
+      "minimumDurationSeconds": 2.5,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 7.86344671201814,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        7.863,
-        7.968,
-        8.119
+        6.615964
       ],
-      "requestId": "I958THG9s9Zyvw6PWjPU",
-      "characterCost": "52",
-      "generationSeed": 913061,
-      "generatedAtUtc": "2026-07-17T15:52:05.318591+00:00",
-      "sha256": "5e5f721a52dd368620b5eb0c3926511557722495911b48e8010796e8624c4fec",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p07_aria.wav"
+      "generationSeed": 3151248,
+      "generatedAtUtc": "2026-09-15T17:54:12.950301+00:00",
+      "sha256": "363bf82717665894f865a4e9f30cf439cd2eb1b12017b3396739a3429f01a6c5",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p07_aria.wav",
+      "text": "الان باید به بازار قدیم برسیم. نیروهای مسلح دارن به راه بستهٔ درمانگاه نزدیک می‌شن.",
+      "spokenText": "الان باید به بازار قدیم برسیم. نیروهای مسلح دارن به راه بستهٔ درمانگاه نزدیک می‌شن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "aa1583573fc931d153ca85ff24584801051147f932627e5f8b89b8a8ebbbbf63"
     },
     {
       "clipId": "p09_aria",
@@ -225,25 +253,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 6.727,
-      "minimumDurationSeconds": 3.043,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 4.702834,
+      "minimumDurationSeconds": 1.8333333333333333,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 6.726598639455783,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.727,
-        7.0,
-        6.446
+        4.702834
       ],
-      "requestId": "VRyfeRSzoKFZX3TxUSuz",
-      "characterCost": "47",
-      "generationSeed": 913071,
-      "generatedAtUtc": "2026-07-17T15:52:18.500343+00:00",
-      "sha256": "ea2a9f891e0a4a963775c08e7e1039e20576c57e3444f64f2e1e539a87bb4c89",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p09_aria.wav"
+      "generationSeed": 3151249,
+      "generatedAtUtc": "2026-09-15T17:54:14.811212+00:00",
+      "sha256": "b82a01a2a11370e8f7c9be59ae167b7d850168e67e044aeda32382ef44b6e372",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p09_aria.wav",
+      "text": "هویتت تأیید شد، فرمانده. من کنارت هستم؛ دستورها رو تو می‌دی.",
+      "spokenText": "هویتت تأیید شد، فرمانده. من کنارت هستم؛ دستورها رو تو می‌دی.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "c97bef565d8bb4ecb9431dbbed854dcfe84dacfa5352b84ff79daea360b11322"
     },
     {
       "clipId": "p10_aria",
@@ -253,25 +285,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 5.302,
-      "minimumDurationSeconds": 2.391,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 5.620204,
+      "minimumDurationSeconds": 2.5,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 5.301655328798186,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        5.302,
-        5.827,
-        5.285
+        5.620204
       ],
-      "requestId": "WQN1qLlK5sUGuKczfGnB",
-      "characterCost": "32",
-      "generationSeed": 913081,
-      "generatedAtUtc": "2026-07-17T15:52:29.358222+00:00",
-      "sha256": "3512865d254ead9fed9035969b7dcb6bdc22371cd15a48125423dd68e9ab5c4d",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p10_aria.wav"
+      "generationSeed": 3151250,
+      "generatedAtUtc": "2026-09-15T17:54:15.734021+00:00",
+      "sha256": "d9e5bb7a6820e4c8b30c94f5ef52a088489362e66a5d3f7c2dc7c048b1b6ed3f",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p10_aria.wav",
+      "text": "این خرابی‌ها اتفاقی نیست. اول برق رو زدن، بعد راه‌ها رو، بعد هم فرماندهی رو.",
+      "spokenText": "این خرابی‌ها اتفاقی نیست. اول برق رو زدن، بعد راه‌ها رو، بعد هم فرماندهی رو.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "3477d1b2ed2bfb50247909c22823869145632efb42cdc058f41a42b7d2199ac9"
     },
     {
       "clipId": "p11_dalia",
@@ -281,25 +317,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dalia-field-comms",
-      "performanceDirection": "[tense] [speaking quickly]",
-      "durationSeconds": 6.369,
-      "minimumDurationSeconds": 2.826,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 5.850567,
+      "minimumDurationSeconds": 2.0,
       "maximumDurationSeconds": 8.25,
       "targetDurationSeconds": 4.8,
-      "timingCompression": 1.04,
+      "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.369,
-        6.482,
-        6.739
+        5.850567
       ],
-      "requestId": "6BrKvmNYvmhRg7W5L8Km",
-      "characterCost": "56",
-      "generationSeed": 913091,
-      "generatedAtUtc": "2026-07-17T15:52:42.323283+00:00",
-      "sha256": "ccd0cfe5126ea65903fa5b9ecb126688f92fbc4b0e7a014fc5e0f51d66f9db0d",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p11_dalia.wav"
+      "generationSeed": 3151251,
+      "generatedAtUtc": "2026-09-15T17:54:17.909694+00:00",
+      "sha256": "94754e194a3ba9f2b07d7e2456372d3dd51c64b042db884a5631d542ffd5a5d0",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p11_dalia.wav",
+      "text": "دو گروه واکنش هنوز آماده‌ان. ولی به نزدیک‌ترین پایگاه جلو دسترسی نداریم.",
+      "spokenText": "دو گروه واکنش هنوز آماده‌ان. ولی به نزدیک‌ترین پایگاه جلو دسترسی نداریم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "503894a80c16c46d8103e1f0f63f972f136d349ceeff6e474d04e59ab879d02d"
     },
     {
       "clipId": "p12_samira",
@@ -309,25 +349,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "field-comms",
-      "performanceDirection": null,
-      "durationSeconds": 6.13,
-      "minimumDurationSeconds": 2.826,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 6.377302,
+      "minimumDurationSeconds": 2.0,
       "maximumDurationSeconds": 8.25,
       "targetDurationSeconds": 6.129659863945578,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.13,
-        6.667,
-        6.056
+        6.377302
       ],
-      "requestId": "K660clinUnhn6OuqOO3G",
-      "characterCost": "45",
-      "generationSeed": 913101,
-      "generatedAtUtc": "2026-07-17T15:52:53.933885+00:00",
-      "sha256": "0aaed5a311b080866a5fc6c24f6fd0a8d988a78736547577539fae7748401a67",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p12_samira.wav"
+      "generationSeed": 3151252,
+      "generatedAtUtc": "2026-09-15T17:54:19.325298+00:00",
+      "sha256": "e07430b903ceb522e9e5ab4b2a15004f9c952abb8ae6c48ddb6772a967e86af2",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p12_samira.wav",
+      "text": "مردم، کارکنان درمانگاه و نیروهای خدمات شهری هنوز اون‌طرف راه‌بندان گیر افتادن.",
+      "spokenText": "مردم، کارکنان درمانگاه و نیروهای خدمات شهری هنوز اون‌طرف راه‌بندان گیر افتادن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "f0b3b7745a1fdbfc5c95e8e2cbc530774c1febebefe5430fa716e94918d21711"
     },
     {
       "clipId": "p13_aria",
@@ -337,25 +381,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 4.238,
-      "minimumDurationSeconds": 2.609,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 3.753991,
+      "minimumDurationSeconds": 1.6666666666666667,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 4.237687074829932,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        4.238,
-        4.014,
-        4.07
+        3.753991
       ],
-      "requestId": "CXh7D4L8GGFljS99IXYa",
-      "characterCost": "31",
-      "generationSeed": 913111,
-      "generatedAtUtc": "2026-07-17T15:53:03.086260+00:00",
-      "sha256": "d348fc97506c6b671031f2def1de3dfbf34f0a41df1564a31ce867744a12f881",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p13_aria.wav"
+      "generationSeed": 3151253,
+      "generatedAtUtc": "2026-09-15T17:54:20.954927+00:00",
+      "sha256": "75ec10e17f937e26421edfc5f912098268ca9f47d21f8872a87a65a1eac9feb1",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p13_aria.wav",
+      "text": "هنوز مدرک کافی نداریم که بفهمیم کی پشت این حمله‌ست.",
+      "spokenText": "هنوز مدرک کافی نداریم که بفهمیم کی پشت این حمله‌ست.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "49fa2fb162f1a671d3ea8cacba67a93e5ed2daab035996de8c43bd128282a384"
     },
     {
       "clipId": "p14_commander",
@@ -365,25 +413,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "commander-clean",
-      "performanceDirection": null,
-      "durationSeconds": 6.929,
-      "minimumDurationSeconds": 4.13,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 7.16322,
+      "minimumDurationSeconds": 3.1666666666666665,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 6.929229024943311,
-      "timingCompression": 1.0,
+      "timingCompression": 1.0194,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.929,
-        7.175,
-        7.178
+        7.16322
       ],
-      "requestId": "0sZeeGSI6eTyNTdCxLgh",
-      "characterCost": "53",
-      "generationSeed": 913121,
-      "generatedAtUtc": "2026-07-17T15:53:16.627821+00:00",
-      "sha256": "ee77b87923d7dad074de90af0542e041ac4f4fb0fdc2790d84eecf2f48da6061",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander.wav"
+      "generationSeed": 3151254,
+      "generatedAtUtc": "2026-09-15T17:54:23.862001+00:00",
+      "sha256": "d8fc388b5a19f739cbd777f18a116e8a8ed0c157add96741d522bb7ca9cb3ec4",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander.wav",
+      "text": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "spokenText": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "ea694d86fab0c673ef7d377cb3b0728147fceeb373b5022d8e8cd1a35196d709"
     },
     {
       "clipId": "p15_dalia",
@@ -393,25 +445,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dalia-field-comms",
-      "performanceDirection": "[alarmed] [controlled]",
-      "durationSeconds": 7.297,
-      "minimumDurationSeconds": 3.696,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 6.852834,
+      "minimumDurationSeconds": 2.6666666666666665,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 5.3,
-      "timingCompression": 1.04,
+      "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        7.297,
-        7.61,
-        7.474
+        6.852834
       ],
-      "requestId": "hX5uMFmQ3NESlx5eXRkU",
-      "characterCost": "61",
-      "generationSeed": 913131,
-      "generatedAtUtc": "2026-07-17T15:53:30.963283+00:00",
-      "sha256": "547bd3c8426bd5a6b6730d80a381282930e6327e66212c18a5d7b52356f903ce",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p15_dalia.wav"
+      "generationSeed": 3151255,
+      "generatedAtUtc": "2026-09-15T17:54:24.543395+00:00",
+      "sha256": "e65ba810748cd80fc5983129ef5e20ea65976ebe27c290a48816e940ba4b5fae",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p15_dalia.wav",
+      "text": "دریافت شد. یه گشت مسلح از خط خاکستر داره میاد سمت بازار قدیم. سلاح سنگین ندیدیم.",
+      "spokenText": "دریافت شد. یه گشت مسلح از خط خاکستر داره میاد سمت بازار قدیم. سلاح سنگین ندیدیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "ed85155dfb158b1665dbfb906ac376159daa616bce043b1019142e881f8932a7"
     },
     {
       "clipId": "p16_aria",
@@ -421,25 +477,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 8.97,
-      "minimumDurationSeconds": 3.478,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 8.323039,
+      "minimumDurationSeconds": 2.6666666666666665,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 8.97,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        8.97,
-        8.75,
-        8.218
+        8.323039
       ],
-      "requestId": "0G8gLu9KKGJaNbJ76d3T",
-      "characterCost": "52",
-      "generationSeed": 913141,
-      "generatedAtUtc": "2026-07-17T15:53:45.985170+00:00",
-      "sha256": "464070c86cf1300bd3d2ab6c6e648793fb8859434019605b4671f643c92c2159",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p16_aria.wav"
+      "generationSeed": 3151256,
+      "generatedAtUtc": "2026-09-15T17:54:27.743470+00:00",
+      "sha256": "b1bb07d7e968caaf68e7b3c068fa8c81f9b7ec9706fa8b34bf3de5d0bc33aa16",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p16_aria.wav",
+      "text": "سه مهاجم مسلح رو شناسایی کردیم. مردم هنوز پشت موانعن. فقط توی مسیر علامت‌گذاری‌شده درگیر شو.",
+      "spokenText": "سه مهاجم مسلح رو شناسایی کردیم. مردم هنوز پشت موانعن. فقط توی مسیر علامت‌گذاری‌شده درگیر شو.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "e60e5c77a7cff70d989638c9c1329877ad3c1761e181d5877205384341b49ed1"
     },
     {
       "clipId": "p17_dalia",
@@ -449,25 +509,29 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "dalia-field-comms",
-      "performanceDirection": "[strained] [resolute]",
-      "durationSeconds": 4.685,
-      "minimumDurationSeconds": 1.739,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 2.808526,
+      "minimumDurationSeconds": 1.0,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 3.8,
-      "timingCompression": 1.03,
+      "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        4.685,
-        4.793,
-        5.113
+        2.808526
       ],
-      "requestId": "6pClQZJtl8G7iGEy2cch",
-      "characterCost": "44",
-      "generationSeed": 913151,
-      "generatedAtUtc": "2026-07-17T15:53:56.463349+00:00",
-      "sha256": "13fa47f854685695a1200203579b754c01dbaf074333651513b4d8a809e77177",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p17_dalia.wav"
+      "generationSeed": 3151257,
+      "generatedAtUtc": "2026-09-15T17:54:26.588716+00:00",
+      "sha256": "a44a9b8cd1971cbaaeba29b03ed74a886d804152bec1f8dda3a47dfac5ac3f46",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p17_dalia.wav",
+      "text": "نیروهام آماده‌ان، فرمانده. کنترل با توئه.",
+      "spokenText": "نیروهام آماده‌ان، فرمانده. کنترل با توئه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "b391f42edd19191ec6abf95c87f5a4dc4df3e3e150953c7aa465fc046db812bf"
     },
     {
       "clipId": "p18_aria",
@@ -477,28 +541,32 @@
       "modelId": "eleven_v3",
       "sourceOutputFormat": "mp3_44100_192",
       "processing": "aria-clean",
-      "performanceDirection": null,
-      "durationSeconds": 6.144,
-      "minimumDurationSeconds": 2.826,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 5.952063,
+      "minimumDurationSeconds": 2.3333333333333335,
       "maximumDurationSeconds": 9.25,
       "targetDurationSeconds": 6.14437641723356,
       "timingCompression": 1.0,
       "selectedCandidate": 1,
-      "candidateCount": 3,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        6.144,
-        5.658,
-        5.475
+        5.952063
       ],
-      "requestId": "KN6VHdh9V8opXfcL5MXN",
-      "characterCost": "39",
-      "generationSeed": 913161,
-      "generatedAtUtc": "2026-07-17T15:54:07.359554+00:00",
-      "sha256": "fef2cfbdcef5ad5c2bfad487bea65debd8987042ef9a79b50b68b5daefe365f9",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav"
+      "generationSeed": 3151258,
+      "generatedAtUtc": "2026-09-15T17:54:30.385967+00:00",
+      "sha256": "f4e65c56906f921ffefca7a27a22884508a826c3660e54e8fbf982bada8d6ef6",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav",
+      "text": "اول گروه تفنگدار رو انتخاب کن. ببرشون پشت پوشش، بعد مسیر رو امن کن.",
+      "spokenText": "اول گروه تفنگدار رو انتخاب کن. ببرشون پشت پوشش، بعد مسیر رو امن کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "captionSha256": "bcc7ebabe116bc55a7a647161da793082bb5e3d7a2844da260ee4baf280eea13"
     }
   ],
-  "lastUpdatedAtUtc": "2026-08-24T11:35:56.073439+00:00",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.094068+00:00",
   "subscriptionSnapshotLastUpdate": {
     "tier": "creator",
     "status": "active",
@@ -528,23 +596,29 @@
       "voiceId": "CeoZEQcJ58ClpEHgRyKe",
       "voiceName": "Warline - Commander Female",
       "modelId": "eleven_v3",
-      "performanceDirection": "[urgent] [controlled]",
-      "durationSeconds": 6.668,
-      "minimumDurationSeconds": 4.13,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 7.175034,
+      "minimumDurationSeconds": 3.1666666666666665,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 4.8,
-      "selectedCandidate": 2,
-      "candidateCount": 3,
+      "selectedCandidate": 1,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        7.235,
-        6.668,
-        7.175
+        7.175034
       ],
-      "requestId": "Tz8XCN0oRiMgBwSswrSo",
-      "characterCost": "65",
-      "generationSeed": 923002,
-      "sha256": "181de2a8fa916b496fd92551f960622e72ed25ad39a7d7e740c0daa48e36f569",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav"
+      "generationSeed": 3251259,
+      "sha256": "43bc8d9e61ebdb8a07f47d0734c8f40f4ea1fcdcfaa853ed4d22087f461919b6",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav",
+      "text": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "spokenText": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "generatedAtUtc": "2026-09-15T17:55:42.909730+00:00",
+      "captionSha256": "ea694d86fab0c673ef7d377cb3b0728147fceeb373b5022d8e8cd1a35196d709",
+      "timingCompression": 1.1243
     },
     {
       "clipId": "p14_commander_neutral",
@@ -553,22 +627,30 @@
       "voiceId": "RaldHBrhNdVemVVS3wAW",
       "voiceName": "Warline - Commander Neutral",
       "modelId": "eleven_v3",
-      "performanceDirection": "[focused] [controlled]",
-      "durationSeconds": 7.18,
-      "minimumDurationSeconds": 4.13,
+      "performanceDirection": "[conversational tone]",
+      "durationSeconds": 7.172608,
+      "minimumDurationSeconds": 3.1666666666666665,
       "maximumDurationSeconds": 7.25,
       "targetDurationSeconds": 4.8,
-      "selectedCandidate": 2,
-      "candidateCount": 2,
+      "selectedCandidate": 1,
+      "candidateCount": 1,
       "candidateDurationsSeconds": [
-        7.18,
-        7.18
+        7.172608
       ],
-      "requestId": "jbjSZsCV1APnCZqKvKa3",
-      "characterCost": "65",
-      "generationSeed": 923012,
-      "sha256": "e1d23f4d21d07c81b314f1c85bceafa47891aeea73088d292e872a9c5b91e76a",
-      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_neutral.wav"
+      "generationSeed": 3151260,
+      "sha256": "d25d42f48c91ca7b0a421e11f03025fbce991749bb8c80011acad2f46937f1ff",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_neutral.wav",
+      "text": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "spokenText": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "generatedAtUtc": "2026-09-15T17:54:34.811011+00:00",
+      "captionSha256": "ea694d86fab0c673ef7d377cb3b0728147fceeb373b5022d8e8cd1a35196d709",
+      "timingCompression": 1.1433
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1"
 }

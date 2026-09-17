@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import shutil
+import sys
 import subprocess
 import tempfile
 import urllib.error
@@ -21,6 +22,8 @@ from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "Tools/Audio"))
+import persian_voice_profile
 CATALOG_PATH = ROOT / "Assets/Game/Data/Narrative/FirstLaunch/first_launch_english_text_catalog.json"
 VOICE_MAP_PATH = ROOT / "Assets/Game/Data/Narrative/FirstLaunch/first_launch_elevenlabs_voice_map.json"
 VOICE_ROOT = ROOT / "Assets/Game/Audio/Narrative/FirstLaunch/Voice"
@@ -264,6 +267,7 @@ def request_audio(
         "seed": seed,
         "apply_text_normalization": "on",
     }
+    persian_voice_profile.apply(body, language_code)
     request = urllib.request.Request(
         f"{API_ROOT}/v1/text-to-speech/{voice_id}?{query}",
         data=json.dumps(body).encode("utf-8"),

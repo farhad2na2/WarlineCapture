@@ -1,0 +1,414 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Duplicate Asset Isolation
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Duplicate Asset Isolation
+  m_GUID: e88cf1d459b49494ebdc0f865528c90b
+  m_SerializeEntries:
+  - m_GUID: 0406db5a14f94604a8c57ccfbc9f3b46
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/Particles/ParticlesUnlit.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 05b024c09cec146d6b00969b4c66446f
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_LightGun.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 06d222c487c244f44a7d6ef8cae5c5c7
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_Smg.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1054d287b52134aeb9aa1e99b4e6cc41
+    m_Address: Assets/Game/Rendering/Meshes/Selection/Premium_Vehicle_FootprintFill.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 12eefcf990bcdf947982514b000cf780
+    m_Address: Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 14bbc90b5801c3747a6c3ca98fb773dd
+    m_Address: Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_05.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 19af44ebe09b96b40a5d5631460703a2
+    m_Address: Assets/PolygonMilitary/Textures/Land_Vehicle_Master_Burnt_01.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24763329e4943b349aae094fd516ee5f
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Vehicles_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2c56dc8c5f7495d49b1721630e3d4c0f
+    m_Address: Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_01_A.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2cc6ca22c1ddb4a8aac9e7707ad4b13d
+    m_Address: Assets/Game/Rendering/Meshes/Selection/Premium_Unit_CapsuleAura.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 36e335017ad71d54fbb10842863188ae
+    m_Address: Packages/com.unity.render-pipelines.core/Runtime/RenderPipelineResources/FallbackShader.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3902aa1094f8e4c588c63cba0d150c6d
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_Pistol.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ccfa556fbbeda64ca72c0d514f4f2c7
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_SMG_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44a349ccb1f41994781ca68e881f2d8f
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4575bb7e6b17d49e4bd9db9871ff3e90
+    m_Address: Assets/Game/Rendering/Materials/Selection/Mat_Selection_Vehicle_Fill_Hologram.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 48843a2db7a47754f9c8d6ae390ebf4b
+    m_Address: Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4afd1c4a29a7cb340bbe0721e5c146bb
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_Small_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b312c90cb2514c13b66a4f8554207da
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_Sniper.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b8110537da53bd43b36493b323da4b6
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_03_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4b8813443beeb4d7d9e3930dffa03dc0
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_Pistol.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4ed123d7222e4c12ab6cc9cde0dea793
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/Models/FX_Sphere.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 522a22b37865e694da43e2a7d59f3159
+    m_Address: Assets/PolygonMilitary/Models/SM_Veh_Truck_01_Destroyed.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 53ac61dbbe655bd4eb7b4f80c9d8f45f
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles
+      Burnt.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59d9d33adf4ba6e47b10b8b83a8741b8
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Helicopters_01_A.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5dfe1f4b41393bc449825fbda255e09d
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_5.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 62beb837fa50d43f7828cb4fe57e779d
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_HeavyMg.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bded339bff95485a9e1174b906e5d36
+    m_Address: Assets/Game/Effects/Combat/Materials/Mat_Vfx_MuzzleFlash_Additive.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 709584fecc50aba4aa08d0c1e88ef7ec
+    m_Address: Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7cc0b541520b0734c80ea6934a192675
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Tex_Cicle.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8ac18b51c2c864b32ba4fc4b2a834c76
+    m_Address: Assets/Game/Materials/HealthBar.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8baff3207836e304f95274c39c8d572c
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/FX_Explosion_Large_Dark_01.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8df26df7aedd94c49905cf6e9a2a457d
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_02_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8e8e3e9def82346efa8bc45308be9d57
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_Rocket.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 92152d3eba8b84fc699c2a1f6007b40a
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_Sniper.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 926a746687ea548af8ad8d990360b466
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_LightGun.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 933532a4fcc9baf4fa0491de14d08ed7
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/Lit.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9436c1d31c0cf4f40a8ebe66cadf1715
+    m_Address: Assets/PolygonMilitary/Models/SM_Veh_Rocket_Truck_01_Destroyed.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9980bf5b609866a41b882aff8d03fa5d
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Air_Vehicles_Burnt.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9b7c8dd5cead2e646bac5e8de95fecb3
+    m_Address: Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_A.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9c50632c165483044bd259fc5758b877
+    m_Address: Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Veh_Tank_Tracks.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a136b360a88d9471fa269eacd44323ee
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_Rocket.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a761c489d7d8040428782d1ce2a4622e
+    m_Address: Assets/PolygonMilitary/Textures/Tank_Track_Burnt.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a77d1ab09c6f9a040b53b1939745e6c5
+    m_Address: Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a91f0d16d3764b3f9ad0f7f50d5a7e11
+    m_Address: Assets/Game/Rendering/Shaders/SelectionHologram.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a9d3462e8b10f4bdd81caa91079f40ec
+    m_Address: Assets/Game/Effects/Combat/Materials/Mat_Vfx_Smoke_Alpha.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: aa43af243a423415580b424951a71ac0
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_Rifle.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3010000000000000000000000000001
+    m_Address: Assets/Game/Configs/Prefabs/Prefab_DefaultFactionTint_Config.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b3010000000000000000000000000002
+    m_Address: Assets/Game/Configs/Prefabs/Prefab_UnitHealthBar_Config.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b39b8ecc8a4a44548194184d4c877c01
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/Models/FX_Sphere_03.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b6790ac587427481c8b1718ba9b38a3f
+    m_Address: Assets/Game/Prefabs/Vehicles/VehicleHealthBar.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b96b02ba1538b47cb99a46f0bf3feb9f
+    m_Address: Assets/Game/Effects/Combat/Textures/Tex_Vfx_SmokeSoft.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b96e71a22a194a36a4ac0c0449b3e501
+    m_Address: Assets/Game/Rendering/Materials/Selection/Mat_Selection_Player_Hologram.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb48c0739f28e4c928e1733f7f54ca39
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_MachineGun.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bb7348bbeae1c554ca56f2a904886c04
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Sniper_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bf41be9e74875804c91333542b6a1da4
+    m_Address: Assets/PolygonMilitary/Materials/Vehicles/PolygonMilitary_Mat_Land_Vehicles_3.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c2db7d64227a3cd489f376913b0a102d
+    m_Address: Assets/PolygonMilitary/Textures/PolygonMilitary_Tank_Tracks.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7a5b7126209aa64cbad9c843605f9c8
+    m_Address: Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c832329c4cbe94ca7870bed4da70360d
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_MachineGun.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cbdbc7f00ebbecf4db3f4e2ffd7838c0
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Circle.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce6a258e463fd9e44b1c152d46f12928
+    m_Address: Assets/PolygonMilitary/Materials/PolygonMilitary_Glass_01.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d2834fbab75454c99b0b283a44cef502
+    m_Address: Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d3466c1f37fab4a0f815ec6e5398247c
+    m_Address: Assets/Game/Effects/Combat/Textures/Tex_Vfx_SoftGlow.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db3be9c6db3c14f32b000034d2ca2a83
+    m_Address: Assets/Game/Shaders/DOTSHealthBarUnlit.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: db87b84122bfad448ac7b7ecc1e278be
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_Metal_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e0bcf3a7d8424734a18501b0dc8cd297
+    m_Address: Assets/Game/Rendering/Materials/Selection/Mat_Selection_Vehicle_Hologram.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e483fea7ffa80b54bae01bf333b06568
+    m_Address: Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Circle_Dark.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e53b4b4bf529fa4439c93eb4809419fa
+    m_Address: Assets/PolygonMilitary/Materials/Misc/PolygonMilitary_Veh_Tank_Tracks_Burnt.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e6e9a19c3678ded42a3bc431ebef7dbd
+    m_Address: Packages/com.unity.render-pipelines.universal/Shaders/Utils/FallbackError.shader
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e84c730222edd4e90b0ebbd01d9714ce
+    m_Address: Assets/Game/Effects/Combat/Materials/Mat_Vfx_Spark_Additive.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eb6cc7f9145c8402181b3074f0d58c5f
+    m_Address: Assets/Game/Effects/Combat/Materials/Mat_Vfx_ImpactFlash_Additive.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ebf1850b2010e472cb684fc908e729dd
+    m_Address: Assets/Game/Effects/Combat/Materials/Mat_Vfx_Dust_Alpha.mat
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecbd9998d661e4f119cca160d94042f0
+    m_Address: Assets/Game/Effects/Combat/Textures/Tex_Vfx_MuzzleFlashStar.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ee1aa652485e946eaae4d46e1182d322
+    m_Address: Assets/Game/Rendering/Meshes/Selection/Premium_Vehicle_BoundsBrackets.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef0eaeb60e61c1541a9368ef955fd450
+    m_Address: Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_01_Military_Side.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f656255a9ae4e45a3b4e67ca3c00c28a
+    m_Address: Assets/Game/Rendering/Meshes/Selection/Premium_Vehicle_FootprintPlate.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f8b2b4dad2dab42629ef74d7e7a01aad
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_MuzzleFlash_HeavyMg.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fbc74162db268475c89dd346a6d2286f
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_Smg.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fcfd19e2536104115bcd9bae4929bd90
+    m_Address: Assets/Game/Effects/Combat/Prefabs/Vfx_BulletImpact_Rifle.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 767260e88213f4b33970ac0f51e98cbd, type: 2}
+    - {fileID: 11400000, guid: 9984479f8d87c433f87ce3b8f39f24f9, type: 2}

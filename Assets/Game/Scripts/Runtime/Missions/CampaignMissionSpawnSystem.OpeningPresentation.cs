@@ -37,7 +37,8 @@ namespace Game.Runtime
             {
                 openingStartFocus = playerFocus;
                 openingEndFocus = approach.Position;
-                establishingFocus = post.Position;
+                // Introduce the defenders and their road, not the decorative airfield around the post.
+                establishingFocus = playerFocus;
                 return;
             }
             if (!missionId.Equals(EstablishBaseMissionId) ||

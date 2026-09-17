@@ -20,11 +20,16 @@ namespace Game.Runtime
 
         public void OnDestroy(ref SystemState state)
         {
-            if (!_gridQuery.TryGetSingletonEntity<GridConfig>(out Entity gridEntity))
-                return;
-
-            state.Dependency.Complete();
-            RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(state.EntityManager, gridEntity);
+            state.EntityManager.CompleteAllTrackedJobs();
+            using var query = state.EntityManager.CreateEntityQuery(new EntityQueryDesc
+            {
+                Any = new[] { ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                    ComponentType.ReadOnly<DynamicOccupancyComponent>(), ComponentType.ReadOnly<PathPoolComponent>() },
+                Options = EntityQueryOptions.IncludeDisabledEntities | EntityQueryOptions.IncludePrefab
+            });
+            using var grids = query.ToEntityArray(Allocator.Temp);
+            foreach (var grid in grids)
+                RuntimeGridPersistentStorageUtilitySystemHelper.DisposeStorage(state.EntityManager, grid);
         }
 
         public void OnUpdate(ref SystemState state)

@@ -87,14 +87,13 @@ namespace Game.Runtime
             ObserveDefenseCommandResults(ref state,ref defense);
             var elements=em.GetBuffer<CampaignMissionConvoyElementState>(root,true);
             main=elements.Length>1 && elements[1].Activated!=0;
-            var ledger=em.GetComponentData<ThreatWarningLedgerState>(root);
             bool imminent=false,mainConfirmed=false;
             var warnings=em.GetBuffer<ThreatWarningRecord>(root,true);
             for(int i=0;i<warnings.Length;i++)
             {imminent|=warnings[i].Resolved==0 && warnings[i].Critical!=0; mainConfirmed|=warnings[i].ElementIndex==1 && warnings[i].Source!=ThreatWarningSourceKind.ScoutReport;}
             uint oldMask=defense.AcknowledgedGuidanceMask;
             // Retain persisted lesson IDs, but never make players undo their defensive Hold.
-            defense.AcknowledgedGuidanceMask |= RetiredDefenseStopLessonMask;
+            defense.AcknowledgedGuidanceMask |= RetiredDefenseStopLessonMask | OptionalDefenseToolsMask;
             for(int i=0;i<definition.Defense.GuidanceSteps.Length;i++)
             {
                 ref var step=ref definition.Defense.GuidanceSteps[i];
@@ -121,17 +120,11 @@ namespace Game.Runtime
             if(oldMask!=defense.AcknowledgedGuidanceMask && current.Active!=0 && current.Prompt>=CampaignMissionGuidancePromptKind.RadarReadWarning &&
                 (defense.AcknowledgedGuidanceMask&(1u<<((int)current.Prompt-13)))!=0)
                 defense.NextGuidanceAtMilliseconds=facts.ElapsedMilliseconds;
-            if(positioned && defense.MoveAccepted!=0 && defense.PositionCameraAligned==0)
-            {
-                if(SystemAPI.TryGetSingletonEntity<RuntimeCameraFocusRequestComponent>(out var cameraEntity))
-                {
-                    var focus=CampaignMissionSpawnSystem.CreateDefenseCommandView(defenseCenter/positionedCount);
-                    focus.Smooth=1; focus.SmoothTimeSeconds=.8f; em.SetComponentData(cameraEntity,focus);
-                    defense.PositionCameraAligned=1;
-                }
-            }
+            // Gameplay camera movement is explicit (Show Me, warning focus, selection or build).
             em.SetComponentData(root,defense);
-            if(selected<0 || ledger.Active==0 || facts.ElapsedMilliseconds<defense.NextGuidanceAtMilliseconds)
+            // The warning can briefly be inactive between convoy elements. The
+            // mission is still running, so keep the defense/wait instruction.
+            if(selected<0 || facts.ElapsedMilliseconds<defense.NextGuidanceAtMilliseconds)
             { ClearDefenseGuidance(em,root,in current); return true; }
             ref var chosen=ref definition.Defense.GuidanceSteps[selected];
             bool canExecute=chosen.Action is not (MissionGuidanceActionKind.Move or MissionGuidanceActionKind.Hold or MissionGuidanceActionKind.Stop) || selectedFriendly;
@@ -152,7 +145,6 @@ namespace Game.Runtime
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled
             };
             ApplyDefenseBattleGuidance(em,root,selected,fork,ref next);
-            FocusDefenseBattleEntry(em,current,next);
             if(!ProjectionEquals(in current,in next) || current.Active==0 || current.Priority!=next.Priority ||
                 !current.Title.Equals(next.Title) || !current.Body.Equals(next.Body) || current.MissionSourceVersion!=next.MissionSourceVersion)
                 em.SetComponentData(root,next);

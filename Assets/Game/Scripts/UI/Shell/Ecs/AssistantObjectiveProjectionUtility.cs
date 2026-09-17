@@ -112,7 +112,12 @@ namespace Game.UI.Shell.Ecs
             out AssistantRecommendationElement recommendation)
         {
             recommendation = default;
-            if (guidance.Active == 0 || guidance.Version == 0 || guidance.GuidanceId == 0 || guidance.GuidanceId == guidance.AcknowledgedGuidanceId) return false;
+            // Accepting production starts a wait; it does not finish the lesson.
+            // Keep that lesson available so its live queue can show progress or
+            // offer recruitment again if the player cancels the queue.
+            bool productionWait = guidance.Prompt == CampaignMissionGuidancePromptKind.EstablishBaseQueueRifle;
+            if (guidance.Active == 0 || guidance.Version == 0 || guidance.GuidanceId == 0 ||
+                guidance.GuidanceId == guidance.AcknowledgedGuidanceId && !productionWait) return false;
             recommendation = new AssistantRecommendationElement
             {
                 RecommendationId = guidance.GuidanceId, SourceVersion = (int)guidance.Version, Kind = guidance.RecommendationKind,

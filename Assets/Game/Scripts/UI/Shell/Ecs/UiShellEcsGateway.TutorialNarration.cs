@@ -109,6 +109,9 @@ namespace Game.UI.Shell.Ecs
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
             if(tutorialStepCount==8 && tutorialStep is >=1 and <=8)
                 return new FixedString64Bytes("vo.aria.tutorial.m05."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
+            // Slot 7 is the retired Stop lesson. Keep its historical recording out of
+            // playback; a live Hold-resume correction explicitly reuses lesson 6 above.
+            if(tutorialStepCount==12 && tutorialStep==7) return default;
             if(tutorialStepCount==12 && tutorialStep is >=1 and <=12)
                 return new FixedString64Bytes("vo.aria.tutorial.m03."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             if (tutorialStepCount == 9)
@@ -176,11 +179,11 @@ namespace Game.UI.Shell.Ecs
             {
                 (title, body) = tutorialStep switch
                 {
-                    1 => ("گروه خود را پیدا کنید", "برای شروع، گروه فرماندهی را انتخاب کنید."),
-                    2 => ("به پوشش حرکت کنید", "گروه را به موقعیت پوشش علامت‌گذاری‌شده منتقل کنید."),
-                    3 => ("تهدید را بررسی کنید", "گشت مسلح نزدیک غیرنظامیان را بررسی کنید."),
-                    4 => ("با گشت دشمن درگیر شوید", "به گشت دشمن تأییدشده حمله کنید."),
-                    5 => ("مسیر را امن کنید", "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید."),
+                    1 => ("گروه خودت رو پیدا کن", "برای شروع، گروه فرماندهی رو انتخاب کن."),
+                    2 => ("به پوشش حرکت کن", "گروه رو به موقعیت پوشش علامت‌گذاری‌شده منتقل کن."),
+                    3 => ("تهدید رو بررسی کن", "گشت مسلح نزدیک غیرنظامیان رو بررسی کن."),
+                    4 => ("با گشت دشمن درگیر شو", "به گشت دشمن تأییدشده حمله کن."),
+                    5 => ("مسیر رو امن کن", "هدفت رو بررسی کن و مسیر مردم رو امن نگه دار."),
                     _ => (string.Empty, string.Empty)
                 };
             }

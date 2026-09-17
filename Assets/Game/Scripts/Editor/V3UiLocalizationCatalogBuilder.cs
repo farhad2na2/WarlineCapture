@@ -145,6 +145,8 @@ namespace Game.Editor
             ImportCommonPersian(persian, keysByEnglish);
             int seededPersian = V3PersianUiTranslationSeeder.FillMissing(english, persian);
             ImportUiStringConfigs(english, persian, keysByEnglish);
+            foreach (var entry in M03RadarWarningUiCopyCatalog.Entries)
+            { english[entry.Key] = entry.English; persian[entry.Key] = entry.Persian; }
             GameLocalizationCatalog catalog = BuildCatalog(english, persian);
             RebuildAndPersistPersianFontCoverage(
                 catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset,
@@ -172,8 +174,30 @@ namespace Game.Editor
 
         public static void RepairMissionResultBindingsAndFont()
         {
+            foreach (string path in new[] { MissionResultV3PrefabBuilder.PrefabPath,
+                         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+                         "Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab" })
+            {
+                var root = PrefabUtility.LoadPrefabContents(path);
+                try
+                {
+                    int count = BindExistingCatalog(root);
+                    if (count != 0) PrefabUtility.SaveAsPrefabAsset(root, path);
+                    Debug.Log("[MissionUiLocalization] prefab=" + path + " repairedBindings=" + count);
+                }
+                finally { PrefabUtility.UnloadPrefabContents(root); }
+            }
+            RebuildSharedPersianFontCoverage();
+            ValidateBindingsAndCoverage();
+        }
+
+        // Prefab builders must retain localization when recreating their hierarchy.
+        // Initial project authoring may precede the catalog; the full catalog builder
+        // binds all screens in that case.
+        public static int BindExistingCatalog(GameObject root)
+        {
             var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
-            if (catalog == null) throw new InvalidOperationException("Missing shared locale catalog.");
+            if (catalog == null) return 0;
             var english = ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode));
             var keysBySource = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var entry in english.OrderBy(pair => pair.Key, StringComparer.Ordinal))
@@ -181,32 +205,22 @@ namespace Game.Editor
                 string source = NormalizeSource(entry.Value);
                 if (!keysBySource.ContainsKey(source)) keysBySource.Add(source, entry.Key);
             }
-            foreach (string path in new[] { MissionResultV3PrefabBuilder.PrefabPath,
-                         "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab" })
+            var bindings = new List<(TMP_Text text, V3LocalizedTextBindingView binding, string key, string source)>();
+            var missing = new List<string>();
+            foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
             {
-            var root = PrefabUtility.LoadPrefabContents(path);
-            try
-            {
-                var bindings = new List<(V3LocalizedTextBindingView binding, string key, string source)>();
-                var missing = new List<string>();
-                foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
-                {
-                    string source = NormalizeSource(ReadAuthoredText(text));
-                    if (!IsTranslatable(source)) continue;
-                    var binding = text.GetComponent<V3LocalizedTextBindingView>();
-                    if (binding != null && !string.IsNullOrEmpty(binding.LocalizationKey) && english.ContainsKey(binding.LocalizationKey)) continue;
-                    if (!keysBySource.TryGetValue(source, out string key)) { missing.Add(source); continue; }
-                    bindings.Add((binding ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>(), key, source));
-                }
-                if (missing.Count != 0) throw new InvalidOperationException(path + " needs explicit translations: " + string.Join(" | ", missing));
-                foreach (var entry in bindings) entry.binding.Configure(entry.key, entry.source, true);
-                if (bindings.Count != 0) PrefabUtility.SaveAsPrefabAsset(root, path);
-                Debug.Log("[MissionUiLocalization] prefab=" + path + " repairedBindings=" + bindings.Count);
+                string source = NormalizeSource(ReadAuthoredText(text));
+                if (!IsTranslatable(source)) continue;
+                var binding = text.GetComponent<V3LocalizedTextBindingView>();
+                if (binding != null && !string.IsNullOrEmpty(binding.LocalizationKey) && english.ContainsKey(binding.LocalizationKey)) continue;
+                if (!keysBySource.TryGetValue(source, out string key)) { missing.Add(source); continue; }
+                bindings.Add((text, binding, key, source));
             }
-            finally { PrefabUtility.UnloadPrefabContents(root); }
-            }
-            RebuildSharedPersianFontCoverage();
-            ValidateBindingsAndCoverage();
+            if (missing.Count != 0)
+                throw new InvalidOperationException(root.name + " needs explicit translations: " + string.Join(" | ", missing));
+            foreach (var entry in bindings)
+                (entry.binding ?? entry.text.gameObject.AddComponent<V3LocalizedTextBindingView>()).Configure(entry.key, entry.source, true);
+            return bindings.Count;
         }
 
         [MenuItem("Game/UI/V3/Localization/Validate Bindings And Coverage")]
@@ -782,8 +796,8 @@ namespace Game.Editor
             Dictionary<string, string> persian,
             Dictionary<string, string> keysByEnglish)
         {
-            AddRuntimeText("narrative.first_launch.language.title", "SELECT STORY LANGUAGE", "زبان داستان را انتخاب کنید");
-            AddRuntimeText("narrative.first_launch.language.info", "This can be changed later\nin Command Settings.", "بعداً می‌توانید این مورد را\nدر تنظیمات فرماندهی تغییر دهید.");
+            AddRuntimeText("narrative.first_launch.language.title", "SELECT STORY LANGUAGE", "زبان داستان رو انتخاب کن");
+            AddRuntimeText("narrative.first_launch.language.info", "This can be changed later\nin Command Settings.", "بعداً هم می‌تونی این مورد رو\nتوی تنظیمات فرماندهی عوض کنی.");
             AddRuntimeText("narrative.first_launch.language.continue", "CONTINUE   ›", "ادامه   ‹");
             AddEnglish("narrative.first_launch.control.skip", "SKIP", english, keysByEnglish);
             AddEnglish("narrative.first_launch.identity.title", "EMERGENCY CONTINUITY AUTHENTICATION", english, keysByEnglish);
@@ -822,26 +836,26 @@ namespace Game.Editor
             AddRuntimeText("ui.settings.large_text", "Large Text", "متن بزرگ");
             AddRuntimeText("ui.settings.assistant_takeover", "Assistant Takeover", "کنترل توسط دستیار");
             AddRuntimeText("ui.settings.assistant_subtitles", "Assistant Subtitles", "زیرنویس دستیار");
-            AddRuntimeText("ui.settings.music_description", "Adjust in-game music volume.", "صدای موسیقی بازی را تنظیم کنید.");
-            AddRuntimeText("ui.settings.sound_description", "Adjust in-game sound effects volume.", "صدای جلوه‌های صوتی بازی را تنظیم کنید.");
-            AddRuntimeText("ui.settings.voice_description", "Adjust in-game voice volume.", "صدای گفتار بازی را تنظیم کنید.");
-            AddRuntimeText("ui.settings.threat_description", "Show tactical warnings during missions.", "هشدارهای تاکتیکی را هنگام مأموریت‌ها نمایش دهید.");
-            AddRuntimeText("ui.settings.contrast_description", "Increase panel and text contrast.", "کنتراست پنل و متن را افزایش دهید.");
-            AddRuntimeText("ui.settings.large_text_description", "Increase UI text scale for readability.", "اندازه متن رابط کاربری را برای خوانایی افزایش دهید.");
-            AddRuntimeText("ui.settings.takeover_description", "Allow assistant-guided bounded actions.", "اقدام‌های محدود با هدایت دستیار را مجاز کنید.");
-            AddRuntimeText("ui.settings.subtitles_description", "Show narration subtitles in the assistant panel.", "زیرنویس روایت را در پنل دستیار نمایش دهید.");
-            AddRuntimeText("ui.settings.enable_music_description", "Enable command music playback.", "پخش موسیقی فرماندهی را فعال کنید.");
-            AddRuntimeText("ui.settings.enable_sound_description", "Enable UI, combat, alert, and ambience sounds.", "صدای رابط کاربری، نبرد، هشدار و محیط را فعال کنید.");
-            AddRuntimeText("ui.settings.enable_voice_description", "Enable tactical assistant voice lines.", "گفتار دستیار تاکتیکی را فعال کنید.");
-            AddRuntimeText("ui.hud.tap_rifle_squad", "SELECT SQUAD", "گروه را انتخاب کنید");
+            AddRuntimeText("ui.settings.music_description", "Adjust in-game music volume.", "صدای موسیقی بازی رو تنظیم کن.");
+            AddRuntimeText("ui.settings.sound_description", "Adjust in-game sound effects volume.", "صدای جلوه‌های صوتی بازی رو تنظیم کن.");
+            AddRuntimeText("ui.settings.voice_description", "Adjust in-game voice volume.", "صدای گفتار بازی رو تنظیم کن.");
+            AddRuntimeText("ui.settings.threat_description", "Show tactical warnings during missions.", "هشدارهای تاکتیکی رو هنگام مأموریت‌ها نمایش بده.");
+            AddRuntimeText("ui.settings.contrast_description", "Increase panel and text contrast.", "کنتراست پنل و متن رو افزایش بده.");
+            AddRuntimeText("ui.settings.large_text_description", "Increase UI text scale for readability.", "اندازه متن رابط کاربری رو برای خوانایی افزایش بده.");
+            AddRuntimeText("ui.settings.takeover_description", "Allow assistant-guided bounded actions.", "اقدام‌های محدود با هدایت دستیار رو مجاز کن.");
+            AddRuntimeText("ui.settings.subtitles_description", "Show narration subtitles in the assistant panel.", "زیرنویس روایت رو در پنل دستیار نمایش بده.");
+            AddRuntimeText("ui.settings.enable_music_description", "Enable command music playback.", "پخش موسیقی فرماندهی رو فعال کن.");
+            AddRuntimeText("ui.settings.enable_sound_description", "Enable UI, combat, alert, and ambience sounds.", "صدای رابط کاربری، نبرد، هشدار و محیط رو فعال کن.");
+            AddRuntimeText("ui.settings.enable_voice_description", "Enable tactical assistant voice lines.", "گفتار دستیار تاکتیکی رو فعال کن.");
+            AddRuntimeText("ui.hud.tap_rifle_squad", "SELECT SQUAD", "گروه رو انتخاب کن");
             AddRuntimeText("ui.hud.aria_target", "ARIA TARGET", "هدف آریا");
-            AddRuntimeText("ui.guidance.open_build", "OPEN BUILD", "ساخت را باز کنید");
-            AddRuntimeText("ui.guidance.select_barracks", "SELECT BARRACKS", "سربازخانه را انتخاب کنید");
+            AddRuntimeText("ui.guidance.open_build", "OPEN BUILD", "ساخت رو باز کن");
+            AddRuntimeText("ui.guidance.select_barracks", "SELECT BARRACKS", "سربازخانه رو انتخاب کن");
             AddRuntimeText("ui.guidance.resource_spend", "RESOURCE SPEND", "هزینه منابع");
-            AddRuntimeText("ui.guidance.queue_rifle", "QUEUE RIFLE", "تفنگدار را در صف بگذارید");
-            AddRuntimeText("ui.guidance.select_squad", "SELECT SQUAD", "گروه را انتخاب کنید");
-            AddRuntimeText("ui.guidance.click_destination", "CLICK DESTINATION", "مقصد را انتخاب کنید");
-            AddRuntimeText("ui.guidance.click_enemy", "CLICK ENEMY", "دشمن را انتخاب کنید");
+            AddRuntimeText("ui.guidance.queue_rifle", "QUEUE RIFLE", "تفنگدار رو در صف بذار");
+            AddRuntimeText("ui.guidance.select_squad", "SELECT SQUAD", "گروه رو انتخاب کن");
+            AddRuntimeText("ui.guidance.click_destination", "CLICK DESTINATION", "مقصد رو انتخاب کن");
+            AddRuntimeText("ui.guidance.click_enemy", "CLICK ENEMY", "دشمن رو انتخاب کن");
             AddRuntimeText("ui.common.queued", "QUEUED", "در صف");
             AddRuntimeText("ui.aria.elapsed_hms", "ELAPSED: {0}:{1:00}:{2:00}", "سپری‌شده: {0}:{1:00}:{2:00}");
             AddRuntimeText("ui.aria.elapsed_ms", "ELAPSED: {0:00}:{1:00}", "سپری‌شده: {0:00}:{1:00}");
@@ -853,9 +867,9 @@ namespace Game.Editor
             AddRuntimeText("ui.aria.name", "ARIA", "آریا");
             AddRuntimeText("ui.skirmish.income_multiplier", "Income Multiplier", "ضریب درآمد");
             AddRuntimeText("ui.skirmish.player_auto_ai", "Player Auto AI", "کنترل خودکار بازیکن");
-            AddRuntimeText("ui.skirmish.player_auto_ai_description", "Let the AI control your faction for simulation tests.", "برای آزمایش شبیه‌سازی، کنترل جناح خود را به هوش مصنوعی بسپارید.");
-            AddRuntimeText("ui.skirmish.fog_description", "Hide unexplored areas.", "مناطق کشف‌نشده را پنهان کنید.");
-            AddRuntimeText("ui.skirmish.intel_description", "Reveal enemy tech on scout.", "فناوری دشمن را هنگام شناسایی آشکار کنید.");
+            AddRuntimeText("ui.skirmish.player_auto_ai_description", "Let the AI control your faction for simulation tests.", "برای آزمایش شبیه‌سازی، کنترل جناح خودت رو به هوش مصنوعی بسپار.");
+            AddRuntimeText("ui.skirmish.fog_description", "Hide unexplored areas.", "مناطق کشف‌نشده رو پنهان کن.");
+            AddRuntimeText("ui.skirmish.intel_description", "Reveal enemy tech on scout.", "فناوری دشمن رو هنگام شناسایی آشکار کن.");
             AddRuntimeText("ui.skirmish.starting_money", "Starting Money", "اعتبار آغازین");
             AddRuntimeText("ui.skirmish.aggression", "Aggression", "تهاجم");
             AddRuntimeText("ui.skirmish.fog_of_war", "FOG OF WAR", "مه جنگ");
@@ -882,12 +896,12 @@ namespace Game.Editor
             AddRuntimeText("ui.store.category_offers", "{0} OFFERS", "پیشنهادهای {0}");
             AddRuntimeText("ui.campaign.title", "CAMPAIGN", "کارزار");
             AddRuntimeText("ui.campaign.m01_name", "FIRST CONTACT", "نخستین تماس");
-            AddRuntimeText("ui.campaign.m02_name", "ESTABLISH THE BASE", "پایگاه را بنا کنید");
+            AddRuntimeText("ui.campaign.m02_name", "ESTABLISH THE BASE", "پایگاه رو بنا کن");
             AddRuntimeText("ui.campaign.build_barrack", "BUILD\nBARRACK", "ساخت\nسربازخانه");
             AddRuntimeText("ui.campaign.secure_corridor", "SECURE\nCORRIDOR", "امن‌سازی\nمسیر");
             AddRuntimeText("ui.campaign.start_briefing", "START BRIEFING", "شروع توجیه");
-            AddRuntimeText("ui.splash.default_tip", "Prepare your squads before entering hostile districts.", "پیش از ورود به مناطق دشمن، گروه‌های خود را آماده کنید.");
-            AddRuntimeText("ui.narrative.confirm_skip_accessible", "Confirm skip to gameplay", "رفتن مستقیم به بازی را تأیید کنید");
+            AddRuntimeText("ui.splash.default_tip", "Prepare your squads before entering hostile districts.", "قبل از ورود به مناطق دشمن، گروه‌های خودت رو آماده کن.");
+            AddRuntimeText("ui.narrative.confirm_skip_accessible", "Confirm skip to gameplay", "رفتن مستقیم به بازی رو تأیید کن");
 
             // Match HUD values are frequently rebuilt from live ECS data. Template entries let
             // V3LocalizedTextBindingView translate the rendered value without teaching each view
@@ -925,17 +939,17 @@ namespace Game.Editor
             AddRuntimeText("ui.aria.priority_age.low_expiring", "LOW / EXPIRING", "کم / رو به پایان");
             AddRuntimeText("ui.aria.step", "STEP {0}/{1}", "مرحله {0}/{1}");
             AddRuntimeText("ui.aria.moving_to_cover", "MOVING TO COVER", "در حال حرکت به پوشش");
-            AddRuntimeText("ui.aria.choose_destination", "CHOOSE DESTINATION", "مقصد را انتخاب کنید");
-            AddRuntimeText("ui.aria.press_move", "PRESS MOVE", "حرکت را بزنید");
+            AddRuntimeText("ui.aria.choose_destination", "CHOOSE DESTINATION", "مقصد رو انتخاب کن");
+            AddRuntimeText("ui.aria.press_move", "PRESS MOVE", "حرکت رو بزن");
             AddRuntimeText("ui.aria.attack_issued", "ATTACK ORDER ISSUED", "دستور حمله صادر شد");
-            AddRuntimeText("ui.aria.choose_enemy", "CHOOSE ENEMY", "دشمن را انتخاب کنید");
-            AddRuntimeText("ui.aria.press_attack", "PRESS ATTACK", "حمله را بزنید");
-            AddRuntimeText("ui.aria.moving_body", "Your squad is moving to the marked cover position.", "گروه شما در حال حرکت به موقعیت پوشش علامت‌گذاری‌شده است.");
-            AddRuntimeText("ui.aria.move_target_body", "Tap the highlighted destination to move your squad.", "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید.");
-            AddRuntimeText("ui.aria.move_button_body", "Tap MOVE to select the move command.", "برای انتخاب دستور حرکت، روی «حرکت» بزنید.");
-            AddRuntimeText("ui.aria.attacking_body", "Your squad is engaging the highlighted enemy.", "گروه شما در حال درگیری با دشمن علامت‌گذاری‌شده است.");
-            AddRuntimeText("ui.aria.attack_target_body", "Tap the highlighted enemy to issue the attack.", "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید.");
-            AddRuntimeText("ui.aria.attack_button_body", "Tap ATTACK to select the attack command.", "برای انتخاب دستور حمله، روی «حمله» بزنید.");
+            AddRuntimeText("ui.aria.choose_enemy", "CHOOSE ENEMY", "دشمن رو انتخاب کن");
+            AddRuntimeText("ui.aria.press_attack", "PRESS ATTACK", "حمله رو بزن");
+            AddRuntimeText("ui.aria.moving_body", "Your squad is moving to the marked cover position.", "گروهت داره به محل پوشش مشخص‌شده می‌ره.");
+            AddRuntimeText("ui.aria.move_target_body", "Tap the highlighted destination to move your squad.", "حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.");
+            AddRuntimeText("ui.aria.move_button_body", "Tap MOVE to select the move command.", "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.");
+            AddRuntimeText("ui.aria.attacking_body", "Your squad is engaging the highlighted enemy.", "گروهت داره با دشمن مشخص‌شده می‌جنگه.");
+            AddRuntimeText("ui.aria.attack_target_body", "Tap the highlighted enemy to issue the attack.", "حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.");
+            AddRuntimeText("ui.aria.attack_button_body", "Tap ATTACK to select the attack command.", "«حمله» رو بزن تا دستور حمله انتخاب بشه.");
 
             AddRuntimeText("ui.exchange.materials_amount", "{0} MATERIALS", "{0} مصالح");
             AddRuntimeText("ui.exchange.oil_amount", "{0} OIL", "{0} نفت");
@@ -957,7 +971,7 @@ namespace Game.Editor
             AddRuntimeText("ui.exchange.transport_required", "Logistics transport required.", "وسیله حمل‌ونقل لجستیکی لازم است.");
             AddRuntimeText("ui.exchange.no_requirements", "No special requirements.", "شرایط ویژه‌ای لازم نیست.");
             AddRuntimeText("ui.exchange.blocked", "BLOCKED: {0}", "مسدود: {0}");
-            AddRuntimeText("ui.exchange.confirm_instruction", "Confirm to start a timed logistics exchange.", "برای شروع مبادله زمان‌دار لجستیکی تأیید کنید.");
+            AddRuntimeText("ui.exchange.confirm_instruction", "Confirm to start a timed logistics exchange.", "برای شروع مبادله زمان‌دار لجستیکی تأیید کن.");
             AddRuntimeText("ui.exchange.unavailable", "Exchange unavailable", "مبادله در دسترس نیست");
             AddRuntimeText("ui.exchange.route_locked", "Route locked", "مسیر قفل است");
             AddRuntimeText("ui.exchange.insufficient_materials", "Insufficient Materials", "مصالح کافی نیست");
@@ -974,7 +988,7 @@ namespace Game.Editor
             AddRuntimeText("ui.briefing.location", "LOCATION: {0}", "موقعیت: {0}");
             AddRuntimeText("ui.briefing.hostiles_delayed", "{0} HOSTILES | DELAYED PATROL", "{0} دشمن | گشت با تأخیر");
             AddRuntimeText("ui.briefing.hostiles_confirmed", "{0} CONFIRMED", "{0} تأییدشده");
-            AddRuntimeText("ui.briefing.destroy_patrol_count", "DESTROY THE HOSTILE PATROL ({0})", "گشت دشمن را نابود کنید ({0})");
+            AddRuntimeText("ui.briefing.destroy_patrol_count", "DESTROY THE HOSTILE PATROL ({0})", "گشت دشمن رو نابود کن ({0})");
             AddRuntimeText("ui.briefing.starting_resources", "{0} CR / {1} MAT", "{0} اعتبار / {1} مصالح");
             AddRuntimeText("ui.briefing.barracks_count", "BARRACKS x{0}", "سربازخانه ×{0}");
             AddRuntimeText("ui.result.combat_summary", "SQUAD LOSSES  {0}     •     ENEMIES DEFEATED  {1}", "تلفات گروه  {0}     •     دشمنان شکست‌خورده  {1}");

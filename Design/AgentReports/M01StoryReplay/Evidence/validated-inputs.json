@@ -1,0 +1,10 @@
+{
+  "Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs": "d77c569c587d25c09e03d813d45b721886e593b41abafc81c716ef19bcb0ab1d",
+  "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs": "77a968cf7e60de505be50ea0d3628b02a93b61c8e351bdc420fdaa96cc17b13e",
+  "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativePortraitVoiceSelectionPresentationSystemHelper.cs": "63123f10d5e12344a88e7939c0d5b145a4d45ba7eb4b35451a83631342269faf",
+  "Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeModelUtilitySystemHelper.cs": "ba64d2e2a86aeb233bd3575239979b4847d3923b01034b6eaa12c7c1386d483b",
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs": "d88145c3d26d25bfe1f30dd7f368102682fc106f644ff519fbfc9734232b0ca0",
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeProgressUtility.cs": "262d433016858ef00e58e168a0b08827f9cc8dcf6c2fff8abb7fab7e5e7ebcbd",
+  "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSequence.asset": "114d5cb41bb275e59b51fd357da2f60eaccb8095183e87e267ee6aafc0eedcc4",
+  "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab": "d28c14124bf166b6d8b7019fa4963af0114bb3c4639fdbf3af1521c7912e2a6b"
+}

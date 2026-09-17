@@ -21,10 +21,11 @@ namespace Game.Components
         public uint SourceVersion, GuidanceCompletedMask;
         public float3 ApproachCenter, GateCenter, CoreCenter, ArchiveCenter;
         public Entity Gate, Core, Support;
+        public float ArchiveRadius;
         public int DeadlineMilliseconds, SecureRequiredMilliseconds;
         public int GateRequestId, CoreRequestId, SecureHoldMilliseconds, CounterattackReleaseAtMilliseconds, PreparationMilliseconds;
         public byte Ready, GateInitialized, CoreInitialized, GateDestroyed, CoreDestroyed, CounterattackReleased;
-        public byte SupportLost, ArchiveSecured, Contested, TimedOut;
+        public byte SupportLost, ArchiveSecured, Contested, TimedOut, FriendlyAtArchive;
     }
 
     [InternalBufferCapacity(32)]

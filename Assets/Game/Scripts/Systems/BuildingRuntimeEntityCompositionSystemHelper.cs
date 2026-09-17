@@ -83,6 +83,16 @@ namespace Game.Runtime
                 Scale = 1f
             });
             em.AddComponentData(entity, new LocalToWorld());
+            // Match the visual root's horizontal bounds recentering. Navigation cells
+            // alone cannot pick the face of a tall building or a thin gate.
+            if (definition.HasLocalBounds)
+            {
+                em.AddComponentData(entity, new UnitSelectionHitbox
+                {
+                    Center = new float3(0f, definition.LocalBounds.center.y, 0f),
+                    Extents = (float3)definition.LocalBounds.extents
+                });
+            }
             em.AddComponentData(entity, new UnitGrid
             {
                 Cell = new int2(originCell.x + footprintCells.x / 2, originCell.y + footprintCells.y / 2)

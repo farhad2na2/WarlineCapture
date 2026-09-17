@@ -10,6 +10,50 @@ using UnityEngine.UI;
 public sealed partial class M02EstablishBaseGuidanceTests
 {
     [Test]
+    public void ProductionWaitSurvivesDestroyedDrawerAndClearsWithQueue()
+    {
+        var root = new GameObject("Production drawer", typeof(RectTransform));
+        root.SetActive(false);
+        var helper = new AssistantHighlightPresentationSystemHelper();
+        try
+        {
+            var view = root.AddComponent<BuildDrawerView>();
+            var catalog = root.AddComponent<BuildDrawerCatalogRuntimeView>();
+            catalog.ConfigureForTests(view, null, null);
+            var query = new TrainingQueueQuery { Pending = true };
+            catalog.BindRuntimeQueries(query);
+            helper.BindBuildDrawer(view);
+            helper.BindBuildDrawer(null);
+            UnityEngine.Object.DestroyImmediate(root);
+            Assert.That(helper.HasPendingProduction, Is.True, "Closing the popup must not lose gameplay queue state.");
+            query.Pending = false;
+            SetPrivateField(helper, "_nextProductionQueryAt", 0f);
+            Assert.That(helper.HasPendingProduction, Is.False, "Completion or cancellation must release the wait.");
+            query.HasProductionDeliveryInProgress = true;
+            Assert.That(helper.HasPendingProduction, Is.True, "Dequeuing must not re-offer Build while soldiers are being delivered.");
+            query.HasProductionDeliveryInProgress = false;
+            query.HasProducedUnitsThisAttempt = true;
+            Assert.That(helper.HasProducedUnitsThisAttempt, Is.True, "Completed delivery must remain observable before guidance consumes the mission facts.");
+            query.Pending = true;
+            helper.Unbind();
+            Assert.That(helper.HasPendingProduction, Is.False, "A previous match must not retain a production wait.");
+        }
+        finally { helper.Unbind(); if (root != null) UnityEngine.Object.DestroyImmediate(root); }
+    }
+
+    private sealed class TrainingQueueQuery : IBuildingUiQuery, IBuildingProductionProgressQuery
+    {
+        public bool Pending;
+        public bool HasProductionDeliveryInProgress { get; set; }
+        public bool HasProducedUnitsThisAttempt { get; set; }
+        public void GetFriendlyPendingProductionUiEntries(System.Collections.Generic.List<BuildingPendingProductionUiEntry> entries)
+        {
+            entries.Clear();
+            if (Pending) entries.Add(default);
+        }
+    }
+
+    [Test]
     public void DefenseBuildCueSkipsSelectedTabAndFollowsRealItemThenPlaceClicks()
     {
         UiShellRuntimeGateway.Register(null);

@@ -31,6 +31,12 @@ namespace Game.Runtime
                 var snapshot=cameraSnapshotQuery.GetSingleton<RuntimeCameraSnapshotComponent>();
                 if(!settled || !TryCaptureTourStart(snapshot,map.Blob.Value.Grid.Origin.y,out camera.StartFocus,out camera.StartPerspective))
                 {opening.ElapsedMilliseconds=0; return;}
+                if (state.EntityManager.HasComponent<CampaignMissionRuntimeComponent>(owner) &&
+                    state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning")))
+                {
+                    camera.StartFocus=opening.FriendlyFocus;
+                    camera.StartPerspective=CampaignMissionSpawnSystem.CreateDefenseCommandView(opening.FriendlyFocus).Perspective;
+                }
                 camera.Captured=1; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds;
             }
             int stageTime=opening.ElapsedMilliseconds-camera.StageStartedAtMilliseconds;

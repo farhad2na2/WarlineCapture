@@ -1,0 +1,54 @@
+[M02ProductionWait] result=Passed acknowledged recruitment, destroyed drawer, queue completion and match cleanup
+[M05EnemyCompoundTests] result=Passed sealed-perimeter, APC-clearance, interior-objectives
+[M05EnemyCompoundTests] live=Passed closed gate seals actual navigation footprints
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=1 body=Break the gate, destroy the transmitter, then secure the archive for 20 seconds. You have 12 minutes. Keep the APC alive and finish under 9 minutes for bonus stars.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=2 body=Tap Select mission group below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=3 body=Press Attack, then tap the marked enemy gate. Wait for it to fall. Show Me follows your next required click.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] settled lesson=3 phase=Engage outcome=None produced=0 guidance=BreachGate body=Press Attack, then tap the marked enemy gate. Wait for it to fall. Show Me follows your next required click.
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Attack:(1024.00, 0.01, 445.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=4 body=Press Attack, then tap the marked enemy gate. Wait for it to fall. Show Me follows your next required click.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=BreachAdvance body=Select your rifles, press Move, and tap the marked approach beyond the gate. Keep the team together; enemy reinforcements are responding.
+[CampaignPlayerJourney] action=4:MoveCommand
+[CampaignPlayerJourney] action=4:ShowMeButton
+[CampaignPlayerJourney] action=4:Move:(1007.00, 0.01, 463.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=5 body=Select your rifles, press Move, and tap the marked approach beyond the gate. Keep the team together; enemy reinforcements are responding.
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=BreachCore body=Select a friendly unit, press Attack, then tap the marked satellite transmitter. Destroying it opens the archive objective.
+[CampaignPlayerJourney] action=5:AttackCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Attack:(1043.00, 0.01, 468.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=8 body=Select a friendly unit, press Attack, then tap the marked satellite transmitter. Destroying it opens the archive objective.
+[CampaignPlayerJourney] settled lesson=8 phase=Engage outcome=None produced=0 guidance=BreachHold body=Recovering the archive: 18 seconds left. Keep at least one unit inside the marked area. Leaving resets recovery.
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=en lesson=0 body=Recovering the archive: 1 seconds left. Keep at least one unit inside the marked area. Leaving resets recovery.
+[CampaignPlayerJourney] victory=saga.ch01.m05.breach_assault locale=en
+[M05EnemyCompoundTests] live=Passed closed gate seals actual navigation footprints
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=1 body=دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=2 body=پایین صفحه، «انتخاب گروه مأموریت» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=3 body=«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] settled lesson=3 phase=Engage outcome=None produced=0 guidance=BreachGate body=«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Attack:(1024.00, 0.01, 445.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=4 body=«حمله» رو بزن، بعد دروازهٔ مشخص‌شدهٔ دشمن رو انتخاب کن. صبر کن تا نابود بشه. «نشان بده» می‌گه قدم بعدی رو کجا بزنی.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=BreachAdvance body=گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.
+[CampaignPlayerJourney] action=4:MoveCommand
+[CampaignPlayerJourney] action=4:ShowMeButton
+[CampaignPlayerJourney] action=4:Move:(1007.00, 0.01, 463.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=5 body=گروه تفنگدارها رو انتخاب کن، «حرکت» رو بزن و ببرشون به مقصد مشخص‌شده اون‌طرف دروازه. کنار هم نگهشون دار؛ نیروی کمکی دشمن توی راهه.
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=BreachCore body=یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.
+[CampaignPlayerJourney] action=5:AttackCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Attack:(1043.00, 0.01, 468.00)
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=8 body=یه نیروی خودی رو انتخاب کن، «حمله» رو بزن، بعد فرستندهٔ ماهواره‌ای مشخص‌شده رو بزن. وقتی نابود بشه، می‌تونی سراغ بایگانی بری.
+[CampaignPlayerJourney] settled lesson=8 phase=Engage outcome=None produced=0 guidance=BreachHold body=دارم اسناد رو بازیابی می‌کنم؛ 18 ثانیه مونده. حداقل یه نیرو رو توی محدوده نگه دار. اگه همه خارج بشن، باید از اول شروع کنیم.
+[CampaignPlayerJourney] mission=saga.ch01.m05.breach_assault locale=fa-IR lesson=0 body=دارم اسناد رو بازیابی می‌کنم؛ 1 ثانیه مونده. حداقل یه نیرو رو توی محدوده نگه دار. اگه همه خارج بشن، باید از اول شروع کنیم.
+[CampaignPlayerJourney] victory=saga.ch01.m05.breach_assault locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m05.breach_assault
+Wrapper exit: 0

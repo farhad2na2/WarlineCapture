@@ -26,7 +26,7 @@ namespace Game.Runtime
             foreach(var ack in acks) if(ack.GuidanceId==65001 && ack.SessionToken.Equals(runtime.SessionToken) && ack.AttemptOrdinal==runtime.AttemptOrdinal) breach.GuidanceCompletedMask|=1;
             acks.Clear();
             var members=em.GetBuffer<CampaignMissionBreachMember>(root,true);
-            Entity actor=Entity.Null,rifle=Entity.Null,hostile=Entity.Null; bool rifleThrough=false,atArchive=false;
+            Entity actor=Entity.Null,rifle=Entity.Null,hostile=Entity.Null; bool rifleThrough=false,atArchive=breach.FriendlyAtArchive!=0;
             foreach(var member in members)
             {
                 var e=member.Entity;
@@ -37,7 +37,6 @@ namespace Game.Runtime
                     if(actor==Entity.Null || em.HasComponent<SelectedUnitTag>(e)) actor=e;
                     if(member.Kind==0 && (rifle==Entity.Null || em.HasComponent<SelectedUnitTag>(e))) rifle=e;
                     if(member.Kind==0 && math.distancesq(position.xz,breach.ArchiveCenter.xz)<28*28) rifleThrough=true;
-                    if(math.distancesq(position.xz,breach.ArchiveCenter.xz)<18*18) atArchive=true;
                 }
                 else if(hostile==Entity.Null) hostile=e;
             }
@@ -63,7 +62,7 @@ namespace Game.Runtime
                 TargetKind=step==2?AssistantTargetKind.Squad:target!=Entity.Null?AssistantTargetKind.Entity:AssistantTargetKind.WorldPosition,
                 SourceEntity=actor,TargetEntity=step==2?actor:target,WorldPosition=destination,HasWorldPosition=1,Title=title,Body=body,
                 ActionLabel=step==1?RadarContinue:RadarAct,CanExecute=(step<8 || !atArchive)&&(step!=6||target!=Entity.Null)?(byte)1:(byte)0,
-                CanShow=(step<8 || !atArchive)&&(step!=6||target!=Entity.Null)?(byte)1:(byte)0,
+                CanShow=(step!=6||target!=Entity.Null)?(byte)1:(byte)0,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled};
             if(!ProjectionEquals(in current,in next) || current.MissionSourceVersion!=next.MissionSourceVersion) em.SetComponentData(root,next);
             return true;

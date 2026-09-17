@@ -138,6 +138,12 @@ namespace Game.Runtime
 
             if (HoldCameraForPlacementPointer(context)) return false;
 
+            // Closing the drawer may clear BuildModeActive while its placement remains live.
+            // Neither the normal-mode nor build-mode blend may undo the preview's framing.
+            if (context.BuildingPlacementInteractionCompositionSystemHelper != null &&
+                context.BuildingPlacementInteractionCompositionSystemHelper.HasPendingBuildingPlacement(context.BuildingPlacementInteractionContext))
+                return false;
+
             bool tacticalFollowOwnsCamera = TacticalFollowOwnsCamera(context);
             if (tacticalFollowOwnsCamera)
             {

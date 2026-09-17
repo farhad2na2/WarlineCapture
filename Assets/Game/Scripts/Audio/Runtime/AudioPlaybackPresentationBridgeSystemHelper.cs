@@ -25,7 +25,6 @@ namespace Game.Runtime
     public sealed partial class AudioPlaybackPresentationBridgeSystemHelper : System.IDisposable
     {
         private const float SettingsMusicFadeSeconds = 0.35f;
-        private const string AriaMatchEventPrefix = "VO.ARIA.Message.";
         internal const string PersianLocaleCode = "fa-IR";
 
         private readonly Dictionary<uint, AudioEventCatalogEntry> _eventsByHash = new();
@@ -34,9 +33,6 @@ namespace Game.Runtime
         private AudioMixerBusConfig _mixerBusConfig;
         private int _lastPresentedRequestId;
         private uint _lastAppliedSettingsVersion;
-        private bool _hasCompletePersianAriaCatalog;
-        private bool _hasResolvedAriaLocale;
-        private string _ariaLocaleCode;
         private readonly AudioGameplayStateQueryCache _simulationStateQuery = new();
 
         public int LastPresentedRequestId => _lastPresentedRequestId;
@@ -131,6 +127,8 @@ namespace Game.Runtime
             DynamicBuffer<AudioPlaybackRequestElement> requests = em.GetBuffer<AudioPlaybackRequestElement>(audioEntity);
 
             bool simulationActive = IsGameplaySimulationActive(em);
+            if (!simulationActive)
+                playbackHelper.StopGameplaySources();
             int presented = 0;
             int played = 0;
             int failed = 0;
@@ -191,8 +189,6 @@ namespace Game.Runtime
         {
             _lastPresentedRequestId = 0;
             _lastAppliedSettingsVersion = 0;
-            _hasResolvedAriaLocale = false;
-            _ariaLocaleCode = null;
         }
         public void Dispose()
         {

@@ -303,6 +303,8 @@ namespace Game.Composition
             BindSequenceEvents();
             reviewPresentation.Initialize(reviewerMode, view, sequencePresentation);
             profileComposition.MarkInProgress(reviewerMode);
+            sequencePresentation.ApplyCommanderIdentity(
+                profileComposition.CommanderIdentity, profileComposition.CommanderPortraitIndex);
             sequencePresentation.Start();
             reviewPresentation.Refresh(true);
             return true;

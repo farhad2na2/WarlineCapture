@@ -205,6 +205,17 @@ namespace Game.Runtime
                 LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero
             };
 
+            // Show the span that will block traffic, rather than the prefab's raised arm.
+            if (BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition) && ActivePlacement.PreviewInstance != null)
+                foreach (var part in ActivePlacement.PreviewInstance.GetComponentsInChildren<Transform>(true))
+                    if (part.name == "Door_Z")
+                    {
+                        var angles = part.localEulerAngles;
+                        angles.z = 0f;
+                        part.localEulerAngles = angles;
+                        break;
+                    }
+
             context.UpdatePlacementVisual?.Invoke(ActivePlacement, false, default);
             if (ActivePlacement != null)
                 context.FocusPlacement?.Invoke(ActivePlacement);

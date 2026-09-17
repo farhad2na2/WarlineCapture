@@ -1,0 +1,1760 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="267" result="Failed(Child)" total="267" passed="262" failed="5" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 21:28:19Z" end-time="2026-09-16 21:29:34Z" duration="75.2962153">
+  <test-suite type="TestSuite" id="1000" name="Warline M5 Compound QA" fullname="Warline M5 Compound QA" runstate="Runnable" testcasecount="4575" result="Failed" site="Child" start-time="2026-09-16 21:28:19Z" end-time="2026-09-16 21:29:34Z" duration="75.296215" total="267" passed="262" failed="5" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="6193" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-readiness-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4574" result="Failed" site="Child" start-time="2026-09-16 21:28:19Z" end-time="2026-09-16 21:29:34Z" duration="75.272453" total="267" passed="262" failed="5" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45230" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestFixture" id="1187" name="AriaTutorialPresentationV3PrefabTests" fullname="AriaTutorialPresentationV3PrefabTests" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.309459" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1191" name="EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" fullname="AriaTutorialPresentationV3PrefabTests.EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" methodname="EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="2063291206" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.289959" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1189" name="MatchHud_EmbedsOnlyDoItAndShowMeActions" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_EmbedsOnlyDoItAndShowMeActions" methodname="MatchHud_EmbedsOnlyDoItAndShowMeActions" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="530299559" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.000517" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1188" name="MatchHud_OwnsTheOnlyTutorialAriaPanel" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_OwnsTheOnlyTutorialAriaPanel" methodname="MatchHud_OwnsTheOnlyTutorialAriaPanel" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="1768724410" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.000244" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1190" name="Popup_DoesNotContainASecondTutorialSurface" fullname="AriaTutorialPresentationV3PrefabTests.Popup_DoesNotContainASecondTutorialSurface" methodname="Popup_DoesNotContainASecondTutorialSurface" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="411874014" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.007845" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1333" name="AudioPlaybackPresentationBridgeSystemHelperTests" fullname="AudioPlaybackPresentationBridgeSystemHelperTests" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.313902" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1334" name="AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" methodname="AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1394870894" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.117756" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1340" name="DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" methodname="DrainAcceptedRequests_CullsGameplayVoiceWhileSimulationInactive" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1498726268" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022154" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1336" name="DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" methodname="DrainAcceptedRequests_DoesNotReplayPresentedRequestWithNewBridge" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="244048630" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.012069" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1343" name="DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" methodname="DrainAcceptedRequests_FadesSettingsChangesOnActiveMusicSource" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="2082226877" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.021960" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1335" name="DrainAcceptedRequests_PlaysAcceptedRequestOnce" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_PlaysAcceptedRequestOnce" methodname="DrainAcceptedRequests_PlaysAcceptedRequestOnce" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="2005594080" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022274" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1342" name="DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" methodname="DrainAcceptedRequests_RebindsGameplayStateQueryWhenWorldChanges" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="87626890" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022139" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1339" name="DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" methodname="DrainAcceptedRequests_RecordsMissingEventWithoutPlayback" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1338260407" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.000826" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1341" name="DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" methodname="DrainAcceptedRequests_ReusesGameplayStateQueryWithoutManagedAllocation" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="33496693" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.001924" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1338" name="DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" methodname="DrainAcceptedRequests_SkipsPendingAndCooldownSkippedRequests" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1059483880" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.000570" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="1347" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.039000" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="1345" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Victory)" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Victory)" methodname="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1026275043" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.012560" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="1346" name="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Defeat)" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Defeat)" methodname="MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1809751080" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022819" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+        <test-case id="1337" name="ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" methodname="ReconcileCurrentMusicState_ReplaysIntoRecreatedPresentationOnlyOnce" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="2086224197" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022714" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1344" name="TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" fullname="AudioPlaybackPresentationBridgeSystemHelperTests.TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" methodname="TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge" classname="AudioPlaybackPresentationBridgeSystemHelperTests" runstate="Runnable" seed="1084891632" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.023916" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1356" name="AudioPlaybackPresentationSystemHelperTests" fullname="AudioPlaybackPresentationSystemHelperTests" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" testcasecount="13" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:21Z" duration="0.210584" total="13" passed="13" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1367" name="ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" fullname="AudioPlaybackPresentationSystemHelperTests.ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" methodname="ApplySettingsToActiveSources_FadesMusicLoopVolumeWhenRequested" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="231172382" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.011134" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1366" name="ApplySettingsToActiveSources_UpdatesMusicLoopVolume" fullname="AudioPlaybackPresentationSystemHelperTests.ApplySettingsToActiveSources_UpdatesMusicLoopVolume" methodname="ApplySettingsToActiveSources_UpdatesMusicLoopVolume" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="722649288" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022449" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1357" name="Helper_PrewarmsPoolWithoutPlaying" fullname="AudioPlaybackPresentationSystemHelperTests.Helper_PrewarmsPoolWithoutPlaying" methodname="Helper_PrewarmsPoolWithoutPlaying" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="47318531" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.000214" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1363" name="PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" methodname="PlayAcceptedRequest_ConfiguresMissileSpatialSfxForRtsScaleAudibility" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="191264563" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.023111" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1365" name="PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" methodname="PlayAcceptedRequest_ConfiguresSpatialSfxForCameraLocalAudibility" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1646069053" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022232" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1368" name="PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" methodname="PlayAcceptedRequest_CrossfadesMusicStatesAndReleasesOutgoingLoop" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="2082913015" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022657" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1359" name="PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" methodname="PlayAcceptedRequest_CullsWhenEventMaxInstancesReached" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1918968853" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.021512" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1361" name="PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" methodname="PlayAcceptedRequest_InterruptibleVoiceCannotReplaceHigherPriorityVoice" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1079130837" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:20Z" duration="0.022700" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1360" name="PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" methodname="PlayAcceptedRequest_InterruptibleVoiceReplacesOlderEqualPriorityVoice" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1041779380" result="Passed" start-time="2026-09-16 21:28:20Z" end-time="2026-09-16 21:28:21Z" duration="0.023024" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1362" name="PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" methodname="PlayAcceptedRequest_ReturnsMissingClipForEmptyCatalogEntry" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="670410147" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000763" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1358" name="PlayAcceptedRequest_ReusesPoolAfterStopAll" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_ReusesPoolAfterStopAll" methodname="PlayAcceptedRequest_ReusesPoolAfterStopAll" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1248570734" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.011384" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1369" name="PlayAcceptedRequest_SelectsRequestedLocalizedClip" fullname="AudioPlaybackPresentationSystemHelperTests.PlayAcceptedRequest_SelectsRequestedLocalizedClip" methodname="PlayAcceptedRequest_SelectsRequestedLocalizedClip" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1565552791" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.023273" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1364" name="ResolveLinearVolume_AppliesMasterAndBusSettings" fullname="AudioPlaybackPresentationSystemHelperTests.ResolveLinearVolume_AppliesMasterAndBusSettings" methodname="ResolveLinearVolume_AppliesMasterAndBusSettings" classname="AudioPlaybackPresentationSystemHelperTests" runstate="Runnable" seed="1656342647" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000805" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1541" name="BuildingPlacementCommitCompositionSystemHelperTests" fullname="BuildingPlacementCommitCompositionSystemHelperTests" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.008391" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1546" name="InvalidRequestReportsNoCommit" fullname="BuildingPlacementCommitCompositionSystemHelperTests.InvalidRequestReportsNoCommit" methodname="InvalidRequestReportsNoCommit" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="728725211" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000703" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1542" name="SinglePlacementWithoutAutoSelectReportsCommittedOutcome" fullname="BuildingPlacementCommitCompositionSystemHelperTests.SinglePlacementWithoutAutoSelectReportsCommittedOutcome" methodname="SinglePlacementWithoutAutoSelectReportsCommittedOutcome" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="681798760" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000885" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1543" name="SingleRegistrationFailureReportsNoCommit" fullname="BuildingPlacementCommitCompositionSystemHelperTests.SingleRegistrationFailureReportsNoCommit" methodname="SingleRegistrationFailureReportsNoCommit" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="849450102" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000190" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1544" name="WallPlacementCompleteSuccessReportsAllCommittedInstances" fullname="BuildingPlacementCommitCompositionSystemHelperTests.WallPlacementCompleteSuccessReportsAllCommittedInstances" methodname="WallPlacementCompleteSuccessReportsAllCommittedInstances" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="346561510" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000932" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1545" name="WallPlacementRegistrationFailureRollsBackRegisteredSegments" fullname="BuildingPlacementCommitCompositionSystemHelperTests.WallPlacementRegistrationFailureRollsBackRegisteredSegments" methodname="WallPlacementRegistrationFailureRollsBackRegisteredSegments" classname="BuildingPlacementCommitCompositionSystemHelperTests" runstate="Runnable" seed="1189709366" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000370" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1547" name="BuildingPlacementConstructionTransactionTests" fullname="BuildingPlacementConstructionTransactionTests" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.014096" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1548" name="AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" methodname="AffordablePlacement_SpendsCreditsAndMaterialsExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="554365548" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.008009" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1549" name="CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" fullname="BuildingPlacementConstructionTransactionTests.CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" methodname="CanonicalMaterialsShortage_DoesNotCommitOrMutateResources" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1384620805" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000761" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1553" name="DuplicateTransaction_DoesNotSpendOrCommitTwice" fullname="BuildingPlacementConstructionTransactionTests.DuplicateTransaction_DoesNotSpendOrCommitTwice" methodname="DuplicateTransaction_DoesNotSpendOrCommitTwice" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="1386575" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000251" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1550" name="InvalidPlacementAndPreviewCancel_SpendNothing" fullname="BuildingPlacementConstructionTransactionTests.InvalidPlacementAndPreviewCancel_SpendNothing" methodname="InvalidPlacementAndPreviewCancel_SpendNothing" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="2041997037" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000416" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1552" name="PartialRegistration_RollsBackResourcesExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.PartialRegistration_RollsBackResourcesExactlyOnce" methodname="PartialRegistration_RollsBackResourcesExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="969971556" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000375" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1551" name="RegistrationFailure_RollsBackResourcesExactlyOnce" fullname="BuildingPlacementConstructionTransactionTests.RegistrationFailure_RollsBackResourcesExactlyOnce" methodname="RegistrationFailure_RollsBackResourcesExactlyOnce" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="2046294981" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000214" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1554" name="SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" fullname="BuildingPlacementConstructionTransactionTests.SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" methodname="SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot" classname="BuildingPlacementConstructionTransactionTests" runstate="Runnable" seed="99185461" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000493" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1818" name="CampaignReadinessLifecycleTests" fullname="CampaignReadinessLifecycleTests" classname="CampaignReadinessLifecycleTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.020057" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1819" name="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" fullname="CampaignReadinessLifecycleTests.ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" methodname="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1714767690" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001658" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1820" name="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" fullname="CampaignReadinessLifecycleTests.DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" methodname="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1525940233" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.015740" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1829" name="CampaignTutorialClarityTests" fullname="CampaignTutorialClarityTests" classname="CampaignTutorialClarityTests" runstate="Runnable" testcasecount="7" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.020156" total="7" passed="7" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1836" name="AttentionPulseRespectsReducedMotion" fullname="CampaignTutorialClarityTests.AttentionPulseRespectsReducedMotion" methodname="AttentionPulseRespectsReducedMotion" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1399086155" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000174" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1834" name="AttentionPulseWaitsResetsAndNeverChangesHitAreas" fullname="CampaignTutorialClarityTests.AttentionPulseWaitsResetsAndNeverChangesHitAreas" methodname="AttentionPulseWaitsResetsAndNeverChangesHitAreas" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="841858950" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.002720" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1832" name="BreachLegacyReplayStartsAndAdvancesFromRealSelection" fullname="CampaignTutorialClarityTests.BreachLegacyReplayStartsAndAdvancesFromRealSelection" methodname="BreachLegacyReplayStartsAndAdvancesFromRealSelection" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="420912653" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.008045" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1833" name="CommandCameraStartsFortyUnitsAboveGround" fullname="CampaignTutorialClarityTests.CommandCameraStartsFortyUnitsAboveGround" methodname="CommandCameraStartsFortyUnitsAboveGround" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="956756786" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000374" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1835" name="EdgeButtonCaptionsStayInsideScreen" fullname="CampaignTutorialClarityTests.EdgeButtonCaptionsStayInsideScreen" methodname="EdgeButtonCaptionsStayInsideScreen" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1112420881" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000400" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1830" name="EveryCampaignEntryAndRetryRequiresFullGuidance" fullname="CampaignTutorialClarityTests.EveryCampaignEntryAndRetryRequiresFullGuidance" methodname="EveryCampaignEntryAndRetryRequiresFullGuidance" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1686264916" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001145" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1831" name="OldEarlyMissionSessionsStillProjectInstructions" fullname="CampaignTutorialClarityTests.OldEarlyMissionSessionsStillProjectInstructions" methodname="OldEarlyMissionSessionsStillProjectInstructions" classname="CampaignTutorialClarityTests" runstate="Runnable" seed="1766596403" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.003531" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2501" name="M01FirstContactHudResultTests" fullname="M01FirstContactHudResultTests" classname="M01FirstContactHudResultTests" runstate="Runnable" testcasecount="12" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.181318" total="12" passed="12" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2506" name="ContinueAdvancesReplayToCampaignReturn" fullname="M01FirstContactHudResultTests.ContinueAdvancesReplayToCampaignReturn" methodname="ContinueAdvancesReplayToCampaignReturn" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="456098801" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.004042" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2504" name="ContinueAdvancesToOwnedDestination" fullname="M01FirstContactHudResultTests.ContinueAdvancesToOwnedDestination" methodname="ContinueAdvancesToOwnedDestination" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="1518554115" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000311" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2509" name="ContinueQueuesReturnToMainMenu" fullname="M01FirstContactHudResultTests.ContinueQueuesReturnToMainMenu" methodname="ContinueQueuesReturnToMainMenu" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="1338655508" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000673" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2503" name="ContinueRequiresAcceptedSettlement" fullname="M01FirstContactHudResultTests.ContinueRequiresAcceptedSettlement" methodname="ContinueRequiresAcceptedSettlement" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="803687832" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000357" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2507" name="GatewayRejectsDuplicateResultInput" fullname="M01FirstContactHudResultTests.GatewayRejectsDuplicateResultInput" methodname="GatewayRejectsDuplicateResultInput" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="1881015923" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001070" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2508" name="HudViewDoesNotOwnElapsedTime" fullname="M01FirstContactHudResultTests.HudViewDoesNotOwnElapsedTime" methodname="HudViewDoesNotOwnElapsedTime" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="709110609" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000382" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2510" name="PrefabsCarryProductionBindings" fullname="M01FirstContactHudResultTests.PrefabsCarryProductionBindings" methodname="PrefabsCarryProductionBindings" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="734284931" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.014996" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2512" name="ResultActionsExposeLivePointerTargets" fullname="M01FirstContactHudResultTests.ResultActionsExposeLivePointerTargets" methodname="ResultActionsExposeLivePointerTargets" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="894121679" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000568" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2511" name="ResultGatewayFormatsOnlyAuthoritativeOutcomeRewards" fullname="M01FirstContactHudResultTests.ResultGatewayFormatsOnlyAuthoritativeOutcomeRewards" methodname="ResultGatewayFormatsOnlyAuthoritativeOutcomeRewards" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="1523531355" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000507" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2502" name="ResultModelCarriesAuthoritativeFacts" fullname="M01FirstContactHudResultTests.ResultModelCarriesAuthoritativeFacts" methodname="ResultModelCarriesAuthoritativeFacts" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="1303642640" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000428" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2513" name="ResultPopupCapturesSupportedAspects" fullname="M01FirstContactHudResultTests.ResultPopupCapturesSupportedAspects" methodname="ResultPopupCapturesSupportedAspects" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="489747643" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.150441" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M01DC031Capture] aspect=victory_16x9 size=1280x720 sha256=b137a285a2de24f81a9f5bc132604e07a3e918d57a5d7769e7784e696a324f83 path=Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_16x9.png
+[M01DC031Capture] aspect=defeat_20x9 size=1000x450 sha256=f9fdb87697808b64fa2100437cbb0b65c1139629e933f583efd2cd9c7cbf4cee path=Build/EditorEvidence/M01FirstContact/M01DC031/result_defeat_20x9.png
+[M01DC031Capture] aspect=victory_tablet4x3 size=1024x768 sha256=ccb55211ae2e1202f435a9536948893b3f8520d176dd0ed1f45fd8a31654d10b path=Build/EditorEvidence/M01FirstContact/M01DC031/result_victory_tablet4x3.png
+]]></output>
+        </test-case>
+        <test-case id="2505" name="RetryQueuesOneCorrelatedAttempt" fullname="M01FirstContactHudResultTests.RetryQueuesOneCorrelatedAttempt" methodname="RetryQueuesOneCorrelatedAttempt" classname="M01FirstContactHudResultTests" runstate="Runnable" seed="414062742" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001504" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2582" name="M01FirstContactProgressStoreTests" fullname="M01FirstContactProgressStoreTests" classname="M01FirstContactProgressStoreTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.034512" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2591" name="BestMetricsOnlyImprove" fullname="M01FirstContactProgressStoreTests.BestMetricsOnlyImprove" methodname="BestMetricsOnlyImprove" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1081926647" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.005830" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2597" name="CorruptProfileDoesNotInventProgress" fullname="M01FirstContactProgressStoreTests.CorruptProfileDoesNotInventProgress" methodname="CorruptProfileDoesNotInventProgress" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="348822064" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000495" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2589" name="DuplicateSettlementTokenIsIgnored" fullname="M01FirstContactProgressStoreTests.DuplicateSettlementTokenIsIgnored" methodname="DuplicateSettlementTokenIsIgnored" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="83114420" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000814" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2586" name="EnsureAvailableIsIdempotent" fullname="M01FirstContactProgressStoreTests.EnsureAvailableIsIdempotent" methodname="EnsureAvailableIsIdempotent" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1818489898" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000811" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2585" name="EntriesNormalizeAndSortDeterministically" fullname="M01FirstContactProgressStoreTests.EntriesNormalizeAndSortDeterministically" methodname="EntriesNormalizeAndSortDeterministically" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1022858301" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000659" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2588" name="FirstClearSettlementPersists" fullname="M01FirstContactProgressStoreTests.FirstClearSettlementPersists" methodname="FirstClearSettlementPersists" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1182221040" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001111" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2595" name="FutureEntrySchemaDoesNotInventProgress" fullname="M01FirstContactProgressStoreTests.FutureEntrySchemaDoesNotInventProgress" methodname="FutureEntrySchemaDoesNotInventProgress" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1088847545" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000632" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2596" name="FutureProfileSchemaDoesNotInventProgress" fullname="M01FirstContactProgressStoreTests.FutureProfileSchemaDoesNotInventProgress" methodname="FutureProfileSchemaDoesNotInventProgress" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="590294727" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000434" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2598" name="InterruptedAtomicReplacePreservesPriorProfile" fullname="M01FirstContactProgressStoreTests.InterruptedAtomicReplacePreservesPriorProfile" methodname="InterruptedAtomicReplacePreservesPriorProfile" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="2120646169" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001762" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2587" name="LegacyM01FirstClearUnlocksM02Once" fullname="M01FirstContactProgressStoreTests.LegacyM01FirstClearUnlocksM02Once" methodname="LegacyM01FirstClearUnlocksM02Once" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1218001143" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001882" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2583" name="NewProfileHasNoInventedProgress" fullname="M01FirstContactProgressStoreTests.NewProfileHasNoInventedProgress" methodname="NewProfileHasNoInventedProgress" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="2043048954" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000206" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2592" name="NextMissionRevealIsPersisted" fullname="M01FirstContactProgressStoreTests.NextMissionRevealIsPersisted" methodname="NextMissionRevealIsPersisted" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="752078998" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000574" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2584" name="OlderProfileMigratesAdditively" fullname="M01FirstContactProgressStoreTests.OlderProfileMigratesAdditively" methodname="OlderProfileMigratesAdditively" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1064721744" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000388" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2593" name="PendingResumeRoundTrips" fullname="M01FirstContactProgressStoreTests.PendingResumeRoundTrips" methodname="PendingResumeRoundTrips" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1497797107" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000653" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2590" name="ReplaySettlementCountsOnce" fullname="M01FirstContactProgressStoreTests.ReplaySettlementCountsOnce" methodname="ReplaySettlementCountsOnce" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1072836460" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000588" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2594" name="RestartPreservesProgressSettingsAndQuickGame" fullname="M01FirstContactProgressStoreTests.RestartPreservesProgressSettingsAndQuickGame" methodname="RestartPreservesProgressSettingsAndQuickGame" classname="M01FirstContactProgressStoreTests" runstate="Runnable" seed="1673294784" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001298" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2599" name="M01FirstContactResultRuleTests" fullname="M01FirstContactResultRuleTests" classname="M01FirstContactResultRuleTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.406307" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2600" name="AllFiveStarCombinationsAreDeterministic" fullname="M01FirstContactResultRuleTests.AllFiveStarCombinationsAreDeterministic" methodname="AllFiveStarCombinationsAreDeterministic" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="2099219665" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.009929" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2606" name="AuthoredRulesRemainTheOnlyThresholdAuthority" fullname="M01FirstContactResultRuleTests.AuthoredRulesRemainTheOnlyThresholdAuthority" methodname="AuthoredRulesRemainTheOnlyThresholdAuthority" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="1806772620" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001081" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2601" name="FourMinuteBoundaryNeverFailsMission" fullname="M01FirstContactResultRuleTests.FourMinuteBoundaryNeverFailsMission" methodname="FourMinuteBoundaryNeverFailsMission" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="1721013964" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000660" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2605" name="InvalidOrContradictoryFactsFailClosed" fullname="M01FirstContactResultRuleTests.InvalidOrContradictoryFactsFailClosed" methodname="InvalidOrContradictoryFactsFailClosed" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="366175487" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000369" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2604" name="NewAttemptProjectsWithoutMutatingPriorBestData" fullname="M01FirstContactResultRuleTests.NewAttemptProjectsWithoutMutatingPriorBestData" methodname="NewAttemptProjectsWithoutMutatingPriorBestData" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="572268952" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000413" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2603" name="RepeatedUpdateIsImmutableAndQueuesSettlementOnce" fullname="M01FirstContactResultRuleTests.RepeatedUpdateIsImmutableAndQueuesSettlementOnce" methodname="RepeatedUpdateIsImmutableAndQueuesSettlementOnce" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="839412019" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000726" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2602" name="ResultCarriesAttemptIdentityAndReturnRoute" fullname="M01FirstContactResultRuleTests.ResultCarriesAttemptIdentityAndReturnRoute" methodname="ResultCarriesAttemptIdentityAndReturnRoute" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="573787228" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000388" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2607" name="ResultUiIsReadOnlyAndProjectionHasOneWriter" fullname="M01FirstContactResultRuleTests.ResultUiIsReadOnlyAndProjectionHasOneWriter" methodname="ResultUiIsReadOnlyAndProjectionHasOneWriter" classname="M01FirstContactResultRuleTests" runstate="Runnable" seed="1900177878" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.389261" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2617" name="M01FirstContactSettlementTests" fullname="M01FirstContactSettlementTests" classname="M01FirstContactSettlementTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.018515" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2619" name="CampaignOriginFirstClearSettlesAndReturnsToCampaign" fullname="M01FirstContactSettlementTests.CampaignOriginFirstClearSettlesAndReturnsToCampaign" methodname="CampaignOriginFirstClearSettlesAndReturnsToCampaign" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="992286960" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.002054" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2629" name="DefeatNeverSettlesOrGrants" fullname="M01FirstContactSettlementTests.DefeatNeverSettlesOrGrants" methodname="DefeatNeverSettlesOrGrants" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1236933489" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000333" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2627" name="FirstClearAndReplayRequireDifferentReturnRoutes" fullname="M01FirstContactSettlementTests.FirstClearAndReplayRequireDifferentReturnRoutes" methodname="FirstClearAndReplayRequireDifferentReturnRoutes" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1980483602" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000179" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2618" name="FirstClearGrantsConfiguredRewardsAndRevealsM02" fullname="M01FirstContactSettlementTests.FirstClearGrantsConfiguredRewardsAndRevealsM02" methodname="FirstClearGrantsConfiguredRewardsAndRevealsM02" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1259147100" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000946" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2631" name="IntelAndUnknownCustomRewardsFailClosed" fullname="M01FirstContactSettlementTests.IntelAndUnknownCustomRewardsFailClosed" methodname="IntelAndUnknownCustomRewardsFailClosed" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="14333801" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000454" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2626" name="InterruptedSavePreservesPriorRewardsAndProgress" fullname="M01FirstContactSettlementTests.InterruptedSavePreservesPriorRewardsAndProgress" methodname="InterruptedSavePreservesPriorRewardsAndProgress" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1705488281" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001457" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2625" name="LegacyLastTokenMigratesIntoHistory" fullname="M01FirstContactSettlementTests.LegacyLastTokenMigratesIntoHistory" methodname="LegacyLastTokenMigratesIntoHistory" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1087183698" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000716" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2622" name="OlderTokenAfterNewerReplayCannotGrantAgain" fullname="M01FirstContactSettlementTests.OlderTokenAfterNewerReplayCannotGrantAgain" methodname="OlderTokenAfterNewerReplayCannotGrantAgain" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="326605850" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001520" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2632" name="PendingResumeClearsOnlyAfterAcceptedVictory" fullname="M01FirstContactSettlementTests.PendingResumeClearsOnlyAfterAcceptedVictory" methodname="PendingResumeClearsOnlyAfterAcceptedVictory" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="843608678" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001229" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2621" name="RecoveredFirstClearCanExitWithoutGrantingAgain" fullname="M01FirstContactSettlementTests.RecoveredFirstClearCanExitWithoutGrantingAgain" methodname="RecoveredFirstClearCanExitWithoutGrantingAgain" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1298529144" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000911" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2620" name="RepeatedCurrentTokenReturnsPriorSuccessWithoutGrant" fullname="M01FirstContactSettlementTests.RepeatedCurrentTokenReturnsPriorSuccessWithoutGrant" methodname="RepeatedCurrentTokenReturnsPriorSuccessWithoutGrant" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1763754282" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000897" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2630" name="ReplayBeforeFirstClearFailsClosed" fullname="M01FirstContactSettlementTests.ReplayBeforeFirstClearFailsClosed" methodname="ReplayBeforeFirstClearFailsClosed" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="322915447" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000177" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2623" name="ReplayUsesReducedConfiguredReward" fullname="M01FirstContactSettlementTests.ReplayUsesReducedConfiguredReward" methodname="ReplayUsesReducedConfiguredReward" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1345742513" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.001559" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2624" name="RestartPreservesSettlementHistoryAndBestMetrics" fullname="M01FirstContactSettlementTests.RestartPreservesSettlementHistoryAndBestMetrics" methodname="RestartPreservesSettlementHistoryAndBestMetrics" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="985809898" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000941" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2628" name="RetryReturnRouteUsesPreservedLaunchOrigin" fullname="M01FirstContactSettlementTests.RetryReturnRouteUsesPreservedLaunchOrigin" methodname="RetryReturnRouteUsesPreservedLaunchOrigin" classname="M01FirstContactSettlementTests" runstate="Runnable" seed="1599788891" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:21Z" duration="0.000400" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2913" name="M02EstablishBasePlacementTests" fullname="M02EstablishBasePlacementTests" classname="M02EstablishBasePlacementTests" runstate="Runnable" testcasecount="10" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:29:33Z" duration="72.005467" total="10" passed="10" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2919" name="BarracksCrossingAnyCanonicalLotEdgeIsRejected" fullname="M02EstablishBasePlacementTests.BarracksCrossingAnyCanonicalLotEdgeIsRejected" methodname="BarracksCrossingAnyCanonicalLotEdgeIsRejected" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="350403993" result="Passed" start-time="2026-09-16 21:28:21Z" end-time="2026-09-16 21:28:27Z" duration="5.625971" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2916" name="BarracksInsideCanonicalLotIsAccepted" fullname="M02EstablishBasePlacementTests.BarracksInsideCanonicalLotIsAccepted" methodname="BarracksInsideCanonicalLotIsAccepted" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="1390104305" result="Passed" start-time="2026-09-16 21:28:27Z" end-time="2026-09-16 21:28:39Z" duration="11.973025" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2917" name="BarracksPreferredOriginIsCenteredInsideCanonicalLot" fullname="M02EstablishBasePlacementTests.BarracksPreferredOriginIsCenteredInsideCanonicalLot" methodname="BarracksPreferredOriginIsCenteredInsideCanonicalLot" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="23659661" result="Passed" start-time="2026-09-16 21:28:39Z" end-time="2026-09-16 21:28:51Z" duration="11.741310" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2918" name="CanonicalLotHasExactlyOneLegalBarracksSearchOrigin" fullname="M02EstablishBasePlacementTests.CanonicalLotHasExactlyOneLegalBarracksSearchOrigin" methodname="CanonicalLotHasExactlyOneLegalBarracksSearchOrigin" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="2052355810" result="Passed" start-time="2026-09-16 21:28:51Z" end-time="2026-09-16 21:28:53Z" duration="2.046197" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2914" name="CanonicalProjectionCarriesExactBuildZone" fullname="M02EstablishBasePlacementTests.CanonicalProjectionCarriesExactBuildZone" methodname="CanonicalProjectionCarriesExactBuildZone" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="997846103" result="Passed" start-time="2026-09-16 21:28:53Z" end-time="2026-09-16 21:28:53Z" duration="0.052490" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2922" name="DisabledMissionRuntimePreservesUnrestrictedPlacement" fullname="M02EstablishBasePlacementTests.DisabledMissionRuntimePreservesUnrestrictedPlacement" methodname="DisabledMissionRuntimePreservesUnrestrictedPlacement" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="796642352" result="Passed" start-time="2026-09-16 21:28:53Z" end-time="2026-09-16 21:28:55Z" duration="1.991385" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2921" name="MissingOrStaleMapDataFailsClosed" fullname="M02EstablishBasePlacementTests.MissingOrStaleMapDataFailsClosed" methodname="MissingOrStaleMapDataFailsClosed" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="132557417" result="Passed" start-time="2026-09-16 21:28:55Z" end-time="2026-09-16 21:29:14Z" duration="19.255130" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2915" name="SameVersionBuildZoneChangeReprojectsExactData" fullname="M02EstablishBasePlacementTests.SameVersionBuildZoneChangeReprojectsExactData" methodname="SameVersionBuildZoneChangeReprojectsExactData" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="954789733" result="Passed" start-time="2026-09-16 21:29:14Z" end-time="2026-09-16 21:29:14Z" duration="0.010576" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2920" name="UnlistedBuildingIsRejectedForActiveM02" fullname="M02EstablishBasePlacementTests.UnlistedBuildingIsRejectedForActiveM02" methodname="UnlistedBuildingIsRejectedForActiveM02" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="578933914" result="Passed" start-time="2026-09-16 21:29:14Z" end-time="2026-09-16 21:29:23Z" duration="9.460988" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2923" name="WarmPlacementPolicyDoesNotAllocateManagedMemory" fullname="M02EstablishBasePlacementTests.WarmPlacementPolicyDoesNotAllocateManagedMemory" methodname="WarmPlacementPolicyDoesNotAllocateManagedMemory" classname="M02EstablishBasePlacementTests" runstate="Runnable" seed="542296885" result="Passed" start-time="2026-09-16 21:29:23Z" end-time="2026-09-16 21:29:33Z" duration="9.841196" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2936" name="M02EstablishBaseResultSettlementTests" fullname="M02EstablishBaseResultSettlementTests" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" testcasecount="15" result="Passed" start-time="2026-09-16 21:29:33Z" end-time="2026-09-16 21:29:34Z" duration="0.255182" total="15" passed="15" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <output><![CDATA[Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+]]></output>
+        <test-case id="2949" name="AcceptedM02ResultQueuesDebriefBeforeVictory" fullname="M02EstablishBaseResultSettlementTests.AcceptedM02ResultQueuesDebriefBeforeVictory" methodname="AcceptedM02ResultQueuesDebriefBeforeVictory" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1693013490" result="Passed" start-time="2026-09-16 21:29:33Z" end-time="2026-09-16 21:29:33Z" duration="0.002411" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2945" name="CampaignRetryBeforeFirstClearGrantsFirstClearRewards" fullname="M02EstablishBaseResultSettlementTests.CampaignRetryBeforeFirstClearGrantsFirstClearRewards" methodname="CampaignRetryBeforeFirstClearGrantsFirstClearRewards" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="919706312" result="Passed" start-time="2026-09-16 21:29:33Z" end-time="2026-09-16 21:29:34Z" duration="0.002819" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2940" name="CivilianAndFiveMinuteStarsAreIndependent" fullname="M02EstablishBaseResultSettlementTests.CivilianAndFiveMinuteStarsAreIndependent" methodname="CivilianAndFiveMinuteStarsAreIndependent" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1370754502" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000282" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2948" name="DebriefCompletionShowsFinalVictoryBeforeReturn" fullname="M02EstablishBaseResultSettlementTests.DebriefCompletionShowsFinalVictoryBeforeReturn" methodname="DebriefCompletionShowsFinalVictoryBeforeReturn" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1718129511" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000575" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2947" name="EveryM02VictoryUsesDebriefBeforeFinalResult" fullname="M02EstablishBaseResultSettlementTests.EveryM02VictoryUsesDebriefBeforeFinalResult" methodname="EveryM02VictoryUsesDebriefBeforeFinalResult" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1381940369" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000457" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2943" name="ExistingBarracksConvertsUnlockToBlueprintPartsExactlyOnce" fullname="M02EstablishBaseResultSettlementTests.ExistingBarracksConvertsUnlockToBlueprintPartsExactlyOnce" methodname="ExistingBarracksConvertsUnlockToBlueprintPartsExactlyOnce" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="722387834" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001699" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2942" name="FirstClearGrantsRewardsBarracksAndM03ExactlyOnce" fullname="M02EstablishBaseResultSettlementTests.FirstClearGrantsRewardsBarracksAndM03ExactlyOnce" methodname="FirstClearGrantsRewardsBarracksAndM03ExactlyOnce" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="960791373" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001013" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2938" name="IncompleteRequirementsCannotResolveVictory" fullname="M02EstablishBaseResultSettlementTests.IncompleteRequirementsCannotResolveVictory" methodname="IncompleteRequirementsCannotResolveVictory" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1925987927" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000467" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2941" name="InvalidOrContradictoryResultFactsFailClosed" fullname="M02EstablishBaseResultSettlementTests.InvalidOrContradictoryResultFactsFailClosed" methodname="InvalidOrContradictoryResultFactsFailClosed" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="914995791" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000105" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2939" name="M02VictoryDoesNotRequireHostilesOrDefenseWave" fullname="M02EstablishBaseResultSettlementTests.M02VictoryDoesNotRequireHostilesOrDefenseWave" methodname="M02VictoryDoesNotRequireHostilesOrDefenseWave" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="2057500656" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000106" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2944" name="ReplayGrantsOnlyReplayCredits" fullname="M02EstablishBaseResultSettlementTests.ReplayGrantsOnlyReplayCredits" methodname="ReplayGrantsOnlyReplayCredits" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="1848748269" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001346" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2946" name="ReplayRetryAfterFirstClearGrantsOnlyReplayRewards" fullname="M02EstablishBaseResultSettlementTests.ReplayRetryAfterFirstClearGrantsOnlyReplayRewards" methodname="ReplayRetryAfterFirstClearGrantsOnlyReplayRewards" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="467906800" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002088" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2950" name="RestartPreservesUnlockRewardsAndSettlementHistory" fullname="M02EstablishBaseResultSettlementTests.RestartPreservesUnlockRewardsAndSettlementHistory" methodname="RestartPreservesUnlockRewardsAndSettlementHistory" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="365381394" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000745" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2937" name="RuntimeCompletesAfterBuildingAndRifleProductionResolve" fullname="M02EstablishBaseResultSettlementTests.RuntimeCompletesAfterBuildingAndRifleProductionResolve" methodname="RuntimeCompletesAfterBuildingAndRifleProductionResolve" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="596259028" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000118" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2951" name="UnknownOrMisScopedCustomRewardsFailClosed" fullname="M02EstablishBaseResultSettlementTests.UnknownOrMisScopedCustomRewardsFailClosed" methodname="UnknownOrMisScopedCustomRewardsFailClosed" classname="M02EstablishBaseResultSettlementTests" runstate="Runnable" seed="876394802" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000346" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3055" name="M03SettlementTests" fullname="M03SettlementTests" classname="M03SettlementTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.020864" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3056" name="GrantsSettleAtomicallyOnceAndReplayOnlyPaysReplayCredits" fullname="M03SettlementTests.GrantsSettleAtomicallyOnceAndReplayOnlyPaysReplayCredits" methodname="GrantsSettleAtomicallyOnceAndReplayOnlyPaysReplayCredits" classname="M03SettlementTests" runstate="Runnable" seed="1126637808" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003678" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3057" name="PreownedUnlocksConvertAndForeignOrReplayGrantsReject" fullname="M03SettlementTests.PreownedUnlocksConvertAndForeignOrReplayGrantsReject" methodname="PreownedUnlocksConvertAndForeignOrReplayGrantsReject" classname="M03SettlementTests" runstate="Runnable" seed="1808607726" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001668" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3073" name="M04AirliftIntegrationTests" fullname="M04AirliftIntegrationTests" classname="M04AirliftIntegrationTests" runstate="Runnable" testcasecount="16" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.043901" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3075" name="BilingualGuidanceCopyFitsNarrationMessages" fullname="M04AirliftIntegrationTests.BilingualGuidanceCopyFitsNarrationMessages" methodname="BilingualGuidanceCopyFitsNarrationMessages" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="75849505" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002652" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3082" name="BoardedDisabledPassengersSurviveProjectionAndRequireRealDeparture" fullname="M04AirliftIntegrationTests.BoardedDisabledPassengersSurviveProjectionAndRequireRealDeparture" methodname="BoardedDisabledPassengersSurviveProjectionAndRequireRealDeparture" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="233113417" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003501" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3089" name="CleanupRemovesBoardedMissionPassengersAndPreservesUnrelatedUnits" fullname="M04AirliftIntegrationTests.CleanupRemovesBoardedMissionPassengersAndPreservesUnrelatedUnits" methodname="CleanupRemovesBoardedMissionPassengersAndPreservesUnrelatedUnits" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1584086186" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.005336" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3078" name="CommandStateReportsPersistentSelectionModeAndClearsAfterExit" fullname="M04AirliftIntegrationTests.CommandStateReportsPersistentSelectionModeAndClearsAfterExit" methodname="CommandStateReportsPersistentSelectionModeAndClearsAfterExit" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="547040718" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001597" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3086" name="EdgeFocusSettlesInsideTheViewportBoundary" fullname="M04AirliftIntegrationTests.EdgeFocusSettlesInsideTheViewportBoundary" methodname="EdgeFocusSettlesInsideTheViewportBoundary" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1656244004" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003597" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3074" name="EveryEntryStartsFullTutorialDespiteSavedGuidanceAndReplayToggle" fullname="M04AirliftIntegrationTests.EveryEntryStartsFullTutorialDespiteSavedGuidanceAndReplayToggle" methodname="EveryEntryStartsFullTutorialDespiteSavedGuidanceAndReplayToggle" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1533941155" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002760" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3088" name="FailedSavePreservesProfileAndSameAttemptCanRetry" fullname="M04AirliftIntegrationTests.FailedSavePreservesProfileAndSameAttemptCanRetry" methodname="FailedSavePreservesProfileAndSameAttemptCanRetry" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1306057877" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002436" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3081" name="FullBoardingStartsPatrolWarningOnlyOnce" fullname="M04AirliftIntegrationTests.FullBoardingStartsPatrolWarningOnlyOnce" methodname="FullBoardingStartsPatrolWarningOnlyOnce" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1237368748" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000246" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3083" name="HostilesResetClearanceAndCarrierLossOnlyFailsBeforeTransfer" fullname="M04AirliftIntegrationTests.HostilesResetClearanceAndCarrierLossOnlyFailsBeforeTransfer" methodname="HostilesResetClearanceAndCarrierLossOnlyFailsBeforeTransfer" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="998459640" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000736" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3077" name="LandingHoldInstructionDistinguishesCountdownContestedAndReturn" fullname="M04AirliftIntegrationTests.LandingHoldInstructionDistinguishesCountdownContestedAndReturn" methodname="LandingHoldInstructionDistinguishesCountdownContestedAndReturn" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1394630775" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000913" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3084" name="MissingMemberAndUninitializedHealthFailDifferently" fullname="M04AirliftIntegrationTests.MissingMemberAndUninitializedHealthFailDifferently" methodname="MissingMemberAndUninitializedHealthFailDifferently" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1459923210" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000883" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3085" name="NamedUnlocksSettleOnceAndReplayImprovesStars" fullname="M04AirliftIntegrationTests.NamedUnlocksSettleOnceAndReplayImprovesStars" methodname="NamedUnlocksSettleOnceAndReplayImprovesStars" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="746674175" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002511" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3087" name="OrdinaryHelicopterMovePublishesAirborneState" fullname="M04AirliftIntegrationTests.OrdinaryHelicopterMovePublishesAirborneState" methodname="OrdinaryHelicopterMovePublishesAirborneState" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="161355530" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.006419" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3076" name="RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons" fullname="M04AirliftIntegrationTests.RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons" methodname="RescueSelectionExcludesOverlappingVehiclesOnlyDuringPassengerLessons" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1523430051" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001649" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3080" name="SelectionLessonRequiresAllFourSpecialists" fullname="M04AirliftIntegrationTests.SelectionLessonRequiresAllFourSpecialists" methodname="SelectionLessonRequiresAllFourSpecialists" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="843405805" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000561" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3079" name="TutorialTargetsFollowSelectionTransportAndDestinationForEveryActionLesson" fullname="M04AirliftIntegrationTests.TutorialTargetsFollowSelectionTransportAndDestinationForEveryActionLesson" methodname="TutorialTargetsFollowSelectionTransportAndDestinationForEveryActionLesson" classname="M04AirliftIntegrationTests" runstate="Runnable" seed="1667781813" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001867" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3090" name="M04AirliftRuleTests" fullname="M04AirliftRuleTests" classname="M04AirliftRuleTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.013130" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3093" name="EscortLossIsABonusCriterion" fullname="M04AirliftRuleTests.EscortLossIsABonusCriterion" methodname="EscortLossIsABonusCriterion" classname="M04AirliftRuleTests" runstate="Runnable" seed="431068710" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000144" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3092" name="FailureWinsOverSimultaneousDeparture" fullname="M04AirliftRuleTests.FailureWinsOverSimultaneousDeparture" methodname="FailureWinsOverSimultaneousDeparture" classname="M04AirliftRuleTests" runstate="Runnable" seed="1376428023" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000182" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3091" name="FullManifestAndGroundLegAreRequired" fullname="M04AirliftRuleTests.FullManifestAndGroundLegAreRequired" methodname="FullManifestAndGroundLegAreRequired" classname="M04AirliftRuleTests" runstate="Runnable" seed="359778903" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000068" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3094" name="OpeningMustFinishBeforeMissionStarts" fullname="M04AirliftRuleTests.OpeningMustFinishBeforeMissionStarts" methodname="OpeningMustFinishBeforeMissionStarts" classname="M04AirliftRuleTests" runstate="Runnable" seed="1435478965" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000081" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3095" name="VictoryWaitsForFinale" fullname="M04AirliftRuleTests.VictoryWaitsForFinale" methodname="VictoryWaitsForFinale" classname="M04AirliftRuleTests" runstate="Runnable" seed="221417782" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000083" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3099" name="M05BreachAssaultIntegrationTests" fullname="M05BreachAssaultIntegrationTests" classname="M05BreachAssaultIntegrationTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.198426" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3100" name="AuthoredMissionHasBilingualPlayableContract" fullname="M05BreachAssaultIntegrationTests.AuthoredMissionHasBilingualPlayableContract" methodname="AuthoredMissionHasBilingualPlayableContract" classname="M05BreachAssaultIntegrationTests" runstate="Runnable" seed="764991156" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.018536" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3101" name="FirstClearAndReplayPersistWithoutDuplicateUnlocks" fullname="M05BreachAssaultIntegrationTests.FirstClearAndReplayPersistWithoutDuplicateUnlocks" methodname="FirstClearAndReplayPersistWithoutDuplicateUnlocks" classname="M05BreachAssaultIntegrationTests" runstate="Runnable" seed="1880221494" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002591" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3103" name="TargetIdentityExcludesAuthoredScenery" fullname="M05BreachAssaultIntegrationTests.TargetIdentityExcludesAuthoredScenery" methodname="TargetIdentityExcludesAuthoredScenery" classname="M05BreachAssaultIntegrationTests" runstate="Runnable" seed="1329193848" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000167" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3102" name="VoicesCoverEveryLessonInBothLanguages" fullname="M05BreachAssaultIntegrationTests.VoicesCoverEveryLessonInBothLanguages" methodname="VoicesCoverEveryLessonInBothLanguages" classname="M05BreachAssaultIntegrationTests" runstate="Runnable" seed="1572284894" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.175213" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M05VoiceCatalog] result=Passed clips=30 tutorialRoutes=16 locales=2
+]]></output>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3104" name="M05BreachAssaultRuleTests" fullname="M05BreachAssaultRuleTests" classname="M05BreachAssaultRuleTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.006960" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3105" name="AllThreeObjectivesRequired" fullname="M05BreachAssaultRuleTests.AllThreeObjectivesRequired" methodname="AllThreeObjectivesRequired" classname="M05BreachAssaultRuleTests" runstate="Runnable" seed="167192893" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000202" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3107" name="FailureWinsAtDeadline" fullname="M05BreachAssaultRuleTests.FailureWinsAtDeadline" methodname="FailureWinsAtDeadline" classname="M05BreachAssaultRuleTests" runstate="Runnable" seed="1207547826" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000208" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3108" name="OpeningAndFinaleGateGameplay" fullname="M05BreachAssaultRuleTests.OpeningAndFinaleGateGameplay" methodname="OpeningAndFinaleGateGameplay" classname="M05BreachAssaultRuleTests" runstate="Runnable" seed="181288182" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000110" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3106" name="SupportLossIsRecoverable" fullname="M05BreachAssaultRuleTests.SupportLossIsRecoverable" methodname="SupportLossIsRecoverable" classname="M05BreachAssaultRuleTests" runstate="Runnable" seed="748176503" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000051" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4867" name="RuntimeGridDeduplicationSystemTests" fullname="RuntimeGridDeduplicationSystemTests" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.011404" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4871" name="ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" fullname="RuntimeGridDeduplicationSystemTests.ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" methodname="ActiveOperationMapMetadataDrivesRuntimeGridBootstrap" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="845232039" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.004737" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=1 size=24x18 cellSize=1.25
+]]></output>
+        </test-case>
+        <test-case id="4869" name="Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" fullname="RuntimeGridDeduplicationSystemTests.Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" methodname="Deduplication_KeepsRuntimeGridWhenNoAuthoredGridExists" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="858925677" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001270" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4868" name="Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" fullname="RuntimeGridDeduplicationSystemTests.Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" methodname="Deduplication_RemovesRuntimeGridWhenAuthoredGridExists" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="106566066" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002699" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4872" name="RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" fullname="RuntimeGridDeduplicationSystemTests.RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" methodname="RuntimeGridBootstrapStartupSystemHelperAppliesAuthoredBlockedCells" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="489348682" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000627" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=0 size=4x3 cellSize=1
+]]></output>
+        </test-case>
+        <test-case id="4870" name="RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" fullname="RuntimeGridDeduplicationSystemTests.RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" methodname="RuntimeGridBootstrapStartupSystemHelperCreatesRuntimeGridFromPlainHelper" classname="RuntimeGridDeduplicationSystemTests" runstate="Runnable" seed="1978441985" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000656" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=0 size=12x10 cellSize=1.5
+]]></output>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4873" name="RuntimeGridPersistentStorageUtilitySystemHelperTests" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.127388" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4877" name="DisposeStorage_IsIdempotentAndClearsComponentAliases" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.DisposeStorage_IsIdempotentAndClearsComponentAliases" methodname="DisposeStorage_IsIdempotentAndClearsComponentAliases" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="819444572" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000401" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4874" name="EnsureStorage_CreatesEveryContainerWithExpectedInitialization" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_CreatesEveryContainerWithExpectedInitialization" methodname="EnsureStorage_CreatesEveryContainerWithExpectedInitialization" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1180061684" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000457" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4876" name="EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" methodname="EnsureStorage_ResizeReplacesGridStorageAndClearsPathPool" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="1882042640" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000347" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4875" name="EnsureStorage_SameSizePreservesLiveContainerContents" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.EnsureStorage_SameSizePreservesLiveContainerContents" methodname="EnsureStorage_SameSizePreservesLiveContainerContents" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="30739377" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000486" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4879" name="OwnershipBoundary_HasOneAllocatorResizerAndDisposer" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.OwnershipBoundary_HasOneAllocatorResizerAndDisposer" methodname="OwnershipBoundary_HasOneAllocatorResizerAndDisposer" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="555408694" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.123883" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4878" name="WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" fullname="RuntimeGridPersistentStorageUtilitySystemHelperTests.WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" methodname="WorldReplacement_ReleasesOldStorageBeforeIndependentRecreation" classname="RuntimeGridPersistentStorageUtilitySystemHelperTests" runstate="Runnable" seed="126120097" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000686" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5477" name="TutorialAttentionAndContinueTests" fullname="TutorialAttentionAndContinueTests" classname="TutorialAttentionAndContinueTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.057226" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5480" name="ChevronHasRenderableGeometry" fullname="TutorialAttentionAndContinueTests.ChevronHasRenderableGeometry" methodname="ChevronHasRenderableGeometry" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="121376790" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002866" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5481" name="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" fullname="TutorialAttentionAndContinueTests.ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" methodname="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="191283034" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.050657" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5479" name="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" fullname="TutorialAttentionAndContinueTests.PlacementPointerFindsOpenCornerBesideMinimapAndFooter" methodname="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="958177560" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001447" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5478" name="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" fullname="TutorialAttentionAndContinueTests.PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" methodname="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="615080812" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000865" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5482" name="TutorialCueOverlayTests" fullname="TutorialCueOverlayTests" classname="TutorialCueOverlayTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.016365" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5484" name="MinimapLeavesRoomForBottomCornerArrow" fullname="TutorialCueOverlayTests.MinimapLeavesRoomForBottomCornerArrow" methodname="MinimapLeavesRoomForBottomCornerArrow" classname="TutorialCueOverlayTests" runstate="Runnable" seed="402931575" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000326" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5486" name="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" fullname="TutorialCueOverlayTests.NextClickFrameIsAbovePopupAndNeverBlocksItsButton" methodname="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" classname="TutorialCueOverlayTests" runstate="Runnable" seed="300479470" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.008420" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5483" name="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" fullname="TutorialCueOverlayTests.WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" methodname="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" classname="TutorialCueOverlayTests" runstate="Runnable" seed="2141986998" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000540" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5485" name="WedgeGuideFramesOnlyTheVisibleSector" fullname="TutorialCueOverlayTests.WedgeGuideFramesOnlyTheVisibleSector" methodname="WedgeGuideFramesOnlyTheVisibleSector" classname="TutorialCueOverlayTests" runstate="Runnable" seed="976464126" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001128" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5767" name="UnitTransportValidationTests" fullname="UnitTransportValidationTests" classname="UnitTransportValidationTests" runstate="Runnable" testcasecount="90" result="Failed" site="Child" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.255811" total="90" passed="85" failed="5" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-case id="5847" name="AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" fullname="UnitTransportValidationTests.AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" methodname="AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" classname="UnitTransportValidationTests" runstate="Runnable" seed="2111547831" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.011101" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5834" name="AirTransport_BoardsWhenLandedOnRaisedHelipad" fullname="UnitTransportValidationTests.AirTransport_BoardsWhenLandedOnRaisedHelipad" methodname="AirTransport_BoardsWhenLandedOnRaisedHelipad" classname="UnitTransportValidationTests" runstate="Runnable" seed="68717309" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000687" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5843" name="AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" methodname="AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" classname="UnitTransportValidationTests" runstate="Runnable" seed="43368146" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000754" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5841" name="AirTransport_DoesNotBoardAtOldWideClearanceDistance" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardAtOldWideClearanceDistance" methodname="AirTransport_DoesNotBoardAtOldWideClearanceDistance" classname="UnitTransportValidationTests" runstate="Runnable" seed="1764533131" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000457" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5833" name="AirTransport_DoesNotBoardSoldierUntilLanded" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardSoldierUntilLanded" methodname="AirTransport_DoesNotBoardSoldierUntilLanded" classname="UnitTransportValidationTests" runstate="Runnable" seed="600130778" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000488" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5846" name="AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" methodname="AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" classname="UnitTransportValidationTests" runstate="Runnable" seed="305147819" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000446" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5842" name="AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" methodname="AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="1061937475" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000398" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5844" name="AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" fullname="UnitTransportValidationTests.AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" methodname="AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" classname="UnitTransportValidationTests" runstate="Runnable" seed="872386989" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.007964" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5845" name="AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" fullname="UnitTransportValidationTests.AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" methodname="AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" classname="UnitTransportValidationTests" runstate="Runnable" seed="376993187" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000694" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5830" name="BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" methodname="BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" classname="UnitTransportValidationTests" runstate="Runnable" seed="1238222897" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.009777" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5832" name="BoardAllSelectedTransportCommand_IgnoresDistantPassengers" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_IgnoresDistantPassengers" methodname="BoardAllSelectedTransportCommand_IgnoresDistantPassengers" classname="UnitTransportValidationTests" runstate="Runnable" seed="1768722032" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001140" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5831" name="BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" methodname="BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" classname="UnitTransportValidationTests" runstate="Runnable" seed="2006990817" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002209" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5829" name="BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" fullname="UnitTransportValidationTests.BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" methodname="BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" classname="UnitTransportValidationTests" runstate="Runnable" seed="1591125790" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003079" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5828" name="BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" fullname="UnitTransportValidationTests.BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" methodname="BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" classname="UnitTransportValidationTests" runstate="Runnable" seed="877516412" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001033" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5827" name="BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" fullname="UnitTransportValidationTests.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" methodname="BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="1943748153" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000669" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5854" name="FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" fullname="UnitTransportValidationTests.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" methodname="FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1139198968" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.010133" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5856" name="FocusedTransportReadModel_PublishesPassengerCapacityAndRows" fullname="UnitTransportValidationTests.FocusedTransportReadModel_PublishesPassengerCapacityAndRows" methodname="FocusedTransportReadModel_PublishesPassengerCapacityAndRows" classname="UnitTransportValidationTests" runstate="Runnable" seed="1203828331" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.004689" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5857" name="FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" fullname="UnitTransportValidationTests.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" methodname="FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="376589347" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001163" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5826" name="GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" fullname="UnitTransportValidationTests.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" methodname="GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" classname="UnitTransportValidationTests" runstate="Runnable" seed="438904007" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000891" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5769" name="GroundPersonnelTransport_BoardsSoldierLikeApc" fullname="UnitTransportValidationTests.GroundPersonnelTransport_BoardsSoldierLikeApc" methodname="GroundPersonnelTransport_BoardsSoldierLikeApc" classname="UnitTransportValidationTests" runstate="Runnable" seed="150273928" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000479" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5791" name="HelicopterBoardingCommand_RejectsVehiclePassenger" fullname="UnitTransportValidationTests.HelicopterBoardingCommand_RejectsVehiclePassenger" methodname="HelicopterBoardingCommand_RejectsVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1943725766" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000587" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5852" name="HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" methodname="HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" classname="UnitTransportValidationTests" runstate="Runnable" seed="345710158" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.006350" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5851" name="HelicopterRopeDisembark_ReleasesPassengersOneAtATime" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_ReleasesPassengersOneAtATime" methodname="HelicopterRopeDisembark_ReleasesPassengersOneAtATime" classname="UnitTransportValidationTests" runstate="Runnable" seed="1809895663" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003394" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5853" name="HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" methodname="HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" classname="UnitTransportValidationTests" runstate="Runnable" seed="893659856" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002063" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5824" name="InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" fullname="UnitTransportValidationTests.InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" methodname="InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" classname="UnitTransportValidationTests" runstate="Runnable" seed="1917258981" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001939" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5818" name="LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" methodname="LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" classname="UnitTransportValidationTests" runstate="Runnable" seed="1933109680" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002439" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5816" name="LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" methodname="LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" classname="UnitTransportValidationTests" runstate="Runnable" seed="880417194" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000506" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5817" name="LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" methodname="LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1414442444" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000513" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5768" name="PassengerVisualScratch_IsCallOwnedAndWorldIsolated" fullname="UnitTransportValidationTests.PassengerVisualScratch_IsCallOwnedAndWorldIsolated" methodname="PassengerVisualScratch_IsCallOwnedAndWorldIsolated" classname="UnitTransportValidationTests" runstate="Runnable" seed="1682112517" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000711" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5855" name="SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" fullname="UnitTransportValidationTests.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" methodname="SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" classname="UnitTransportValidationTests" runstate="Runnable" seed="1512113744" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000903" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5850" name="Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" fullname="UnitTransportValidationTests.Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" methodname="Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="148287007" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000465" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5839" name="TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" fullname="UnitTransportValidationTests.TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" methodname="TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" classname="UnitTransportValidationTests" runstate="Runnable" seed="425856516" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000604" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5838" name="TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" fullname="UnitTransportValidationTests.TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" methodname="TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="37014426" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000493" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5835" name="TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" fullname="UnitTransportValidationTests.TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" methodname="TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" classname="UnitTransportValidationTests" runstate="Runnable" seed="433362520" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000441" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5836" name="TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" fullname="UnitTransportValidationTests.TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" methodname="TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" classname="UnitTransportValidationTests" runstate="Runnable" seed="1744606911" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000531" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5840" name="TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" fullname="UnitTransportValidationTests.TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" methodname="TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" classname="UnitTransportValidationTests" runstate="Runnable" seed="137688889" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001129" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5837" name="TransportBoardingSystem_VehicleRequiresCargoCapacity" fullname="UnitTransportValidationTests.TransportBoardingSystem_VehicleRequiresCargoCapacity" methodname="TransportBoardingSystem_VehicleRequiresCargoCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="1357442849" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000409" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5823" name="TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" fullname="UnitTransportValidationTests.TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" methodname="TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1519708207" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003450" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5822" name="TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" fullname="UnitTransportValidationTests.TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" methodname="TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" classname="UnitTransportValidationTests" runstate="Runnable" seed="673237353" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000735" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5820" name="TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" methodname="TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1092832700" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003620" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5821" name="TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" methodname="TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1559302653" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001129" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5819" name="TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" methodname="TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" classname="UnitTransportValidationTests" runstate="Runnable" seed="1453674696" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000610" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5849" name="TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" fullname="UnitTransportValidationTests.TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" methodname="TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" classname="UnitTransportValidationTests" runstate="Runnable" seed="1172908031" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001006" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5848" name="TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" fullname="UnitTransportValidationTests.TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" methodname="TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" classname="UnitTransportValidationTests" runstate="Runnable" seed="1235700669" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000482" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5805" name="TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" methodname="TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1362158380" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.009782" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5806" name="TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" methodname="TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" classname="UnitTransportValidationTests" runstate="Runnable" seed="1742729674" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000850" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5804" name="TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" methodname="TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" classname="UnitTransportValidationTests" runstate="Runnable" seed="477646154" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001137" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5809" name="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" methodname="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" classname="UnitTransportValidationTests" runstate="Runnable" seed="1887784227" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001715" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5808" name="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" methodname="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" classname="UnitTransportValidationTests" runstate="Runnable" seed="46279328" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000687" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5813" name="TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" methodname="TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1781128395" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001511" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5811" name="TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" methodname="TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" classname="UnitTransportValidationTests" runstate="Runnable" seed="365062781" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003142" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5812" name="TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" methodname="TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1912719735" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000878" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5807" name="TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" methodname="TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="1264405781" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001770" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5810" name="TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" methodname="TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" classname="UnitTransportValidationTests" runstate="Runnable" seed="822982284" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000734" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5814" name="TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" methodname="TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="311332997" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000698" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5815" name="TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" methodname="TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="1084558657" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000590" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5778" name="TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" methodname="TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="2046182842" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000524" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5789" name="TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" methodname="TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" classname="UnitTransportValidationTests" runstate="Runnable" seed="1904138229" result="Failed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.003556" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected string length 18 but was 20. Strings differ at index 0.
+  Expected: "Transport is full."
+  But was:  "دیگه جای خالی نداره."
+  -----------^
+]]></message>
+            <stack-trace><![CDATA[at UnitTransportValidationTests.TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull () [0x00190] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/UnitTransportValidationTests.cs:913
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5788" name="TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" methodname="TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1432180845" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000887" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5782" name="TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" methodname="TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" classname="UnitTransportValidationTests" runstate="Runnable" seed="1779775928" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.022938" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5780" name="TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" methodname="TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="741961897" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000782" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5786" name="TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" methodname="TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" classname="UnitTransportValidationTests" runstate="Runnable" seed="2111751479" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000494" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5785" name="TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" methodname="TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" classname="UnitTransportValidationTests" runstate="Runnable" seed="367767421" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001209" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5781" name="TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" methodname="TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" classname="UnitTransportValidationTests" runstate="Runnable" seed="986111513" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000960" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5784" name="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" methodname="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" classname="UnitTransportValidationTests" runstate="Runnable" seed="538643114" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.005200" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5783" name="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" methodname="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="1139676342" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000934" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5779" name="TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" methodname="TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="337728240" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000563" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5787" name="TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" fullname="UnitTransportValidationTests.TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" methodname="TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" classname="UnitTransportValidationTests" runstate="Runnable" seed="1068757105" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000761" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5790" name="TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" methodname="TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1859373414" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001184" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5771" name="TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" fullname="UnitTransportValidationTests.TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" methodname="TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" classname="UnitTransportValidationTests" runstate="Runnable" seed="1914704783" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000459" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5772" name="TransportPlaneCapacity_PreservesAuthoredCargoCapacity" fullname="UnitTransportValidationTests.TransportPlaneCapacity_PreservesAuthoredCargoCapacity" methodname="TransportPlaneCapacity_PreservesAuthoredCargoCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="1751560698" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000331" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5770" name="TransportPlaneCapacity_RecognizesPlaneSourceNames" fullname="UnitTransportValidationTests.TransportPlaneCapacity_RecognizesPlaneSourceNames" methodname="TransportPlaneCapacity_RecognizesPlaneSourceNames" classname="UnitTransportValidationTests" runstate="Runnable" seed="1659761972" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000130" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5773" name="TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" fullname="UnitTransportValidationTests.TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" methodname="TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" classname="UnitTransportValidationTests" runstate="Runnable" seed="162551685" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.013510" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5796" name="TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="598867832" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000922" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5798" name="TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" methodname="TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1984587515" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000919" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5797" name="TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" methodname="TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" classname="UnitTransportValidationTests" runstate="Runnable" seed="254976936" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000588" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5802" name="TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" methodname="TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" classname="UnitTransportValidationTests" runstate="Runnable" seed="1031860103" result="Failed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000913" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Expected string length 19 but was 33. Strings differ at index 0.
+  Expected: "Cargo drop blocked."
+  But was:  "اینجا نمی‌شه بار رو پایین انداخت."
+  -----------^
+]]></message>
+            <stack-trace><![CDATA[at UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked () [0x001dd] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/UnitTransportValidationTests.cs:1401
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5794" name="TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" methodname="TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" classname="UnitTransportValidationTests" runstate="Runnable" seed="1165749566" result="Failed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001371" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  String lengths are both 35. Strings differ at index 0.
+  Expected: "No clear exit point for passengers."
+  But was:  "اینجا جای امنی برای پیاده شدن نیست."
+  -----------^
+]]></message>
+            <stack-trace><![CDATA[at UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell () [0x00225] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/UnitTransportValidationTests.cs:1082
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5803" name="TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="120230567" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000745" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5793" name="TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" methodname="TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" classname="UnitTransportValidationTests" runstate="Runnable" seed="505144334" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001170" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5799" name="TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" methodname="TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" classname="UnitTransportValidationTests" runstate="Runnable" seed="423314405" result="Failed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000733" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  String lengths are both 25. Strings differ at index 0.
+  Expected: "Parachute visual missing."
+  But was:  "نمای چتر نجات آماده نیست."
+  -----------^
+]]></message>
+            <stack-trace><![CDATA[at UnitTransportValidationTests.TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason () [0x00140] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/UnitTransportValidationTests.cs:1283
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5801" name="TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" methodname="TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" classname="UnitTransportValidationTests" runstate="Runnable" seed="717896814" result="Failed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000848" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  String lengths are both 30. Strings differ at index 0.
+  Expected: "No clear airdrop landing zone."
+  But was:  "اینجا جای بازی برای فرود نیست."
+  -----------^
+]]></message>
+            <stack-trace><![CDATA[at UnitTransportValidationTests.TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason () [0x001a1] in /private/tmp/warline-readiness-validation/Assets/Tests/Editor/UnitTransportValidationTests.cs:1357
+]]></stack-trace>
+          </failure>
+        </test-case>
+        <test-case id="5800" name="TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="1985816044" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000625" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5792" name="TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" methodname="TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" classname="UnitTransportValidationTests" runstate="Runnable" seed="345178565" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001280" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5795" name="TransportPlaneDoorOpenRequest_OpensThenExpires" fullname="UnitTransportValidationTests.TransportPlaneDoorOpenRequest_OpensThenExpires" methodname="TransportPlaneDoorOpenRequest_OpensThenExpires" classname="UnitTransportValidationTests" runstate="Runnable" seed="689955289" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000610" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5777" name="TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" fullname="UnitTransportValidationTests.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" methodname="TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" classname="UnitTransportValidationTests" runstate="Runnable" seed="1448360570" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001017" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5776" name="TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" fullname="UnitTransportValidationTests.TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" methodname="TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" classname="UnitTransportValidationTests" runstate="Runnable" seed="1867819924" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.000334" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5774" name="TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" fullname="UnitTransportValidationTests.TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" methodname="TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" classname="UnitTransportValidationTests" runstate="Runnable" seed="92399601" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.002549" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5825" name="TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" fullname="UnitTransportValidationTests.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" methodname="TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" classname="UnitTransportValidationTests" runstate="Runnable" seed="1165795878" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.023047" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5775" name="TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" fullname="UnitTransportValidationTests.TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" methodname="TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" classname="UnitTransportValidationTests" runstate="Runnable" seed="406529212" result="Passed" start-time="2026-09-16 21:29:34Z" end-time="2026-09-16 21:29:34Z" duration="0.001843" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/Warline M5 Compound QA/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -458,7 +458,9 @@ namespace Game.Components
         }
     }
 
-    public struct DynamicBlockerComponent : IComponentData
+    // Keep owned native storage alive when its scene entity is destroyed, so the
+    // cleanup system can release it before ECS removes the final components.
+    public struct DynamicBlockerComponent : ICleanupComponentData
     {
         public int GridSize;
         public NativeArray<int> Counts;
@@ -466,12 +468,12 @@ namespace Game.Components
         public NativeArray<byte> FriendlyPassFactionIds;
     }
 
-    public struct PathPoolComponent : IComponentData
+    public struct PathPoolComponent : ICleanupComponentData
     {
         public NativeList<int2> Cells;
     }
 
-    public struct DynamicOccupancyComponent : IComponentData
+    public struct DynamicOccupancyComponent : ICleanupComponentData
     {
         public int GridSize;
         public NativeBitArray Occupied;

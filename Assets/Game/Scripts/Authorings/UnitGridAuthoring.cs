@@ -574,7 +574,7 @@ namespace Game.Authoring
                 {
                     AddVehicleVisualPrefabReferences(authoring, entity);
                 }
-                else if (destroyed != null)
+                if (destroyed != null && (!authoring.UsesVehicleMotion || authoring.VehicleDestroyedVisualPrefab == null))
                 {
                     Entity destroyedEntity = GetEntity(destroyed.gameObject, TransformUsageFlags.Renderable);
                     AddComponent(entity, new UnitDestroyedVisualReference

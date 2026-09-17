@@ -13,7 +13,7 @@ namespace Game.UI.Runtime
             if(target.Moving)
             {
                 _waitingForTutorialAction=true;
-                ShowTutorialWorld(target.Destination,false);
+                ShowTutorialWorld(target.Destination,false,waitingArea:true);
                 return;
             }
             switch(target.BattleAction)
@@ -28,7 +28,7 @@ namespace Game.UI.Runtime
                 default:
                     // This ring marks the defended road/contact; ARIA explicitly explains the wait.
                     _waitingForTutorialAction=true;
-                    ShowTutorialWorld(target.Destination,false);
+                    ShowTutorialWorld(target.Destination,false,waitingArea:true);
                     break;
             }
         }

@@ -1,10 +1,18 @@
 using Unity.Collections;
 using Game.Components;
+using Game.Missions.Contracts;
 
 namespace Game.Runtime
 {
     internal static class CampaignMissionNarrativePolicy
     {
+        private static readonly FixedString64Bytes M01 = "saga.ch01.m01.first_contact";
+        // Initial onboarding already plays this story before handing off to M1.
+        // Campaign entries and retries own a fresh playback, independently of save progress.
+        internal static bool UsesFirstContactOpening(in CampaignMissionRuntimeComponent runtime) =>
+            runtime.MissionId.Equals(M01) &&
+            (runtime.LaunchOrigin != MissionLaunchOriginKind.FirstLaunch || runtime.AttemptOrdinal > 0);
+
         private static readonly FixedString64Bytes M02 = "saga.ch01.m02.establish_base";
         private static readonly FixedString64Bytes M03 = "saga.ch01.m03.radar_warning";
         private static readonly FixedString64Bytes M05 = "saga.ch01.m05.breach_assault";

@@ -80,9 +80,10 @@ public sealed class RoadGatePlacementValidation
         var barracksPrefab = new GameObject("Building_Barrack");
         try
         {
+            for(int y=0;y<20;y++) for(int x=0;x<20;x++) roads[y*20+x]=new GridRoad {Value=(byte)(y>=4 && y<=6?1:0)};
             foreach (var prefab in new[]{gatePrefab,barracksPrefab})
                 Assert.AreEqual(prefab==gatePrefab,cache.IsPlacementValid(new BuildingDefinition {Prefab=prefab},
-                    rect.position,rect.size,false,grid,roads,blockers,new BuildingGameplayDependencyCompositionSystemHelper(),
+                    rect.position,rect.size,true,grid,roads,blockers,new BuildingGameplayDependencyCompositionSystemHelper(),
                     new BuildingPlacementStartupSystemHelper(),(_,_,_,_)=>rect,_=>false),prefab.name);
         }
         finally {UnityEngine.Object.DestroyImmediate(gatePrefab);UnityEngine.Object.DestroyImmediate(barracksPrefab);}
@@ -102,6 +103,22 @@ public sealed class RoadGatePlacementValidation
         Assert.IsTrue(new BuildingBarrierUtilitySystemHelper().ResolvePlacementRotateVertical(default,null,state));
         state.AutoRotateVertical=false;
         Assert.IsFalse(new BuildingBarrierUtilitySystemHelper().ResolvePlacementRotateVertical(default,null,state));
+    }
+
+    [Test]
+    public void GateSnapsOffSidewalkToRoadCenterAndRejectsOpenLand()
+    {
+        bool Road(Vector2Int c)=>c.y>=42 && c.y<=50;
+        Assert.IsTrue(BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(new Vector2Int(80,53),Road,out var center,out var vertical));
+        Assert.AreEqual(new Vector2Int(80,46),center); Assert.IsTrue(vertical);
+        Assert.IsFalse(BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(new Vector2Int(80,70),Road,out _,out _));
+        Assert.IsTrue(BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(new Vector2Int(53,80),c=>c.x>=42 && c.x<=50,out center,out vertical));
+        Assert.AreEqual(new Vector2Int(46,80),center); Assert.IsFalse(vertical);
+        // A raised median splits a broad highway into two separate carriageways.
+        Assert.IsTrue(BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(new Vector2Int(80,50),
+            c=>c.y>=40 && c.y<=47 || c.y>=54 && c.y<=61,out center,out vertical));
+        Assert.That(center.y,Is.InRange(43,44)); Assert.IsTrue(vertical);
+
     }
 
     [Test]

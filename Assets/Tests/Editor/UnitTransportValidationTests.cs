@@ -910,7 +910,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.TransportFull, results[0].ReasonCode);
-        Assert.AreEqual("Transport is full.", results[0].Message.ToString());
+        Assert.AreEqual(GameText.Get("tactical.command.reason.transport_full", "Transport is full."), results[0].Message.ToString());
     }
 
     [Test]
@@ -1079,7 +1079,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results[0].HasCommandResult);
         Assert.AreEqual((int)TacticalCommandReasonCode.NoDisembarkCell, results[0].ReasonCode);
         Assert.AreEqual(RtsSelectionCommandFeedbackLifetime.Transient, results[0].FeedbackLifetime);
-        Assert.AreEqual("No clear exit point for passengers.", results[0].Message.ToString());
+        Assert.AreEqual(GameText.Get("tactical.command.reason.no_disembark_cell", "No clear exit point for passengers."), results[0].Message.ToString());
     }
 
     [Test]
@@ -1280,7 +1280,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.CommandUnavailable, results[0].ReasonCode);
-        Assert.AreEqual("Parachute visual missing.", results[0].Message.ToString());
+        Assert.AreEqual(GameText.Get("tactical.airdrop.parachute_visual_missing", "Parachute visual missing."), results[0].Message.ToString());
         Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
         Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
     }
@@ -1354,7 +1354,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.TargetBlocked, results[0].ReasonCode);
-        Assert.AreEqual("No clear airdrop landing zone.", results[0].Message.ToString());
+        Assert.AreEqual(GameText.Get("tactical.airdrop.no_clear_landing_zone", "No clear airdrop landing zone."), results[0].Message.ToString());
         Assert.IsFalse(em.HasComponent<UnitTransportAirdropRequest>(transport));
         Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length);
     }
@@ -1398,7 +1398,7 @@ public sealed class UnitTransportValidationTests
         Assert.AreEqual(1, results.Length);
         Assert.AreEqual(0, results[0].Accepted);
         Assert.AreEqual((int)TacticalCommandReasonCode.TargetBlocked, results[0].ReasonCode);
-        Assert.AreEqual("Cargo drop blocked.", results[0].Message.ToString());
+        Assert.AreEqual(GameText.Get("tactical.airdrop.cargo_drop_blocked", "Cargo drop blocked."), results[0].Message.ToString());
     }
 
     [Test]

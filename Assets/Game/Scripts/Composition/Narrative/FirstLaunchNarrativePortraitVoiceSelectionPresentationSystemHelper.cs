@@ -37,7 +37,8 @@ namespace Game.Composition
 
         public void Capture(int selectedPortraitIndex)
         {
-            portraitIndex = selectedPortraitIndex;
+            portraitIndex = commanderView != null && commanderView.SelectedPortraitIndex >= 0
+                ? commanderView.SelectedPortraitIndex : selectedPortraitIndex;
             portrait = commanderView?.SelectedPortrait;
         }
 

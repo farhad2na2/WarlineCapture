@@ -13,11 +13,42 @@ using Game.Runtime;
 
 namespace Game.Composition
 {
-    internal sealed class BuildingUiQueryAdapter : IBuildingUiQuery
+    internal sealed class BuildingUiQueryAdapter : IBuildingUiQuery, IBuildingProductionProgressQuery
     {
         private readonly BuildingUiQueryUiSystemHelper system;
         private readonly BuildingUiQueryUiSystemHelper.Context context;
         private readonly List<BuildingUiQueryUiSystemHelper.PendingProductionUiEntry> scratch = new();
+
+        public bool HasProductionDeliveryInProgress
+        {
+            get
+            {
+                if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out var em)) return false;
+                using var query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingProductionDeliveryReadModel>());
+                if (query.CalculateEntityCount() != 1) return false;
+                var delivery = query.GetSingleton<BuildingProductionDeliveryReadModel>();
+                return delivery.ActiveCanonicalDeliveryCount > 0 || delivery.ActiveManagedDeliveryCount > 0;
+            }
+        }
+
+        public bool HasProducedUnitsThisAttempt
+        {
+            get
+            {
+                if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out var em)) return false;
+                using var attemptQuery = em.CreateEntityQuery(ComponentType.ReadOnly<CampaignMissionAttemptFactProjectionStateComponent>(),
+                    ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
+                using var producedQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeStateTag>(),
+                    ComponentType.ReadOnly<BuildingProducedUnitReadModel>());
+                if (attemptQuery.CalculateEntityCount() != 1 || producedQuery.CalculateEntityCount() != 1) return false;
+                var attempt = attemptQuery.GetSingleton<CampaignMissionAttemptFactProjectionStateComponent>();
+                var runtime = attemptQuery.GetSingleton<CampaignMissionRuntimeComponent>();
+                if (attempt.Initialized == 0 || !attempt.SessionToken.Equals(runtime.SessionToken) ||
+                    attempt.AttemptOrdinal != runtime.AttemptOrdinal) return false;
+                return em.GetBuffer<BuildingProducedUnitReadModel>(producedQuery.GetSingletonEntity(), true).Length >
+                    attempt.ProducedUnitReadModelBaselineCount;
+            }
+        }
 
         public BuildingUiQueryAdapter(BuildingUiQueryUiSystemHelper system, BuildingUiQueryUiSystemHelper.Context context)
         {

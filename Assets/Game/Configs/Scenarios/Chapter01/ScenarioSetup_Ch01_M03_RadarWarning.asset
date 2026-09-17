@@ -98,7 +98,7 @@ MonoBehaviour:
   - anchorId: anchor.ch01.m03.convoy_path_024
     kind: 11
   deterministicSeed: 3003001
-  encounterStartMilliseconds: 45000
+  encounterStartMilliseconds: 5000
   unitGroups:
   - groupId: group.ch01.m03.squad_a
     factionIndex: 1
@@ -267,7 +267,7 @@ MonoBehaviour:
     - anchor.ch01.m03.convoy_path_022
     - anchor.ch01.m03.convoy_path_023
     - anchor.ch01.m03.convoy_path_024
-    startDelayMilliseconds: 45000
+    startDelayMilliseconds: 5000
   - routeId: route.ch01.m03.main_body
     unitGroupId: group.ch01.m03.main_body
     anchorIds:
@@ -296,7 +296,7 @@ MonoBehaviour:
     - anchor.ch01.m03.convoy_path_022
     - anchor.ch01.m03.convoy_path_023
     - anchor.ch01.m03.convoy_path_024
-    startDelayMilliseconds: 140000
+    startDelayMilliseconds: 50000
   restrictions:
     buildingDisabled: 0
     productionDisabled: 0
@@ -346,15 +346,15 @@ MonoBehaviour:
       routeId: route.ch01.m03.vanguard
       contactAnchorId: anchor.ch01.m03.contact
       warningAtMilliseconds: 0
-      activationAtMilliseconds: 45000
-      contactAtMilliseconds: 65000
+      activationAtMilliseconds: 5000
+      contactAtMilliseconds: 25000
     - elementId: convoy.ch01.m03.main_body
       unitGroupId: group.ch01.m03.main_body
       routeId: route.ch01.m03.main_body
       contactAnchorId: anchor.ch01.m03.contact
-      warningAtMilliseconds: 100000
-      activationAtMilliseconds: 140000
-      contactAtMilliseconds: 165000
+      warningAtMilliseconds: 35000
+      activationAtMilliseconds: 50000
+      contactAtMilliseconds: 75000
     guidanceSteps:
     - stepId: tutorial.ch01.m03.01.read_warning
       titleKey: mission.m03.tutorial.1.title
@@ -395,8 +395,8 @@ MonoBehaviour:
     - stepId: tutorial.ch01.m03.07.stop
       titleKey: mission.m03.tutorial.7.title
       bodyKey: mission.m03.tutorial.7.body
-      action: 6
-      completion: 6
+      action: 0
+      completion: 0
       optional: 1
     - stepId: tutorial.ch01.m03.08.refresh
       titleKey: mission.m03.tutorial.8.title

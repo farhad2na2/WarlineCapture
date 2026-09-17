@@ -1,4 +1,5 @@
 using Game.UI.Contracts;
+using Game.Tactical.Contracts;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,6 +11,8 @@ namespace Game.UI.Runtime
         private static readonly ProfilerMarker RefreshMarker = new("MissionDefenseHudView.Refresh");
         [SerializeField] private Button skipCameraTourButton;
         private bool cameraPreferencesApplied;
+        private uint lastScanResult;
+        private BattleHudRuntimeFeedbackView feedback;
         [SerializeField] private GameObject openingHint;
         [SerializeField] private GameObject actions;
         [SerializeField] private MissionHudTouchLayoutView touchLayout;
@@ -19,16 +22,12 @@ namespace Game.UI.Runtime
         [SerializeField] private V3LocalizedTextBindingView status,supportLabel;
         [SerializeField] private Image supportIcon;
         [SerializeField] private Sprite radarIcon;
-        private Sprite originalIcon;
-        private string originalLabel,lastLocale;
-        private bool showingDefense;
-        private int lastCharges=-1,lastCooldown=-1;
         public bool IsCameraTourControl(Selectable control)=>control==skipCameraTourButton;
-        private void Awake()
-        {originalIcon=supportIcon!=null ? supportIcon.sprite : null; originalLabel=supportLabel!=null ? supportLabel.EnglishFallback : "";}
         private void OnEnable()
         {
             cameraPreferencesApplied=false;
+            if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(false);
+            if(skipCameraTourButton!=null) skipCameraTourButton.gameObject.SetActive(false);
             if(skipCameraTourButton!=null) skipCameraTourButton.onClick.AddListener(SkipCameraTour);
             UiShellRuntimeGateway.Localization.LocaleChanged += Refresh;
             if(guideButton!=null) guideButton.onClick.AddListener(OpenGuide);
@@ -58,7 +57,7 @@ namespace Game.UI.Runtime
                     if(visible && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out restrictions))
                         openingHint.GetComponent<V3LocalizedTextBindingView>()?.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get((restrictions.MissionId=="saga.ch01.m05.breach_assault" ? "mission.m05" : restrictions.MissionId=="saga.ch01.m04.airlift" ? "mission.m04" : "mission.m03")+(restrictions.OpeningCinematic ? ".camera.opening" : ".camera.victory")));
                 }
-                if(skipCameraTourButton.gameObject.activeSelf!=touring) skipCameraTourButton.gameObject.SetActive(touring);
+                if(skipCameraTourButton.gameObject.activeSelf) skipCameraTourButton.gameObject.SetActive(false);
                 if(touring && !cameraPreferencesApplied)
                 {
                     cameraPreferencesApplied=true;
@@ -77,31 +76,17 @@ namespace Game.UI.Runtime
             if(skipButton!=null && !active) skipButton.gameObject.SetActive(false);
             bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour() && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restriction) && restriction.MissionId=="saga.ch01.m03.radar_warning";
             if(touchLayout!=null) touchLayout.Apply(active || touring || UiShellRuntimeGateway.TryReadMissionExtraction(out _));
-            if(showingDefense!=active || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode)
-            {
-                if(supportLabel!=null) supportLabel.SetLocalizedValue(active ? UiShellRuntimeGateway.Localization.Get("mission.m03.ping.label","Radar Ping") : UiShellRuntimeGateway.Localization.Get("",originalLabel));
-                if(supportIcon!=null) supportIcon.sprite=active ? radarIcon : originalIcon;
-                showingDefense=active;
-            }
-            if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(active && model.CanReturnCamera);
-            if(status!=null) status.gameObject.SetActive(active);
-            if(!active) {lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode; return;}
-            if(supportButton!=null) supportButton.interactable=model.CanPing;
+            if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(false);
+            if(status!=null) status.gameObject.SetActive(false);
+            if(!active) {lastScanResult=0; return;}
             if(warningButton!=null) warningButton.interactable=model.HasWarning;
-            if(skipButton!=null) skipButton.gameObject.SetActive(!model.RequiresHoldResume && model.GuidanceId is 45004 or 45007 or 45008 or 45009);
-            if(status!=null && (lastCharges!=model.Charges || lastCooldown!=model.CooldownSeconds || lastLocale!=UiShellRuntimeGateway.Localization.CurrentLocaleCode))
+            if(warningButton!=null && model.ScanResultVersion!=lastScanResult && !string.IsNullOrEmpty(model.ScanFeedback))
             {
-                string pingStatus=model.Charges>0 && model.CooldownSeconds>0 ? (model.CooldownSeconds/60)+":"+(model.CooldownSeconds%60).ToString("00") : model.Charges.ToString();
-                status.SetLocalizedValue(pingStatus);
-                if(supportLabel!=null) supportLabel.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(
-                    model.Charges==0 ? "mission.m03.ping.spent_label" : model.CooldownSeconds>0 ? "mission.m03.ping.recharging_label" : "mission.m03.ping.label"));
-                var counter=status.GetComponent<TMPro.TMP_Text>();
-                if(counter!=null) {counter.fontSizeMin=22;counter.fontSizeMax=24;
-                    var rect=counter.rectTransform;rect.anchorMin=new Vector2(0,1);rect.anchorMax=Vector2.one;
-                    rect.pivot=new Vector2(.5f,1);rect.anchoredPosition=new Vector2(0,-6);rect.sizeDelta=new Vector2(-16,32);}
-                lastCharges=model.Charges;lastCooldown=model.CooldownSeconds;
+                lastScanResult=model.ScanResultVersion;
+                if(feedback==null) feedback=transform.root.GetComponentInChildren<BattleHudRuntimeFeedbackView>(true);
+                feedback?.ApplyTransientCommandFeedback(MatchHudCommandFeedbackModel.ShowTransient(model.ScanFeedback,CommandFeedbackSeverity.Ready,8f),Time.unscaledTime);
             }
-            lastLocale=UiShellRuntimeGateway.Localization.CurrentLocaleCode;
+            if(skipButton!=null) skipButton.gameObject.SetActive(!model.RequiresHoldResume && model.GuidanceId is 45004 or 45007 or 45008 or 45009);
         }
         private void OpenGuide()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);
         private void OpenWarning()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenWarning);

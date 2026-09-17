@@ -43,7 +43,9 @@ namespace Game.UI.Runtime
                     if(_tutorialWarning==null && _buttonRoot!=null)
                         _tutorialWarning=_buttonRoot.root.GetComponentInChildren<ThreatAlertV3PopupView>(true);
                     var jump=_tutorialWarning?.JumpToThreatButton;
-                    Cue(jump!=null && jump.IsActive() ? jump : _embeddedTutorialView.ContinueButton,"tutorial.next.continue"); break;
+                    if (jump != null && jump.IsActive()) Cue(jump, "ui.v3.jump_to_threat.b1cb566ff9");
+                    else Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");
+                    break;
                 case 3: ShowConstructionCue(true,false); break;
                 case 4: ShowConstructionCue(true,true); break;
                 case 9: ShowProductionCue(); break;
@@ -51,7 +53,7 @@ namespace Game.UI.Runtime
                 case 6: ShowSelectionOrControl(_commandControlsView?.HoldButton,"mission.m03.guide.control.8"); break;
                 case 7:
                     ShowSelectionOrControl(_commandControlsView?.HoldButton,"mission.m03.guide.control.8"); break;
-                case 8: Cue(_commandControlsView?.SupportButton,"mission.m03.guide.control.6"); break;
+                case 8: Cue(_commandControlsView?.ScanButton,"mission.m03.guide.control.6"); break;
                 case 10: case 11: case 12: ShowDefenseBattleAction(); break;
                 default: _highlightPresentationSystem.ClearDirectTutorialCue(); break;
             }
@@ -84,7 +86,7 @@ namespace Game.UI.Runtime
             if (_lastPanelModel.TutorialStepCount == 9 && _lastPanelModel.TutorialStep == 7)
             { ShowTutorialWorld(target.Destination, false); return; }
             if (target.NeedsSelection) { ShowSelectionTarget(target.Selection); return; }
-            if (target.Moving) { WaitForTutorialArrival(); return; }
+            if (target.Moving || target.ExecutingAttack) { WaitForTutorialArrival(); return; }
             if (_activeCommandMode == TacticalCommandMode.Attack) ShowTutorialWorld(target.Destination, false);
             else Cue(_commandControlsView?.AttackButton, "ui.aria.press_attack");
         }

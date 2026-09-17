@@ -149,6 +149,7 @@ namespace Game.Runtime
             pooledSource.RequestId = request.RequestId;
             pooledSource.Priority = request.Priority;
             pooledSource.BusId = resolvedBusId;
+            pooledSource.GameplayOnly = IsGameplayOnly(entry.EventId, resolvedBusId);
             pooledSource.VolumeDecibels = AudioPlaybackSourceConfiguration.ResolveTotalDecibels(request, entry, bus);
             pooledSource.InUse = true;
             pooledSource.ReleaseAfterFade = false;
@@ -210,6 +211,26 @@ namespace Game.Runtime
                     pooledSource.Source.Stop();
                 ReleaseSource(i);
             }
+        }
+
+        public void StopGameplaySources()
+        {
+            for (int i = 0; i < _sources.Count; i++)
+            {
+                if (!_sources[i].InUse || !_sources[i].GameplayOnly) continue;
+                _sources[i].Source?.Stop();
+                ReleaseSource(i);
+            }
+        }
+
+        internal static bool IsGameplayOnly(string eventId, string busId)
+        {
+            return string.Equals(busId, "Voice", StringComparison.Ordinal) ||
+                   string.Equals(busId, "Alerts", StringComparison.Ordinal) ||
+                   (!string.IsNullOrEmpty(eventId) &&
+                    (eventId.StartsWith("Gameplay.", StringComparison.Ordinal) ||
+                     eventId.StartsWith("Alert.", StringComparison.Ordinal) ||
+                     eventId.StartsWith("VO.ARIA", StringComparison.Ordinal)));
         }
 
         public void ApplySettingsToActiveSources(AudioSettingsComponent settings)

@@ -788,6 +788,11 @@ namespace Game.Runtime
                 return true;
             }
 
+            // A screen tap on a gate's face projects onto the ground behind it.
+            // Resolve visible building geometry before the unit-distance fallback.
+            if (TryGetClickedRuntimeBuildingVisual(em, context.WorldCamera, screenPosition, out bestEntity))
+                return true;
+
             if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
                 return true;
 
@@ -887,6 +892,37 @@ namespace Game.Runtime
             Vector3 worldPoint = ray.GetPoint(distance);
             cell = GridUtils.WorldToCell(grid, worldPoint);
             return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        }
+
+        private bool TryGetClickedRuntimeBuildingVisual(
+            EntityManager em, Camera camera, Vector2 screenPosition, out Entity bestEntity)
+        {
+            bestEntity = Entity.Null;
+            if (camera == null) return false;
+            EnsureEntityQueries(em);
+            CompleteRuntimeBuildingCombatReadDependencies(em);
+            em.CompleteDependencyBeforeRO<UnitSelectionHitbox>();
+            float bestDistance = float.MaxValue;
+            float bestDepth = float.MaxValue;
+            // Eight pixels are already included by the shared projection helper.
+            float padding = Mathf.Max(8f, camera.pixelHeight * 16f / 1080f);
+            using var entities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
+            foreach (Entity entity in entities)
+            {
+                if (!em.HasComponent<UnitSelectionHitbox>(entity) ||
+                    !FactionIdentity.IsHostileToPlayer(em.GetComponentData<Faction>(entity).Id) ||
+                    em.GetComponentData<UnitHealth>(entity).Current <= 0) continue;
+                LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
+                float depth = camera.WorldToScreenPoint(transform.Position).z;
+                if (depth <= 0f || !FocusableUnitLookupCameraSystemHelper.TryGetSelectionHitboxScreenDistanceSq(
+                        camera, transform.ToMatrix(), em.GetComponentData<UnitSelectionHitbox>(entity),
+                        screenPosition, out float distance, out _) || distance > padding * padding) continue;
+                if (distance > bestDistance || (distance == bestDistance && depth >= bestDepth)) continue;
+                bestDistance = distance;
+                bestDepth = depth;
+                bestEntity = entity;
+            }
+            return bestEntity != Entity.Null;
         }
 
         private bool TryGetClickedRuntimeBuildingCombatEntity(

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Game.Configs;
 using Game.Editor;
 using Game.UI.Contracts;
@@ -16,10 +17,10 @@ public sealed class AriaInstructionViewportTests
             var test = new AriaInstructionViewportTests();
             foreach (float width in new[]{1920f,2400f})
             foreach (bool persian in new[]{false,true})
-                { test.HiddenPlacementDoesNotClipTheMovementLesson(width,persian); test.BreachStatusFits(width,persian); }
+                { test.HiddenPlacementDoesNotClipTheMovementLesson(width,persian); test.BreachStatusFits(width,persian); test.NewlyScrollableCopyStartsAtTheFirstLine(width,persian); }
             new HudRightColumnLayoutValidation().MinimapDockAndContentHeightFollowActualControlsAndCopy();
             new ProductionSourceGrowthArchitectureTests().AllBaselinedPathsRespectRatchetedLineAndByteCeilings();
-            Debug.Log("[AriaInstructionViewport] result=Passed cases=8 hidden-placement,full-copy,breach-status,buttons,dock");
+            Debug.Log("[AriaInstructionViewport] result=Passed cases=12 hidden-placement,full-copy,breach-status,buttons,dock");
         }
         catch(Exception error) { Debug.LogException(error); EditorApplication.Exit(1); }
     }
@@ -33,7 +34,19 @@ public sealed class AriaInstructionViewportTests
     [TestCase(2400f,false)] [TestCase(2400f,true)]
     public void BreachStatusFits(float width,bool persian) => CheckInstruction(width,persian,true);
 
-    private static void CheckInstruction(float width,bool persian,bool breach)
+    [TestCase(1920f,false)] [TestCase(1920f,true)]
+    [TestCase(2400f,false)] [TestCase(2400f,true)]
+    public void NewlyScrollableCopyStartsAtTheFirstLine(float width,bool persian) => CheckInstruction(width,persian,true,true);
+
+    public static void ValidateScrollTransitions()
+    {
+        var test=new AriaInstructionViewportTests();
+        foreach(float width in new[]{1920f,2400f})
+        foreach(bool persian in new[]{false,true}) test.NewlyScrollableCopyStartsAtTheFirstLine(width,persian);
+        Debug.Log("[AriaScrollTransitions] result=Passed languages=EN,FA widths=1920,2400 newly-scrollable-top and existing-scroll-preserved");
+    }
+
+    private static void CheckInstruction(float width,bool persian,bool breach,bool dockTransition=false)
     {
         var previousLocale=GameLocalization.CurrentLocaleCode;
         var canvas=new GameObject("ARIA viewport QA",typeof(RectTransform),typeof(Canvas));
@@ -68,6 +81,26 @@ public sealed class AriaInstructionViewportTests
             view.SetPresentationVisible(true); view.ApplyAccessibility(false,false); Canvas.ForceUpdateCanvases(); view.RefreshContentLayout();
             view.BodyText.ForceMeshUpdate(true,true);
             var viewport=(RectTransform)view.BodyText.transform.parent;
+            if(dockTransition)
+            {
+                // First layout has room for all copy; final minimap layout reduces the
+                // available rail height without changing the lesson's title.
+                var originalBody=view.BodyText is RTLTMPro.RTLTextMeshPro source ? source.OriginalText : view.BodyText.text;
+                view.BodyText.text=string.Join(" ",Enumerable.Repeat(originalBody,3));
+                var mapPosition=dock.Minimap.anchoredPosition;
+                dock.enabled=false;
+                dock.Minimap.anchoredPosition+=Vector2.down*4000;
+                view.RefreshContentLayout();Canvas.ForceUpdateCanvases();
+                var scroll=viewport.GetComponent<UnityEngine.UI.ScrollRect>();
+                Assert.IsFalse(scroll.vertical,"Expanded layout must initially fit the copy.");
+                scroll.verticalNormalizedPosition=0;
+                dock.Minimap.anchoredPosition=mapPosition;
+                view.RefreshContentLayout();Canvas.ForceUpdateCanvases();
+                Assert.IsTrue(scroll.vertical,"Final dock layout requires scrolling.");
+                Assert.That(scroll.verticalNormalizedPosition,Is.EqualTo(1).Within(.01f),"First lines must stay visible when overflow first appears.");
+                Assert.That(view.BodyText.rectTransform.anchoredPosition.y,Is.EqualTo(0).Within(.5f));
+                dock.enabled=true;
+            }
             if(breach) Assert.IsFalse(view.BodyText.isTextOverflowing,"M5 status, including the clock, must fit.");
             // Full-width stacked controls may require scrolling; the content must remain
             // complete, visibly scrollable, and stable while mission status changes.

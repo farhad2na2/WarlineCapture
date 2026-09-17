@@ -24,6 +24,18 @@ namespace Game.Runtime
             if (building == null)
                 return;
 
+            // Copy a legacy destroyed child before hiding its live ancestors.
+            if (building.DestroyedVisualInstance == null && building.Instance != null &&
+                (building.Definition == null || building.Definition.DestroyedVisualPrefab == null))
+            {
+                foreach (Transform child in building.Instance.GetComponentsInChildren<Transform>(true))
+                {
+                    if (!string.Equals(child.name, "Destroyed", System.StringComparison.OrdinalIgnoreCase))
+                        continue;
+                    building.DestroyedVisualInstance = Object.Instantiate(child.gameObject, building.Instance.transform, true);
+                    break;
+                }
+            }
             HideAliveVisuals(context, building);
             if (building.DestroyedVisualInstance != null)
             {
@@ -53,6 +65,7 @@ namespace Game.Runtime
                 instance.transform.localScale = source.localScale;
             }
 
+            instance.SetActive(true);
             building.DestroyedVisualInstance = instance;
         }
 

@@ -351,7 +351,9 @@ namespace Game.Runtime
                 processedRequests++;
                 if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
                     spawnable = BuildingDefinitionPrefabSystemHelper.BuildConfiguredSpawnableEntry(definition);
-                if (spawnable.Prefab == null || !spawnable.CanRequest)
+                bool authoredEnemy = request.AllowNonBuildableEnemy != 0 && request.HasOwnerFaction != 0 &&
+                    request.FactionId != FactionIdentity.PlayerFactionId;
+                if (spawnable.Prefab == null || (!spawnable.CanRequest && !authoredEnemy))
                 {
                     request.Status = BuildingRuntimeSpawnRequest.Failed;
                     request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
@@ -406,7 +408,7 @@ namespace Game.Runtime
                         false,
                         ResolveOwnerFaction(request),
                         request.RotateVertical != 0,
-                        out result);
+                        out result, request.RequirePreferredOrigin != 0);
                     request.SpawnedCount = placed ? 1 : 0;
                 }
 

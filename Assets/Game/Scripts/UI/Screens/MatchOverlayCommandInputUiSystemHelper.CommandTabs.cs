@@ -41,22 +41,41 @@ namespace Game.UI.Runtime
             {
                 if (scanAlias)
                 {
-                    // M3 loans a mission radar action on this slot. It must not go
-                    // through selected-unit Scan capability/targeting.
-                    if (UiShellRuntimeGateway.TryReadMissionDefense(out var defense))
-                    {
-                        CaptureCommandUiClick();
-                        bool queued = UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.RadarPing);
-                        ApplyCommandResult(queued
-                            ? TacticalCommandResult.Success(_gameTextResolver.Get("mission.m03.ping.requested", "Radar sweep requested."))
-                            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable, defense.PingText));
-                        return;
-                    }
-                    OnScanButtonClicked();
+                    CaptureCommandUiClick();
+                    UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.Support, 0);
                     return;
                 }
 
                 CaptureCommandUiClick();
+            }
+
+            private void OnScanButtonClicked()
+            {
+                if (TryRequestMissionScan()) return;
+                CaptureCommandUiClick();
+                if (!TryAcceptCapability(CommandCapability.Scan))
+                    return;
+
+                CloseBuildDrawerIfOpen();
+                bool queued = _selectionUiCommandSystem != null &&
+                    _selectionUiCommandSystem.RequestScanCommandMode();
+
+                if (!queued)
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
+                        ResolveFallbackReason(CommandCapability.Scan),
+                        ResolveUnavailableFeedbackMessage(CommandCapability.Scan, ResolveFallbackReason(CommandCapability.Scan))));
+            }
+
+            private bool TryRequestMissionScan()
+            {
+                if (!UiShellRuntimeGateway.TryReadMissionDefense(out var defense)) return false;
+                CaptureCommandUiClick();
+                CloseBuildDrawerIfOpen();
+                bool queued = UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.RadarPing);
+                ApplyCommandResult(queued
+                    ? TacticalCommandResult.Success(_gameTextResolver.Get("mission.m03.ping.requested", "Radar sweep requested."))
+                    : TacticalCommandResult.Rejected(TacticalCommandReasonCode.ScanUnavailable, defense.PingText));
+                return true;
             }
 
             private bool IsScanAliasCommandButton(Button button)

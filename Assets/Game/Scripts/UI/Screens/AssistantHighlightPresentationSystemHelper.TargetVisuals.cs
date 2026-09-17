@@ -216,6 +216,8 @@ namespace Game.UI.Runtime
             float radius = Mathf.Max(
                 0.35f,
                 WorldRingRadius * (0.75f + Mathf.Clamp01(model.Strength) * 0.25f));
+            SetWorldMarkerDecoration(true);
+            _worldRingRenderer.startColor = _worldRingRenderer.endColor = V3CyanSoft;
             WriteWorldMarker(center, radius);
             _worldRingRoot.SetActive(true);
         }

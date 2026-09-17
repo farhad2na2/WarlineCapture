@@ -1,0 +1,53 @@
+{
+  "method": "Local whisper.cpp small, automatic language detection; machine transcript for manual content review, not a native-speaker sign-off.",
+  "clips": [
+    {
+      "id": "warning_ground_attack_type",
+      "locale": "en-US",
+      "expected": "Ground vehicle attack detected",
+      "detectedLanguage": "en",
+      "transcript": "Ground vehicle attack detected.",
+      "sha256": "6dbc4b47d6f3c7b0556ac61340ca460e06617eef21051fd2ed1f4278bbf51e43"
+    },
+    {
+      "id": "warning_ground_attack_type",
+      "locale": "fa-IR",
+      "expected": "خودروهای دشمن دارن حمله می‌کنن",
+      "detectedLanguage": "fa",
+      "transcript": "خود روهای دوشمن دارن حمله می کنن.",
+      "sha256": "504ebf905db0797189378a5d8383cf033016884943443190cb773df7195c0694"
+    },
+    {
+      "id": "tactical.banner.accepted.move.title",
+      "locale": "en-US",
+      "expected": "MOVE ORDER",
+      "detectedLanguage": "en",
+      "transcript": "Move Order.",
+      "sha256": "5c9825ea82b3378555e75c62c3587307b886bcccb8cfd88bec91bb42936e17bb"
+    },
+    {
+      "id": "tactical.banner.accepted.move.title",
+      "locale": "fa-IR",
+      "expected": "فرمان حرکت",
+      "detectedLanguage": "fa",
+      "transcript": "فرمان حرکت",
+      "sha256": "26d7600825cbd61dd7e96d4e9fc78fe0ea708f7bc3971cd7ef1c214c4f4daa06"
+    },
+    {
+      "id": "tactical.banner.accepted.move.description",
+      "locale": "en-US",
+      "expected": "Units moving to target.",
+      "detectedLanguage": "en",
+      "transcript": "Units moving to target.",
+      "sha256": "0971be1941fb111fecd6ebe0bcc7e2e25c0706ebf04ec317fc2e3f7591e3daec"
+    },
+    {
+      "id": "tactical.banner.accepted.move.description",
+      "locale": "fa-IR",
+      "expected": "نیروهات دارن می‌رن سمت مقصد.",
+      "detectedLanguage": "fa",
+      "transcript": "میروهات دران میران سمت مقصد",
+      "sha256": "d238db9da7b2d7ef8a9eb9766173c2a71c77d0be42e2edef44a32e44a66bd4d2"
+    }
+  ]
+}

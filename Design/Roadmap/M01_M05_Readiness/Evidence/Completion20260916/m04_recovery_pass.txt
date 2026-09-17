@@ -1,0 +1,12 @@
+Wrapper exit 0. Supplemental normal-order mechanics: visible passenger chip/Exit All; clearance interruption/reset/re-entry; protected self-destruct rejection; real replay combat defeat; clean Retry; no duplicate rewards. Idle combat uses 4x simulation, not pacing evidence. Legacy result marker resolution labels are not authoritative; actual capture dimensions below.
+
+[M04MobileActions] live roster availability=Passed
+[M04MobileActions] visible passenger chip opens drawer, actual Exit All unloads=Passed
+[M04ReadinessRecovery] moving loaded helicopter outside landing zone at progress=3014
+[M04ReadinessRecovery] clearance reset; returning loaded helicopter with a normal Move order
+[M04ReadinessRecovery] result=Passed clearance resumed with all four passengers
+[M04MobileActions] rescue quality: enemies stopped=4 escort losses=0 time=79333
+[M04EditorProbe] Continue reached the visible, interactive Campaign screen
+[M04EditorProbe] First-clear journey passed; validating replay defeat and retry through normal commands
+[M04EditorProbe] Idle retry defeated at ms=131851 passengerLosses=1 escorts=0 timeout=0
+[M04EditorProbe] result=Passed HUD en/fa 16:9 and 20:9; 12 guide topics and 57 classes in both languages; real APC/helicopter rescue; debrief; saved unlocks; visible bilingual result; campaign return; protected self-destruct rejection and real Replay combat defeat and clean Retry; idle failure under normal combat at 4x simulation; no duplicate rewards

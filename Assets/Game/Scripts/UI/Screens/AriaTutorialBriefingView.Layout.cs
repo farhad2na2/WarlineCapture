@@ -58,12 +58,16 @@ namespace Game.UI.Runtime
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
             bool newInstruction=measuredTitle!=titleText.text;
-            float scrollPosition=bodyScroll!=null && !newInstruction ? bodyScroll.verticalNormalizedPosition : 1f;
+            // A fitting ScrollRect can report zero even though the reader never scrolled.
+            // When the dock settles and the copy starts overflowing, open at the first line.
+            bool preserveScroll=bodyScroll!=null && bodyScroll.vertical && !newInstruction;
+            float scrollPosition=preserveScroll ? Mathf.Clamp01(bodyScroll.verticalNormalizedPosition) : 1f;
+            if(!preserveScroll && bodyScroll!=null) bodyScroll.StopMovement();
             _layoutDirty=false; measuredAvailable=available; measuredState=state; measuredWidth=rail.rect.width; measuredFont=bodyText.font;
             measuredTitle=titleText.text; measuredBody=bodyText.text; measuredAlert=alertCopy?.text; measuredOpening=openingCopy?.text;
             float width=rail.rect.width-40;
-            float titleHeight=tutorial ? Measure(titleText,width,_missionLayoutLarge?22:20) : 0;
-            float bodyHeight=tutorial ? Measure(bodyText,width,_missionLayoutLarge?19:17) : 0;
+            float titleHeight=tutorial ? Measure(titleText,width,26) : 0;
+            float bodyHeight=tutorial ? Measure(bodyText,width,24) : 0;
             float utilityHeight=(utilityCount+extractionCount)*84;
             float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
@@ -99,8 +103,8 @@ namespace Game.UI.Runtime
             {
                 // No reserved tutorial rectangle or inactive text raycast surface.
                 if(briefingLayout.gameObject.activeSelf) briefingLayout.gameObject.SetActive(false);
-                if(opening) {float h=Measure(openingCopy,width,_missionLayoutLarge?19:17);Place(openingLayout,20,y,width,h);Place(openingCopy.rectTransform,0,0,width,h);y+=h+12;}
-                else if(alert) {float h=Measure(alertCopy,width,_missionLayoutLarge?19:17);Place(alertCopy.rectTransform,20,y,width,h);y+=h+12;}
+                if(opening) {float h=Measure(openingCopy,width,24);Place(openingLayout,20,y,width,h);Place(openingCopy.rectTransform,0,0,width,h);y+=h+12;}
+                else if(alert) {float h=Measure(alertCopy,width,24);Place(alertCopy.rectTransform,20,y,width,h);y+=h+12;}
             }
             if(utilityActions!=null && utilityActions.gameObject.activeSelf)
             {PlaceUtilityRow(utilityActions,y,width);y+=utilityCount*84;}

@@ -38,9 +38,10 @@ namespace Game.UI.Runtime
             return _highlightPresentationSystem.HasDirectTutorialTarget;
         }
 
-        private void ShowTutorialWorld(Vector3 position, bool selection)
+        private void ShowTutorialWorld(Vector3 position, bool selection, bool waitingArea = false)
         {
-            _highlightPresentationSystem.ShowTutorialWorld(position);
+            if (waitingArea) _highlightPresentationSystem.ShowTutorialArea(position, 3f, defensive: true);
+            else _highlightPresentationSystem.ShowTutorialWorld(position);
             if (_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(selection))
             {
                 _tutorialFocusPendingUntil=Time.unscaledTime+2f;

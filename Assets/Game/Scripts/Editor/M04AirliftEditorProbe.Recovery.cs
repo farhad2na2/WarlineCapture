@@ -8,6 +8,7 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,6 +23,48 @@ namespace Game.Editor
         private static string resultWaitReason;
         private static MissionResultPopupView observedResult;
         private static int resultFirstFrame;
+        private const string ClearanceRecoveryKey = "Warline.M04.ReadinessClearanceRecovery";
+        private static int clearanceRecoveryStage;
+
+        public static void RunReadinessRecovery()
+        {
+            SessionState.SetBool(ClearanceRecoveryKey, true);
+            clearanceRecoveryStage = 0;
+            RunCommittedAcceptance();
+        }
+
+        private static bool ExerciseClearanceInterruption(EntityManager em,
+            CampaignMissionExtractionState extraction, CampaignMissionAttemptFactsComponent facts)
+        {
+            if (!SessionState.GetBool(ClearanceRecoveryKey, false) || clearanceRecoveryStage >= 3) return false;
+            if (clearanceRecoveryStage == 0)
+            {
+                if (facts.ExtractionSecureMilliseconds < 3000) return true;
+                if (extraction.DepartureCleared != 0) throw new InvalidOperationException("Clearance completed before interruption check.");
+                Move(em, extraction.Aircraft, new int2((int)extraction.LandingCenter.x - 32, (int)extraction.LandingCenter.z));
+                clearanceRecoveryStage = 1;
+                Debug.Log("[M04ReadinessRecovery] moving loaded helicopter outside landing zone at progress=" + facts.ExtractionSecureMilliseconds);
+                return true;
+            }
+            if (clearanceRecoveryStage == 1)
+            {
+                if (Near(em, extraction.Aircraft, extraction.LandingCenter, 22)) return true;
+                if (facts.ExtractionSecureMilliseconds != 0 || extraction.DepartureCleared != 0)
+                    throw new InvalidOperationException("Leaving the landing zone did not reset clearance.");
+                ScreenCapture.CaptureScreenshot(Output + "/clearance-interrupted.png");
+                Move(em, extraction.Aircraft, new int2((int)extraction.LandingCenter.x, (int)extraction.LandingCenter.z));
+                clearanceRecoveryStage = 2;
+                Debug.Log("[M04ReadinessRecovery] clearance reset; returning loaded helicopter with a normal Move order");
+                return true;
+            }
+            if (facts.ExtractionSecureMilliseconds < 1000) return true;
+            if (facts.ExtractionPassengersAboard != 4)
+                throw new InvalidOperationException("Clearance recovery lost a passenger.");
+            clearanceRecoveryStage = 3;
+            ScreenCapture.CaptureScreenshot(Output + "/clearance-resumed.png");
+            Debug.Log("[M04ReadinessRecovery] result=Passed clearance resumed with all four passengers");
+            return false;
+        }
         private static void BeginRecovery(EntityManager em,Entity root)
         {
             recoveryActive=true;deployed=false;step=100;stepAt=EditorApplication.timeSinceStartup;

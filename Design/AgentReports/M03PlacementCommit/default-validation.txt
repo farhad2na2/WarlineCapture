@@ -1,0 +1,6 @@
+[PlacementTransaction] result=Passed tests=7
+[M03PlacementCommit] visible=(882, 419) pointerSnapshot=(879, 426)
+[M03PlacementCommit] result=Passed registered cell, root and model pose match preview: (882, 419) position=(883.00, 0.45, 423.00)
+[M03PlacementCommit] result=Passed registered cell, root and model pose match preview: (882, 419) position=(883.00, 0.45, 423.00)
+[M03RadarWarningEditorLaunchProbe] result=Passed M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement.
+Wrapper exit: 0

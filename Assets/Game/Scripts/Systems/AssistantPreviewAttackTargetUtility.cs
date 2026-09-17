@@ -34,7 +34,7 @@ namespace Game.Runtime
             Entity candidate = highlight.TargetEntity;
             if (highlight.Active == 0 ||
                 highlight.RecommendationKind != AssistantRecommendationKind.Attack ||
-                !IsDirectResolvedAttackTarget(entityManager, candidate))
+                !IsPreviewAttackTarget(entityManager, candidate))
             {
                 return false;
             }
@@ -57,10 +57,16 @@ namespace Game.Runtime
             EntityManager entityManager,
             Entity targetEntity)
         {
+            // Buildings must still pass through the managed breach-routing path.
+            return IsPreviewAttackTarget(entityManager, targetEntity) &&
+                   !entityManager.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) &&
+                   !entityManager.HasComponent<RuntimeBuildingCombatTag>(targetEntity);
+        }
+
+        private static bool IsPreviewAttackTarget(EntityManager entityManager, Entity targetEntity)
+        {
             if (targetEntity == Entity.Null ||
                 !entityManager.Exists(targetEntity) ||
-                entityManager.HasComponent<RuntimeBuildingCombatTag>(targetEntity) ||
-                entityManager.HasComponent<RuntimeBuildingCombatInfo>(targetEntity) ||
                 entityManager.HasComponent<StaticGridBlocker>(targetEntity) ||
                 !entityManager.HasComponent<Faction>(targetEntity) ||
                 !entityManager.HasComponent<LocalTransform>(targetEntity))

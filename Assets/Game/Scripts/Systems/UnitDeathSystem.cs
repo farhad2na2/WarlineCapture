@@ -304,7 +304,8 @@ namespace Game.Runtime
 
         private static bool TryBeginVehicleWreck(EntityManager em, Entity entity)
         {
-            bool hasConfiguredDestroyedVisual = em.HasComponent<VehicleDestroyedVisualPrefabReference>(entity);
+            bool hasConfiguredDestroyedVisual = em.HasComponent<VehicleDestroyedVisualPrefabReference>(entity) &&
+                em.Exists(em.GetComponentData<VehicleDestroyedVisualPrefabReference>(entity).Prefab);
             bool hasLegacyDestroyedVisual = em.HasComponent<UnitDestroyedVisualReference>(entity);
             if (!hasConfiguredDestroyedVisual && !hasLegacyDestroyedVisual)
             {
@@ -342,7 +343,7 @@ namespace Game.Runtime
                     for (int i = 0; i < children.Length; i++)
                     {
                         Entity child = children[i].Value;
-                        UnitDestroyedVisualSystem.SetChildVisible(em, child, child == visualRef.DestroyedVisual);
+                        UnitDestroyedVisualSystem.SetChildVisible(em, child, child == visualRef.DestroyedVisual, visualRef.DestroyedVisibleScale);
                     }
                 }
                 else
@@ -350,7 +351,7 @@ namespace Game.Runtime
                     UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.AliveVisual, false);
                     if (em.HasComponent<UnitTurretReference>(entity))
                         UnitDestroyedVisualSystem.SetChildVisible(em, em.GetComponentData<UnitTurretReference>(entity).Turret, false);
-                    UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.DestroyedVisual, true);
+                    UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.DestroyedVisual, true, visualRef.DestroyedVisibleScale);
                 }
             }
 

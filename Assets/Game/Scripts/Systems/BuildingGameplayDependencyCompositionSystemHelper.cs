@@ -96,6 +96,13 @@ namespace Game.Runtime
             return MainMenuPlayUi != null && MainMenuPlayUi.IsBuildDrawerOpen;
         }
 
+        internal void FocusPlacementImmediately(Vector3 worldPosition, bool isValid)
+        {
+            Vector2 center = MainMenuPlayUi is IBuildingPlacementViewportQuery viewport
+                ? viewport.GetPlacementViewportCenter(isValid) : new Vector2(.5f, .6f);
+            SelectionUiCameraSystemHelper?.FocusPlacementImmediately(worldPosition, center);
+        }
+
         internal void SmoothMoveCameraGroundCenterTo(Vector3 worldPosition) =>
             SelectionUiCameraSystemHelper?.SmoothMoveCameraGroundCenterTo(worldPosition);
 

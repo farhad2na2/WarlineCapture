@@ -478,6 +478,10 @@ namespace Game.Components
         public byte RequestKind;
         public byte FactionId;
         public byte HasOwnerFaction;
+        // Authored mission enemies may use prefabs excluded from the player build catalogue.
+        public byte AllowNonBuildableEnemy;
+        // Authored objectives must keep their wall/mission layout rather than relocate.
+        public byte RequirePreferredOrigin;
         public FixedString128Bytes BuildingId;
         public int2 PreferredOrigin;
         public int2 EndOrigin;

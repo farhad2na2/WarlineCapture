@@ -1,0 +1,14 @@
+{
+  "date": "2026-09-16",
+  "branch": "codex/m03-radar-warning",
+  "head": "b70b529b40c9cb8689402824b29190a2443d420c",
+  "working_tree": "existing uncommitted source/assets preserved; validation uses copied working-tree source",
+  "qa_project": "/private/tmp/warline-m05-tap-validation",
+  "probe": "CampaignTutorialEntryEditorProbe.Run",
+  "limits": [
+    "isolated completed profile, assistant Off",
+    "comics skipped through visible skip controls",
+    "opening and first action only, not mission completion",
+    "Editor, not physical phone"
+  ]
+}

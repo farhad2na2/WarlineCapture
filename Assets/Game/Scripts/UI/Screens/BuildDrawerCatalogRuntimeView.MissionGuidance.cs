@@ -207,8 +207,7 @@ namespace Game.UI.Runtime
             RefreshQueue();
             UiShellRuntimeGateway.TryAcknowledgeCampaignGuidanceTarget(
                 UiCampaignGuidanceTargetKind.RifleProduction);
-            if (_guidedProductionInvocation)
-                _closeDrawer?.Invoke();
+            _closeDrawer?.Invoke();
         }
 
         internal RectTransform ResolveRifleProductionGuidanceTarget()

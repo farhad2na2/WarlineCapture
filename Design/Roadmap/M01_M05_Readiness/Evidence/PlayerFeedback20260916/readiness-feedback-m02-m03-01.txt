@@ -1,0 +1,131 @@
+[M02ProductionWait] result=Passed acknowledged recruitment, destroyed drawer, queue completion and match cleanup
+[M05EnemyCompoundTests] result=Passed sealed-perimeter, APC-clearance, interior-objectives
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=2 body=Open the Build menu.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=3 body=Select Barracks from the building list.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=4 body=Place the Barracks inside the green area, then confirm construction.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=EstablishBasePlaceBarracks body=Move the preview onto a green footprint; rotate if needed, then tap Place Building. Cancel returns to the lesson.
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=5 body=You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=6 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=EstablishBaseQueueRifle body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] production-before=ItemView catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] production-before=BuildButton catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] training-wait locale=en drawer=closed body=Training is in progress. Wait for your rifle squad to arrive; no further tap is needed. The mission continues automatically when they are ready.
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=en
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=2 body=منوی «ساخت» رو باز کن.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=3 body=از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=4 body=سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=EstablishBasePlaceBarracks body=پیش‌نمایش رو به محل سبز بکش. اگه لازم شد بچرخونش، بعد «قراردهی ساختمان» رو بزن. «لغو» برت می‌گردونه به درس.
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=5 body=با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=6 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=EstablishBaseQueueRifle body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] production-before=ItemView catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] production-before=BuildButton catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] training-wait locale=fa-IR drawer=closed body=آموزش شروع شده. صبر کن گروه تفنگدار آماده بشه؛ لازم نیست چیزی بزنی. وقتی آماده شدن، مأموریت خودش ادامه پیدا می‌کنه.
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=fa-IR
+[CampaignPlayerJourney] bilingual-complete=saga.ch01.m02.establish_base
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=1 body=Your mission: stop BOTH enemy convoys before they reach the post. Keep the post standing. First prepare your rifles; the convoy waits while you learn. Read the warning, then Continue.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=2 body=Jump to the reported road. This moves the camera and keeps your squads and orders unchanged.
+[CampaignPlayerJourney] action=2:JumpToThreatButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=3 body=First prepare a defensive line beside the marked road. Open Build to see your options. In the next lesson, choose ONE tower or road barrier, or skip building. You do not need all three buildings.
+[CampaignPlayerJourney] action=3:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=4 body=Choose ONE Road Barrier or Guard Tower. Place the barrier across the road; place the tower off the road. Rotate if needed, then confirm a green footprint. One placement completes this optional lesson.
+[CampaignPlayerJourney] action=4:ItemView - Road Barrier
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=RadarBuildOption body=Choose ONE Road Barrier or Guard Tower. Place the barrier across the road; place the tower off the road. Rotate if needed, then confirm a green footprint. One placement completes this optional lesson.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=5 body=Tap Select defenders below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=5:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=RadarPositionSquads body=Select a friendly squad, press Move, then choose a reachable position beside the convoy road. Wait for arrival.
+[CampaignPlayerJourney] action=5:MoveCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Move:(876.00, 0.67, 426.00)
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=6 body=Select a friendly squad, press Move, then choose a reachable position beside the convoy road. Wait for arrival.
+[CampaignPlayerJourney] action=6:HoldCommand
+[CampaignPlayerJourney] defense-status elapsed=1 text=Convoy 1/2
+Arriving in <size=130%><b>00:24</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=10 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=RadarPriority body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] defense-status elapsed=20 text=Convoy 1/2
+Arriving in <size=130%><b>00:06</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=11 body=Enemy vehicles are approaching. Keep rifles on Hold at the yellow ring: they fire automatically when enemies enter range. Stop every vehicle before the post. Another scan is not required.
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=RadarAdapt body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] defense-status elapsed=40 text=Convoy 1/2
+Defend · 2 vehicles left
+[CampaignPlayerJourney] defense-status elapsed=60 text=Convoy 2/2
+Arriving in <size=130%><b>00:31</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=12 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] defense-status elapsed=80 text=Convoy 2/2
+Arriving in <size=130%><b>00:11</b></size>
+[CampaignPlayerJourney] settled lesson=12 phase=Engage outcome=None produced=0 guidance=RadarResult body=Enemy vehicles are approaching. Keep rifles on Hold at the yellow ring: they fire automatically when enemies enter range. Stop every vehicle before the post. Another scan is not required.
+[CampaignPlayerJourney] defense-status elapsed=100 text=Convoy 2/2
+Defend · 2 vehicles left
+[CampaignPlayerJourney] defense-status elapsed=120 text=Convoy 2/2
+Defend · 1 vehicles left
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=0 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=en
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=1 body=هدفت اینه که هر دو کاروان رو قبل از رسیدن به پاسگاه متوقف کنی و پاسگاه رو سالم نگه داری. اول تفنگدارها رو آماده کن؛ کاروان تا پایان آموزش منتظر می‌مونه. هشدار رو بخون، بعد «ادامه» رو بزن.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=2 body=جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.
+[CampaignPlayerJourney] action=2:JumpToThreatButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=3 body=اول کنار جادهٔ مشخص‌شده دفاعت رو آماده کن. «ساخت» رو بزن تا گزینه‌ها رو ببینی. فقط یه برج یا مانع جاده کافیه؛ می‌تونی از ساخت هم بگذری. لازم نیست هر سه سازه رو بسازی.
+[CampaignPlayerJourney] action=3:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=4 body=فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.
+[CampaignPlayerJourney] action=4:ItemView - Road Barrier
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=RadarBuildOption body=فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=5 body=پایین صفحه، «انتخاب مدافعان» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=5:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=RadarPositionSquads body=اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.
+[CampaignPlayerJourney] action=5:MoveCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Move:(876.00, 0.67, 426.00)
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=6 body=اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.
+[CampaignPlayerJourney] action=6:HoldCommand
+[CampaignPlayerJourney] defense-status elapsed=1 text=ﮐﺎﺭﻭﺍﻥ 1 ﺍﺯ 2
+ﺗﺎ ﺭﺳﯿﺪﻥ: <size=130%><b>42:00</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=10 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=RadarPriority body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] defense-status elapsed=20 text=ﮐﺎﺭﻭﺍﻥ 1 ﺍﺯ 2
+ﺗﺎ ﺭﺳﯿﺪﻥ: <size=130%><b>60:00</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=11 body=خودروهای دشمن دارن نزدیک می‌شن. تفنگدارها رو کنار حلقهٔ زرد روی «حفظ» نگه دار تا وقتی دشمن توی برد اومد، شلیک کنن. همهٔ خودروها رو قبل از پاسگاه متوقف کن. اسکن دوباره لازم نیست.
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=RadarAdapt body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] defense-status elapsed=40 text=ﮐﺎﺭﻭﺍﻥ 1 ﺍﺯ 2
+ﺩﻓﺎﻉ ﮐﻦ · 2 ﺧﻮﺩﺭﻭ ﻣﻮﻧﺪﻩ
+[CampaignPlayerJourney] defense-status elapsed=60 text=ﮐﺎﺭﻭﺍﻥ 2 ﺍﺯ 2
+ﺗﺎ ﺭﺳﯿﺪﻥ: <size=130%><b>13:00</b></size>
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=12 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] defense-status elapsed=80 text=ﮐﺎﺭﻭﺍﻥ 2 ﺍﺯ 2
+ﺗﺎ ﺭﺳﯿﺪﻥ: <size=130%><b>11:00</b></size>
+[CampaignPlayerJourney] settled lesson=12 phase=Engage outcome=None produced=0 guidance=RadarResult body=خودروهای دشمن دارن نزدیک می‌شن. تفنگدارها رو کنار حلقهٔ زرد روی «حفظ» نگه دار تا وقتی دشمن توی برد اومد، شلیک کنن. همهٔ خودروها رو قبل از پاسگاه متوقف کن. اسکن دوباره لازم نیست.
+[CampaignPlayerJourney] defense-status elapsed=100 text=ﮐﺎﺭﻭﺍﻥ 2 ﺍﺯ 2
+ﺩﻓﺎﻉ ﮐﻦ · 3 ﺧﻮﺩﺭﻭ ﻣﻮﻧﺪﻩ
+[CampaignPlayerJourney] defense-status elapsed=120 text=ﮐﺎﺭﻭﺍﻥ 2 ﺍﺯ 2
+ﺩﻓﺎﻉ ﮐﻦ · 1 ﺧﻮﺩﺭﻭ ﻣﻮﻧﺪﻩ
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=0 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m03.radar_warning
+Wrapper exit: 0

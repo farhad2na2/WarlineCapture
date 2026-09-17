@@ -109,7 +109,8 @@ namespace Game.Runtime
             bool isCityGenerated,
             byte? ownerFactionId,
             bool rotateVertical,
-            out SpawnRuntimeBuildingResult result)
+            out SpawnRuntimeBuildingResult result,
+            bool requirePreferredOrigin = false)
         {
             result = default;
             if (prefab == null || context.DefinitionSystem == null)
@@ -124,7 +125,7 @@ namespace Game.Runtime
                 context.RunwaySystem);
             Vector2Int placementFootprint = context.GetPlacementFootprint(definition, rotateVertical);
 
-            if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingEntity building))
+            if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingEntity building, requirePreferredOrigin))
                 return false;
 
             building.IsCityGenerated = isCityGenerated;
@@ -148,7 +149,8 @@ namespace Game.Runtime
             bool isCityGenerated,
             byte? ownerFactionId,
             bool rotateVertical,
-            out SpawnRuntimeBuildingResult result)
+            out SpawnRuntimeBuildingResult result,
+            bool requirePreferredOrigin = false)
         {
             return TrySpawnRuntimeBuilding(
                 context,
@@ -161,7 +163,7 @@ namespace Game.Runtime
                 isCityGenerated,
                 ownerFactionId,
                 rotateVertical,
-                out result);
+                out result, requirePreferredOrigin);
         }
 
         public int TrySpawnRuntimeWallRun(
@@ -308,7 +310,8 @@ namespace Game.Runtime
             BuildingDefinition definition,
             Vector2Int preferredOrigin,
             bool rotateVertical,
-            out RuntimeBuildingEntity building)
+            out RuntimeBuildingEntity building,
+            bool requirePreferredOrigin = false)
         {
             building = null;
             if (definition == null || definition.Prefab == null)
@@ -317,7 +320,7 @@ namespace Game.Runtime
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
                 return false;
 
-            if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell))
+            if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell, requirePreferredOrigin))
                 return false;
 
             GameObject instance = context.CreateBuildingVisualInstance?.Invoke(definition, context.BuildingRoot);

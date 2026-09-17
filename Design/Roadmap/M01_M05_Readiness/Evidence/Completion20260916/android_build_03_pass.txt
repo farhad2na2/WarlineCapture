@@ -1,0 +1,7 @@
+Wrapper exit 0. Original strict gates retained.
+
+[ReadinessAddressablesRepair] existingAddressesPreserved=122 isolatedDependencies=78 groups=1 report=Design/AgentReports/readiness_addressables_dependency_isolation.txt
+[OperationMapAddressablesAnalyze] result=Passed rule=duplicate-bundle-dependencies issues=0
+[OperationMapAddressablesBuildReport] result=Passed wrote=1 maps=1 bytes=141791457 partitions=0 addresses=6 entitiesArtifacts=0 duplicates=1 report=Design/AgentReports/operation_map_addressables_build_report.json
+Build Finished, Result: Success.
+[AndroidBuildReport] result=Passed packageType=APK assets=6424 artifactBytes=634020483 json=Design/AgentReports/architecture_performance_android_apk_build_report.json markdown=Design/AgentReports/architecture_performance_android_apk_build_report.md

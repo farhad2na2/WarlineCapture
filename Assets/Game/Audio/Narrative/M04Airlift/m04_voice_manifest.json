@@ -35,13 +35,22 @@
       "id": "m04-brief-01",
       "speaker": "LAILA",
       "locale": "fa-IR",
-      "text": "سروان لیلا ناصر هستم. بالگردم در محل فرود شرقی آماده است. چهار متخصص را با نفربر به من برسانید؛ فرصت تخلیه را ده دقیقه باز نگه می‌دارم.",
+      "text": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
       "voiceId": "EXAVITQu4vr4xnSDxMaL",
       "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav",
-      "durationSeconds": 11.92,
-      "sha256": "2f2259d4a375f7ffea4db7080d9fb1e37ed8eb3e3ba4e9e0df7762e258da0b5e",
-      "captionSha256": "4ad537f17cf9c8e361ea96d0b7d898e86084eedc483288becb728537b2a7f239"
+      "durationSeconds": 10.16,
+      "sha256": "e35ec619dd2eea50ff8c7525e114989a4d31b07c2f0cace91fbd78cf316dfc0d",
+      "captionSha256": "9ccaf5977371e78984a91011cd33f0a9a22561b3ed0aaa6aaf4d6235f84dfeb1",
+      "spokenText": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151208,
+      "generatedAtUtc": "2026-09-15T17:52:37.232016+00:00"
     },
     {
       "kind": "narrative",
@@ -61,13 +70,22 @@
       "id": "m04-brief-02",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "دو امدادگر و دو مهندس کنار جادهٔ غربی گرفتار شده‌اند. آن‌ها می‌توانند درمانگاه‌ها را باز کنند و شبکه را بازگردانند. همه را سالم برگردانید.",
+      "text": "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav",
-      "durationSeconds": 11.52,
-      "sha256": "eb50844664ef78acb86cd36af25a1bc7bc54446296ef3d37ed8821bf94c083a7",
-      "captionSha256": "5c0ab439a8858a023024076de0cd701aef68de0ce05add1b6f07c132f22d33c5"
+      "durationSeconds": 10.08,
+      "sha256": "8de3767da05a7df8a6ccbe7560bb7b37fabcbcc538dd1f4b90153d73790543cb",
+      "captionSha256": "171a6c3daaa3a594e20b400fd16550f7700bc68a602a5b37a6a8d199243a065b",
+      "spokenText": "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151209,
+      "generatedAtUtc": "2026-09-15T17:52:40.916338+00:00"
     },
     {
       "kind": "narrative",
@@ -87,13 +105,22 @@
       "id": "m04-brief-03",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "تفنگدارها جاده را پوشش می‌دهند؛ نفربر تیم را منتقل می‌کند. کنار لیلا پیاده شوید، سوار بالگرد شوید، بیست ثانیه محل را امن نگه دارید و سپس به محدودهٔ خروج پرواز کنید.",
+      "text": "تفنگدارها جاده رو پوشش بدن؛ نفربر تیم رو جابه‌جا کنه. کنار لیلا پیاده‌شون کنید و سوار بالگردش کنید. بیست ثانیه محل رو امن نگه دارید، بعد به محدودهٔ خروج پرواز کنید.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-03.wav",
-      "durationSeconds": 15.12,
-      "sha256": "e562bfc044250287ad5ffb7e60029c21d8b2345444c8550e352064143d6c94b2",
-      "captionSha256": "e880892e3e298406df2a1ac93b48d1c57f7b2223d9d0491bda481209d3fee81c"
+      "durationSeconds": 12.72,
+      "sha256": "a4c230f8b144cd88d3c132d9f932dc1c0cab60c0aa712e7479189fa7854928dc",
+      "captionSha256": "dbf39774a2166dbed0566494bfd15c4d35c1ce1eb3b33ead067a09cbdd41b76b",
+      "spokenText": "تفنگدارها جاده رو پوشش بدن؛ نفربر تیم رو جابه‌جا کنه. کنار لیلا پیاده‌شون کنید و سوار بالگردش کنید. بیست ثانیه محل رو امن نگه دارید، بعد به محدودهٔ خروج پرواز کنید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151210,
+      "generatedAtUtc": "2026-09-15T17:52:43.198717+00:00"
     },
     {
       "kind": "narrative",
@@ -113,13 +140,22 @@
       "id": "m04-comms-01",
       "speaker": "LAILA",
       "locale": "fa-IR",
-      "text": "هر چهار نفر سوار شده‌اند. محل فرود امن است و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از آنجا تیم را منتقل می‌کنم.",
+      "text": "هر چهار نفر سوار شدن. محل فرود امنه و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از اونجا تیم رو می‌برم.",
       "voiceId": "EXAVITQu4vr4xnSDxMaL",
       "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-comms-01.wav",
-      "durationSeconds": 11.68,
-      "sha256": "0768009ef6270234b3c50a4b08a2ff053a4467511cca6ffb1b12890b831382f6",
-      "captionSha256": "9d2c3e4f82620f35aac9c4d172e37dae112d5f7f4dcfb4dc036890a515820224"
+      "durationSeconds": 10.0,
+      "sha256": "2bcbfbb50acd4778710ea1fc2d6dbf6cdbbcf24985ad49c0a0ffb2d779f9120e",
+      "captionSha256": "408967dbacd56a2dc93121b31e9b1a79a79b42a6b98730096c5ae3dd3c0a94bd",
+      "spokenText": "هر چهار نفر سوار شدن. محل فرود امنه و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از اونجا تیم رو می‌برم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151211,
+      "generatedAtUtc": "2026-09-15T17:52:44.860148+00:00"
     },
     {
       "kind": "narrative",
@@ -139,13 +175,22 @@
       "id": "m04-debrief-01",
       "speaker": "LAILA",
       "locale": "fa-IR",
-      "text": "هر چهار مسافر حاضرند. پوشش شما زمان لازم را فراهم کرد. به این عملیات می‌پیوندم؛ از این پس برای نجات تیم بعدی یک خلبان ترابری هوایی خواهید داشت.",
+      "text": "هر چهار نفر سالم رسیدن. پوششتون بهمون وقت داد. من هم به تیمتون ملحق می‌شم؛ برای نجات بعدی روی بالگردم حساب کنید.",
       "voiceId": "EXAVITQu4vr4xnSDxMaL",
       "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-01.wav",
-      "durationSeconds": 12.72,
-      "sha256": "72b717053914ec939e413a66c74c42115bbe4ce9e25ddfeaf2ec64b18dd7d087",
-      "captionSha256": "7bdf260bce52e917fd8582abf6f63f229d90e9d26d6e19cf47a7d31018f92eee"
+      "durationSeconds": 9.12,
+      "sha256": "896190603cf2004b7e050f63b7f3568334c429f38cd3a60e428eecceb65a436d",
+      "captionSha256": "a45ae92f60d739fbee456cbb12a8952e9f12dd4dd31f8ab3cdbf3534ca048069",
+      "spokenText": "هر چهار نفر سالم رسیدن. پوششتون بهمون وقت داد. من هم به تیمتون ملحق می‌شم؛ برای نجات بعدی روی بالگردم حساب کنید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151212,
+      "generatedAtUtc": "2026-09-15T17:52:47.579588+00:00"
     },
     {
       "kind": "narrative",
@@ -165,13 +210,22 @@
       "id": "m04-debrief-02",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "مهندسان سوابق تعمیر را آورده‌اند. چند قطعی به یک گرهٔ ارتباطی مستحکم برمی‌گردد. سرانجام محلی برای بررسی داریم.",
+      "text": "مهندس‌ها گزارش‌های تعمیر رو آوردن. چند تا از قطعی‌ها به یه مرکز ارتباطی حفاظت‌شده می‌رسه. بالاخره می‌دونیم کجا رو باید بررسی کنیم.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-02.wav",
-      "durationSeconds": 10.08,
-      "sha256": "145de36bb4377fa2a7bb679e07d02706abf85d68828157d710cd6316fa1e5e21",
-      "captionSha256": "31da0d825fc119b653c9600e319b0e1860e27d034ce5adce85d79ec9936fd4de"
+      "durationSeconds": 9.76,
+      "sha256": "8d1461b7fbfa18752cf76936e5b330c23729904b0c1b34fe1f0b8a9046179cd3",
+      "captionSha256": "7347d9b3240ce02cd9276e5f010431761899fd1587a8f50880f15e05520fb51b",
+      "spokenText": "مهندس‌ها گزارش‌های تعمیر رو آوردن. چند تا از قطعی‌ها به یه مرکز ارتباطی حفاظت‌شده می‌رسه. بالاخره می‌دونیم کجا رو باید بررسی کنیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151213,
+      "generatedAtUtc": "2026-09-15T17:52:49.450941+00:00"
     },
     {
       "kind": "narrative",
@@ -191,13 +245,289 @@
       "id": "m04-debrief-03",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "تخلیه تأیید شد. سروان ناصر به گروه پیوست. هدف بعدی: بررسی آن گرهٔ ارتباطی. ابتدا بگذارید تیم پزشکی به کارش برگردد.",
+      "text": "نجات تأیید شد. سروان ناصر هم به تیم پیوست. بعدش باید اون مرکز ارتباطی رو بررسی کنیم. فعلاً بذاریم تیم پزشکی به کارش برسه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-03.wav",
-      "durationSeconds": 12.48,
-      "sha256": "5e00bcf18709c45e22418ece9a01e841a75881bf71f0ce3ff87f07e27e05b0e5",
-      "captionSha256": "f3be234b5d6dec7bca7d035a14dc5f0ff44b708c439649526dcce053b03900ee"
+      "durationSeconds": 9.36,
+      "sha256": "f685da87a7cc8c58a357a5bc3166f9ebd7473658bc940cb3da4d28d0ac6ba072",
+      "captionSha256": "c1aec4037510a015b9f1bd24745f74fa00ec092fb36c12b1c50acf17b7cc3a7e",
+      "spokenText": "نجات تأیید شد. سروان ناصر هم به تیم پیوست. بعدش باید اون مرکز ارتباطی رو بررسی کنیم. فعلاً بذاریم تیم پزشکی به کارش برسه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151214,
+      "generatedAtUtc": "2026-09-15T17:52:51.912380+00:00"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151215,
+      "generatedAtUtc": "2026-09-15T17:52:54.835038+00:00",
+      "durationSeconds": 13.76,
+      "sha256": "f22dc411856934c857bf0776ee3be9fa4db0ca691ae51331ea8079e8bcdc7daf",
+      "captionSha256": "0624229eece563fb3189263aca0d10ef8077fba27d6bb8e76074e90bc8c5de78"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نفربر چرخ‌دار کنار تفنگدارها رو انتخاب کن. چهار صندلیش رو برای متخصص‌ها خالی نگه دار. اگه پیداش نکردی، «نشان بده» رو بزن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "نفربر چرخ‌دار کنار تفنگدارها رو انتخاب کن. چهار صندلیش رو برای متخصص‌ها خالی نگه دار. اگه پیداش نکردی، «نشان بده» رو بزن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151216,
+      "generatedAtUtc": "2026-09-15T17:52:56.287201+00:00",
+      "durationSeconds": 9.84,
+      "sha256": "364f87a89be6a8ad55a1a069a26304292e7687bed4b56c4ca5d304183b0b2b2c",
+      "captionSha256": "8375ff604566dceb415fb1d27576f6c35ad9a21155b3843060c0f93ffc733383"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151217,
+      "generatedAtUtc": "2026-09-15T17:52:59.089324+00:00",
+      "durationSeconds": 11.2,
+      "sha256": "108b3645a401ce84eb7e413b95e8704c36e3c76e29d57b9d8286fac5b78bd1bd",
+      "captionSha256": "913c2d199d05d51f17cb7bc276503fdeb5f58fda4278eeeb48fb21a64e0fe342"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-04",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151218,
+      "generatedAtUtc": "2026-09-15T17:53:01.879408+00:00",
+      "durationSeconds": 12.96,
+      "sha256": "5bd499da9bf16a59d430dd5e11024d22ecd2e70fe1fb6d525e54c92fe82cec77",
+      "captionSha256": "6186aa89bf2d79d3cf33717609157f1d0434a47e346e7ed1c4e0b50dea727486"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-05",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151219,
+      "generatedAtUtc": "2026-09-15T17:53:03.153320+00:00",
+      "durationSeconds": 9.28,
+      "sha256": "222762f564d3ded969ddaf625cac826a809790ca3b59c7f26542b7899af84feb",
+      "captionSha256": "12757278fbda9f1250457b9b98dc2927752e37cd0c6f91eb93c60d9330fb7fbd"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-06",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151220,
+      "generatedAtUtc": "2026-09-15T17:53:07.762344+00:00",
+      "durationSeconds": 13.36,
+      "sha256": "22d11463894c142e3a6bff6b296326c8db07249d7e2bd106dcb3dfeabc6cb234",
+      "captionSha256": "4ea3b39bd51701a8833d269e8799e31b0e4318e17e5d44ea84e39312e873a988"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-07",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151221,
+      "generatedAtUtc": "2026-09-15T17:53:08.186038+00:00",
+      "durationSeconds": 12.08,
+      "sha256": "362a503cbb088fd64e23d277425009f19f27c812487d1f52b627eb9b1d111e55",
+      "captionSha256": "5a213b92d23bf7d0390c5099d07669af65d751b5cfe692ff81ea3766edba2788"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-08",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد لیلا رو انتخاب کن. کنار متخصص‌ها روی زمین نگهش دار تا هر چهار نفر بتونن سوار بشن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "بالگرد لیلا رو انتخاب کن. کنار متخصص‌ها روی زمین نگهش دار تا هر چهار نفر بتونن سوار بشن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151222,
+      "generatedAtUtc": "2026-09-15T17:53:11.006929+00:00",
+      "durationSeconds": 7.36,
+      "sha256": "c754a47a50e35d5f8eee560705ce412072d0c93b0913c4fba76e20bf7fd3016a",
+      "captionSha256": "e253c4f4f014f1b465a083e6bb4e228dcdf1ad445588021729668d9128b878fd"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-09",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151223,
+      "generatedAtUtc": "2026-09-15T17:53:13.662354+00:00",
+      "durationSeconds": 12.24,
+      "sha256": "ab75b311b5a33911eaa9ef5c96c2ad34f8d678c7d101168033b40ee875186561",
+      "captionSha256": "16637ae9b4a831b1bc95552ed8f7e202c73acb07b08eedb2a4f2b4a491ffd28e"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-10",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3251224,
+      "generatedAtUtc": "2026-09-15T18:15:01.102774+00:00",
+      "durationSeconds": 12.64,
+      "sha256": "4fe091d4c952a59a05e84b76e321a985338dd47191a758bbbee47092cf189760",
+      "captionSha256": "ac5038ce4e355d6fae5403f8a27e28d3ed43b3992ed89222e64230ae38eed2a2",
+      "retakeReason": "Opening word unclear in two independent speech-recognition checks; replacement transcript matches the approved script."
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-11",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151225,
+      "generatedAtUtc": "2026-09-15T17:53:19.262668+00:00",
+      "durationSeconds": 11.92,
+      "sha256": "b7af5586736bd564b974050623ba8664b8783f4dceed5bb68f6fbddafcfea281",
+      "captionSha256": "6c6fd3e30c85ac29c66b3722f7e050803efe94fbf31670139f6cf585576ac8eb"
+    },
+    {
+      "kind": "tutorial",
+      "id": "tutorial-m04-12",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دارم نجات رو تأیید می‌کنم. تا نتیجه بیاد، مسافرها رو سوار نگه دار و از بالگرد محافظت کن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "spokenText": "دارم نجات رو تأیید می‌کنم. تا نتیجه بیاد، مسافرها رو سوار نگه دار و از بالگرد محافظت کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151226,
+      "generatedAtUtc": "2026-09-15T17:53:20.344153+00:00",
+      "durationSeconds": 7.36,
+      "sha256": "3f40eda2ab8f1a9a152af1ad3078580072dedc230c5b41e8932828bf3d500d7f",
+      "captionSha256": "529aa7e333a987908c5686a4f03f7febce0ac9f7f0cfdbc017704791cc7638dd"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.092439+00:00"
 }

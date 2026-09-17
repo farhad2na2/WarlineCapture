@@ -75,55 +75,117 @@
       "step": 1,
       "phase": "selection",
       "locale": "fa-IR",
-      "text": "برای شروع، گروه فرماندهی را انتخاب کنید.",
+      "text": "برای شروع، گروه فرماندهی رو انتخاب کن.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav",
-      "durationSeconds": 3.221859,
-      "sha256": "4547701cc280332f99d3442162430d4a1f9092ce9f99c0dacf03b20d3b2dbf94"
+      "durationSeconds": 3.52,
+      "sha256": "db55b8eeea4219775e9ccdeee2895b59b2c055af5ccdfe17094e45b0fef427c4",
+      "spokenText": "برای شروع، گروه فرماندهی رو انتخاب کن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151163,
+      "generatedAtUtc": "2026-09-15T17:51:12.061504+00:00",
+      "captionSha256": "65c40dd0b3c2fabf472b5a001d071e92218e576e667f2aa7acdf6c1adeaf7330"
     },
     {
       "step": 2,
       "phase": "command",
       "locale": "fa-IR",
-      "text": "برای انتخاب دستور حرکت، روی «حرکت» بزنید.",
+      "text": "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
-      "durationSeconds": 3.787755,
-      "sha256": "171fb4f0cbce1868a079661337ed7b7e68cee402cc5035cbefaf4bdcab559bc2"
+      "durationSeconds": 3.2,
+      "sha256": "31e2778041d4b60ed152be94a512783a866d0bda01512eca66a27d111c13a0d8",
+      "spokenText": "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151164,
+      "generatedAtUtc": "2026-09-15T17:51:13.579085+00:00",
+      "captionSha256": "187833e5b58b1c59a638769efe0318f4fe2c67a4431a7d160d72e7dfce889d77"
     },
     {
       "step": 3,
       "phase": "worldTarget",
       "locale": "fa-IR",
-      "text": "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید.",
+      "text": "حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav",
-      "durationSeconds": 4.284082,
-      "sha256": "6fd0adec31875429ee280b9dbed9c4acc6dce80c531d932f163c80a04d3a7c30"
+      "durationSeconds": 5.12,
+      "sha256": "ffff91d801f941508115aeb10511985c7989dd220e3867e0f89820979f8e709b",
+      "spokenText": "حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151165,
+      "generatedAtUtc": "2026-09-15T17:51:14.507314+00:00",
+      "captionSha256": "47333a38a826f9b8e370405cdac336ca11bc96ea6b5f374d7d06da69d0653f50"
     },
     {
       "step": 4,
       "phase": "command",
       "locale": "fa-IR",
-      "text": "برای انتخاب دستور حمله، روی «حمله» بزنید.",
+      "text": "«حمله» رو بزن تا دستور حمله انتخاب بشه.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav",
-      "durationSeconds": 3.474286,
-      "sha256": "1d5152ece83dde7dc9aeb3459a7214573f0d2a0a9733fe4401992346a1c201fc"
+      "durationSeconds": 3.28,
+      "sha256": "64aa369badaca6c6d0f8f85ac94c4be9feb8850d70a6fbaf77f58a840ab2e894",
+      "spokenText": "«حمله» رو بزن تا دستور حمله انتخاب بشه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151166,
+      "generatedAtUtc": "2026-09-15T17:51:16.215396+00:00",
+      "captionSha256": "3e0f36444594f2278c5da20d83859857fa6ec97b3d4e6fb508e585bbefe67b43"
     },
     {
       "step": 5,
       "phase": "worldTarget",
       "locale": "fa-IR",
-      "text": "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید.",
+      "text": "حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
-      "durationSeconds": 4.597551,
-      "sha256": "131aa531634962d13d6b97cd0a1405beb5137e4f900abeb1571cb1a36dc634af"
+      "durationSeconds": 5.36,
+      "sha256": "5dc4f53755b30eac0408dd10662d54c8225706bcffca83acddb8323ea7dc56d4",
+      "spokenText": "حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151167,
+      "generatedAtUtc": "2026-09-15T17:51:17.305537+00:00",
+      "captionSha256": "e0f08aa533be293cabb4fc3858d425012b0eb2f95638cec3ba640fe5e5060ad5"
     },
     {
       "step": 5,
       "phase": "missionResolution",
       "locale": "fa-IR",
-      "text": "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید.",
+      "text": "هدفت رو بررسی کن و مسیر مردم رو امن نگه دار.",
       "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav",
-      "durationSeconds": 3.984376,
-      "sha256": "4febc4b2fcabd07c678a7af57408b5dd120328f61f3f44de646dcc7ae5e9a6ae"
+      "durationSeconds": 4.08,
+      "sha256": "32c33ce96bb86a641a2537700a5fa5674cbbba43ec10b892a8c9b288798d9786",
+      "spokenText": "هدفت رو بررسی کن و مسیر مردم رو امن نگه دار.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151168,
+      "generatedAtUtc": "2026-09-15T17:51:18.495048+00:00",
+      "captionSha256": "0dac60ffe7941d1b4d42c2038b7e12f481e9381696938fd593e710b364a39d40"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.090695+00:00"
 }

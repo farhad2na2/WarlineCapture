@@ -128,24 +128,7 @@ public sealed class FirstLaunchNarrativePlayModeTests
                     value => value.name == "ContinueButton");
                 Assert.NotNull(identityContinue);
                 identityContinue.onClick.Invoke();
-                float guidanceDeadline = Time.realtimeSinceStartup + 5f;
-                while (stateLabel.text != "first_launch.guidance_choice" &&
-                       Time.realtimeSinceStartup < guidanceDeadline)
-                    yield return null;
-                Assert.AreEqual("first_launch.guidance_choice", stateLabel.text);
-                visited.Add(stateLabel.text);
-
-                Transform guidance = narrative.transform.Find("SafeArea/GuidanceChoiceSurface");
-                Assert.NotNull(guidance);
-                float guidanceSurfaceDeadline = Time.realtimeSinceStartup + 5f;
-                while (!guidance.gameObject.activeSelf && Time.realtimeSinceStartup < guidanceSurfaceDeadline)
-                    yield return null;
-                Assert.IsTrue(guidance.gameObject.activeSelf);
-                Button guidanceContinue = Array.Find(
-                    guidance.GetComponentsInChildren<Button>(true),
-                    value => value.name == "ContinueButton");
-                Assert.NotNull(guidanceContinue);
-                guidanceContinue.onClick.Invoke();
+                Assert.IsNull(narrative.transform.Find("SafeArea/GuidanceChoiceSurface"));
                 float postGuidanceDeadline = Time.realtimeSinceStartup + 5f;
                 while (stateLabel.text != "FL-P09" && Time.realtimeSinceStartup < postGuidanceDeadline)
                     yield return null;
@@ -174,7 +157,7 @@ public sealed class FirstLaunchNarrativePlayModeTests
             yield return null;
         }
         CollectionAssert.Contains(visited, "first_launch.commander_identity");
-        CollectionAssert.Contains(visited, "first_launch.guidance_choice");
+        CollectionAssert.DoesNotContain(visited, "first_launch.guidance_choice");
         CollectionAssert.Contains(visited, "first_launch.gameplay_placeholder");
         CollectionAssert.Contains(visited, "FL-P22");
         CollectionAssert.Contains(visited, "first_launch.command_base_reveal");

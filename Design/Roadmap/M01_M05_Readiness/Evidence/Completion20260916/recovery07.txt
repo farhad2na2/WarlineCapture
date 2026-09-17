@@ -1,0 +1,30 @@
+Wrapper exit 0. Fresh Farsi M1–M5, normal speed, full active comic playback, current screen controls, recovery actions, saves/reloads and settlements. Resolution 2400x1080. No outcome, health, position or unlock injection.
+
+[CampaignContinuity] deploy=chain-06-m1-fa available=1 completed=0 action=Start
+[ReadinessRecovery] rejected=TargetNotAttackable message=ﺑﻪ ﺍﯾﻦ ﻫﺪﻑ ﻧﻤﯽﺷﻪ ﺣﻤﻠﻪ ﮐﺮﺩ.
+[CampaignContinuity] settled=chain-06-m1-fa token=campaign-m01-0000000000000001:1 replayCount=0 xp=260 credits=1200
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=fa-IR
+[ReadinessRecovery] coverage=Passed entry=chain-06-m1-fa
+[CampaignContinuity] disk-reload-return=chain-06-m1-fa
+[CampaignContinuity] deploy=chain-07-m2-fa available=3 completed=1 action=Start
+[CampaignContinuity] settled=chain-07-m2-fa token=campaign-m02-0000000000000002:1 replayCount=0 xp=580 credits=2700
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=fa-IR
+[ReadinessRecovery] coverage=Passed entry=chain-07-m2-fa
+[CampaignContinuity] disk-reload-return=chain-07-m2-fa
+[CampaignContinuity] deploy=chain-08-m3-fa available=7 completed=3 action=Start
+[CampaignContinuity] settled=chain-08-m3-fa token=campaign-m03-0000000000000003:1 replayCount=0 xp=980 credits=4700
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=fa-IR
+[ReadinessRecovery] coverage=Passed entry=chain-08-m3-fa
+[CampaignContinuity] disk-reload-return=chain-08-m3-fa
+[CampaignContinuity] deploy=chain-09-m4-fa available=15 completed=7 action=Start
+[CampaignContinuity] settled=chain-09-m4-fa token=campaign-m01-0000000000000004:1 replayCount=0 xp=1480 credits=7200
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=fa-IR
+[ReadinessRecovery] coverage=Passed entry=chain-09-m4-fa
+[CampaignContinuity] disk-reload-return=chain-09-m4-fa
+[CampaignContinuity] deploy=chain-10-m5-fa available=31 completed=15 action=Start
+[ReadinessRecovery] rejected=TargetNotAttackable message=ﺑﻪ ﺍﯾﻦ ﻫﺪﻑ ﻧﻤﯽﺷﻪ ﺣﻤﻠﻪ ﮐﺮﺩ.
+[CampaignContinuity] settled=chain-10-m5-fa token=campaign-m01-0000000000000005:1 replayCount=0 xp=2230 credits=11200
+[CampaignPlayerJourney] victory=saga.ch01.m05.breach_assault locale=fa-IR
+[ReadinessRecovery] coverage=Passed entry=chain-10-m5-fa
+[CampaignContinuity] disk-reload-return=chain-10-m5-fa
+[CampaignTutorialEntry] result=Passed Recovery chain entries 6-10, player actions, full comic playback, disk reloads and settlements; EN 1280x720 / FA 2400x1080

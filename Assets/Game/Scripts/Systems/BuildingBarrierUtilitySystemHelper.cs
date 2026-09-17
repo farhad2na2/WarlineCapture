@@ -534,6 +534,11 @@ namespace Game.Runtime
             return definition != null && definition.IsWall;
         }
 
+        // The player road barrier needs carriageway alignment. Authored compound gates
+        // are also gates for pathfinding/combat, but belong in their wall openings.
+        public static bool RequiresRoadPlacement(BuildingDefinition definition) =>
+            definition?.Prefab != null && definition.Prefab.name == "Building_Road_Barrier";
+
         public static bool IsWallGateDefinition(BuildingDefinition definition)
         {
             if (definition == null)

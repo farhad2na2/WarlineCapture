@@ -179,6 +179,9 @@ public sealed class M01FirstContactHudRestrictionTests
             Assert.That(support.interactable, Is.False);
             Assert.That(build.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
             Assert.That(support.GetComponent<CanvasGroup>().alpha, Is.EqualTo(1f));
+            var cinematicGroup = build.GetComponent<CanvasGroup>();
+            Assert.That(cinematicGroup.interactable, Is.True, "Mission scope must not become a captured cinematic lock.");
+            Assert.That(cinematicGroup.blocksRaycasts, Is.True);
             Assert.That(build.colors.disabledColor.a, Is.EqualTo(build.colors.normalColor.a));
             Assert.That(support.colors.disabledColor.a, Is.EqualTo(support.colors.normalColor.a));
             Assert.That(build.GetComponent<Image>().material.shader.name,
@@ -187,16 +190,69 @@ public sealed class M01FirstContactHudRestrictionTests
                 Is.EqualTo("Warline/UI/Disabled Grayscale"));
             Assert.That(zoomIn.gameObject.activeSelf, Is.True);
             Assert.That(zoomOut.gameObject.activeSelf, Is.True);
+            cinematicGroup.interactable = cinematicGroup.blocksRaycasts = false;
             view.ApplyMissionRestrictionVisibility(buildDisabled: false, supportDisabled: false);
+            Assert.That(cinematicGroup.interactable, Is.False, "An active cinematic still owns its input lock.");
+            cinematicGroup.interactable = cinematicGroup.blocksRaycasts = true;
             Assert.That(build.gameObject.activeSelf, Is.True, "Skirmish/default presentation must remain unchanged.");
             Assert.That(support.gameObject.activeSelf, Is.True);
             Assert.That(build.interactable, Is.True);
             Assert.That(support.interactable, Is.True);
+            Assert.That(build.IsInteractable(), Is.True, "The new mission's Build becomes usable after cinematic return.");
         }
         finally
         {
             UnityEngine.Object.DestroyImmediate(root);
         }
+    }
+
+    public static void ValidateScopeLockOwnership()
+    {
+        RightRailDisablesAndGraysBuildAndSupport();
+        ClearingAbsentDisabledReasonPreservesCurrentVisuals();
+        RightRailDoesNotOverrideMigratedFooterBuild();
+        Debug.Log("[MissionScopeLockOwnership] result=Passed independent input locks and idempotent visual restoration");
+    }
+
+    [Test]
+    public static void RightRailDoesNotOverrideMigratedFooterBuild()
+    {
+        var rail = new GameObject("Legacy rail", typeof(RectTransform), typeof(MatchHudRightQuickRailView));
+        var footer = new GameObject("Footer", typeof(RectTransform), typeof(MatchOverlayCommandControlsView));
+        try
+        {
+            var button = CreateButton(footer.transform, "BuildCommand");
+            var view = rail.GetComponent<MatchHudRightQuickRailView>();
+            typeof(MatchHudRightQuickRailView).GetField("buildButton", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(view, button);
+            view.ApplyMissionRestrictionVisibility(true, true);
+            Assert.That(button.IsInteractable(), Is.True, "Only the footer may apply its tutorial Build override.");
+            Assert.That(button.GetComponent<Image>().material.shader.name, Is.Not.EqualTo("Warline/UI/Disabled Grayscale"));
+        }
+        finally { UnityEngine.Object.DestroyImmediate(rail); UnityEngine.Object.DestroyImmediate(footer); }
+    }
+
+    [Test]
+    public static void ClearingAbsentDisabledReasonPreservesCurrentVisuals()
+    {
+        var root = new GameObject("Disabled state fixture", typeof(RectTransform));
+        try
+        {
+            var button = CreateButton(root.transform, "BuildCommand");
+            var image = button.GetComponent<Image>();
+            button.gameObject.AddComponent<UiDisabledMaterialStateView>();
+            button.gameObject.AddComponent<UiDisabledSelectableVisualStateView>();
+            var original = button.colors;
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            UiDisabledMaterialUtility.SetSelectableDisabled(button, UiDisabledVisualReason.MissionRestriction, false);
+            Assert.That(image.color, Is.EqualTo(Color.white), "An empty runtime state must not erase the graphic.");
+            Assert.That(button.colors, Is.EqualTo(original));
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, true);
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            image.color = Color.yellow;
+            UiDisabledMaterialUtility.SetDisabled(button.gameObject, UiDisabledVisualReason.MissionRestriction, false);
+            Assert.That(image.color, Is.EqualTo(Color.yellow), "Repeated clears must preserve the current enabled style.");
+        }
+        finally { UnityEngine.Object.DestroyImmediate(root); }
     }
 
     [Test]

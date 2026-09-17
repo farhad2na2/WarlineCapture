@@ -1,0 +1,20 @@
+Wrapper exit 1 only at locale-transition resolution setup: 2340x1080 preset absent. All remaining English M3-M5 routes, full comics, actions, recovery and settlements passed. Run07 uses existing 2400x1080 preset for a fresh Farsi chain. EN M1/M2 completed in run05; M3 resumed their real disk profile.
+
+[CampaignContinuity] resumed-real-profile=/private/tmp/warline-readiness-20260916-215754/campaign-en/profile.json; M1/M2 completed in previous run; no unlocks or outcomes seeded
+[CampaignContinuity] deploy=chain-03-m3-en available=7 completed=3 action=Start
+[CampaignContinuity] settled=chain-03-m3-en token=campaign-m03-0000000000000001:1 replayCount=0 xp=980 credits=4700
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=en
+[ReadinessRecovery] coverage=Passed entry=chain-03-m3-en
+[CampaignContinuity] disk-reload-return=chain-03-m3-en
+[CampaignContinuity] deploy=chain-04-m4-en available=15 completed=7 action=Start
+[CampaignContinuity] settled=chain-04-m4-en token=campaign-m01-0000000000000002:1 replayCount=0 xp=1480 credits=7200
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=en
+[ReadinessRecovery] coverage=Passed entry=chain-04-m4-en
+[CampaignContinuity] disk-reload-return=chain-04-m4-en
+[CampaignContinuity] deploy=chain-05-m5-en available=31 completed=15 action=Start
+[ReadinessRecovery] rejected=TargetNotAttackable message=Target cannot be attacked.
+[CampaignContinuity] settled=chain-05-m5-en token=campaign-m01-0000000000000003:1 replayCount=0 xp=2230 credits=11200
+[CampaignPlayerJourney] victory=saga.ch01.m05.breach_assault locale=en
+[ReadinessRecovery] coverage=Passed entry=chain-05-m5-en
+[CampaignContinuity] disk-reload-return=chain-05-m5-en
+[CampaignTutorialEntry] result=Failed Game View preset 2340x1080 is missing from the Android size list.

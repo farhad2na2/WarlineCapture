@@ -188,6 +188,36 @@ namespace Game.Runtime
             return ApplyMatchHudZoomLevel(targetLevel);
         }
 
+        public void FocusPlacementImmediately(Vector3 worldPosition, Vector2 viewportCenter)
+        {
+            if (_cameraSystem == null || _cameraRequestSystem == null || _worldCamera == null ||
+                !TryGetDefaultEntityManager(out EntityManager em)) return;
+            // The menu click's release also reaches placement input. Finish the handoff before
+            // that release cancels smooth camera targets; later drags must never move the camera.
+            if (_cameraSystem.NormalIsoModeActive) ExitNormalIsoMode();
+            DeactivateMatchHudZoomTransition();
+            _cameraRequestSystem.QueueSetWasBuildModeActive(em, true);
+            _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
+            _cameraRequestSystem.QueueClearSmoothPerspectiveTarget(em);
+            _cameraRequestSystem.QueueCompleteZoomTransition(em);
+            _cameraRequestSystem.QueueSetMatchIntroZoomSettlePending(em, false);
+            _cameraRequestSystem.QueueClearDragging(em);
+            var target = ResolvePlacementCameraGroundCenter(_worldCamera, worldPosition, viewportCenter);
+            _cameraRequestSystem.QueueMoveGroundCenterTo(em, target);
+            ProcessCameraRequests(em);
+        }
+
+        internal static Vector3 ResolvePlacementCameraGroundCenter(Camera camera, Vector3 worldPosition, Vector2 viewportCenter)
+        {
+            var plane = new Plane(Vector3.up, worldPosition);
+            var ray = camera.ViewportPointToRay(new Vector3(viewportCenter.x, viewportCenter.y, 0f));
+            var centerRay = camera.ViewportPointToRay(new Vector3(.5f, .5f, 0f));
+            var ground = new Plane(Vector3.up, Vector3.zero);
+            if (!plane.Raycast(ray, out float distance) || !ground.Raycast(centerRay, out float centerDistance))
+                return worldPosition;
+            return centerRay.GetPoint(centerDistance) + worldPosition - ray.GetPoint(distance);
+        }
+
         public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
         {
             if (_cameraRequestSystem == null || _worldCamera == null || !TryGetDefaultEntityManager(out EntityManager em))

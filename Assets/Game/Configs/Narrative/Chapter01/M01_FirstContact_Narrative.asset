@@ -38,37 +38,37 @@ MonoBehaviour:
       englishFallback: Command squad, move to cover and confirm the armed patrol
         before engaging.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 35bc8d5f242114dee880306c915d6376, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 7.12
       essentialCaption: 1
     - lineId: m01-comms.line.2
       textKey: narrative.m01.comms.aria
       englishFallback: Courier, Warden, and Broker remain inside the marked corridor.
         Objective updates reflect verified mission state.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a12d6140198544b9588c6db228f5d65b, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 7.12
+      deadlineSeconds: 15.999999
       essentialCaption: 1
     - lineId: m01-comms.line.3
       textKey: narrative.m01.comms.samira
       englishFallback: The evacuation path is holding. Keep the command squad intact.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 9a6416a7245764647bac34a6828ce962, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 15.999999
+      deadlineSeconds: 21.359999
       essentialCaption: 1
     continueStateId: M01-COMMS-COMPLETE
     skipStateId: M01-COMMS-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 21.859999
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -156,38 +156,38 @@ MonoBehaviour:
       englishFallback: 'First contact is confirmed: three armed Ash Line operatives
         are blocking the clinic corridor in Old Market.'
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 8867108f990bb45cf82af6bb49c68b51, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 8.08
       essentialCaption: 1
     - lineId: m01-brief.line.2
       textKey: narrative.m01.brief.aria
       englishFallback: 'Threat profiles: Courier carries orders, Warden controls
         the crossing, and Broker coordinates supplies.'
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 35c8ff593f17d499889ba24c84f5cda0, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 8.08
+      deadlineSeconds: 15.84
       essentialCaption: 1
     - lineId: m01-brief.line.3
       textKey: narrative.m01.brief.samira
       englishFallback: Civilians are sheltering beyond the patrol. Clear the marked
         corridor; do not pursue outside the district.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 3dc22705bf09a4170b3c0658e273750e, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 15.84
+      deadlineSeconds: 24.48
       essentialCaption: 1
     continueStateId: M01-BRIEF-COMPLETE
     skipStateId: M01-BRIEF-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 24.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -275,38 +275,38 @@ MonoBehaviour:
       textKey: narrative.m01.debrief.dalia
       englishFallback: The corridor is secure. The patrol was coordinated, not opportunistic.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e685ca1467823407aa0787be32be0d53, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 3.75
+      deadlineSeconds: 5.76
       essentialCaption: 1
     - lineId: m01-debrief.line.2
       textKey: narrative.m01.debrief.aria
       englishFallback: Recovered traffic includes a fragment of a revoked civic-relay
         credential. The source identity is unresolved.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: c6ddc478f12a74f689d6ea4f31b120e3, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 4
-      deadlineSeconds: 7.75
+      startSeconds: 5.76
+      deadlineSeconds: 14
       essentialCaption: 1
     - lineId: m01-debrief.line.3
       textKey: narrative.m01.debrief.samira
       englishFallback: Civilians are moving to safety. Command Base is online; the
         next operation is ready for review.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: bebe81532fec140a19fba54ca587a17c, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
-      startSeconds: 8
-      deadlineSeconds: 11.75
+      startSeconds: 14
+      deadlineSeconds: 20.96
       essentialCaption: 1
     continueStateId: M01-DEBRIEF-COMPLETE
     skipStateId: M01-DEBRIEF-COMPLETE
     reducedMotionSupported: 1
-    durationSeconds: 12
+    durationSeconds: 21.46
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

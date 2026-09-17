@@ -24,7 +24,7 @@ namespace Game.Editor
         public const string SupportRole="role.friendly.heavy_apc", CounterRole="role.hostile.counterattack";
         public static void Build()
         {
-            BuildMap(); BuildScenario(); BuildMission(); M01FirstContactConfigBuilder.RefreshChapterCatalogs();
+            M05EnemyCompoundBuilder.BuildAssets(); BuildMap(); BuildScenario(); BuildMission(); M01FirstContactConfigBuilder.RefreshChapterCatalogs();
             Require(MissionDefinitionContractValidation.TryValidateCatalog(Load<MissionDefinitionCatalogConfig>(M02EstablishBaseConfigBuilder.MissionCatalogPath),out string error),error);
             Debug.Log("[M05BreachAssaultConfig] result=Passed rifles=8 heavyApc=1 hostiles=8");
         }
@@ -37,20 +37,21 @@ namespace Game.Editor
             {
                 // Main east-west road surveyed in M03. M05 occupies a separate logical window/anchor set.
                 (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
-                    ("squad_a",940,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("squad_b",955,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("support",970,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("approach",1000,426,OperationMapAnchorKind.Camera,1,6),
-                    ("gate",1020,426,OperationMapAnchorKind.Objective,2,5),
-                    ("core",1048,390,OperationMapAnchorKind.Objective,2,8),
-                    ("archive",1048,414,OperationMapAnchorKind.Objective,1,18),
-                    ("return_rts",955,426,OperationMapAnchorKind.Camera,1,3),
-                    ("garrison",1055,426,OperationMapAnchorKind.Spawn,2,4),
-                    ("counterattack",1082,426,OperationMapAnchorKind.Spawn,2,4),
-                    ("route_00",1065,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_01",1048,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_02",1025,426,OperationMapAnchorKind.Lane,2,3)};
+                    ("squad_a",1015,424,OperationMapAnchorKind.Deployment,1,4),
+                    ("squad_b",1033,424,OperationMapAnchorKind.Deployment,1,4),
+                    ("support",1024,410,OperationMapAnchorKind.Deployment,1,4),
+                    ("approach",1024,453,OperationMapAnchorKind.Camera,1,6),
+                    ("gate",1020,444,OperationMapAnchorKind.Objective,2,5),
+                    ("core",1038,463,OperationMapAnchorKind.Objective,2,8),
+                    ("archive",1007,463,OperationMapAnchorKind.Objective,1,6),
+                    ("return_rts",1024,424,OperationMapAnchorKind.Camera,1,3),
+                    ("garrison",1018,455,OperationMapAnchorKind.Spawn,2,4),
+                    ("counterattack",1044,457,OperationMapAnchorKind.Spawn,2,4),
+                    ("route_00",1034,457,OperationMapAnchorKind.Lane,2,3),
+                    ("route_01",1024,452,OperationMapAnchorKind.Lane,2,3),
+                    ("route_02",1024,443,OperationMapAnchorKind.Lane,2,3)};
                 var data=new SerializedObject(map); S(data,"operationMapId",MapId);
+                data.FindProperty("additionalBuildingPlacements").objectReferenceValue=Load<MapBuildingPlacementConfig>(M05EnemyCompoundBuilder.PlacementsPath);
                 S(data,"planningCameraId","camera.ch01.m05.planning"); S(data,"battleCameraId","camera.ch01.m05.battle");
                 S(data.FindProperty("minimap"),"minimapId","minimap.ch01.m05.breach_assault");
                 A(data.FindProperty("anchors"),seeds.Length,(entry,i)=>
@@ -63,13 +64,13 @@ namespace Game.Editor
                 A(data.FindProperty("cameras"),2,(entry,i)=>
                 {
                     S(entry,"cameraId","camera.ch01.m05."+(i==0?"planning":"battle"));
-                    var pos=new Vector3(955,i==0?70:55,i==0?456:451);
+                    var pos=new Vector3(1024,40,400);
                     entry.FindPropertyRelative("position").vector3Value=pos;
-                    entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(new Vector3(955,0,426)-pos).eulerAngles;
+                    entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(new Vector3(1024,0,440)-pos).eulerAngles;
                     entry.FindPropertyRelative("fieldOfView").floatValue=55;
                 });
                 using var sha=SHA256.Create();
-                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes("M05-BreachAssault-v1:"+map.ContentHash+":road801-1060:departure1085-465"))).Replace("-",string.Empty).ToLowerInvariant();
+                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes("M05-BreachAssault-compound-v2:"+map.ContentHash+":road801-1060:departure1085-465"))).Replace("-",string.Empty).ToLowerInvariant();
                 S(data,"contentHash",hash); S(data,"generatedMetadataHash",hash); data.ApplyModifiedPropertiesWithoutUndo();
                 Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);
                 EditorUtility.SetDirty(map); AssetDatabase.SaveAssets();
@@ -96,12 +97,12 @@ namespace Game.Editor
             });
             S(data.FindProperty("extraction"),"enabled",false);
             var breach=data.FindProperty("breach"); S(breach,"enabled",true);
-            S(breach,"gateBuildingId","Building_Road_Barrier"); S(breach,"coreBuildingId","Building_Satelite_Dish");
+            S(breach,"gateBuildingId",M05EnemyCompoundBuilder.GateId); S(breach,"coreBuildingId","Building_Satelite_Dish");
             foreach(string name in new[]{"approach","gate","core","archive"}) S(breach,name+"AnchorId",Prefix+name);
             S(breach,"supportRoleId",SupportRole);S(breach,"counterattackRoleId",CounterRole);
             S(breach,"gateHealth",1000);S(breach,"coreHealth",1400);S(breach,"secureHoldMilliseconds",20000);
             S(breach,"deadlineMilliseconds",720000);S(breach,"counterattackWarningMilliseconds",15000);
-            breach.FindPropertyRelative("archiveRadius").floatValue=20;
+            breach.FindPropertyRelative("archiveRadius").floatValue=6;
             var tour=breach.FindPropertyRelative("cameraTour"); S(tour,"StartHoldMilliseconds",750);S(tour,"PostHoldMilliseconds",1200);
             S(tour,"ApproachHoldMilliseconds",1500);S(tour,"ReturnHoldMilliseconds",500);tour.FindPropertyRelative("SmoothTimeSeconds").floatValue=.65f;
             tour.FindPropertyRelative("PostPerspective").vector4Value=new Vector4(48,65,0,55);tour.FindPropertyRelative("ApproachPerspective").vector4Value=new Vector4(48,65,0,55);

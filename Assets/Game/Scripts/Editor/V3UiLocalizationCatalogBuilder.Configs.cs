@@ -62,8 +62,8 @@ namespace Game.Editor
             }
         }
 
-        [MenuItem("Game/UI/V3/Localization/Apply Configured UI Strings")]
-        public static void ApplyConfiguredUiStrings()
+        [MenuItem("Game/UI/V3/Localization/Apply Configured UI Tables")]
+        public static void ApplyConfiguredUiTables()
         {
             var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
             if (catalog == null) throw new InvalidOperationException("Missing UI localization catalog.");
@@ -87,6 +87,14 @@ namespace Game.Editor
             catalog.Configure(catalog.SourceLocaleCode, tables);
             ValidateAllLocaleTables(catalog);
             EditorUtility.SetDirty(catalog);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[ConfiguredUiTables] result=Passed configEntries=" + ReadUiStringConfigs().Count);
+        }
+
+        [MenuItem("Game/UI/V3/Localization/Apply Configured UI Strings")]
+        public static void ApplyConfiguredUiStrings()
+        {
+            ApplyConfiguredUiTables();
             const string narrativePath = "Assets/Game/Prefabs/UI/Narrative/FirstLaunch/FirstLaunchNarrativeSequence.prefab";
             var root = PrefabUtility.LoadPrefabContents(narrativePath);
             try

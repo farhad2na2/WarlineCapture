@@ -1,0 +1,7 @@
+{
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs": "3d4fbd0f0f1cf7d725a9896dc10df121f7331177b592239493ed43e1f18b6b40",
+  "Assets/Tests/Editor/M02EstablishBaseObjectiveTests.cs": "a52531a507903bc5ea01bf65e6248e123e7b3dd6a75c699917e5e1bcc7c98454",
+  "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Layout.cs": "1d6b4b180275fae87126cb3f5088621d9fca6b8c0a0a749458290e61e7ea2518",
+  "Assets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs": "96716480ee72ca861d5c5874687ffb0420b422d06433c323fa5d54ff89efb7c2",
+  "Assets/Tests/Editor/AriaInstructionViewportTests.cs": "2805ec71fd7e5be5d170ec32abd930c18b08b633aa2d8ab78c588998ae186fe1"
+}

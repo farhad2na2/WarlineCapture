@@ -1,0 +1,5094 @@
+{
+  "taskId": "APH-500",
+  "schemaVersion": 1,
+  "status": "complete",
+  "exactCommit": "b70b529b40c9cb8689402824b29190a2443d420c",
+  "dirty": true,
+  "unityVersion": "6000.5.2f1",
+  "releaseBuildType": "release",
+  "packageType": "APK",
+  "buildTarget": "Android",
+  "scriptingBackend": "IL2CPP",
+  "targetArchitecture": "ARM64",
+  "frameTimingStatsEnabled": true,
+  "detailedBuildReport": true,
+  "artifactPath": "Build/AndroidAPK/WarlineCapture.apk",
+  "artifactBytes": 634020483,
+  "artifactSha256": "6aa83f296e60f45cc4adb8ddd102c3b1f5fd2b9557bed7589d29ec77790b1173",
+  "artifactSizeSemantics": "Compressed APK/AAB package file length. This is not a sum of per-asset packed contributions.",
+  "buildReportSizeSemantics": "Unity BuildReport bytes. Included-asset rows are serialized packed contributions; packed file overhead and summary-unaccounted bytes are reported separately.",
+  "packedFileCount": 41,
+  "packedAssetEntryCount": 33610,
+  "unattributedPackedEntryCount": 3,
+  "totalIncludedAssetCount": 6424,
+  "reportedIncludedAssetCount": 100,
+  "attributedPackedAssetBytes": 518044547,
+  "unattributedPackedAssetBytes": 79827,
+  "packedContentBytes": 518124374,
+  "packedFileOverheadBytes": 1005182,
+  "accountedPackedFileBytes": 519129556,
+  "buildReportSummaryTotalSizeBytes": 3549450758,
+  "buildReportSummaryUnaccountedBytes": 3030321202,
+  "buildReportIncludedAssets": [
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+      "packedBytes": 22369788,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture0.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture1.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture2.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png",
+      "packedBytes": 9961684,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png",
+      "packedBytes": 5592564,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Signs 1.png",
+      "packedBytes": 5592552,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonGeneric/Textures/SyntyLensDirt_01.png",
+      "packedBytes": 4988208,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Inbox/SCN15_NorthBridgeIntel_V3.png",
+      "packedBytes": 4720692,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+      "packedBytes": 4720684,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png",
+      "packedBytes": 4720204,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png",
+      "packedBytes": 4720196,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png",
+      "packedBytes": 4720188,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Portraits/SCN06_EnemyOfficer_V3.png",
+      "packedBytes": 4718176,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/RewardUnlock/POP04_RangerSquad_V3.png",
+      "packedBytes": 4718168,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Backgrounds/SCN01_LoadingEnvironment_V3.png",
+      "packedBytes": 4717284,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_01_A_Combined 10.asset",
+      "packedBytes": 4507444,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Audio/Music/music_match_calm_loop_01.wav",
+      "packedBytes": 3870252,
+      "objectTypes": [
+        "UnityEngine.AudioClip"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Gold_A_Combined 3.asset",
+      "packedBytes": 3563224,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Audio/Music/music_menu_loop_01.wav",
+      "packedBytes": 3533448,
+      "objectTypes": [
+        "UnityEngine.AudioClip"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_01_CombinedSkinned_19_lod0.asset",
+      "packedBytes": 3263132,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_01_CombinedSkinned_25_lod0.asset",
+      "packedBytes": 3261992,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Audio/Music/music_match_combat_loop_01.wav",
+      "packedBytes": 3258160,
+      "objectTypes": [
+        "UnityEngine.AudioClip"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_Alt_02_CombinedSkinned_26_lod0.asset",
+      "packedBytes": 3073976,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_CombinedSkinned_21_lod0.asset",
+      "packedBytes": 3071860,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_CombinedSkinned_32_lod0.asset",
+      "packedBytes": 2815140,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_Alt_02_CombinedSkinned_23_lod0.asset",
+      "packedBytes": 2697856,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_01_CombinedSkinned_27_lod0.asset",
+      "packedBytes": 2532284,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Ghillie_Male_01_CombinedSkinned_8_lod0.asset",
+      "packedBytes": 2518736,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "packedBytes": 2506772,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png",
+      "packedBytes": 2497864,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_05.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Land_Vehicle_Master_Burnt_01.png",
+      "packedBytes": 2497852,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Land_Vehicle_Master_01.png",
+      "packedBytes": 2497848,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Air_Veh_Large_01.png",
+      "packedBytes": 2497840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_A.png",
+      "packedBytes": 2497840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Road_Texture.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_01_A.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_02_A.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Male_02_CombinedSkinned_7_lod0.asset",
+      "packedBytes": 2461636,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/MidLOD/LowLOD_Unit_Chr_Soldier_Male_02_Alt_04.asset",
+      "packedBytes": 2398900,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_02_CombinedSkinned_12_lod0.asset",
+      "packedBytes": 2295460,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_04_CombinedSkinned_31_lod0.asset",
+      "packedBytes": 2290848,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_02_CombinedSkinned_29_lod0.asset",
+      "packedBytes": 2276388,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_01_Alt_02_CombinedSkinned_20_lod0.asset",
+      "packedBytes": 2272780,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Female_01_CombinedSkinned_5_lod0.asset",
+      "packedBytes": 2266532,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_CombinedSkinned_24_lod0.asset",
+      "packedBytes": 2218996,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Female_01_CombinedSkinned_9_lod0.asset",
+      "packedBytes": 2181604,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Female_02_Alt_01_CombinedSkinned_22_lod0.asset",
+      "packedBytes": 2143396,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/GeneratedCombinedMeshes/Model_PolygonMilitary_Mat_Land_Vehicles_5_Combined.asset",
+      "packedBytes": 2136972,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_03_CombinedSkinned_30_lod0.asset",
+      "packedBytes": 2025228,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_05_CombinedSkinned_15_lod0.asset",
+      "packedBytes": 2011172,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Contractor_Male_01_CombinedSkinned_6_lod0.asset",
+      "packedBytes": 1883944,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Bld_Hall_01.fbx",
+      "packedBytes": 1829928,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Veh_Light_Armored_Car.asset",
+      "packedBytes": 1747420,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_01_CombinedSkinned_11_lod0.asset",
+      "packedBytes": 1689476,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Soldier_Male_02_Alt_01_CombinedSkinned_28_lod0.asset",
+      "packedBytes": 1597004,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+      "packedBytes": 1581880,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-C01.png",
+      "packedBytes": 1579448,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+      "packedBytes": 1579012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png",
+      "packedBytes": 1578992,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+      "packedBytes": 1578976,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M05BreachAssault/Final/M05-B01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M05BreachAssault/Final/M05-D03.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+      "packedBytes": 1576000,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_Light_Armored_Car_01.fbx",
+      "packedBytes": 1536504,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_04_CombinedSkinned_14_lod0.asset",
+      "packedBytes": 1533116,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/BakedPoses/HumanM@DualGun_Aim01_Pose_0.50.asset",
+      "packedBytes": 1521828,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Female_02_CombinedSkinned_10_lod0.asset",
+      "packedBytes": 1450476,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/BatchTexture.asset",
+      "packedBytes": 1398224,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/MidLOD/MidLOD_Unit_Chr_Soldier_Male_02_Alt_04.asset",
+      "packedBytes": 1341196,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MissionResult/POP05_M01_OldMarket_ResultBackdrop_V3.png",
+      "packedBytes": 1250856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Built-in Texture2D: Splash Screen Unity Logo",
+      "packedBytes": 1250840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Insurgent_Male_03_CombinedSkinned_13_lod0.asset",
+      "packedBytes": 1213328,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/IntelReveal/POP08_EvidenceAtlas_V3.png",
+      "packedBytes": 1180788,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Pilot_Female_01_CombinedSkinned_17_lod0.asset",
+      "packedBytes": 1169480,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01_Destroyed.fbx",
+      "packedBytes": 1098196,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+      "packedBytes": 1078464,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "packedBytes": 1076360,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset",
+      "packedBytes": 1065324,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset",
+      "packedBytes": 1064140,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_attack.png",
+      "packedBytes": 1053340,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_support.png",
+      "packedBytes": 1052076,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_scan.png",
+      "packedBytes": 1051360,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_hold.png",
+      "packedBytes": 1051084,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_move.png",
+      "packedBytes": 1050820,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_stop.png",
+      "packedBytes": 1050736,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_build.png",
+      "packedBytes": 1050340,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_select.png",
+      "packedBytes": 1049972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/SM_Chr_Bombsuit_Male_01_CombinedSkinned_0_lod0.asset",
+      "packedBytes": 983796,
+      "objectTypes": [
+        "UnityEngine.Mesh"
+      ]
+    }
+  ],
+  "allIncludedTexturePathsExported": true,
+  "buildReportIncludedTextures": [
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png",
+      "packedBytes": 1581880,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+      "packedBytes": 262720,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_radio_dispatch.png",
+      "packedBytes": 262736,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+      "packedBytes": 262720,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P08.png",
+      "packedBytes": 701444,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png",
+      "packedBytes": 701460,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P02-Comms.png",
+      "packedBytes": 701460,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P03-Debrief.png",
+      "packedBytes": 701460,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-C01.png",
+      "packedBytes": 1579448,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-D01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png",
+      "packedBytes": 1578976,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M05BreachAssault/Final/M05-B01.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/Narrative/M05BreachAssault/Final/M05-D03.png",
+      "packedBytes": 1578488,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Final/scn02_nav_button_inactive_frame.png",
+      "packedBytes": 237656,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset",
+      "packedBytes": 2506772,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Regular.ttf",
+      "packedBytes": 240870,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_art_ammunition_depot.png",
+      "packedBytes": 344900,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_art_attack_helicopter.png",
+      "packedBytes": 344900,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_aircraft_helicopter.png",
+      "packedBytes": 43192,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_comms_signal.png",
+      "packedBytes": 37836,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_damage_burst.png",
+      "packedBytes": 51192,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_move_runner.png",
+      "packedBytes": 50064,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_patrol_chevrons.png",
+      "packedBytes": 36844,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo/scn19_icon_upgrades_chevrons.png",
+      "packedBytes": 35448,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_04_tab_selected_bg.png",
+      "packedBytes": 11652,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/BuildDrawer/LayeredOneGo/chrome_05_tab_idle_bg.png",
+      "packedBytes": 11668,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_17_reward_node_claimed.png",
+      "packedBytes": 38468,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_18_reward_node_active.png",
+      "packedBytes": 38528,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_chrome_19_reward_node_locked.png",
+      "packedBytes": 38980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_02_commander_rank_shield.png",
+      "packedBytes": 160048,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_04_supplies_crate.png",
+      "packedBytes": 159324,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_06_inbox_envelope.png",
+      "packedBytes": 86476,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_08_back_arrow.png",
+      "packedBytes": 79876,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_09_edit_pencil.png",
+      "packedBytes": 101948,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_10_badge_shield.png",
+      "packedBytes": 109864,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_11_roster_group.png",
+      "packedBytes": 124512,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_12_vehicle.png",
+      "packedBytes": 83552,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_14_support_plus.png",
+      "packedBytes": 87228,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01/scn03_icon_15_reward_wreath.png",
+      "packedBytes": 143436,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_background_command_table_no_ui.png",
+      "packedBytes": 1578992,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_disabled.png",
+      "packedBytes": 804144,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_hover.png",
+      "packedBytes": 804136,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_pressed.png",
+      "packedBytes": 804144,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_header_square_button_frame_selected.png",
+      "packedBytes": 804144,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_mode_skirmish_crossed_weapons_icon.png",
+      "packedBytes": 789144,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_campaign_target_icon.png",
+      "packedBytes": 618600,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuBrightCommand/Sprites/scn02c_nav_chevron_icon.png",
+      "packedBytes": 156820,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_campaign_thumbnail_art.png",
+      "packedBytes": 701580,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_deploy_chevrons.png",
+      "packedBytes": 12056,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_icon_lock.png",
+      "packedBytes": 10860,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_operations_thumbnail_art.png",
+      "packedBytes": 701584,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo/scn02_skirmish_thumbnail_art.png",
+      "packedBytes": 701580,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card1_RifleSquad.png",
+      "packedBytes": 118972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card2_CombatVehicles.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card3_AttackHelicopter.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card4_FighterJet.png",
+      "packedBytes": 118972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/SquadTray/SquadTray_Card5_Transport.png",
+      "packedBytes": 118972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_civilian_minimap_dot.png",
+      "packedBytes": 2404,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_friendly_minimap_dot.png",
+      "packedBytes": 2652,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_hostile_minimap_dot.png",
+      "packedBytes": 2380,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_marker_minimap_viewport_rect.png",
+      "packedBytes": 26632,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_content.png",
+      "packedBytes": 699524,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_minimap_focus_target_icon.png",
+      "packedBytes": 5964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01/scn08_portrait_rifle_squad.png",
+      "packedBytes": 79484,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_checked.png",
+      "packedBytes": 8160,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_checkbox_empty.png",
+      "packedBytes": 8028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_north_arrow.png",
+      "packedBytes": 8700,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_objective_star.png",
+      "packedBytes": 10940,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_squad_badge.png",
+      "packedBytes": 9188,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_minus.png",
+      "packedBytes": 10844,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_icon_zoom_plus.png",
+      "packedBytes": 10680,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_objectives_panel_frame.png",
+      "packedBytes": 474172,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_progress_track_frame.png",
+      "packedBytes": 48612,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_frame.png",
+      "packedBytes": 331604,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_rect_button_selected_frame.png",
+      "packedBytes": 382964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_resource_chip_frame.png",
+      "packedBytes": 216812,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_selected_squad_group_portrait.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_frame.png",
+      "packedBytes": 514060,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_card_selected_frame.png",
+      "packedBytes": 513868,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_squad_rifle_portrait.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_frame.png",
+      "packedBytes": 359028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_square_button_selected_frame.png",
+      "packedBytes": 358536,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV02/scn08_v02_wide_rail_frame.png",
+      "packedBytes": 331636,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/ResourceExchange/LayeredOneGo/pop12_icon_09_timer_clock.png",
+      "packedBytes": 83764,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png",
+      "packedBytes": 4720204,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_air_transport.png",
+      "packedBytes": 263008,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_armor_star.png",
+      "packedBytes": 263264,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_board.png",
+      "packedBytes": 263084,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_camera.png",
+      "packedBytes": 262904,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_civilians.png",
+      "packedBytes": 263488,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_destroy.png",
+      "packedBytes": 263988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_exit.png",
+      "packedBytes": 66544,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_friendly_marker.png",
+      "packedBytes": 263272,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_fuel.png",
+      "packedBytes": 263092,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_help.png",
+      "packedBytes": 66636,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_hostile_marker.png",
+      "packedBytes": 262964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_info.png",
+      "packedBytes": 263160,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_locate.png",
+      "packedBytes": 264012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_materials.png",
+      "packedBytes": 263080,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_medical.png",
+      "packedBytes": 263184,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_oil.png",
+      "packedBytes": 263076,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_pause.png",
+      "packedBytes": 263028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_player.png",
+      "packedBytes": 263124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_rank_badge.png",
+      "packedBytes": 262980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_resume.png",
+      "packedBytes": 66316,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_return.png",
+      "packedBytes": 263144,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_rope_drop.png",
+      "packedBytes": 263384,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_settings.png",
+      "packedBytes": 263312,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_speed.png",
+      "packedBytes": 262960,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/Icons/v3_icon_warning.png",
+      "packedBytes": 263056,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_attack.png",
+      "packedBytes": 1053340,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_build.png",
+      "packedBytes": 1050340,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_hold.png",
+      "packedBytes": 1051084,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_move.png",
+      "packedBytes": 1050820,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_scan.png",
+      "packedBytes": 1051360,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_select.png",
+      "packedBytes": 1049972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_stop.png",
+      "packedBytes": 1050736,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Generated/V3Shared/MatchCommandsAligned/v3_match_command_support.png",
+      "packedBytes": 1052076,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_command_board_vehicle.png",
+      "packedBytes": 53100,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_command_hold_shield.png",
+      "packedBytes": 49476,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_command_scan_radar.png",
+      "packedBytes": 55608,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_current_order_chevrons.png",
+      "packedBytes": 5984,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_icon_civilian_group.png",
+      "packedBytes": 53704,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_icon_objective_star.png",
+      "packedBytes": 45040,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn08_icon_shield_rank_badge.png",
+      "packedBytes": 48292,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn09_icon_barracks.png",
+      "packedBytes": 92800,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn09_icon_squad_group.png",
+      "packedBytes": 81424,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Icons/scn09_icon_time_clock.png",
+      "packedBytes": 260312,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn08_status_segment_strip.png",
+      "packedBytes": 5456,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_detail_tall_frame.png",
+      "packedBytes": 60420,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_secondary_button_bg.png",
+      "packedBytes": 9244,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Panels/scn09_panel_small_gold_button_bg.png",
+      "packedBytes": 4176,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Airport_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120888,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Ammunition_Depot_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120584,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Barrack_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120580,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Fuel_Bladder_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120332,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 124164,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_Big_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 124768,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Hall_Polygon.png",
+      "packedBytes": 120348,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Helipad_Polygon.png",
+      "packedBytes": 119436,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_House_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120716,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_OilPump_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 122960,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Portaloo_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120356,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Refinery_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120660,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Refinery_Big_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 122624,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Road_Barrier_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 119792,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Satelite_Dish_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 122652,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Shop_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120644,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Contractor_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Expert_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120612,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Refugee_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120336,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Regular_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120416,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Dirt_Straight_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 127132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Fence_Straight_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 160192,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_WaterTank_AI_RealisticBuilding_ChromaGreen.png",
+      "packedBytes": 120964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Bombsuit_Male_01_AI_RealisticBombSuit_ChromaGreen.png",
+      "packedBytes": 120392,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Female_01_AI_RealisticCivilian_ChromaGreen.png",
+      "packedBytes": 120260,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Female_02_AI_RealisticCivilian_ChromaGreen.png",
+      "packedBytes": 120084,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
+      "packedBytes": 120160,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_02_AI_RealisticCivilian_ChromaGreen.png",
+      "packedBytes": 120208,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Female_01_AI_RealisticSMG_ChromaGreen.png",
+      "packedBytes": 120268,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Male_01_AI_RealisticPistol_ChromaGreen.png",
+      "packedBytes": 120108,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Male_02_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120204,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Ghillie_Male_01_AI_RealisticRocketLauncher_ChromaGreen.png",
+      "packedBytes": 120520,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Female_01_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120112,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Female_02_AI_RealisticPistol_ChromaGreen.png",
+      "packedBytes": 120180,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_01_AI_RealisticRPG_ChromaGreen.png",
+      "packedBytes": 120044,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_02_AI_RealisticMachineGun_ChromaGreen.png",
+      "packedBytes": 120160,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_03_AI_RealisticSMG_ChromaGreen.png",
+      "packedBytes": 120032,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_04_AI_RealisticSniper_ChromaGreen.png",
+      "packedBytes": 120296,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_05_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120072,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Leader_Male_01_AI_RealisticMetalPistol_ChromaGreen.png",
+      "packedBytes": 120328,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Pilot_Female_01_AI_RealisticCompactPistol_ChromaGreen.png",
+      "packedBytes": 120292,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Pilot_Male_01_AI_RealisticCompactPistol_ChromaGreen.png",
+      "packedBytes": 120724,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_AI_RealisticSniper_ChromaGreen.png",
+      "packedBytes": 120544,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_Alt_01_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120336,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_Alt_02_AI_RealisticSniper_ChromaGreen.png",
+      "packedBytes": 120380,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120064,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_Alt_01_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120376,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_Alt_02_AI_RealisticSMG_ChromaGreen.png",
+      "packedBytes": 119960,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_AI_RealisticMachineGun_ChromaGreen.png",
+      "packedBytes": 120660,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_Alt_01_AI_RealisticSniperBearded_ChromaGreen.png",
+      "packedBytes": 120564,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_Alt_02_AI_RealisticAdvancedRifle_v3_ChromaGreen.png",
+      "packedBytes": 120452,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120532,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_01_AI_RealisticMetalPistol_ChromaGreen.png",
+      "packedBytes": 120396,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120388,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_03_AI_RealisticPistol_ChromaGreen.png",
+      "packedBytes": 120124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_04_AI_RealisticRifle_ChromaGreen.png",
+      "packedBytes": 120264,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Fast_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120416,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Heavy_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120908,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Slow_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 119932,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Drone_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120172,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Attack_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 123188,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Attack_Small_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 122968,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Transport_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121924,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Jet_01_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120460,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Jet_02_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120404,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Light_Armored_Car_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121456,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Missle_Launcher_Air_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 122296,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Missle_Launcher_Ground_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121484,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Plane_Transport_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120564,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Radar_Tank_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 122328,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Tank_USA_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 120828,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Canopy_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Tanker_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Tray_AI_RealisticVehicle_ChromaGreen.png",
+      "packedBytes": 121236,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Airport_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Airport_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Ammunition_Depot_Action_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Ammunition_Depot_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Barrack_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Barrack_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Fuel_Bladder_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Fuel_Bladder_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_GuardTower_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_GuardTower_Big_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_GuardTower_Big_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_GuardTower_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Hall_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Hall_Card_512.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Helipad_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Helipad_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_House_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_House_Card_512.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_OilPump_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_OilPump_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Portaloo_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Portaloo_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Refinery_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Refinery_Big_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Refinery_Big_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Refinery_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Road_Barrier_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Road_Barrier_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Satelite_Dish_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Satelite_Dish_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Shop_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Shop_Card_512.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Contractor_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Contractor_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Expert_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Expert_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Refugee_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Refugee_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Regular_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Tent_Regular_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Wall_Dirt_Straight_Action_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Wall_Dirt_Straight_Card_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Wall_Fence_Straight_Action_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_Wall_Fence_Straight_Card_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_WaterTank_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Building_WaterTank_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Bombsuit_Male_01_BombSuit_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Bombsuit_Male_01_BombSuit_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Female_01_Civilian_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Female_01_Civilian_Card_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Female_02_Civilian_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Female_02_Civilian_Card_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Male_01_Civilian_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Male_01_Civilian_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Male_02_Civilian_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Civilian_Male_02_Civilian_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Female_01_SMG_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Female_01_SMG_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Male_01_Pistol_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Male_01_Pistol_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Male_02_Rifle_Action_512.png",
+      "packedBytes": 787124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Contractor_Male_02_Rifle_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Ghillie_Male_01_RocketLauncher_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Ghillie_Male_01_RocketLauncher_Card_512.png",
+      "packedBytes": 787132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Female_01_Rifle_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Female_01_Rifle_Card_512.png",
+      "packedBytes": 787116,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Female_02_Pistol_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Female_02_Pistol_Card_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Male_01_RPG_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Male_01_RPG_Card_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Male_02_MachineGun_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Male_02_MachineGun_Card_512.png",
+      "packedBytes": 787124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Leader_Male_01_FieldCommander_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Leader_Male_01_FieldCommander_Card_512.png",
+      "packedBytes": 787124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_03_CompactShortRifle_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_03_CompactShortRifle_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_04_ScopedLongRifle_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_04_ScopedLongRifle_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_05_Rifle_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Male_05_Rifle_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Female_01_CompactPistol_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Female_01_CompactPistol_Card_512.png",
+      "packedBytes": 787124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Male_01_CompactPistol_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Pilot_Male_01_CompactPistol_Card_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_Alt_01_Rifle_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_Alt_01_Rifle_Card_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_Alt_02_ScopedLongRifle_Action_512.png",
+      "packedBytes": 119060,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_Alt_02_ScopedLongRifle_Card_512.png",
+      "packedBytes": 119052,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_ScopedLongRifle_Action_512.png",
+      "packedBytes": 119044,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_01_ScopedLongRifle_Card_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Alt_01_Rifle_Action_512.png",
+      "packedBytes": 787132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Alt_01_Rifle_Card_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Alt_02_CompactShortRifle_Action_512.png",
+      "packedBytes": 119060,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Alt_02_CompactShortRifle_Card_512.png",
+      "packedBytes": 119060,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Rifle_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Female_02_Rifle_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_Alt_01_Marksman_Action_512.png",
+      "packedBytes": 787132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_Alt_01_Marksman_Card_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_Alt_02_AdvancedRifle_Action_512.png",
+      "packedBytes": 119052,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_Alt_02_AdvancedRifle_Card_512.png",
+      "packedBytes": 119044,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_HeavyGunner_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_HeavyGunner_Card_512.png",
+      "packedBytes": 787124,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_01_MetalPistol_Action_512.png",
+      "packedBytes": 119044,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_01_MetalPistol_Card_512.png",
+      "packedBytes": 119044,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_Rifleman_Action_512.png",
+      "packedBytes": 787132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_Rifleman_Card_512.png",
+      "packedBytes": 787132,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_03_Pistol_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_03_Pistol_Card_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_04_Rifleman_Action_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Alt_04_Rifleman_Card_512.png",
+      "packedBytes": 119036,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Rifleman_Action_512.png",
+      "packedBytes": 119028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_02_Rifleman_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Fast_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Fast_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Heavy_Action_512.png",
+      "packedBytes": 787092,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Heavy_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Slow_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_APC_Slow_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Drone_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Drone_Card_512.png",
+      "packedBytes": 118980,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Attack_Action_512.png",
+      "packedBytes": 787108,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Attack_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Attack_Small_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Attack_Small_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Transport_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Helicopter_Transport_Card_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Action_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_02_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Light_Armored_Car_Action_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Light_Armored_Car_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Missle_Launcher_Air_Action_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Missle_Launcher_Air_Card_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Missle_Launcher_Ground_Action_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Missle_Launcher_Ground_Card_512.png",
+      "packedBytes": 119020,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Plane_Transport_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Plane_Transport_Card_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Radar_Tank_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Radar_Tank_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Tank_USA_Action_512.png",
+      "packedBytes": 787092,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Tank_USA_Card_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Canopy_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Canopy_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Tanker_Action_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Tanker_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Tray_Action_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Truck_Tray_Card_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_Aircraft_Polygon_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_Buildings_Polygon_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_MixedForce_Polygon_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_MixedSoldierAircraft_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_MixedSoldierVehicleAircraft_512.png",
+      "packedBytes": 119012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_MixedSoldierVehicle_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_MixedVehicleAircraft_512.png",
+      "packedBytes": 119004,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_Transports_Polygon_512.png",
+      "packedBytes": 118996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Portraits/Secondary/SelectionSummary_VehicleSquad_512.png",
+      "packedBytes": 118988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_command.png",
+      "packedBytes": 66544,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_credits.png",
+      "packedBytes": 66704,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_fuel.png",
+      "packedBytes": 8740,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_materials.png",
+      "packedBytes": 13000,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_oil.png",
+      "packedBytes": 30584,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/Resources/resource_rush.png",
+      "packedBytes": 12148,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Backgrounds/SCN01_LoadingEnvironment_V3.png",
+      "packedBytes": 4717284,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png",
+      "packedBytes": 4720196,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png",
+      "packedBytes": 1579012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Events/SCN16_ARIAFieldTrials_V3.png",
+      "packedBytes": 4720684,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Inbox/SCN15_NorthBridgeIntel_V3.png",
+      "packedBytes": 4720692,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/IntelReveal/POP08_EvidenceAtlas_V3.png",
+      "packedBytes": 1180788,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_CampaignScene_V3.png",
+      "packedBytes": 919988,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_OperationsScene_V3.png",
+      "packedBytes": 348788,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MainMenuPlates/SCN02_SkirmishScene_V3.png",
+      "packedBytes": 381428,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MissionBriefing/SCN06_ForwardPost_V3.png",
+      "packedBytes": 4720188,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/MissionResult/POP05_M01_OldMarket_ResultBackdrop_V3.png",
+      "packedBytes": 1250856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png",
+      "packedBytes": 1576000,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Portraits/SCN06_EnemyOfficer_V3.png",
+      "packedBytes": 4718176,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/RewardUnlock/POP04_RangerSquad_V3.png",
+      "packedBytes": 4718168,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Brand/ui_v3_brand_logo_mainmenu.png",
+      "packedBytes": 947416,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Core/ui_core_button_9s.png",
+      "packedBytes": 246380,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Core/ui_core_focus_overlay_9s.png",
+      "packedBytes": 541452,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Core/ui_core_panel_9s.png",
+      "packedBytes": 655972,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_airstrike.png",
+      "packedBytes": 263344,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_ammo_crate.png",
+      "packedBytes": 263340,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_armor_plate.png",
+      "packedBytes": 263232,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_emp_blast.png",
+      "packedBytes": 263792,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_lock.png",
+      "packedBytes": 263104,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_medic_drop.png",
+      "packedBytes": 263864,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_repair_kit.png",
+      "packedBytes": 263268,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Equipment/ui_equipment_targeting_module.png",
+      "packedBytes": 263400,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_accessibility.png",
+      "packedBytes": 271212,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_audio.png",
+      "packedBytes": 265492,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_gear.png",
+      "packedBytes": 264636,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_reset.png",
+      "packedBytes": 264332,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/Settings/ui_icon_settings_video.png",
+      "packedBytes": 264012,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/ui_icon_attack.png",
+      "packedBytes": 256672,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/Icons/ui_icon_chapters_book.png",
+      "packedBytes": 82500,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_ArmoryCrate_V3.png",
+      "packedBytes": 83080,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_CampaignTarget_V3.png",
+      "packedBytes": 66808,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_OperationsCompass_V3.png",
+      "packedBytes": 68376,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_SkirmishBlades_V3.png",
+      "packedBytes": 66692,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Art/UI/V3Shared/Sprites/MainMenuIcons/SCN02_Icon_StoreCart_V3.png",
+      "packedBytes": 83028,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Effects/Combat/Textures/Tex_Vfx_MuzzleFlashStar.png",
+      "packedBytes": 40232,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Effects/Combat/Textures/Tex_Vfx_SmokeSoft.png",
+      "packedBytes": 10644,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Effects/Combat/Textures/Tex_Vfx_SoftGlow.png",
+      "packedBytes": 10640,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture0.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture1.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/AnimationTexture2.asset",
+      "packedBytes": 16777348,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Prefabs/Generated/CharactersBaked/ModelResources/BatchTexture.asset",
+      "packedBytes": 1398224,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Bombsuit_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_01.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Female_02.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Civilian_Male_02.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Female_01.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_01.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Contractor_Male_02.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Ghillie_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_01.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Female_02.png",
+      "packedBytes": 315148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_02.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_03.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_04.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Insurgent_Male_05.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Leader_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Female_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Pilot_Male_01.png",
+      "packedBytes": 315140,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_01.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_01_Alt_02.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_01.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Female_02_Alt_02.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_01.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_01_Alt_02.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02.png",
+      "packedBytes": 315144,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_01.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_02.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_03.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Generated/Impostors/ImpostorAtlas_Unit_Chr_Soldier_Male_02_Alt_04.png",
+      "packedBytes": 315152,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Game/Textures/Logo.png",
+      "packedBytes": 470916,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Prefabs/FX/Materials/FX_Tex_Cicle.png",
+      "packedBytes": 40220,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Air_Vehicle_Burnt.png",
+      "packedBytes": 5592564,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Fence_Alpha.tga",
+      "packedBytes": 158556,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Land_Vehicle_Master_01.png",
+      "packedBytes": 2497848,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Land_Vehicle_Master_Burnt_01.png",
+      "packedBytes": 2497852,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Tank_Tracks.png",
+      "packedBytes": 158572,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A.png",
+      "packedBytes": 22369788,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_A_Normals.png",
+      "packedBytes": 9961684,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_B.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_01_C.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_02_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_03_C.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/PolygonMilitary_Texture_04_A.png",
+      "packedBytes": 9961676,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Road_Texture.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Signs 1.png",
+      "packedBytes": 5592552,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Tank_Track_Burnt.png",
+      "packedBytes": 158560,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Air_Veh_Large_01.png",
+      "packedBytes": 2497840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_03.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/PolygonMilitary_Land_Vehicles_05.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Heli_01_A.png",
+      "packedBytes": 2497840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_01_A.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Vehicles/Veh_Jet_02_A.png",
+      "packedBytes": 2497836,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/PolygonMilitary/Textures/Weapons/PolygonMilitary_Weapons_01.png",
+      "packedBytes": 158572,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset",
+      "packedBytes": 1065324,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold.ttf",
+      "packedBytes": 29830,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light SDF.asset",
+      "packedBytes": 1064140,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light.ttf",
+      "packedBytes": 29938,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "packedBytes": 1076360,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium.ttf",
+      "packedBytes": 29902,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_MachineGun_Bandit_01_Military_Side.png",
+      "packedBytes": 59912,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_MachineGun_USA_01_Military_Side.png",
+      "packedBytes": 59964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_01_Military_Side.png",
+      "packedBytes": 60084,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_Metal_01_Military_Side.png",
+      "packedBytes": 60172,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Pistol_Small_01_Military_Side.png",
+      "packedBytes": 60172,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Complex_01_Military_Side.png",
+      "packedBytes": 60120,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_01_Military_Side.png",
+      "packedBytes": 59996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_02_Military_Side.png",
+      "packedBytes": 60112,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Rifle_03_Military_Side.png",
+      "packedBytes": 59964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_SMG_01_Military_Side.png",
+      "packedBytes": 60068,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_A_Sniper_01_Military_Side.png",
+      "packedBytes": 59996,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_B_Rifle_01_Military_Side.png",
+      "packedBytes": 60068,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_B_Rifle_02_Military_Side.png",
+      "packedBytes": 60068,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_B_Rifle_03_Military_Side.png",
+      "packedBytes": 59936,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_B_SMG_01_Military_Side.png",
+      "packedBytes": 60040,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Preset_B_Sniper_01_Military_Side.png",
+      "packedBytes": 60400,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_RPG_01_Military_Side.png",
+      "packedBytes": 59912,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_RocketLauncher_01_Military_Side.png",
+      "packedBytes": 59964,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Weapons/ICON_SM_Wep_Sniper_01_Military_Side.png",
+      "packedBytes": 59948,
+      "objectTypes": [
+        "UnityEngine.Sprite",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Texture_01_A.png",
+      "packedBytes": 2497856,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonBattleRoyale/Textures/PolygonBattleRoyale_Vehicles_01_Emmision.png",
+      "packedBytes": 2497864,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/Synty/PolygonGeneric/Textures/SyntyLensDirt_01.png",
+      "packedBytes": 4988208,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/TextMesh Pro/Fonts/LiberationSans.ttf",
+      "packedBytes": 352734,
+      "objectTypes": [
+        "UnityEngine.Font",
+        "UnityEngine.Material",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset",
+      "packedBytes": 3344,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset",
+      "packedBytes": 1078464,
+      "objectTypes": [
+        "UnityEngine.Material",
+        "UnityEngine.MonoBehaviour",
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Built-in Texture2D: Splash Screen Unity Logo",
+      "packedBytes": 1250840,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.probuilder/Content/Material/Textures/GridBox_Collider.png",
+      "packedBytes": 158560,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.probuilder/Content/Material/Textures/GridBox_NoDraw.png",
+      "packedBytes": 158560,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.probuilder/Content/Material/Textures/GridBox_Trigger.png",
+      "packedBytes": 158560,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.probuilder/Content/Resources/Textures/GridBox_Default.png",
+      "packedBytes": 158560,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BayerMatrix.png",
+      "packedBytes": 140,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_0.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_1.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_10.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_11.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_12.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_13.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_14.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_15.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_16.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_17.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_18.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_19.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_2.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_20.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_21.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_22.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_23.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_24.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_25.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_26.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_27.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_28.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_29.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_3.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_30.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_31.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_4.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_5.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_6.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_7.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_8.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise16/L/LDR_LLL1_9.png",
+      "packedBytes": 380,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/BlueNoise64/L/LDR_LLL1_0.png",
+      "packedBytes": 4220,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/DebugFont.tga",
+      "packedBytes": 15260,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Large01.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Large02.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium01.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium02.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium03.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium04.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium05.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Medium06.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Thin01.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/FilmGrain/Thin02.png",
+      "packedBytes": 262264,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/SMAA/AreaTex.tga",
+      "packedBytes": 268920,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    },
+    {
+      "sourceAssetPath": "Packages/com.unity.render-pipelines.universal/Textures/SMAA/SearchTex.tga",
+      "packedBytes": 1148,
+      "objectTypes": [
+        "UnityEngine.Texture2D"
+      ]
+    }
+  ]
+}

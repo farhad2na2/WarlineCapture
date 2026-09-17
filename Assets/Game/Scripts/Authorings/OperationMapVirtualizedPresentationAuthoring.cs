@@ -41,7 +41,7 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 2)]
+        [BakingVersion("WarlineCapture", 3)]
         private sealed class Baker : Baker<OperationMapVirtualizedPresentationAuthoring>
         {
             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)
@@ -78,6 +78,23 @@ namespace Game.Authoring
                     SchemaVersion = authoring.DatabaseConfig.SchemaVersion,
                     MapGeneration = authoring.mapGeneration
                 });
+                var sidewalks=AddBuffer<OperationMapSidewalkFootprint>(entity);
+                var config=authoring.DatabaseConfig;
+                foreach(var placement in config.Placements)
+                {
+                    var prototype=config.Prototypes[placement.PrototypeIndex];
+                    for(int partIndex=prototype.FirstPart;partIndex<prototype.FirstPart+prototype.PartCount;partIndex++)
+                    {
+                        var part=config.Parts[partIndex]; var mesh=config.Meshes[part.MeshIndex].Mesh;
+                        if(mesh==null || mesh.name.IndexOf("sidewalk",System.StringComparison.OrdinalIgnoreCase)<0) continue;
+                        DependsOn(mesh);
+                        var local=part.LocalBounds; var matrix=placement.WorldMatrix*part.LocalToPlacement;
+                        var bounds=new Bounds(matrix.MultiplyPoint3x4(local.center),Vector3.zero);
+                        for(int c=0;c<8;c++) bounds.Encapsulate(matrix.MultiplyPoint3x4(local.center+Vector3.Scale(local.extents,
+                            new Vector3((c&1)==0?-1:1,(c&2)==0?-1:1,(c&4)==0?-1:1))));
+                        sidewalks.Add(new OperationMapSidewalkFootprint {WorldToLocal=matrix.inverse,LocalMin=local.min,LocalMax=local.max,WorldMin=bounds.min,WorldMax=bounds.max});
+                    }
+                }
                 AddComponent(entity, new OperationMapRenderVirtualizationStateComponent());
                 AddComponent(entity, new OperationMapRenderVirtualizationMetricsComponent());
                 AddComponent(

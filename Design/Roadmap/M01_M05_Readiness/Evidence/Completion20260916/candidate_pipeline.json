@@ -1,0 +1,153 @@
+{
+  "current": {
+    "phase": "complete",
+    "state": "passed",
+    "utc": "2026-09-16T23:14:30.440668+00:00",
+    "apk": "/Users/farhad/Projects/WarlineCapture/Build/ReadinessCandidate/WarlineCapture-M1-M5.apk",
+    "bytes": 634020483,
+    "sha256": "6aa83f296e60f45cc4adb8ddd102c3b1f5fd2b9557bed7589d29ec77790b1173",
+    "deviceValidation": "Not performed: no Android device connected"
+  },
+  "completed": [
+    {
+      "phase": "readiness-focused-06",
+      "exit": 0,
+      "passed": true,
+      "log": "/private/tmp/readiness-focused-06.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "900",
+        "--log",
+        "/private/tmp/readiness-focused-06.log",
+        "--",
+        "-runTests",
+        "-testPlatform",
+        "EditMode",
+        "-testFilter",
+        "CampaignReadinessLifecycleTests;TutorialCueOverlayTests;TutorialAttentionAndContinueTests;AriaTutorialPresentationV3PrefabTests",
+        "-testResults",
+        "/private/tmp/readiness-focused-06.xml"
+      ]
+    },
+    {
+      "phase": "readiness-m04-recovery-final",
+      "exit": 1,
+      "passed": false,
+      "log": "/private/tmp/readiness-m04-recovery-final.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "1200",
+        "--log",
+        "/private/tmp/readiness-m04-recovery-final.log",
+        "--",
+        "-executeMethod",
+        "Game.Editor.M04AirliftEditorProbe.RunReadinessRecovery"
+      ]
+    },
+    {
+      "phase": "readiness-m04-recovery-final-02",
+      "exit": 0,
+      "passed": true,
+      "log": "/private/tmp/readiness-m04-recovery-final-02.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "1200",
+        "--log",
+        "/private/tmp/readiness-m04-recovery-final-02.log",
+        "--",
+        "-executeMethod",
+        "Game.Editor.M04AirliftEditorProbe.RunReadinessRecovery"
+      ]
+    },
+    {
+      "phase": "readiness-m05-retry-final",
+      "exit": 0,
+      "passed": true,
+      "log": "/private/tmp/readiness-m05-retry-final.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "900",
+        "--log",
+        "/private/tmp/readiness-m05-retry-final.log",
+        "--",
+        "-executeMethod",
+        "Game.Editor.M05BreachAssaultEditorProbe.RunTimeoutRetry"
+      ]
+    },
+    {
+      "phase": "readiness-android-candidate",
+      "exit": 0,
+      "passed": false,
+      "log": "/private/tmp/readiness-android-candidate.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "7200",
+        "--log",
+        "/private/tmp/readiness-android-candidate.log",
+        "--",
+        "-quit",
+        "-executeMethod",
+        "Game.Editor.BuildScript.BuildAndroid",
+        "-buildType",
+        "APK"
+      ]
+    },
+    {
+      "phase": "readiness-android-candidate-02",
+      "exit": 0,
+      "passed": false,
+      "log": "/private/tmp/readiness-android-candidate-02.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "7200",
+        "--log",
+        "/private/tmp/readiness-android-candidate-02.log",
+        "--",
+        "-quit",
+        "-executeMethod",
+        "Game.Editor.BuildScript.BuildAndroid",
+        "-buildType",
+        "APK"
+      ]
+    },
+    {
+      "phase": "readiness-android-candidate-03",
+      "exit": 0,
+      "passed": true,
+      "log": "/private/tmp/readiness-android-candidate-03.log",
+      "command": [
+        "/Users/farhad/Projects/WarlineCapture/Tools/CI/invoke_unity_macos.sh",
+        "--project",
+        "/private/tmp/warline-readiness-validation",
+        "--timeout",
+        "7200",
+        "--log",
+        "/private/tmp/readiness-android-candidate-03.log",
+        "--",
+        "-quit",
+        "-executeMethod",
+        "Game.Editor.CampaignReadinessAddressablesBuild.RepairDependenciesAndBuildAndroid",
+        "-buildType",
+        "APK"
+      ]
+    }
+  ]
+}

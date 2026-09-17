@@ -180,8 +180,8 @@ namespace Game.UI.Shell.Ecs
                 ? victory
                     ? firstClear
                         ? "Forward post operational. Dalia Rahim accepts field-lead duty. The clinic-route warning sector has gone dark."
-                        : "Forward post defended. The clinic route remains under coalition control."
-                    : "The forward post fell before the defense was secured. Rebuild and redeploy."
+                        : GameText.Get("mission.m02.result.operational")
+                    : GameText.Get("mission.m02.result.incomplete")
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
@@ -205,7 +205,9 @@ namespace Game.UI.Shell.Ecs
                 !victory || settlementAccepted != 0,
                 !victory,
                 firstClear,
-                debriefRequired);
+                debriefRequired,
+                construction: establishBase ? new UiMissionConstructionResultDetails(
+                    facts.RequiredBuildingCompletedCount, facts.RequiredUnitProducedCount, facts.CivilianLossCount) : default);
             if(runtime.MissionId.Equals(RadarResultMissionId)) result=LocalizeDefenseResult(in result,in facts,in runtime);
             if(runtime.MissionId.Equals(AirliftId)) result=LocalizeExtractionResult(in result,in facts);
             if(runtime.MissionId.Equals(BreachId)) result=LocalizeBreachResult(in result,in facts);

@@ -1,0 +1,1 @@
+Supplemental run readiness-m04-recovery-final exited 1 deliberately through its owned Complete(false) handler. It stalled at unload because the historical probe required the retired hidden Do It button. Current normal-control M4 EN/FA journeys had already passed. Repaired supplemental probe to use visible passenger chip → Exit All. No gameplay code changed.

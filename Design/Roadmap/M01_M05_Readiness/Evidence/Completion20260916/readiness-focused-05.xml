@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="93" result="Passed" total="93" passed="93" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:30Z" duration="1.2244896">
+  <test-suite type="TestSuite" id="1000" name="Warline M5 Compound QA" fullname="Warline M5 Compound QA" runstate="Runnable" testcasecount="4576" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:30Z" duration="1.224490" total="93" passed="93" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="6194" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-readiness-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4575" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:30Z" duration="1.184210" total="93" passed="93" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="45915" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1818" name="CampaignReadinessLifecycleTests" fullname="CampaignReadinessLifecycleTests" classname="CampaignReadinessLifecycleTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.379959" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1819" name="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" fullname="CampaignReadinessLifecycleTests.ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" methodname="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="466813633" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.030066" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1821" name="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" fullname="CampaignReadinessLifecycleTests.DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" methodname="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="589656659" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.316608" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1820" name="PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" fullname="CampaignReadinessLifecycleTests.PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" methodname="PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="924768273" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.010120" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5768" name="UnitTransportValidationTests" fullname="UnitTransportValidationTests" classname="UnitTransportValidationTests" runstate="Runnable" testcasecount="90" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:30Z" duration="0.680951" total="90" passed="90" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5848" name="AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" fullname="UnitTransportValidationTests.AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" methodname="AirTransport_BoardsAllPassengersThatReachedCloseHelicopterGoals" classname="UnitTransportValidationTests" runstate="Runnable" seed="1866966205" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.055372" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5835" name="AirTransport_BoardsWhenLandedOnRaisedHelipad" fullname="UnitTransportValidationTests.AirTransport_BoardsWhenLandedOnRaisedHelipad" methodname="AirTransport_BoardsWhenLandedOnRaisedHelipad" classname="UnitTransportValidationTests" runstate="Runnable" seed="1600646667" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001984" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5844" name="AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" methodname="AirTransport_DoesNotBoardAtFarEdgeOfLargeHelicopterFootprint" classname="UnitTransportValidationTests" runstate="Runnable" seed="634463916" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.002552" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5842" name="AirTransport_DoesNotBoardAtOldWideClearanceDistance" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardAtOldWideClearanceDistance" methodname="AirTransport_DoesNotBoardAtOldWideClearanceDistance" classname="UnitTransportValidationTests" runstate="Runnable" seed="999759000" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001137" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5834" name="AirTransport_DoesNotBoardSoldierUntilLanded" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardSoldierUntilLanded" methodname="AirTransport_DoesNotBoardSoldierUntilLanded" classname="UnitTransportValidationTests" runstate="Runnable" seed="684412917" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001090" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5847" name="AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" methodname="AirTransport_DoesNotBoardWhenAirFlagsGroundedButModelStillFlying" classname="UnitTransportValidationTests" runstate="Runnable" seed="1332669117" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.000839" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5843" name="AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" fullname="UnitTransportValidationTests.AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" methodname="AirTransport_DoesNotBoardWhenStoppedOneCellShortOfCloseGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="2109859180" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.000823" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5845" name="AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" fullname="UnitTransportValidationTests.AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" methodname="AirTransportPickup_ClickingFlyingHelicopterCommandsLandingNearPassengerBeforeBoarding" classname="UnitTransportValidationTests" runstate="Runnable" seed="536512925" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.024765" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5846" name="AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" fullname="UnitTransportValidationTests.AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" methodname="AirTransportPickup_FindingLandingCellDoesNotInvalidateGridArrays" classname="UnitTransportValidationTests" runstate="Runnable" seed="84295544" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001809" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5831" name="BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" methodname="BoardAllSelectedTransportCommand_ConsumesRequestAndOrdersNearestSoldiers" classname="UnitTransportValidationTests" runstate="Runnable" seed="22079896" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.031484" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5833" name="BoardAllSelectedTransportCommand_IgnoresDistantPassengers" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_IgnoresDistantPassengers" methodname="BoardAllSelectedTransportCommand_IgnoresDistantPassengers" classname="UnitTransportValidationTests" runstate="Runnable" seed="481246670" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.003009" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5832" name="BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" fullname="UnitTransportValidationTests.BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" methodname="BoardAllSelectedTransportCommand_RetryRefreshesPendingPassengersForSameTransport" classname="UnitTransportValidationTests" runstate="Runnable" seed="1215936401" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.006008" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5830" name="BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" fullname="UnitTransportValidationTests.BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" methodname="BoardTransportCommandFlush_ConsumesPreResolvedTransportRequestAndOrdersMove" classname="UnitTransportValidationTests" runstate="Runnable" seed="994384114" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.007296" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5829" name="BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" fullname="UnitTransportValidationTests.BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" methodname="BoardTransportCommandSystem_EmptyQueueSteadyStateAllocatesNoManagedMemory" classname="UnitTransportValidationTests" runstate="Runnable" seed="355955173" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.003267" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5828" name="BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" fullname="UnitTransportValidationTests.BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" methodname="BoardTransportCommandSystem_OnUpdateConsumesPreResolvedTransportRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="1704429729" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001625" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5855" name="FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" fullname="UnitTransportValidationTests.FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" methodname="FocusedTransportExitButton_StartsRopeDisembarkWithoutLosingPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="537529208" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.026886" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5857" name="FocusedTransportReadModel_PublishesPassengerCapacityAndRows" fullname="UnitTransportValidationTests.FocusedTransportReadModel_PublishesPassengerCapacityAndRows" methodname="FocusedTransportReadModel_PublishesPassengerCapacityAndRows" classname="UnitTransportValidationTests" runstate="Runnable" seed="327101002" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.045296" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5858" name="FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" fullname="UnitTransportValidationTests.FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" methodname="FocusedTransportReadModel_PublishesPlaneCargoCapacityBreakdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="1822353760" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.003075" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5827" name="GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" fullname="UnitTransportValidationTests.GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" methodname="GroundPersonnelTransport_BoardOrderCapsAtAvailableSeats" classname="UnitTransportValidationTests" runstate="Runnable" seed="278546822" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001851" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5770" name="GroundPersonnelTransport_BoardsSoldierLikeApc" fullname="UnitTransportValidationTests.GroundPersonnelTransport_BoardsSoldierLikeApc" methodname="GroundPersonnelTransport_BoardsSoldierLikeApc" classname="UnitTransportValidationTests" runstate="Runnable" seed="167861270" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.001453" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5792" name="HelicopterBoardingCommand_RejectsVehiclePassenger" fullname="UnitTransportValidationTests.HelicopterBoardingCommand_RejectsVehiclePassenger" methodname="HelicopterBoardingCommand_RejectsVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1977056436" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.002221" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5853" name="HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" methodname="HelicopterRopeDisembark_DropsStraightDownOntoFreeLandingCell" classname="UnitTransportValidationTests" runstate="Runnable" seed="1398476467" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.027922" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5852" name="HelicopterRopeDisembark_ReleasesPassengersOneAtATime" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_ReleasesPassengersOneAtATime" methodname="HelicopterRopeDisembark_ReleasesPassengersOneAtATime" classname="UnitTransportValidationTests" runstate="Runnable" seed="1157326656" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:29Z" duration="0.011156" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5854" name="HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" fullname="UnitTransportValidationTests.HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" methodname="HelicopterRopeDisembark_TenPassengersDisperseToDistinctFreeCells" classname="UnitTransportValidationTests" runstate="Runnable" seed="1897291730" result="Passed" start-time="2026-09-16 21:35:29Z" end-time="2026-09-16 21:35:30Z" duration="0.005077" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5825" name="InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" fullname="UnitTransportValidationTests.InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" methodname="InitialUnitSpawnApplySystem_CopiesTransportAirdropVisualPrefabRefs" classname="UnitTransportValidationTests" runstate="Runnable" seed="2031597531" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.005484" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5819" name="LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" methodname="LoadedTransportAttackOrder_AcceptsNestedAttackPayloadCarrier" classname="UnitTransportValidationTests" runstate="Runnable" seed="2125391838" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.006349" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5817" name="LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" methodname="LoadedTransportAttackOrder_CreatesDeployOrderInsteadOfEngageTarget" classname="UnitTransportValidationTests" runstate="Runnable" seed="254753392" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001380" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5818" name="LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" fullname="UnitTransportValidationTests.LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" methodname="LoadedTransportAttackOrder_RejectsTransportWithoutAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="846754285" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001251" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5769" name="PassengerVisualScratch_IsCallOwnedAndWorldIsolated" fullname="UnitTransportValidationTests.PassengerVisualScratch_IsCallOwnedAndWorldIsolated" methodname="PassengerVisualScratch_IsCallOwnedAndWorldIsolated" classname="UnitTransportValidationTests" runstate="Runnable" seed="1060998360" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001356" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5856" name="SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" fullname="UnitTransportValidationTests.SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" methodname="SelectionFallback_FindsNearbyTransportHelicopterWhenHelipadCellWasClicked" classname="UnitTransportValidationTests" runstate="Runnable" seed="1965303182" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002740" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5851" name="Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" fullname="UnitTransportValidationTests.Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" methodname="Transport_DoesNotBoardPassengerThatOnlyReachedFarBoardingGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="1935126645" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001233" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5840" name="TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" fullname="UnitTransportValidationTests.TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" methodname="TransportBoardingSystem_BoardingTargetMetadataClassifiesVehicleOccupancy" classname="UnitTransportValidationTests" runstate="Runnable" seed="1848271721" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002167" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5839" name="TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" fullname="UnitTransportValidationTests.TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" methodname="TransportBoardingSystem_CargoSoldierCapacityOverridesLegacyCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="1315773666" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001471" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5836" name="TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" fullname="UnitTransportValidationTests.TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" methodname="TransportBoardingSystem_DuplicatePassengerEntriesConsumeCapacityPerEntry" classname="UnitTransportValidationTests" runstate="Runnable" seed="1411278789" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001037" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5837" name="TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" fullname="UnitTransportValidationTests.TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" methodname="TransportBoardingSystem_IgnoresMissingPassengerEntitiesWhenCountingOccupancy" classname="UnitTransportValidationTests" runstate="Runnable" seed="1207196177" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001078" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5841" name="TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" fullname="UnitTransportValidationTests.TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" methodname="TransportBoardingSystem_MultipleGridConfigsRejectAmbiguousSingleton" classname="UnitTransportValidationTests" runstate="Runnable" seed="608103194" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002436" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5838" name="TransportBoardingSystem_VehicleRequiresCargoCapacity" fullname="UnitTransportValidationTests.TransportBoardingSystem_VehicleRequiresCargoCapacity" methodname="TransportBoardingSystem_VehicleRequiresCargoCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="1374896037" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000913" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5824" name="TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" fullname="UnitTransportValidationTests.TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" methodname="TransportDeployAttackSystem_NestedCarrierReceivesDeployOrderForArmedPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1775216468" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.012846" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5823" name="TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" fullname="UnitTransportValidationTests.TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" methodname="TransportDeployAttackSystem_WaitsUntilPassengerSettledBeforeEngage" classname="UnitTransportValidationTests" runstate="Runnable" seed="1680518607" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002036" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5821" name="TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" methodname="TransportDeployOrderSystem_AttackDeployAirdropsOnlyAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="1584213377" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.007962" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5822" name="TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" methodname="TransportDeployOrderSystem_AttackDeployHelicopterRopesOnlyAttackPayload" classname="UnitTransportValidationTests" runstate="Runnable" seed="107275223" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002910" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5820" name="TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" fullname="UnitTransportValidationTests.TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" methodname="TransportDeployOrderSystem_CargoPlaneStartsAirdropNearBlockedTarget" classname="UnitTransportValidationTests" runstate="Runnable" seed="1010431207" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001546" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5850" name="TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" fullname="UnitTransportValidationTests.TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" methodname="TransportPlane_BoardsClusterAroundResolvedRearRampWithStaleMovementState" classname="UnitTransportValidationTests" runstate="Runnable" seed="270772187" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002783" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5849" name="TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" fullname="UnitTransportValidationTests.TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" methodname="TransportPlane_BoardsPassengerBesideRearRampGoalWithStaleMovementState" classname="UnitTransportValidationTests" runstate="Runnable" seed="539620738" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001168" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5806" name="TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" methodname="TransportPlaneAirdropPass_DoesNotRequireUnitAttackComponent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1228328500" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.057979" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5807" name="TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" methodname="TransportPlaneAirdropPass_PhysicallyAirborneWithStaleGroundedFlagDropsPassengers" classname="UnitTransportValidationTests" runstate="Runnable" seed="1656124929" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002740" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5805" name="TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" fullname="UnitTransportValidationTests.TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" methodname="TransportPlaneAirdropPass_WaitsForFixedWingPassBeforeReleaseAndReturnsHome" classname="UnitTransportValidationTests" runstate="Runnable" seed="1700395282" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.003555" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5810" name="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" methodname="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromRegistryBeforeDrop" classname="UnitTransportValidationTests" runstate="Runnable" seed="2143487284" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.004087" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5809" name="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" methodname="TransportPlaneAirdropSystem_BackfillsVisualPrefabsFromSourceKeyBeforeDrop" classname="UnitTransportValidationTests" runstate="Runnable" seed="56779705" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002163" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5814" name="TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" methodname="TransportPlaneAirdropSystem_CargoVisualTracksVehicleDuringDescent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1312811258" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.004906" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5812" name="TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" methodname="TransportPlaneAirdropSystem_KeepsDoorOpenBrieflyAfterFinalDropRelease" classname="UnitTransportValidationTests" runstate="Runnable" seed="218475484" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.018012" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5813" name="TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" methodname="TransportPlaneAirdropSystem_ParachuteVisualTracksSoldierDuringDescent" classname="UnitTransportValidationTests" runstate="Runnable" seed="1753479247" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.003650" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5808" name="TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" methodname="TransportPlaneAirdropSystem_ReleasesSoldierWithParachuteVisualAndRestoresOnTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="194163756" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.005090" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5811" name="TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" methodname="TransportPlaneAirdropSystem_ReleasesVehicleCargoWithEmergencyDropVisual" classname="UnitTransportValidationTests" runstate="Runnable" seed="315873911" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001691" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5815" name="TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" methodname="TransportPlaneAirdropSystem_SoldierSettlesAfterTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="1273074749" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001982" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5816" name="TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" fullname="UnitTransportValidationTests.TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" methodname="TransportPlaneAirdropSystem_VehicleRollsOutAfterCargoTouchdown" classname="UnitTransportValidationTests" runstate="Runnable" seed="1962177611" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001423" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5779" name="TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" methodname="TransportPlaneBoardingCommand_AllowsSelectedVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1889386877" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001503" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5790" name="TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" methodname="TransportPlaneBoardingCommand_FullVehicleSlotsReportsTransportFull" classname="UnitTransportValidationTests" runstate="Runnable" seed="1581794148" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.003659" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5789" name="TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" methodname="TransportPlaneBoardingCommand_LoadingCargoMessageForVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="466209589" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001364" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5783" name="TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" methodname="TransportPlaneBoardingCommand_NoDoorMetadataStillBoardsSelectedFarSoldier" classname="UnitTransportValidationTests" runstate="Runnable" seed="76388253" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.057153" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5781" name="TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" methodname="TransportPlaneBoardingCommand_QueuesPassengerMoveToBoardingGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="934809118" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001357" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5787" name="TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" methodname="TransportPlaneBoardingCommand_RejectsAirbornePlanePickupBoarding" classname="UnitTransportValidationTests" runstate="Runnable" seed="1660222350" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000991" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5786" name="TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" methodname="TransportPlaneBoardingCommand_RetryReplacesStalePendingOrdersWithoutCountingThemAsSeats" classname="UnitTransportValidationTests" runstate="Runnable" seed="836589677" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002948" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5782" name="TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" methodname="TransportPlaneBoardingCommand_SelectedFarSoldierUsesRampWithoutNearbyRequirement" classname="UnitTransportValidationTests" runstate="Runnable" seed="740004153" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002711" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5785" name="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" methodname="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockPathfindingToRamp" classname="UnitTransportValidationTests" runstate="Runnable" seed="250473739" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.009573" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5784" name="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" methodname="TransportPlaneBoardingCommand_SelectedRampSoldierDoesNotBlockSelectedPassengerGoal" classname="UnitTransportValidationTests" runstate="Runnable" seed="1386962475" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001877" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5780" name="TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" methodname="TransportPlaneBoardingCommand_UsesRearRampApproachForSoldierPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1575983297" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002046" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5788" name="TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" fullname="UnitTransportValidationTests.TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" methodname="TransportPlaneBoardingSystem_BoardsVehicleIntoCargoSlot" classname="UnitTransportValidationTests" runstate="Runnable" seed="1423756060" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002182" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5791" name="TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" fullname="UnitTransportValidationTests.TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" methodname="TransportPlaneBoardPreview_OnlyCargoPlaneAcceptsVehiclePassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1338539533" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.003447" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5772" name="TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" fullname="UnitTransportValidationTests.TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" methodname="TransportPlaneCapacity_AddsCargoCapacityAndPassengerBuffer" classname="UnitTransportValidationTests" runstate="Runnable" seed="292644011" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000948" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5773" name="TransportPlaneCapacity_PreservesAuthoredCargoCapacity" fullname="UnitTransportValidationTests.TransportPlaneCapacity_PreservesAuthoredCargoCapacity" methodname="TransportPlaneCapacity_PreservesAuthoredCargoCapacity" classname="UnitTransportValidationTests" runstate="Runnable" seed="1723106754" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000756" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5771" name="TransportPlaneCapacity_RecognizesPlaneSourceNames" fullname="UnitTransportValidationTests.TransportPlaneCapacity_RecognizesPlaneSourceNames" methodname="TransportPlaneCapacity_RecognizesPlaneSourceNames" classname="UnitTransportValidationTests" runstate="Runnable" seed="1634959461" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000265" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5774" name="TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" fullname="UnitTransportValidationTests.TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" methodname="TransportPlaneConfig_ContainsCargoCapacityAndAirdropVisualSources" classname="UnitTransportValidationTests" runstate="Runnable" seed="848515236" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.030969" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5797" name="TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_AirborneStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="1972711413" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001926" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5799" name="TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" methodname="TransportPlaneDisembarkCommand_AirdropInProgressActuallyDropsPassenger" classname="UnitTransportValidationTests" runstate="Runnable" seed="1349044732" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001930" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5798" name="TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" methodname="TransportPlaneDisembarkCommand_AirdropResultReportsInProgress" classname="UnitTransportValidationTests" runstate="Runnable" seed="1336504951" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001115" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5803" name="TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" methodname="TransportPlaneDisembarkCommand_BlockedAirdropReportsCargoDropBlocked" classname="UnitTransportValidationTests" runstate="Runnable" seed="279161741" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001503" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5795" name="TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" methodname="TransportPlaneDisembarkCommand_BlockedRampReportsNoDisembarkCell" classname="UnitTransportValidationTests" runstate="Runnable" seed="1842914852" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002636" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5804" name="TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_LandedTargetCellStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="229682519" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002599" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5794" name="TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" methodname="TransportPlaneDisembarkCommand_LandedWithoutDoorMetadataUsesGroundExit" classname="UnitTransportValidationTests" runstate="Runnable" seed="1715953035" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.004156" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5800" name="TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" methodname="TransportPlaneDisembarkCommand_MissingAirdropVisualRejectsWithReason" classname="UnitTransportValidationTests" runstate="Runnable" seed="1047247578" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001949" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5802" name="TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" methodname="TransportPlaneDisembarkCommand_NoLandingCellRejectsWithReason" classname="UnitTransportValidationTests" runstate="Runnable" seed="2116626684" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001594" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5801" name="TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" methodname="TransportPlaneDisembarkCommand_RegistryVisualStartsAirdropRequest" classname="UnitTransportValidationTests" runstate="Runnable" seed="951452910" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002037" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5793" name="TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" fullname="UnitTransportValidationTests.TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" methodname="TransportPlaneDisembarkCommand_UsesRearRampForLoadedVehicle" classname="UnitTransportValidationTests" runstate="Runnable" seed="1478216616" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.002886" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5796" name="TransportPlaneDoorOpenRequest_OpensThenExpires" fullname="UnitTransportValidationTests.TransportPlaneDoorOpenRequest_OpensThenExpires" methodname="TransportPlaneDoorOpenRequest_OpensThenExpires" classname="UnitTransportValidationTests" runstate="Runnable" seed="1234566561" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.001238" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5778" name="TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" fullname="UnitTransportValidationTests.TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" methodname="TransportPlaneDoorSystem_InterpolatesBakedDoorRotation" classname="UnitTransportValidationTests" runstate="Runnable" seed="1117995194" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.004628" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5777" name="TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" fullname="UnitTransportValidationTests.TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" methodname="TransportPlaneFixedWingClassifier_TreatsTransportPlaneAsRunwayAircraft" classname="UnitTransportValidationTests" runstate="Runnable" seed="265771460" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.000802" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5775" name="TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" fullname="UnitTransportValidationTests.TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" methodname="TransportPlanePrefab_UsesConfiguredAirdropVisualPrefabAssets" classname="UnitTransportValidationTests" runstate="Runnable" seed="907017683" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.006036" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5826" name="TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" fullname="UnitTransportValidationTests.TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" methodname="TransportPlanePureEcs_StaticGuardRejectsManagedRuntimeBridgePatterns" classname="UnitTransportValidationTests" runstate="Runnable" seed="270556128" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.032238" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5776" name="TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" fullname="UnitTransportValidationTests.TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" methodname="TransportPlaneSelectionMetadata_ResolvesPortraitAndSelectionReferences" classname="UnitTransportValidationTests" runstate="Runnable" seed="2062041563" result="Passed" start-time="2026-09-16 21:35:30Z" end-time="2026-09-16 21:35:30Z" duration="0.005462" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/Warline M5 Compound QA/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

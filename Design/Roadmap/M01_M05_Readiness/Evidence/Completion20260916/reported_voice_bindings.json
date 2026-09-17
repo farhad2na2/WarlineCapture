@@ -1,0 +1,38 @@
+[
+  {
+    "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+    "locale": "en-US",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav",
+    "guid": "8d82333d4d3e806f333a458e452cf6bb"
+  },
+  {
+    "eventId": "VO.ARIA.Message.WarningGroundAttackType",
+    "locale": "fa-IR",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav",
+    "guid": "39a6745be79d6f19618a6b68f01261ed"
+  },
+  {
+    "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+    "locale": "en-US",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav",
+    "guid": "7cf05bb791ebf3f2f8bd5097c23e5f13"
+  },
+  {
+    "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveTitle",
+    "locale": "fa-IR",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav",
+    "guid": "6c18460c68563dbfc4b1e89773523b6d"
+  },
+  {
+    "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+    "locale": "en-US",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_description_01.wav",
+    "guid": "f4913197a465de9b0a1fff34de090130"
+  },
+  {
+    "eventId": "VO.ARIA.Message.TacticalBannerAcceptedMoveDescription",
+    "locale": "fa-IR",
+    "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_description_01_fa.wav",
+    "guid": "f958c4f4dcaea0a07a66fc21411b3d84"
+  }
+]

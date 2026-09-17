@@ -140,9 +140,11 @@ namespace Game.UI.Shell.Ecs
             bool narrationPulse = narrationState.LastPresentedAt > 0f &&
                                   Time.time - narrationState.LastPresentedAt <= 0.8f;
 
+            var breachStatusStamp=ReadBreachStatusStamp();
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
+                cachedBreachStatusStamp==breachStatusStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -280,6 +282,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageCount = messages.Length;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
+            cachedBreachStatusStamp=breachStatusStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

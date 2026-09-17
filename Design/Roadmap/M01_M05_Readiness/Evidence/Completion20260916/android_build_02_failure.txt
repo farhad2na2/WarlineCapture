@@ -1,0 +1,1 @@
+Player script compilation passed after QA-32. Content built, but the strict duplicate gate rejected URP ParticlesUnlit.shader repeated across 30 map bundle dependencies (760264 redundant bytes). Required pass marker absent; queue failed despite Unity wrapper exit 0. Dependency isolation and a fresh strict build are required; no gate bypass.

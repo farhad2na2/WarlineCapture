@@ -15,10 +15,7 @@ namespace Game.UI.Runtime
             {
                 // Update the binding before an inactive feedback panel is shown again.
                 // Otherwise OnEnable restores the prefab's authoring/example message.
-                if(UiShellRuntimeGateway.Localization.TryGetSourceByLocalized(text,out var key,out var source))
-                    binding.Configure(key,source);
-                else binding.Configure(string.Empty,text);
-                binding.ApplyLocalization();
+                binding.SetLocalizedValue(text);
                 return;
             }
             if(label.text!=text) label.text=text;
@@ -67,10 +64,10 @@ namespace Game.UI.Runtime
             panelRect.pivot = new Vector2(0f, 1f);
             panelRect.anchoredPosition = expandedError
                 ? new Vector2(465f, -660f)
-                : new Vector2(591f, -710f);
+                : new Vector2(719f, -710f);
             panelRect.sizeDelta = expandedError
                 ? new Vector2(816f + extraWidth, 70f)
-                : new Vector2(660f + extraWidth, 48f);
+                : new Vector2(532f + extraWidth, 48f);
 
             if (feedbackIcon != null)
             {
@@ -93,7 +90,7 @@ namespace Game.UI.Runtime
                     : new Vector2(53f, -4f);
                 textRect.sizeDelta = expandedError
                     ? new Vector2(734f + extraWidth, 60f)
-                    : new Vector2(590f + extraWidth, 40f);
+                    : new Vector2(panelRect.sizeDelta.x - 53f - 16f, 40f);
                 feedbackText.fontSize = expandedError ? 24f : 18f;
             }
         }

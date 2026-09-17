@@ -1,0 +1,27 @@
+Approved legacy authored assets; not enabled in shipping campaign. Real sequence-player playback, all 18 clips once to completion, correct locale/no restart/no cutoff. The standalone scene logged two AudioListeners (test harness listener plus existing bootstrap listener); the clip progression assertions do not claim physical-device audio quality.
+
+[M01ComicVoicePlayback] start=seq.ch01.m01.brief locale=fa-IR
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.3.wav
+[M01ComicVoicePlayback] start=seq.ch01.m01.comms locale=fa-IR
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.3.wav
+[M01ComicVoicePlayback] start=seq.ch01.m01.debrief locale=fa-IR
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.3.wav
+[M01ComicVoicePlayback] start=seq.ch01.m01.brief locale=en
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.3.wav
+[M01ComicVoicePlayback] start=seq.ch01.m01.comms locale=en
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.3.wav
+[M01ComicVoicePlayback] start=seq.ch01.m01.debrief locale=en
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.1.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.2.wav
+[M01ComicVoicePlayback] playing=Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.3.wav
+[M01ComicVoicePlayback] result=Passed all 18 M1 authored-sequence clips played once to completion in the real sequence player; language and timing verified; this does not add these legacy sequences to the campaign flow

@@ -65,6 +65,17 @@ namespace Game.Runtime
                 entityManager.GetComponentData<CampaignMissionCatalogComponent>(root);
             CampaignMissionRuntimeComponent runtime =
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            // A replay creates its campaign session before the previous map's managed
+            // building cleanup finishes. Sample baselines only after the new attempt's
+            // startup has applied resources, otherwise its first new Barracks is
+            // subtracted as if it belonged to the previous attempt.
+            if (entityManager.HasComponent<CampaignMissionAttemptResourceInitializationComponent>(root))
+            {
+                var startup = entityManager.GetComponentData<CampaignMissionAttemptResourceInitializationComponent>(root);
+                if (startup.Applied == 0 || !startup.SessionToken.Equals(runtime.SessionToken) ||
+                    startup.AttemptOrdinal != runtime.AttemptOrdinal)
+                    return;
+            }
             CampaignMissionAttemptFactProjectionStateComponent projectionState =
                 entityManager.GetComponentData<CampaignMissionAttemptFactProjectionStateComponent>(root);
             bool hasRequiredBuilding = TryResolveRequiredBuilding(

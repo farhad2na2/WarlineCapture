@@ -1,0 +1,8 @@
+[PlacementCameraMath] result=Passed six remote perspective/orthographic poses
+[M03PlacementHandoff] result=Passed distant camera + stale focus -> initial preview centered (0.38, 0.57, 48.73)
+[M03PlacementHandoff] result=Passed distant camera + stale focus -> initial preview centered (0.38, 0.57, 48.73)
+[M03PlacementDrag] start=(882, 419) size=(2, 8) pointer=(733.43, 615.84) target=(546.18, 600.88)
+[M03RoadGateTutorial] result=Passed convoy lane=centered green yaw=90 manual-rotate=both-directions model-center=(875.00, 0.54, 422.19) ordinary-building=blocked tutorial=real-clicks
+[M03PlacementDrag] result=Passed real pointer drag + 1.5s hold + release; camera stable; green footprint confirmable.
+[M03RadarWarningEditorLaunchProbe] result=Passed M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement.
+Wrapper exit: 0

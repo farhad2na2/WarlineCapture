@@ -50,7 +50,7 @@ namespace Game.Runtime
                 !SystemAPI.TryGetSingleton(out OperationMapMetadataComponent metadata) || !metadata.Blob.IsCreated) return;
             var em=system.EntityManager;
             if(!em.HasBuffer<BuildingRuntimeSpawnRequest>(boundary)) return;
-            PrepareBreachTarget(em,boundary,metadata,definition.GateBuildingId,breach.GateCenter,definition.GateHealth,1,
+            PrepareBreachTarget(em,boundary,metadata,definition.GateBuildingId,breach.GateCenter,definition.GateHealth,0,
                 ref breach.GateRequestId,ref breach.Gate,ref breach.GateInitialized,ref facts);
             PrepareBreachTarget(em,boundary,metadata,definition.CoreBuildingId,breach.CoreCenter,definition.CoreHealth,0,
                 ref breach.CoreRequestId,ref breach.Core,ref breach.CoreInitialized,ref facts);
@@ -67,7 +67,7 @@ namespace Game.Runtime
             {
                 requestId=1;for(int i=0;i<requests.Length;i++) requestId=math.max(requestId,requests[i].RequestId+1);
                 requests.Add(new BuildingRuntimeSpawnRequest {RequestId=requestId,RequestKind=BuildingRuntimeSpawnRequest.KindBuilding,
-                    FactionId=2,HasOwnerFaction=1,BuildingId=id,RotateVertical=rotate,PreferredOrigin=CampaignMissionSpawnSystem.ToGridCell(center,metadata.Blob.Value.Grid)});
+                    FactionId=2,HasOwnerFaction=1,AllowNonBuildableEnemy=1,RequirePreferredOrigin=1,BuildingId=id,RotateVertical=rotate,PreferredOrigin=CampaignMissionSpawnSystem.ToGridCell(center,metadata.Blob.Value.Grid)});
                 return;
             }
             int runtimeId=0;int2 actualOrigin=default;
@@ -121,6 +121,7 @@ namespace Game.Runtime
             if(gateHit && breach.CounterattackReleaseAtMilliseconds==0) breach.CounterattackReleaseAtMilliseconds=facts.ElapsedMilliseconds+definition.CounterattackWarningMilliseconds;
             if(breach.CounterattackReleaseAtMilliseconds>0 && facts.ElapsedMilliseconds>=breach.CounterattackReleaseAtMilliseconds) breach.CounterattackReleased=1;
             breach.Contested=contested?(byte)1:(byte)0;
+            breach.FriendlyAtArchive=atArchive?(byte)1:(byte)0;
             if(runtime.Phase!=MissionPhaseKind.Engage || breach.ArchiveSecured!=0) return;
             bool canHold=breach.GateDestroyed!=0 && breach.CoreDestroyed!=0 && breach.CounterattackReleased!=0 && hostileAlive==0 && atArchive && !contested;
             breach.SecureHoldMilliseconds=canHold?SaturatingAddMilliseconds(breach.SecureHoldMilliseconds,deltaTime):0;

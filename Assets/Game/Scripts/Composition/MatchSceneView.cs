@@ -122,10 +122,21 @@ namespace Game.Composition
         public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
         public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
         public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
-        public MapBuildingPlacementConfig MapBuildingPlacementConfig =>
-            activeOperationMapSceneView != null
-                ? activeOperationMapSceneView.BuildingPlacements
-                : mapBuildingPlacementConfig;
+        private MapBuildingPlacementConfig missionPlacementOverlay;
+        public MapBuildingPlacementConfig MapBuildingPlacementConfig
+        {
+            get
+            {
+                var source = activeOperationMapSceneView != null
+                    ? activeOperationMapSceneView.BuildingPlacements : mapBuildingPlacementConfig;
+                var additions = resolvedOperationMapDefinition?.AdditionalBuildingPlacements;
+                if (additions == null) return source;
+                if (source == null) return additions;
+                if (missionPlacementOverlay == null)
+                    missionPlacementOverlay = MapBuildingPlacementConfig.CreateRuntimeOverlay(source, additions);
+                return missionPlacementOverlay;
+            }
+        }
         public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
             activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.VehiclePlacements

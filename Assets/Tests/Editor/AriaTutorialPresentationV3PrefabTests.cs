@@ -54,7 +54,7 @@ public sealed class AriaTutorialPresentationV3PrefabTests
     }
 
     [Test]
-    public void EnglishAndFarsi_ReuseTheSameFixedPanelFootprint()
+    public void EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth()
     {
         string previousLocale = GameLocalization.CurrentLocaleCode;
         GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath), previousLocale, false);
@@ -65,17 +65,25 @@ public sealed class AriaTutorialPresentationV3PrefabTests
                 instance.transform,
                 "AriaAssistantButton") as RectTransform;
             AriaTutorialBriefingView view = aria.GetComponent<AriaTutorialBriefingView>();
-            Vector2 panelSize = aria.sizeDelta;
-            Vector2 guidanceSize = view.BriefingLayout.sizeDelta;
+            float panelWidth = aria.rect.width;
 
             GameLocalization.SetLocale("en", false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel());
             view.SetPresentationVisible(true);
+            view.RefreshContentLayout();
+            Assert.AreEqual(panelWidth, aria.rect.width);
+            Assert.That(view.BodyText.fontSize, Is.GreaterThanOrEqualTo(24));
+            Assert.IsFalse(view.BodyText.enableAutoSizing);
+            Assert.IsFalse(view.DoItButton.gameObject.activeSelf);
             GameLocalization.SetLocale("fa-IR", false);
             view.Apply(AriaTutorialBriefingPrefabBuilder.CreateTargetLockPreviewModel(true));
 
-            Assert.AreEqual(panelSize, aria.sizeDelta);
-            Assert.AreEqual(guidanceSize, view.BriefingLayout.sizeDelta);
+            view.RefreshContentLayout();
+            Assert.AreEqual(panelWidth, aria.rect.width);
+            Assert.That(aria.rect.height, Is.GreaterThan(0));
+            Assert.That(view.BodyText.fontSize, Is.GreaterThanOrEqualTo(24));
+            Assert.IsFalse(view.BodyText.enableAutoSizing);
+            Assert.IsFalse(view.DoItButton.gameObject.activeSelf);
             Assert.IsTrue(view.TitleText.isRightToLeftText);
             Assert.IsTrue(view.BodyText.isRightToLeftText);
             Assert.IsNull(view.CloseButton);
@@ -96,7 +104,7 @@ public sealed class AriaTutorialPresentationV3PrefabTests
             tests.MatchHud_OwnsTheOnlyTutorialAriaPanel(); passed++;
             tests.MatchHud_EmbedsOnlyDoItAndShowMeActions(); passed++;
             tests.Popup_DoesNotContainASecondTutorialSurface(); passed++;
-            tests.EnglishAndFarsi_ReuseTheSameFixedPanelFootprint(); passed++;
+            tests.EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth(); passed++;
             Debug.Log($"[AriaTutorialPresentationV3Validation] result=Passed tests={passed} panels=1 actions=2 skip=absent");
             ValidationExit.Exit(0);
         }

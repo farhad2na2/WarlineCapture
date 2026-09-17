@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="45" result="Passed" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:55Z" duration="8.4915224">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="4583" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:55Z" duration="8.491522" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="6203" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-readiness-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4582" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:55Z" duration="8.469733" total="45" passed="45" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="82288" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="3512" name="FirstLaunchNarrativeCompositionBoundaryTests" fullname="FirstLaunchNarrativeCompositionBoundaryTests" classname="FirstLaunchNarrativeCompositionBoundaryTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.130438" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3514" name="ProfileBoundary_PersistsProductionChoicesAndHandoffState" fullname="FirstLaunchNarrativeCompositionBoundaryTests.ProfileBoundary_PersistsProductionChoicesAndHandoffState" methodname="ProfileBoundary_PersistsProductionChoicesAndHandoffState" classname="FirstLaunchNarrativeCompositionBoundaryTests" runstate="Runnable" seed="967031273" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.015075" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3513" name="ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs" fullname="FirstLaunchNarrativeCompositionBoundaryTests.ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs" methodname="ProfileBoundary_ProjectsStartupDispositionWithoutUiOrEcs" classname="FirstLaunchNarrativeCompositionBoundaryTests" runstate="Runnable" seed="640876200" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.001138" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3515" name="ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile" fullname="FirstLaunchNarrativeCompositionBoundaryTests.ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile" methodname="ProfileBoundary_ReviewerChoicesDoNotMutateSavedProfile" classname="FirstLaunchNarrativeCompositionBoundaryTests" runstate="Runnable" seed="932545272" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000624" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3516" name="ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission" fullname="FirstLaunchNarrativeCompositionBoundaryTests.ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission" methodname="ShellBoundary_QueuesExactlyOneMatchRouteForTypedMission" classname="FirstLaunchNarrativeCompositionBoundaryTests" runstate="Runnable" seed="526269121" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.106770" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3562" name="FirstLaunchNarrativeSequencePresentationSystemHelperTests" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" testcasecount="8" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.146380" total="8" passed="8" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3563" name="Player_AdvancesStaticAndDialogueStatesWithoutHierarchyLookup" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_AdvancesStaticAndDialogueStatesWithoutHierarchyLookup" methodname="Player_AdvancesStaticAndDialogueStatesWithoutHierarchyLookup" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="1619924564" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.066074" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3567" name="Player_AutoAdvanceHonorsAuthoredPanelAndLineTiming" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_AutoAdvanceHonorsAuthoredPanelAndLineTiming" methodname="Player_AutoAdvanceHonorsAuthoredPanelAndLineTiming" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="876004857" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.008006" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="3571" name="Player_CommittedIdentityCarriesIntoFirstCommanderDialogue" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_CommittedIdentityCarriesIntoFirstCommanderDialogue" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.029938" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="3569" name="Player_CommittedIdentityCarriesIntoFirstCommanderDialogue(0,&quot;p14_commander_female&quot;)" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_CommittedIdentityCarriesIntoFirstCommanderDialogue(0,&quot;p14_commander_female&quot;)" methodname="Player_CommittedIdentityCarriesIntoFirstCommanderDialogue" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="2032290169" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.014837" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="3570" name="Player_CommittedIdentityCarriesIntoFirstCommanderDialogue(1,&quot;p14_commander&quot;)" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_CommittedIdentityCarriesIntoFirstCommanderDialogue(1,&quot;p14_commander&quot;)" methodname="Player_CommittedIdentityCarriesIntoFirstCommanderDialogue" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="1598088936" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.007223" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+        <test-case id="3566" name="Player_DebriefWatchedAndSkippedRoutesShareMandatoryCluePayload" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_DebriefWatchedAndSkippedRoutesShareMandatoryCluePayload" methodname="Player_DebriefWatchedAndSkippedRoutesShareMandatoryCluePayload" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="2119314750" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.006517" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3564" name="Player_EmitsInteractiveSkipAndTypedHandoffOnce" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_EmitsInteractiveSkipAndTypedHandoffOnce" methodname="Player_EmitsInteractiveSkipAndTypedHandoffOnce" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="1322734134" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.007245" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3565" name="Player_PauseStepRestartAndCancelAreDeterministic" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_PauseStepRestartAndCancelAreDeterministic" methodname="Player_PauseStepRestartAndCancelAreDeterministic" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="1415187778" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.006217" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3568" name="Player_UsesSelectedCommanderPortraitAndMatchingVoice" fullname="FirstLaunchNarrativeSequencePresentationSystemHelperTests.Player_UsesSelectedCommanderPortraitAndMatchingVoice" methodname="Player_UsesSelectedCommanderPortraitAndMatchingVoice" classname="FirstLaunchNarrativeSequencePresentationSystemHelperTests" runstate="Runnable" seed="499082070" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.019257" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="3580" name="FirstLaunchStartupGateTests" fullname="FirstLaunchStartupGateTests" classname="FirstLaunchStartupGateTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.023797" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3585" name="EnterMatchRequest_FromClosedFirstLaunchGateUsesLoadingTransition" fullname="FirstLaunchStartupGateTests.EnterMatchRequest_FromClosedFirstLaunchGateUsesLoadingTransition" methodname="EnterMatchRequest_FromClosedFirstLaunchGateUsesLoadingTransition" classname="FirstLaunchStartupGateTests" runstate="Runnable" seed="547235153" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.014119" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3584" name="EnterMenuDisposition_UsesExistingMenuTransition" fullname="FirstLaunchStartupGateTests.EnterMenuDisposition_UsesExistingMenuTransition" methodname="EnterMenuDisposition_UsesExistingMenuTransition" classname="FirstLaunchStartupGateTests" runstate="Runnable" seed="2128454895" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000480" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-suite type="ParameterizedMethod" id="3583" name="PendingAndFirstLaunchDisposition_KeepShellClosed" fullname="FirstLaunchStartupGateTests.PendingAndFirstLaunchDisposition_KeepShellClosed" classname="FirstLaunchStartupGateTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.001714" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-case id="3581" name="PendingAndFirstLaunchDisposition_KeepShellClosed(Pending)" fullname="FirstLaunchStartupGateTests.PendingAndFirstLaunchDisposition_KeepShellClosed(Pending)" methodname="PendingAndFirstLaunchDisposition_KeepShellClosed" classname="FirstLaunchStartupGateTests" runstate="Runnable" seed="1637995145" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000324" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+          <test-case id="3582" name="PendingAndFirstLaunchDisposition_KeepShellClosed(FirstLaunch)" fullname="FirstLaunchStartupGateTests.PendingAndFirstLaunchDisposition_KeepShellClosed(FirstLaunch)" methodname="PendingAndFirstLaunchDisposition_KeepShellClosed" classname="FirstLaunchStartupGateTests" runstate="Runnable" seed="522631236" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000138" asserts="0">
+            <properties>
+              <property name="retryIteration" value="0" />
+              <property name="repeatIteration" value="0" />
+            </properties>
+          </test-case>
+        </test-suite>
+      </test-suite>
+      <test-suite type="TestFixture" id="3586" name="M01StoryReplayTests" fullname="M01StoryReplayTests" classname="M01StoryReplayTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.002244" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="3587" name="CampaignReplayWaitsForStoryAndAdvancesOnce" fullname="M01StoryReplayTests.CampaignReplayWaitsForStoryAndAdvancesOnce" methodname="CampaignReplayWaitsForStoryAndAdvancesOnce" classname="M01StoryReplayTests" runstate="Runnable" seed="1023217784" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000524" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3588" name="FirstLaunchDoesNotRepeatItsOpeningButRetryDoes" fullname="M01StoryReplayTests.FirstLaunchDoesNotRepeatItsOpeningButRetryDoes" methodname="FirstLaunchDoesNotRepeatItsOpeningButRetryDoes" classname="M01StoryReplayTests" runstate="Runnable" seed="1348998865" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000059" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3590" name="NewPlayerRetainsIdentityButNeverGuidanceChoice" fullname="M01StoryReplayTests.NewPlayerRetainsIdentityButNeverGuidanceChoice" methodname="NewPlayerRetainsIdentityButNeverGuidanceChoice" classname="M01StoryReplayTests" runstate="Runnable" seed="1648861569" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000816" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="3589" name="ReplayHasEveryStoryPanelAndNoSetupOrPostMissionPages" fullname="M01StoryReplayTests.ReplayHasEveryStoryPanelAndNoSetupOrPostMissionPages" methodname="ReplayHasEveryStoryPanelAndNoSetupOrPostMissionPages" classname="M01StoryReplayTests" runstate="Runnable" seed="273960349" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:47Z" duration="0.000300" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="2840" name="M02EstablishBaseNarrativeTests" fullname="M02EstablishBaseNarrativeTests" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" testcasecount="25" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:55Z" duration="7.997939" total="25" passed="25" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="2850" name="ActivePersianUiLocaleSelectsPersianM02Speech" fullname="M02EstablishBaseNarrativeTests.ActivePersianUiLocaleSelectsPersianM02Speech" methodname="ActivePersianUiLocaleSelectsPersianM02Speech" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="271457519" result="Passed" start-time="2026-09-17 09:00:47Z" end-time="2026-09-17 09:00:49Z" duration="1.346142" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeArtImporter] result=Passed panels=3 final=1 textFree=1
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2853" name="AuthoredComicDialogueStillRequiresItsPanel" fullname="M02EstablishBaseNarrativeTests.AuthoredComicDialogueStillRequiresItsPanel" methodname="AuthoredComicDialogueStillRequiresItsPanel" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="23394984" result="Passed" start-time="2026-09-17 09:00:49Z" end-time="2026-09-17 09:00:49Z" duration="0.000500" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2863" name="BriefAndCommsPauseWhileDebriefRequiresFinalResult" fullname="M02EstablishBaseNarrativeTests.BriefAndCommsPauseWhileDebriefRequiresFinalResult" methodname="BriefAndCommsPauseWhileDebriefRequiresFinalResult" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1013253024" result="Passed" start-time="2026-09-17 09:00:49Z" end-time="2026-09-17 09:00:49Z" duration="0.000087" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2843" name="BriefEstablishesPostDirectionAndCivicPurpose" fullname="M02EstablishBaseNarrativeTests.BriefEstablishesPostDirectionAndCivicPurpose" methodname="BriefEstablishesPostDirectionAndCivicPurpose" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="2029092274" result="Passed" start-time="2026-09-17 09:00:49Z" end-time="2026-09-17 09:00:49Z" duration="0.343970" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2858" name="BriefHandoffAcknowledgesExactAttempt" fullname="M02EstablishBaseNarrativeTests.BriefHandoffAcknowledgesExactAttempt" methodname="BriefHandoffAcknowledgesExactAttempt" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="313284520" result="Passed" start-time="2026-09-17 09:00:49Z" end-time="2026-09-17 09:00:49Z" duration="0.002539" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2841" name="BuildIsDeterministicAndContainsThreeSequences" fullname="M02EstablishBaseNarrativeTests.BuildIsDeterministicAndContainsThreeSequences" methodname="BuildIsDeterministicAndContainsThreeSequences" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="306513216" result="Passed" start-time="2026-09-17 09:00:49Z" end-time="2026-09-17 09:00:50Z" duration="0.685296" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2844" name="CommsRecoverPreAttackMunicipalAccessList" fullname="M02EstablishBaseNarrativeTests.CommsRecoverPreAttackMunicipalAccessList" methodname="CommsRecoverPreAttackMunicipalAccessList" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1913395566" result="Passed" start-time="2026-09-17 09:00:50Z" end-time="2026-09-17 09:00:50Z" duration="0.332351" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2860" name="ConsumedStagesDoNotRepeatWithinAttempt" fullname="M02EstablishBaseNarrativeTests.ConsumedStagesDoNotRepeatWithinAttempt" methodname="ConsumedStagesDoNotRepeatWithinAttempt" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1193469057" result="Passed" start-time="2026-09-17 09:00:50Z" end-time="2026-09-17 09:00:50Z" duration="0.000248" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2845" name="DebriefClosesPostDaliaAndM03WarningSectorBeats" fullname="M02EstablishBaseNarrativeTests.DebriefClosesPostDaliaAndM03WarningSectorBeats" methodname="DebriefClosesPostDaliaAndM03WarningSectorBeats" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="737203488" result="Passed" start-time="2026-09-17 09:00:50Z" end-time="2026-09-17 09:00:50Z" duration="0.342234" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2864" name="DebriefCompletionReturnsToFinalResult" fullname="M02EstablishBaseNarrativeTests.DebriefCompletionReturnsToFinalResult" methodname="DebriefCompletionReturnsToFinalResult" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1121979578" result="Passed" start-time="2026-09-17 09:00:50Z" end-time="2026-09-17 09:00:50Z" duration="0.000864" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2851" name="FinalComicDialogueRequiresItsPanelBinding" fullname="M02EstablishBaseNarrativeTests.FinalComicDialogueRequiresItsPanelBinding" methodname="FinalComicDialogueRequiresItsPanelBinding" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="671653815" result="Passed" start-time="2026-09-17 09:00:50Z" end-time="2026-09-17 09:00:51Z" duration="0.342261" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2852" name="FinalComicDirectPanelPresentsImmediately" fullname="M02EstablishBaseNarrativeTests.FinalComicDirectPanelPresentsImmediately" methodname="FinalComicDirectPanelPresentsImmediately" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="2003264954" result="Passed" start-time="2026-09-17 09:00:51Z" end-time="2026-09-17 09:00:51Z" duration="0.339964" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2846" name="FinalSequencesBindReviewedPanelsAndEnglishVoice" fullname="M02EstablishBaseNarrativeTests.FinalSequencesBindReviewedPanelsAndEnglishVoice" methodname="FinalSequencesBindReviewedPanelsAndEnglishVoice" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1557742421" result="Passed" start-time="2026-09-17 09:00:51Z" end-time="2026-09-17 09:00:51Z" duration="0.342304" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2848" name="FirstLaunchRebuildPreservesM02PersianLocaleExtensions" fullname="M02EstablishBaseNarrativeTests.FirstLaunchRebuildPreservesM02PersianLocaleExtensions" methodname="FirstLaunchRebuildPreservesM02PersianLocaleExtensions" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="773636514" result="Passed" start-time="2026-09-17 09:00:51Z" end-time="2026-09-17 09:00:52Z" duration="0.737004" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+[FirstLaunchNarrativeConfigBuilder] Built Addressables-backed sequence, speaker, and punctuation assets.
+]]></output>
+        </test-case>
+        <test-case id="2857" name="InteractiveBriefSelectsBriefSequenceStage" fullname="M02EstablishBaseNarrativeTests.InteractiveBriefSelectsBriefSequenceStage" methodname="InteractiveBriefSelectsBriefSequenceStage" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="9800" result="Passed" start-time="2026-09-17 09:00:52Z" end-time="2026-09-17 09:00:52Z" duration="0.000128" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2862" name="M01UsesItsOwnOpeningOnCampaignEntry" fullname="M02EstablishBaseNarrativeTests.M01UsesItsOwnOpeningOnCampaignEntry" methodname="M01UsesItsOwnOpeningOnCampaignEntry" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="2085795342" result="Passed" start-time="2026-09-17 09:00:52Z" end-time="2026-09-17 09:00:52Z" duration="0.000084" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2855" name="M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent" fullname="M02EstablishBaseNarrativeTests.M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent" methodname="M02NarrativeIdentityDoesNotBorrowM01OrFirstLaunchContent" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="394820209" result="Passed" start-time="2026-09-17 09:00:52Z" end-time="2026-09-17 09:00:53Z" duration="0.333255" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2856" name="MenuSceneCarriesAllM02NarrativeBindings" fullname="M02EstablishBaseNarrativeTests.MenuSceneCarriesAllM02NarrativeBindings" methodname="MenuSceneCarriesAllM02NarrativeBindings" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1472916452" result="Passed" start-time="2026-09-17 09:00:53Z" end-time="2026-09-17 09:00:54Z" duration="1.651048" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2842" name="MissionReferencesAllThreeSequences" fullname="M02EstablishBaseNarrativeTests.MissionReferencesAllThreeSequences" methodname="MissionReferencesAllThreeSequences" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="937452657" result="Passed" start-time="2026-09-17 09:00:54Z" end-time="2026-09-17 09:00:55Z" duration="0.402768" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2865" name="OpeningBriefClaimsEnteringMatchBeforeHudIsExposed" fullname="M02EstablishBaseNarrativeTests.OpeningBriefClaimsEnteringMatchBeforeHudIsExposed" methodname="OpeningBriefClaimsEnteringMatchBeforeHudIsExposed" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1497820896" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.000241" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2847" name="PersianLocaleMatchesEveryFinalNarrativeLine" fullname="M02EstablishBaseNarrativeTests.PersianLocaleMatchesEveryFinalNarrativeLine" methodname="PersianLocaleMatchesEveryFinalNarrativeLine" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="312299921" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.408083" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2861" name="RetryAttemptRearmsBriefAndComms" fullname="M02EstablishBaseNarrativeTests.RetryAttemptRearmsBriefAndComms" methodname="RetryAttemptRearmsBriefAndComms" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="1117119098" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.000251" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2854" name="SkipReducedMotionAndCaptionsAreSupported" fullname="M02EstablishBaseNarrativeTests.SkipReducedMotionAndCaptionsAreSupported" methodname="SkipReducedMotionAndCaptionsAreSupported" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="351890156" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.342335" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[M02EstablishBaseNarrativeVoiceImporter] result=Passed clips=18 locales=2
+[M02EstablishBaseNarrativeLocaleBuilder] result=Passed locale=fa-IR text=9 voices=9
+]]></output>
+        </test-case>
+        <test-case id="2849" name="TutorialVoiceAssetsMatchEveryDisplayedInstruction" fullname="M02EstablishBaseNarrativeTests.TutorialVoiceAssetsMatchEveryDisplayedInstruction" methodname="TutorialVoiceAssetsMatchEveryDisplayedInstruction" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="654289724" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.039023" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="2859" name="WarningSelectsCommsOnlyBeforeActivation" fullname="M02EstablishBaseNarrativeTests.WarningSelectsCommsOnlyBeforeActivation" methodname="WarningSelectsCommsOnlyBeforeActivation" classname="M02EstablishBaseNarrativeTests" runstate="Runnable" seed="820854113" result="Passed" start-time="2026-09-17 09:00:55Z" end-time="2026-09-17 09:00:55Z" duration="0.000208" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/WarlineCapture/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

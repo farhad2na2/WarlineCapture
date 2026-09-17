@@ -53,7 +53,7 @@ public static class M02EstablishBaseNarrativeTests
             WarningSelectsCommsOnlyBeforeActivation();
             ConsumedStagesDoNotRepeatWithinAttempt();
             RetryAttemptRearmsBriefAndComms();
-            M01NeverSelectsM02Narrative();
+            M01UsesItsOwnOpeningOnCampaignEntry();
             BriefAndCommsPauseWhileDebriefRequiresFinalResult();
             DebriefCompletionReturnsToFinalResult();
             OpeningBriefClaimsEnteringMatchBeforeHudIsExposed();
@@ -537,12 +537,12 @@ public static class M02EstablishBaseNarrativeTests
     }
 
     [Test]
-    public static void M01NeverSelectsM02Narrative()
+    public static void M01UsesItsOwnOpeningOnCampaignEntry()
     {
         CampaignMissionRuntimeComponent runtime = Runtime(MissionPhaseKind.InteractiveBrief);
         runtime.MissionId = new Unity.Collections.FixedString64Bytes("saga.ch01.m01.first_contact");
         Assert.AreEqual(
-            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None,
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief,
             CampaignMissionDebriefCompositionSystemHelper.ResolveStage(
                 in runtime, default, briefConsumed: false, commsConsumed: false));
     }

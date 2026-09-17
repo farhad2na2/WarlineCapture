@@ -1,0 +1,17 @@
+[
+  {
+    "log": "readiness-recovery-campaign-04.log",
+    "shutdown_leak_stacks": 179,
+    "project_native_storage_leak_stacks": []
+  },
+  {
+    "log": "readiness-recovery-campaign-05.log",
+    "shutdown_leak_stacks": 179,
+    "project_native_storage_leak_stacks": []
+  },
+  {
+    "log": "readiness-recovery-campaign-06.log",
+    "shutdown_leak_stacks": 179,
+    "project_native_storage_leak_stacks": []
+  }
+]

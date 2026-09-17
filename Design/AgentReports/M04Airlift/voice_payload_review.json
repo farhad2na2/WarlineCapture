@@ -18,134 +18,135 @@
       "m04-brief-01",
       "LAILA",
       "Captain Laila Nasser. My helicopter is ready at the eastern landing area. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
-      "سروان لیلا ناصر هستم. بالگردم در محل فرود شرقی آماده است. چهار متخصص را با نفربر به من برسانید؛ فرصت تخلیه را ده دقیقه باز نگه می‌دارم."
+      "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم."
     ],
     [
       "narrative",
       "m04-brief-02",
       "SAMIRA",
       "Two medics and two engineers are stranded by the western road. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
-      "دو امدادگر و دو مهندس کنار جادهٔ غربی گرفتار شده‌اند. آن‌ها می‌توانند درمانگاه‌ها را باز کنند و شبکه را بازگردانند. همه را سالم برگردانید."
+      "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید."
     ],
     [
       "narrative",
       "m04-brief-03",
       "DALIA",
       "Rifles cover the road; the APC carries the team. Unload beside Laila, board the helicopter, hold the area clear for twenty seconds, then fly to the marked departure zone.",
-      "تفنگدارها جاده را پوشش می‌دهند؛ نفربر تیم را منتقل می‌کند. کنار لیلا پیاده شوید، سوار بالگرد شوید، بیست ثانیه محل را امن نگه دارید و سپس به محدودهٔ خروج پرواز کنید."
+      "تفنگدارها جاده رو پوشش بدن؛ نفربر تیم رو جابه‌جا کنه. کنار لیلا پیاده‌شون کنید و سوار بالگردش کنید. بیست ثانیه محل رو امن نگه دارید، بعد به محدودهٔ خروج پرواز کنید."
     ],
     [
       "narrative",
       "m04-comms-01",
       "LAILA",
       "All four are aboard. The landing area is clear and departure is authorized. Fly to the marked exit; I will take the team from there.",
-      "هر چهار نفر سوار شده‌اند. محل فرود امن است و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از آنجا تیم را منتقل می‌کنم."
+      "هر چهار نفر سوار شدن. محل فرود امنه و اجازهٔ خروج داریم. به محل خروج مشخص‌شده پرواز کنید؛ از اونجا تیم رو می‌برم."
     ],
     [
       "narrative",
       "m04-debrief-01",
       "LAILA",
       "Four passengers accounted for. Your escort gave us the time we needed. I am joining this operation; you will have an airlift pilot when the next team needs a way out.",
-      "هر چهار مسافر حاضرند. پوشش شما زمان لازم را فراهم کرد. به این عملیات می‌پیوندم؛ از این پس برای نجات تیم بعدی یک خلبان ترابری هوایی خواهید داشت."
+      "هر چهار نفر سالم رسیدن. پوششتون بهمون وقت داد. من هم به تیمتون ملحق می‌شم؛ برای نجات بعدی روی بالگردم حساب کنید."
     ],
     [
       "narrative",
       "m04-debrief-02",
       "SAMIRA",
       "The engineers brought their repair records. Several outages lead back to the same fortified communications node. We finally have a place to investigate.",
-      "مهندسان سوابق تعمیر را آورده‌اند. چند قطعی به یک گرهٔ ارتباطی مستحکم برمی‌گردد. سرانجام محلی برای بررسی داریم."
+      "مهندس‌ها گزارش‌های تعمیر رو آوردن. چند تا از قطعی‌ها به یه مرکز ارتباطی حفاظت‌شده می‌رسه. بالاخره می‌دونیم کجا رو باید بررسی کنیم."
     ],
     [
       "narrative",
       "m04-debrief-03",
       "ARIA",
       "Extraction confirmed. Captain Nasser is on the roster. Next objective: assess that communications node. First, let the medical team get back to work.",
-      "تخلیه تأیید شد. سروان ناصر به گروه پیوست. هدف بعدی: بررسی آن گرهٔ ارتباطی. ابتدا بگذارید تیم پزشکی به کارش برگردد."
+      "نجات تأیید شد. سروان ناصر هم به تیم پیوست. بعدش باید اون مرکز ارتباطی رو بررسی کنیم. فعلاً بذاریم تیم پزشکی به کارش برسه."
     ],
     [
       "tutorial",
       "tutorial-m04-01",
       "ARIA",
       "Rescue all four specialists: APC first, helicopter second. You have ten minutes. Enemy kills are optional; keep the escort alive for a bonus star.",
-      "هر چهار متخصص را نجات دهید: ابتدا نفربر، سپس بالگرد. ده دقیقه فرصت دارید. کشتن دشمن الزامی نیست؛ سالم نگه‌داشتن محافظان یک ستارهٔ اضافی دارد."
+      "باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری."
     ],
     [
       "tutorial",
       "tutorial-m04-02",
       "ARIA",
       "Select the wheeled APC beside your rifles. Keep its four seats free for the specialists. Show Me locates the APC.",
-      "نفربر چرخ‌دار کنار تفنگدارها را انتخاب کنید. چهار صندلی آن را برای متخصصان خالی نگه دارید. نشانم بده، محل نفربر را نشان می‌دهد."
+      "نفربر چرخ‌دار کنار تفنگدارها رو انتخاب کن. چهار صندلیش رو برای متخصص‌ها خالی نگه دار. اگه پیداش نکردی، «نشان بده» رو بزن."
     ],
     [
       "tutorial",
       "tutorial-m04-03",
       "ARIA",
       "Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.",
-      "حرکت را بزنید و کنار چهار متخصص در جادهٔ غربی مقصد بدهید. نشانم بده، محل آن‌ها را نشان می‌دهد. تفنگدارها را برای پوشش به جلو بفرستید."
+      "«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست."
     ],
     [
       "tutorial",
       "tutorial-m04-04",
       "ARIA",
       "Select all four specialists beside the road. Keep armed escorts outside the selection. This step completes when all four are selected.",
-      "هر چهار متخصص کنار جاده را انتخاب کنید. محافظان مسلح را وارد انتخاب نکنید. با انتخاب هر چهار نفر این مرحله تمام می‌شود."
+      "هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد."
     ],
     [
       "tutorial",
       "tutorial-m04-05",
       "ARIA",
       "Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.",
-      "سوارشدن را بزنید و سپس نفربر را انتخاب کنید. پیش از حرکت صبر کنید فهرست مسافران، هر چهار متخصص را نشان دهد."
+      "«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن."
     ],
     [
       "tutorial",
       "tutorial-m04-06",
       "ARIA",
       "Move the loaded APC east to the marked landing area. Show Me locates Laila. Keep the rifles covering the approaching patrol.",
-      "نفربر پر را به محدودهٔ فرود مشخص‌شده در شرق ببرید. نشانم بده، محل لیلا را نشان می‌دهد. تفنگدارها مسیر گشتی دشمن را پوشش دهند."
+      "نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار."
     ],
     [
       "tutorial",
       "tutorial-m04-07",
       "ARIA",
       "Open the APC passenger panel, then tap Unload. Wait until all four specialists stand beside the helicopter. Move into open ground if unloading is blocked.",
-      "بخش مسافران نفربر را باز کنید و پیاده‌شدن را بزنید. صبر کنید هر چهار متخصص کنار بالگرد بایستند. اگر محل بسته است، نفربر را به فضای باز ببرید."
+      "بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز."
     ],
     [
       "tutorial",
       "tutorial-m04-08",
       "ARIA",
       "Select Laila’s helicopter. Keep it landed beside the specialists until all four have boarded.",
-      "بالگرد لیلا را انتخاب کنید. آن را کنار متخصصان روی زمین نگه دارید تا هر چهار نفر سوار شوند."
+      "بالگرد لیلا رو انتخاب کن. کنار متخصص‌ها روی زمین نگهش دار تا هر چهار نفر بتونن سوار بشن."
     ],
     [
       "tutorial",
       "tutorial-m04-09",
       "ARIA",
       "Select all four specialists, press Board, then tap the landed helicopter. Check that its passenger list shows four people.",
-      "هر چهار متخصص را انتخاب کنید، سوارشدن را بزنید و بالگرد فرودآمده را انتخاب کنید. فهرست مسافران باید چهار نفر را نشان دهد."
+      "با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن."
     ],
     [
       "tutorial",
       "tutorial-m04-10",
       "ARIA",
       "Keep the loaded helicopter inside the marked landing area for twenty clear seconds. Use the rifles to stop threats entering the ring. Leaving or enemy entry resets the count.",
-      "بالگرد پر را بیست ثانیه در محدودهٔ امن فرود نگه دارید. تفنگدارها مانع ورود دشمن به حلقه شوند. خروج بالگرد یا ورود دشمن زمان را از نو آغاز می‌کند."
+      "بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه."
     ],
     [
       "tutorial",
       "tutorial-m04-11",
       "ARIA",
       "Select the helicopter, press Move, then tap the marked exit. Show Me locates the exit. Keep all four specialists aboard until extraction is confirmed.",
-      "بالگرد را انتخاب کنید، حرکت را بزنید و به خروج مشخص‌شده مقصد بدهید. نشانم بده، خروج را نشان می‌دهد. تا تأیید نجات، هر چهار متخصص سوار بمانند."
+      "بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن."
     ],
     [
       "tutorial",
       "tutorial-m04-12",
       "ARIA",
       "Extraction is being confirmed. Keep the passengers aboard and protect the helicopter until the result appears.",
-      "نجات در حال تأیید است. تا نمایش نتیجه، مسافران را سوار نگه دارید و از بالگرد محافظت کنید."
+      "دارم نجات رو تأیید می‌کنم. تا نتیجه بیاد، مسافرها رو سوار نگه دار و از بالگرد محافظت کن."
     ]
   ],
-  "purpose": "M3/M4 mobile audit corrections: concise bilingual mission and tutorial narration"
+  "purpose": "M3/M4 mobile audit corrections: concise bilingual mission and tutorial narration",
+  "persianDeliveryProfile": "fa-conversational-v1"
 }

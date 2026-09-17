@@ -1,0 +1,349 @@
+{
+  "purpose": "Fill the nine silent M1 briefing/comms/debrief lines in English and conversational Farsi using the existing permanent cast.",
+  "provider": "https://api.elevenlabs.io",
+  "clipCount": 18,
+  "requests": [
+    {
+      "lineId": "m01-brief.line.1",
+      "textKey": "narrative.m01.brief.dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "First contact is confirmed: three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "First contact is confirmed: three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162000,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-brief.line.1",
+      "textKey": "narrative.m01.brief.dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "تماس تأیید شد. سه نیروی مسلح خط خاکستر، مسیر درمانگاه بازار قدیمی رو بستن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] تماس تأیید شد. سه نیروی مسلح خط خاکستر، مسیر درمانگاه بازار قدیمی رو بستن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162001,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-brief.line.2",
+      "textKey": "narrative.m01.brief.aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Threat profiles: Courier carries orders, Warden controls the crossing, and Broker coordinates supplies.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Threat profiles: Courier carries orders, Warden controls the crossing, and Broker coordinates supplies.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162002,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-brief.line.2",
+      "textKey": "narrative.m01.brief.aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "پیک دستورها رو می‌رسونه، نگهبان چهارراه رو کنترل می‌کنه و کارگزار تدارکات رو هماهنگ می‌کنه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] پیک دستورها رو می‌رسونه، نگهبان چهارراه رو کنترل می‌کنه و کارگزار تدارکات رو هماهنگ می‌کنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162003,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-brief.line.3",
+      "textKey": "narrative.m01.brief.samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Civilians are sheltering beyond the patrol. Clear the marked corridor; do not pursue outside the district.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-brief.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "Civilians are sheltering beyond the patrol. Clear the marked corridor; do not pursue outside the district.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162004,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-brief.line.3",
+      "textKey": "narrative.m01.brief.samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مردم اون طرف گشت پناه گرفتن. مسیر مشخص‌شده رو باز کنید، ولی برای تعقیب از منطقه خارج نشید.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-brief.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] مردم اون طرف گشت پناه گرفتن. مسیر مشخص‌شده رو باز کنید، ولی برای تعقیب از منطقه خارج نشید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162005,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.1",
+      "textKey": "narrative.m01.comms.dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Command squad, move to cover and confirm the armed patrol before engaging.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "Command squad, move to cover and confirm the armed patrol before engaging.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162006,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.1",
+      "textKey": "narrative.m01.comms.dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "گروه فرماندهی، برید پشت پوشش. قبل از حمله مطمئن بشید هدف همون گشت مسلحه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] گروه فرماندهی، برید پشت پوشش. قبل از حمله مطمئن بشید هدف همون گشت مسلحه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162007,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.2",
+      "textKey": "narrative.m01.comms.aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Courier, Warden, and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Courier, Warden, and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162008,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.2",
+      "textKey": "narrative.m01.comms.aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "پیک، نگهبان و کارگزار هنوز توی مسیر مشخص‌شده هستن. وضعیت هدف‌ها با گزارش‌های تأییدشده به‌روز می‌شه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] پیک، نگهبان و کارگزار هنوز توی مسیر مشخص‌شده هستن. وضعیت هدف‌ها با گزارش‌های تأییدشده به‌روز می‌شه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162009,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.3",
+      "textKey": "narrative.m01.comms.samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The evacuation path is holding. Keep the command squad intact.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-comms.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "The evacuation path is holding. Keep the command squad intact.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162010,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-comms.line.3",
+      "textKey": "narrative.m01.comms.samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مسیر تخلیه هنوز بازه. مراقب باشید گروه فرماندهی سالم بمونه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-comms.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] مسیر تخلیه هنوز بازه. مراقب باشید گروه فرماندهی سالم بمونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162011,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.1",
+      "textKey": "narrative.m01.debrief.dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The corridor is secure. The patrol was coordinated, not opportunistic.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "The corridor is secure. The patrol was coordinated, not opportunistic.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162012,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.1",
+      "textKey": "narrative.m01.debrief.dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "مسیر امن شد. این گشت اتفاقی اینجا نبود؛ با هم هماهنگ بودن.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.1.wav",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "request": {
+        "text": "[conversational tone] مسیر امن شد. این گشت اتفاقی اینجا نبود؛ با هم هماهنگ بودن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162013,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.2",
+      "textKey": "narrative.m01.debrief.aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162014,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.2",
+      "textKey": "narrative.m01.debrief.aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "توی پیام‌های بازیابی‌شده، بخشی از یک شناسهٔ باطل‌شدهٔ شبکهٔ شهری پیدا کردم. هنوز معلوم نیست مال کیه.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.2.wav",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] توی پیام‌های بازیابی‌شده، بخشی از یک شناسهٔ باطل‌شدهٔ شبکهٔ شهری پیدا کردم. هنوز معلوم نیست مال کیه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162015,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.3",
+      "textKey": "narrative.m01.debrief.samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Civilians are moving to safety. Command Base is online; the next operation is ready for review.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/en/m01-debrief.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "Civilians are moving to safety. Command Base is online; the next operation is ready for review.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 3162016,
+        "apply_text_normalization": "on"
+      },
+      "outputFormat": "mp3_44100_192"
+    },
+    {
+      "lineId": "m01-debrief.line.3",
+      "textKey": "narrative.m01.debrief.samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "مردم دارن به جای امن می‌رن. پایگاه فرماندهی آماده‌ست؛ می‌تونید عملیات بعدی رو بررسی کنید.",
+      "assetPath": "Assets/Game/Audio/Narrative/M01FirstContact/Voice/fa/m01-debrief.line.3.wav",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "request": {
+        "text": "[conversational tone] مردم دارن به جای امن می‌رن. پایگاه فرماندهی آماده‌ست؛ می‌تونید عملیات بعدی رو بررسی کنید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 3162017,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "outputFormat": "mp3_44100_192"
+    }
+  ]
+}

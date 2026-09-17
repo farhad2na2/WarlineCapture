@@ -124,10 +124,7 @@ namespace Game.Runtime
 
         public string GetSelectedBuildingLabel(Context context)
         {
-            if (!TryGetActiveBuilding(context, out RuntimeBuildingEntity building) || building?.Definition == null)
-                return "Building";
-
-            return $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})";
+            return GetSelectedBuildingDisplayName(context);
         }
 
         public string GetSelectedBuildingDisplayName(Context context)

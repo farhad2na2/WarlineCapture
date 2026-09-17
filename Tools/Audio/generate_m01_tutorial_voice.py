@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import persian_voice_profile
 import datetime as dt
 import hashlib
 import json
@@ -34,24 +35,24 @@ CUES = (
      "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav", 2103),
     (5, "worldTarget", "en-US", "en", "Tap the highlighted enemy to issue the attack.",
      "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav", 2104),
-    (2, "command", "fa-IR", "fa", "برای انتخاب دستور حرکت، روی «حرکت» بزنید.",
+    (2, "command", "fa-IR", "fa", "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav", 2201),
-    (3, "worldTarget", "fa-IR", "fa", "برای حرکت گروه، روی مقصد علامت‌گذاری‌شده بزنید.",
+    (3, "worldTarget", "fa-IR", "fa", "حالا مقصد مشخص‌شده رو بزن تا گروهت حرکت کنه.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav", 2202),
-    (4, "command", "fa-IR", "fa", "برای انتخاب دستور حمله، روی «حمله» بزنید.",
+    (4, "command", "fa-IR", "fa", "«حمله» رو بزن تا دستور حمله انتخاب بشه.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav", 2203),
-    (5, "worldTarget", "fa-IR", "fa", "برای صدور دستور حمله، روی دشمن علامت‌گذاری‌شده بزنید.",
+    (5, "worldTarget", "fa-IR", "fa", "حالا دشمن مشخص‌شده رو بزن تا نیروهات بهش حمله کنن.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav", 2204),
 )
 
 PRESERVED_CUES = (
     (1, "selection", "en-US", "Select the command squad to begin.",
      "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav"),
-    (1, "selection", "fa-IR", "برای شروع، گروه فرماندهی را انتخاب کنید.",
+    (1, "selection", "fa-IR", "برای شروع، گروه فرماندهی رو انتخاب کن.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav"),
     (5, "missionResolution", "en-US", "Check the objective and secure the civilian route.",
      "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_secure_corridor_aria.wav"),
-    (5, "missionResolution", "fa-IR", "هدف را بررسی کنید و مسیر غیرنظامیان را امن کنید.",
+    (5, "missionResolution", "fa-IR", "هدفت رو بررسی کن و مسیر مردم رو امن نگه دار.",
      "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav"),
 )
 
@@ -101,6 +102,7 @@ def request_audio(api_key: str, text: str, language: str, seed: int) -> bytes:
         "seed": seed,
         "apply_text_normalization": "on",
     }
+    persian_voice_profile.apply(body, language)
     request = urllib.request.Request(
         f"{API_ROOT}/v1/text-to-speech/{VOICE_ID}?{query}",
         data=json.dumps(body).encode("utf-8"),
@@ -156,12 +158,23 @@ def main() -> None:
     if subscription.get("status") != "active" or subscription.get("tier") in {None, "free"}:
         raise RuntimeError("An active paid ElevenLabs subscription is required.")
 
-    records = [clip_record(*cue) for cue in PRESERVED_CUES]
+    prior = {c["assetPath"]: c for c in json.loads(MANIFEST_PATH.read_text())["clips"]} if MANIFEST_PATH.exists() else {}
+    records = []
+    for step, phase, locale, text, asset_path in PRESERVED_CUES:
+        language = "fa" if locale == "fa-IR" else "en"
+        destination = ROOT / asset_path
+        if args.force or not persian_voice_profile.clip_matches(prior.get(asset_path, {}), text, destination, language):
+            convert_to_wav(request_audio(api_key, text, language, 2300 + step), destination)
+        record = clip_record(step, phase, locale, text, asset_path)
+        record.update(persian_voice_profile.metadata(language))
+        records.append(record)
     for step, phase, locale, language, text, asset_path, seed in CUES:
         destination = ROOT / asset_path
-        if args.force or not destination.exists():
+        if args.force or not persian_voice_profile.clip_matches(prior.get(asset_path, {}), text, destination, language):
             convert_to_wav(request_audio(api_key, text, language, seed), destination)
-        records.append(clip_record(step, phase, locale, text, asset_path))
+        record = clip_record(step, phase, locale, text, asset_path)
+        record.update(persian_voice_profile.metadata(language))
+        records.append(record)
 
     records.sort(key=lambda item: (item["locale"], item["step"], item["phase"]))
     manifest = {

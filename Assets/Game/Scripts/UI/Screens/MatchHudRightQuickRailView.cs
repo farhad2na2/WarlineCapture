@@ -313,8 +313,12 @@ namespace Game.UI.Runtime
                 _lastHideUnrelatedControls == hideUnrelatedControls)
                 return;
 
-            SetButtonDisabled(buildButton, buildDisabled, outsideMissionScope: false);
-            SetButtonDisabled(_supportButton, supportDisabled, hideUnrelatedControls && supportDisabled);
+            // Migrated footer commands own their restrictions and tutorial overrides.
+            // This legacy rail must not reapply a conflicting disabled appearance.
+            if (buildButton == null || buildButton.GetComponentInParent<MatchOverlayCommandControlsView>() == null)
+                SetButtonDisabled(buildButton, buildDisabled, outsideMissionScope: false);
+            if (_supportButton == null || _supportButton.GetComponentInParent<MatchOverlayCommandControlsView>() == null)
+                SetButtonDisabled(_supportButton, supportDisabled, hideUnrelatedControls && supportDisabled);
             _lastBuildDisabled = buildDisabled;
             _lastSupportDisabled = supportDisabled;
             _lastHideUnrelatedControls = hideUnrelatedControls;
@@ -344,8 +348,9 @@ namespace Game.UI.Runtime
             if (group == null)
                 group = button.gameObject.AddComponent<CanvasGroup>();
             group.alpha = 1f;
-            group.interactable = !unavailable;
-            group.blocksRaycasts = !unavailable;
+            // Mission availability belongs to Button.interactable. The cinematic
+            // lock owns CanvasGroup input; snapshotting a mission-disabled group
+            // can otherwise restore that stale lock in the next mission.
         }
 
         private Camera ResolveEventCamera()

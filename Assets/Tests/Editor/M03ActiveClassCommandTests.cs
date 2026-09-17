@@ -18,7 +18,7 @@ public sealed class M03ActiveClassCommandTests
         Entity rifle=Actor(em,1,100),sensor=Actor(em,1,100),enemy=Actor(em,2,100),civilian=Actor(em,0,100),dead=Actor(em,1,0),passenger=Actor(em,1,100);
         em.AddComponent<UnitTransportPassenger>(passenger);
         em.SetComponentData(rifle,new UnitCombat {CanAttack=1});
-        foreach(var kind in new[]{RtsSelectionCommandIntentKind.HoldPosition,RtsSelectionCommandIntentKind.HoldPosition,RtsSelectionCommandIntentKind.Stop})
+        foreach(var kind in new[]{RtsSelectionCommandIntentKind.HoldPosition,RtsSelectionCommandIntentKind.HoldPosition,RtsSelectionCommandIntentKind.Stop,RtsSelectionCommandIntentKind.HoldPosition})
         {
             em.GetBuffer<RtsSelectionCommandIntentRequestElement>(queue).Add(new RtsSelectionCommandIntentRequestElement {Kind=kind});
             Assert.IsTrue(RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(em,Entity.Null,out var processed,out bool accepted,out _,out int count));

@@ -85,6 +85,9 @@ namespace Game.UI.Runtime
 
         public void Unbind()
         {
+            _productionQuery = null;
+            _productionQueue.Clear();
+            _nextProductionQueryAt = 0;
             ClearDirectTutorialCue();
             DetachSquadGuidanceButton();
             DetachCommandGuidanceButtons();
@@ -363,7 +366,9 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            buttonRect.GetWorldCorners(_commandButtonCorners);
+            var wedge = buttonRect.GetComponent<V3RadialWedgeGraphic>();
+            if (wedge != null) wedge.GetGuidanceWorldCorners(_commandButtonCorners);
+            else buttonRect.GetWorldCorners(_commandButtonCorners);
             Canvas buttonCanvas = buttonRect.GetComponentInParent<Canvas>()?.rootCanvas;
             Camera buttonCamera = buttonCanvas == null || buttonCanvas.renderMode == RenderMode.ScreenSpaceOverlay
                 ? null

@@ -1,0 +1,68 @@
+Wrapper: Tools/CI/invoke_unity_macos.sh --project /private/tmp/warline-readiness-validation --timeout 1000 --log /private/tmp/readiness-m02-recovery-07.log -- -executeMethod Game.Editor.M05GateValidationEntry.Run
+Entry: focused M02ProductionWait + CampaignTutorialEntryEditorProbe.RunM02RecoveryJourney
+Normal speed; isolated profile; visible hit-tested controls; comics skipped; no mission facts or outcomes edited.
+[M02ProductionWait] result=Passed acknowledged recruitment, destroyed drawer, queue completion and match cleanup
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=2 body=Open the Build menu.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=3 body=Select Barracks from the building list.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=4 body=Place the Barracks inside the green area, then confirm construction.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=recovery:cancel-placement
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=EstablishBasePlaceBarracks body=Place the Barracks inside the green area, then confirm construction.
+[CampaignPlayerJourney] action=4:BuildCommand
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] action=recovery:pause
+[CampaignPlayerJourney] action=recovery:resume
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=5 body=You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=6 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=EstablishBaseQueueRifle body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] production-before=ItemView catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] production-before=BuildButton catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] training-wait locale=en drawer=closed body=Training is in progress. Wait for your rifle squad to arrive; no further tap is needed. The mission continues automatically when they are ready.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=en
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=2 body=منوی «ساخت» رو باز کن.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=3 body=از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=4 body=سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=recovery:cancel-placement
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=EstablishBasePlaceBarracks body=سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.
+[CampaignPlayerJourney] action=4:BuildCommand
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] action=recovery:pause
+[CampaignPlayerJourney] action=recovery:resume
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=5 body=با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=6 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=EstablishBaseQueueRifle body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] production-before=ItemView catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] production-before=BuildButton catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] training-wait locale=fa-IR drawer=closed body=آموزش شروع شده. صبر کن گروه تفنگدار آماده بشه؛ لازم نیست چیزی بزنی. وقتی آماده شدن، مأموریت خودش ادامه پیدا می‌کنه.
+[CampaignPlayerJourney] production-before=BuildCommand catalog=False active=False queue= body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] production-before=SoldiersTab catalog=True active=True queue=0 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m02.establish_base
+Wrapper exit code: 0

@@ -1,0 +1,6 @@
+{
+  "clip": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav",
+  "durationSeconds": 8.45,
+  "sha256": "e66bf13daca0b79f256bd2ec87ea0df6be0962b0fea39003e1b496ba28a364c8",
+  "edit": "Local end trim and 50ms fade. Removed obsolete Stop sentence; no paid generation or external upload."
+}

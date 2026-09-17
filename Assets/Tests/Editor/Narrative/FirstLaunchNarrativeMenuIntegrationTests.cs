@@ -365,7 +365,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
                 Assert.NotNull(voice.NeutralVoiceClip);
             }
         }
-        Assert.AreEqual(26, bootstrap.FirstLaunchNarrativeConfig.States.Count);
+        Assert.AreEqual(25, bootstrap.FirstLaunchNarrativeConfig.States.Count);
         Assert.AreEqual(bootstrap.UiCanvas.transform, bootstrap.FirstLaunchNarrativeView.transform.parent);
         Assert.AreEqual(bootstrap.UiCanvas.transform.childCount - 2, bootstrap.FirstLaunchNarrativeView.transform.GetSiblingIndex());
         Assert.AreEqual(bootstrap.UiCanvas.transform.childCount - 1, bootstrap.FirstLaunchLanguageChoiceView.transform.GetSiblingIndex());
@@ -376,7 +376,7 @@ public sealed class FirstLaunchNarrativeMenuIntegrationTests
         Assert.IsFalse(group.interactable);
         Assert.IsFalse(group.blocksRaycasts);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.CommanderIdentityView);
-        Assert.NotNull(bootstrap.FirstLaunchNarrativeView.GuidanceChoiceView);
+        Assert.IsNull(bootstrap.FirstLaunchNarrativeView.GuidanceChoiceView);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.SkipConfirmationView);
         Assert.NotNull(bootstrap.FirstLaunchNarrativeView.ReviewerControlsView);
         Assert.IsTrue(scene.IsValid());

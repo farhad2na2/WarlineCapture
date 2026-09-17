@@ -51,7 +51,7 @@ namespace Game.Editor
                     if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
                     var save=new SaveService(new JsonSaveRepository(Path.Combine(Output,Guid.NewGuid().ToString("N"))));
                     store=new CampaignMissionProgressStore(save);store.EnsureAvailable(M05BreachAssaultConfigBuilder.MissionId);
-                    em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;GameLocalization.SetLocale(SessionState.GetBool("Warline.M05.Guided",false)?"en":"fa-IR",false);prepared=true;return;
+                    em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;GameLocalization.SetLocale(SessionState.GetBool("Warline.M05.Guided",false) || SessionState.GetBool("Warline.M05.EnglishCombat",false)?"en":"fa-IR",false);prepared=true;return;
                 }
                 if(!deployed)
                 {
@@ -62,6 +62,7 @@ namespace Game.Editor
                 SampleVoices();SkipNarrative();
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
                 MissionMotionEditorAudit.Sample(em,root,in runtime,in facts);
+                if(SessionState.GetBool("Warline.M05.LifecycleAudit",false)) SampleLifecycleUi(em,root);
                 var breach=em.HasComponent<CampaignMissionBreachState>(root)?em.GetComponentData<CampaignMissionBreachState>(root):default;
                 if(EditorApplication.timeSinceStartup-lastLog>5)
                 {
@@ -93,6 +94,7 @@ namespace Game.Editor
                 if(EditorApplication.timeSinceStartup-lastOrder<3) return;
                 lastOrder=EditorApplication.timeSinceStartup;
                 if(step==1) {ScreenCapture.CaptureScreenshot(Output+"/tutorial-fa.png");step=2;}
+                if(SessionState.GetBool("Warline.M05.ScreenTapAudit",false) && TickGateScreenTap(em,breach))return;
                 using var members=em.GetBuffer<CampaignMissionBreachMember>(root,true).ToNativeArray(Allocator.Temp);
                 Entity enemy=Entity.Null;
                 foreach(var member in members) if(member.Kind>=2 && Hp(em,member.Entity)>0) {enemy=member.Entity;break;}
@@ -101,7 +103,7 @@ namespace Game.Editor
                 {
                     if(member.Kind>1 || Hp(em,member.Entity)<=0)continue;
                     if(target!=Entity.Null && Hp(em,target)>0) UnitAttackOrderRequestSystem.EnqueueSourceAttackTarget(em,member.Entity,target);
-                    else if(!Near(em,member.Entity,breach.ArchiveCenter,12))
+                    else if(!Near(em,member.Entity,breach.ArchiveCenter,4))
                     {
                         var cell=new int2((int)breach.ArchiveCenter.x,(int)breach.ArchiveCenter.z);
                         var move=new UnitMoveOrderSystem().IssueGroupedManualMoveOrder(em,member.Entity,cell,true,false,Time.frameCount,Time.frameCount);
@@ -116,7 +118,7 @@ namespace Game.Editor
         private static void SkipNarrative()
         {
             var view=UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>(FindObjectsInactive.Include);if(view==null||!Visible(view,"rootGroup")||EditorApplication.timeSinceStartup-lastClick<.7)return;
-            if(!SessionState.GetBool("Warline.M05.GuideOnly",false) && !SessionState.GetBool("Warline.M05.RetryProbe",false) && view.CurrentPanelSprite!=null && view.CurrentPanelSprite.name.StartsWith("M05-",StringComparison.Ordinal))
+            if(!SessionState.GetBool("Warline.M05.SkipComics",false) && !SessionState.GetBool("Warline.M05.GuideOnly",false) && !SessionState.GetBool("Warline.M05.RetryProbe",false) && view.CurrentPanelSprite!=null && view.CurrentPanelSprite.name.StartsWith("M05-",StringComparison.Ordinal))
             {
                 string shot=GameLocalization.CurrentLocaleCode+"-"+view.CurrentPanelSprite.name;
                 if(narrativeShot!=shot){narrativeShot=shot;narrativePanelAt=EditorApplication.timeSinceStartup;return;}

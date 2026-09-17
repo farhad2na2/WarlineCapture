@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Entities;
 using Game.Components;
 
 namespace Game.Runtime
@@ -37,6 +38,7 @@ namespace Game.Runtime
             public readonly BuildingPlacementInputUiSystemHelper.UpdatePlacementFromPointerDelegate UpdatePlacement;
             public readonly Func<int, int, int, int, bool> IsRuntimeBlockerCell;
             public readonly Func<GridConfig, Vector2Int, Vector2Int, bool> HasRoadInFootprint;
+            public readonly Func<bool[]> GetRoadSidewalks;
             public readonly BuildingPlacementCommitCompositionSystemHelper.CreateVisualDelegate CreateBuildingVisualInstance;
             public readonly BuildingPlacementCommitCompositionSystemHelper.PositionVisualDelegate PositionBuildingObject;
             public readonly BuildingPlacementCommitCompositionSystemHelper.RegisterRuntimeBuildingDelegate RegisterRuntimeBuilding;
@@ -78,7 +80,8 @@ namespace Game.Runtime
                 BuildingPlacementCommitCompositionSystemHelper.RollbackRuntimeBuildingDelegate rollbackRuntimeBuilding,
                 BuildingPlacementCommitCompositionSystemHelper.CloneDefinitionWithFootprintDelegate cloneDefinitionWithFootprint,
                 BuildingPlacementCommitCompositionSystemHelper.GetPlacementFootprintDelegate getPlacementFootprint,
-                BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate destroyRuntimeObject)
+                BuildingPlacementCommitCompositionSystemHelper.DestroyRuntimeObjectDelegate destroyRuntimeObject,
+                Func<bool[]> getRoadSidewalks=null)
             {
                 RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
                 LifecycleSystem = lifecycleSystem;
@@ -112,7 +115,7 @@ namespace Game.Runtime
                 RollbackRuntimeBuilding = rollbackRuntimeBuilding;
                 CloneDefinitionWithFootprint = cloneDefinitionWithFootprint;
                 GetPlacementFootprint = getPlacementFootprint;
-                DestroyRuntimeObject = destroyRuntimeObject;
+                DestroyRuntimeObject = destroyRuntimeObject; GetRoadSidewalks=getRoadSidewalks;
             }
         }
 

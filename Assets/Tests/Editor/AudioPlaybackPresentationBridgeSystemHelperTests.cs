@@ -40,6 +40,12 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
             passed++;
             RunCase(test => test.AriaVoiceLanguageResolver_MapsPersistedSelectionToSupportedLocale());
             passed++;
+            RunCase(test => test.TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge());
+            passed++;
+            RunCase(test => test.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Game.Missions.Contracts.MissionOutcomeKind.Victory));
+            passed++;
+            RunCase(test => test.MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Game.Missions.Contracts.MissionOutcomeKind.Defeat));
+            passed++;
 
             Debug.Log($"[AudioPlaybackPresentationBridgeValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -482,6 +488,72 @@ public sealed class AudioPlaybackPresentationBridgeSystemHelperTests
 
         playback.UpdatePool(now: 1.55f);
         Assert.That(source.volume, Is.EqualTo(0f).Within(0.001f));
+    }
+
+    [Test]
+    public void TacticalVoiceTracksActiveLocaleWithoutRecreatingBridge()
+    {
+        string previousLocale = GameLocalization.CurrentLocaleCode;
+        var english = CreateClip("move_en");
+        var persian = CreateClip("move_fa");
+        var entry = CreateEntry(AudioEventIds.VOARIAMessageTacticalBannerAcceptedMoveTitle, "Voice", english);
+        var localized = new LocalizedAudioClipSet();
+        SetPrivateField(localized, "localeCode", "fa-IR");
+        var weighted = new AudioClipWeightEntry();
+        SetPrivateField(weighted, "clip", persian);
+        SetPrivateField(localized, "clips", new List<AudioClipWeightEntry> { weighted });
+        SetPrivateField(entry, "localizedClips", new List<LocalizedAudioClipSet> { localized });
+        var catalog = CreateCatalog(entry);
+        RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(_entityManager, true);
+        using var playback = new AudioPlaybackPresentationSystemHelper(initialPoolSize: 1, maxPoolSize: 2);
+        using var bridge = new AudioPlaybackPresentationBridgeSystemHelper();
+        try
+        {
+            foreach (string locale in new[] { "en", "fa-IR", "en" })
+            {
+                Assert.IsTrue(GameLocalization.SetLocale(locale, false));
+                playback.StopAll();
+                int id = AudioEventRequestSystem.EnqueueOneShot(_entityManager,
+                    new FixedString64Bytes(entry.EventId), AudioEventIds.StableHash(entry.EventId),
+                    new FixedString32Bytes("Voice"), AudioPlaybackPriority.High, requestedAt: 1f);
+                AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+                bridge.DrainAcceptedRequests(_entityManager, catalog, null, playback, 1f);
+                Assert.IsTrue(playback.TryGetActiveSource(id, out var source));
+                Assert.That(source.clip, Is.SameAs(locale == "en" ? english : persian));
+            }
+        }
+        finally { GameLocalization.SetLocale(previousLocale, false); }
+    }
+
+    [TestCase(Game.Missions.Contracts.MissionOutcomeKind.Victory)]
+    [TestCase(Game.Missions.Contracts.MissionOutcomeKind.Defeat)]
+    public void MissionOutcomeStopsActiveGameplayAudioAndRejectsLateVoices(Game.Missions.Contracts.MissionOutcomeKind outcome)
+    {
+        RuntimeGameplayStateTestHelper.SetPlayRequested(_entityManager, true);
+        RuntimeGameplayStateTestHelper.SetSimulationActive(_entityManager, true);
+        var mission = _entityManager.CreateEntity(typeof(CampaignMissionRuntimeComponent));
+        var voice = CreateEntry(AudioEventIds.VOARIAMessageWarningGroundAttackType, "Voice", CreateClip("warning_en"));
+        var music = CreateEntry("Music.Result", "Music", CreateClip("result_music"));
+        var ui = CreateEntry(AudioEventIds.UIButtonPrimaryClick, "UI", CreateClip("result_click"));
+        var catalog = CreateCatalog(voice, music, ui);
+        using var playback = new AudioPlaybackPresentationSystemHelper(initialPoolSize: 3, maxPoolSize: 4);
+        using var bridge = new AudioPlaybackPresentationBridgeSystemHelper();
+        int Enqueue(AudioEventCatalogEntry e, float time) => AudioEventRequestSystem.EnqueueOneShot(_entityManager,
+            new FixedString64Bytes(e.EventId), AudioEventIds.StableHash(e.EventId), new FixedString32Bytes(e.BusId),
+            AudioPlaybackPriority.High, requestedAt: time);
+        int voiceId = Enqueue(voice, 1f), musicId = Enqueue(music, 1f);
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 1f);
+        bridge.DrainAcceptedRequests(_entityManager, catalog, null, playback, 1f);
+        Assert.IsTrue(playback.TryGetActiveSource(voiceId, out var voiceSource));
+        _entityManager.SetComponentData(mission, new CampaignMissionRuntimeComponent { Outcome = outcome });
+        int lateVoice = Enqueue(voice, 2f), resultClick = Enqueue(ui, 2f);
+        AudioCooldownSystem.ProcessPendingRequests(_entityManager, now: 2f);
+        bridge.DrainAcceptedRequests(_entityManager, catalog, null, playback, 2f);
+        Assert.IsFalse(playback.TryGetActiveSource(voiceId, out _));
+        Assert.IsFalse(playback.TryGetActiveSource(lateVoice, out _));
+        Assert.IsTrue(playback.TryGetActiveSource(musicId, out _), "Result music retains its own lifecycle.");
+        Assert.IsTrue(playback.TryGetActiveSource(resultClick, out _), "Result buttons remain audible.");
     }
 
     private AudioClip CreateClip(string name)

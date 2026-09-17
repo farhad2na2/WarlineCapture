@@ -67,7 +67,7 @@ namespace Game.Runtime
             if (building.DoorZ != null)
             {
                 float openEulerZ = NormalizeSignedAngle(building.DoorZ.localEulerAngles.z);
-                if (usesRoadBarrierArmFallback && Mathf.Abs(openEulerZ) < 0.01f)
+                if ((usesRoadBarrierArmFallback || BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(building.Definition)) && Mathf.Abs(openEulerZ) < 0.01f)
                     openEulerZ = RoadBarrierArmOpenEulerZ;
 
                 building.DoorClosedLocalEulerZ = 0f;

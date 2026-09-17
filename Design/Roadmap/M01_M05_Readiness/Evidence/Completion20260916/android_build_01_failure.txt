@@ -1,0 +1,1 @@
+readiness-android-candidate.log: Unity wrapper exit 0, but required AndroidBuildReport pass marker missing; queue correctly failed. Player script compilation error CS0103: ResolveAuthoredFootprint is Editor-only while its caller was compiled for Android. Added matching UNITY_EDITOR guard at the call. Editor bake behavior unchanged. Rebuild required.

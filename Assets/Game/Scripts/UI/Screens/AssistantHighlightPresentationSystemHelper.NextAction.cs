@@ -26,7 +26,35 @@ namespace Game.UI.Runtime
         private string _directCaptionKey, _directCaptionLocale;
         internal Button ResolveSquadTutorialControl() => _squadGuidanceButton;
         internal bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
-        internal bool HasPendingProduction => _buildDrawerCatalogRuntimeView != null && _buildDrawerCatalogRuntimeView.HasPendingProduction;
+        private IBuildingUiQuery _productionQuery;
+        private readonly System.Collections.Generic.List<BuildingPendingProductionUiEntry> _productionQueue = new();
+        private float _nextProductionQueryAt;
+        internal IBuildingUiQuery ProductionQuery => _productionQuery;
+        internal bool HasProducedUnitsThisAttempt =>
+            _productionQuery is IBuildingProductionProgressQuery progress && progress.HasProducedUnitsThisAttempt;
+        internal void BindProductionQuery(IBuildingUiQuery query)
+        {
+            _productionQuery = query;
+            _productionQueue.Clear();
+            _nextProductionQueryAt = 0;
+        }
+        internal bool HasPendingProduction
+        {
+            get
+            {
+                if (_buildDrawerCatalogRuntimeView?.ProductionQuery != null)
+                    _productionQuery = _buildDrawerCatalogRuntimeView.ProductionQuery;
+                if (_productionQuery == null)
+                    return _buildDrawerCatalogRuntimeView != null && _buildDrawerCatalogRuntimeView.HasPendingProduction;
+                if (Time.unscaledTime >= _nextProductionQueryAt)
+                {
+                    _nextProductionQueryAt = Time.unscaledTime + .2f;
+                    _productionQuery.GetFriendlyPendingProductionUiEntries(_productionQueue);
+                }
+                return _productionQueue.Count > 0 ||
+                    _productionQuery is IBuildingProductionProgressQuery progress && progress.HasProductionDeliveryInProgress;
+            }
+        }
 
         internal void TickAttention(float time)
         {
@@ -103,9 +131,31 @@ namespace Game.UI.Runtime
             _commandCueActive = false;
             if (_screenTargetIndicator != null) _screenTargetIndicator.gameObject.SetActive(false);
             ApplyWorldRing(new UiAssistantHighlightModel(0,true,0,0,0,3,target.x,target.y,target.z,1), true);
+            SetWorldMarkerDecoration(true);
             if(_worldRingRenderer!=null) _worldRingRenderer.startColor=_worldRingRenderer.endColor=V3GuidanceYellow;
             // A guidance target must remain visible when a transport or prop occludes the person.
             if(_worldRingMaterial!=null) _worldRingMaterial.SetInt("_ZTest",(int)UnityEngine.Rendering.CompareFunction.Always);
+        }
+
+        internal void ShowTutorialArea(Vector3 center, float radius, bool defensive = false)
+        {
+            ShowTutorialWorld(center);
+            WriteWorldMarker(center + Vector3.up * WorldRingHeightOffset, Mathf.Max(.35f, radius));
+            SetWorldMarkerDecoration(false);
+            _worldRingRenderer.startColor = _worldRingRenderer.endColor = defensive
+                ? V3GuidanceYellow : new Color32(94,224,79,255);
+        }
+
+        private void SetWorldMarkerDecoration(bool active)
+        {
+            SetLinesActive(_worldAccentRenderers, active);
+            SetLinesActive(_worldBracketRenderers, active);
+            SetLinesActive(_worldCrosshairRenderers, active);
+        }
+
+        private static void SetLinesActive(LineRenderer[] lines, bool active)
+        {
+            if (lines != null) foreach (var line in lines) line.enabled = active;
         }
 
         internal void ClearDirectTutorialCue()

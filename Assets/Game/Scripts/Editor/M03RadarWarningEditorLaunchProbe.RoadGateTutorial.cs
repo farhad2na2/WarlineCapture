@@ -20,11 +20,13 @@ namespace Game.Editor
             GridConfig grid,DynamicBuffer<GridRoad> roads,Vector2Int origin,Vector2Int footprint)
         {
             var center=origin+new Vector2Int(footprint.x/2,footprint.y/2);
+            var sidewalks=source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.GetRoadSidewalks();
             bool IsRoad(Vector2Int cell) => cell.x>=0 && cell.y>=0 && cell.x<grid.Width && cell.y<grid.Height &&
+                (sidewalks==null || !sidewalks[cell.y*grid.Width+cell.x]) &&
                 (roads[cell.y*grid.Width+cell.x].Value!=0 || source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.HasRoadInFootprint(
                     source.BuildingPlacementStartupSystemHelper,grid,cell,Vector2Int.one));
-            // Cell row 426 is the authored west-road convoy lane, not its sidewalk.
-            return center.y==426 && IsRoad(center) && BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateRotation(center,IsRoad,out bool vertical) && vertical;
+            // The authored convoy lane surrounds row 426. Snap to the local road center, never the adjacent median.
+            return center.y>=418 && center.y<=432 && IsRoad(center) && BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(center,IsRoad,out var snapped,out bool vertical) && snapped==center && vertical;
         }
 
         private static void DumpRoadGateCandidates(BuildingGameplaySourceCompositionSystemHelper source,
@@ -63,6 +65,9 @@ namespace Game.Editor
             BuildingPlacementLifecycleCompositionSystemHelper.PlacementState placement,
             GridConfig grid,DynamicBuffer<GridRoad> roads,DynamicBlockerComponent blockers)
         {
+            var sidewalks=source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.GetRoadSidewalks();
+            if(sidewalks==null || !sidewalks[427*grid.Width+875] || sidewalks[423*grid.Width+875])
+                throw new InvalidOperationException("The authored raised median and asphalt lane are not distinguished in placement data.");
             if(!placement.AutoRotateVertical || Quaternion.Angle(placement.PreviewInstance.transform.rotation,Quaternion.Euler(0,90,0))>.1f)
                 throw new InvalidOperationException("Road gate did not rotate across the east-west road.");
             var footprint=source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint(placement.Definition,true);
@@ -87,7 +92,7 @@ namespace Game.Editor
             bar.RotateButton.onClick.Invoke();
             if(!placement.AutoRotateVertical || !placement.IsValid)
                 throw new InvalidOperationException("Manual Rotate back to the road crossing did not restore green placement.");
-            Debug.Log("[M03RoadGateTutorial] result=Passed convoy lane=426 green yaw=90 manual-rotate=both-directions model-center="+modelBounds.center+" ordinary-building=blocked tutorial=real-clicks");
+            Debug.Log("[M03RoadGateTutorial] result=Passed convoy lane=centered green yaw=90 manual-rotate=both-directions model-center="+modelBounds.center+" ordinary-building=blocked tutorial=real-clicks");
         }
     }
 }

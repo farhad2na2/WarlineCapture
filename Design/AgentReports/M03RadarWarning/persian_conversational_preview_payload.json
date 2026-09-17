@@ -1,0 +1,21 @@
+{
+  "purpose": "User-requested small listening preview: conversational Iranian Persian ARIA, M3 selection/movement/Hold. Preview only; no game assets replaced.",
+  "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+  "speaker": "ARIA",
+  "voice_id": "Fi9tPTnEcbh3of7hOHC8",
+  "model_id": "eleven_v3",
+  "language_code": "fa",
+  "voice_settings": {
+    "stability": 0.5,
+    "similarity_boost": 0.75
+  },
+  "seed": 3150506,
+  "caption": "اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.\n\nوقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن. همین کافیه، لازم نیست «توقف» رو بزنی.",
+  "text": "[conversational tone] اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.\n\nوقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن. همین کافیه، لازم نیست «توقف» رو بزنی.",
+  "reference_clips": [
+    "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav",
+    "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav"
+  ],
+  "output_directory": ".local/voice-previews/m03-persian-conversational",
+  "settings_reference": "https://elevenlabs.io/docs/overview/capabilities/text-to-speech/best-practices"
+}

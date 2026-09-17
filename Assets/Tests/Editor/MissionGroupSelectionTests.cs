@@ -14,7 +14,8 @@ public sealed class MissionGroupSelectionTests
     public void RescueSelectionResolvesSpecialistsInsteadOfOverlappingTransports()
     {
         using var world=new World("Mission group selection");var em=world.EntityManager;
-        var root=em.CreateEntity(typeof(CampaignMissionExtractionState));
+        var root=em.CreateEntity(typeof(CampaignMissionExtractionState),typeof(CampaignMissionRuntimeComponent));
+        em.SetComponentData(root,new CampaignMissionRuntimeComponent {MissionId="saga.ch01.m04.airlift"});
         Entity carrier=Actor(em),helicopter=Actor(em),specialist=Actor(em),second=Actor(em);
         em.SetComponentData(root,new CampaignMissionExtractionState {Carrier=carrier,Aircraft=helicopter});
         var members=em.AddBuffer<CampaignMissionExtractionMember>(root);
@@ -33,6 +34,85 @@ public sealed class MissionGroupSelectionTests
         Assert.AreEqual(Entity.Null,Resolve(em,root,new CampaignMissionGuidanceProjectionComponent {GuidanceId=55009},float3.zero));
         Assert.AreEqual(carrier,Resolve(em,root,new CampaignMissionGuidanceProjectionComponent {GuidanceId=55002},float3.zero));
         Assert.AreEqual(helicopter,Resolve(em,root,new CampaignMissionGuidanceProjectionComponent {GuidanceId=55008},float3.zero));
+    }
+    [Test]
+    public void ReturningFromAirliftDoesNotRedirectOtherMissionSelection()
+    {
+        using var world=new World("Post-airlift tutorial selection");var em=world.EntityManager;
+        var root=em.CreateEntity(typeof(CampaignMissionExtractionState),typeof(CampaignMissionRuntimeComponent));
+        var currentActor=Actor(em);
+        var oldCarrier=Actor(em);var oldAircraft=Actor(em);
+        foreach(var mission in new[]{"saga.ch01.m01.first_contact","saga.ch01.m02.establish_base","saga.ch01.m03.radar_warning","saga.ch01.m05.breach_assault"})
+        {
+            em.SetComponentData(root,new CampaignMissionRuntimeComponent {MissionId=mission,SessionToken="current-attempt"});
+            foreach(bool retainedActors in new[]{false,true})
+            {
+                em.SetComponentData(root,retainedActors ? new CampaignMissionExtractionState {Carrier=oldCarrier,Aircraft=oldAircraft} : default);
+                Assert.AreEqual(currentActor,Resolve(em,root,new CampaignMissionGuidanceProjectionComponent {SourceEntity=currentActor},float3.zero),mission);
+            }
+        }
+    }
+
+    [Test]
+    public void TravelCueWaitsForTheLastSelectedSoldier()
+    {
+        using var world = new World("Formation arrival guidance"); var em = world.EntityManager;
+        Entity arrived = Actor(em), moving = Actor(em), oldAttempt = Actor(em);
+        foreach (var unit in new[] { arrived, moving, oldAttempt })
+        {
+            em.AddComponent<SelectedUnitTag>(unit);
+            em.AddComponentData(unit, new CampaignMissionUnitRoleComponent
+            { SessionToken = unit == oldAttempt ? "old" : "current" });
+        }
+        em.AddComponent<UnitPathFollow>(moving); em.AddComponent<UnitPathFollow>(oldAttempt);
+        Assert.IsTrue(GroupMoving(em, "current"));
+        em.RemoveComponent<UnitPathFollow>(moving);
+        Assert.IsFalse(GroupMoving(em, "current"), "Ignore an older attempt's moving actor.");
+        em.AddComponent<UnitPathFollow>(moving); em.RemoveComponent<SelectedUnitTag>(moving);
+        Assert.IsFalse(GroupMoving(em, "current"), "Unselected actors do not block the instructed group.");
+    }
+
+    private static bool GroupMoving(EntityManager em, Unity.Collections.FixedString64Bytes session) =>
+        (bool)typeof(UiShellEcsGateway).GetMethod("IsSelectedTutorialGroupMoving",System.Reflection.BindingFlags.Static|System.Reflection.BindingFlags.NonPublic).Invoke(null,new object[]{em,session});
+
+    [Test]
+    public void AcceptedAttackWaitsForItsActualTarget()
+    {
+        using var world = new World("Attack feedback"); var em = world.EntityManager;
+        var actor = Actor(em); var target = Actor(em); var other = Actor(em);
+        bool Busy() => (bool)typeof(UiShellEcsGateway).GetMethod("IsTutorialAttackInProgress",
+            System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+            .Invoke(null, new object[] { em, actor, target });
+        em.AddComponentData(actor, new EngageTarget {Target=target,IsCommanded=1});
+        Assert.IsTrue(Busy(), "One accepted attack must not demand the same click again.");
+        em.SetComponentData(actor, new EngageTarget {Target=other,IsCommanded=1});
+        Assert.IsFalse(Busy(), "A wrong target must still offer corrective guidance.");
+        em.SetComponentData(actor, new EngageTarget {Target=target,IsCommanded=0});
+        Assert.IsFalse(Busy(), "Auto-engagement is not the requested command.");
+        em.SetComponentData(actor, new EngageTarget {Target=target,IsCommanded=1});
+        em.SetComponentData(target, new UnitHealth {Current=0}); Assert.IsFalse(Busy());
+        em.DestroyEntity(target); Assert.IsFalse(Busy());
+    }
+
+    public static void ValidateAttackCue()
+    {
+        new MissionGroupSelectionTests().AcceptedAttackWaitsForItsActualTarget();
+        Debug.Log("[TutorialAttackFeedback] result=Passed accepted, wrong, automatic, dead and removed targets");
+    }
+
+    public static void ValidateTravelCue()
+    {
+        new MissionGroupSelectionTests().TravelCueWaitsForTheLastSelectedSoldier();
+        Debug.Log("[TutorialFormationTravel] result=Passed last-selected-arrival and attempt isolation");
+    }
+
+    public static void ValidateRouting()
+    {
+        var tests=new MissionGroupSelectionTests();
+        tests.RescueSelectionResolvesSpecialistsInsteadOfOverlappingTransports();
+        tests.ReturningFromAirliftDoesNotRedirectOtherMissionSelection();
+        tests.DefendersSpanBothSquadsButExcludeOtherRolesAndAttempts();
+        Debug.Log("[MissionGroupSelectionRouting] result=Passed rescue, cross-mission return, role and attempt isolation");
     }
     [Test]
     public void DefendersSpanBothSquadsButExcludeOtherRolesAndAttempts()
@@ -87,7 +167,7 @@ public sealed class MissionGroupSelectionTests
         try
         {
             Game.Editor.M03RadarWarningLocalizationBuilder.Import();
-            var tests=new MissionGroupSelectionTests();tests.RescueSelectionResolvesSpecialistsInsteadOfOverlappingTransports();tests.SelectionCopyExistsInBothLanguageConfigs();tests.DefendersSpanBothSquadsButExcludeOtherRolesAndAttempts();
+            ValidateRouting();new MissionGroupSelectionTests().SelectionCopyExistsInBothLanguageConfigs();
             MatchHudAssistantUiSystemHelperTests.RunShowMeValidation();
             new HudRightColumnLayoutValidation().MinimapDockAndContentHeightFollowActualControlsAndCopy();
             Debug.Log("[MissionGroupSelection] result=Passed M1-M5 HUD transitions, group routing, bilingual copy, layout");

@@ -486,7 +486,7 @@ namespace Game.Runtime
             return (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
         }
 
-        private static bool TryGetSelectionHitboxScreenDistanceSq(
+        internal static bool TryGetSelectionHitboxScreenDistanceSq(
             Camera worldCamera,
             float4x4 localToWorld,
             UnitSelectionHitbox hitbox,

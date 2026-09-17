@@ -1,0 +1,5 @@
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20260916-213201
+[CampaignContinuity] deploy=chain-01-m1-en available=1 completed=0 action=Start
+InvalidOperationException: System.InvalidOperationException: GetSingleton<Game.Components.PathPoolComponent>() requires that exactly one entity exists that match this query, but there are 2 entities in 2 chunks.
+InvalidOperationException: InvalidOperationException: System.InvalidOperationException: GetSingleton<Game.Components.PathPoolComponent>() requires that exactly one entity exists that match this query, but there are 2 entities in 2 chunks.
+[CampaignTutorialEntry] result=Failed InvalidOperationException: System.InvalidOperationException: GetSingleton<Game.Components.PathPoolComponent>() requires that exactly one entity exists that match this query, but there are 2 entities in 2 chunks.

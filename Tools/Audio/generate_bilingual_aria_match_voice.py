@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import persian_voice_profile
 import concurrent.futures
 import datetime as dt
 import hashlib
@@ -107,6 +108,7 @@ def load_lines() -> list[dict]:
                 "eventId": target.event_id,
                 "englishText": target.text,
                 "persianText": persian_text,
+                "persianSpokenText": localized.get("spokenText", persian_text),
                 "englishAssetPath": target.clip_asset_path,
                 "persianAssetPath": persian_path.relative_to(ROOT).as_posix(),
             }
@@ -160,7 +162,7 @@ def normalize_spoken_text(text: str, language: str) -> str:
 
 def cache_path(text: str, language: str) -> Path:
     digest = hashlib.sha256(
-        f"{VOICE_ID}\n{MODEL}\n{language}\n{text}".encode("utf-8")
+        f"{VOICE_ID}\n{MODEL}\n{language}\n{persian_voice_profile.PROFILE_ID if language == 'fa' else 'default'}\n{text}".encode("utf-8")
     ).hexdigest()
     return CACHE_ROOT / language / f"{digest}.mp3"
 
@@ -174,6 +176,7 @@ def request_audio(api_key: str, text: str, language: str, seed: int) -> bytes:
         "seed": seed,
         "apply_text_normalization": "on",
     }
+    persian_voice_profile.apply(body, language)
     request = urllib.request.Request(
         f"{API_ROOT}/v1/text-to-speech/{VOICE_ID}?{query}",
         data=json.dumps(body).encode("utf-8"),
@@ -194,7 +197,7 @@ def request_audio(api_key: str, text: str, language: str, seed: int) -> bytes:
 
 def ensure_cached_audio(api_key: str, line: dict, language: str, index: int) -> Path:
     text_key = "persianText" if language == PERSIAN_LANGUAGE else "englishText"
-    spoken = normalize_spoken_text(line[text_key], language)
+    spoken = line["persianSpokenText"] if language == PERSIAN_LANGUAGE else normalize_spoken_text(line[text_key], language)
     destination = cache_path(spoken, language)
     if destination.exists() and destination.stat().st_size > 0:
         return destination
@@ -341,6 +344,9 @@ def wave_record(line: dict, locale: str, text: str, asset_path: str) -> dict:
         "eventId": line["eventId"],
         "locale": locale,
         "text": text,
+        "spokenText": line["persianSpokenText"] if locale == PERSIAN_LOCALE else text,
+        "captionSha256": hashlib.sha256(text.encode()).hexdigest(),
+        **persian_voice_profile.metadata("fa" if locale == PERSIAN_LOCALE else "en"),
         "assetPath": asset_path,
         "durationSeconds": round(duration, 6),
         "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),

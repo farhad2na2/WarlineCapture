@@ -2,6 +2,7 @@
 """Generate M03 voice from the authoritative C# copy catalogs; no runtime TTS."""
 from __future__ import annotations
 import argparse
+import persian_voice_profile
 import copy
 import datetime as dt
 import hashlib
@@ -17,7 +18,7 @@ STRING = r'"((?:[^"\\]|\\.)*)"'
 def decode(value):
     return json.loads('"' + value + '"')
 
-def lines():
+def lines(include_retired=False):
     source = (ROOT / "Assets/Game/Scripts/Configs/Narrative/M03RadarWarningCopyCatalog.cs").read_text()
     pattern = r'new\(' + STRING + r',NarrativeSpeakerId\.(\w+),\s*' + STRING + r',\s*' + STRING + r'\)'
     narrative = re.findall(pattern, source)
@@ -30,6 +31,8 @@ def lines():
     if len(tutorial) != 12:
         raise RuntimeError(f"Expected 12 canonical tutorial steps, got {len(tutorial)}")
     for i, (_, english, _, persian) in enumerate(tutorial, 1):
+        if i == 7 and not include_retired:
+            continue  # Retired Stop lesson: preserve its archive, never regenerate it.
         yield "tutorial", f"tutorial-m03-{i:02}", "ARIA", decode(english), decode(persian)
 
 def main():
@@ -39,7 +42,7 @@ def main():
     args = parser.parse_args()
     entries = list(lines())
     if args.dry_run:
-        print(f"[M03VoiceCopy] result=Passed narrative=11 tutorial=12 locales=2 characters={sum(len(e[3])+len(e[4]) for e in entries)}")
+        print(f"[M03VoiceCopy] result=Passed narrative=11 tutorial=11 retiredTutorial=1 locales=2 characters={sum(len(e[3])+len(e[4]) for e in entries)}")
         return
     key = audio.read_api_key(ROOT / ".local/secrets/elevenlabs_api_key")
     subscription = audio.request_json(key, "/v1/user/subscription")
@@ -53,20 +56,22 @@ def main():
         "subscription": {"tier": subscription.get("tier"), "status": subscription.get("status")},
         "processing": {"sampleRateHz": 44100, "channels": 1, "sourceEncoding": "PCM_S16LE", "loudnessLUFS": -18}, "clips": []}
     MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+    manifest['clips']=[dict(c,retired=True) for c in previous['clips'] if c['id']=='tutorial-m03-07']
     for index, (kind, identity, speaker, english, persian) in enumerate(entries):
         for language, locale, text in (("en", "en-US", english), ("fa", "fa-IR", persian)):
             path = MANIFEST.parent / "Voice" / language / (identity + ".wav")
             old = prior.get((identity, locale), {})
-            matching = path.exists() and old.get("text") == text and old.get("sha256") == hashlib.sha256(path.read_bytes()).hexdigest()
+            matching = persian_voice_profile.clip_matches(old, text, path, language)
             if args.force or not matching:
                 audio.convert(audio.request_audio(key, audio.VOICE_IDS[speaker], text, language, 3300 + index*2 + (language=="fa")), path, speaker)
             clip = audio.record(kind, identity, speaker, locale, text, path)
             clip["captionSha256"] = hashlib.sha256(text.encode()).hexdigest()
+            clip.update(persian_voice_profile.metadata(language))
             manifest["clips"].append(clip)
             MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
             print(f"[M03Voice] {kind} {identity} {locale} duration={clip['durationSeconds']:.2f}s", flush=True)
     register_events(manifest["clips"])
-    print("[M03BilingualVoiceGeneration] result=Passed narrative=22 tutorial=24 locales=2")
+    print("[M03BilingualVoiceGeneration] result=Passed narrative=22 tutorial=22 locales=2")
 
 def register_events(clips):
     path=ROOT / "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json"
@@ -74,6 +79,8 @@ def register_events(clips):
     template=next(e for e in catalog["events"] if e["eventId"]=="VO.ARIA.Tutorial.M02.OpenBuild.En")
     catalog["events"]=[e for e in catalog["events"] if not e["eventId"].lower().startswith(("vo.aria.tutorial.m03.","vo.aria.m03.comms."))]
     for clip in clips:
+        if clip.get('retired'):
+            continue
         if clip["kind"]!="tutorial" and clip["id"]!="m03-comms-01":
             continue
         suffix="fa" if clip["locale"]=="fa-IR" else "en"

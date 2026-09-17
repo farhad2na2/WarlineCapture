@@ -19,6 +19,11 @@ namespace Game.UI.Runtime
 
         public void BindBuildDrawer(BuildDrawerView buildDrawerView)
         {
+            // Closing destroys the popup. Keep its gameplay query, not the view,
+            // so recruitment guidance can continue through the training wait.
+            if (_buildDrawerCatalogRuntimeView?.ProductionQuery != null)
+                _productionQuery = _buildDrawerCatalogRuntimeView.ProductionQuery;
+            _nextProductionQueryAt = 0;
             DetachBarracksGuidanceButton();
             _buildDrawerOpenRequested = false;
             _buildDrawerView = buildDrawerView;
@@ -139,7 +144,9 @@ namespace Game.UI.Runtime
                 {
                     MoveRecommendationKind => _commandControlsView?.MoveButton,
                     8 => _commandControlsView?.HoldButton,
-                    10 => _commandControlsView?.StopButton,
+                    10 => _commandControlsView?.CommandWheelPanel?.IsOpen == true
+                        ? _commandControlsView.CommandWheelStopButton
+                        : _commandControlsView?.CommandWheelPanel?.OpenButton,
                     6 => _commandControlsView?.SupportButton,
                     BuildRecommendationKind => _buildGuidanceButton,
                     SelectRecommendationKind => ResolveBarracksGuidanceButton(),

@@ -135,12 +135,13 @@ namespace Game.Editor
             // Header coordinates share the existing responsive HUD reference space.
             var actions=Rect("M03Actions",composition,660,181,540,95);
             var warningTitle=Find(composition.Find("ThreatJumpPanel").gameObject,"Title").GetComponent<TMP_Text>();
-            warningTitle.enableAutoSizing=true; warningTitle.fontSizeMin=12; warningTitle.fontSizeMax=18;
+            warningTitle.enableAutoSizing=true; warningTitle.fontSizeMin=22; warningTitle.fontSizeMax=22;
             var guide=Button("FieldGuide",actions,0,0,172,42,"mission.m03.guide.open");
             var warning=Button("ReadWarning",actions,182,0,172,42,"mission.m03.action.warning");
             var skip=Button("SkipLesson",actions,364,0,176,42,"mission.m03.optional.skip");
             var status=Text("RadarStatus",actions,0,47,354,40,20,"");
             var returnCamera=Button("ReturnWarningCamera",actions,364,47,176,42,"mission.m03.camera.return");
+            returnCamera.gameObject.SetActive(false); skipTour.gameObject.SetActive(false);
             var support=Find(root,"SupportCommand"); var scan=Find(root,"ScanCommand");
             var supportText=support.GetComponentsInChildren<TMP_Text>(true).First();
             var obsolete=root.GetComponent<MissionDefenseHudView>(); if(obsolete!=null) UnityEngine.Object.DestroyImmediate(obsolete);

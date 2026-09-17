@@ -170,10 +170,41 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
     {
         AssertCommanderPresentation(0, "p14_commander_female");
         AssertCommanderPresentation(1, "p14_commander");
-        AssertCommanderPresentation(6, "p14_commander_neutral");
+        // The six-portrait shipping selector clamps an older saved neutral option
+        // to portrait 6. Its voice must follow that visible portrait too.
+        AssertCommanderPresentation(6, "p14_commander_female", 5);
     }
 
-    private static void AssertCommanderPresentation(int portraitIndex, string expectedClipName)
+    [TestCase(0, "p14_commander_female")]
+    [TestCase(1, "p14_commander")]
+    public void Player_CommittedIdentityCarriesIntoFirstCommanderDialogue(int index, string clipName)
+    {
+        TestContext context = CreateContext();
+        try
+        {
+            Assert.IsTrue(context.SequencePresentation.StartAt("first_launch.commander_identity"));
+            var identity = context.View.CommanderIdentityView;
+            var serialized = new SerializedObject(identity);
+            var portraitButton = (Button)serialized.FindProperty("portraitButtons").GetArrayElementAtIndex(index).objectReferenceValue;
+            var continueButton = (Button)serialized.FindProperty("continueButton").objectReferenceValue;
+            int committedIndex = -1;
+            context.SequencePresentation.CommanderIdentityCommitted += (_, selected) => committedIndex = selected;
+            portraitButton.onClick.Invoke();
+            Sprite selectedPortrait = identity.SelectedPortrait;
+            continueButton.onClick.Invoke();
+            Assert.AreEqual(index, committedIndex);
+            Assert.AreEqual("FL-P09", context.SequencePresentation.CurrentStateId);
+            Assert.IsTrue(context.SequencePresentation.StartAt("FL-P14"));
+            context.SequencePresentation.Tick(0.51f);
+            Assert.NotNull(selectedPortrait);
+            Assert.AreSame(selectedPortrait, context.View.DialogueView.CurrentPortraitSprite);
+            Assert.IsTrue(context.View.DialogueView.IsPortraitVisible);
+            Assert.AreEqual(clipName, context.View.VoiceSource.clip.name);
+        }
+        finally { context.Dispose(); }
+    }
+
+    private static void AssertCommanderPresentation(int portraitIndex, string expectedClipName, int? resolvedIndex = null)
     {
         TestContext context = CreateContext();
         context.SequencePresentation.ApplyCommanderIdentity(new NarrativeCommanderIdentityData
@@ -183,6 +214,7 @@ public sealed class FirstLaunchNarrativeSequencePresentationSystemHelperTests
         }, portraitIndex);
 
         Sprite selectedPortrait = context.View.CommanderIdentityView.SelectedPortrait;
+        Assert.AreEqual(resolvedIndex ?? portraitIndex, context.View.CommanderIdentityView.SelectedPortraitIndex);
         Assert.NotNull(selectedPortrait, $"Commander portrait {portraitIndex}");
         Assert.IsTrue(context.SequencePresentation.StartAt("FL-P14"));
         context.SequencePresentation.Tick(0.51f);

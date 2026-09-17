@@ -36,6 +36,9 @@ namespace Game.Editor
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(guidance.GuidanceId==45005 && tutorialBuildClick>=4)
             {
+                if (EditorApplication.timeSinceStartup < tutorialBuildNext) return true;
+                AssertCommittedPreviewPose();
+                ScreenCapture.CaptureScreenshot(Output+"/placement-after-confirm.png");
                 SessionState.SetBool(TutorialBuildKey,false); SessionState.SetBool("Warline.M03.Probe.RoadGateTutorial",false);
                 if (placementIndicatorAudit && placementIndicatorVerified && !optionalJourney) { Complete(true,"Placement indicator aligned and animated; real confirm advanced to squad movement."); return true; }
                 if (completeBuildingJourney) { Debug.Log("[M03BuildingJourney] one real defense placed; continuing through combat and results."); return false; }
@@ -78,8 +81,10 @@ namespace Game.Editor
                 if(!tutorialPlotStaged)
                 {
                     var bootstrap=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap;
+                    AssertInitialPlacementHandoff(bootstrap);
+                    if (placementDragPhase == 0) ScreenCapture.CaptureScreenshot(Output+"/placement-initial-centered.png");
                     if (placementIndicatorAudit) StageLegalPlacementPreview(bootstrap);
-                    else if (!AdvancePlacementPointerDrag(bootstrap)) return true;
+                    else if (!SessionState.GetBool("Warline.M03.Probe.ConfirmDefaultPreview", false) && !AdvancePlacementPointerDrag(bootstrap)) return true;
                     tutorialPlotStaged=true; tutorialBuildNext=EditorApplication.timeSinceStartup+1; return true;
                 }
                 var bar=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>();
@@ -95,9 +100,14 @@ namespace Game.Editor
             if (tutorialBuildClick==3)
             {
                 var command=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap.BuildingUiCommandContract;
+                CapturePreviewPoseForCommit();
                 tutorialMaterialsSpent=command.ActivePlacementCost; tutorialCreditsSpent=command.ActivePlacementCreditsCost;
             }
-            ClickTutorialButton(button); tutorialBuildCaptured=false; tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+(placementIndicatorAudit && tutorialBuildClick==3 ? 3 : 1); return true;
+            if (tutorialBuildClick == 2) StageDistantPlacementCamera();
+            ClickTutorialButton(button);
+            if (tutorialBuildClick == 3) AssertCommittedPreviewPose();
+            if (tutorialBuildClick == 2) AssertInitialPlacementHandoff(UnityEngine.Object.FindAnyObjectByType<MatchSceneView>().MatchBootstrap);
+            tutorialBuildCaptured=false; tutorialBuildClick++; tutorialBuildNext=EditorApplication.timeSinceStartup+(placementIndicatorAudit && tutorialBuildClick==3 ? 3 : 1); return true;
         }
     }
 }

@@ -48,7 +48,7 @@ MonoBehaviour:
     continueStateId: M05-debrief-1
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.92
+    durationSeconds: 13.17
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -94,7 +94,7 @@ MonoBehaviour:
     continueStateId: M05-debrief-2
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.36
+    durationSeconds: 14.61
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -140,7 +140,7 @@ MonoBehaviour:
     continueStateId: M05-debrief-3
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.16
+    durationSeconds: 17.41
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -186,7 +186,7 @@ MonoBehaviour:
     continueStateId: M05-debrief-complete
     skipStateId: M05-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 15.96
+    durationSeconds: 16.21
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -282,7 +282,7 @@ MonoBehaviour:
     continueStateId: M05-brief-1
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.48
+    durationSeconds: 17.73
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -328,7 +328,7 @@ MonoBehaviour:
     continueStateId: M05-brief-2
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.88
+    durationSeconds: 18.13
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -374,7 +374,7 @@ MonoBehaviour:
     continueStateId: M05-brief-complete
     skipStateId: M05-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 16.68
+    durationSeconds: 16.93
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -470,7 +470,7 @@ MonoBehaviour:
     continueStateId: M05-comms-complete
     skipStateId: M05-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.92
+    durationSeconds: 13.17
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

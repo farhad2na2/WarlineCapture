@@ -1,0 +1,13 @@
+[MissionGroupSelectionRouting] result=Passed rescue, cross-mission return, role and attempt isolation
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/en replay=Replay lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/en replay=Replay lesson=2 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/en replay=Replay lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m04.airlift/en replay=Replay lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m05.breach_assault/en replay=Replay lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/fa-IR replay=Retry lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/fa-IR replay=Retry lesson=2 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/fa-IR replay=Retry lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m04.airlift/fa-IR replay=Retry lesson=1 visible text and cue
+[CampaignTutorialEntry] saga.ch01.m05.breach_assault/fa-IR replay=Retry lesson=1 visible text and cue
+[CampaignTutorialEntry] result=Passed M1-M5 completed-profile entries and first-action transitions in English and Farsi
+wrapper exit=0

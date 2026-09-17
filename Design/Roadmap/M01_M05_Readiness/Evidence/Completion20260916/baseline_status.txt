@@ -1,0 +1,509 @@
+ M "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset"
+ M Assets/Game/Audio/Config/audio_event_catalog_v0_1.json
+ M Assets/Game/Audio/Events/AudioEventCatalogConfig.asset
+ M Assets/Game/Audio/GeneratedSource/aria_match_voice_bilingual_manifest_v0_1.json
+ M Assets/Game/Audio/GeneratedSource/aria_match_voice_fa_text_catalog_v0_1.json
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p02_radio.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p03_radio.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_dalia.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p04_samira.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p05_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p06_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p07_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p09_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p10_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p11_dalia.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p12_samira.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p13_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_neutral.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p15_dalia.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p16_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p17_dalia.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav
+ M Assets/Game/Audio/Narrative/FirstLaunch/first_launch_persian_voice_manifest.json
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_1_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_2_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_3_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_1_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_2_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_3_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_1_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_2_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_3_fa.wav
+ M Assets/Game/Audio/Narrative/M02EstablishBase/m02_narrative_voice_manifest.json
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-01.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-02.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-03.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-comms-01.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-01.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-02.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-03.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-civilian-loss.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-clean.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-damaged.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-mixed.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-01.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-02.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-03.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-04.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-07.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-08.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-09.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-10.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-11.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-12.wav
+ M Assets/Game/Audio/Narrative/M03RadarWarning/m03_voice_manifest.json
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-03.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-comms-01.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-01.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-02.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-03.wav
+ M Assets/Game/Audio/Narrative/M04Airlift/m04_voice_manifest.json
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-02.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-03.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-comms-01.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-01.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-02.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-03.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-01.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-02.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-03.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-04.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-05.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-06.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-07.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav
+ M Assets/Game/Audio/Narrative/M05BreachAssault/m05_voice_manifest.json
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_action_place_choose_footprint_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_aircraft_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_buildings_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_default_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_name_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_select_item_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_soldiers_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_empty_vehicles_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_connecting_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_global_queue_full_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_invalid_selection_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_missing_producer_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_not_enough_money_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_queue_full_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_global_queue_full_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_missing_producer_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_not_enough_money_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_queue_full_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_requires_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_short_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_failure_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_cannot_place_here_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_instruction_place_pending_confirm_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_placement_invalid_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_aircraft_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_buildings_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_default_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_soldiers_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_ready_vehicles_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_production_queued_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_drawer_success_recruitment_queued_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_building_placed_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_drawer_not_ready_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_no_active_placement_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_building_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_place_on_valid_ground_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_placement_cancelled_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancel_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_cancelled_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_clear_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_cleared_sentence_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_queue_empty_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_production_requested_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_feedback_rotated_90_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_instruction_confirm_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_drag_to_position_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_status_valid_ground_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_default_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_fallback_subject_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_build_placement_title_named_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_confirm_destroy_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_create_first_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_drag_building_to_final_position_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_blocked_civilian_zone_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_match_feedback_tactical_map_not_ready_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_not_enough_money_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_soldier_singular_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_count_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_squad_selected_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_plural_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_unit_singular_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_selection_feedback_vehicle_singular_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_cargo_drop_blocked_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_emergency_drop_visual_missing_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_no_clear_landing_zone_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_airdrop_parachute_visual_missing_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_board_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_build_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_destroy_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_return_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_scan_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_stop_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_attack_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_description_transport_to_passenger_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_board_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_build_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_move_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_description_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_mode_scan_title_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_passenger_to_transport_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_prompt_transport_to_passenger_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_select_unit_first_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_selected_unit_cannot_board_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_tap_units_to_board_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_board_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_attack_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_board_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_build_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_hold_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_move_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_scan_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_select_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_special_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_instruction_stop_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_build_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_camera_jump_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_command_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_fuel_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_insufficient_resources_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_passenger_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_invalid_transport_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_disembark_cell_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_eligible_passengers_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_no_selection_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_cooldown_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_scan_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_blocked_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_attackable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_not_enemy_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_out_of_bounds_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_target_unreachable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_full_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_reason_transport_passenger_missing_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_hold_no_selection_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_scan_no_selection_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_command_unavailable_stop_no_selection_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_air_defense_auto_engage_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_boarding_transport_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_active_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_camera_follow_unavailable_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_building_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_unit_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_destroyed_selected_units_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_passengers_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_unit_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_follow_target_lost_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_holding_current_position_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_loading_transport_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_missile_launched_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_rts_camera_restored_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_complete_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_contacts_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_one_contact_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_scan_ordered_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_unit_returning_to_base_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_units_returning_to_base_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_air_attack_type_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_count_suffix_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_seconds_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_attack_eta_suffix_01_fa.wav
+ M Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_secure_corridor_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_defend_post_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_incoming_patrol_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_open_build_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_place_barracks_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_select_barracks_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_train_rifle_squad_aria_fa.wav
+ M Assets/Game/Audio/Voice/Tutorial/tutorial_m01_aria_voice_manifest.json
+ M Assets/Game/Audio/Voice/Tutorial/tutorial_m02_aria_voice_manifest.json
+ M Assets/Game/Configs/Localization/StartThroughM02UiStrings.json
+ M Assets/Game/Configs/Narrative/Chapter01/M03_RadarWarning_Narrative.asset
+ M Assets/Game/Configs/Narrative/Chapter01/M04_Airlift_Narrative.asset
+ M Assets/Game/Configs/Narrative/Chapter01/M05_BreachAssault_Narrative.asset
+ M Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset
+ M Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset
+ M Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_BreachAssault01.asset
+ M Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M03_RadarWarning.asset
+ M Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M05_BreachAssault.asset
+ M Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset
+ M Assets/Game/Data/Narrative/FirstLaunch/first_launch_persian_text_catalog.json
+ M Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab
+ M Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab
+ M Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset
+ M Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs
+ M Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs
+ M Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs
+ M Assets/Game/Scripts/Components/CampaignMissionBreachComponents.cs
+ M Assets/Game/Scripts/Components/MatchHudMinimapMarkerComponents.cs
+ M Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs
+ M Assets/Game/Scripts/Composition/MatchSceneView.cs
+ M Assets/Game/Scripts/Composition/UiRuntimeAdapters.cs
+ M Assets/Game/Scripts/Configs/Localization/M03RadarWarningGuideCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/Localization/M03RadarWarningTutorialCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/Localization/M03RadarWarningUiCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/Localization/M04AirliftCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/Localization/M05BreachAssaultCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/MapBuildingPlacementConfig.cs
+ M Assets/Game/Scripts/Configs/Narrative/M02EstablishBaseTextCatalog.cs
+ M Assets/Game/Scripts/Configs/Narrative/M03RadarWarningCopyCatalog.cs
+ M Assets/Game/Scripts/Configs/OperationMapDefinition.cs
+ M Assets/Game/Scripts/Contracts/TacticalCommandContracts.cs
+ M Assets/Game/Scripts/Editor/BuildDrawerV3PrefabBuilder.cs
+ M Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.Guidance.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningConfigBuilder.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.BattleClarity.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.OptionalJourney.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RadarToolbar.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.RoadGateTutorial.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.TutorialBuild.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.cs
+ M Assets/Game/Scripts/Editor/M03RadarWarningUiBuilder.cs
+ M Assets/Game/Scripts/Editor/M05BreachAssaultConfigBuilder.cs
+ M Assets/Game/Scripts/Editor/M05BreachAssaultEditorProbe.cs
+ M Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.SelectionWheel.cs
+ M Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs
+ M Assets/Game/Scripts/Editor/MissionResultV3PrefabBuilder.cs
+ M Assets/Game/Scripts/Editor/V3PersianUiTranslationSeeder.cs
+ M Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.Configs.cs
+ M Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptFactProjectionSystem.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.Breach.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.Defense.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.DefenseBattle.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionPatrolOrderSystem.DefenseCamera.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Breach.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.Breach.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.OpeningPresentation.cs
+ M Assets/Game/Scripts/Systems/AssistantPreviewAttackTargetUtility.cs
+ M Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.PlacementOrientation.cs
+ M Assets/Game/Scripts/Systems/BuildingBarrierUtilitySystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingDestroyedVisualPresentationSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingGameplayDependencyCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementCommandCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementConstructionTransaction.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementContextCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementInvalidCellCacheCompositionSystemHelper.RoadValidation.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementLifecycleCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementQueryUiSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.Camera.cs
+ M Assets/Game/Scripts/Systems/BuildingPlacementVisualUpdateCompositionSystemHelper.RoadGate.cs
+ M Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.InitialPlacement.cs
+ M Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/BuildingRuntimeVisualPresentationSystemHelper.cs
+ M Assets/Game/Scripts/Systems/CampaignMissionBuildingPlacementPolicy.cs
+ M Assets/Game/Scripts/Systems/FocusableUnitLookupCameraSystemHelper.cs
+ M Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs
+ M Assets/Game/Scripts/Systems/MatchHudMinimapMarkerSystem.cs
+ M Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs
+ M Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystemHelper.cs
+ M Assets/Game/Scripts/Systems/SelectionOrderMarkerPresentationSystemHelper.cs
+ M Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs
+ M Assets/Game/Scripts/Systems/ThreatDetectionWarningSystem.RadarPing.cs
+ M Assets/Game/Scripts/Systems/ThreatWarningDisplayText.cs
+ M Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs
+ M Assets/Game/Scripts/Systems/UnitDeathSystem.cs
+ M Assets/Game/Scripts/UI/Art/V3RadialWedgeGraphic.cs
+ M Assets/Game/Scripts/UI/Components/BattleHudRuntimeFeedbackView.Presentation.cs
+ M Assets/Game/Scripts/UI/Components/TutorialTapPointerLayout.cs
+ M Assets/Game/Scripts/UI/Components/TutorialTapPointerView.cs
+ M Assets/Game/Scripts/UI/Components/UiDisabledMaterialUtility.cs
+ M Assets/Game/Scripts/UI/Contracts/UiMissionDefenseModels.cs
+ M Assets/Game/Scripts/UI/Contracts/UiMissionResultModels.cs
+ M Assets/Game/Scripts/UI/Contracts/UiMissionTutorialTarget.cs
+ M Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs
+ M Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Layout.cs
+ M Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Progress.cs
+ M Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Selection.cs
+ M Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs
+ M Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.Guidance.cs
+ M Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.NextAction.cs
+ M Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.TargetVisuals.cs
+ M Assets/Game/Scripts/UI/Screens/AssistantHighlightPresentationSystemHelper.UiSurfaceGuidance.cs
+ M Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs
+ M Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.NextAction.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Breach.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.DefenseBattle.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.M02PlacementGuidance.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.PlacementClarity.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ShowMe.cs
+ M Assets/Game/Scripts/UI/Screens/MatchHudRightQuickRailView.cs
+ M Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsView.cs
+ M Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.Capabilities.cs
+ M Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.CommandTabs.cs
+ M Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs
+ M Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs
+ M Assets/Game/Scripts/UI/Screens/MissionExtractionHudView.cs
+ M Assets/Game/Scripts/UI/Screens/MissionResultPopupView.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Breach.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Contracts.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionDefense.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialNarration.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialSelection.cs
+ M Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialTarget.cs
+ M Assets/Game/Scripts/UI/Shell/UIShellView.cs
+ M Assets/Tests/Editor/AriaInstructionViewportTests.cs
+ M Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs
+ M Assets/Tests/Editor/M01FirstContactHudRestrictionTests.cs
+ M Assets/Tests/Editor/M02EstablishBaseGuidanceTests.NextAction.cs
+ M Assets/Tests/Editor/M02EstablishBaseGuidanceTests.cs
+ M Assets/Tests/Editor/M02EstablishBaseHudResultTests.cs
+ M Assets/Tests/Editor/M02EstablishBaseObjectiveTests.cs
+ M Assets/Tests/Editor/M03ActiveClassCommandTests.cs
+ M Assets/Tests/Editor/M03RadarPingTests.cs
+ M Assets/Tests/Editor/M03RadarToolbarAndVoiceValidation.cs
+ M Assets/Tests/Editor/MissionGroupSelectionTests.cs
+ M Assets/Tests/Editor/RoadGatePlacementValidation.cs
+ M Assets/Tests/Editor/TutorialCueOverlayTests.cs
+ M Assets/Tests/PlayMode/HoldStopScanCommandPlayModeTests.cs
+ M "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+ M Design/AgentReports/M04Airlift/comic_voice_payload_review.json
+ M Design/AgentReports/M04Airlift/voice_payload_review.json
+ M Design/AgentReports/M05BreachAssault/voice_payload_review.json
+ M Design/M03_Radar_Warning_Production_Plan.md
+ M Tools/Audio/generate_bilingual_aria_match_voice.py
+ M Tools/Audio/generate_m01_tutorial_voice.py
+ M Tools/Audio/generate_m02_bilingual_voice.py
+ M Tools/Audio/generate_m03_bilingual_voice.py
+ M Tools/Audio/generate_m04_bilingual_voice.py
+ M Tools/Audio/generate_m05_bilingual_voice.py
+ M Tools/NarrativeVision/generate_first_launch_voice_elevenlabs.py
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav.meta
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav
+?? Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav.meta
+?? Assets/Game/Configs/OperationMaps/Chapter01/M05EnemyCompoundPlacements.asset
+?? Assets/Game/Configs/OperationMaps/Chapter01/M05EnemyCompoundPlacements.asset.meta
+?? Assets/Game/Prefabs/Buildings/M05Compound.meta
+?? Assets/Game/Prefabs/Buildings/M05Compound/
+?? Assets/Game/Scripts/Components/OperationMapSidewalkFootprint.cs
+?? Assets/Game/Scripts/Components/OperationMapSidewalkFootprint.cs.meta
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Campaign.cs
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Campaign.cs.meta
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Journey.cs.meta
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs
+?? Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs.meta
+?? Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementCommit.cs
+?? Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementCommit.cs.meta
+?? Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementHandoff.cs
+?? Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementHandoff.cs.meta
+?? Assets/Game/Scripts/Editor/M05BreachAssaultEditorProbe.Lifecycle.cs
+?? Assets/Game/Scripts/Editor/M05BreachAssaultEditorProbe.Lifecycle.cs.meta
+?? Assets/Game/Scripts/Editor/M05BreachAssaultEditorProbe.ScreenTap.cs
+?? Assets/Game/Scripts/Editor/M05BreachAssaultEditorProbe.ScreenTap.cs.meta
+?? Assets/Game/Scripts/Editor/M05EnemyCompoundBuilder.cs
+?? Assets/Game/Scripts/Editor/M05EnemyCompoundBuilder.cs.meta
+?? Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.M03Clarity.cs
+?? Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.M03Clarity.cs.meta
+?? Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs
+?? Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs.meta
+?? Assets/Game/Scripts/Editor/PersianConversationalToneImporter.Audio.cs
+?? Assets/Game/Scripts/Editor/PersianConversationalToneImporter.Audio.cs.meta
+?? Assets/Game/Scripts/Editor/PersianConversationalToneImporter.cs
+?? Assets/Game/Scripts/Editor/PersianConversationalToneImporter.cs.meta
+?? Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs
+?? Assets/Game/Scripts/UI/Contracts/IBuildingPlacementViewportQuery.cs.meta
+?? Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs
+?? Assets/Game/Scripts/UI/MainMenuPlayUI.PlacementViewport.cs.meta
+?? Assets/Game/Scripts/UI/Screens/MissionResultPopupView.Construction.cs
+?? Assets/Game/Scripts/UI/Screens/MissionResultPopupView.Construction.cs.meta
+?? Assets/Tests/Editor/BuildingPlacementCameraHandoffTests.cs
+?? Assets/Tests/Editor/BuildingPlacementCameraHandoffTests.cs.meta
+?? Assets/Tests/Editor/M03ScanFeedbackLayoutTests.cs
+?? Assets/Tests/Editor/M03ScanFeedbackLayoutTests.cs.meta
+?? Assets/Tests/Editor/M05EnemyCompoundTests.cs
+?? Assets/Tests/Editor/M05EnemyCompoundTests.cs.meta
+?? Assets/Tests/Editor/M05TargetLifecycleTests.cs
+?? Assets/Tests/Editor/M05TargetLifecycleTests.cs.meta
+?? Assets/Tests/Editor/PersianConversationalRolloutValidation.cs
+?? Assets/Tests/Editor/PersianConversationalRolloutValidation.cs.meta
+?? Assets/Tests/Editor/RuntimeBuildingAttackPickingTests.cs
+?? Assets/Tests/Editor/RuntimeBuildingAttackPickingTests.cs.meta
+?? Design/AgentReports/M03PlacementCommit/
+?? Design/AgentReports/M03PlacementHandoff/
+?? Design/AgentReports/M03RadarWarning/persian_conversational_preview_payload.json
+?? Design/AgentReports/M03RadarWarning/unified_scan_and_production_close_2026-09-15.md
+?? Design/AgentReports/M03RoadDefenseClarity/
+?? Design/AgentReports/M05BreachAssault/Enemy_Compound_Fix.md
+?? Design/AgentReports/M05BreachAssault/Gate_Screen_Targeting_Fix.md
+?? Design/AgentReports/M05BreachAssault/Target_Death_And_Recovery_Clarity.md
+?? Design/AgentReports/MobileCommandBar/
+?? Design/AgentReports/PersianConversationalTone/
+?? Design/Roadmap/
+?? Tools/Audio/generate_persian_conversational_rollout.py
+?? Tools/Audio/install_persian_conversational_events.py
+?? Tools/Audio/persian_voice_profile.py
+?? Tools/Audio/validate_persian_conversational_rollout.py

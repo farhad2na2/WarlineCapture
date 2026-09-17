@@ -10,6 +10,19 @@ namespace Game.UI.Shell.Ecs
     public sealed partial class UiShellEcsGateway : IUiMissionBreachGateway
     {
         private static readonly FixedString64Bytes BreachId="saga.ch01.m05.breach_assault";
+        private static (int Hold, int Clock, int Guards, int Reinforcements, int Flags) cachedBreachStatusStamp;
+        private static (int Hold, int Clock, int Guards, int Reinforcements, int Flags) ReadBreachStatusStamp()
+        {
+            if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionBreachState>(root))
+                return (-1,-1,-1,-1,-1);
+            var b=em.GetComponentData<CampaignMissionBreachState>(root);
+            var f=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            return (System.Math.Max(0,(b.SecureRequiredMilliseconds-b.SecureHoldMilliseconds+999)/1000),
+                System.Math.Max(0,(b.DeadlineMilliseconds-f.ElapsedMilliseconds+999)/1000),
+                System.Math.Max(0,f.HostileTotalCount-f.HostileDefeatedCount),
+                System.Math.Max(0,(b.CounterattackReleaseAtMilliseconds-f.ElapsedMilliseconds+999)/1000),
+                b.CoreDestroyed | b.ArchiveSecured<<1 | b.Contested<<2 | b.CounterattackReleased<<3 | b.FriendlyAtArchive<<4);
+        }
         private static string AppendBreachStatus(string text)
         {
             if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionBreachState>(root))return text;
@@ -21,6 +34,19 @@ namespace Game.UI.Shell.Ecs
                 System.Math.Max(0,facts.HostileTotalCount-facts.HostileDefeatedCount),$"{remaining/60:00}:{remaining%60:00}",breach.SecureRequiredMilliseconds/1000);
             if(breach.CounterattackReleaseAtMilliseconds>0 && breach.CounterattackReleased==0)
                 status=string.Format(GameText.Get("mission.m05.hud.counterattack"),System.Math.Max(0,(breach.CounterattackReleaseAtMilliseconds-facts.ElapsedMilliseconds+999)/1000))+"\n"+status;
+            if(breach.CoreDestroyed!=0)
+            {
+                string recovery;
+                int seconds=System.Math.Max(0,(breach.SecureRequiredMilliseconds-breach.SecureHoldMilliseconds+999)/1000);
+                if(breach.ArchiveSecured!=0) recovery=GameText.Get("mission.m05.hud.recovery.complete");
+                else if(breach.Contested!=0 || facts.HostileTotalCount>facts.HostileDefeatedCount)
+                    recovery=GameText.Get("mission.m05.hud.recovery.enemies");
+                else if(breach.CounterattackReleased==0) recovery=GameText.Get("mission.m05.hud.recovery.reinforcements");
+                else if(breach.SecureHoldMilliseconds>0)
+                    recovery=string.Format(GameText.Get("mission.m05.hud.recovery.progress"),seconds);
+                else recovery=GameText.Get("mission.m05.hud.recovery.enter");
+                return recovery+"\n\n"+status;
+            }
             return text+"\n\n"+status;
         }
         public bool IsBreachGuideContext()

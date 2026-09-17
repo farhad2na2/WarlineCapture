@@ -1,0 +1,270 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a870bee3db08143e5a68159c7496a096, type: 3}
+  m_Name: M05EnemyCompoundPlacements
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MapBuildingPlacementConfig
+  spawnOnMatchStart: 1
+  hideAuthoringVisualsAfterSpawn: 1
+  useExistingStaticPresentationWhenAuthoringVisualMissing: 0
+  placements:
+  - sourcePath: M05Compound/0
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 999, y: 0.009179778, z: 445}
+    worldPosition: {x: 999, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/1
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1009, y: 0.009179778, z: 445}
+    worldPosition: {x: 1009, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/2
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1039, y: 0.009179778, z: 445}
+    worldPosition: {x: 1039, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/3
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1049, y: 0.009179778, z: 445}
+    worldPosition: {x: 1049, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/4
+    category: MissionFortification
+    buildingPrefab: {fileID: 4859760191473082275, guid: 9a258d217ad44433a8d03890d9aec48a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1017, y: 0.009179778, z: 445}
+    worldPosition: {x: 1017, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/5
+    category: MissionFortification
+    buildingPrefab: {fileID: 4859760191473082275, guid: 9a258d217ad44433a8d03890d9aec48a, type: 3}
+    factionId: 0
+    worldCenter: {x: 1031, y: 0.009179778, z: 445}
+    worldPosition: {x: 1031, y: 0.009179778, z: 445}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/6
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 999, y: 0.009179778, z: 475}
+    worldPosition: {x: 999, y: 0.009179778, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/7
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1009, y: 0.009179778, z: 475}
+    worldPosition: {x: 1009, y: 0.009179778, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/8
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1019, y: 0.009179778, z: 475}
+    worldPosition: {x: 1019, y: 0.009179778, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/9
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1029, y: 0.009179778, z: 475}
+    worldPosition: {x: 1029, y: 0.009179778, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/10
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1039, y: 0.009179778, z: 475}
+    worldPosition: {x: 1039, y: 0.009179778, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/11
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1049, y: 0.15917978, z: 475}
+    worldPosition: {x: 1049, y: 0.15917978, z: 475}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/12
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 995, y: 0.009179778, z: 451}
+    worldPosition: {x: 995, y: 0.009179778, z: 451}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/13
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 995, y: 0.009179778, z: 461}
+    worldPosition: {x: 995, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/14
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 995, y: 0.009179778, z: 471}
+    worldPosition: {x: 995, y: 0.009179778, z: 471}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/15
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1053, y: 0.009179778, z: 451}
+    worldPosition: {x: 1053, y: 0.009179778, z: 451}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/16
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1053, y: 0.009179778, z: 461}
+    worldPosition: {x: 1053, y: 0.009179778, z: 461}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/17
+    category: MissionFortification
+    buildingPrefab: {fileID: 4805305520211279215, guid: 9e2d86420b4744c079a9d41f106cc36d, type: 3}
+    factionId: 0
+    worldCenter: {x: 1053, y: 0.009179778, z: 471}
+    worldPosition: {x: 1053, y: 0.009179778, z: 471}
+    worldEulerAngles: {x: 0, y: 90, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 90
+    rotateVertical: 1
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/18
+    category: MissionFortification
+    buildingPrefab: {fileID: 3231427345988938426, guid: 6d905c10263624de3967c053d16e8b7b, type: 3}
+    factionId: 0
+    worldCenter: {x: 1016, y: 0.009179778, z: 449}
+    worldPosition: {x: 1016, y: 0.009179778, z: 449}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/19
+    category: MissionFortification
+    buildingPrefab: {fileID: 3231427345988938426, guid: 6d905c10263624de3967c053d16e8b7b, type: 3}
+    factionId: 0
+    worldCenter: {x: 1032, y: 0.009179778, z: 449}
+    worldPosition: {x: 1032, y: 0.009179778, z: 449}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1
+  - sourcePath: M05Compound/20
+    category: MissionFortification
+    buildingPrefab: {fileID: 4627880804973772824, guid: d786b521948894b06856c3e555b13bb6, type: 3}
+    factionId: 0
+    worldCenter: {x: 1007, y: 0.009179778, z: 470}
+    worldPosition: {x: 1007, y: 0.009179778, z: 470}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1

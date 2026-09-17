@@ -562,28 +562,28 @@ namespace Game.Editor
             // The target lock aligns the warning strip with the right edge of the
             // header controls, leaving a clean lane before ARIA. Keeping it out of
             // ARIA's column also prevents the warning from being occluded at 20:9.
-            SetTopLeft(threat, 663f, 94f, 525f, 79f);
+            SetTopLeft(threat, 663f, 94f, 525f, 104f);
             RectTransform threatFrame = RequireRect(threat, "Frame");
             Stretch(threatFrame);
             SetImageTransparent(threatFrame.GetComponent<Image>());
             EnsureGradient(threatFrame, DarkTop, DarkBottom, theme.OrangeRed, 3f);
             Image warning = FindDeepChild(threat, "WarningIcon")?.GetComponent<Image>();
             SetSprite(warning, RequireSprite(V3UiFoundationBuilder.MatchInvalidIconPath), theme.OrangeRed);
-            SetTopLeft(warning.rectTransform, 16f, 16f, 47f, 47f);
+            SetTopLeft(warning.rectTransform, 16f, 28f, 47f, 47f);
             TMP_Text title = FindDeepChild(threat, "Title")?.GetComponent<TMP_Text>();
             ConfigureText(title, "HOSTILE CELL SPOTTED\nMarket quarter, 140m", 18f, boldFont, theme.TextPrimary, TextAlignmentOptions.MidlineLeft);
             title.textWrappingMode = TextWrappingModes.Normal;
             title.fontStyle = FontStyles.Normal;
             title.enableAutoSizing = true;
-            title.fontSizeMin = 12f;
-            title.fontSizeMax = 18f;
-            SetTopLeft(title.rectTransform, 76f, 6f, 350f, 67f);
+            title.fontSizeMin = 22f;
+            title.fontSizeMax = 22f;
+            SetTopLeft(title.rectTransform, 76f, 8f, 350f, 88f);
             RectTransform jump = EnsureRect("V3ThreatJump", threatFrame);
-            SetTopLeft(jump, 450f, 10f, 63f, 59f);
+            SetTopLeft(jump, 441f, 16f, 72f, 72f);
             EnsureGradient(jump, AmberTop, RedBottom, theme.OrangeRed, 2f);
             Image jumpIcon = EnsureImage(jump, "Icon");
             SetSprite(jumpIcon, RequireSprite(V3UiFoundationBuilder.MatchJumpIconPath), theme.TextPrimary);
-            SetTopLeft(jumpIcon.rectTransform, 13f, 11f, 37f, 37f);
+            SetTopLeft(jumpIcon.rectTransform, 17f, 17f, 38f, 38f);
 
             RectTransform aria = RequireRect(header, "AriaAssistantButton");
             SetTopLeft(aria, 1257f, 8f, 400f, 683f);
@@ -1931,6 +1931,7 @@ namespace Game.Editor
             Texture2D capture = new(width, height, TextureFormat.RGBA32, false);
             try
             {
+                if (validateMobileCapture) ValidateMobileGeometry(instance, camera, width, height);
                 camera.Render();
                 RenderTexture.active = target;
                 capture.ReadPixels(new Rect(0f, 0f, width, height), 0, 0);

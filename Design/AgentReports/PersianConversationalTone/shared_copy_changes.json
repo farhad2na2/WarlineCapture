@@ -1,0 +1,554 @@
+{
+  "confirm_destroy": {
+    "old": "آیا از نابود کردن {0} مطمئن هستید؟",
+    "new": "مطمئنی می‌خوای {0} رو نابود کنی؟"
+  },
+  "not_enough_money": {
+    "old": "اعتبار کافی نیست",
+    "new": "اعتبار کافی نداری"
+  },
+  "create_first": {
+    "old": "ابتدا {0} را بسازید",
+    "new": "اول {0} رو بساز"
+  },
+  "drag_building_to_final_position": {
+    "old": "به موقعیت نهایی بکشید",
+    "new": "بکشش به جایی که می‌خوای بسازیش"
+  },
+  "warning_ground_attack_type": {
+    "old": "حمله خودروهای زمینی شناسایی شد",
+    "new": "خودروهای دشمن دارن حمله می‌کنن"
+  },
+  "warning_air_attack_type": {
+    "old": "حمله هوایی شناسایی شد",
+    "new": "حملهٔ هوایی! آماده باش"
+  },
+  "warning_attack_eta_seconds": {
+    "old": "زمان تقریبی رسیدن به پایگاه: {0} ثانیه",
+    "new": "حدود {0} ثانیه تا رسیدن به پایگاه"
+  },
+  "warning_attack_eta_suffix": {
+    "old": "{0} - زمان رسیدن {1} ثانیه",
+    "new": "{0} — حدود {1} ثانیه تا رسیدن"
+  },
+  "warning_attack_count_suffix": {
+    "old": "{0}، تعداد {1}",
+    "new": "{0}، تعداد: {1}"
+  },
+  "tactical.command.reason.no_selection": {
+    "old": "ابتدا نیروها یا یک ساختمان را انتخاب کنید.",
+    "new": "اول نیروهات یا یه ساختمان رو انتخاب کن."
+  },
+  "tactical.command.reason.target_out_of_bounds": {
+    "old": "هدف خارج از محدوده عملیاتی است.",
+    "new": "این هدف بیرون محدودهٔ عملیاته."
+  },
+  "tactical.command.reason.target_blocked": {
+    "old": "مسیر مسدود است.",
+    "new": "این مسیر بسته‌ست."
+  },
+  "tactical.command.reason.target_unreachable": {
+    "old": "دسترسی به هدف ممکن نیست.",
+    "new": "نیروهات نمی‌تونن به این هدف برسن."
+  },
+  "tactical.command.reason.target_not_enemy": {
+    "old": "هدف دشمن نیست.",
+    "new": "این هدف دشمن نیست."
+  },
+  "tactical.command.reason.target_not_attackable": {
+    "old": "امکان حمله به این هدف وجود ندارد.",
+    "new": "به این هدف نمی‌شه حمله کرد."
+  },
+  "tactical.command.reason.command_unavailable": {
+    "old": "فرمان در دسترس نیست.",
+    "new": "الان نمی‌تونی این فرمان رو بدی."
+  },
+  "tactical.command.reason.build_unavailable": {
+    "old": "ساخت‌وساز در دسترس نیست.",
+    "new": "الان نمی‌تونی چیزی بسازی."
+  },
+  "tactical.command.reason.camera_jump_unavailable": {
+    "old": "تمرکز دوربین در دسترس نیست.",
+    "new": "الان نمی‌شه دوربین رو به اونجا برد."
+  },
+  "tactical.command.reason.scan_unavailable": {
+    "old": "اسکن در دسترس نیست.",
+    "new": "الان نمی‌تونی اسکن کنی."
+  },
+  "tactical.command.reason.scan_cooldown": {
+    "old": "اسکن در حال بازیابی است.",
+    "new": "اسکن هنوز آماده نشده؛ یه کم صبر کن."
+  },
+  "tactical.command.reason.insufficient_resources": {
+    "old": "منابع کافی نیست.",
+    "new": "منابع کافی نداری."
+  },
+  "tactical.command.reason.insufficient_fuel": {
+    "old": "سوخت کافی نیست.",
+    "new": "بنزین کافی نداری."
+  },
+  "tactical.command.reason.invalid_transport": {
+    "old": "ابتدا یک خودرو یا هواگرد ترابری انتخاب کنید.",
+    "new": "اول یه خودرو یا بالگرد حمل‌ونقل انتخاب کن."
+  },
+  "tactical.command.reason.invalid_passenger": {
+    "old": "نیرو یا محموله قابل سوار شدن را انتخاب کنید.",
+    "new": "نیرو یا باری رو انتخاب کن که بشه سوارش کرد."
+  },
+  "tactical.command.reason.transport_full": {
+    "old": "ظرفیت وسیله ترابری تکمیل است.",
+    "new": "دیگه جای خالی نداره."
+  },
+  "tactical.command.reason.no_eligible_passengers": {
+    "old": "هیچ نیروی نزدیک نمی‌تواند سوار این وسیله شود.",
+    "new": "هیچ‌کدوم از نیروهای نزدیک نمی‌تونن سوارش بشن."
+  },
+  "tactical.command.reason.no_disembark_cell": {
+    "old": "محل امنی برای پیاده شدن نیروها وجود ندارد.",
+    "new": "اینجا جای امنی برای پیاده شدن نیست."
+  },
+  "tactical.command.reason.transport_passenger_missing": {
+    "old": "این نیرو داخل وسیله ترابری نیست.",
+    "new": "این نیرو داخل وسیله نیست."
+  },
+  "tactical.command.instruction.select": {
+    "old": "نیروها یا یک ساختمان را انتخاب کنید.",
+    "new": "نیروهات یا یه ساختمان رو انتخاب کن."
+  },
+  "tactical.command.instruction.move": {
+    "old": "مقصد را انتخاب کنید.",
+    "new": "مقصد رو انتخاب کن."
+  },
+  "tactical.command.instruction.attack": {
+    "old": "روی هدف دشمن بزنید.",
+    "new": "روی هدف دشمن بزن."
+  },
+  "tactical.command.instruction.hold": {
+    "old": "موضع را حفظ کنید و پاسخ آتش بدهید.",
+    "new": "همین‌جا بمون و به دشمنی که نزدیک می‌شه شلیک کن."
+  },
+  "tactical.command.instruction.stop": {
+    "old": "نیروهای منتخب را متوقف و فرمان‌ها را لغو کنید.",
+    "new": "نیروهای انتخاب‌شده رو نگه دار و دستورهاشون رو لغو کن."
+  },
+  "tactical.command.instruction.scan": {
+    "old": "روی محدوده اسکن بزنید.",
+    "new": "روی جایی که می‌خوای اسکن بشه بزن."
+  },
+  "tactical.command.instruction.board": {
+    "old": "یک وسیله ترابری انتخاب کنید.",
+    "new": "یه وسیلهٔ حمل‌ونقل انتخاب کن."
+  },
+  "tactical.command.instruction.build": {
+    "old": "ساختمان، محصول یا نیروی مورد نظر را انتخاب کنید.",
+    "new": "ساختمان یا نیرویی رو که می‌خوای بسازی انتخاب کن."
+  },
+  "tactical.command.instruction.special": {
+    "old": "فرمان ویژه را انتخاب کنید.",
+    "new": "فرمان ویژه رو انتخاب کن."
+  },
+  "tactical.command.board.prompt_transport_to_passenger": {
+    "old": "نیروها را برای سوار شدن انتخاب کنید یا همه را سوار کنید.",
+    "new": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن."
+  },
+  "tactical.command.board.prompt_passenger_to_transport": {
+    "old": "یک وسیله ترابری انتخاب کنید.",
+    "new": "یه وسیلهٔ حمل‌ونقل انتخاب کن."
+  },
+  "tactical.command.board.unavailable": {
+    "old": "فرمان سوار شدن در دسترس نیست.",
+    "new": "الان نمی‌تونی نیروها رو سوار کنی."
+  },
+  "tactical.command.board.tap_units_to_board": {
+    "old": "روی نیروها بزنید تا سوار شوند.",
+    "new": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن."
+  },
+  "tactical.command.board.selected_unit_cannot_board": {
+    "old": "نیروی منتخب نمی‌تواند سوار شود.",
+    "new": "این نیرو نمی‌تونه سوار بشه."
+  },
+  "tactical.command.board.select_unit_first": {
+    "old": "ابتدا یک نیرو انتخاب کنید.",
+    "new": "اول یه نیرو انتخاب کن."
+  },
+  "tactical.command.unavailable.hold_no_selection": {
+    "old": "برای حفظ موضع ابتدا نیروها را انتخاب کنید.",
+    "new": "اول نیروهات رو انتخاب کن، بعد «حفظ» رو بزن."
+  },
+  "tactical.command.unavailable.stop_no_selection": {
+    "old": "برای توقف فرمان‌ها ابتدا نیروها را انتخاب کنید.",
+    "new": "اول نیروهات رو انتخاب کن، بعد «توقف» رو بزن."
+  },
+  "tactical.command.unavailable.scan_no_selection": {
+    "old": "ابتدا واحد اسکن یا نیروی رزمی را انتخاب کنید.",
+    "new": "اول واحد اسکن یا یه نیروی رزمی رو انتخاب کن."
+  },
+  "tactical.feedback.camera_follow_unavailable": {
+    "old": "تعقیب دوربین در دسترس نیست.",
+    "new": "الان نمی‌شه با دوربین دنبالش کرد."
+  },
+  "tactical.feedback.camera_follow_active": {
+    "old": "تعقیب دوربین فعال شد.",
+    "new": "دوربین داره دنبالش می‌کنه."
+  },
+  "tactical.feedback.rts_camera_restored": {
+    "old": "دوربین راهبردی بازگردانده شد.",
+    "new": "برگشتیم به نمای فرماندهی."
+  },
+  "tactical.feedback.follow_target_lost": {
+    "old": "هدف تعقیب از دست رفت.",
+    "new": "دیگه نمی‌تونیم هدف رو دنبال کنیم."
+  },
+  "tactical.feedback.destroyed_selected_building": {
+    "old": "ساختمان منتخب نابود شد.",
+    "new": "ساختمونی که انتخاب کردی نابود شد."
+  },
+  "tactical.feedback.air_defense_auto_engage": {
+    "old": "پدافند هوایی به‌طور خودکار با هواگردها و موشک‌های ورودی درگیر می‌شود.",
+    "new": "پدافند هوایی خودش به هواگردها و موشک‌هایی که نزدیک می‌شن شلیک می‌کنه."
+  },
+  "tactical.feedback.exiting_unit": {
+    "old": "نیرو در حال پیاده شدن است.",
+    "new": "داره پیاده می‌شه."
+  },
+  "tactical.feedback.exiting_passengers": {
+    "old": "نیروها در حال پیاده شدن هستند.",
+    "new": "نیروها دارن پیاده می‌شن."
+  },
+  "tactical.feedback.loading_transport": {
+    "old": "وسیله ترابری در حال بارگیری است.",
+    "new": "دارن بار رو سوار می‌کنن."
+  },
+  "tactical.feedback.boarding_transport": {
+    "old": "نیروها در حال سوار شدن هستند.",
+    "new": "نیروها دارن سوار می‌شن."
+  },
+  "tactical.feedback.holding_current_position": {
+    "old": "موضع فعلی حفظ می‌شود.",
+    "new": "نیروهات همین‌جا می‌مونن."
+  },
+  "tactical.feedback.stopped_selected_units": {
+    "old": "نیروهای منتخب متوقف شدند.",
+    "new": "نیروهایی که انتخاب کردی ایستادن."
+  },
+  "tactical.feedback.unit_returning_to_base": {
+    "old": "نیرو به پایگاه بازمی‌گردد.",
+    "new": "داره برمی‌گرده پایگاه."
+  },
+  "tactical.feedback.units_returning_to_base": {
+    "old": "{0} نیرو به پایگاه بازمی‌گردند.",
+    "new": "{0} نیرو دارن برمی‌گردن پایگاه."
+  },
+  "tactical.feedback.destroyed_selected_unit": {
+    "old": "نیروی منتخب نابود شد.",
+    "new": "نیرویی که انتخاب کردی نابود شد."
+  },
+  "tactical.feedback.destroyed_selected_units": {
+    "old": "{0} نیروی منتخب نابود شدند.",
+    "new": "{0} نیروی انتخاب‌شده نابود شدن."
+  },
+  "tactical.feedback.scan_ordered": {
+    "old": "فرمان اسکن صادر شد؛ واحد اسکن در راه است",
+    "new": "اسکن رو شروع می‌کنیم؛ واحد اسکن تو راهه."
+  },
+  "tactical.feedback.scan_one_contact": {
+    "old": "یک هدف شناسایی شد",
+    "new": "یه هدف پیدا شد"
+  },
+  "tactical.feedback.scan_contacts": {
+    "old": "{0} هدف شناسایی شد",
+    "new": "{0} هدف پیدا شد"
+  },
+  "tactical.feedback.scan_complete": {
+    "old": "اسکن کامل شد: {0}",
+    "new": "اسکن تموم شد: {0}"
+  },
+  "tactical.feedback.missile_launched": {
+    "old": "موشک شلیک شد.",
+    "new": "موشک شلیک شد."
+  },
+  "tactical.airdrop.emergency_drop_visual_missing": {
+    "old": "نمایش بصری پرتاب اضطراری موجود نیست.",
+    "new": "نمای پرتاب اضطراری آماده نیست."
+  },
+  "tactical.airdrop.parachute_visual_missing": {
+    "old": "نمایش بصری چتر نجات موجود نیست.",
+    "new": "نمای چتر نجات آماده نیست."
+  },
+  "tactical.airdrop.no_clear_landing_zone": {
+    "old": "منطقه بازی برای فرود هوایی وجود ندارد.",
+    "new": "اینجا جای بازی برای فرود نیست."
+  },
+  "tactical.airdrop.cargo_drop_blocked": {
+    "old": "پرتاب محموله مسدود است.",
+    "new": "اینجا نمی‌شه بار رو پایین انداخت."
+  },
+  "tactical.banner.mode.move.description": {
+    "old": "مقصد را انتخاب کنید.",
+    "new": "مقصد رو انتخاب کن."
+  },
+  "tactical.banner.mode.attack.description": {
+    "old": "یک هدف دشمن انتخاب کنید.",
+    "new": "یه هدف دشمن انتخاب کن."
+  },
+  "tactical.banner.mode.scan.description": {
+    "old": "محدوده اسکن را انتخاب کنید.",
+    "new": "جایی رو که می‌خوای اسکن بشه انتخاب کن."
+  },
+  "tactical.banner.mode.board.description": {
+    "old": "یک وسیله ترابری انتخاب کنید.",
+    "new": "یه وسیلهٔ حمل‌ونقل انتخاب کن."
+  },
+  "tactical.banner.mode.board.description_transport_to_passenger": {
+    "old": "نیروها را برای سوار شدن انتخاب کنید.",
+    "new": "نیروهایی رو که می‌خوای سوار بشن انتخاب کن."
+  },
+  "tactical.banner.mode.build.description": {
+    "old": "سازه را روی زمین مناسب قرار دهید.",
+    "new": "ساختمان رو روی یه جای مناسب بذار."
+  },
+  "tactical.banner.accepted.move.description": {
+    "old": "نیروها به سوی هدف حرکت می‌کنند.",
+    "new": "نیروهات دارن می‌رن سمت مقصد."
+  },
+  "tactical.banner.accepted.attack.description": {
+    "old": "درگیری با هدف آغاز شد.",
+    "new": "درگیری شروع شد."
+  },
+  "tactical.banner.accepted.hold.description": {
+    "old": "نیروهای منتخب موضع را حفظ می‌کنند.",
+    "new": "نیروهایی که انتخاب کردی همین‌جا می‌مونن."
+  },
+  "tactical.banner.accepted.stop.description": {
+    "old": "فرمان‌های نیروهای منتخب لغو می‌شود.",
+    "new": "دستورهای نیروهای انتخاب‌شده لغو می‌شن."
+  },
+  "tactical.banner.accepted.scan.description": {
+    "old": "پویش شناسایی در حال انجام است.",
+    "new": "داریم محدوده رو اسکن می‌کنیم."
+  },
+  "tactical.banner.accepted.board.description": {
+    "old": "نیروها در حال سوار شدن هستند.",
+    "new": "نیروها دارن سوار می‌شن."
+  },
+  "tactical.banner.accepted.build.description": {
+    "old": "فرمان ساخت پذیرفته شد.",
+    "new": "درخواست ساخت ثبت شد."
+  },
+  "tactical.banner.accepted.return.description": {
+    "old": "نیرو به پایگاه بازمی‌گردد.",
+    "new": "داره برمی‌گرده پایگاه."
+  },
+  "tactical.banner.accepted.destroy.description": {
+    "old": "نیروی منتخب حذف شد.",
+    "new": "نیرویی که انتخاب کردی حذف شد."
+  },
+  "build.drawer.empty.name": {
+    "old": "موردی وجود ندارد",
+    "new": "اینجا چیزی نیست"
+  },
+  "build.drawer.ready.buildings": {
+    "old": "استقرار: محل {0} را انتخاب کنید.",
+    "new": "یه جا برای {0} انتخاب کن."
+  },
+  "build.drawer.ready.vehicles": {
+    "old": "تولید: {0} را به صف خودروها اضافه کنید.",
+    "new": "{0} رو به صف تولید خودروها اضافه کن."
+  },
+  "build.drawer.ready.aircraft": {
+    "old": "تولید: {0} را به صف هواگردها اضافه کنید.",
+    "new": "{0} رو به صف تولید هواگردها اضافه کن."
+  },
+  "build.drawer.ready.soldiers": {
+    "old": "جذب نیرو: {0} را به صف آموزش اضافه کنید.",
+    "new": "{0} رو به صف آموزش اضافه کن."
+  },
+  "build.drawer.ready.default": {
+    "old": "{0} را انتخاب کنید.",
+    "new": "{0} رو انتخاب کن."
+  },
+  "build.drawer.instruction.place_pending_confirm": {
+    "old": "استقرار {0}: به محل مورد نظر بکشید و تأیید کنید.",
+    "new": "{0} رو بکش به جایی که می‌خوای و تأیید کن."
+  },
+  "build.drawer.instruction.cannot_place_here": {
+    "old": "استقرار در این محل ممکن نیست: {0}.",
+    "new": "اینجا نمی‌شه ساخت: {0}."
+  },
+  "build.drawer.failure.connecting": {
+    "old": "منوی ساخت در حال اتصال است. کمی بعد دوباره تلاش کنید.",
+    "new": "منوی ساخت داره آماده می‌شه. یه کم صبر کن."
+  },
+  "build.drawer.failure.not_enough_money": {
+    "old": "برای {1} {2} به {0} اعتبار بیشتر نیاز است.",
+    "new": "برای {1} {2}، هنوز {0} اعتبار کم داری."
+  },
+  "build.drawer.failure.missing_producer_named": {
+    "old": "امکان {0} {1} وجود ندارد؛ به {2} نیاز است.",
+    "new": "برای {0} {1}، اول به {2} نیاز داری."
+  },
+  "build.drawer.failure.missing_producer": {
+    "old": "امکان {0} {1} وجود ندارد: {2}.",
+    "new": "الان نمی‌شه {0} {1}: {2}."
+  },
+  "build.drawer.failure.queue_full_named": {
+    "old": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید {2} پر هستند.",
+    "new": "نمی‌شه {0} {1}؛ همهٔ جایگاه‌های تولید {2} پرن."
+  },
+  "build.drawer.failure.queue_full": {
+    "old": "امکان {0} {1} وجود ندارد؛ همه جایگاه‌های تولید مرتبط پر هستند.",
+    "new": "نمی‌شه {0} {1}؛ همهٔ جایگاه‌های تولیدش پرن."
+  },
+  "build.drawer.failure.global_queue_full": {
+    "old": "امکان {0} {1} وجود ندارد؛ سقف صف تولید {2} است.",
+    "new": "نمی‌شه {0} {1}؛ ظرفیت صف تولید {2} تاست."
+  },
+  "build.drawer.failure.invalid_selection": {
+    "old": "ابتدا یک مورد از منوی ساخت انتخاب کنید.",
+    "new": "اول یه مورد از منوی ساخت انتخاب کن."
+  },
+  "build.drawer.failure.unavailable": {
+    "old": "امکان {0} {1} وجود ندارد؛ درخواست در دسترس نیست.",
+    "new": "الان نمی‌شه {0} {1}؛ این درخواست در دسترس نیست."
+  },
+  "build.drawer.failure.short.not_enough_money": {
+    "old": "اعتبار کافی نیست.",
+    "new": "اعتبار کافی نداری."
+  },
+  "build.drawer.failure.short.requires_named": {
+    "old": "به {0} نیاز است.",
+    "new": "به {0} نیاز داری."
+  },
+  "build.drawer.failure.short.missing_producer": {
+    "old": "ساختمان تولیدکننده مورد نیاز وجود ندارد.",
+    "new": "هنوز ساختمان لازم برای تولیدش رو نداری."
+  },
+  "build.drawer.failure.short.queue_full_named": {
+    "old": "جایگاه‌های تولید {0} پر هستند.",
+    "new": "جایگاه‌های تولید {0} پرن."
+  },
+  "build.drawer.failure.short.queue_full": {
+    "old": "همه جایگاه‌های تولید مرتبط پر هستند.",
+    "new": "همهٔ جایگاه‌های تولیدش پرن."
+  },
+  "build.drawer.failure.short.global_queue_full": {
+    "old": "سقف صف تولید تکمیل شده است؛ حداکثر {0}.",
+    "new": "صف تولید پره؛ بیشتر از {0} تا جا نداره."
+  },
+  "build.drawer.failure.short.unavailable": {
+    "old": "درخواست ساخت در دسترس نیست.",
+    "new": "الان نمی‌تونی درخواست ساخت بدی."
+  },
+  "build.drawer.empty.buildings": {
+    "old": "هیچ ساختمان قابل درخواستی تعریف نشده است.",
+    "new": "الان ساختمونی برای ساختن نیست."
+  },
+  "build.drawer.empty.vehicles": {
+    "old": "هیچ خودروی قابل درخواستی تعریف نشده است.",
+    "new": "الان خودرویی برای تولید نیست."
+  },
+  "build.drawer.empty.aircraft": {
+    "old": "هیچ هواگرد قابل درخواستی تعریف نشده است.",
+    "new": "الان هواگردی برای تولید نیست."
+  },
+  "build.drawer.empty.soldiers": {
+    "old": "هیچ نیروی قابل درخواستی تعریف نشده است.",
+    "new": "الان نیرویی برای آموزش نیست."
+  },
+  "build.drawer.empty.default": {
+    "old": "هیچ مورد قابل درخواستی تعریف نشده است.",
+    "new": "الان چیزی برای ساخت یا تولید نیست."
+  },
+  "build.drawer.empty.select_item": {
+    "old": "یک مورد برای استقرار، تولید یا جذب انتخاب کنید.",
+    "new": "چیزی رو که می‌خوای بسازی یا آموزش بدی انتخاب کن."
+  },
+  "build.drawer.placement.invalid": {
+    "old": "محل استقرار نامعتبر است",
+    "new": "اینجا نمی‌شه ساخت"
+  },
+  "build.drawer.action.place_choose_footprint": {
+    "old": "استقرار {0}: محدوده مناسبی انتخاب کنید.",
+    "new": "یه جای مناسب برای {0} انتخاب کن."
+  },
+  "build.feedback.place_building": {
+    "old": "استقرار ساختمان",
+    "new": "ساختمان رو قرار بده"
+  },
+  "build.drawer.success.recruitment_queued": {
+    "old": "{0} به صف جذب نیرو اضافه شد.",
+    "new": "{0} به صف آموزش اضافه شد."
+  },
+  "build.drawer.success.production_queued": {
+    "old": "{0} به صف تولید اضافه شد.",
+    "new": "{0} به صف تولید اضافه شد."
+  },
+  "build.feedback.production_cancel_unavailable": {
+    "old": "لغو تولید در دسترس نیست.",
+    "new": "الان نمی‌شه تولید رو لغو کرد."
+  },
+  "build.feedback.production_cancelled_named": {
+    "old": "{0} لغو شد.",
+    "new": "{0} لغو شد."
+  },
+  "build.feedback.production_queue_empty": {
+    "old": "صف تولید خالی است.",
+    "new": "صف تولید خالیه."
+  },
+  "build.feedback.production_queue_cleared_sentence": {
+    "old": "صف تولید پاک شد.",
+    "new": "صف تولید خالی شد."
+  },
+  "build.feedback.production_clear_unavailable": {
+    "old": "پاک کردن صف تولید در دسترس نیست.",
+    "new": "الان نمی‌شه صف تولید رو خالی کرد."
+  },
+  "build.feedback.production_queue_cleared": {
+    "old": "صف تولید پاک شد",
+    "new": "صف تولید خالی شد"
+  },
+  "build.feedback.placement_cancelled": {
+    "old": "استقرار لغو شد",
+    "new": "قرار دادن ساختمان لغو شد"
+  },
+  "build.feedback.rotated_90": {
+    "old": "نود درجه چرخانده شد",
+    "new": "نود درجه چرخید"
+  },
+  "build.feedback.no_active_placement": {
+    "old": "هیچ استقرار ساختمانی فعال نیست.",
+    "new": "الان ساختمونی در حال قرار دادن نیست."
+  },
+  "build.feedback.building_placed": {
+    "old": "ساختمان مستقر شد",
+    "new": "ساختمان قرار گرفت"
+  },
+  "build.feedback.place_on_valid_ground": {
+    "old": "روی زمین مناسب قرار دهید.",
+    "new": "روی یه جای مناسب بذارش."
+  },
+  "build.feedback.drawer_not_ready": {
+    "old": "منوی ساخت آماده نیست.",
+    "new": "منوی ساخت هنوز آماده نیست."
+  },
+  "build.placement.status.drag_to_position": {
+    "old": "به موقعیت مورد نظر بکشید",
+    "new": "بکشش به جایی که می‌خوای"
+  },
+  "build.placement.instruction.confirm": {
+    "old": "به محل مورد نظر بکشید و برای ساخت تأیید کنید",
+    "new": "بکشش به جایی که می‌خوای، بعد ساخت رو تأیید کن"
+  },
+  "match.feedback.tactical_map_not_ready": {
+    "old": "نقشه تاکتیکی آماده نیست.",
+    "new": "نقشهٔ تاکتیکی هنوز آماده نیست."
+  },
+  "match.feedback.blocked_civilian_zone": {
+    "old": "مسدود است: منطقه غیرنظامی",
+    "new": "اینجا بسته‌ست؛ محدودهٔ غیرنظامیه"
+  },
+  "selection.feedback.squad_selected": {
+    "old": "گروه انتخاب شد",
+    "new": "گروه انتخاب شد"
+  }
+}

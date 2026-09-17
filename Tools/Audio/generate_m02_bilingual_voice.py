@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import persian_voice_profile
 import datetime as dt
 import hashlib
 import json
@@ -35,33 +36,33 @@ VOICE_NAMES = {
 
 NARRATIVE = (
     ("m02_brief_line_1", "DALIA", "This forward post is abandoned, but we need it. Restore it and prepare to defend the clinic road.",
-     "این پاسگاه متروکه است، اما به آن نیاز داریم. آن را دوباره فعال کنید و برای دفاع از مسیر درمانگاه آماده شوید."),
+     "این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید."),
     ("m02_brief_line_2", "ARIA", "Build a Barracks here, then train one rifle squad. That will make the post operational.",
-     "اینجا یک سربازخانه بسازید، سپس یک گروه تفنگدار آموزش دهید. با این کار پاسگاه دوباره فعال می‌شود."),
+     "اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته."),
     ("m02_brief_line_3", "SAMIRA", "The clinic and city crews use this road. Holding the post keeps their route open.",
-     "درمانگاه و نیروهای خدمات شهری از این مسیر استفاده می‌کنند. حفظ پاسگاه، راه آن‌ها را باز نگه می‌دارد."),
+     "امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه."),
     ("m02_comms_line_1", "DALIA", "Enemy patrol approaching from the west. Hold the post and keep them away from the clinic road.",
-     "یک گشت دشمن از غرب نزدیک می‌شود. پاسگاه را حفظ کنید و نگذارید به مسیر درمانگاه برسند."),
+     "گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن."),
     ("m02_comms_line_2", "ARIA", "We found a city access list on one attacker. It was copied before the first strike.",
-     "یک فهرست دسترسی شهری همراه یکی از مهاجمان پیدا شد. این فهرست پیش از نخستین حمله کپی شده است."),
+     "همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده."),
     ("m02_comms_line_3", "SAMIRA", "It marks power stations, service gates, and tunnels. Someone stole it before the attack.",
-     "در آن، پست‌های برق، ورودی‌های خدماتی و تونل‌ها مشخص شده‌اند. کسی پیش از حمله آن را دزدیده است."),
+     "جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده."),
     ("m02_debrief_line_1", "SAMIRA", "The post is active again. The clinic road and city response teams are connected.",
-     "پاسگاه دوباره فعال است. مسیر درمانگاه و تیم‌های امداد شهری دوباره به هم متصل شده‌اند."),
+     "پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن."),
     ("m02_debrief_line_2", "DALIA", "Commander, Dalia Rahim. I will lead the ground response from this post.",
-     "فرمانده، دالیا رحیم هستم. از این پاسگاه، هدایت نیروهای زمینی را بر عهده می‌گیرم."),
+     "فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم."),
     ("m02_debrief_line_3", "ARIA", "The warning network ahead has gone dark. Armored vehicles are moving toward the next sector.",
-     "شبکه هشدار در مسیر پیش رو خاموش شده است. خودروهای زرهی به سمت منطقه بعدی حرکت می‌کنند."),
+     "شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن."),
 )
 
 TUTORIAL = (
-    (2, "open_build", "Open the Build menu.", "منوی ساخت را باز کنید."),
-    (3, "select_barracks", "Select Barracks from the building list.", "سربازخانه را از فهرست ساختمان‌ها انتخاب کنید."),
-    (4, "place_barracks", "Place the Barracks inside the green area, then confirm construction.", "سربازخانه را داخل محدوده سبز قرار دهید و ساخت را تأیید کنید."),
-    (5, "check_cost", "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.", "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید."),
-    (6, "train_rifle_squad", "Open production and recruit one rifle squad.", "بخش تولید را باز کنید و یک گروه تفنگدار آموزش دهید."),
-    (7, "incoming_patrol", "An enemy patrol is approaching from the west. Prepare your squad at the marked lane.", "یک گشت دشمن از غرب نزدیک می‌شود. گروه خود را در مسیر علامت‌گذاری‌شده آماده کنید."),
-    (8, "defend_post", "Hold the marked lane and protect the forward post.", "مسیر علامت‌گذاری‌شده را حفظ کنید و از پاسگاه دفاع کنید."),
+    (2, "open_build", "Open the Build menu.", "منوی «ساخت» رو باز کن."),
+    (3, "select_barracks", "Select Barracks from the building list.", "از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن."),
+    (4, "place_barracks", "Place the Barracks inside the green area, then confirm construction.", "سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن."),
+    (5, "check_cost", "You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.", "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار."),
+    (6, "train_rifle_squad", "Open production and recruit one rifle squad.", "بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده."),
+    (7, "incoming_patrol", "An enemy patrol is approaching from the west. Prepare your squad at the marked lane.", "گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن."),
+    (8, "defend_post", "Hold the marked lane and protect the forward post.", "مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن."),
 )
 
 
@@ -110,6 +111,7 @@ def request_audio(api_key: str, voice_id: str, text: str, language: str, seed: i
         "seed": seed,
         "apply_text_normalization": "on",
     }
+    persian_voice_profile.apply(body, language)
     request = urllib.request.Request(
         f"{API_ROOT}/v1/text-to-speech/{voice_id}?{query}",
         data=json.dumps(body).encode("utf-8"),
@@ -150,6 +152,7 @@ def record(kind: str, identity: str, speaker: str, locale: str, text: str, path:
     with wave.open(str(path), "rb") as audio:
         duration = audio.getnframes() / audio.getframerate()
     return {
+        **persian_voice_profile.metadata("fa" if locale == "fa-IR" else "en"),
         "kind": kind,
         "id": identity,
         "speaker": speaker,
@@ -192,6 +195,9 @@ def main() -> None:
     if subscription.get("status") != "active" or subscription.get("tier") in {None, "free"}:
         raise RuntimeError("An active paid ElevenLabs subscription is required.")
 
+    prior = {}
+    for manifest_path in (ROOT / "Assets/Game/Audio/Narrative/M02EstablishBase/m02_narrative_voice_manifest.json", ROOT / "Assets/Game/Audio/Voice/Tutorial/tutorial_m02_aria_voice_manifest.json"):
+        if manifest_path.exists(): prior.update({c["assetPath"]: c for c in json.loads(manifest_path.read_text())["clips"]})
     narrative_records: list[dict] = []
     tutorial_records: list[dict] = []
     sequence = 3200
@@ -201,7 +207,7 @@ def main() -> None:
             ("fa-IR", "fa", persian, "_fa"),
         ):
             path = ROOT / f"Assets/Game/Audio/Narrative/M02EstablishBase/Voice/{'en' if language == 'en' else 'fa'}/{identity}{suffix}.wav"
-            if args.force or not path.exists():
+            if args.force or not persian_voice_profile.clip_matches(prior.get(path.relative_to(ROOT).as_posix(), {}), text, path, language):
                 convert(request_audio(api_key, VOICE_IDS[speaker], text, language, sequence), path, speaker)
             narrative_records.append(record("narrative", identity, speaker, locale, text, path))
             sequence += 1
@@ -212,7 +218,7 @@ def main() -> None:
             ("fa-IR", "fa", persian, "_fa"),
         ):
             path = ROOT / f"Assets/Game/Audio/Voice/Tutorial/{'en' if language == 'en' else 'fa'}/tutorial_m02_{identity}_aria{suffix}.wav"
-            if args.force or not path.exists():
+            if args.force or not persian_voice_profile.clip_matches(prior.get(path.relative_to(ROOT).as_posix(), {}), text, path, language):
                 convert(request_audio(api_key, VOICE_IDS["ARIA"], text, language, sequence), path, "ARIA")
             tutorial_records.append(record("tutorial", str(step), "ARIA", locale, text, path))
             sequence += 1

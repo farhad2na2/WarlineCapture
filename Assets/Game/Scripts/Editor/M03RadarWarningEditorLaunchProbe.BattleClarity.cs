@@ -18,12 +18,14 @@ namespace Game.Editor
         private static readonly HashSet<string> battleClarityStates=new();
         private static double battleClarityCaptureAt;
         private static int battleClarityStep;
-        private static bool battleClarityCooldownSeen;
+        private static bool battleClarityCooldownSeen, battleClarityScanRequested, battleClarityScanVerified;
+        private static double battleClarityScanAt;
         private static string battleClarityBody;
         private static double battleClarityBodyAt;
         public static void RunBattleClarityEnglish()=>BeginBattleClarity("en");
         public static void RunBattleClarityPersian()=>BeginBattleClarity("fa-IR");
-        private static void BeginBattleClarity(string locale)
+        public static void RunBattleClarityBuildingPersian()=>BeginBattleClarity("fa-IR",true);
+        private static void BeginBattleClarity(string locale,bool build=false)
         {
             // Run the focused state transitions on the same assembly as the real journey.
             var tests=System.AppDomain.CurrentDomain.GetAssemblies();
@@ -37,8 +39,8 @@ namespace Game.Editor
                 tested=true; Debug.Log("[M03BattleClarity] focused state regressions passed on journey assembly");break;
             }
             if(!tested) throw new InvalidOperationException("Focused battle clarity tests are unavailable in this Editor.");
-            RunFullGuidanceJourney(); battleClarityAudit=true; battleClarityLocale=locale;
-            battleClarityStates.Clear(); battleClarityStep=0; battleClarityCaptureAt=0;battleClarityCooldownSeen=false;
+            if(build) RunBuildingJourneyPersian(); else RunFullGuidanceJourney(); battleClarityAudit=true; battleClarityLocale=locale;
+            battleClarityStates.Clear(); battleClarityStep=0; battleClarityCaptureAt=0;battleClarityCooldownSeen=battleClarityScanRequested=battleClarityScanVerified=false;
             GameLocalization.SetLocale(locale,false);
         }
         private static void ObserveBattleClarity(EntityManager em,Entity root)
@@ -46,12 +48,34 @@ namespace Game.Editor
             if(!battleClarityAudit) return;
             if(GameLocalization.CurrentLocaleCode!=battleClarityLocale) GameLocalization.SetLocale(battleClarityLocale,false);
             var p=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
-            if(p.GuidanceId==45004)
+            if(p.GuidanceId==45004 && !completeBuildingJourney)
             {
                 var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
                 if(drawer!=null && drawer.IsOpen) ClickCommand(drawer.CloseButton);
             }
             if(p.GuidanceId<45010 || p.Active==0) return;
+            if(!battleClarityScanRequested)
+            {
+                var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+                if(controls!=null && controls.ScanButton.IsInteractable())
+                {ClickTutorialButton(controls.ScanButton);battleClarityScanRequested=true;battleClarityScanAt=EditorApplication.timeSinceStartup;return;}
+            }
+            if(battleClarityScanRequested && !battleClarityScanVerified && EditorApplication.timeSinceStartup-battleClarityScanAt>1)
+            {
+                var scan=em.GetComponentData<RadarPingState>(root);
+                if(scan.Result!=RadarPingResultKind.Accepted || scan.Charges!=1 || scan.PendingRequestId!=0)
+                    throw new InvalidOperationException("Optional Scan did not produce an accepted result.");
+                VerifyGuidanceOrders(em,true);
+                if(!UiShellRuntimeGateway.TryReadMissionDefense(out var scanModel) || string.IsNullOrEmpty(scanModel.ScanFeedback))
+                    throw new InvalidOperationException("Optional Scan has no readable result.");
+                var feedback=UnityEngine.Object.FindAnyObjectByType<BattleHudRuntimeFeedbackView>();
+                var label=(TMPro.TMP_Text)typeof(BattleHudRuntimeFeedbackView).GetField("feedbackText",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic).GetValue(feedback);
+                if(!label.gameObject.activeInHierarchy || label.text!=V3LocalizedTextBindingView.ShapeForRendering(scanModel.ScanFeedback))
+                    throw new InvalidOperationException("Scan result is not visibly explained: "+label.text);
+                ScreenCapture.CaptureScreenshot(Output+"/optional-scan-"+battleClarityLocale+".png");
+                Debug.Log("[M03Clarity] optional Scan feedback visible, Hold preserved, battle continues: "+scanModel.ScanFeedback);
+                battleClarityScanVerified=true;
+            }
             if(!p.Body.ToString().StartsWith("mission.m03.clarity.",StringComparison.Ordinal))
                 throw new InvalidOperationException("Battle lost its state-specific next instruction.");
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || target.BattleAction==UiTutorialBattleAction.None)
@@ -76,7 +100,7 @@ namespace Game.Editor
             if(UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.CooldownSeconds>0)
             {
                 var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
-                if(controls.SupportButton.IsInteractable()) throw new InvalidOperationException("Cooling radar remains clickable.");
+                if(defense.CanPing) throw new InvalidOperationException("Cooling radar accepts another sweep.");
                 battleClarityCooldownSeen=true;
             }
             if(battleClarityStates.Add(p.Body.ToString()))
@@ -88,7 +112,7 @@ namespace Game.Editor
         private static void VerifyBattleClarity()
         {
             if(!battleClarityAudit) return;
-            if(!battleClarityCooldownSeen || !battleClarityStates.Contains("mission.m03.clarity.wait") || !battleClarityStates.Contains("mission.m03.clarity.engage"))
+            if(!battleClarityScanVerified || !battleClarityCooldownSeen || !battleClarityStates.Contains("mission.m03.clarity.wait") || !battleClarityStates.Contains("mission.m03.clarity.engage"))
                 throw new InvalidOperationException("Battle QA did not observe both readable waiting and enemy-contact states.");
             Debug.Log("[M03BattleClarity] result=Passed locale="+battleClarityLocale+" waiting,contact,visible targets,localized instructions,real defensive victory");
             battleClarityAudit=false;

@@ -18,7 +18,8 @@ public sealed class BuildingPlacementConstructionTransactionTests
             tests.RegistrationFailure_RollsBackResourcesExactlyOnce();
             tests.PartialRegistration_RollsBackResourcesExactlyOnce();
             tests.DuplicateTransaction_DoesNotSpendOrCommitTwice();
-            Debug.Log("[BuildingPlacementConstructionTransactionValidation] result=Passed tests=6");
+            tests.SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot();
+            Debug.Log("[BuildingPlacementConstructionTransactionValidation] result=Passed tests=7");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -119,6 +120,21 @@ public sealed class BuildingPlacementConstructionTransactionTests
         Assert.AreEqual(1, fixture.CommitCount);
     }
 
+    [Test]
+    public void SnappedPreview_CommitsVisibleOriginAndRotationInsteadOfPointerSnapshot()
+    {
+        using var fixture = new Fixture(500, 100, 120, 30);
+        // The initial or last pointer cell can be on the median; road snapping moves
+        // the visible, validated preview to the asphalt and rotates it across the lane.
+        fixture.Placement.CommittedOriginCell = new Vector2Int(882, 427);
+        fixture.Placement.OriginCell = new Vector2Int(882, 419);
+        fixture.Placement.AutoRotateVertical = true;
+        Assert.IsTrue(fixture.Confirm(1, committed: true, out _));
+        Assert.AreEqual(new Vector2Int(882, 419), fixture.CommittedOrigin);
+        Assert.IsTrue(fixture.CommittedRotation);
+        Assert.AreEqual(1, fixture.CommitCount);
+    }
+
     private static void AssertShortage(
         int credits,
         int materials,
@@ -144,6 +160,9 @@ public sealed class BuildingPlacementConstructionTransactionTests
         public readonly RuntimeFactionResourceSystemHelper Resources;
         public readonly BuildingConstructionResourceTransactionSystemHelper Transactions;
         public int CommitCount { get; private set; }
+        public BuildingPlacementLifecycleCompositionSystemHelper.PlacementState Placement => _lifecycle.ActivePlacement;
+        public Vector2Int CommittedOrigin { get; private set; }
+        public bool CommittedRotation { get; private set; }
 
         public Fixture(
             int credits,
@@ -216,8 +235,10 @@ public sealed class BuildingPlacementConstructionTransactionTests
                 Transactions.TryReserve,
                 Transactions.TryFinalize,
                 Transactions.TryRollback,
-                _ =>
+                placement =>
                 {
+                    CommittedOrigin = placement.OriginCell;
+                    CommittedRotation = placement.AutoRotateVertical;
                     CommitCount++;
                     return new BuildingPlacementCommitCompositionSystemHelper.CommitOutcome(
                         null,

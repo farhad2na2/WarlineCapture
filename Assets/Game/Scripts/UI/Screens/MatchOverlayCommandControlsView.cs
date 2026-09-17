@@ -64,6 +64,9 @@ namespace Game.UI.Runtime
 
         internal void RefreshMissionRestrictions()
         {
+            // Cease Fire lives in the selected-unit Commands menu. Keep the legacy
+            // reference for serialized compatibility, but never expose it on the main rail.
+            if (stopButton != null) stopButton.gameObject.SetActive(false);
             bool buildDisabled = false;
             bool supportDisabled = false;
             bool cinematicInteractionLocked = false;
@@ -76,7 +79,6 @@ namespace Game.UI.Runtime
             }
 
             _tutorialBuildAvailable = _tutorialBuildRequested && !cinematicInteractionLocked;
-            if(UiShellRuntimeGateway.TryReadMissionDefense(out var defense)) supportDisabled=!defense.CanPing;
             ApplyMissionRestrictionState(buildDisabled, supportDisabled);
         }
 

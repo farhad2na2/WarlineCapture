@@ -1,0 +1,555 @@
+[
+  {
+    "run": 5,
+    "observations": 26,
+    "distinctClips": 26,
+    "clips": [
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_brief_line_1.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_brief_line_2.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_brief_line_3.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_debrief_line_1.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_debrief_line_2.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/en/m02_debrief_line_3.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-04.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_attack_target_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_confirm_threat_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_engage_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_find_squad_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_destination_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m01_move_to_cover_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_check_cost_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_open_build_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_place_barracks_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_select_barracks_aria.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/Tutorial/en/tutorial_m02_train_rifle_squad_aria.wav"
+      }
+    ]
+  },
+  {
+    "run": 6,
+    "observations": 40,
+    "distinctClips": 40,
+    "clips": [
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-brief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-debrief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-debrief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/m03-debrief-clean.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-04.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-05.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-06.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-10.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-11.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/en/tutorial-m03-12.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-debrief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-brief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-brief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-brief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-comms-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-debrief-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-debrief-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/m05-debrief-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-02.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-03.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-04.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-05.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/en/tutorial-m05-08.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_attack_title_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_hold_title_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_banner_accepted_move_title_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_boarding_transport_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_tactical_feedback_exiting_passengers_01.wav"
+      },
+      {
+        "locale": "en",
+        "path": "Assets/Game/Audio/Voice/ARIA/aria_message_warning_ground_attack_type_01.wav"
+      }
+    ]
+  },
+  {
+    "run": 7,
+    "observations": 67,
+    "distinctClips": 67,
+    "clips": [
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_1_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_2_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_3_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_1_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_2_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_3_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-clean.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-04.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-10.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-11.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-12.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-debrief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-comms-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-debrief-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-01.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-02.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-03.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-04.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-05.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_attack_title_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_hold_title_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_banner_accepted_move_title_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_boarding_transport_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_exiting_passengers_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_warning_ground_attack_type_01_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_confirm_threat_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_find_squad_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_destination_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_open_build_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_place_barracks_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_select_barracks_aria_fa.wav"
+      },
+      {
+        "locale": "fa-IR",
+        "path": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_train_rifle_squad_aria_fa.wav"
+      }
+    ]
+  }
+]

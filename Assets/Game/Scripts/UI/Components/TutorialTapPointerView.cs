@@ -19,7 +19,7 @@ namespace Game.UI.Runtime
         private Vector2 captionSize;
         private TutorialPointerSide side;
         private float refreshAt;
-        private bool visible, placed;
+        private bool visible, placed, captionPlaced;
 
         internal static void BindCaption(RectTransform target, RectTransform caption, Transform obstacleTextRoot)
         {
@@ -99,14 +99,22 @@ namespace Game.UI.Runtime
                 float travel = Mathf.Clamp(Screen.height * .014f, 8, 18);
                 placed = TutorialTapPointerLayout.TryPlace(screen, safe, labelSize, size, margin, travel,
                     obstacles, out arrowScreen, out captionScreen, out side);
+                captionPlaced = placed;
+                if (!placed)
+                {
+                    // Keep the directional cue when a long caption cannot fit beside
+                    // a dense control such as the command wheel. The button still has
+                    // its own label, and the arrow must not cover adjacent controls.
+                    placed = TutorialTapPointerLayout.TryPlace(screen, safe, Vector2.zero, size, margin, travel,
+                        obstacles, out arrowScreen, out _, out side);
+                }
                 if (!placed && caption != null)
                 {
-                    // Tight layouts retain a safe caption and pulse frame without an arrow.
-                    bool labelFits = TutorialTapPointerLayout.TryPlace(screen, safe, labelSize, 0, margin, 0,
+                    captionPlaced = TutorialTapPointerLayout.TryPlace(screen, safe, labelSize, 0, margin, 0,
                         obstacles, out _, out captionScreen, out side);
-                    caption.gameObject.SetActive(labelFits);
-                    if (labelFits) Place(caption, captionScreen.center, captionScreen.size);
+                    if (captionPlaced) Place(caption, captionScreen.center, captionScreen.size);
                 }
+                if (caption != null) caption.gameObject.SetActive(captionPlaced);
             }
             arrow.gameObject.SetActive(placed);
             if (!placed) return;
@@ -116,7 +124,7 @@ namespace Game.UI.Runtime
             Place(arrow, arrowScreen.center + approach * bounce, arrowScreen.size);
             arrow.localRotation = Quaternion.Euler(0, 0, Vector2.SignedAngle(
                 Vector2.down, -approach));
-            if (caption != null) { caption.gameObject.SetActive(true); Place(caption, captionScreen.center, captionScreen.size); }
+            if (caption != null && captionPlaced) Place(caption, captionScreen.center, captionScreen.size);
         }
 
         private static bool Visible(Transform value)
@@ -134,7 +142,9 @@ namespace Game.UI.Runtime
         {
             var owner = rect.GetComponentInParent<Canvas>()?.rootCanvas;
             var camera = owner != null && owner.renderMode != RenderMode.ScreenSpaceOverlay ? owner.worldCamera : null;
-            rect.GetWorldCorners(corners);
+            var wedge = rect.GetComponent<V3RadialWedgeGraphic>();
+            if (wedge != null) wedge.GetGuidanceWorldCorners(corners);
+            else rect.GetWorldCorners(corners);
             Vector2 min = RectTransformUtility.WorldToScreenPoint(camera, corners[0]);
             Vector2 max = min;
             for (int i = 1; i < 4; i++) { var p = RectTransformUtility.WorldToScreenPoint(camera, corners[i]); min = Vector2.Min(min, p); max = Vector2.Max(max, p); }
@@ -158,21 +168,25 @@ namespace Game.UI.Runtime
         protected override void OnPopulateMesh(VertexHelper vh)
         {
             vh.Clear(); Rect r = rectTransform.rect;
-            Arrow(vh,r,1f,new Color(.025f,.035f,.04f));
-            Arrow(vh,r,.82f,new Color(1,.79f,.015f));
-            Segment(vh,r.center+new Vector2(-r.width*.26f,-r.height*.04f),
-                r.center+new Vector2(0,-r.height*.32f),r.width*.04f,new Color(1,.96f,.5f));
+            Chevron(vh,r,1f,new Color(.025f,.035f,.04f));
+            Chevron(vh,r,.84f,new Color(1,.79f,.015f));
+            Segment(vh,r.center+new Vector2(-r.width*.37f,r.height*.28f),
+                r.center+new Vector2(0,-r.height*.115f),r.width*.035f,new Color(1,.96f,.5f));
         }
-        private static void Arrow(VertexHelper vh,Rect r,float scale,Color color)
+        private static void Chevron(VertexHelper vh,Rect r,float scale,Color color)
         {
+            // A broad, open chevron without a shaft. Authored pointing down; the
+            // existing placement rotates it toward the guided button on any side.
             Vector2 P(float x,float y) => r.center+new Vector2(x*r.width,y*r.height)*scale;
             int i=vh.currentVertCount;
-            vh.AddVert(P(0,-.48f),color,Vector2.zero); vh.AddVert(P(-.46f,0),color,Vector2.zero);
-            vh.AddVert(P(.46f,0),color,Vector2.zero); vh.AddTriangle(i,i+1,i+2);
-            i=vh.currentVertCount;
-            vh.AddVert(P(-.18f,-.06f),color,Vector2.zero); vh.AddVert(P(-.18f,.45f),color,Vector2.zero);
-            vh.AddVert(P(.18f,.45f),color,Vector2.zero); vh.AddVert(P(.18f,-.06f),color,Vector2.zero);
+            vh.AddVert(P(-.46f,.34f),color,Vector2.zero);
+            vh.AddVert(P(-.46f,.02f),color,Vector2.zero);
+            vh.AddVert(P(0,-.46f),color,Vector2.zero);
+            vh.AddVert(P(0,-.14f),color,Vector2.zero);
+            vh.AddVert(P(.46f,.02f),color,Vector2.zero);
+            vh.AddVert(P(.46f,.34f),color,Vector2.zero);
             vh.AddTriangle(i,i+1,i+2); vh.AddTriangle(i,i+2,i+3);
+            vh.AddTriangle(i+3,i+2,i+4); vh.AddTriangle(i+3,i+4,i+5);
         }
         private static void Segment(VertexHelper vh, Vector2 a, Vector2 b, float width, Color color)
         {

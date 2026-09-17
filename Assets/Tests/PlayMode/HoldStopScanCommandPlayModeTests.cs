@@ -48,6 +48,7 @@ public sealed class HoldStopScanCommandPlayModeTests
             typeof(EngageTarget),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 3) });
         em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 4f, ArriveDistance = 0.1f });
         em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 0 });
@@ -103,6 +104,7 @@ public sealed class HoldStopScanCommandPlayModeTests
             typeof(HoldPositionOrderTag),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(vehicle, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(vehicle, new UnitGrid { Cell = new int2(3, 4) });
         em.SetComponentData(vehicle, new UnitMove { Speed = 7f, WalkSpeed = 5f, ArriveDistance = 0.1f });
         em.SetComponentData(vehicle, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
@@ -118,6 +120,7 @@ public sealed class HoldStopScanCommandPlayModeTests
             typeof(UnitAirComponent),
             typeof(UnitTarget),
             typeof(UnitPathRequest));
+        em.AddComponentData(airUnit, new Faction { Id = FactionIdentity.PlayerFactionId });
         em.SetComponentData(airUnit, new UnitGrid { Cell = new int2(10, 11) });
         em.SetComponentData(airUnit, new UnitMove { Speed = 14f, WalkSpeed = 14f, ArriveDistance = 0.1f });
         em.SetComponentData(airUnit, new UnitAirMovement { CruiseHeight = 14f, RunwayTaxiSpeed = 5f });

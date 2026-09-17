@@ -10,12 +10,12 @@ namespace Game.Editor
             string[] names={"read_warning","inspect_route","choose_defense","build_option","position_squads","hold","stop","refresh","reinforce","priority","adapt","result"};
             MissionGuidanceActionKind[] actions={MissionGuidanceActionKind.ReadWarning,MissionGuidanceActionKind.FocusWarning,
                 MissionGuidanceActionKind.Explain,MissionGuidanceActionKind.OpenBuild,MissionGuidanceActionKind.Move,
-                MissionGuidanceActionKind.Hold,MissionGuidanceActionKind.Stop,MissionGuidanceActionKind.RadarPing,
+                MissionGuidanceActionKind.Hold,MissionGuidanceActionKind.Explain,MissionGuidanceActionKind.RadarPing,
                 MissionGuidanceActionKind.OpenProduction,MissionGuidanceActionKind.InspectContact,
                 MissionGuidanceActionKind.FocusWarning,MissionGuidanceActionKind.ReviewResult};
             MissionGuidanceCompletionKind[] completion={MissionGuidanceCompletionKind.WarningRead,MissionGuidanceCompletionKind.RouteInspected,
                 MissionGuidanceCompletionKind.Acknowledged,MissionGuidanceCompletionKind.DefenseBuilt,MissionGuidanceCompletionKind.SquadPositioned,
-                MissionGuidanceCompletionKind.Holding,MissionGuidanceCompletionKind.StopAccepted,MissionGuidanceCompletionKind.PingAccepted,
+                MissionGuidanceCompletionKind.Holding,MissionGuidanceCompletionKind.Acknowledged,MissionGuidanceCompletionKind.PingAccepted,
                 MissionGuidanceCompletionKind.ReinforcementProduced,MissionGuidanceCompletionKind.HostileDefeated,
                 MissionGuidanceCompletionKind.MainElementActivated,MissionGuidanceCompletionKind.ResultSettled};
             Array(defense.FindPropertyRelative("guidanceSteps"),12,(step,i)=>

@@ -92,6 +92,15 @@ namespace Game.UI.Runtime
                 return;
 
             UiDisabledMaterialStateView state = graphic.GetComponent<UiDisabledMaterialStateView>();
+            // Shell sections can be cloned/rebound after a restricted mission. Material
+            // references survive cloning; the nonserialized restriction owner does not.
+            // A control with no remaining restriction must not retain that runtime shader.
+            if (!disabled && (state == null || state.Reasons == UiDisabledVisualReason.None))
+            {
+                if (graphic.material != null && graphic.material.shader != null && graphic.material.shader.name == ShaderName)
+                    graphic.material = null;
+                return;
+            }
             // A mission's static color overlay already communicates unavailability. A
             // cinematic input lock must not grayscale it and compete with the card style.
             if (state != null && state.PreserveAuthoredVisual)
@@ -107,7 +116,8 @@ namespace Game.UI.Runtime
             {
                 if (state.Reasons == UiDisabledVisualReason.None)
                 {
-                    state.OriginalMaterial = graphic.material;
+                    state.OriginalMaterial = graphic.material != null && graphic.material.shader != null &&
+                        graphic.material.shader.name == ShaderName ? null : graphic.material;
                     state.OriginalColor = graphic.color;
                 }
                 state.Reasons |= reason;
@@ -132,6 +142,8 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if ((state.Reasons & reason) == UiDisabledVisualReason.None)
+                return;
             state.Reasons &= ~reason;
             if (state.Reasons != UiDisabledVisualReason.None)
                 return;
@@ -171,6 +183,8 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            if ((state.Reasons & reason) == UiDisabledVisualReason.None)
+                return;
             state.Reasons &= ~reason;
             if (state.Reasons == UiDisabledVisualReason.None)
                 selectable.colors = state.OriginalColors;

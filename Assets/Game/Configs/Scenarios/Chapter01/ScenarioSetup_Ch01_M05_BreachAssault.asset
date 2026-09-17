@@ -243,7 +243,7 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   breach:
     enabled: 1
-    gateBuildingId: Building_Road_Barrier
+    gateBuildingId: M05_Breach_Road_Barrier
     coreBuildingId: Building_Satelite_Dish
     approachAnchorId: anchor.ch01.m05.approach
     gateAnchorId: anchor.ch01.m05.gate
@@ -256,7 +256,7 @@ MonoBehaviour:
     secureHoldMilliseconds: 20000
     deadlineMilliseconds: 720000
     counterattackWarningMilliseconds: 15000
-    archiveRadius: 20
+    archiveRadius: 6
     cameraTour:
       StartHoldMilliseconds: 750
       PostHoldMilliseconds: 1200

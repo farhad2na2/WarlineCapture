@@ -23,7 +23,7 @@ public sealed class FirstLaunchNarrativeConfigTests
             tests.DialogueLines_HaveStableKeysSpeakersTimingAndVoiceClips();
             tests.SpeakerCatalog_UsesDistinctPortraitsAndProductionAriaIcon();
             tests.SequenceConfig_DoesNotDirectlyRetainPanelTextures();
-            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=7 states=26 panels=22 lines=17 speakers=5");
+            Debug.Log("[FirstLaunchNarrativeConfigValidation] result=Passed tests=7 states=25 panels=22 lines=17 speakers=5");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -41,7 +41,7 @@ public sealed class FirstLaunchNarrativeConfigTests
         NarrativeSequenceConfig config = AssetDatabase.LoadAssetAtPath<NarrativeSequenceConfig>(FirstLaunchNarrativeConfigBuilder.SequencePath);
         Assert.NotNull(config);
         Assert.AreEqual("FL-P01", config.EntryStateId);
-        Assert.AreEqual(26, config.States.Count);
+        Assert.AreEqual(25, config.States.Count);
         HashSet<string> ids = new(StringComparer.Ordinal);
         int panelCount = 0;
         foreach (NarrativeStateRecord state in config.States)

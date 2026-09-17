@@ -1,0 +1,891 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-09-15T22:22:56Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-09-15T22:22:56.11443Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/private/tmp/warline-m05-tap-validation
+-logFile
+/private/tmp/mobile-commands-validation-final.log
+-executeMethod
+Game.Editor.M05GateValidationEntry.Run
+Successfully changed project path to: /private/tmp/warline-m05-tap-validation
+/private/tmp/warline-m05-tap-validation
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              5ce1aaf579e7439ab285663745ae770c
+  Correlation Id:          7c0c2057daeac6751c2911cf835c0186
+  External correlation Id: 7102716837151715447
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.29s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-09-15T22:22:56.401854Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.29s
+Logging is directed to a specific file, skipping project log.Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55504 [Flags] 2 [Guid] 1938957605 [EditorId] 1938957605 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55504 [Flags] 2 [Guid] 1938957605 [EditorId] 1938957605 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-63833" after 0.1 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Licensing::Client] Successfully resolved entitlement details
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /private/tmp/warline-m05-tap-validation/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56833
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.000966 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.212 seconds
+Domain Reload Profiling: 436ms
+	BeginReloadAssembly (59ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (25ms)
+	LoadAllAssembliesAndSetupDomain (130ms)
+		LoadAssemblies (58ms)
+		AnalyzeDomain (99ms)
+			TypeCache.Refresh (98ms)
+				TypeCache.ScanAssembly (89ms)
+	FinalizeReload (213ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (44ms)
+			BeforeProcessingInitializeOnLoad (35ms)
+			ProcessInitializeOnLoadAttributes (42ms)
+			ProcessInitializeOnLoadMethodAttributes (57ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/private/tmp/warline-m05-tap-validation/Packages/com.sniveler-code.gpu-animation (location: /private/tmp/warline-m05-tap-validation/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /private/tmp/warline-m05-tap-validation/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.00 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+[ScriptCompilation] Requested script compilation because: AssetDatabase observed changes in script compilation related files
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-4d040f10b981f2bcbd01b8942b3b9177
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /private/tmp/warline-m05-tap-validation
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 21.2570ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/1300b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /private/tmp/warline-m05-tap-validation
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 16.5626ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Tests.PlayMode.dll, with 152 defines and 311 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.Rocks.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEngine.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Collections, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Collections.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Burst.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Cecil.Awesome, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null with Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.CodeGen/Unity.Cecil.Awesome.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Scripting, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/Unity.Scripting.dll
+  - EILPP : Game.Tests.PlayMode : : 121ms (~106ms)
+    - EILPP : Game.Tests.PlayMode : Cloner: 1ms 
+    - EILPP : Game.Tests.PlayMode : ComponentDataPP: 10ms 
+    - EILPP : Game.Tests.PlayMode : StaticTypeRegistryPostProcessor: 4ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved UnityEditor.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed/UnityEngine/UnityEditor.CoreModule.dll
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 173.2204ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Editor.dll, with 150 defines and 352 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+  - EILPP : Game.Editor : : 533ms (~69ms)
+    - EILPP : Game.Editor : GetAllComponentTypes: 36ms 
+    - EILPP : Game.Editor : ComponentDataPP: 6ms 
+    - EILPP : Game.Editor : StaticTypeRegistryPostProcessor: 34ms 
+    - EILPP : Game.Editor : WriteAssembly: 388ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 631.8615ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Tests.Editor.dll, with 150 defines and 328 references
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Entities.CodeGen.EntitiesILPostProcessors
+  - EILPP : Game.Tests.Editor : : 469ms (~79ms)
+    - EILPP : Game.Tests.Editor : Cloner: 1ms 
+    - EILPP : Game.Tests.Editor : ComponentDataPP: 11ms 
+    - EILPP : Game.Tests.Editor : StaticTypeRegistryPostProcessor: 12ms 
+    - EILPP : Game.Tests.Editor : WriteAssembly: 366ms 
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Jobs.CodeGen.JobsILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+info: Unity.ILPP.Runner.PostProcessingPipeline[0]
+      running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/PostProcessAssembly'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/PostProcessAssembly - 200 - application/grpc 592.1474ms
+ExitCode: 0 Duration: 6s98ms
+[1394/1923  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+[1911/1923  0s] Csc Library/Bee/artifacts/1300b0aE.dag/Game.Tests.PlayMode.dll (+2 others)
+Assets/Tests/PlayMode/OperationMapDenseCityPackedRuntimeParityPlayModeTests.cs(1669,13): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Tests/PlayMode/OperationMapDenseCityPackedRuntimeParityPlayModeTests.cs(1667,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+[1912/1923  0s] ILPostProcess Library/Bee/artifacts/1300b0aE.dag/post-processed/Game.Tests.PlayMode.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Tests.PlayMode.dll, with 152 defines and 311 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1913/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.PlayMode.pdb
+[1914/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.PlayMode.dll
+[1915/1923  2s] Csc Library/Bee/artifacts/1300b0aE.dag/Game.Editor.dll (+2 others)
+Assets/Game/Scripts/Editor/M03RadarWarningMediaImporter.cs(40,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M04AirliftMediaImporter.cs(43,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(50,103): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(50,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,96): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,31): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,41): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(211,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(211,35): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,112): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,39): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,122): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,111): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationMapRenderInfrastructureEligibilityPolicy.cs(75,68): warning CS0618: 'Projector' is obsolete: 'Projector component is deprecated now that the Built-In Render Pipeline is deprecated. To use an alternative, refer to the documentation in the component help icon. #from(6000.5)'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,86): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+[1916/1923  0s] ILPostProcess Library/Bee/artifacts/1300b0aE.dag/post-processed/Game.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Editor.dll, with 150 defines and 352 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1917/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Editor.pdb
+[1918/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Editor.dll
+[1919/1923  2s] Csc Library/Bee/artifacts/1300b0aE.dag/Game.Tests.Editor.dll (+2 others)
+[1920/1923  0s] ILPostProcess Library/Bee/artifacts/1300b0aE.dag/post-processed/Game.Tests.Editor.dll (+pdb)
+Processing assembly Library/Bee/artifacts/1300b0aE.dag/Game.Tests.Editor.dll, with 150 defines and 328 references
+processors: Unity.Entities.CodeGen.EntitiesILPostProcessors, Unity.Jobs.CodeGen.JobsILPostProcessor, Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor, zzzUnity.Burst.CodeGen.BurstILPostProcessor
+running Unity.Entities.CodeGen.EntitiesILPostProcessors
+running Unity.Jobs.CodeGen.JobsILPostProcessor
+running Unity.Pipeline.CodeGen.HotReloadInPlaceILPostProcessor
+running zzzUnity.Burst.CodeGen.BurstILPostProcessor
+[1921/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.Editor.pdb
+[1922/1923  0s] CopyFiles Library/ScriptAssemblies/Game.Tests.Editor.dll
+*** Tundra build success (6.08 seconds), 13 items updated, 1923 evaluated
+Assets/Tests/PlayMode/OperationMapDenseCityPackedRuntimeParityPlayModeTests.cs(1669,13): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Tests/PlayMode/OperationMapDenseCityPackedRuntimeParityPlayModeTests.cs(1667,34): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningMediaImporter.cs(40,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M04AirliftMediaImporter.cs(43,47): warning CS0618: 'TextureImporter.spritesheet' is obsolete: 'Support for accessing sprite meta data through spritesheet has been removed. Please use the UnityEditor.U2D.Sprites.ISpriteEditorDataProvider interface instead.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(50,103): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.MobileActions.cs(50,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,96): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(141,31): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M04AirliftEditorProbe.PlayerGuidance.cs(153,41): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(211,108): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Guidance.cs(211,35): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,112): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.Indicator.cs(93,39): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,122): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(59,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,111): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/M03RadarWarningEditorLaunchProbe.PlacementIndicator.cs(62,38): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsInactive, FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+Assets/Game/Scripts/Editor/OperationMapRenderInfrastructureEligibilityPolicy.cs(75,68): warning CS0618: 'Projector' is obsolete: 'Projector component is deprecated now that the Built-In Render Pipeline is deprecated. To use an alternative, refer to the documentation in the component help icon. #from(6000.5)'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,86): warning CS0618: 'FindObjectsSortMode' is obsolete: 'FindObjectsSortMode has been deprecated. Use the FindObjectsByType overloads that do not take a FindObjectsSortMode parameter.'
+Assets/Game/Scripts/Editor/MissionTowerFireEditorProbe.cs(167,36): warning CS0618: 'Object.FindObjectsByType<T>(FindObjectsSortMode)' is obsolete: 'FindObjectsByType with FindObjectsSortMode parameter has been deprecated. Use FindObjectsByType<T>() or FindObjectsByType<T>(FindObjectsInactive) instead. InstanceID will be replaced in the future with EntityId and previous sort order cannot be maintained.'
+AssetDatabase: script compilation time: 6.521050s
+Total cache size 268290618
+Total cache size after purge 268290618, took 00:00:00.2103487
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 110ms
+Start HTTP server: port:7801
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-Warline M5 Compound QA
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  6.465 seconds
+Domain Reload Profiling: 7197ms
+	BeginReloadAssembly (93ms)
+		DisableScriptedObjects (6ms)
+		CreateAndSetChildDomain (16ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (593ms)
+		LoadAssemblies (262ms)
+		AnalyzeDomain (309ms)
+			TypeCache.Refresh (248ms)
+				TypeCache.ScanAssembly (224ms)
+			BuildScriptInfoCaches (48ms)
+			ResolveRequiredComponents (6ms)
+	FinalizeReload (6466ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (5ms)
+			BeforeProcessingInitializeOnLoad (49ms)
+			ProcessInitializeOnLoadAttributes (3334ms)
+			ProcessInitializeOnLoadMethodAttributes (2847ms)
+		AwakeInstancesAfterBackupRestoration (10ms)
+Starting new worker id: 0 with log in /private/tmp/warline-m05-tap-validation/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=75c7bae8f72b146569750b5631bb1053): Total: 16.025 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=8333 ms
+		Asset DB Callback time: managed=339 ms, native=15 ms
+		Scripting: domain reloads=1, domain reload time=764 ms, compile time=6522 ms, other=49 ms
+		Project Asset Count: scripts=3257, non-scripts=21271
+		Asset File Changes: new=0, changed=5, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 8.928ms
+	ApplyChangesToAssetFolders: 0.354ms
+	Scan: 1115.188ms
+	Collect global state as custom dependencies: 2.174ms
+	OnSourceAssetsModified: 0.327ms
+	CategorizeScriptCompilationAssets: 63.687ms
+	ProcessAssetsWithTransientArtifactChanges: 73.937ms
+	CategorizeAssets: 247.959ms
+	CompileScripts: 6522.423ms
+	ImportOutOfDateAssets: 6643.725ms (6493.366ms without children)
+		ReloadNativeAssets: 0.251ms
+		UnloadImportedAssets: 5.684ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.986ms
+		ImportSchedulerStart: 142.309ms
+	PostProcessAllAssets: 342.850ms
+		VCAutoAddAssetPostprocess 1.331ms
+		XRBuildSystem.XRAssetImported 0.132ms
+		WindowTitlePostprocess 0.091ms
+		PostProcessCallbackCreateDeferredMaterials 0.072ms
+		MonoPostProcessAllAssets: 339.584ms
+			AssetPostprocessor.OnPostprocessAllAssets 205.434ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 17.519ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 10.911ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 5.059ms
+			SyncVS.PostprocessSyncProject 4.782ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 4.017ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 2.402ms
+			AssetChangedListener.OnPostprocessAllAssets 2.075ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.339ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 1.098ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.039ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 0.916ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.877ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.872ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.609ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.450ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.390ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.312ms
+			PostProcessor.OnPostprocessAllAssets 0.304ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.288ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.274ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.268ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.251ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.225ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.224ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.204ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.200ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.198ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.160ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.152ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.150ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.147ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.127ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.125ms
+			AssetEvents.OnPostprocessAllAssets 0.109ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.099ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.066ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.064ms
+	PostAssetChangesProfiler: 4.254ms
+	UnloadStreamsBegin: 3.614ms
+	PersistCurrentRevisions: 0.450ms
+	GenerateScriptTypeHashes: 3.937ms
+	GenerateScriptTypeSerializationHashes: 5.855ms
+	Untracked: 993.474ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.06 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.086ms
+Initializing Unity extensions:
+2026-09-16 00:23:15.057 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6edf3ca0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:15.058 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6edf3de0 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:15.058 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6edf3e80 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:15.061 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6ee6fe80 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Worker ready: AssetImportWorkerHW0 0
+Unloading 53 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 14374 unused Assets / (20.2 MB). Loaded Objects now: 14956.
+Memory consumption went from 0.54 GB to 0.52 GB.
+Total: 50.982708 ms (FindLiveObjects: 0.453500 ms CreateObjectMapping: 2.952292 ms MarkObjects: 38.803125 ms  DeleteObjects: 8.773583 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /private/tmp/warline-m05-tap-validation/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+2026-09-16 00:23:16.497 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6ee114a0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:16.497 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6ee11360 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:16.497 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6ee112c0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-09-16 00:23:16.501 Unity[63833:9347978] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb6ee6cfa0 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+[Project] Loading completed in 20.408 seconds
+	Project init time: 				18.271 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.091 seconds
+		Asset Database init time: 		0.829 seconds
+		Global illumination init time: 	0.000 seconds
+		Assemblies load time: 			0.467 seconds
+		Unity extensions init time: 	0.034 seconds
+		Asset Database refresh time: 	16.027 seconds
+	Scene opening time: 			1.826 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1789510996517,"processId":63833,"projectLoad":20.408022959,"projectInit":18.270856917,"templateInit":0.0,"packageManagerInit":0.091210167,"assetDatabaseInit":0.828971375,"globalIlluminationInit":0.000400875,"assembliesLoad":0.467450333,"unityExtensionsInit":0.033721666,"assetDatabaseRefresh":16.02715175,"sceneOpening":1.825882958}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1789510996517,"processId":63833,"editorVersion":"6000.5.2f1 (eb73d3b415a1)","branch":"6000.5/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+Scanning for USB devices : 0.108ms
+
+Asset Pipeline Refresh (id=02f6283fdf29841b0a62a65f70ca1e81): Total: 0.772 seconds - Initiated by RefreshV2(AllowForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=771 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3257, non-scripts=21271
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 0.489ms
+	ApplyChangesToAssetFolders: 0.185ms
+	Scan: 443.261ms
+	Collect global state as custom dependencies: 0.265ms
+	ProcessAssetsWithTransientArtifactChanges: 2.991ms
+	CategorizeAssets: 129.046ms
+	ImportOutOfDateAssets: 152.630ms (19.321ms without children)
+		ReloadNativeAssets: 0.237ms
+		UnloadImportedAssets: 0.106ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.788ms
+		ImportSchedulerStart: 131.176ms
+	GatherAllCurrentPrimaryImportResultRevisions: 5.263ms
+	UnloadStreamsBegin: 3.354ms
+	PersistCurrentRevisions: 0.545ms
+	Untracked: 32.716ms
+
+GPU Resident Drawer created.
+Created GICache directory at /Users/farhad/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.005s, timestamps: [21.201 - 21.206]
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully updated the access token
+[Licensing::Module] Successfully updated access token: "--nA1kDJ"... (expires: 2026-09-15T23:44:01Z)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Project ID request failed, Reason: The requested URL returned error: 403 (403).
+Unknown Unity Connect error (400). Please contact support at support@unity.com while processing request "https://services.unity.com/api/unity/legacy/v1/projects/328e4279-a98a-4284-a898-89ed1ab87d7d", HTTP error code 403
+.Android Extension - Scanning For ADB Devices 3289 ms
+Android Extension - Scanning For ADB Devices 75 ms
+Attempted to call .Dispose on an already disposed CancellationTokenSource
+Android Extension - Scanning For ADB Devices 68 ms
+Android Extension - Scanning For ADB Devices 62 ms
+Loaded scene 'Library/Unused/183babae093f84d32a7e7b1605e26166'
+	Deserialize:            78.830 ms
+	Integration:            34.158 ms
+	Integration of assets:  3.786 ms
+	Thread Wait Time:       0.068 ms
+	Total Operation Time:   116.842 ms
+Asset Pipeline Refresh (id=b859f41be1add4b0b8684004503ea760): Total: 0.013 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc' -> (Import Result ID: 'e5adda7659215452fb2b18271e709b95') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=62d630281ea5878bf5aa058de937a29c DependenciesID=2f60ba38eaa9a10617a440825abb2993 StaticDependenciesID=4e0a885c7f27b70e2cb00de76b72c5fb 
+Asset Pipeline Refresh (id=314fc4978ffcc4a9da533486a5ed6c28): Total: 0.165 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[M03RadarWarningLocalizationBuilder] result=Passed central tables updated; unrelated keys and prefab bindings preserved
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M03RadarWarningLocalizationBuilder:Import () (at Assets/Game/Scripts/Editor/M03RadarWarningLocalizationBuilder.cs:39)
+Game.Editor.MatchHudV3PrefabBuilder:BuildMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:161)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/M03RadarWarningLocalizationBuilder.cs Line: 39)
+
+[MobileCommands] build=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:BuildMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:180)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 180)
+
+Unloading 7 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2154 unused Assets / (0.7 MB). Loaded Objects now: 22434.
+Memory consumption went from 0.62 GB to 0.61 GB.
+Total: 73.408083 ms (FindLiveObjects: 0.424041 ms CreateObjectMapping: 2.140792 ms MarkObjects: 69.542875 ms  DeleteObjects: 1.297875 ms)
+
+[MobileCommands] geometry=Passed size=1920x1080
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateMobileGeometry (UnityEngine.GameObject,UnityEngine.Camera,int,int) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:121)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1934)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:142)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 121)
+
+[MatchHudV3PrefabBuilder] capture=Passed size=1920x1080 path=/private/tmp/mobile-commands-en.png scene=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1940)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:142)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs Line: 1940)
+
+Unloading 81 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2136 unused Assets / (2.9 MB). Loaded Objects now: 22441.
+Memory consumption went from 0.66 GB to 0.66 GB.
+Total: 18.571750 ms (FindLiveObjects: 0.457750 ms CreateObjectMapping: 1.975834 ms MarkObjects: 15.111250 ms  DeleteObjects: 1.026500 ms)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2127 unused Assets / (425.8 KB). Loaded Objects now: 22441.
+Memory consumption went from 0.65 GB to 0.65 GB.
+Total: 20.833958 ms (FindLiveObjects: 0.450209 ms CreateObjectMapping: 1.961292 ms MarkObjects: 17.448291 ms  DeleteObjects: 0.973791 ms)
+
+[MobileCommands] geometry=Passed size=2400x1080
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateMobileGeometry (UnityEngine.GameObject,UnityEngine.Camera,int,int) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:121)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1934)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:143)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 121)
+
+[MatchHudV3PrefabBuilder] capture=Passed size=2400x1080 path=/private/tmp/mobile-commands-wide-en.png scene=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1940)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:143)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs Line: 1940)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2136 unused Assets / (2.9 MB). Loaded Objects now: 22441.
+Memory consumption went from 0.66 GB to 0.65 GB.
+Total: 21.181625 ms (FindLiveObjects: 0.486291 ms CreateObjectMapping: 1.948750 ms MarkObjects: 17.753750 ms  DeleteObjects: 0.992458 ms)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2127 unused Assets / (0.5 MB). Loaded Objects now: 22441.
+Memory consumption went from 0.65 GB to 0.65 GB.
+Total: 21.071125 ms (FindLiveObjects: 0.469167 ms CreateObjectMapping: 1.978750 ms MarkObjects: 17.701833 ms  DeleteObjects: 0.921125 ms)
+
+[MobileCommands] geometry=Passed size=1920x1080
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateMobileGeometry (UnityEngine.GameObject,UnityEngine.Camera,int,int) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:121)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1934)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:142)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 121)
+
+[MatchHudV3PrefabBuilder] capture=Passed size=1920x1080 path=/private/tmp/mobile-commands-fa-IR.png scene=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1940)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:142)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs Line: 1940)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2136 unused Assets / (2.9 MB). Loaded Objects now: 22441.
+Memory consumption went from 0.66 GB to 0.65 GB.
+Total: 19.765000 ms (FindLiveObjects: 0.467542 ms CreateObjectMapping: 1.917208 ms MarkObjects: 16.387708 ms  DeleteObjects: 0.992084 ms)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2127 unused Assets / (426.3 KB). Loaded Objects now: 22441.
+Memory consumption went from 0.65 GB to 0.65 GB.
+Total: 19.235500 ms (FindLiveObjects: 0.429417 ms CreateObjectMapping: 1.925250 ms MarkObjects: 15.981291 ms  DeleteObjects: 0.899334 ms)
+
+[MobileCommands] geometry=Passed size=2400x1080
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateMobileGeometry (UnityEngine.GameObject,UnityEngine.Camera,int,int) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:121)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1934)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:143)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 121)
+
+[MatchHudV3PrefabBuilder] capture=Passed size=2400x1080 path=/private/tmp/mobile-commands-wide-fa-IR.png scene=
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:Capture (string,int,int,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool,bool) (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs:1940)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:143)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.cs Line: 1940)
+
+Unloading 80 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2136 unused Assets / (2.9 MB). Loaded Objects now: 22441.
+Memory consumption went from 0.66 GB to 0.65 GB.
+Total: 20.669250 ms (FindLiveObjects: 0.453375 ms CreateObjectMapping: 2.034459 ms MarkObjects: 17.204125 ms  DeleteObjects: 0.977042 ms)
+
+[MobileCommands] validation=Passed mainCommands=7 squadTray=707 languages=en,fa-IR captures=4
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.MatchHudV3PrefabBuilder:ValidateAndCaptureMobileCommands () (at Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs:146)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:7)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/MatchHudV3PrefabBuilder.MobileCommands.cs Line: 146)
+
+[MobileCommands] orders=Passed Hold and Cease Fire mixed selection
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M05GateValidationEntry:StartWhenReady () (at Assets/Game/Scripts/Editor/M05GateValidationEntry.cs:12)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: Assets/Game/Scripts/Editor/M05GateValidationEntry.cs Line: 12)
+
+MonoPathRemapper: Attempts to remap: 74766; Successful remaps: 84
+Thread 0x3a043f000 may have been prematurely finalized
+Serialized file version minimum: 23, current 23
+[LAYOUT] About to save layout /private/tmp/warline-m05-tap-validation/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+Pipeline Server stopped
+Unloading 2 Unused Serialized files (Serialized files now loaded: 0)
+Killing ADB server in 0.062724 seconds.
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Unloading 0 unused Assets / (0.5 KB). Loaded Objects now: 22376.
+Memory consumption went from 0.67 GB to 0.67 GB.
+Total: 25.038250 ms (FindLiveObjects: 0.434667 ms CreateObjectMapping: 2.100667 ms MarkObjects: 22.478417 ms  DeleteObjects: 0.024166 ms)
+
+Thread 0x3ab23b000 may have been prematurely finalized
+VB/C# compiler server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+MSBuild server shut down successfully.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+Thread 0x16c30b000 may have been prematurely finalized
+Thread 0x16c397000 may have been prematurely finalized
+Thread 0x16c423000 may have been prematurely finalized
+Thread 0x16c4af000 may have been prematurely finalized
+Thread 0x16c76b000 may have been prematurely finalized
+Thread 0x16c653000 may have been prematurely finalized
+Thread 0x16c6df000 may have been prematurely finalized
+Thread 0x16c5c7000 may have been prematurely finalized
+Thread 0x16c53b000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x178787000 may have been prematurely finalized
+Cleanup mono
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+CodeReloadManager destroyed
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 403 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 40

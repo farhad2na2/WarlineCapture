@@ -35,13 +35,22 @@
       "id": "m03-brief-01",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "شبکهٔ هشدار این بخش قطع است. دیده‌بان‌ها از یک کاروان زرهی در جادهٔ غربی خبر می‌دهند. خودروی رادار زمینی ما پس از ورود خودروها به محدودهٔ پوشش، تماس را تأیید می‌کند.",
+      "text": "شبکهٔ هشدار اینجا قطع شده. دیده‌بان‌ها می‌گن یه کاروان زرهی توی جادهٔ غربیه. وقتی خودروها به محدودهٔ رادارمون برسن، می‌تونیم حضورشون رو تأیید کنیم.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-01.wav",
-      "durationSeconds": 14.24,
-      "sha256": "e22a45367ce64d3faf6602a63297ddf2d1908e3c2e9fa1e55aee65f87084ceb9",
-      "captionSha256": "c335e26c1534b78d933bb79c01710d7e1f6cd2962ec7c215de57824752e6915a"
+      "durationSeconds": 10.48,
+      "sha256": "fa8229622914eb8c4a1ba67c2432e1fe5cf96532a3349816d4f391179eb1a1e1",
+      "captionSha256": "d663bf811148131c74553523f23a832041b967686ae19c82003641c9c3a3d736",
+      "spokenText": "شبکهٔ هشدار اینجا قطع شده. دیده‌بان‌ها می‌گن یه کاروان زرهی توی جادهٔ غربیه. وقتی خودروها به محدودهٔ رادارمون برسن، می‌تونیم حضورشون رو تأیید کنیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151185,
+      "generatedAtUtc": "2026-09-15T17:51:46.231178+00:00"
     },
     {
       "kind": "narrative",
@@ -61,13 +70,22 @@
       "id": "m03-brief-02",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "در تقاطع جلوی آن‌ها را بگیرید یا نزدیک‌تر به پاسگاه دفاع کنید. مسیر درمانگاه را باز نگه دارید. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسد.",
+      "text": "جلوی کاروان رو توی تقاطع بگیرید؛ یا نزدیک‌تر به پاسگاه دفاع کنید. راه درمانگاه باید باز بمونه. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسه.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-02.wav",
-      "durationSeconds": 12.4,
-      "sha256": "cf75f633e053cd423301ebfa3a1e0425ceebb93ad2f331eeeecedd9f3651c890",
-      "captionSha256": "748d7cc04f754d39c6dc9663499966754f5e87e62f82b1deb32aa3098d4d4e43"
+      "durationSeconds": 11.84,
+      "sha256": "baddbf8cca2a0d0ee023727feec80596bd9a2b7e547f600149f65124583e8a0c",
+      "captionSha256": "e2c2c8b902f0ddfc5a877a9eeba8c6bd16d5fb5feb21bfdd429cc49d7edf90a1",
+      "spokenText": "جلوی کاروان رو توی تقاطع بگیرید؛ یا نزدیک‌تر به پاسگاه دفاع کنید. راه درمانگاه باید باز بمونه. حتی نفربر بی‌سلاح هم نباید به محدودهٔ مرکزی برسه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151186,
+      "generatedAtUtc": "2026-09-15T17:51:48.474445+00:00"
     },
     {
       "kind": "narrative",
@@ -87,13 +105,22 @@
       "id": "m03-brief-03",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "حدود یک دقیقه برای آماده‌شدن فرصت داریم. دو گروه تفنگدار و یک پادگان آماده در اختیار شماست. برج، مانع یا نیروی کمکی را انتخاب کنید. هشدار نخست یک برآورد است.",
+      "text": "حدود یه دقیقه وقت داریم آماده بشیم. دو گروه تفنگدار و یه سربازخانهٔ آماده داری. خودت انتخاب کن: برج، مانع جاده یا نیروی کمکی. هشدار اول فقط یه تخمینه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-03.wav",
-      "durationSeconds": 14.8,
-      "sha256": "90194c559f8f3a2a3d7fec1997280ff681ab9a0d2572aa80cee7d499bdbc0913",
-      "captionSha256": "05c52aa1943af804dfa5aca32166453b158464cec6ff2ddc6deaef90de2db4b7"
+      "durationSeconds": 13.2,
+      "sha256": "0d0b19271821da8b56b605012a420990be93f58b2c8d19f44c4b9a57ccecdce4",
+      "captionSha256": "a426630266c5e546b4416a50d05bbb1dff0ab2cae934048550b1a8b068b0ae19",
+      "spokenText": "حدود یه دقیقه وقت داریم آماده بشیم. دو گروه تفنگدار و یه سربازخانهٔ آماده داری. خودت انتخاب کن: برج، مانع جاده یا نیروی کمکی. هشدار اول فقط یه تخمینه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151187,
+      "generatedAtUtc": "2026-09-15T17:51:51.855325+00:00"
     },
     {
       "kind": "narrative",
@@ -113,13 +140,22 @@
       "id": "m03-comms-01",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "زمان حرکت کاروان در گزارش با زمان قطع شبکهٔ هشدار یکی است. این هم‌زمانی نشان از اطلاع قبلی دارد. به دفاع ادامه دهید؛ پس از نبرد سوابق را مقایسه می‌کنیم.",
+      "text": "طبق گزارش، کاروان درست موقع قطع شبکهٔ هشدار راه افتاده. انگار از قبل خبر داشتن. فعلاً دفاع رو ادامه بده؛ بعد از نبرد، گزارش‌ها رو کنار هم می‌ذاریم.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-comms-01.wav",
-      "durationSeconds": 14.4,
-      "sha256": "f993f4f4f77bb0a489e30b24ffefc38754095368d96fbaf2ab69cd974c00025c",
-      "captionSha256": "aa0788fd832582fc58c13af6120b4cf29d3b7425c7b2f798a51645d92e339d81"
+      "durationSeconds": 11.68,
+      "sha256": "ad1a2217d9179755294e9f152ec8b2a6e99ac51d828a8ed8e096b176e8af8751",
+      "captionSha256": "9451f9f21a1fc5022a4a964a406c0a3597a8d317979da14b47970e056f932637",
+      "spokenText": "طبق گزارش، کاروان درست موقع قطع شبکهٔ هشدار راه افتاده. انگار از قبل خبر داشتن. فعلاً دفاع رو ادامه بده؛ بعد از نبرد، گزارش‌ها رو کنار هم می‌ذاریم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151188,
+      "generatedAtUtc": "2026-09-15T17:51:54.812550+00:00"
     },
     {
       "kind": "narrative",
@@ -139,13 +175,22 @@
       "id": "m03-debrief-01",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "کاروان متوقف شد و پاسگاه پابرجاست. خسارت و وضعیت همه را بررسی کنید. به گزارشی دقیق نیاز داریم.",
+      "text": "کاروان متوقف شد، پاسگاه هم سر جاشه. ببینید چقدر آسیب دیدیم و همه چه وضعی دارن. گزارش دقیق می‌خوام.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-01.wav",
-      "durationSeconds": 9.36,
-      "sha256": "b6e921ceaf558d3dbf67f4a3e255e584bccbb584f52a763d9d4aafc352459124",
-      "captionSha256": "8565e4760b5689fbcd500afcf75584e106f7b3ec5466f4ab25c791a3657f8c72"
+      "durationSeconds": 8.32,
+      "sha256": "ecd545ab75908e757d5774300a8cef2c9cbb3123e7ecd921caef17971a204dcb",
+      "captionSha256": "280ca7b7d224cb756dd01f345635521f8a4929bc011782f9af147d3a3db37785",
+      "spokenText": "کاروان متوقف شد، پاسگاه هم سر جاشه. ببینید چقدر آسیب دیدیم و همه چه وضعی دارن. گزارش دقیق می‌خوام.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151189,
+      "generatedAtUtc": "2026-09-15T17:51:56.157355+00:00"
     },
     {
       "kind": "narrative",
@@ -165,13 +210,22 @@
       "id": "m03-debrief-02",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "در دستورهای بازیابی‌شده، قطع شبکهٔ هشدار پیش از وقوعش ثبت شده است. این مدرکِ اطلاع قبلی است، اما هنوز نمی‌دانیم چه کسی آن را داده است.",
+      "text": "توی دستورهایی که پیدا کردیم، قطع شبکهٔ هشدار از قبل ثبت شده. پس ازش خبر داشتن. هنوز نمی‌دونیم کی این اطلاعات رو داده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-02.wav",
-      "durationSeconds": 11.28,
-      "sha256": "ffcf840c71ba1a7b47d9ebb3920a806dc1b128f746eda5801a590803e19f6c7b",
-      "captionSha256": "c263ca6b0566239c6b90c3f797a504d6c30b2bc349b2fc0f75a9e46254c85529"
+      "durationSeconds": 8.96,
+      "sha256": "3358979b879ee43b59de66b4dcf2b2efcd598e42676ad8329a3fb4fc226f3e39",
+      "captionSha256": "d29b95c39152aa609bda4b3057c75b3f53476ad46efbe2b8f65ae9836d466d65",
+      "spokenText": "توی دستورهایی که پیدا کردیم، قطع شبکهٔ هشدار از قبل ثبت شده. پس ازش خبر داشتن. هنوز نمی‌دونیم کی این اطلاعات رو داده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151190,
+      "generatedAtUtc": "2026-09-15T17:51:58.927885+00:00"
     },
     {
       "kind": "narrative",
@@ -191,13 +245,22 @@
       "id": "m03-debrief-03",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "یک تیم پزشکی و مهندسی آن سوی جاده گرفتار شده است. به تخلیهٔ هوایی نیاز دارند. مسیر امنی برای آن‌ها آماده کنید.",
+      "text": "یه تیم پزشکی و مهندسی اون‌طرف جاده گیر افتاده. باید با بالگرد بیاریمشون بیرون. یه مسیر امن براشون آماده کنید.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-03.wav",
-      "durationSeconds": 8.88,
-      "sha256": "200888193baeec0e43f9aad8d941dd403c2ea2a6b73f4c9b572ddee50f60192d",
-      "captionSha256": "de4961c634089ddd6441f00def7883f4ad5f75edd972f021487d7c5dbe0f0b6f"
+      "durationSeconds": 8.32,
+      "sha256": "49fe95cbe859eddfae09fbec3ec2437bacc45787863f69607f31e462f4942de7",
+      "captionSha256": "7fd1daa44eea863e4074e9916108ca72c4e46ec76f321093f6aa2ceb02de3bd1",
+      "spokenText": "یه تیم پزشکی و مهندسی اون‌طرف جاده گیر افتاده. باید با بالگرد بیاریمشون بیرون. یه مسیر امن براشون آماده کنید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151191,
+      "generatedAtUtc": "2026-09-15T17:52:00.054076+00:00"
     },
     {
       "kind": "narrative",
@@ -217,13 +280,22 @@
       "id": "m03-debrief-clean",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "کاروان متوقف شد. پاسگاه آسیب ندیده و همهٔ غیرنظامیان سالم هستند. مسیر درمانگاه را باز نگه دارید.",
+      "text": "کاروان متوقف شد. پاسگاه آسیبی ندیده و همهٔ مردم سالم‌ان. راه درمانگاه رو باز نگه دارید.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-clean.wav",
-      "durationSeconds": 9.28,
-      "sha256": "60f8a1827654a2bd10adc698f54f79dbea6202c1b9be5f56d7ccd52ec4968138",
-      "captionSha256": "cb7295278929f8d3a9201f38958a368c6e17c5e1c853d5f742e0e5367823a884"
+      "durationSeconds": 8.08,
+      "sha256": "1d320f101aa9c02d25fa15ffb6b8ae60eba96897d96306b6315da159a58bf067",
+      "captionSha256": "6547a71338e7319e46b94d94f696d4f88a926497cd761d390cd36043ecb71ac2",
+      "spokenText": "کاروان متوقف شد. پاسگاه آسیبی ندیده و همهٔ مردم سالم‌ان. راه درمانگاه رو باز نگه دارید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151192,
+      "generatedAtUtc": "2026-09-15T17:52:02.405522+00:00"
     },
     {
       "kind": "narrative",
@@ -243,13 +315,22 @@
       "id": "m03-debrief-damaged",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "کاروان متوقف شد و همهٔ غیرنظامیان سالم هستند. پاسگاه آسیب دیده است. پیش از عملیات بعدی آن را تعمیر کنید.",
+      "text": "کاروان متوقف شد و همهٔ مردم سالم‌ان. پاسگاه آسیب دیده؛ قبل از عملیات بعدی تعمیرش کنید.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-damaged.wav",
-      "durationSeconds": 10.16,
-      "sha256": "9d3ec2dcb42c5ae014ba9e36e596d58844be9bb965d741a38ace0e96dbbd4280",
-      "captionSha256": "79e4afb01a4afc7d8582de85af47cafce5b6716bef4bfd68d9d8e3889e8a1d15"
+      "durationSeconds": 8.32,
+      "sha256": "30f634055a1516348db6cf8b10d1a524ed98adee16dc19a84c657e9d5897dd3d",
+      "captionSha256": "5a46cfbc41f9439a5211ca6e5e47acadbaadd5207bcfb8e83871e5c0229def99",
+      "spokenText": "کاروان متوقف شد و همهٔ مردم سالم‌ان. پاسگاه آسیب دیده؛ قبل از عملیات بعدی تعمیرش کنید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151193,
+      "generatedAtUtc": "2026-09-15T17:52:03.236567+00:00"
     },
     {
       "kind": "narrative",
@@ -269,13 +350,22 @@
       "id": "m03-debrief-civilian-loss",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "کاروان متوقف شد و پاسگاه آسیب ندیده است. غیرنظامیانی را از دست دادیم. تلفات را ثبت و مسیر درمانگاه را امن کنید.",
+      "text": "کاروان متوقف شد و پاسگاه سالمه، ولی چند نفر از مردم رو از دست دادیم. تلفات رو ثبت کنید و راه درمانگاه رو امن نگه دارید.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-civilian-loss.wav",
-      "durationSeconds": 10.72,
-      "sha256": "bfbf656d6d02e72c310d671b5534a08e20f4bc879032ee370fdc3eb3424bd4c2",
-      "captionSha256": "b9bd019da2a5d00b22cd86ad242fd49e0a46077f4aa214d79eee0a665d4ee408"
+      "durationSeconds": 9.76,
+      "sha256": "342050d5dd5789688f3527a0a8bf930a41675cb72244629a0f66386c2a3402a2",
+      "captionSha256": "a69bc106d2c9417d70962e20182750e1911480bff9817b170e486e91b89cb745",
+      "spokenText": "کاروان متوقف شد و پاسگاه سالمه، ولی چند نفر از مردم رو از دست دادیم. تلفات رو ثبت کنید و راه درمانگاه رو امن نگه دارید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151194,
+      "generatedAtUtc": "2026-09-15T17:52:06.625714+00:00"
     },
     {
       "kind": "narrative",
@@ -295,13 +385,22 @@
       "id": "m03-debrief-mixed",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "کاروان متوقف شد، اما پاسگاه آسیب دید و غیرنظامیانی را از دست دادیم. هر دو را ثبت کنید. مسیر همچنان به حفاظت نیاز دارد.",
+      "text": "کاروان متوقف شد، ولی پاسگاه آسیب دید و چند نفر از مردم رو از دست دادیم. هر دو رو ثبت کنید. هنوز باید از جاده محافظت کنیم.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-debrief-mixed.wav",
-      "durationSeconds": 11.6,
-      "sha256": "d8b0a3f5e4a5027d89440cb35dbd73f7ad9124fbf9adc90d7763db7b32adb093",
-      "captionSha256": "b888dbeb8e661c786de0493a97d856e9947f5290fa0589a76fbb4eee00fcbd26"
+      "durationSeconds": 9.92,
+      "sha256": "a34553e335cf30f6e9330359becb1d0ed87fa4e69e11f5f322016a1e7caafbd2",
+      "captionSha256": "e71d818671f845595ab91f9295c66dad2dc9dbb1297f637a5fdd0b37de6dcada",
+      "spokenText": "کاروان متوقف شد، ولی پاسگاه آسیب دید و چند نفر از مردم رو از دست دادیم. هر دو رو ثبت کنید. هنوز باید از جاده محافظت کنیم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151195,
+      "generatedAtUtc": "2026-09-15T17:52:07.542886+00:00"
     },
     {
       "kind": "tutorial",
@@ -321,13 +420,22 @@
       "id": "tutorial-m03-01",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "منبع، مسیر و زمان تقریبی تماس را بررسی کنید. گزارش دیده‌بان تعداد خودروها را تأیید نمی‌کند.",
+      "text": "ببین گزارش از کجا اومده، کاروان توی کدوم مسیره و حدوداً کی می‌رسه. دیده‌بان هنوز تعداد خودروها رو تأیید نکرده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-01.wav",
       "durationSeconds": 8.64,
-      "sha256": "e2446f584ad495e8abd7bf464454f5db4ac900e48b3bd17aec46293eaad383fb",
-      "captionSha256": "3181151a6e7df9b72a8031c610c4aa811f3f9c54e0889ec8da6e11aaccbd370e"
+      "sha256": "6a62bca33ecf44770369e4896b4715aab5e99458ebcab60e2b8f99606368d51e",
+      "captionSha256": "faf052e20b85f2a4c2a1790077b0c5fe4c6cc1f10e0138ef1e1e8e4a13b7ee2f",
+      "spokenText": "ببین گزارش از کجا اومده، کاروان توی کدوم مسیره و حدوداً کی می‌رسه. دیده‌بان هنوز تعداد خودروها رو تأیید نکرده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151196,
+      "generatedAtUtc": "2026-09-15T17:52:10.268242+00:00"
     },
     {
       "kind": "tutorial",
@@ -347,13 +455,22 @@
       "id": "tutorial-m03-02",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "به جادهٔ گزارش‌شده نگاه کنید. این کار فقط دوربین را جابه‌جا می‌کند و دستور گروه‌ها را تغییر نمی‌دهد.",
+      "text": "جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-02.wav",
-      "durationSeconds": 8.08,
-      "sha256": "914cd2e14dadfb6aefaba1f761f99b1d36be1c27c476ec5ffcba2346c31e6425",
-      "captionSha256": "6e1a341435f87bb8817a20bf24182c1b63c348bb7af6eb883c1c9139beaf278a"
+      "durationSeconds": 6.32,
+      "sha256": "e26c45da5b4e7041d183e10a57af72d2c0cc4b06e290135574966198c16c4066",
+      "captionSha256": "81b3f3e7f3a5540a04e71f95e1222e614e3df9b61e8cc21b9e8d7c5a4ae339ff",
+      "spokenText": "جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151197,
+      "generatedAtUtc": "2026-09-15T17:52:10.761971+00:00"
     },
     {
       "kind": "tutorial",
@@ -373,13 +490,22 @@
       "id": "tutorial-m03-03",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "دفاع جلوتر فرصت بیشتری برای توقف کاروان می‌دهد. نزدیک پاسگاه هم می‌توانید دفاع کنید؛ مسیر مرکزی را پوشش دهید.",
+      "text": "اگه جلوتر دفاع کنی، وقت بیشتری برای متوقف‌کردن کاروان داری. نزدیک پاسگاه هم می‌تونی دفاع کنی؛ فقط مسیر مرکزی رو پوشش بده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-03.wav",
-      "durationSeconds": 9.76,
-      "sha256": "5c734590b816295e8a95d18f21f29234ded0eb561ca76f4654506ae76fcb4b25",
-      "captionSha256": "c77d7df9cf9a695757f8bec1d18c11eeae246cc1ff548b86e98e68e08e20f0af"
+      "durationSeconds": 10.16,
+      "sha256": "6f473cea7e89af813b78240085237e110a2fdc4cbd7211cc655fc26032317ddb",
+      "captionSha256": "4a9d5d028e323eb21525c7cc4b3f39412cf1178d20eb3145b0e41bae72ba68c9",
+      "spokenText": "اگه جلوتر دفاع کنی، وقت بیشتری برای متوقف‌کردن کاروان داری. نزدیک پاسگاه هم می‌تونی دفاع کنی؛ فقط مسیر مرکزی رو پوشش بده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151198,
+      "generatedAtUtc": "2026-09-15T17:52:14.649727+00:00"
     },
     {
       "kind": "tutorial",
@@ -399,13 +525,22 @@
       "id": "tutorial-m03-04",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "در بخش ساخت، برج یا مانع را انتخاب کنید. پیش از تأیید، هزینه و محل مجاز را بررسی کنید. می‌توانید از این آموزش بگذرید.",
+      "text": "فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-04.wav",
-      "durationSeconds": 10.56,
-      "sha256": "53fdabb6802e224020624fdeff808fa3e10cf954d465e4fddd0964f9571d6575",
-      "captionSha256": "63b4973b9bb9f7612b39611cc9075c212b18350291433fc3b961c91f67337f7b"
+      "durationSeconds": 16.0,
+      "sha256": "dab2f7bd5ad72a4142bb6d3228604fcf12fb29a4baf43032793082612bfd0a42",
+      "captionSha256": "cae38a313c2645179d4d582828588836b81aeae06b767d5a3782be3c403de064",
+      "spokenText": "فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151199,
+      "generatedAtUtc": "2026-09-15T17:52:17.368711+00:00"
     },
     {
       "kind": "tutorial",
@@ -425,13 +560,22 @@
       "id": "tutorial-m03-05",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "گروه خودی را انتخاب کنید، حرکت را بزنید و کنار جادهٔ کاروان مقصدی قابل‌دسترسی تعیین کنید. منتظر رسیدن گروه بمانید.",
+      "text": "اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav",
-      "durationSeconds": 10.4,
-      "sha256": "d3c55339a6fe30c30e6173d34438703ea19082028cbf08bd466e96a446674576",
-      "captionSha256": "46ece387206cc0f1fc7e3f0d57507138800d21baf7d9b0d0e48067369bc17ba5"
+      "durationSeconds": 11.84,
+      "sha256": "7dce09a7b92afc77cf3ef81bc5fd9cf6233e37a81297dc310ff04bb6645de763",
+      "captionSha256": "efd0aca83dfc57efb941fa8f340efad95e13153ea8dda4495ae304754fc8542b",
+      "spokenText": "اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151200,
+      "generatedAtUtc": "2026-09-15T17:52:20.156073+00:00"
     },
     {
       "kind": "tutorial",
@@ -451,13 +595,23 @@
       "id": "tutorial-m03-06",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "گروه را انتخاب کنید و حفظ را بزنید. گروه از موضع خود دفاع می‌کند و بدون تعقیب، به دشمن در برد شلیک می‌کند.",
+      "text": "وقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav",
-      "durationSeconds": 9.12,
-      "sha256": "e811c9ad04f6efe20a39cca8179962494c1abaaa6c5ae6743a5436c4ec76eeca",
-      "captionSha256": "22bc4d10c2bb2f7019afff43d42584311bf41538a047a736d563dfe96572a97a"
+      "durationSeconds": 8.45,
+      "sha256": "e66bf13daca0b79f256bd2ec87ea0df6be0962b0fea39003e1b496ba28a364c8",
+      "captionSha256": "3c1ebfe097f807d7587a81a628f82617d28cc04381b822d500989e5ae9a60650",
+      "spokenText": "وقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151201,
+      "generatedAtUtc": "2026-09-15T17:52:23.072066+00:00",
+      "localEdit": "Removed obsolete Stop sentence after Hold; kept approved original performance."
     },
     {
       "kind": "tutorial",
@@ -477,13 +631,22 @@
       "id": "tutorial-m03-07",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "توقف، دستور فعلی واحدهای انتخاب‌شده را لغو می‌کند؛ نبرد متوقف نمی‌شود. برای حفظ آرایش فعلی می‌توانید از این مرحله بگذرید.",
+      "text": "«توقف» دستورها و شلیک خودکار رو قطع می‌کنه. اگه امتحانش کردی، برای ادامهٔ دفاع دوباره «حفظ» رو بزن. این درس اختیاریه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-07.wav",
-      "durationSeconds": 12.08,
-      "sha256": "88e18eacf9448f741d0afb48816dab6f858c7f52ff82e7f9d434acc055a8e51b",
-      "captionSha256": "326d1d4617c408a214246f1249f135298a5b0c697969e32270a0fbbec26a7220"
+      "durationSeconds": 9.52,
+      "sha256": "09780b43f93bf9feb0750e940f4286f63a7be4fb9d794dbe23e50f8030767315",
+      "captionSha256": "f9c546eb686ce09e37f798c0e18215bc8ac6a2b10ed841fb14c8ba584344cfb5",
+      "spokenText": "«توقف» دستورها و شلیک خودکار رو قطع می‌کنه. اگه امتحانش کردی، برای ادامهٔ دفاع دوباره «حفظ» رو بزن. این درس اختیاریه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151202,
+      "generatedAtUtc": "2026-09-15T17:52:24.213369+00:00"
     },
     {
       "kind": "tutorial",
@@ -503,13 +666,22 @@
       "id": "tutorial-m03-08",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "پالس رادار محدودهٔ خودروی رادار زمینیِ سالم را بررسی می‌کند. دو بار قابل‌استفاده است و زمان بازیابی دارد. اسکن بدون تماس هم یک نوبت مصرف می‌کند.",
+      "text": "«اسکن» محدودهٔ خودروی رادار سالمت رو بررسی می‌کنه. دو بار می‌تونی ازش استفاده کنی و بینش باید صبر کنی تا دوباره آماده بشه. حتی اگه چیزی پیدا نکنه، یه نوبت مصرف می‌شه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-08.wav",
-      "durationSeconds": 12.16,
-      "sha256": "e57447b2c8fb81d3367b6f41ea4544a88523eed8e9974c677c91c1ec48b35128",
-      "captionSha256": "b8bf077cd0b220934fac406fbf1aab544925e80acf7a33ff11b49f1fbaf45222"
+      "durationSeconds": 12.48,
+      "sha256": "7622f1bd55674b5a443d832240450ed87e84140f28146fc52785384ecd9f0527",
+      "captionSha256": "c7d3968d9ea34b57bd05fbebd3e4cfaf561ce956285424d05b1d01c93e6b849b",
+      "spokenText": "«اسکن» محدودهٔ خودروی رادار سالمت رو بررسی می‌کنه. دو بار می‌تونی ازش استفاده کنی و بینش باید صبر کنی تا دوباره آماده بشه. حتی اگه چیزی پیدا نکنه، یه نوبت مصرف می‌شه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151203,
+      "generatedAtUtc": "2026-09-15T17:52:27.892111+00:00"
     },
     {
       "kind": "tutorial",
@@ -529,13 +701,22 @@
       "id": "tutorial-m03-09",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "تولید تفنگدار در پادگان آماده را باز کنید. هزینهٔ نمایش‌داده‌شده برای گروه چهارنفری را بررسی کنید. ساخت و تولید به انتخاب شماست.",
+      "text": "تولید تفنگدار رو توی سربازخانهٔ آماده باز کن. هزینهٔ گروه چهارنفری رو ببین، بعد تصمیم بگیر. ساخت‌وساز و نیروی کمکی اختیاریه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-09.wav",
       "durationSeconds": 10.64,
-      "sha256": "cca231027d9ce271c0986df90f24a700b5d0be4ea78b0893f25296a9f6d98212",
-      "captionSha256": "cb4ab5848a06591114cf4c91b00184b2a87ac8614a139bdfb1b26f8fca15d8ad"
+      "sha256": "80fd4cf4e17ee3d04e9f94f866dc0a896add5d7e26fc45e56e5229df74ce878e",
+      "captionSha256": "b8525cca058d958ff7f036fca0f67c6bd2e41236a9360757c8d8de3690438252",
+      "spokenText": "تولید تفنگدار رو توی سربازخانهٔ آماده باز کن. هزینهٔ گروه چهارنفری رو ببین، بعد تصمیم بگیر. ساخت‌وساز و نیروی کمکی اختیاریه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151204,
+      "generatedAtUtc": "2026-09-15T17:52:28.136259+00:00"
     },
     {
       "kind": "tutorial",
@@ -555,13 +736,22 @@
       "id": "tutorial-m03-10",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "خودروهای مسلح به مدافعان آسیب می‌زنند. نفربر بی‌سلاح هم می‌تواند وارد محدودهٔ مرکزی شود. هدف تأییدشده را انتخاب کنید.",
+      "text": "خودروهای مسلح به نیروهات آسیب می‌زنن. نفربر بی‌سلاح هم می‌تونه وارد محدودهٔ مرکزی بشه. هدفی رو انتخاب کن که حضورش تأیید شده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-10.wav",
-      "durationSeconds": 10.08,
-      "sha256": "2de6c81e9341d1a959ff6398bc4b712717464c28559b3f64f4a2f92fbee6a59c",
-      "captionSha256": "e73a6ecab88d4027b3388dec605214afe1f766f6b222c063a7384c15fde9444c"
+      "durationSeconds": 10.0,
+      "sha256": "70ef940e8518c7977adc6cf91cb33c820c06f62faf284f2fc2cb004b9a82d9d5",
+      "captionSha256": "2fc5dabf61c21a6d3c585436c0618af1538a79b1ac5560630092fd5d8c9f105d",
+      "spokenText": "خودروهای مسلح به نیروهات آسیب می‌زنن. نفربر بی‌سلاح هم می‌تونه وارد محدودهٔ مرکزی بشه. هدفی رو انتخاب کن که حضورش تأیید شده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151205,
+      "generatedAtUtc": "2026-09-15T17:52:32.551739+00:00"
     },
     {
       "kind": "tutorial",
@@ -581,13 +771,22 @@
       "id": "tutorial-m03-11",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "هشدار دوم و وضعیت نیروهای باقی‌مانده را بررسی کنید. در صورت نیاز جابه‌جا شوید و مسیر پاسگاه را پوشش دهید.",
+      "text": "هشدار دوم رو بخون و وضعیت نیروهات رو ببین. اگه لازمه جابه‌جاشون کن؛ راه پاسگاه باید زیر پوششت بمونه.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-11.wav",
-      "durationSeconds": 9.12,
-      "sha256": "06a81bd43169a81ae86ea86a6066131ded1c48c23723df351fc4cb0e2c462d1c",
-      "captionSha256": "262a875337d07974e994659df170a64ca837774446108db3764ce694f6c195c7"
+      "durationSeconds": 8.64,
+      "sha256": "77666b662a35b53275f0ff4e627dca9533105af9c101fc77e2b3306f310dd65e",
+      "captionSha256": "9340f389b0aab09ddcedf6f54516f3e54b767658a99c760a505ca984e4b4bbb2",
+      "spokenText": "هشدار دوم رو بخون و وضعیت نیروهات رو ببین. اگه لازمه جابه‌جاشون کن؛ راه پاسگاه باید زیر پوششت بمونه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151206,
+      "generatedAtUtc": "2026-09-15T17:52:32.545038+00:00"
     },
     {
       "kind": "tutorial",
@@ -607,13 +806,24 @@
       "id": "tutorial-m03-12",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "برای پیروزی هر دو بخش کاروان را متوقف و پاسگاه و مرکز را حفظ کنید. تلفات غیرنظامی و آسیب پاسگاه، ستاره‌های امتیازی جداگانه را کم می‌کنند.",
+      "text": "همهٔ خودروهای دشمن رو متوقف کن. تفنگدارها رو روی «حفظ» نگه دار. اگه مردم و پاسگاه سالم بمونن، ستارهٔ اضافه می‌گیری.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-12.wav",
-      "durationSeconds": 12.56,
-      "sha256": "7df76764fe249e6bb8395ecad133ce24a7339ea1a9da9c234310259b4e673c8c",
-      "captionSha256": "d012a522efd02bfd948e7a1d804f5ac4f8c97121194669bf0bf10bcc5a5ae255"
+      "durationSeconds": 9.52,
+      "sha256": "ac279bf29236914e1ef25467f17a7e81a2b48dbe257a2c834ce4644d851fd801",
+      "captionSha256": "4e396351feeab2e32e2f309e577a6e3dcee7991bfdb83041da8096d5c9713c0a",
+      "spokenText": "همهٔ خودروهای دشمن رو متوقف کن. تفنگدارها رو روی «حفظ» نگه دار. اگه مردم و پاسگاه سالم بمونن، ستارهٔ اضافه می‌گیری.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151207,
+      "generatedAtUtc": "2026-09-15T17:52:36.807278+00:00"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.091939+00:00"
 }

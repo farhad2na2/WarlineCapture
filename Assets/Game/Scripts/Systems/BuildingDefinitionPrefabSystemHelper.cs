@@ -384,7 +384,7 @@ namespace Game.Runtime
                 DestroyedVisualPrefab = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.DestroyedVisualPrefab : null,
                 SelectionPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.SelectionPortraitSprite : null,
                 CardPortraitSprite = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.CardPortraitSprite : null,
-                FootprintCells = metadata.HasVisualFootprint && prefab.name != "Building_Road_Barrier"
+                FootprintCells = metadata.HasVisualFootprint && prefab.name.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) < 0
                     ? metadata.VisualFootprint : Vector2Int.Max(metadata.HasVisualFootprint ? metadata.VisualFootprint : Vector2Int.one,
                         metadata.HasDefinitionMetadata ? NormalizeFootprint(metadata.DefinitionMetadata.FootprintCells) : fallbackFootprint),
                 Role = metadata.HasDefinitionMetadata ? metadata.DefinitionMetadata.Role : BuildingRole.None,
@@ -475,7 +475,7 @@ namespace Game.Runtime
                 DestroyedVisualPrefab = hasMetadata ? metadata.DestroyedVisualPrefab : null,
                 SelectionPortraitSprite = hasMetadata ? metadata.SelectionPortraitSprite : null,
                 CardPortraitSprite = hasMetadata ? metadata.CardPortraitSprite : null,
-                FootprintCells = hasVisualFootprint && prefab.name != "Building_Road_Barrier" ? visualFootprint :
+                FootprintCells = hasVisualFootprint && prefab.name.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) < 0 ? visualFootprint :
                     Vector2Int.Max(hasVisualFootprint ? visualFootprint : Vector2Int.one, configuredFootprint),
                 Role = hasMetadata ? metadata.Role : BuildingRole.None,
                 IsWall = hasMetadata && metadata.IsWall,

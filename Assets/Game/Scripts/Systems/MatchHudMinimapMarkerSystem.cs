@@ -26,7 +26,14 @@ namespace Game.Runtime
             Entity markerBoundaryEntity = GetOrCreateMarkerBoundary(ref state, em);
             double now = SystemAPI.Time.ElapsedTime;
             if (now < _nextMarkerRefreshTime)
+            {
+                state.Dependency = new PruneDeadMarkersJob
+                {
+                    Health = SystemAPI.GetComponentLookup<UnitHealth>(true),
+                    Markers = em.GetBuffer<MatchHudMinimapMarkerElement>(markerBoundaryEntity)
+                }.Schedule(state.Dependency);
                 return;
+            }
 
             _nextMarkerRefreshTime = now + MarkerRefreshIntervalSeconds;
             var markerScratch = new NativeList<MatchHudMinimapMarkerElement>(MaxMarkers, Allocator.TempJob);
@@ -86,6 +93,22 @@ namespace Game.Runtime
             }.Schedule(state.Dependency);
             state.Dependency = markerScratch.Dispose(state.Dependency);
             state.Dependency = produced.Dispose(state.Dependency);
+        }
+
+        [BurstCompile]
+        private struct PruneDeadMarkersJob : IJob
+        {
+            [ReadOnly] public ComponentLookup<UnitHealth> Health;
+            public DynamicBuffer<MatchHudMinimapMarkerElement> Markers;
+            public void Execute()
+            {
+                for (int i = Markers.Length - 1; i >= 0; i--)
+                {
+                    Entity source = Markers[i].SourceEntity;
+                    if (source != Entity.Null && (!Health.HasComponent(source) || Health[source].Current <= 0))
+                        Markers.RemoveAt(i);
+                }
+            }
         }
 
         [BurstCompile]
@@ -154,6 +177,7 @@ namespace Game.Runtime
 
                 Markers.Add(new MatchHudMinimapMarkerElement
                 {
+                    SourceEntity = entity,
                     Position = RequireObservedIntel ? LastSeenLookup[entity].Position : transform.Position,
                     FactionId = faction.Id
                 });

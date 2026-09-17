@@ -15,7 +15,7 @@ using UnityEngine;
 
 public sealed class M02EstablishBaseObjectiveTests
 {
-    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=26";
+    private const string Marker = "[M02EstablishBaseObjectiveValidation] result=Passed tests=27";
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
@@ -34,6 +34,7 @@ public sealed class M02EstablishBaseObjectiveTests
             tests.CanonicalProjectionCreatesAttemptFactState();
             tests.AuthoritativeBarracksCompletionAdvancesFacts();
             tests.AuthoritativeUiPlacementSummaryAdvancesFactsWithoutSpawnRequest();
+            tests.ReplayBaselineWaitsForNewAttemptStartup();
             tests.PreAttemptOwnedBarracksIsIgnored();
             tests.SuccessfulRequestWithoutLiveBuildingFailsClosed();
             tests.LiveBuildingWithoutSuccessfulRequestFailsClosed();
@@ -150,6 +151,38 @@ public sealed class M02EstablishBaseObjectiveTests
         {
             blob.Dispose();
         }
+    }
+
+    public static void ValidateReplayBaseline()
+    {
+        new M02EstablishBaseObjectiveTests().ReplayBaselineWaitsForNewAttemptStartup();
+        Debug.Log("[M02ReplayBaseline] result=Passed previous-map cleanup -> new-attempt placement");
+    }
+
+    [Test]
+    public void ReplayBaselineWaitsForNewAttemptStartup()
+    {
+        using World world = CreateRuntimeWorld(true, false, out var blob);
+        try
+        {
+            var em = world.EntityManager;
+            using var query = em.CreateEntityQuery(typeof(CampaignMissionRootComponent));
+            var root = query.GetSingletonEntity();
+            var runtime = em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            em.AddComponentData(root, default(CampaignMissionAttemptResourceInitializationComponent));
+            SetOwnedBuildingCount(em, "building_barrack", 1); // Previous map, cleanup not processed yet.
+            UpdateFacts(world);
+            Assert.AreEqual(0, em.GetComponentData<CampaignMissionAttemptFactProjectionStateComponent>(root).Initialized);
+            SetOwnedBuildingCount(em, "building_barrack", 0);
+            em.SetComponentData(root, new CampaignMissionAttemptResourceInitializationComponent
+            { SessionToken = runtime.SessionToken, AttemptOrdinal = runtime.AttemptOrdinal, Applied = 1 });
+            UpdateFacts(world);
+            SetOwnedBuildingCount(em, "building_barrack", 1); // First placement in this replay.
+            UpdateFacts(world);
+            Assert.AreEqual(1, GetFacts(em).RequiredBuildingPlacedCount);
+            Assert.AreEqual(1, GetFacts(em).RequiredBuildingCompletedCount);
+        }
+        finally { blob.Dispose(); }
     }
 
     [Test]

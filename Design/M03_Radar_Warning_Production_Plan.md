@@ -2,7 +2,9 @@
 
 Date: 2026-09-08
 
-Status: Proposed plan; implementation has not started
+Status: Original production proposal; see implementation reports for shipped behavior.
+
+2026-09-15 control revision: M3 uses the existing **Scan** button for the optional radar sweep. The Support slot retains its normal identity and mission restrictions. No separate Radar Pulse command or toolbar counter is required. See [unified Scan and production popup behavior](AgentReports/M03RadarWarning/unified_scan_and_production_close_2026-09-15.md). This revision supersedes the separate control described below; the sensor transaction, optional scan lesson and automatic warning behavior remain.
 
 Mission: `saga.ch01.m03.radar_warning`
 

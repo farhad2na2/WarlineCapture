@@ -88,6 +88,12 @@ namespace Game.UI.Contracts
         void GetFriendlyPendingProductionUiEntries(List<BuildingPendingProductionUiEntry> entries);
     }
 
+    public interface IBuildingProductionProgressQuery
+    {
+        bool HasProductionDeliveryInProgress { get; }
+        bool HasProducedUnitsThisAttempt { get; }
+    }
+
     public interface IMatchRuntimeState
     {
         bool PlayRequested { get; set; }

@@ -67,9 +67,10 @@ namespace Game.Editor
             if(AdvanceOptionalReinforcement(em,root,in runtime)) return false;
             if(runtime.Phase==MissionPhaseKind.ResultAfterDebrief && !guidanceJourneyVerified)
             {
-                if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=(battleClarityAudit ? 1 : 2))
+                if(!guidanceHeld || !guidanceVisited.Contains(5) || runtime.Outcome!=MissionOutcomeKind.Victory || em.GetComponentData<RadarPingState>(root).Charges!=(battleClarityAudit || unifiedScanJourney ? 1 : 2))
                     throw new InvalidOperationException("Full Guidance did not complete through real defensive orders with the expected optional Ping budget.");
                 VerifyBattleClarity();
+                VerifyOptionalProduction(em);
                 AssertBudget(em,50000-tutorialCreditsSpent,100-tutorialMaterialsSpent); guidanceJourneyVerified=true;
                 Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for; Ping charges="+em.GetComponentData<RadarPingState>(root).Charges+"; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
                 return false;
@@ -130,7 +131,7 @@ namespace Game.Editor
             var projection=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(projection.Active==0) return false;
             int step=(int)projection.Prompt-12;
-            if(step==7) throw new InvalidOperationException("Retired Stop lesson interrupted the defensive Hold.");
+            if(step is 7 or 8 or 9) throw new InvalidOperationException("Retired tool lesson interrupted the defensive Hold.");
             var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if(view==null || !view.IsPresentationVisible || !UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=step ||
                 (byte)typeof(AriaTutorialBriefingView).GetField("_tutorialStep",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(view)!=step) return false;
@@ -151,8 +152,8 @@ namespace Game.Editor
                     else if (view.ContinueButton.IsActive()) ClickCommand(view.ContinueButton);
                     break;
                 case 3:
-                    if(guidanceSubstep==0 && UiShellRuntimeGateway.TryReadMissionDefense(out var focus) && focus.CanReturnCamera)
-                    {ClickLive("ReturnWarningCamera"); guidanceSubstep=1; guidanceNext=EditorApplication.timeSinceStartup+2; break;}
+                    if(UnityEngine.Object.FindObjectsByType<Button>(FindObjectsSortMode.None).Any(b=>b.name=="ReturnWarningCamera" && b.IsActive()))
+                        throw new InvalidOperationException("Removed camera-return control is visible.");
                     using(var camera=em.CreateEntityQuery(typeof(RtsCameraStateComponent)))
                         if(camera.GetSingleton<RtsCameraStateComponent>().HasSmoothFocusTarget!=0 || camera.GetSingleton<RtsCameraStateComponent>().HasSmoothPerspectiveTarget!=0) return false;
                     ClickCommand(controls.BuildButton); break;
@@ -198,7 +199,7 @@ namespace Game.Editor
                     }
                     break;
                 case 8:
-                    if(battleClarityAudit) {if(controls.SupportButton.IsInteractable()) ClickCommand(controls.SupportButton); break;}
+                    if(battleClarityAudit) {if(controls.ScanButton.IsInteractable()) ClickCommand(controls.ScanButton); break;}
                     if(!ClickGuidanceSkipWhenReady()) return false; break;
             }
             return false;

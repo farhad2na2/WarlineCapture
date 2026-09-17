@@ -570,6 +570,8 @@ namespace Game.Editor
             instance.name = prefab.name;
             Stretch(instance.transform as RectTransform);
             MissionResultPopupView view = instance.GetComponent<MissionResultPopupView>();
+            foreach (var binding in instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true))
+                binding.ApplyLocalization();
             view.Apply(in model);
             Canvas.ForceUpdateCanvases();
             foreach (MainMenuV3SectionLayoutView layout in instance.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true))

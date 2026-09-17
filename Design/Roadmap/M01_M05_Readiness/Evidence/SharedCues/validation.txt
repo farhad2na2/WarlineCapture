@@ -1,0 +1,161 @@
+Wrapper: Tools/CI/invoke_unity_macos.sh --project /private/tmp/warline-readiness-validation --timeout 1600 --log /private/tmp/readiness-shared-cues-04.log -- -executeMethod Game.Editor.M05GateValidationEntry.Run
+Entry: focused scope-lock, formation, accepted-attack and cue-geometry tests, then RunSharedCueRegression(2).
+Actual route: M3 EN -> M3 FA -> M4 EN -> M4 FA. The old generic final marker mentions M1, but M1 was NOT run in this invocation. That marker is corrected in the next source revision.
+M1 EN/FA and the M1->M3 transition ran in shared-cues-03. That suite was intentionally failed on later visual findings; individual M1 victories are not a whole-suite pass.
+Normal speed; isolated profiles; comics skipped; visible hit-tested controls and screen-position commands; no mission facts/outcomes edited.
+Pass marker observed; validation Editor completed its normal cleanup and exited. The originating tool session's terminal exit status was not retained, so no independent wrapper-exit assertion is made for run 04.
+M3 Build and M4 Board arrow captures reviewed in both languages. M3 watch-marker simplification is validated separately after this source snapshot.
+
+[MissionScopeLockOwnership] result=Passed independent input locks and idempotent visual restoration
+[TutorialFormationTravel] result=Passed last-selected-arrival and attempt isolation
+[TutorialAttackFeedback] result=Passed accepted, wrong, automatic, dead and removed targets
+[TutorialWedgeFraming] result=Passed four sectors, hit geometry and crowded minimap corner
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20260916-185620
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/en replay=FirstClear lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=1 body=Your mission: stop BOTH enemy convoys before they reach the post. Keep the post standing. First prepare your rifles; the convoy waits while you learn. Read the warning, then Continue.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=2 body=Jump to the reported road. This moves the camera and keeps your squads and orders unchanged.
+[CampaignPlayerJourney] action=2:JumpToThreatButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=3 body=First prepare a defensive line beside the marked road. Open Build to see your options. In the next lesson, choose ONE tower or road barrier, or skip building. You do not need all three buildings.
+[CampaignPlayerJourney] action=3:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=4 body=Choose ONE Road Barrier or Guard Tower. Place the barrier across the road; place the tower off the road. Rotate if needed, then confirm a green footprint. One placement completes this optional lesson.
+[CampaignPlayerJourney] action=4:ItemView - Road Barrier
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=RadarBuildOption body=Choose ONE Road Barrier or Guard Tower. Place the barrier across the road; place the tower off the road. Rotate if needed, then confirm a green footprint. One placement completes this optional lesson.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=5 body=Tap Select defenders below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=5:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=RadarPositionSquads body=Select a friendly squad, press Move, then choose a reachable position beside the convoy road. Wait for arrival.
+[CampaignPlayerJourney] action=5:MoveCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Move:(876.00, 0.67, 426.00)
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=6 body=Select a friendly squad, press Move, then choose a reachable position beside the convoy road. Wait for arrival.
+[CampaignPlayerJourney] action=6:HoldCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=10 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=RadarPriority body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=11 body=Enemy vehicles are approaching. Keep rifles on Hold at the yellow ring: they fire automatically when enemies enter range. Stop every vehicle before the post. Another scan is not required.
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=RadarAdapt body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=12 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] settled lesson=12 phase=Engage outcome=None produced=0 guidance=RadarResult body=Enemy vehicles are approaching. Keep rifles on Hold at the yellow ring: they fire automatically when enemies enter range. Stop every vehicle before the post. Another scan is not required.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=en lesson=0 body=Defense is ready. Keep your rifles here on Hold and wait for the convoy; no extra click is needed. The yellow ring marks the road to defend. The warning estimates enemy arrival.
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=en
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=1 body=هدفت اینه که هر دو کاروان رو قبل از رسیدن به پاسگاه متوقف کنی و پاسگاه رو سالم نگه داری. اول تفنگدارها رو آماده کن؛ کاروان تا پایان آموزش منتظر می‌مونه. هشدار رو بخون، بعد «ادامه» رو بزن.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=2 body=جاده‌ای رو که توی گزارش اومده ببین. فقط دوربین جابه‌جا می‌شه؛ دستور نیروهات عوض نمی‌شه.
+[CampaignPlayerJourney] action=2:JumpToThreatButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=3 body=اول کنار جادهٔ مشخص‌شده دفاعت رو آماده کن. «ساخت» رو بزن تا گزینه‌ها رو ببینی. فقط یه برج یا مانع جاده کافیه؛ می‌تونی از ساخت هم بگذری. لازم نیست هر سه سازه رو بسازی.
+[CampaignPlayerJourney] action=3:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=4 body=فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.
+[CampaignPlayerJourney] action=4:ItemView - Road Barrier
+[CampaignPlayerJourney] settled lesson=4 phase=Engage outcome=None produced=0 guidance=RadarBuildOption body=فقط یه مانع جاده یا برج نگهبانی انتخاب کن. مانع رو عرض جاده بذار و برج رو بیرون جاده. اگه لازم شد بچرخونش؛ وقتی محل سبز شد، تأیید کن. با یه ساخت، این درس اختیاری تموم می‌شه.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=5 body=پایین صفحه، «انتخاب مدافعان» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=5:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=RadarPositionSquads body=اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.
+[CampaignPlayerJourney] action=5:MoveCommand
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Move:(876.00, 0.67, 426.00)
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=6 body=اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.
+[CampaignPlayerJourney] action=6:HoldCommand
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=10 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=RadarPriority body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=11 body=خودروهای دشمن دارن نزدیک می‌شن. تفنگدارها رو کنار حلقهٔ زرد روی «حفظ» نگه دار تا وقتی دشمن توی برد اومد، شلیک کنن. همهٔ خودروها رو قبل از پاسگاه متوقف کن. اسکن دوباره لازم نیست.
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=RadarAdapt body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=12 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] settled lesson=12 phase=Engage outcome=None produced=0 guidance=RadarResult body=خودروهای دشمن دارن نزدیک می‌شن. تفنگدارها رو کنار حلقهٔ زرد روی «حفظ» نگه دار تا وقتی دشمن توی برد اومد، شلیک کنن. همهٔ خودروها رو قبل از پاسگاه متوقف کن. اسکن دوباره لازم نیست.
+[CampaignPlayerJourney] mission=saga.ch01.m03.radar_warning locale=fa-IR lesson=0 body=دفاع آماده‌ست. تفنگدارها رو همین‌جا روی «حفظ» نگه دار و منتظر کاروان باش؛ لازم نیست دکمهٔ دیگه‌ای بزنی. حلقهٔ زرد مسیر دفاع رو نشون می‌ده. زمان هشدار، تخمین رسیدن دشمنه.
+[CampaignPlayerJourney] victory=saga.ch01.m03.radar_warning locale=fa-IR
+[CampaignPlayerJourney] bilingual-complete=saga.ch01.m03.radar_warning
+[CampaignTutorialEntry] saga.ch01.m04.airlift/en replay=FirstClear lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=1 body=Rescue all four specialists: APC first, helicopter second. You have ten minutes. Enemy kills are optional; keep the escort alive for a bonus star.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=2 body=Tap Select rescue APC below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=3 body=Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.
+[CampaignPlayerJourney] action=3:MoveCommand
+[CampaignPlayerJourney] settled lesson=3 phase=Engage outcome=None produced=0 guidance=AirliftReachTeam body=Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Move:(813.25, 0.49, 426.75)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=4 body=Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=5 body=Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.
+[CampaignPlayerJourney] action=5:CommandWheelCue
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=AirliftBoardCarrier body=Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.
+[CampaignPlayerJourney] action=5:BoardSector
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Board:(814.98, 0.57, 426.70)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=6 body=Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.
+[CampaignPlayerJourney] action=6:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=AirliftEscort body=Move the loaded APC east to the marked landing area. Show Me locates Laila. Keep the rifles covering the approaching patrol.
+[CampaignPlayerJourney] action=6:MoveCommand
+[CampaignPlayerJourney] action=6:ShowMeButton
+[CampaignPlayerJourney] action=6:Move:(1060.00, 0.45, 428.00)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=7 body=Move the loaded APC east to the marked landing area. Show Me locates Laila. Keep the rifles covering the approaching patrol.
+[CampaignPlayerJourney] action=7:PassengerChip
+[CampaignPlayerJourney] settled lesson=7 phase=Engage outcome=None produced=0 guidance=AirliftUnload body=Open the APC passenger panel, then tap Unload. Wait until all four specialists stand beside the helicopter. Move into open ground if unloading is blocked.
+[CampaignPlayerJourney] action=7:ExitAllButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=8 body=Tap Select helicopter below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=8:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=9 body=Tap Select all specialists below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=9:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=9 phase=Engage outcome=None produced=0 guidance=AirliftBoardAircraft body=Select all four specialists, press Board, then tap the landed helicopter. Check that its passenger list shows four people.
+[CampaignPlayerJourney] action=9:CommandWheelCue
+[CampaignPlayerJourney] action=9:BoardSector
+[CampaignPlayerJourney] action=9:Board:(1062.94, 0.45, 432.39)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=10 body=Select all four specialists, press Board, then tap the landed helicopter. Check that its passenger list shows four people.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=AirliftSecure body=All four specialists are aboard. Wait 18 more seconds; no click is needed. Keep the helicopter inside the yellow landing ring. The next lesson will guide you to the exit.
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=11 body=All four specialists are aboard. Wait 1 more seconds; no click is needed. Keep the helicopter inside the yellow landing ring. The next lesson will guide you to the exit.
+[CampaignPlayerJourney] action=11:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=AirliftDepart body=Select the helicopter, press Move, then tap the marked exit. Show Me locates the exit. Keep all four specialists aboard until extraction is confirmed.
+[CampaignPlayerJourney] action=11:MoveCommand
+[CampaignPlayerJourney] action=11:ShowMeButton
+[CampaignPlayerJourney] action=11:Move:(1085.00, 0.01, 465.00)
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=en
+[CampaignTutorialEntry] saga.ch01.m04.airlift/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=1 body=باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=2 body=پایین صفحه، «انتخاب نفربر نجات» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=3 body=«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.
+[CampaignPlayerJourney] action=3:MoveCommand
+[CampaignPlayerJourney] settled lesson=3 phase=Engage outcome=None produced=0 guidance=AirliftReachTeam body=«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Move:(813.25, 0.49, 426.75)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=4 body=«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=5 body=«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=5:CommandWheelCue
+[CampaignPlayerJourney] settled lesson=5 phase=Engage outcome=None produced=0 guidance=AirliftBoardCarrier body=«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=5:BoardSector
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Board:(814.87, 0.56, 426.71)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=6 body=«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=6:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=6 phase=Engage outcome=None produced=0 guidance=AirliftEscort body=نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.
+[CampaignPlayerJourney] action=6:MoveCommand
+[CampaignPlayerJourney] action=6:ShowMeButton
+[CampaignPlayerJourney] action=6:Move:(1060.00, 0.45, 428.00)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=7 body=نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.
+[CampaignPlayerJourney] action=7:PassengerChip
+[CampaignPlayerJourney] settled lesson=7 phase=Engage outcome=None produced=0 guidance=AirliftUnload body=بخش مسافرهای نفربر رو باز کن و «پیاده‌شدن» رو بزن. صبر کن هر چهار متخصص کنار بالگرد پیاده بشن. اگه جا بسته‌ست، نفربر رو یه کم ببر توی فضای باز.
+[CampaignPlayerJourney] action=7:ExitAllButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=8 body=پایین صفحه، «انتخاب بالگرد» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=8:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=9 body=پایین صفحه، «انتخاب همهٔ متخصصان» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=9:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=9 phase=Engage outcome=None produced=0 guidance=AirliftBoardAircraft body=با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=9:CommandWheelCue
+[CampaignPlayerJourney] action=9:BoardSector
+[CampaignPlayerJourney] action=9:Board:(1062.94, 0.45, 432.39)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=10 body=با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] settled lesson=10 phase=Engage outcome=None produced=0 guidance=AirliftSecure body=هر چهار متخصص سوارن. 17 ثانیهٔ دیگه صبر کن؛ لازم نیست دکمه‌ای بزنی. بالگرد رو توی حلقهٔ زرد فرود نگه دار. درس بعدی مسیر خروج رو نشونت می‌ده.
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=11 body=هر چهار متخصص سوارن. 1 ثانیهٔ دیگه صبر کن؛ لازم نیست دکمه‌ای بزنی. بالگرد رو توی حلقهٔ زرد فرود نگه دار. درس بعدی مسیر خروج رو نشونت می‌ده.
+[CampaignPlayerJourney] action=11:SelectMissionGroupButton
+[CampaignPlayerJourney] settled lesson=11 phase=Engage outcome=None produced=0 guidance=AirliftDepart body=بالگرد رو انتخاب کن، «حرکت» رو بزن و به محل خروج مشخص‌شده بفرستش. «نشان بده» خروج رو نشونت می‌ده. تا نجات تأیید نشده، هر چهار متخصص باید سوار بمونن.
+[CampaignPlayerJourney] action=11:MoveCommand
+[CampaignPlayerJourney] action=11:ShowMeButton
+[CampaignPlayerJourney] action=11:Move:(1085.00, 0.01, 465.00)
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=fa-IR
+[CampaignTutorialEntry] result=Passed M1, M3 and M4 bilingual player-action regression journeys, victory and campaign return

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="16" result="Passed" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-16 22:38:06Z" end-time="2026-09-16 22:38:07Z" duration="0.8993961">
+  <test-suite type="TestSuite" id="1000" name="Warline M5 Compound QA" fullname="Warline M5 Compound QA" runstate="Runnable" testcasecount="4577" result="Passed" start-time="2026-09-16 22:38:06Z" end-time="2026-09-16 22:38:07Z" duration="0.899396" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="6195" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-readiness-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4576" result="Passed" start-time="2026-09-16 22:38:06Z" end-time="2026-09-16 22:38:07Z" duration="0.856491" total="16" passed="16" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="53101" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1187" name="AriaTutorialPresentationV3PrefabTests" fullname="AriaTutorialPresentationV3PrefabTests" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.295231" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1191" name="EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" fullname="AriaTutorialPresentationV3PrefabTests.EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" methodname="EnglishAndFarsi_ReflowAtReadableSizeWithinTheSamePanelWidth" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="1098423765" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.264779" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1189" name="MatchHud_EmbedsOnlyDoItAndShowMeActions" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_EmbedsOnlyDoItAndShowMeActions" methodname="MatchHud_EmbedsOnlyDoItAndShowMeActions" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="1435829607" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.001473" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1188" name="MatchHud_OwnsTheOnlyTutorialAriaPanel" fullname="AriaTutorialPresentationV3PrefabTests.MatchHud_OwnsTheOnlyTutorialAriaPanel" methodname="MatchHud_OwnsTheOnlyTutorialAriaPanel" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="92675587" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.000484" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1190" name="Popup_DoesNotContainASecondTutorialSurface" fullname="AriaTutorialPresentationV3PrefabTests.Popup_DoesNotContainASecondTutorialSurface" methodname="Popup_DoesNotContainASecondTutorialSurface" classname="AriaTutorialPresentationV3PrefabTests" runstate="Runnable" seed="1782183863" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.011266" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="1818" name="CampaignReadinessLifecycleTests" fullname="CampaignReadinessLifecycleTests" classname="CampaignReadinessLifecycleTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.283752" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1819" name="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" fullname="CampaignReadinessLifecycleTests.ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" methodname="ClonedDisabledControlRecoversItsNormalMaterialWithoutARestrictionOwner" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1191225092" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.004061" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1821" name="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" fullname="CampaignReadinessLifecycleTests.DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" methodname="DestroyingSceneGridReleasesNativeStorageWithoutWaitingForWorldShutdown" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1526676300" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.266993" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1820" name="PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" fullname="CampaignReadinessLifecycleTests.PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" methodname="PathMaintenanceIgnoresRetiredGridUntilItsCleanupRuns" classname="CampaignReadinessLifecycleTests" runstate="Runnable" seed="1108930129" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.003600" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5478" name="TutorialAttentionAndContinueTests" fullname="TutorialAttentionAndContinueTests" classname="TutorialAttentionAndContinueTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.064513" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5481" name="ChevronHasRenderableGeometry" fullname="TutorialAttentionAndContinueTests.ChevronHasRenderableGeometry" methodname="ChevronHasRenderableGeometry" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="329553716" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.006125" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5482" name="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" fullname="TutorialAttentionAndContinueTests.ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" methodname="ContinueDisappearsBeforeCallbackAndCannotReappearForSameLesson" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="855493494" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.043577" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5480" name="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" fullname="TutorialAttentionAndContinueTests.PlacementPointerFindsOpenCornerBesideMinimapAndFooter" methodname="PlacementPointerFindsOpenCornerBesideMinimapAndFooter" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="1490125605" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.003799" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5479" name="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" fullname="TutorialAttentionAndContinueTests.PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" methodname="PointerRotatesInsideEveryEdgeAndAvoidsOtherControls" classname="TutorialAttentionAndContinueTests" runstate="Runnable" seed="236062669" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.001962" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5483" name="TutorialCueOverlayTests" fullname="TutorialCueOverlayTests" classname="TutorialCueOverlayTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.037541" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5485" name="MinimapLeavesRoomForBottomCornerArrow" fullname="TutorialCueOverlayTests.MinimapLeavesRoomForBottomCornerArrow" methodname="MinimapLeavesRoomForBottomCornerArrow" classname="TutorialCueOverlayTests" runstate="Runnable" seed="1921124845" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.000878" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5486" name="NarrowFooterKeepsArrowWhenMapAndCancellationBannerBlockDifferentAxes" fullname="TutorialCueOverlayTests.NarrowFooterKeepsArrowWhenMapAndCancellationBannerBlockDifferentAxes" methodname="NarrowFooterKeepsArrowWhenMapAndCancellationBannerBlockDifferentAxes" classname="TutorialCueOverlayTests" runstate="Runnable" seed="182545498" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.000508" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5488" name="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" fullname="TutorialCueOverlayTests.NextClickFrameIsAbovePopupAndNeverBlocksItsButton" methodname="NextClickFrameIsAbovePopupAndNeverBlocksItsButton" classname="TutorialCueOverlayTests" runstate="Runnable" seed="2012713738" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.020793" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5484" name="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" fullname="TutorialCueOverlayTests.WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" methodname="WaitAreaDoesNotResembleAClickTargetAndRestoresTargetStyle" classname="TutorialCueOverlayTests" runstate="Runnable" seed="1980714197" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.001361" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5487" name="WedgeGuideFramesOnlyTheVisibleSector" fullname="TutorialCueOverlayTests.WedgeGuideFramesOnlyTheVisibleSector" methodname="WedgeGuideFramesOnlyTheVisibleSector" classname="TutorialCueOverlayTests" runstate="Runnable" seed="1221101631" result="Passed" start-time="2026-09-16 22:38:07Z" end-time="2026-09-16 22:38:07Z" duration="0.003398" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/Warline M5 Compound QA/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

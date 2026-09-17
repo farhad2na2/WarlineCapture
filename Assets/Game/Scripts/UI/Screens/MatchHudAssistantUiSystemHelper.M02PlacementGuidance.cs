@@ -28,6 +28,7 @@ namespace Game.UI.Runtime
             public readonly bool WorldTargetCompleted;
             public readonly Func<bool> ExecuteBuildingPlacementStep;
             public readonly RectTransform ResourceStrip;
+            public readonly IBuildingUiQuery ProductionQuery;
             public readonly byte PendingDoItStep;
             public readonly float PendingDoItUntil;
             public readonly byte PendingTutorialStep;
@@ -50,6 +51,7 @@ namespace Game.UI.Runtime
                 WorldTargetCompleted = owner._tutorialWorldTargetCompleted;
                 ExecuteBuildingPlacementStep = owner._executeBuildingPlacementStep;
                 ResourceStrip = owner._boundResourceStrip;
+                ProductionQuery = owner._highlightPresentationSystem.ProductionQuery;
                 PendingDoItStep = owner._pendingM02DoItStep;
                 PendingDoItUntil = owner._pendingM02DoItUntilUnscaledTime;
                 PendingTutorialStep = owner._pendingTutorialStep;
@@ -78,6 +80,7 @@ namespace Game.UI.Runtime
             _tutorialWorldTargetCompleted = state.WorldTargetCompleted;
             _executeBuildingPlacementStep = state.ExecuteBuildingPlacementStep;
             _boundResourceStrip = state.ResourceStrip;
+            _highlightPresentationSystem.BindProductionQuery(state.ProductionQuery);
             _pendingM02DoItStep = state.PendingDoItStep;
             _pendingM02DoItUntilUnscaledTime = state.PendingDoItUntil;
             _pendingTutorialStep = state.PendingTutorialStep;

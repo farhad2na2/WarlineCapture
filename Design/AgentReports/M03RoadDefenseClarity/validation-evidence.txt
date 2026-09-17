@@ -1,0 +1,19 @@
+English full mission — /private/tmp/m03-clarity-en.log
+[M03BattleClarity] result=Passed locale=en waiting,contact,visible targets,localized instructions,real defensive victory
+[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for; Ping charges=1; visited=1,2,3,4,5,6,10,11,12
+[M03RadarWarningEditorLaunchProbe] result=Passed real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars=3; civiliansLost=0
+Farsi gate placement — /private/tmp/m03-clarity-fa3.log
+[M03RoadGateTutorial] result=Passed convoy lane=centered green yaw=90 manual-rotate=both-directions model-center=(875.00, 0.54, 422.19) ordinary-building=blocked tutorial=real-clicks
+[M03PlacementDrag] result=Passed real pointer drag + 1.5s hold + release; camera stable; green footprint confirmable.
+
+Farsi full mission — /private/tmp/m03-clarity-fa6.log
+[M03Clarity] optional Scan feedback visible, Hold preserved, battle continues: اسکن: خودرویی نیست؛ دفاع رو ادامه بده.
+[M03BattleClarity] result=Passed locale=fa-IR waiting,contact,visible targets,localized instructions,real defensive victory
+[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for; Ping charges=1; visited=1,2,3,4,5,6,10,11,12
+[M03RadarWarningEditorLaunchProbe] result=Passed real rifle victory -> 3-second finale (clock frozen) -> 3 final M3 debrief panels -> localized Victory; result guide returns; stars=3; civiliansLost=0
+
+Final focused layout and placement regressions — /private/tmp/m03-clarity-final2.log
+[M03ClarityRepair] result=Passed warning=22px returnCamera=hidden
+[M03Clarity] road placement regressions Passed
+[M03ScanLayout] result=Passed EN/FA zero/contact messages fit panel and text bounds
+[M03FinalFocused] result=Passed

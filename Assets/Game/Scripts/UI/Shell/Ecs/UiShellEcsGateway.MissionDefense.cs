@@ -72,7 +72,10 @@ namespace Game.UI.Shell.Ecs
                 { warning=ThreatWarningDisplayText.Build(records[i]); hasWarning=true; focus=active && records[i].HasFocus!=0; attention=records[i].AttentionEscalated!=0 && records[i].ReadByPlayer==0; break; }
             if(preparing) warning=GameText.Get("mission.m03.prepare")+"\n"+warning;
             if(facts.SquadLossCount>0) warning+= "\n"+GameText.Format("mission.m03.casualties","",facts.SquadLossCount);
-            model=new UiMissionDefenseModel(true,hasWarning,focus,canPing,warning,status,ping.Charges,cooldown,ledger.FocusElementIndex,guidance,ledger.Version+ping.Version,canReturn,attention,resume);
+            string scanFeedback=ping.Result!=RadarPingResultKind.Accepted ? null : ping.LastContactCount==0
+                ? GameText.Get("mission.m03.scan.empty_result")
+                : GameText.Format("mission.m03.scan.contact_result","Scan: {0} vehicles. Keep holding.",ping.LastContactCount);
+            model=new UiMissionDefenseModel(true,hasWarning,focus,canPing,warning,status,ping.Charges,cooldown,ledger.FocusElementIndex,guidance,ledger.Version+ping.Version,canReturn,attention,resume,scanFeedback,ping.LastRequestId);
             defenseAttemptKey=attemptKey; defenseReadKey=key; defenseReadLocale=locale;
             defenseReadModel=model; defenseReadResume=resume;defenseReadPreparing=preparing;defenseReadLosses=facts.SquadLossCount; hasDefenseReadModel=true;
             return true;

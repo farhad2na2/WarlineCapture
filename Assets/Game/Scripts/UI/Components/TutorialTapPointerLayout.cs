@@ -40,12 +40,16 @@ namespace Game.UI.Runtime
                 var direction = Outward(candidate);
                 var signs = new Vector2(Mathf.Sign(direction.x), Mathf.Sign(direction.y));
                 var corner = target.center + Vector2.Scale(target.size * .5f, signs);
-                for (int reach = 0; reach < 4; reach++)
-                for (int axis = 0; axis < 2; axis++)
+                // A minimap above and a feedback banner beside the button can
+                // require clearance on BOTH axes. Search nearest offsets first.
+                for (int reach = 0; reach <= 12; reach++)
+                for (int xReach = 0; xReach <= 6; xReach++)
                 {
+                    int yReach = reach - xReach;
+                    if (yReach < 0 || yReach > 6) continue;
                     var halfDiagonal = size * .707107f;
                     var offset = Vector2.one * (halfDiagonal + gap + travel);
-                    if (axis == 0) offset.x += reach * size; else offset.y += reach * size;
+                    offset += new Vector2(xReach, yReach) * size;
                     var center = corner + Vector2.Scale(offset, signs);
                     var pointer = new Rect(center - Vector2.one * size * .5f, Vector2.one * size);
                     var envelope = new Rect(center - Vector2.one * (halfDiagonal + travel),

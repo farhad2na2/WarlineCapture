@@ -1,0 +1,188 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1727197537378050417
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1856120916556202103}
+  m_Layer: 0
+  m_Name: Geometry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1856120916556202103
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1727197537378050417}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0, y: -0, z: -0}
+  m_LocalScale: {x: 1.3770784, y: 0.90341115, z: 1.0253093}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 534281733576355754}
+  m_Father: {fileID: 260961628210528487}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3231427345988938426
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 260961628210528487}
+  - component: {fileID: 3709072125853932317}
+  m_Layer: 0
+  m_Name: M05_GuardPost
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &260961628210528487
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3231427345988938426}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1856120916556202103}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3709072125853932317
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3231427345988938426}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c3c1b346ef24d7ea4a0cb6f65d6c1c1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.Authoring::Game.Authoring.BuildingDefinitionAuthoring
+  config: {fileID: 0}
+  displayName: Guard Post
+  description: 
+  portraitSprite: {fileID: 0}
+  portraitCardSprite: {fileID: 0}
+  portraitActionSprite: {fileID: 0}
+  footprintCells: {x: 4, y: 4}
+  maxHealth: 100000
+  role: 0
+  canRequest: 0
+  price: 20000
+  materialsCost: 0
+  productionDurationSeconds: 30
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  materialFabricationEnabled: 0
+  materialFabricationOilConsumedPerCycle: 0
+  materialFabricationMaterialsOutputPerCycle: 0
+  materialFabricationCycleDurationSeconds: 30
+  materialFabricationOutputCapacityPolicy: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  canAttack: 0
+  maxConcurrentAttacks: 1
+  attackRange: 0
+  attackCooldownSeconds: 1
+  attackDamage: 0
+  attackImpactPrefab: {fileID: 0}
+  muzzleFlashPrefab: {fileID: 0}
+  muzzleFlashHeightOffset: 0.95
+  muzzleFlashForwardOffset: 0.5
+  attackTraceColor: {r: 1, g: 0.62, b: 0.25, a: 1}
+  attackTraceWidth: 0.14
+  attackTraceScrollSpeed: 24
+  attackTraceDashDensity: 4
+  attackTraceVisibleSeconds: 0.1
+  attackTracerEveryNthShot: 3
+  productions: []
+  isWall: 0
+  destroyedVisualPrefab: {fileID: 0}
+  primarySpawnUnitPrefab: {fileID: 0}
+  secondarySpawnUnitPrefab: {fileID: 0}
+  tertiarySpawnUnitPrefab: {fileID: 0}
+--- !u!1001 &539118562327919276
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1856120916556202103}
+    m_Modifications:
+    - target: {fileID: 1112122440176180, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_Name
+      value: SM_Bld_GuardTower_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+--- !u!4 &534281733576355754 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4911648172381446, guid: 7fa410500dabdde4cb375f3c7e442e92, type: 3}
+  m_PrefabInstance: {fileID: 539118562327919276}
+  m_PrefabAsset: {fileID: 0}

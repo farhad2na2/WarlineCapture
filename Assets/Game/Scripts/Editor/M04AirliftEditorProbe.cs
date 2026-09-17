@@ -214,6 +214,7 @@ namespace Game.Editor
                         for(int i=0;i<team.Count;i++)if(!em.HasComponent<UnitTransportPassenger>(team[i])||em.GetComponentData<UnitTransportPassenger>(team[i]).Transport!=extraction.Aircraft)return;
                         Next();break;
                     case 6:
+                        if(ExerciseClearanceInterruption(em,extraction,facts))return;
                         if(extraction.DepartureCleared==0)return;
                         ScreenCapture.CaptureScreenshot(Output+"/cleared.png");Move(em,extraction.Aircraft,new int2(1085,465));Next();break;
                     case 7:

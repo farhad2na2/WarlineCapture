@@ -1,0 +1,14 @@
+{
+  "utc": "2026-09-16T23:15:13.047771+00:00",
+  "apk": "/Users/farhad/Projects/WarlineCapture/Build/ReadinessCandidate/WarlineCapture-M1-M5.apk",
+  "bytes": 634020483,
+  "sha256": "6aa83f296e60f45cc4adb8ddd102c3b1f5fd2b9557bed7589d29ec77790b1173",
+  "archiveIntegrity": "Passed",
+  "signature": "Passed",
+  "abi": "arm64-v8a",
+  "minimumAndroidApi": 26,
+  "debuggable": false,
+  "sourceInputsVerified": 19336,
+  "deviceStartup": "Not performed: no device or emulator available",
+  "copiedArtifactHashVerified": true
+}

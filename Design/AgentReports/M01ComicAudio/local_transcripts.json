@@ -1,0 +1,149 @@
+{
+  "method": "Local whisper.cpp small, automatic language detection; machine transcript for manual content review, not a native-speaker sign-off.",
+  "clips": [
+    {
+      "id": "m01-brief.line.1",
+      "locale": "en-US",
+      "expected": "First contact is confirmed: three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+      "detectedLanguage": "en",
+      "transcript": "First contact is confirmed. Three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+      "sha256": "cfa4ece46434f7f75a0d648313c2c0aa0f7eb3a3dba601aeaa6cdafb49dd9fd3"
+    },
+    {
+      "id": "m01-brief.line.1",
+      "locale": "fa-IR",
+      "expected": "تماس تأیید شد. سه نیروی مسلح خط خاکستر، مسیر درمانگاه بازار قدیمی رو بستن.",
+      "detectedLanguage": "fa",
+      "transcript": "تماس تایید شد، سنیروی مسلح خط خاکستر مصیر در منگاه بازار قدیمی رو بستن.",
+      "sha256": "c47c9ee30805d3c5908a9854a599f9df262147a14c38bdeb3d9f951bca99e2ee"
+    },
+    {
+      "id": "m01-brief.line.2",
+      "locale": "en-US",
+      "expected": "Threat profiles: Courier carries orders, Warden controls the crossing, and Broker coordinates supplies.",
+      "detectedLanguage": "en",
+      "transcript": "Threat profiles. Courier carries orders. Warden controls the crossing. And broker coordinates supplies.",
+      "sha256": "aff89cdcc871de7acd66e47ae3dee3fed2a1fd37d6e6716d7a6774a9b51100f1"
+    },
+    {
+      "id": "m01-brief.line.2",
+      "locale": "fa-IR",
+      "expected": "پیک دستورها رو می‌رسونه، نگهبان چهارراه رو کنترل می‌کنه و کارگزار تدارکات رو هماهنگ می‌کنه.",
+      "detectedLanguage": "fa",
+      "transcript": "هیک تستور هارو میره سونه، نگهبان چها راه رو کنتورول می کنه و کارگوزار تداروکات رو همه هنج می کنه.",
+      "sha256": "30e172e1245143734824d45d3d3122352a3de04be5325875f4e75ac788886b21"
+    },
+    {
+      "id": "m01-brief.line.3",
+      "locale": "en-US",
+      "expected": "Civilians are sheltering beyond the patrol. Clear the marked corridor; do not pursue outside the district.",
+      "detectedLanguage": "en",
+      "transcript": "Civilians are sheltering beyond the patrol. Clear the marked corridor. Do not pursue outside the district.",
+      "sha256": "b4edfd7809296a0abef191f4a3e0d138a8f459017e498f281694fb5c56b337fd"
+    },
+    {
+      "id": "m01-brief.line.3",
+      "locale": "fa-IR",
+      "expected": "مردم اون طرف گشت پناه گرفتن. مسیر مشخص‌شده رو باز کنید، ولی برای تعقیب از منطقه خارج نشید.",
+      "detectedLanguage": "fa",
+      "transcript": "مردوم اون طرف گش پناه گرفتن مسیره مشخص شداره باز کنید ولی برای تقیب از منطق خارج نشید",
+      "sha256": "ae651046a9d515e92c3bb430d8e56b0aca4a01f295cfe6ff20e476f0c0a439d2"
+    },
+    {
+      "id": "m01-comms.line.1",
+      "locale": "en-US",
+      "expected": "Command squad, move to cover and confirm the armed patrol before engaging.",
+      "detectedLanguage": "en",
+      "transcript": "Command Squad, move to cover and confirm the armed patrol before engaging.",
+      "sha256": "6f3f03a48848cbd79e548aba60d1dca268b69104c483336e874ae51416ef21db"
+    },
+    {
+      "id": "m01-comms.line.1",
+      "locale": "fa-IR",
+      "expected": "گروه فرماندهی، برید پشت پوشش. قبل از حمله مطمئن بشید هدف همون گشت مسلحه.",
+      "detectedLanguage": "fa",
+      "transcript": "گروح فارمندهی بورید پوشت پوشش عبلس حمله مطمئن بشید حداف همونگیشت موصلا هر",
+      "sha256": "f85adfc4d9964b12f9ad61f60136e79083f2f75da0e48b896c8fb7c03e77d1cf"
+    },
+    {
+      "id": "m01-comms.line.2",
+      "locale": "en-US",
+      "expected": "Courier, Warden, and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+      "detectedLanguage": "en",
+      "transcript": "Courier, Warden and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+      "sha256": "aba5b6304221c5cf878597c4097e7068e209019644d90a8403ebd2ccf8d89463"
+    },
+    {
+      "id": "m01-comms.line.2",
+      "locale": "fa-IR",
+      "expected": "پیک، نگهبان و کارگزار هنوز توی مسیر مشخص‌شده هستن. وضعیت هدف‌ها با گزارش‌های تأییدشده به‌روز می‌شه.",
+      "detectedLanguage": "fa",
+      "transcript": "پیک نگهبان و کارگوزار هنوز توی مصیر موشخص شده هستن وزیهت هدفها با گوزارشهای تهید شده بروز میشه",
+      "sha256": "65e7298a97516dde47f526afbd6c5d3dec11e6d9fdd09b7a369a1fcd55035486"
+    },
+    {
+      "id": "m01-comms.line.3",
+      "locale": "en-US",
+      "expected": "The evacuation path is holding. Keep the command squad intact.",
+      "detectedLanguage": "en",
+      "transcript": "The evacuation path is holding. Keep the command squad intact.",
+      "sha256": "0665c9075d488374d5e5e94ed90e9c610db5771d107b8908d18f306011145148"
+    },
+    {
+      "id": "m01-comms.line.3",
+      "locale": "fa-IR",
+      "expected": "مسیر تخلیه هنوز بازه. مراقب باشید گروه فرماندهی سالم بمونه.",
+      "detectedLanguage": "fa",
+      "transcript": "مسیر تخلی هنوز بازه مراقب باشید گروه فرماندهی سالم بمونه",
+      "sha256": "20055b427ab0171c9057eceafdfe1a1a20253bea488e5c3031f0c5731dcd9942"
+    },
+    {
+      "id": "m01-debrief.line.1",
+      "locale": "en-US",
+      "expected": "The corridor is secure. The patrol was coordinated, not opportunistic.",
+      "detectedLanguage": "en",
+      "transcript": "The corridor is secure, the patrol was coordinated, not opportunistic.",
+      "sha256": "6da36b5388a7f93aabbeae2bfb6f85325d2adc38166ff53ebaecd098c96c07f0"
+    },
+    {
+      "id": "m01-debrief.line.1",
+      "locale": "fa-IR",
+      "expected": "مسیر امن شد. این گشت اتفاقی اینجا نبود؛ با هم هماهنگ بودن.",
+      "detectedLanguage": "fa",
+      "transcript": "مصیر امت شد انگشت اتفاقه اینجانا بود با هم هماها اینگ بودن.",
+      "sha256": "827b77443048094d38a0053c0c66255032b55b0c92632e511e751aea2dff6a55"
+    },
+    {
+      "id": "m01-debrief.line.2",
+      "locale": "en-US",
+      "expected": "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved.",
+      "detectedLanguage": "en",
+      "transcript": "Recover traffic includes a fragment of a revoked civic relay credential. The source identity is unresolved.",
+      "sha256": "8ba89fe6e884fef33393091d553c7cfaf0fb3c8ca64a2f17f0fbae0463c2bfbc"
+    },
+    {
+      "id": "m01-debrief.line.2",
+      "locale": "fa-IR",
+      "expected": "توی پیام‌های بازیابی‌شده، بخشی از یک شناسهٔ باطل‌شدهٔ شبکهٔ شهری پیدا کردم. هنوز معلوم نیست مال کیه.",
+      "detectedLanguage": "fa",
+      "transcript": "توی پیانهای بازیابی شده بخشی از یک شناسه باتل شده یه شبکه یه شهری پیدا کردم. هنوز ملوم نیست مالکی اید.",
+      "sha256": "236b5bbd2738c7fb2a2f21d51a2703dcbb58d01184bf3b8eef8d61b09b544690"
+    },
+    {
+      "id": "m01-debrief.line.3",
+      "locale": "en-US",
+      "expected": "Civilians are moving to safety. Command Base is online; the next operation is ready for review.",
+      "detectedLanguage": "en",
+      "transcript": "Civilians are moving to safety. Command Base is online. The next operation is ready for review.",
+      "sha256": "9ed8fab2107ccdc8ec57a5bf6b76a4040d79f156e6d26cd3718c68e32bdeeb45"
+    },
+    {
+      "id": "m01-debrief.line.3",
+      "locale": "fa-IR",
+      "expected": "مردم دارن به جای امن می‌رن. پایگاه فرماندهی آماده‌ست؛ می‌تونید عملیات بعدی رو بررسی کنید.",
+      "detectedLanguage": "fa",
+      "transcript": "مردم دارم بجای امن میرن، پایگاه فرماندهی آمادست، میتونید امالیات بادی رو برسی کنید.",
+      "sha256": "c7b33dc2b203f110ded3010549bb677e3efe1439ecd8425bab4359e856c896ff"
+    }
+  ]
+}

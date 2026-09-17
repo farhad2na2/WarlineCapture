@@ -43,8 +43,14 @@ namespace Game.Editor
             var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             if(mobileUnload==1)
             {
-                if(!UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=7 || aria==null || VisibleLesson(aria)!=7 || !aria.DoItButton.IsInteractable())return false;
-                aria.DoItButton.onClick.Invoke();mobileUnload=2;frame=Time.frameCount;return false;
+                if(!UiShellRuntimeGateway.TryReadMatchHudAssistantPanel(out var panel) || panel.TutorialStep!=7 || aria==null || VisibleLesson(aria)!=7)return false;
+                foreach(var candidate in UnityEngine.Object.FindObjectsByType<MatchHudSelectionPanelView>(FindObjectsSortMode.None))
+                {
+                    var chip = (Button)typeof(MatchHudSelectionPanelView).GetField("passengerChipButton", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(candidate);
+                    if(chip == null || !chip.isActiveAndEnabled || !chip.IsInteractable())continue;
+                    chip.onClick.Invoke();mobileUnload=2;frame=Time.frameCount;return false;
+                }
+                return false;
             }
             MatchHudSelectionPanelView selection=null;
             foreach(var candidate in UnityEngine.Object.FindObjectsByType<MatchHudSelectionPanelView>(FindObjectsSortMode.None))
@@ -65,7 +71,7 @@ namespace Game.Editor
             }
             if(!UiShellRuntimeGateway.TryReadMissionExtraction(out var after) || after.Aboard!=0)return false;
             if(drawer!=null)((Button)typeof(MatchHudTransportPassengerDrawerView).GetField("closeButton",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(drawer)).onClick.Invoke();
-            Debug.Log("[M04MobileActions] actual Do It opens passengers, actual Exit All unloads=Passed");return true;
+            Debug.Log("[M04MobileActions] visible passenger chip opens drawer, actual Exit All unloads=Passed");return true;
         }
     }
 }

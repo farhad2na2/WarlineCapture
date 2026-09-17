@@ -11,6 +11,16 @@ namespace Game.UI.Runtime
         private string selectionInstruction;
         private float selectionQueuedAt=-1;
         public Button SelectionButton => selectionButton;
+        private void EnsureSelectionButton()
+        {
+            if (selectionButton != null || doItButton == null) return;
+            selectionButton=Instantiate(doItButton,doItButton.transform.parent);
+            selectionButton.name="SelectMissionGroupButton";
+            selectionButton.onClick=new Button.ButtonClickedEvent();
+            selectionButton.onClick.AddListener(SelectLessonGroup);
+            selectionButtonLabel=selectionButton.GetComponentInChildren<TMP_Text>(true);
+            selectionButton.gameObject.SetActive(false);
+        }
         internal void SetSelectionActionAvailable(bool available,string labelKey="ui.aria.select_group")
         {
             if(!available)
@@ -22,14 +32,7 @@ namespace Game.UI.Runtime
                 selectionInstruction=null;
                 return;
             }
-            if(selectionButton==null)
-            {
-                selectionButton=Instantiate(doItButton,doItButton.transform.parent);
-                selectionButton.name="SelectMissionGroupButton";
-                selectionButton.onClick=new Button.ButtonClickedEvent();
-                selectionButton.onClick.AddListener(SelectLessonGroup);
-                selectionButtonLabel=selectionButton.GetComponentInChildren<TMP_Text>(true);
-            }
+            EnsureSelectionButton();
             bool pending=selectionQueuedAt>=0 && Time.unscaledTime-selectionQueuedAt<1;
             selectionButton.gameObject.SetActive(!pending);
             selectionButton.interactable=!pending;

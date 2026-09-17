@@ -348,40 +348,6 @@ MonoBehaviour:
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     lines: []
-    continueStateId: first_launch.guidance_choice
-    skipStateId: first_launch.m01_handoff
-    reducedMotionSupported: 1
-    durationSeconds: 0
-    motionPreset: 6
-    locationTitleKey: 
-    locationTitleFallback: 
-    locationSubtitleKey: 
-    locationSubtitleFallback: 
-    musicCue: 0
-    ambienceCue: 0
-    vehicleCue: 0
-    eventCue: 0
-    routeRole: 5
-    completionPayloadId: 
-    evidenceIds: []
-    missionContextFlags: []
-  - stateId: first_launch.guidance_choice
-    kind: 2
-    panel16x9: {fileID: 0}
-    panel20x9: {fileID: 0}
-    panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
-      m_EditorAssetChanged: 0
-    panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
-      m_SubObjectType: 
-      m_SubObjectGUID: 
-      m_EditorAssetChanged: 0
-    lines: []
     continueStateId: FL-P09
     skipStateId: first_launch.m01_handoff
     reducedMotionSupported: 1
@@ -395,7 +361,7 @@ MonoBehaviour:
     ambienceCue: 0
     vehicleCue: 0
     eventCue: 0
-    routeRole: 6
+    routeRole: 5
     completionPayloadId: 
     evidenceIds: []
     missionContextFlags: []

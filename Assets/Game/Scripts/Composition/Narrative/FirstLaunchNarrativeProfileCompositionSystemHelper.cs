@@ -83,8 +83,8 @@ namespace Game.Composition
         }
 
         public bool HasCommittedCommanderIdentity() =>
-            profile.firstLaunchLastCompletedStateId == commanderIdentityStateId ||
-            profile.firstLaunchLastCompletedStateId == guidanceChoiceStateId;
+            (!string.IsNullOrEmpty(commanderIdentityStateId) && profile.firstLaunchLastCompletedStateId == commanderIdentityStateId) ||
+            (!string.IsNullOrEmpty(guidanceChoiceStateId) && profile.firstLaunchLastCompletedStateId == guidanceChoiceStateId);
 
         public MissionLaunchPayload PrepareMissionHandoff(ulong transitionToken)
         {

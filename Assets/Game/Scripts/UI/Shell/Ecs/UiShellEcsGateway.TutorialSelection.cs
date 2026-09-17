@@ -31,7 +31,10 @@ namespace Game.UI.Shell.Ecs
         internal static Entity ResolveTutorialSelectionActor(EntityManager em,Entity root,
             CampaignMissionGuidanceProjectionComponent guidance,float3 position)
         {
-            if(em.HasComponent<CampaignMissionExtractionState>(root))
+            var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            // Optional mission state can remain on the persistent root after returning
+            // to the campaign. Only M4 owns specialist/transport selection routing.
+            if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
             {
                 int step=guidance.GuidanceId-55000;
                 var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
@@ -46,7 +49,7 @@ namespace Game.UI.Shell.Ecs
                 return CanSelectTutorialActor(em,vehicle)?vehicle:Entity.Null;
             }
             if(CanSelectTutorialActor(em,guidance.SourceEntity)) return guidance.SourceEntity;
-            var session=em.GetComponentData<CampaignMissionRuntimeComponent>(root).SessionToken;
+            var session=runtime.SessionToken;
             using var query=em.CreateEntityQuery(typeof(CampaignMissionUnitRoleComponent),typeof(Faction),typeof(UnitMove),typeof(LocalTransform));
             using var units=query.ToEntityArray(Allocator.Temp);
             Entity closest=Entity.Null;float distance=float.MaxValue;

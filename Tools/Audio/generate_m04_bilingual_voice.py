@@ -2,6 +2,7 @@
 """Generate M04 voice from the authoritative C# copy catalogs; no runtime TTS."""
 from __future__ import annotations
 import argparse
+import persian_voice_profile
 import copy
 import datetime as dt
 import hashlib
@@ -71,11 +72,12 @@ def main():
         for language, locale, text in (("en", "en-US", english), ("fa", "fa-IR", persian)):
             path = MANIFEST.parent / "Voice" / language / (identity + ".wav")
             old = prior.get((identity, locale), {})
-            matching = path.exists() and old.get("text") == text and old.get("sha256") == hashlib.sha256(path.read_bytes()).hexdigest()
+            matching = persian_voice_profile.clip_matches(old, text, path, language)
             if args.force or not matching:
                 audio.convert(audio.request_audio(key, audio.VOICE_IDS[speaker], text, language, 4400 + index*2 + (language=="fa")), path, speaker)
             clip = audio.record(kind, identity, speaker, locale, text, path)
             clip["captionSha256"] = hashlib.sha256(text.encode()).hexdigest()
+            clip.update(persian_voice_profile.metadata(language))
             manifest["clips"].append(clip)
             MANIFEST.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
             print(f"[M04Voice] {kind} {identity} {locale} duration={clip['durationSeconds']:.2f}s", flush=True)

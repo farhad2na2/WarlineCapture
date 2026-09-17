@@ -1,0 +1,94 @@
+{
+  "method": "Local whisper.cpp small, automatic language detection, no script prompt. Speech recognition is a spot check, not a native-speaker listening review.",
+  "samples": [
+    {
+      "identity": "tactical.feedback.stopped_selected_units",
+      "assetPath": "Assets/Game/Audio/Voice/ARIA/fa/aria_message_tactical_feedback_stopped_selected_units_01_fa.wav",
+      "sha256": "c406e288dd22b218da6726e59bec61e4f6c7455054afbd4893337c95443d5d05",
+      "expected": "نیروهایی که انتخاب کردی ایستادن.",
+      "transcript": " نیروهای که انتخاب کرده استادن",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "2command",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_move_to_cover_aria_fa.wav",
+      "sha256": "31e2778041d4b60ed152be94a512783a866d0bda01512eca66a27d111c13a0d8",
+      "expected": "«حرکت» رو بزن تا دستور حرکت انتخاب بشه.",
+      "transcript": " حرکت رو بزن تا دستوره حرکت انتخاب بشه.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "5",
+      "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m02_check_cost_aria_fa.wav",
+      "sha256": "1834867de03572833e2e3abb8454b13759a827e0f36d7f0e6949d850e9c868eb",
+      "expected": "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.",
+      "transcript": " باسد و بیست واهد مساله شروع کردی، سرباز خانه نوات تا مسرف گرد، سیتا منده، بیستا شروع برا یا موزش گروه توفنگ دار نگهدار.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "tutorial-m03-05",
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-05.wav",
+      "sha256": "7dce09a7b92afc77cf3ef81bc5fd9cf6233e37a81297dc310ff04bb6645de763",
+      "expected": "اول «انتخاب مدافعان» رو بزن تا نیروهات انتخاب بشن. بعد «حرکت» رو بزن و کنار جاده، توی محدودهٔ زرد، یه جا براشون انتخاب کن. صبر کن تا برسن.",
+      "transcript": " اول انتخاب مدافعان رو بزن، تانی روحات انتخاب بشن، بعد حرکت رو بزن و کنار جاده تو یه محدود یه زرد یه جا برا شون انتخاب کن، سپر کن تا برسن.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "tutorial-m03-06",
+      "assetPath": "Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/tutorial-m03-06.wav",
+      "sha256": "f78081125436918eb1e728436e74b4b04825cd52191e4986153331aab4de292a",
+      "expected": "وقتی رسیدن، «حفظ» رو بزن. این‌طوری سر جاشون می‌مونن. وقتی دشمن نزدیک بشه، خودشون شلیک می‌کنن و دنبالش نمی‌رن. همین کافیه، لازم نیست «توقف» رو بزنی.",
+      "transcript": " مختی رسیدان هفز رو بزن، این توری سرجا شن میمونن، بختی دوشمن نزدیک بشه خودشن شلیک می کنن و دومبالش نمیرن، همین کافیه، لازم میست توقف رو بزنی.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "m04-brief-01",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav",
+      "sha256": "e35ec619dd2eea50ff8c7525e114989a4d31b07c2f0cace91fbd78cf316dfc0d",
+      "expected": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+      "transcript": " من سرون لیلا ناسرم  بالگردم توی محل فرود شرغی آماد است  چهار متخصص روبان نفربر به من برسونید  ده دقیقه میتونم منتظر به منه",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "tutorial-m04-04",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav",
+      "sha256": "5bd499da9bf16a59d430dd5e11024d22ecd2e70fe1fb6d525e54c92fe82cec77",
+      "expected": "هر چهار متخصص کنار جاده رو با دکمهٔ انتخاب متخصصان انتخاب کن. محافظ‌های مسلح نباید توی این گروه باشن. وقتی هر چهار نفر انتخاب بشن، می‌ریم مرحلهٔ بعد.",
+      "transcript": " هر چهار متخصص کنار جاد درو با دوکمی ای انتخاب موتخصصان انتخاب کن.  محافظ های مسلح نبایت تو یه این گروه باشن.  مختی هر چهار نفر انتخاب بشن میری مرحلی بد.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "tutorial-m04-10",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav",
+      "sha256": "542f483dcfc2db9ec8a3e6266a23d44f38a9b3fd6c76106871311d130ec2613a",
+      "expected": "بالگرد پر رو بیست ثانیه توی حلقهٔ امن فرود نگه دار. با تفنگدارها نذار دشمن وارد حلقه بشه. اگه بالگرد بیرون بره یا دشمن وارد بشه، زمان از اول شروع می‌شه.",
+      "transcript": " ملگرد پور رو بیست سانی توی حلقی ایامن فرود نگه دار.  با تو فنگ دار ها نظار دوشمن وارد حلقی بشه.  اگه بارگی هد بیروم بره یا دوشمن وارد بشه, زمان از اول شروع میشه.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "m05-brief-01",
+      "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav",
+      "sha256": "fbf88319fa07c4bfd30c26f210f7eeab57de0d0107942c099760989d4ef87965",
+      "expected": "مهندس‌ها رد قطعی‌ها رو توی این مرکز ارتباطی پیدا کردن. دروازهٔ جاده رو بشکنید، فرستنده رو از کار بندازید و بایگانی رو امن کنید. شاید این اسناد نشون بدن کی دستور حمله‌ها رو داده.",
+      "transcript": " محندس ها رد قطیحه رو توی این مرکز ارتباطی پیدا کردن.  دروزه جاددر و بشکنید, فرستندر و از کاربین دازید و بایگانی رو امن کنید.  شایدین اصناد نشون بدن کی دستوره همله ها رو داده.",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "p02_radio",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p02_radio.wav",
+      "sha256": "aac9f9fc61117cbd8ed8a930283f9c7bff73e2b9dd75cfdd76cfda4626278fbf",
+      "expected": "چند تا انفجار توی بازار قدیم گزارش شده. برق داره قطع می‌شه. راه اصلی درمانگاه هم بسته‌ست.",
+      "transcript": " کن تا امفجارتی بازار قدیم گزاره شده  بار دره وات میشه  روحه اصلای دارمونگه هم بستست",
+      "detectedLanguage": "fa"
+    },
+    {
+      "identity": "p14_commander_female",
+      "assetPath": "Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav",
+      "sha256": "43bc8d9e61ebdb8a07f47d0734c8f40f4ea1fcdcfaa853ed4d22087f461919b6",
+      "expected": "تیم‌های واکنش رو به هم وصل کنید. راه درمانگاه رو امن کنید. قبل از شلیک، مطمئن بشید هدف دشمنه.",
+      "transcript": " تیمهای باکونش رو به هم وصد کنید، راه در منگاه رو امت کنید.  قبل از شلیق، متماین بشید حدف دوشمنه.",
+      "detectedLanguage": "fa"
+    }
+  ],
+  "note": "Initial local ASR diagnostic. M4 tutorial 10 was subsequently replaced; transcript_spot_checks.json records the accepted final take and current hash."
+}

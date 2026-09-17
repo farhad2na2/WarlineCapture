@@ -12,15 +12,24 @@ namespace Game.Editor
 {
     public static partial class M03RadarWarningEditorLaunchProbe
     {
-        private static bool optionalJourney,reinforcementQueued;
-        private static double reinforcementNext;
+        private static bool optionalJourney,reinforcementQueued,reinforcementDrawerClosed;
+        private static double reinforcementNext, reinforcementCloseDeadline;
+        private static int reinforcementProduced;
+        private static string reinforcementSourceKey;
+        private static double reinforcementDiagnosticAt;
         public static void RunOptionalJourneyEnglish()
-            =>RunChecked(()=>{RunOptionalLayoutChecks();RunBuildingJourneyEnglish();BeginOptionalJourney();});
+            =>RunChecked(()=>{M03RadarWarningLocalizationBuilder.Import();RunOptionalLayoutChecks();RunBuildingJourneyEnglish();BeginOptionalJourney();});
         public static void RunOptionalJourneyPersian()
-        {RunBuildingJourneyPersian();BeginOptionalJourney();}
+        {M03RadarWarningLocalizationBuilder.Import();RunBuildingJourneyPersian();BeginOptionalJourney();}
+        public static void RunUnifiedScanProductionPersian()
+        {
+            RunOptionalJourneyPersian();
+            unifiedScanJourney=true;radarToolbarLocale="fa-IR";
+            radarToolbarAudit=true;radarToolbarClicked=false;radarToolbarSeenAt=0;
+        }
         private static void BeginOptionalJourney()
         {
-            optionalJourney=true;reinforcementQueued=false;reinforcementNext=0;
+            optionalJourney=true;reinforcementQueued=false;reinforcementDrawerClosed=false;reinforcementNext=0;reinforcementProduced=0;reinforcementDiagnosticAt=0;
             BeginPlacementIndicator();
             MainMenuV3PrefabBuilder.SetGameViewResolution(2400,1080);
         }
@@ -42,6 +51,18 @@ namespace Game.Editor
         {
             if(!optionalJourney || runtime.Phase!=MissionPhaseKind.Engage) return false;
             var p=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+            if(reinforcementQueued && !reinforcementDrawerClosed)
+            {
+                var closingDrawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
+                if(closingDrawer==null || !closingDrawer.IsOpen)
+                {
+                    reinforcementDrawerClosed=true;
+                    Debug.Log("[M03OptionalJourney] production popup closed automatically; no close-button click");
+                }
+                else if(EditorApplication.timeSinceStartup>reinforcementCloseDeadline)
+                    throw new InvalidOperationException("Production popup did not close after its animation.");
+            }
+            if(reinforcementQueued) ObserveOptionalProduction(em);
             if(p.GuidanceId!=45009) return false;
             var aria=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             // Mission projection can advance before the throttled HUD presents its next lesson.
@@ -51,11 +72,7 @@ namespace Game.Editor
             if(EditorApplication.timeSinceStartup<reinforcementNext) return true;
             reinforcementNext=EditorApplication.timeSinceStartup+1;
             var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
-            if(reinforcementQueued)
-            {
-                if(drawer!=null && drawer.IsOpen) ClickCommand(drawer.CloseButton);
-                return true;
-            }
+            if(reinforcementQueued) return true;
             if(drawer==null || !drawer.IsOpen)
             {ClickCommand(UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>().BuildButton);return true;}
             var catalog=drawer.GetComponent<BuildDrawerCatalogRuntimeView>();
@@ -65,16 +82,44 @@ namespace Game.Editor
             AssertOptionalClickFrame(button);
             bool produce=button==drawer.PrimaryActionButton;
             var before=ReadBudget(em);
+            if(produce) reinforcementSourceKey=((BuildDrawerCatalogItem)typeof(BuildDrawerCatalogRuntimeView)
+                .GetField("_selectedItem",BindingFlags.Instance|BindingFlags.NonPublic).GetValue(catalog)).Prefab.name;
             ClickTutorialButton(button); // Same EventSystem pointer path as a touch/click.
             if(produce)
             {
+                reinforcementCloseDeadline=EditorApplication.timeSinceStartup+2;
                 var after=ReadBudget(em);
                 if(after.Item2>=before.Item2) throw new InvalidOperationException("Rifle production did not spend displayed materials.");
                 tutorialCreditsSpent+=before.Item1-after.Item1;tutorialMaterialsSpent+=before.Item2-after.Item2;
                 reinforcementQueued=true;guidanceVisited.Add(9);
-                Debug.Log("[M03OptionalJourney] queued one four-person rifle squad through Soldiers tab, card and Produce; budget="+after);
+                Debug.Log("[M03OptionalJourney] queued one four-person rifle squad through Soldiers tab, card and Produce; source="+reinforcementSourceKey+" budget="+after);
             }
             return true;
+        }
+        private static void VerifyOptionalProduction(EntityManager em)
+        {
+            if(!optionalJourney) return;
+            if(!reinforcementQueued || !reinforcementDrawerClosed)
+                throw new InvalidOperationException("Optional production did not queue and close its popup.");
+            if(reinforcementProduced!=4) throw new InvalidOperationException("Expected four recruited soldiers after popup closed, observed "+reinforcementProduced);
+            Debug.Log("[M03OptionalJourney] result=Passed automatic popup close, exact purchase and four produced soldiers");
+        }
+        private static void ObserveOptionalProduction(EntityManager em)
+        {
+            if(reinforcementProduced==4 || EditorApplication.timeSinceStartup<reinforcementDiagnosticAt) return;
+            reinforcementDiagnosticAt=EditorApplication.timeSinceStartup+5;
+            int produced=0;var rows=new System.Collections.Generic.List<string>();
+            using(var query=em.CreateEntityQuery(typeof(BuildingProducedUnitReadModel)))
+            using(var owners=query.ToEntityArray(Unity.Collections.Allocator.Temp))
+            foreach(var owner in owners)
+            foreach(var unit in em.GetBuffer<BuildingProducedUnitReadModel>(owner,true))
+            {
+                rows.Add(unit.UnitSourceKey+" owner="+unit.HasOwnerFaction+"/"+unit.OwnerFactionId+" exists="+em.Exists(unit.Unit));
+                if(unit.HasOwnerFaction!=0 && unit.OwnerFactionId==1 && em.Exists(unit.Unit) &&
+                    string.Equals(unit.UnitSourceKey.ToString(),reinforcementSourceKey,StringComparison.OrdinalIgnoreCase)) produced++;
+            }
+            reinforcementProduced=Math.Max(reinforcementProduced,produced);
+            Debug.Log("[M03OptionalProduction] source="+reinforcementSourceKey+" produced="+produced+" rows="+string.Join(";",rows));
         }
         private static void AssertOptionalClickFrame(Button button)
         {

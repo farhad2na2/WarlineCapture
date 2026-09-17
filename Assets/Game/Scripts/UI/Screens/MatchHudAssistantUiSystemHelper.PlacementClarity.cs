@@ -7,10 +7,14 @@ namespace Game.UI.Runtime
         private bool _placementInstructionShown;
         private void ShowProductionCue()
         {
-            if(_highlightPresentationSystem.HasPendingProduction)
+            bool establishBase = _lastPanelModel.TutorialStepCount == 9;
+            if(_highlightPresentationSystem.HasPendingProduction ||
+                establishBase && _highlightPresentationSystem.HasProducedUnitsThisAttempt)
             {
                 _waitingForTutorialAction=true;
-                _embeddedTutorialView.ApplyContextInstruction("ui.aria.production_wait.title","ui.aria.production_wait.body");
+                _embeddedTutorialView.ApplyContextInstruction(
+                    establishBase ? "tutorial.m02.training_wait.title" : "ui.aria.production_wait.title",
+                    establishBase ? "tutorial.m02.training_wait.body" : "ui.aria.production_wait.body");
                 _highlightPresentationSystem.ClearDirectTutorialCue();
                 return;
             }

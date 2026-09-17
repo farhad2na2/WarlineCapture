@@ -1,0 +1,9 @@
+[PlacementTransaction] result=Passed tests=7
+[M03PlacementDrag] start=(882, 419) size=(2, 8) pointer=(733.37, 615.80) target=(546.12, 600.84)
+[M03RoadGateTutorial] result=Passed convoy lane=centered green yaw=90 manual-rotate=both-directions model-center=(875.00, 0.54, 422.19) ordinary-building=blocked tutorial=real-clicks
+[M03PlacementDrag] result=Passed real pointer drag + 1.5s hold + release; camera stable; green footprint confirmable.
+[M03PlacementCommit] visible=(874, 418) pointerSnapshot=(874, 418)
+[M03PlacementCommit] result=Passed registered cell, root and model pose match preview: (874, 418) position=(875.00, 0.45, 422.00)
+[M03PlacementCommit] result=Passed registered cell, root and model pose match preview: (874, 418) position=(875.00, 0.45, 422.00)
+[M03RadarWarningEditorLaunchProbe] result=Passed M3 tutorial: Build -> defense card -> Place -> Confirm; pointer drag stayed fixed, valid placement advanced to squad movement.
+Wrapper exit: 0

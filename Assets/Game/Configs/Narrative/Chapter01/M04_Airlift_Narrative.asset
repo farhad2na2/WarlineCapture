@@ -48,7 +48,7 @@ MonoBehaviour:
     continueStateId: M04-brief-1
     skipStateId: M04-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.92
+    durationSeconds: 13.17
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -94,7 +94,7 @@ MonoBehaviour:
     continueStateId: M04-brief-2
     skipStateId: M04-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.52
+    durationSeconds: 12.77
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -140,7 +140,7 @@ MonoBehaviour:
     continueStateId: M04-brief-complete
     skipStateId: M04-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 16.119999
+    durationSeconds: 16.369999
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -236,7 +236,7 @@ MonoBehaviour:
     continueStateId: M04-debrief-1
     skipStateId: M04-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.72
+    durationSeconds: 13.97
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -282,7 +282,7 @@ MonoBehaviour:
     continueStateId: M04-debrief-2
     skipStateId: M04-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.08
+    durationSeconds: 11.33
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -328,7 +328,7 @@ MonoBehaviour:
     continueStateId: M04-debrief-complete
     skipStateId: M04-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.48
+    durationSeconds: 13.73
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -423,7 +423,7 @@ MonoBehaviour:
     continueStateId: M04-comms-complete
     skipStateId: M04-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.68
+    durationSeconds: 12.93
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

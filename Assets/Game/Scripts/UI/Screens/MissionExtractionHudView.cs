@@ -31,7 +31,9 @@ namespace Game.UI.Runtime
             RefreshWorldMarkers(active,in model);
             if(active && status!=null) status.SetLocalizedValue(model.Cleared ? UiShellRuntimeGateway.Localization.Get("mission.m04.hud.cleared") : model.PatrolSeconds>0 ? UiShellRuntimeGateway.Localization.Format("mission.m04.patrol.warning","",model.PatrolSeconds) : UiShellRuntimeGateway.Localization.Get("mission.m04.patrol.active"));
             if(!active)return;
-            team.gameObject.SetActive(model.Lesson<=5);landing.gameObject.SetActive(model.Lesson>5 && model.Lesson<=10);departure.gameObject.SetActive(model.Lesson>10);
+            // The briefing needs room for the rescue objective. Team navigation becomes
+            // useful after Continue, when the player starts selecting and moving units.
+            team.gameObject.SetActive(model.Lesson>1 && model.Lesson<=5);landing.gameObject.SetActive(model.Lesson>5 && model.Lesson<=10);departure.gameObject.SetActive(model.Lesson>10);
             if(lastStatus!=null && lastAboard==model.Aboard && lastCarrier==model.CarrierLeg && lastSecure==model.SecureSeconds && lastRemaining==model.RemainingSeconds && lastContested==model.Contested && lastCleared==model.Cleared)return;
             lastAboard=model.Aboard;lastCarrier=model.CarrierLeg;lastSecure=model.SecureSeconds;lastRemaining=model.RemainingSeconds;lastContested=model.Contested;lastCleared=model.Cleared;
             aboard.SetLocalizedValue(model.Aboard+" / 4");carrier.SetLocalizedValue(model.CarrierLeg+" / 4");secure.SetLocalizedValue(model.SecureSeconds+" / 20");

@@ -374,7 +374,9 @@ namespace Game.Runtime
             if (current.Phase == MissionPhaseKind.Preparing &&
                 (current.ReadyReadiness & current.RequiredReadiness) == current.RequiredReadiness)
                 phase = MissionPhaseKind.InteractiveBrief;
-            else if (current.Phase == MissionPhaseKind.InteractiveBrief)
+            else if (current.Phase == MissionPhaseKind.InteractiveBrief &&
+                     (!CampaignMissionNarrativePolicy.UsesFirstContactOpening(current) ||
+                      facts.InteractiveBriefCompleted != 0))
                 phase = MissionPhaseKind.FindSquad;
             else if (current.Phase == MissionPhaseKind.FindSquad &&
                      facts.CommandSquadSpawned != 0 && facts.CommandSquadAlive == 0 &&

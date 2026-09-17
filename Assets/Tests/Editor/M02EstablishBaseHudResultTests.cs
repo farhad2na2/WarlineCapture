@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.IO;
+using System.Linq;
 using Game.Components;
 using Game.Missions.Contracts;
 using Game.UI.Contracts;
@@ -16,7 +17,7 @@ using UnityEngine;
 public sealed class M02EstablishBaseHudResultTests
 {
     private const string Marker =
-        "[M02EstablishBaseHudResultValidation] result=Passed tests=7";
+        "[M02EstablishBaseHudResultValidation] result=Passed tests=8";
     private const string MissionId = "saga.ch01.m02.establish_base";
 
     [MenuItem("Game/Validation/Run M02 Establish Base HUD Result Focused")]
@@ -32,6 +33,7 @@ public sealed class M02EstablishBaseHudResultTests
             tests.FinalVictoryButtonReturnsToMenu();
             tests.DebriefOwnerReturnsToFinalResultBeforeMenu();
             tests.ResultPopupHidesLegacyM01Identity();
+            tests.ConstructionResultsUseMissionFactsAndRestoreCombatLabels();
             Debug.Log(Marker);
             ValidationExit.Passed();
         }
@@ -65,6 +67,80 @@ public sealed class M02EstablishBaseHudResultTests
                 "[M02EstablishBaseHudResultRegressionValidation] result=Failed");
             ValidationExit.Failed();
         }
+    }
+
+    [Test]
+    public void ConstructionResultsUseMissionFactsAndRestoreCombatLabels()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
+        var instance = UnityEngine.Object.Instantiate(prefab);
+        try
+        {
+            var view = instance.GetComponent<MissionResultPopupView>();
+            var patrol = Find(instance, "Objective_DestroyHostilePatrol", "Label");
+            var squad = Find(instance, "Objective_KeepCommandSquadAlive", "Label");
+            string originalPatrol = patrol.text, originalSquad = squad.text;
+            var model = new UiMissionResultPopupModel(1, MissionId, UiMissionResultOutcome.Loss,
+                "MISSION FAILED", "ESTABLISH THE BASE", "", 0, "00:20", "0", "0/0", "", "RETRY", true, true,
+                construction: new UiMissionConstructionResultDetails(1, 0, 2));
+            view.Apply(in model);
+            Assert.AreNotEqual(originalPatrol, patrol.text);
+            Assert.AreNotEqual(originalSquad, squad.text);
+            Assert.AreEqual("MISSION FAILED", instance.GetComponentsInChildren<TMP_Text>(true)
+                .First(t => t.name == "MissionStatusText").text);
+            Assert.AreEqual("2", Find(instance, "CiviliansLostCard", "ValueText").text);
+            Assert.AreEqual("0", Find(instance, "EnemiesDefeatedCard", "ValueText").text);
+            var combat = new UiMissionResultPopupModel(2, "saga.ch01.m01.first_contact", UiMissionResultOutcome.Victory,
+                "VICTORY", "FIRST CONTACT", "", 3, "00:40", "0", "3/3", "", "CONTINUE", true, false);
+            view.Apply(in combat);
+            Assert.AreEqual(originalPatrol, patrol.text, "M2 must not leak its objectives into another mission.");
+            Assert.AreEqual(originalSquad, squad.text);
+            Assert.AreEqual("3/3", Find(instance, "EnemiesDefeatedCard", "ValueText").text);
+        }
+        finally { UnityEngine.Object.DestroyImmediate(instance); }
+    }
+
+    private static TMP_Text Find(GameObject root, string row, string name)
+    {
+        foreach (var text in root.GetComponentsInChildren<TMP_Text>(true))
+            if (text.name == name && text.transform.parent.name == row) return text;
+        Assert.Fail("Missing result row " + row + "/" + name); return null;
+    }
+
+    public static void ValidateConstructionResults()
+    {
+        new M02EstablishBaseHudResultTests().ConstructionResultsUseMissionFactsAndRestoreCombatLabels();
+        Debug.Log("[M02ConstructionResults] result=Passed partial construction facts and combat-label restoration");
+    }
+
+    public static void CaptureConstructionResults()
+    {
+        string oldLocale = Game.Configs.GameLocalization.CurrentLocaleCode;
+        try
+        {
+            foreach (string locale in new[] { "en", "fa-IR" })
+            {
+                Game.Configs.GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<Game.Configs.GameLocalizationCatalog>(
+                    Game.Editor.V3UiLocalizationCatalogBuilder.CatalogPath), locale, false);
+                Game.Editor.V3UiLocalizationCatalogBuilder.ValidateConfiguredCatalogEntries(
+                    AssetDatabase.LoadAssetAtPath<Game.Configs.GameLocalizationCatalog>(Game.Editor.V3UiLocalizationCatalogBuilder.CatalogPath));
+                foreach (bool victory in new[] { true, false })
+                {
+                    var model = new UiMissionResultPopupModel(1, MissionId,
+                        victory ? UiMissionResultOutcome.Victory : UiMissionResultOutcome.Loss,
+                        victory ? "VICTORY" : "MISSION FAILED", "ESTABLISH THE BASE • FORWARD POST",
+                        Game.Configs.GameText.Get(victory ? "mission.m02.result.operational" : "mission.m02.result.incomplete"), victory ? (byte)3 : (byte)0,
+                        "00:49", "0", "0/0", victory ? "320 COMMANDER XP  ·  1500 CREDITS" : "NO REWARD",
+                        victory ? "CONTINUE" : "RETRY", true, !victory,
+                        construction: new UiMissionConstructionResultDetails(1, victory ? 1 : 0, 0));
+                    typeof(Game.Editor.MissionResultV3PrefabBuilder).GetMethod("Capture",
+                        System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                        .Invoke(null, new object[] { $"/private/tmp/readiness-m02-result-{locale}-{victory}.png", 1920, 1080, model });
+                }
+            }
+            Debug.Log("[M02ConstructionResultCaptures] result=Passed languages=EN,FA victory and partial failure");
+        }
+        finally { Game.Configs.GameLocalization.SetLocale(oldLocale, false); }
     }
 
     [Test]

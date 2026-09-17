@@ -1,0 +1,22 @@
+{
+  "result": "Passed",
+  "completedAtUtc": "2026-09-15T18:22:33.975732+00:00",
+  "validationMode": "Editor GUI licensing through checked macOS wrapper",
+  "qaProject": "/private/tmp/warline-m05-validation",
+  "logPath": "/private/tmp/warline-persian-rollout-validation-final-v2.log",
+  "logSha256": "d1500d4a5f5567bbba643456ba1627de48a7faddc72023c9b19f07e435294d00",
+  "requiredPassMarker": "[PersianConversationalRolloutValidation] result=Passed suites=6 captions,layout,voice-routing,comic-timing",
+  "results": [
+    "[BuildDrawerV3PrefabBuilder] result=Passed layout=1672x941 gradients=procedural borders=3 art=catalog-bound atlases=shared",
+    "[StartM02Localization] M3AriaLayout=Passed combinations=48",
+    "[StartM02Localization] result=Passed tests=24",
+    "[M03PresentationValidation] result=Passed ariaPresentations=192 finalComicCrops=14",
+    "[M02EstablishBaseNarrativeValidation] result=Passed tests=25",
+    "[M04ComicAudioRegression] result=Passed tests=2",
+    "[MatchCommandAudioFeedbackValidation] result=Passed tests=10",
+    "[FirstLaunchNarrativeTextCatalogValidation] result=Passed tests=2 lines=17 speakers=5",
+    "[PersianConversationalRolloutValidation] result=Passed suites=6 captions,layout,voice-routing,comic-timing"
+  ],
+  "mainEditor": "Canonical captions and 12 M4 Farsi tutorial bindings validated after final audio refresh.",
+  "scopeLimit": "Automated Editor regression suites and 11 final transcription spot checks; not exhaustive listening or a new full mission gameplay run."
+}

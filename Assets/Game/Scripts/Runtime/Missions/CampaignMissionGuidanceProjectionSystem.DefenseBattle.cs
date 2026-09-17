@@ -8,6 +8,8 @@ namespace Game.Runtime
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
         internal const uint RetiredDefenseStopLessonMask=1u<<6;
+        // These optional tools remain available, but must not interrupt a ready defense.
+        internal const uint OptionalDefenseToolsMask=(1u<<7)|(1u<<8);
         // The battle has no Continue click: each cue follows a real defensive order or contact.
         private static void ApplyDefenseBattleGuidance(EntityManager em, Entity root, int step,
             float3 line, ref CampaignMissionGuidanceProjectionComponent next)
@@ -54,18 +56,6 @@ namespace Game.Runtime
             if(!atLine) return "mission.m03.clarity.move";
             if(!holding) return "mission.m03.clarity.hold";
             return contact ? "mission.m03.clarity.engage" : "mission.m03.clarity.wait";
-        }
-
-        private static void FocusDefenseBattleEntry(EntityManager em,
-            in CampaignMissionGuidanceProjectionComponent previous,in CampaignMissionGuidanceProjectionComponent next)
-        {
-            if(next.GuidanceId<45010 || previous.GuidanceId==next.GuidanceId) return;
-            using var cameras=new EntityQueryBuilder(Unity.Collections.Allocator.Temp)
-                .WithAll<RuntimeCameraFocusRequestComponent>().Build(em);
-            if(cameras.CalculateEntityCount()!=1) return;
-            var focus=CampaignMissionSpawnSystem.CreateDefenseCommandView(next.WorldPosition);
-            focus.Smooth=1;focus.SmoothTimeSeconds=.8f;
-            em.SetComponentData(cameras.GetSingletonEntity(),focus);
         }
 
         private static bool IsLiveDefenseActor(EntityManager em,Entity unit) => em.Exists(unit) &&

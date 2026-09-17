@@ -15,7 +15,8 @@ namespace Game.Runtime
             GridConfig grid,
             DynamicBuffer<GridRoad> roads,
             DynamicBlockerComponent blockerData,
-            out Vector2Int originCell)
+            out Vector2Int originCell,
+            bool requirePreferredOrigin = false)
         {
             originCell = default;
             if (definition == null || context.GetPlacementFootprint == null || context.GetEffectivePlacementRect == null || context.IsPlacementValid == null)
@@ -37,6 +38,11 @@ namespace Game.Runtime
                         footprintSearchRadius,
                         preferredPlacementRect.width,
                         preferredPlacementRect.height)));
+            if (requirePreferredOrigin)
+            {
+                if (clampedPreferred != preferredOrigin) return false;
+                maxSearchRadius = 0;
+            }
             for (int radius = 0; radius <= maxSearchRadius; radius++)
             {
                 for (int dy = -radius; dy <= radius; dy++)

@@ -63,7 +63,7 @@ namespace Game.Editor
         private static void Tick()
         {
             if(finished) return;
-            if((completeBuildingJourney || radarToolbarAudit || battleClarityAudit) && EditorApplication.isPlaying && !insideBuildingGameFrame)
+            if((completeBuildingJourney || SessionState.GetBool(TutorialBuildKey,false) || radarToolbarAudit || battleClarityAudit) && EditorApplication.isPlaying && !insideBuildingGameFrame)
             {EnsureBuildingGameFrame(); return;}
             try
             {

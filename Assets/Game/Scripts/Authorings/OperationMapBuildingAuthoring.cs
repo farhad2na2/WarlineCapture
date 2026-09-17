@@ -249,7 +249,11 @@ namespace Game.Authoring
                 Vector2Int footprint = authoring.FootprintCells;
                 int2 footprintCells = new(math.max(1, footprint.x), math.max(1, footprint.y));
                 int2 origin = new(authoring.originCell.x, authoring.originCell.y);
+#if UNITY_EDITOR
+                // This asset-dependent refinement runs when baking the map in the
+                // Editor; players consume the baked footprint components.
                 ResolveAuthoredFootprint(authoring, ref origin, ref footprintCells);
+#endif
                 int runtimeBuildingId = authoring.placementIndex + 1;
                 int maxHealth = authoring.MaxHealth;
 

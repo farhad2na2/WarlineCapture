@@ -220,13 +220,13 @@ public sealed class FirstLaunchNarrativePresentationTests
             Assert.IsFalse(view.LocationIntroView.gameObject.activeSelf);
             Assert.IsFalse(view.PlaybackControlsView.gameObject.activeSelf);
             Assert.IsTrue(view.CommanderIdentityView.gameObject.activeSelf);
-            Assert.IsFalse(view.GuidanceChoiceView.gameObject.activeSelf);
+            Assert.IsNull(view.GuidanceChoiceView);
 
             view.SetInteractiveState(NarrativeInteractiveStateKind.None);
             Assert.IsTrue(view.LocationIntroView.gameObject.activeSelf);
             Assert.IsTrue(view.PlaybackControlsView.gameObject.activeSelf);
             Assert.IsFalse(view.CommanderIdentityView.gameObject.activeSelf);
-            Assert.IsFalse(view.GuidanceChoiceView.gameObject.activeSelf);
+            Assert.IsNull(view.GuidanceChoiceView);
         }
         finally
         {
@@ -310,10 +310,8 @@ public sealed class FirstLaunchNarrativePresentationTests
         Transform identity = prefab.transform.Find("SafeArea/CommanderIdentitySurface");
         Transform guidance = prefab.transform.Find("SafeArea/GuidanceChoiceSurface");
         Assert.NotNull(identity);
-        Assert.NotNull(guidance);
+        Assert.IsNull(guidance);
         foreach (Button button in identity.GetComponentsInChildren<Button>(true))
-            Assert.GreaterOrEqual(button.GetComponent<RectTransform>().rect.height, 88f, button.name);
-        foreach (Button button in guidance.GetComponentsInChildren<Button>(true))
             Assert.GreaterOrEqual(button.GetComponent<RectTransform>().rect.height, 88f, button.name);
 
         RectTransform reviewer = prefab.transform.Find("SafeArea/DevelopmentReviewerControls") as RectTransform;

@@ -60,6 +60,16 @@ namespace Game.UI.Runtime
         public bool IsPresentationVisible =>
             briefingLayout != null && briefingLayout.gameObject.activeSelf;
 
+        private void Awake() => PrepareActionButtons();
+
+        private void PrepareActionButtons()
+        {
+            // Create before the cinematic lock snapshots HUD controls. Cloning a locked
+            // button later inherits its CanvasGroup but not its saved unlock state.
+            _ = ContinueButton;
+            EnsureSelectionButton();
+        }
+
         public bool TryBindHierarchy()
         {
             return briefingLayout != null && portraitImage != null && titleText != null &&
@@ -74,6 +84,7 @@ namespace Game.UI.Runtime
             Action executeRecommendationRequested)
         {
             UnbindActions();
+            PrepareActionButtons();
             continueConsumed = false;
             _closeRequested = closeRequested;
             _showRecommendationRequested = showRecommendationRequested;

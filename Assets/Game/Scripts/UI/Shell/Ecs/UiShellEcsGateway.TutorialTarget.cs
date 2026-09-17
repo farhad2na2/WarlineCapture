@@ -22,16 +22,24 @@ namespace Game.UI.Shell.Ecs
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
             if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
-            if(runtime.MissionId.Equals(BreachId) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            if(runtime.MissionId.Equals(BreachId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
+                var breach = em.GetComponentData<CampaignMissionBreachState>(root);
+                bool recovering = guidance.GuidanceId == 65008 && breach.FriendlyAtArchive != 0;
                 target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
-                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity));return true;
+                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity),
+                    battleAction: recovering ? UiTutorialBattleAction.Watch : UiTutorialBattleAction.None,
+                    executingAttack: IsTutorialAttackInProgress(em, guidance.SourceEntity, guidance.TargetEntity),
+                    areaRadius: breach.ArchiveRadius);return true;
             }
             if(guidance.GuidanceId<45001 || guidance.GuidanceId>45012 || !em.Exists(guidance.SourceEntity) ||
                 !em.HasComponent<LocalTransform>(guidance.SourceEntity)) return false;
             var actor=guidance.SourceEntity;
+            bool moving = IsTutorialActorMoving(em, actor);
+            if (guidance.GuidanceId == 45005)
+                moving |= IsSelectedTutorialGroupMoving(em, runtime.SessionToken);
             target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(actor).Position,guidance.WorldPosition,
-                !em.HasComponent<SelectedUnitTag>(actor),IsTutorialActorMoving(em,actor),1,
+                !em.HasComponent<SelectedUnitTag>(actor),moving,1,
                 guidance.GuidanceId<45010 ? UiTutorialBattleAction.None :
                 guidance.RecommendationKind==AssistantRecommendationKind.Move ? UiTutorialBattleAction.Move :
                 guidance.RecommendationKind==AssistantRecommendationKind.DefensiveAlert ? UiTutorialBattleAction.Hold : UiTutorialBattleAction.Watch, selectionLabelKey:"ui.aria.select_defenders");
@@ -72,7 +80,9 @@ namespace Game.UI.Shell.Ecs
                 destination = anchor.Position;
             }
             target = new UiMissionTutorialTarget(position, destination,
-                !em.HasComponent<SelectedUnitTag>(actor), IsTutorialActorMoving(em, actor));
+                !em.HasComponent<SelectedUnitTag>(actor), IsTutorialActorMoving(em, actor) ||
+                IsSelectedTutorialGroupMoving(em, runtime.SessionToken),
+                executingAttack: IsTutorialAttackInProgress(em, actor, hostile));
             return true;
         }
 
@@ -123,6 +133,28 @@ namespace Game.UI.Shell.Ecs
             em.HasComponent<SelectedUnitTag>(person) || (step is 5 or 9 &&
             em.HasComponent<UnitTransportPassenger>(person) && em.GetComponentData<UnitTransportPassenger>(person).Transport==actor);
         private static int cachedExtractionSelectionCount=-1;
+
+        internal static bool IsSelectedTutorialGroupMoving(EntityManager em, Unity.Collections.FixedString64Bytes session)
+        {
+            // A formation's first soldier can arrive while the rest are still moving.
+            // Keep the arrival instruction until the selected mission group has stopped.
+            using var query = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(CampaignMissionUnitRoleComponent),
+                typeof(Faction), typeof(UnitHealth));
+            using var units = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach (var unit in units)
+                if (em.GetComponentData<CampaignMissionUnitRoleComponent>(unit).SessionToken.Equals(session) &&
+                    FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(unit).Id) &&
+                    em.GetComponentData<UnitHealth>(unit).Current > 0 && IsTutorialActorMoving(em, unit)) return true;
+            return false;
+        }
+
+        internal static bool IsTutorialAttackInProgress(EntityManager em, Entity actor, Entity target)
+        {
+            if (!em.Exists(actor) || !em.Exists(target) || !em.HasComponent<EngageTarget>(actor) ||
+                em.HasComponent<UnitHealth>(target) && em.GetComponentData<UnitHealth>(target).Current <= 0) return false;
+            var order = em.GetComponentData<EngageTarget>(actor);
+            return order.IsCommanded != 0 && order.Target == target;
+        }
 
         private static bool IsTutorialActorMoving(EntityManager em,Entity actor) =>
             em.HasComponent<UnitPathRequest>(actor) || em.HasComponent<UnitPathFollow>(actor);

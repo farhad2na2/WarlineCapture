@@ -1,0 +1,64 @@
+Wrapper exit: 0
+Source scope: before final audio, font and native-storage cleanup fixes. Comics skipped, normal time scale, 1920x1080.
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20260916-205003
+[CampaignContinuity] deploy=chain-01-m1-en available=1 completed=0 action=Start
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/en replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-01-m1-en token=campaign-m01-0000000000000001:1 replayCount=0 xp=260 credits=1200
+[CampaignContinuity] disk-reload-return=chain-01-m1-en
+[CampaignContinuity] deploy=chain-02-m2-en available=3 completed=1 action=Start
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/en replay=FirstClear lesson=2 visible text and cue
+[CampaignContinuity] settled=chain-02-m2-en token=campaign-m02-0000000000000002:1 replayCount=0 xp=580 credits=2700
+[CampaignContinuity] disk-reload-return=chain-02-m2-en
+[CampaignContinuity] deploy=chain-03-m3-en available=7 completed=3 action=Start
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/en replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-03-m3-en token=campaign-m03-0000000000000003:1 replayCount=0 xp=980 credits=4700
+[CampaignContinuity] disk-reload-return=chain-03-m3-en
+[CampaignContinuity] deploy=chain-04-m4-en available=15 completed=7 action=Start
+[CampaignTutorialEntry] saga.ch01.m04.airlift/en replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-04-m4-en token=campaign-m01-0000000000000004:1 replayCount=0 xp=1480 credits=7200
+[CampaignContinuity] disk-reload-return=chain-04-m4-en
+[CampaignContinuity] deploy=chain-05-m5-en available=31 completed=15 action=Start
+[CampaignTutorialEntry] saga.ch01.m05.breach_assault/en replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-05-m5-en token=campaign-m01-0000000000000005:1 replayCount=0 xp=2230 credits=11200
+[CampaignContinuity] disk-reload-return=chain-05-m5-en
+[CampaignContinuity] deploy=chain-06-m1-fa available=1 completed=0 action=Start
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/fa-IR replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-06-m1-fa token=campaign-m01-0000000000000006:1 replayCount=0 xp=260 credits=1200
+[CampaignContinuity] disk-reload-return=chain-06-m1-fa
+[CampaignContinuity] deploy=chain-07-m2-fa available=3 completed=1 action=Start
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/fa-IR replay=FirstClear lesson=2 visible text and cue
+[CampaignContinuity] settled=chain-07-m2-fa token=campaign-m02-0000000000000007:1 replayCount=0 xp=580 credits=2700
+[CampaignContinuity] disk-reload-return=chain-07-m2-fa
+[CampaignContinuity] deploy=chain-08-m3-fa available=7 completed=3 action=Start
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/fa-IR replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-08-m3-fa token=campaign-m03-0000000000000008:1 replayCount=0 xp=980 credits=4700
+[CampaignContinuity] disk-reload-return=chain-08-m3-fa
+[CampaignContinuity] deploy=chain-09-m4-fa available=15 completed=7 action=Start
+[CampaignTutorialEntry] saga.ch01.m04.airlift/fa-IR replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-09-m4-fa token=campaign-m01-0000000000000009:1 replayCount=0 xp=1480 credits=7200
+[CampaignContinuity] disk-reload-return=chain-09-m4-fa
+[CampaignContinuity] deploy=chain-10-m5-fa available=31 completed=15 action=Start
+[CampaignTutorialEntry] saga.ch01.m05.breach_assault/fa-IR replay=FirstClear lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-10-m5-fa token=campaign-m01-000000000000000a:1 replayCount=0 xp=2230 credits=11200
+[CampaignContinuity] disk-reload-return=chain-10-m5-fa
+[CampaignContinuity] deploy=chain-11-m4-fa available=31 completed=31 action=Replay
+[CampaignTutorialEntry] saga.ch01.m04.airlift/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-11-m4-fa token=campaign-m01-000000000000000b:2 replayCount=1 xp=2230 credits=11500
+[CampaignContinuity] disk-reload-return=chain-11-m4-fa
+[CampaignContinuity] deploy=chain-12-m1-fa available=31 completed=31 action=Replay
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-12-m1-fa token=campaign-m01-000000000000000c:2 replayCount=1 xp=2230 credits=11750
+[CampaignContinuity] disk-reload-return=chain-12-m1-fa
+[CampaignContinuity] deploy=chain-13-m3-fa available=31 completed=31 action=Replay
+[CampaignTutorialEntry] saga.ch01.m03.radar_warning/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-13-m3-fa token=campaign-m03-000000000000000d:2 replayCount=1 xp=2230 credits=12050
+[CampaignContinuity] disk-reload-return=chain-13-m3-fa
+[CampaignContinuity] deploy=chain-14-m5-fa available=31 completed=31 action=Replay
+[CampaignTutorialEntry] saga.ch01.m05.breach_assault/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignContinuity] settled=chain-14-m5-fa token=campaign-m01-000000000000000e:2 replayCount=1 xp=2230 credits=12350
+[CampaignContinuity] disk-reload-return=chain-14-m5-fa
+[CampaignContinuity] deploy=chain-15-m2-fa available=31 completed=31 action=Replay
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/fa-IR replay=Replay lesson=2 visible text and cue
+[CampaignContinuity] settled=chain-15-m2-fa token=campaign-m02-000000000000000f:2 replayCount=1 xp=2230 credits=12650
+[CampaignContinuity] disk-reload-return=chain-15-m2-fa
+[CampaignTutorialEntry] result=Passed Fresh EN and FA M1-M5 chains plus FA M4-M1-M3-M5-M2 replay chain, disk reloads and once-only settlements

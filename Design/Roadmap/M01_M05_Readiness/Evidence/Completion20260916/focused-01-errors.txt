@@ -1,0 +1,1 @@
+Assets/Game/Scripts/Editor/CampaignTutorialEntryEditorProbe.Recovery.cs(71,64): error CS0246: The type or namespace name 'MatchSceneView' could not be found (are you missing a using directive or an assembly reference?)

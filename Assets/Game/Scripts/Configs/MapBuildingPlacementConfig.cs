@@ -18,6 +18,11 @@ namespace Game.Configs
         [SerializeField] private float yawDegrees;
         [SerializeField] private bool rotateVertical;
 
+        [SerializeField] private bool instantiateVisualWhenSourceMissing;
+        public bool InstantiateVisualWhenSourceMissing => instantiateVisualWhenSourceMissing;
+        [SerializeField] private bool useGeometricFootprintCenter;
+        public bool UseGeometricFootprintCenter => useGeometricFootprintCenter;
+
         public string SourcePath => sourcePath;
         public string Category => category;
         public GameObject BuildingPrefab => buildingPrefab;
@@ -39,7 +44,9 @@ namespace Game.Configs
             Vector3 worldEulerAngles,
             Vector3 worldScale,
             float yawDegrees,
-            bool rotateVertical)
+            bool rotateVertical,
+            bool instantiateVisualWhenSourceMissing = false,
+            bool useGeometricFootprintCenter = false)
         {
             this.sourcePath = sourcePath;
             this.category = category;
@@ -51,6 +58,8 @@ namespace Game.Configs
             this.worldScale = worldScale;
             this.yawDegrees = yawDegrees;
             this.rotateVertical = rotateVertical;
+            this.instantiateVisualWhenSourceMissing = instantiateVisualWhenSourceMissing;
+            this.useGeometricFootprintCenter = useGeometricFootprintCenter;
         }
     }
 
@@ -67,6 +76,19 @@ namespace Game.Configs
         public bool UseExistingStaticPresentationWhenAuthoringVisualMissing =>
             useExistingStaticPresentationWhenAuthoringVisualMissing;
         public IReadOnlyList<MapBuildingPlacementConfigEntry> Placements => placements;
+
+        public static MapBuildingPlacementConfig CreateRuntimeOverlay(
+            MapBuildingPlacementConfig source, MapBuildingPlacementConfig additions)
+        {
+            if (source == null || additions == null)
+                throw new ArgumentNullException(source == null ? nameof(source) : nameof(additions));
+            var combined = Instantiate(source);
+            combined.name = source.name + "_MissionOverlay";
+            combined.hideFlags = HideFlags.DontSave;
+            combined.placements = new List<MapBuildingPlacementConfigEntry>(source.placements);
+            combined.placements.AddRange(additions.placements);
+            return combined;
+        }
 
     #if UNITY_EDITOR
         public void EditorSetPlacements(List<MapBuildingPlacementConfigEntry> newPlacements)

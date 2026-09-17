@@ -1,0 +1,39 @@
+2026-09-16 checked macOS GUI wrapper, exit 0
+Log: /private/tmp/readiness-m02-journey-02.log
+[M02ReplayBaseline] result=Passed previous-map cleanup -> new-attempt placement
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20260916-170110
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/en replay=FirstClear lesson=2 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=2 body=Open the Build menu.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=3 body=Select Barracks from the building list.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=4 body=Place the Barracks inside the green area, then confirm construction.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=5 body=You started with 120 Materials. The Barracks used 90, leaving 30. Save 20 to train your rifle squad.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=6 body=Open production and recruit one rifle squad.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=en lesson=0 body=Select a player-controlled unit before issuing a tactical order.
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=en
+[CampaignTutorialEntry] saga.ch01.m02.establish_base/fa-IR replay=Replay lesson=2 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=2 body=منوی «ساخت» رو باز کن.
+[CampaignPlayerJourney] action=2:BuildCommand
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=3 body=از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.
+[CampaignPlayerJourney] action=3:ItemView
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=4 body=سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن.
+[CampaignPlayerJourney] action=4:BuildButton
+[CampaignPlayerJourney] action=4:ConfirmButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=5 body=با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار.
+[CampaignPlayerJourney] action=5:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=6 body=بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده.
+[CampaignPlayerJourney] action=6:BuildCommand
+[CampaignPlayerJourney] action=6:SoldiersTab
+[CampaignPlayerJourney] action=6:ItemView
+[CampaignPlayerJourney] action=6:BuildButton
+[CampaignPlayerJourney] mission=saga.ch01.m02.establish_base locale=fa-IR lesson=0 body=a player-controlled unit before issuing a tactical order رو انتخاب کن.
+[CampaignPlayerJourney] victory=saga.ch01.m02.establish_base locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m02.establish_base

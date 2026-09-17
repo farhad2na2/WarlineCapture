@@ -9,6 +9,7 @@ namespace Game.Components
 
     public struct MatchHudMinimapMarkerElement : IBufferElementData
     {
+        public Entity SourceEntity;
         public float3 Position;
         public byte FactionId;
     }

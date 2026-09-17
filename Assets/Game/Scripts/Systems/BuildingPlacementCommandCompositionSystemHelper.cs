@@ -191,7 +191,8 @@ namespace Game.Runtime
                     building),
                 BuildingRuntimeSpawnCompositionSystemHelper.CloneDefinitionWithFootprint,
                 source.BuildingPlacementGridCameraSystemHelper.GetPlacementFootprint,
-                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject);
+                source.RuntimeObjectPresentationHelper.DestroyRuntimeObject,
+                source.BuildingPlacementInvalidCellCacheCompositionSystemHelper.GetRoadSidewalks);
         }
     }
 }

@@ -7922,8 +7922,8 @@
       },
       "clips": [
         {
-          "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_engage_aria_fa.wav",
-          "status": "elevenlabs-v3-licensed",
+          "assetPath": "Assets/Game/Audio/Voice/Tutorial/fa/tutorial_m01_attack_target_aria_fa.wav",
+          "status": "generated-elevenlabs",
           "weight": 1
         }
       ]
@@ -9315,6 +9315,294 @@
       "clips": [
         {
           "assetPath": "Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/tutorial-m05-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.01.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.02.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-02.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.03.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-03.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.04.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-04.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.05.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-05.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.06.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-06.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.07.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-07.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.08.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.09.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-09.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.10.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-10.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.11.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-11.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.m04.12.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/tutorial-m04-12.wav",
           "status": "generated-elevenlabs",
           "weight": 1
         }

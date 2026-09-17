@@ -1,0 +1,76 @@
+Wrapper: GUI licensing, /private/tmp/warline-readiness-validation, readiness-m04-journey-03.log
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=1 body=Rescue all four specialists: APC first, helicopter second. You have ten minutes. Enemy kills are optional; keep the escort alive for a bonus star.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=2 body=Tap Select rescue APC below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=3 body=Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.
+[CampaignPlayerJourney] action=3:MoveCommand
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Move:(813.25, 0.49, 426.75)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=4 body=Press Move, then tap beside the four specialists on the western road. Show Me locates them. Send the rifles forward to cover the pickup.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=5 body=Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.
+[CampaignPlayerJourney] action=5:CommandWheelCue
+[CampaignPlayerJourney] action=5:BoardSector
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Board:(814.87, 0.58, 426.68)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=6 body=Press Board, then tap the APC. Wait until its passenger list shows all four specialists before moving.
+[CampaignPlayerJourney] action=6:SelectMissionGroupButton
+[CampaignPlayerJourney] action=6:MoveCommand
+[CampaignPlayerJourney] action=6:ShowMeButton
+[CampaignPlayerJourney] action=6:Move:(1060.00, 0.45, 428.00)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=7 body=Move the loaded APC east to the marked landing area. Show Me locates Laila. Keep the rifles covering the approaching patrol.
+[CampaignPlayerJourney] action=7:PassengerChip
+[CampaignPlayerJourney] action=7:ExitAllButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=8 body=Tap Select helicopter below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=8:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=9 body=Tap Select all specialists below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=9:SelectMissionGroupButton
+[CampaignPlayerJourney] action=9:CommandWheelCue
+[CampaignPlayerJourney] action=9:BoardSector
+[CampaignPlayerJourney] action=9:Board:(1062.94, 0.45, 432.39)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=10 body=Select all four specialists, press Board, then tap the landed helicopter. Check that its passenger list shows four people.
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=en lesson=11 body=All four specialists are aboard. Wait 1 more seconds; no click is needed. Keep the helicopter inside the yellow landing ring. The next lesson will guide you to the exit.
+[CampaignPlayerJourney] action=11:SelectMissionGroupButton
+[CampaignPlayerJourney] action=11:MoveCommand
+[CampaignPlayerJourney] action=11:ShowMeButton
+[CampaignPlayerJourney] action=11:Move:(1085.00, 0.01, 465.00)
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=en
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=1 body=باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.
+[CampaignPlayerJourney] action=1:ContinueLessonButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=2 body=پایین صفحه، «انتخاب نفربر نجات» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=2:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=3 body=«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.
+[CampaignPlayerJourney] action=3:MoveCommand
+[CampaignPlayerJourney] action=3:ShowMeButton
+[CampaignPlayerJourney] action=3:Move:(813.25, 0.49, 426.75)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=4 body=«حرکت» رو بزن و نفربر رو کنار چهار متخصص توی جادهٔ غربی ببر. «نشان بده» جاشون رو نشونت می‌ده. تفنگدارها رو هم برای پوشش جلو بفرست.
+[CampaignPlayerJourney] action=4:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=5 body=«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=5:CommandWheelCue
+[CampaignPlayerJourney] action=5:BoardSector
+[CampaignPlayerJourney] action=5:ShowMeButton
+[CampaignPlayerJourney] action=5:Board:(814.92, 0.59, 426.65)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=6 body=«سوارشدن» رو بزن، بعد نفربر رو انتخاب کن. قبل از حرکت، صبر کن تا هر چهار متخصص توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] action=6:SelectMissionGroupButton
+[CampaignPlayerJourney] action=6:MoveCommand
+[CampaignPlayerJourney] action=6:ShowMeButton
+[CampaignPlayerJourney] action=6:Move:(1060.00, 0.45, 428.00)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=7 body=نفربر پر رو به محل فرود مشخص‌شده توی شرق ببر. «نشان بده» جای لیلا رو نشونت می‌ده. تفنگدارها رو برای پوشش مسیر گشت دشمن نگه دار.
+[CampaignPlayerJourney] action=7:PassengerChip
+[CampaignPlayerJourney] action=7:ExitAllButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=8 body=پایین صفحه، «انتخاب بالگرد» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=8:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=9 body=پایین صفحه، «انتخاب همهٔ متخصصان» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=9:SelectMissionGroupButton
+[CampaignPlayerJourney] action=9:CommandWheelCue
+[CampaignPlayerJourney] action=9:BoardSector
+[CampaignPlayerJourney] action=9:Board:(1062.94, 0.45, 432.39)
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=10 body=با دکمهٔ انتخاب متخصصان، هر چهار نفر رو انتخاب کن. «سوارشدن» رو بزن، بعد بالگرد روی زمین رو انتخاب کن. باید هر چهار نفر توی فهرست مسافرها باشن.
+[CampaignPlayerJourney] mission=saga.ch01.m04.airlift locale=fa-IR lesson=11 body=هر چهار متخصص سوارن. 1 ثانیهٔ دیگه صبر کن؛ لازم نیست دکمه‌ای بزنی. بالگرد رو توی حلقهٔ زرد فرود نگه دار. درس بعدی مسیر خروج رو نشونت می‌ده.
+[CampaignPlayerJourney] action=11:SelectMissionGroupButton
+[CampaignPlayerJourney] action=11:MoveCommand
+[CampaignPlayerJourney] action=11:ShowMeButton
+[CampaignPlayerJourney] action=11:Move:(1085.00, 0.01, 465.00)
+[CampaignPlayerJourney] victory=saga.ch01.m04.airlift locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m04.airlift

@@ -25,6 +25,7 @@ namespace Game.Runtime
         private Renderer[] _attackOrderMarkerRenderers;
         private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
         private float _attackOrderMarkerHideTime = -1f;
+        private Entity _attackMarkerTarget;
         private GameObject _attackTargetRingMarker;
         private LineRenderer _attackTargetRingRenderer;
         private GameObject _attackTargetSelectionMarker;
@@ -45,6 +46,7 @@ namespace Game.Runtime
         private Transform _runtimeRoot;
         private EntityQuery _attackTargetPreviewQuery;
         private readonly List<GameObject> _attackTargetPreviewMarkers = new();
+        private readonly List<Entity> _previewTargets = new();
         private readonly List<Renderer[]> _attackTargetPreviewMarkerRenderers = new();
         private readonly MaterialPropertyBlock _boardTargetPreviewPropertyBlock = new();
         private bool _attackTargetPreviewVisible;
@@ -235,7 +237,11 @@ namespace Game.Runtime
             if ((_attackOrderMarker == null && _attackTargetRingMarker == null && _attackTargetSelectionMarker == null) || _attackOrderMarkerHideTime < 0f)
                 return;
 
-            if (UnityEngine.Time.time < _attackOrderMarkerHideTime)
+            // Target death takes precedence over the command feedback display duration.
+            bool targetAlive = _attackMarkerTarget == Entity.Null ||
+                (_queryWorld != null && _queryWorld.IsCreated &&
+                 IsAttackMarkerTargetAlive(_queryWorld.EntityManager, _attackMarkerTarget));
+            if (targetAlive && UnityEngine.Time.time < _attackOrderMarkerHideTime)
                 return;
 
             if (_attackOrderMarker != null)
@@ -248,6 +254,10 @@ namespace Game.Runtime
             if (_moveOrderMarkerHideTime < 0f && _scanOrderMarkerHideTime < 0f)
                 setHudWorldMarkersVisible?.Invoke(false);
         }
+
+        internal static bool IsAttackMarkerTargetAlive(EntityManager em, Entity target) =>
+            em.Exists(target) && (!em.HasComponent<UnitHealth>(target) ||
+                                 em.GetComponentData<UnitHealth>(target).Current > 0);
 
         public void UpdateScanOrderMarkerVisibility(System.Action<bool> setHudWorldMarkersVisible)
         {
@@ -322,6 +332,7 @@ namespace Game.Runtime
 
         public void ShowAttackOrderMarker(EntityManager em, Entity targetEntity, Vector3 worldPoint, float visibleSeconds = -1f)
         {
+            _attackMarkerTarget = targetEntity;
             bool hasPrefabMarker = _attackOrderMarker != null &&
                                    _attackOrderMarkerRenderers != null &&
                                    _attackOrderMarkerRenderers.Length > 0;
@@ -548,6 +559,7 @@ namespace Game.Runtime
                 return;
             }
 
+            HideDeadPreviewTargets(em);
             if (_attackTargetPreviewVisible && UnityEngine.Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
                 return;
 
@@ -589,6 +601,7 @@ namespace Game.Runtime
                 return;
             }
 
+            HideDeadPreviewTargets(em);
             if (_attackTargetPreviewVisible && UnityEngine.Time.unscaledTime < _nextAttackTargetPreviewUpdateTime)
                 return;
 
@@ -663,6 +676,8 @@ namespace Game.Runtime
                     if (marker == null)
                         continue;
 
+                    while (_previewTargets.Count <= markerIndex) _previewTargets.Add(Entity.Null);
+                    _previewTargets[markerIndex] = target;
                     float3 position = transforms[i].Position;
                     marker.transform.position = new Vector3(
                         position.x,
@@ -681,6 +696,13 @@ namespace Game.Runtime
             }
 
             return markerIndex;
+        }
+
+        private void HideDeadPreviewTargets(EntityManager em)
+        {
+            for (int i = 0; i < _attackTargetPreviewVisibleCount && i < _previewTargets.Count; i++)
+                if (!IsAttackMarkerTargetAlive(em, _previewTargets[i]))
+                    SetMarkerActive(_attackTargetPreviewMarkers[i], false);
         }
 
         private void CacheMoveOrderMarker()

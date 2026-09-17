@@ -14,7 +14,7 @@ namespace Game.Runtime
             TryFindAnchor(ref map,definition.Breach.CoreAnchorId,out var core);
             TryFindAnchor(ref map,definition.Breach.ArchiveAnchorId,out var archive);
             SetOrAdd(em,root,new CampaignMissionBreachState {SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,
-                SourceVersion=runtime.SourceVersion,DeadlineMilliseconds=definition.Breach.DeadlineMilliseconds,SecureRequiredMilliseconds=definition.Breach.SecureHoldMilliseconds,ApproachCenter=approach.Position,GateCenter=gate.Position,CoreCenter=core.Position,ArchiveCenter=archive.Position});
+                SourceVersion=runtime.SourceVersion,DeadlineMilliseconds=definition.Breach.DeadlineMilliseconds,SecureRequiredMilliseconds=definition.Breach.SecureHoldMilliseconds,ApproachCenter=approach.Position,GateCenter=gate.Position,CoreCenter=core.Position,ArchiveCenter=archive.Position,ArchiveRadius=definition.Breach.ArchiveRadius});
             SetOrAdd(em,root,new CampaignMissionCameraTourState {SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,SourceVersion=runtime.SourceVersion});
             if(!em.HasBuffer<CampaignMissionBreachMember>(root)) em.AddBuffer<CampaignMissionBreachMember>(root);
             em.GetBuffer<CampaignMissionBreachMember>(root).Clear();

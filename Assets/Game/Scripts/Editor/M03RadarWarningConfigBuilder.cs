@@ -32,13 +32,35 @@ namespace Game.Editor
             Debug.Log($"[M03RadarWarningConfigBuilder] result=Passed missions={catalog.Entries.Length} maps={maps.Definitions.Length} hostiles=7 civilians=4 rifles=8 sensor=1");
         }
 
+        public static void ApplyDefensePacing()
+        {
+            var scenario = Load<ScenarioSetupConfig>(ScenarioPath);
+            var data = new SerializedObject(scenario);
+            Set(data, "encounterStartMilliseconds", 5000);
+            var routes = data.FindProperty("patrolRoutes");
+            for (int i = 0; i < routes.arraySize; i++)
+                Set(routes.GetArrayElementAtIndex(i), "startDelayMilliseconds", i == 0 ? 5000 : 50000);
+            var elements = data.FindProperty("defense").FindPropertyRelative("convoyElements");
+            for (int i = 0; i < elements.arraySize; i++)
+            {
+                var element = elements.GetArrayElementAtIndex(i);
+                Set(element, "warningAtMilliseconds", i == 0 ? 0 : 35000);
+                Set(element, "activationAtMilliseconds", i == 0 ? 5000 : 50000);
+                Set(element, "contactAtMilliseconds", i == 0 ? 25000 : 75000);
+            }
+            data.ApplyModifiedPropertiesWithoutUndo();
+            Require(scenario.TryValidate(out string error), error);
+            EditorUtility.SetDirty(scenario);
+            AssetDatabase.SaveAssets();
+        }
+
         private static void BuildScenario()
         {
             ScenarioSetupConfig scenario = Clone<ScenarioSetupConfig>(M02EstablishBaseConfigBuilder.ScenarioPath, ScenarioPath);
             OperationMapDefinition map = Load<OperationMapDefinition>(M03RadarWarningMapBuilder.Path);
             SerializedObject data = new(scenario);
             Set(data,"scenarioId",ScenarioId); Set(data,"operationMapId",M03RadarWarningMapBuilder.MapId);
-            Set(data,"deterministicSeed",3003001); Set(data,"encounterStartMilliseconds",45000);
+            Set(data,"deterministicSeed",3003001); Set(data,"encounterStartMilliseconds",5000);
             var routeAnchors = new List<string>();
             SerializedProperty anchors = data.FindProperty("requiredAnchors"); anchors.arraySize = map.Anchors.Length;
             for (int i = 0; i < map.Anchors.Length; i++)
@@ -53,7 +75,7 @@ namespace Game.Editor
             {
                 string name = index == 0 ? "vanguard" : "main_body";
                 Set(route,"routeId",RoutePrefix+name); Set(route,"unitGroupId",GroupPrefix+name);
-                Set(route,"startDelayMilliseconds",index == 0 ? 45000 : 140000);
+                Set(route,"startDelayMilliseconds",index == 0 ? 5000 : 50000);
                 Strings(route.FindPropertyRelative("anchorIds"),routeAnchors);
             });
             SerializedProperty runtime = data.FindProperty("missionRuntime");
@@ -88,9 +110,9 @@ namespace Game.Editor
                 string name = index == 0 ? "vanguard" : "main_body";
                 Set(element,"elementId","convoy.ch01.m03."+name); Set(element,"unitGroupId",GroupPrefix+name);
                 Set(element,"routeId",RoutePrefix+name); Set(element,"contactAnchorId",AnchorPrefix+"contact");
-                Set(element,"warningAtMilliseconds",index == 0 ? 0 : 100000);
-                Set(element,"activationAtMilliseconds",index == 0 ? 45000 : 140000);
-                Set(element,"contactAtMilliseconds",index == 0 ? 65000 : 165000);
+                Set(element,"warningAtMilliseconds",index == 0 ? 0 : 35000);
+                Set(element,"activationAtMilliseconds",index == 0 ? 5000 : 50000);
+                Set(element,"contactAtMilliseconds",index == 0 ? 25000 : 75000);
             });
             data.ApplyModifiedPropertiesWithoutUndo();
             Require(scenario.TryValidate(out string error),error);

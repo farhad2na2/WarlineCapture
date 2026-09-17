@@ -38,6 +38,7 @@ namespace Game.Editor
         internal static void ApplySelectionWheel(GameObject root)
         {
             LoadAssets();
+            ApplyMobileCommandLayout(root);
             var controller = root.GetComponentInChildren<CommandWheelPanelView>(true);
             var selection = root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
             if (controller == null || selection == null) return;
@@ -90,7 +91,7 @@ namespace Game.Editor
             data.ApplyModifiedPropertiesWithoutUndo();
             var controls = root.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
             data = new SerializedObject(controls);
-            data.FindProperty("commandWheelStopButton").objectReferenceValue = null;
+            data.FindProperty("commandWheelStopButton").objectReferenceValue = BuildCeaseFireButton(root);
             data.ApplyModifiedPropertiesWithoutUndo();
 
             var frame = RequireRect(selection.transform, "PortraitFrame");

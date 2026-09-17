@@ -8,11 +8,12 @@ namespace Game.UI.Contracts
         public readonly bool CanReturnCamera, WarningNeedsAttention, RequiresHoldResume;
         public readonly string WarningText, PingText;
         public readonly int Charges, CooldownSeconds, WarningElementIndex, GuidanceId;
-        public readonly uint Version;
+        public readonly uint Version, ScanResultVersion;
+        public readonly string ScanFeedback;
         public UiMissionDefenseModel(bool active, bool warning, bool focus, bool ping, string warningText, string pingText,
-            int charges, int cooldown, int element, int guidanceId, uint version,bool canReturnCamera=false,bool warningNeedsAttention=false,bool requiresHoldResume=false)
+            int charges, int cooldown, int element, int guidanceId, uint version,bool canReturnCamera=false,bool warningNeedsAttention=false,bool requiresHoldResume=false,string scanFeedback=null,uint scanResultVersion=0)
         { IsActive=active; HasWarning=warning; CanFocus=focus; CanPing=ping; WarningText=warningText; PingText=pingText;
-          Charges=charges; CooldownSeconds=cooldown; WarningElementIndex=element; GuidanceId=guidanceId; Version=version; CanReturnCamera=canReturnCamera; WarningNeedsAttention=warningNeedsAttention; RequiresHoldResume=requiresHoldResume; }
+          Charges=charges; CooldownSeconds=cooldown; WarningElementIndex=element; GuidanceId=guidanceId; Version=version; CanReturnCamera=canReturnCamera; WarningNeedsAttention=warningNeedsAttention; RequiresHoldResume=requiresHoldResume; ScanFeedback=scanFeedback; ScanResultVersion=scanResultVersion; }
     }
 
     public interface IUiMissionDefenseGateway

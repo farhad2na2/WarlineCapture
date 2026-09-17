@@ -1,8 +1,10 @@
 using Game.Components;
 using Game.Configs;
+using Game.Missions.Contracts;
 using Game.UI.Contracts;
-using Unity.Entities;
 using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Game.Runtime
 {
@@ -10,12 +12,9 @@ namespace Game.Runtime
     {
         private WorldScopedComponentQueryCache<CampaignMissionRootComponent> _defenseQuery = new(readOnly: true);
         private bool _defenseVisible;
-        private string _defenseText, _defenseLocale;
-        private ThreatWarningRecord _defenseDisplayRecord;
+        private string _defenseText;
         private FixedString64Bytes _defenseSession;
-        private int _defenseAttempt,_defenseLosses;
-        private bool _defensePreparing;
-        private uint _defenseSource;
+        private int _defenseAttempt;
 
         private bool TryPresentDefense(EntityManager em, IMatchRuntimeUi matchUi, float now)
         {
@@ -26,37 +25,57 @@ namespace Game.Runtime
             var ledger = em.GetComponentData<ThreatWarningLedgerState>(root);
             var runtime = em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if (!ThreatWarningResolveSystem.Matches(in ledger, in runtime)) return false;
-            if (ledger.Active == 0)
+            if (runtime.Outcome != MissionOutcomeKind.None)
             {
                 if (_defenseVisible) matchUi.TryShowMatchHudThreatWarning(_defenseText, now);
                 _defenseVisible = false;
                 return true;
             }
-            bool preparing=em.HasComponent<CampaignMissionDefenseStateComponent>(root) && (em.GetComponentData<CampaignMissionDefenseStateComponent>(root).AcknowledgedGuidanceMask&0x1FFu)!=0x1FFu;
-            int losses=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).SquadLossCount;
-            var records = em.GetBuffer<ThreatWarningRecord>(root, true);
-            for (int i = 0; i < records.Length; i++)
+            var catalog = em.GetComponentData<CampaignMissionCatalogComponent>(root);
+            if (!CampaignMissionSpawnSystem.TryFindDefinition(in catalog, in runtime, out int index)) return false;
+            ref var definition = ref catalog.Blob.Value.Missions[index];
+            if (definition.Defense.Enabled == 0) return false;
+            var defense = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
+            var facts = em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            var elements = em.GetBuffer<CampaignMissionConvoyElementState>(root, true);
+            var members = em.GetBuffer<CampaignMissionDefenseMember>(root, true);
+            bool preparing = (defense.AcknowledgedGuidanceMask & 0x1FFu) != 0x1FFu;
+            string text;
+            if (preparing)
+                text = GameText.Get("mission.m03.prepare.short") + "\n" + GameText.Get("mission.m03.prepare.progress");
+            else
             {
-                ThreatWarningRecord record = records[i];
-                if (record.ElementIndex != ledger.FocusElementIndex || record.Resolved != 0) continue;
-                string locale = GameLocalization.CurrentLocaleCode;
-                if (_defenseVisible && _defenseSession.Equals(runtime.SessionToken) && _defenseAttempt==runtime.AttemptOrdinal &&
-                    _defenseSource==runtime.SourceVersion && SameDisplay(record,_defenseDisplayRecord) && locale == _defenseLocale && preparing==_defensePreparing && losses==_defenseLosses) return true;
-                _defenseText = ThreatWarningDisplayText.Build(in record);
-                if(preparing) _defenseText=GameText.Get("mission.m03.prepare.short")+"\n"+GameText.Get("mission.m03.prepare.progress");
-                else if(losses>0) _defenseText=GameText.Format("mission.m03.casualties","",losses)+"\n"+_defenseText.Substring(_defenseText.IndexOf('\n')+1);
-                _defensePreparing=preparing;_defenseLosses=losses;
-                if (!matchUi.TryShowMatchHudThreatWarning(_defenseText, float.PositiveInfinity)) return true;
-                _defenseDisplayRecord=record; _defenseSession=runtime.SessionToken; _defenseAttempt=runtime.AttemptOrdinal;
-                _defenseSource=runtime.SourceVersion; _defenseLocale = locale; _defenseVisible = true;
-                ledger.AcknowledgedPresentationVersion = ledger.PresentationVersion;
-                em.SetComponentData(root, ledger);
-                return true;
+                int next = 0;
+                while (next < elements.Length && elements[next].Resolved != 0) next++;
+                if (next >= elements.Length)
+                    text = GameText.Get("mission.m03.defense.complete");
+                else
+                {
+                    int seconds = math.max(0, (definition.Defense.Elements[next].ContactAtMilliseconds - facts.ElapsedMilliseconds + 999) / 1000);
+                    string phase = GameText.Format("mission.m03.defense.wave", "Convoy {0}/{1}", next + 1, elements.Length);
+                    if (seconds > 0)
+                        text = phase + "\n" + GameText.Format("mission.m03.defense.countdown", "Hold · arrival in {0}", $"{seconds / 60:00}:{seconds % 60:00}");
+                    else
+                    {
+                        int alive = 0;
+                        for (int i = 0; i < members.Length; i++)
+                            if (members[i].ElementIndex == next && members[i].Defeated == 0) alive++;
+                        text = phase + "\n" + GameText.Format("mission.m03.defense.fighting", "Defend · {0} vehicles left", alive);
+                    }
+                }
             }
+            // Keep the defense status present even between warning records. A resolved
+            // scout alert is not the end of the mission or a reason to hide its timer.
+            if (_defenseVisible && _defenseText == text && _defenseSession.Equals(runtime.SessionToken) &&
+                _defenseAttempt == runtime.AttemptOrdinal) return true;
+            if (!matchUi.TryShowMatchHudThreatWarning(text, float.PositiveInfinity)) return true;
+            _defenseText = text;
+            _defenseVisible = true;
+            _defenseSession = runtime.SessionToken;
+            _defenseAttempt = runtime.AttemptOrdinal;
+            ledger.AcknowledgedPresentationVersion = ledger.PresentationVersion;
+            em.SetComponentData(root, ledger);
             return true;
         }
-        private static bool SameDisplay(in ThreatWarningRecord a,in ThreatWarningRecord b)=>a.EtaSeconds==b.EtaSeconds &&
-            a.ElementIndex==b.ElementIndex && a.KnownVehicleCount==b.KnownVehicleCount && a.Source==b.Source && a.Stale==b.Stale &&
-            a.ContactWindowOpen==b.ContactWindowOpen;
     }
 }

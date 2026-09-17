@@ -34,12 +34,22 @@
       "id": "m02_brief_line_1",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "این پاسگاه متروکه است، اما به آن نیاز داریم. آن را دوباره فعال کنید و برای دفاع از مسیر درمانگاه آماده شوید.",
+      "text": "این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_1_fa.wav",
-      "durationSeconds": 9.68,
-      "sha256": "6ae841c6ccb11d682d8d7be7709db2ad325b1a4c21c1a0fa2794959d22d796c0"
+      "durationSeconds": 7.6,
+      "sha256": "dda1eab916f75412f4d30496aa8090d1f29e5a5dc641e096d1eaefb454f853aa",
+      "spokenText": "این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151169,
+      "generatedAtUtc": "2026-09-15T17:51:21.642181+00:00",
+      "captionSha256": "03772d084d0267c6f0513bbdd067af28e90f988337f34ac330b43121825ace66"
     },
     {
       "kind": "narrative",
@@ -58,12 +68,22 @@
       "id": "m02_brief_line_2",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "اینجا یک سربازخانه بسازید، سپس یک گروه تفنگدار آموزش دهید. با این کار پاسگاه دوباره فعال می‌شود.",
+      "text": "اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_2_fa.wav",
-      "durationSeconds": 8.4,
-      "sha256": "6e98f113f59b5858105d6175086ab6e79d555bf07ed57df4b8847f6dc19e6342"
+      "durationSeconds": 7.6,
+      "sha256": "0d7d6ac31ec29e9ed9f9ad85c64a67736104412a2a66ae80f69d4e17cef926d1",
+      "spokenText": "اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151170,
+      "generatedAtUtc": "2026-09-15T17:51:21.707283+00:00",
+      "captionSha256": "a1e8b2011ae02a08fb76b235a4332bc693910484d80bd52108bf966664900345"
     },
     {
       "kind": "narrative",
@@ -82,12 +102,22 @@
       "id": "m02_brief_line_3",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "درمانگاه و نیروهای خدمات شهری از این مسیر استفاده می‌کنند. حفظ پاسگاه، راه آن‌ها را باز نگه می‌دارد.",
+      "text": "امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_3_fa.wav",
-      "durationSeconds": 8.24,
-      "sha256": "abd9b2272579cee3f98985347e64d76df1a1f5362570dcecc63d2e9579012110"
+      "durationSeconds": 7.68,
+      "sha256": "e4abd5e95cefe3dd464ca4a038b7f57b7ef1eeee95b15cda22f45b015737f95e",
+      "spokenText": "امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151171,
+      "generatedAtUtc": "2026-09-15T17:51:25.737838+00:00",
+      "captionSha256": "7172e4b181731bdffd4a7c52b48c3ddd63a8d74904c71d1d2ddec009d2c6f732"
     },
     {
       "kind": "narrative",
@@ -106,12 +136,22 @@
       "id": "m02_comms_line_1",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "یک گشت دشمن از غرب نزدیک می‌شود. پاسگاه را حفظ کنید و نگذارید به مسیر درمانگاه برسند.",
+      "text": "گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_1_fa.wav",
-      "durationSeconds": 7.44,
-      "sha256": "d5fcd2d87846ad9e73efa597a1b84ee9663e7575fa44009ad468d3da12f39b74"
+      "durationSeconds": 5.76,
+      "sha256": "ecdbee9d02850b7b9fe67ea9302a1e50e47dc9d01aa0169923b53da3517d3b6d",
+      "spokenText": "گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151172,
+      "generatedAtUtc": "2026-09-15T17:51:24.456426+00:00",
+      "captionSha256": "f46c905c1ac8065e5fe8df20c5693410ef295f04473f075d8f7b91b4a651086b"
     },
     {
       "kind": "narrative",
@@ -130,12 +170,22 @@
       "id": "m02_comms_line_2",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "یک فهرست دسترسی شهری همراه یکی از مهاجمان پیدا شد. این فهرست پیش از نخستین حمله کپی شده است.",
+      "text": "همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_2_fa.wav",
-      "durationSeconds": 8.4,
-      "sha256": "062d36984eed5ce1d77fff6afddf349b93ed95fa2d7e19a0bfaced4cbf24f1ff"
+      "durationSeconds": 7.04,
+      "sha256": "71006b09002537dbabb3d4101256236e1ec03d31531eb2be6ed2377a00f44ac4",
+      "spokenText": "همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151173,
+      "generatedAtUtc": "2026-09-15T17:51:27.781658+00:00",
+      "captionSha256": "b23396d5d1f68cb7457d57c25e577641f84a8090b8951bf4899e2dd832aa4ca0"
     },
     {
       "kind": "narrative",
@@ -154,12 +204,22 @@
       "id": "m02_comms_line_3",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "در آن، پست‌های برق، ورودی‌های خدماتی و تونل‌ها مشخص شده‌اند. کسی پیش از حمله آن را دزدیده است.",
+      "text": "جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_comms_line_3_fa.wav",
-      "durationSeconds": 8.0,
-      "sha256": "b73e3d427da34cdb713d7d923d57663d9bcd467ee697478f28ff250011768c37"
+      "durationSeconds": 7.44,
+      "sha256": "ae29cf27a32505b881c953f95e0bd4d8f10e5b878909cc2aada434e1d3b5858a",
+      "spokenText": "جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151174,
+      "generatedAtUtc": "2026-09-15T17:51:28.913075+00:00",
+      "captionSha256": "e4ab304b0bd3068cd6ebdfcbc4fabb3110199e7369a5b6e4b41c4d1e12a8325c"
     },
     {
       "kind": "narrative",
@@ -178,12 +238,22 @@
       "id": "m02_debrief_line_1",
       "speaker": "SAMIRA",
       "locale": "fa-IR",
-      "text": "پاسگاه دوباره فعال است. مسیر درمانگاه و تیم‌های امداد شهری دوباره به هم متصل شده‌اند.",
+      "text": "پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن.",
       "voiceId": "7uxeJ73HfJL9gOH2mttA",
       "voiceName": "Warline - Engineer Samira Haddad",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_1_fa.wav",
-      "durationSeconds": 7.28,
-      "sha256": "1a29ba7e58f6155bda14f993f4504ac1abf526d74d9ed4cb53e99521bf2564d8"
+      "durationSeconds": 6.08,
+      "sha256": "db7d182f67da4c708355a46a088bbb3b5e32e130f0b8e0776a06df57be9c05fa",
+      "spokenText": "پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151175,
+      "generatedAtUtc": "2026-09-15T17:51:30.973371+00:00",
+      "captionSha256": "c319a68fc38bbcf95c0f133e3129254b213a49e8bb4d0f992f7bc7d493a8b507"
     },
     {
       "kind": "narrative",
@@ -202,12 +272,22 @@
       "id": "m02_debrief_line_2",
       "speaker": "DALIA",
       "locale": "fa-IR",
-      "text": "فرمانده، دالیا رحیم هستم. از این پاسگاه، هدایت نیروهای زمینی را بر عهده می‌گیرم.",
+      "text": "فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم.",
       "voiceId": "MK1Zvh93428YrgOQ8Obr",
       "voiceName": "Warline - Major Dalia Rahim",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_2_fa.wav",
-      "durationSeconds": 7.04,
-      "sha256": "4c21804c2a489e18db8406db3e49d47ca432b355ccf3015c6cc3712e77d82372"
+      "durationSeconds": 5.92,
+      "sha256": "efe660b94b81ff736af4fae4436f216d89b82b8dd9bc279e4352e71deafbb9bf",
+      "spokenText": "فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151176,
+      "generatedAtUtc": "2026-09-15T17:51:32.111939+00:00",
+      "captionSha256": "e47b9e6a52a89d40c9dcba98b492ff4fc6f33bd0a086387ed30d0571d0571c55"
     },
     {
       "kind": "narrative",
@@ -226,12 +306,24 @@
       "id": "m02_debrief_line_3",
       "speaker": "ARIA",
       "locale": "fa-IR",
-      "text": "شبکه هشدار در مسیر پیش رو خاموش شده است. خودروهای زرهی به سمت منطقه بعدی حرکت می‌کنند.",
+      "text": "شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن.",
       "voiceId": "Fi9tPTnEcbh3of7hOHC8",
       "voiceName": "Warline - ARIA Civic Relay",
       "assetPath": "Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_debrief_line_3_fa.wav",
-      "durationSeconds": 8.32,
-      "sha256": "5a339e7439733d6b13529f2f9529ff178d27d2b26cfe6740375025cb060955d7"
+      "durationSeconds": 5.68,
+      "sha256": "faf26233daaaaf67edf3a3caaf5678b06ae46b14e5f3776db1b2fd5086d99107",
+      "spokenText": "شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن.",
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "generationSeed": 3151177,
+      "generatedAtUtc": "2026-09-15T17:51:34.036708+00:00",
+      "captionSha256": "945693d1cd1ad08f5d79f5d3cc5e052537b373c9676a907abc290938820ddd34"
     }
-  ]
+  ],
+  "persianDeliveryProfile": "fa-conversational-v1",
+  "lastUpdatedAtUtc": "2026-09-15T17:55:43.091221+00:00"
 }

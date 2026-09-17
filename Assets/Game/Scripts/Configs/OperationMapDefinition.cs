@@ -88,6 +88,9 @@ namespace Game.Configs
         [SerializeField] private AssetReference buildingPlacementsReference;
         [SerializeField] private AssetReference vehiclePlacementsReference;
 
+        [SerializeField] private MapBuildingPlacementConfig additionalBuildingPlacements;
+        public MapBuildingPlacementConfig AdditionalBuildingPlacements => additionalBuildingPlacements;
+
         public string OperationMapId => operationMapId;
         public int SchemaVersion => schemaVersion;
         public int ContentVersion => contentVersion;

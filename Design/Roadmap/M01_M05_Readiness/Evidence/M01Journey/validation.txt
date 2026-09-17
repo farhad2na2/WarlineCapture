@@ -1,0 +1,25 @@
+[CampaignTutorialEntry] evidence=/private/tmp/warline-readiness-20260916-164529
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/en replay=FirstClear lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=1 body=Tap Select mission group below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+[CampaignPlayerJourney] action=1:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=2 body=Tap MOVE to select the move command.
+[CampaignPlayerJourney] action=2:MoveCommand
+[CampaignPlayerJourney] action=2:ShowMeButton
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=en lesson=3 body=Tap MOVE to select the move command.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=en
+[CampaignTutorialEntry] saga.ch01.m01.first_contact/fa-IR replay=Replay lesson=1 visible text and cue
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=1 body=پایین صفحه، «انتخاب گروه مأموریت» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+[CampaignPlayerJourney] action=1:SelectMissionGroupButton
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=2 body=«حرکت» رو بزن تا دستور حرکت انتخاب بشه.
+[CampaignPlayerJourney] action=2:MoveCommand
+[CampaignPlayerJourney] action=2:ShowMeButton
+[CampaignPlayerJourney] action=2:Move:(1792.00, 0.01, 719.00)
+[CampaignPlayerJourney] mission=saga.ch01.m01.first_contact locale=fa-IR lesson=3 body=«حمله» رو بزن تا دستور حمله انتخاب بشه.
+[CampaignPlayerJourney] action=3:AttackCommand
+[CampaignPlayerJourney] action=3:Attack:(1792.50, 0.31, 732.50)
+[CampaignPlayerJourney] victory=saga.ch01.m01.first_contact locale=fa-IR
+[CampaignTutorialEntry] result=Passed Bilingual player-action journey, victory and campaign return for saga.ch01.m01.first_contact
+wrapper exit=0

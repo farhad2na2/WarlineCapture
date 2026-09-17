@@ -75,7 +75,9 @@ namespace Game.Runtime
                 return false;
             }
 
-            placement.OriginCell = placement.CommittedOriginCell;
+            // Commit the pose that was displayed and validated above. Road alignment and
+            // rotation may have moved it since the last raw pointer/drag snapshot.
+            placement.CommittedOriginCell = placement.OriginCell;
             BuildingPlacementCommitCompositionSystemHelper.CommitOutcome outcome =
                 context.CommitPlacement != null ? context.CommitPlacement(placement) : default;
             if (!outcome.FullyCommitted)

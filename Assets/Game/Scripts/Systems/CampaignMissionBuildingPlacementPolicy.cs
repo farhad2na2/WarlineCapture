@@ -22,6 +22,11 @@ namespace Game.Runtime
                 origin = new Vector2Int(missionOrigins.xMin + (missionOrigins.width - 1) / 2,
                     missionOrigins.yMin + (missionOrigins.height - 1) / 2);
             origin = DefenseOrigin(source, context, definition, footprint, origin);
+            // A road barrier must keep its mission road anchor. Searching with the
+            // unrotated footprint otherwise chooses a distant perpendicular road.
+            // The preview snaps and rotates locally before confirmation validation.
+            if(hasMissionOrigins && BuildingBarrierUtilitySystemHelper.IsWallGateDefinition(definition))
+            { resolved=origin; return true; }
             bool found = source.BuildingRuntimeSpawnCompositionSystemHelper.TryResolveInitialPlacementOrigin(
                 context, definition, origin, out resolved, hasMissionOrigins ? missionOrigins : null);
             if (!found && hasMissionOrigins && context.TryGetGridData(out _, out var grid, out var roads, out var blockers))

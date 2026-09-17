@@ -42,7 +42,7 @@ public sealed partial class M02EstablishBaseGuidanceTests
             tests.AuthoritativePlacementAdvancesToResourceSpendReview();
             tests.AcknowledgedResourceSpendWaitsForCompletionThenQueuesRifle();
             tests.RifleStepTargetsTheRealProductionControls();
-            tests.AcknowledgedRifleQueueStaysHiddenWhileProductionIsPending();
+            tests.AcknowledgedRifleQueueRetainsWaitPresentation();
             tests.RifleQueueAcknowledgementInvalidatesThePresentationReadModel();
             tests.CompletedRifleKeepsAriaHiddenUntilWaveWarning();
             tests.WaveWarningPreemptsIncompleteRifleProduction();
@@ -389,7 +389,7 @@ public sealed partial class M02EstablishBaseGuidanceTests
     }
 
     [Test]
-    public void AcknowledgedRifleQueueStaysHiddenWhileProductionIsPending()
+    public void AcknowledgedRifleQueueRetainsWaitPresentation()
     {
         CampaignMissionGuidanceProjectionComponent queue = ProjectRifleQueueStep();
         queue.AcknowledgedGuidanceId = queue.GuidanceId;
@@ -400,11 +400,18 @@ public sealed partial class M02EstablishBaseGuidanceTests
         };
 
         Assert.IsFalse(TryProject(queue, facts, out _),
-            "The acknowledged rifle instruction must remain stored and hidden until production completes.");
-        Assert.IsFalse(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
-            queue,
-            out _),
-            "An acknowledged queued-production instruction must not reopen ARIA while the queue runs.");
+            "The acknowledged rifle instruction remains stored until production completes.");
+        Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
+            queue, out var waiting), "Keep the training context instead of a blank ARIA panel.");
+        Assert.AreEqual(6, waiting.TutorialStep);
+        Assert.AreEqual(9, waiting.TutorialStepCount);
+    }
+
+    public static void ValidateProductionWait()
+    {
+        new M02EstablishBaseGuidanceTests().AcknowledgedRifleQueueRetainsWaitPresentation();
+        new M02EstablishBaseGuidanceTests().ProductionWaitSurvivesDestroyedDrawerAndClearsWithQueue();
+        UnityEngine.Debug.Log("[M02ProductionWait] result=Passed acknowledged recruitment, destroyed drawer, queue completion and match cleanup");
     }
 
     [Test]

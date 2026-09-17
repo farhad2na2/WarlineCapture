@@ -103,6 +103,7 @@ namespace Game.UI.Runtime
                 retryButton.interactable = model.RetryVisible;
             }
             ApplyV3Outcome(model);
+            ApplyConstructionOutcome(in model);
             ApplyDefenseOutcome(in model);
             ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model);
             if (hiddenLegacyRoots != null)

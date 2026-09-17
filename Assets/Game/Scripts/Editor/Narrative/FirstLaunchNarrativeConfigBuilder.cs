@@ -187,12 +187,9 @@ namespace Game.Editor
             string[] opening = { "FL-P01", "FL-P02", "FL-P03", "FL-P04", "FL-P05", "FL-P06", "FL-P07" };
             foreach (string id in opening)
                 states.Add(CreatePanelState(id, NextOpening(id), "first_launch.m01_handoff"));
-            NarrativeStateRecord identity = CreateInteractiveState("first_launch.commander_identity", NarrativeStateKind.InteractiveIdentity, "first_launch.guidance_choice", "first_launch.m01_handoff", "FL-P08");
+            NarrativeStateRecord identity = CreateInteractiveState("first_launch.commander_identity", NarrativeStateKind.InteractiveIdentity, "FL-P09", "first_launch.m01_handoff", "FL-P08");
             Set(identity, "routeRole", NarrativeRouteRole.CommanderIdentity);
             states.Add(identity);
-            NarrativeStateRecord guidance = CreateInteractiveState("first_launch.guidance_choice", NarrativeStateKind.InteractiveGuidance, "FL-P09", "first_launch.m01_handoff", null);
-            Set(guidance, "routeRole", NarrativeRouteRole.GuidanceChoice);
-            states.Add(guidance);
             for (int panel = 9; panel <= 18; panel++)
             {
                 string id = $"FL-P{panel:00}";

@@ -35,19 +35,19 @@ namespace Game.Configs
                 "narrative.m02.brief.dalia",
                 NarrativeSpeakerId.Dalia,
                 "This forward post is abandoned, but we need it. Restore it and prepare to defend the clinic road.",
-                "این پاسگاه متروکه است، اما به آن نیاز داریم. آن را دوباره فعال کنید و برای دفاع از مسیر درمانگاه آماده شوید."),
+                "این پاسگاه خالی مونده، ولی بهش نیاز داریم. دوباره راهش بندازید و آماده باشید از جادهٔ درمانگاه دفاع کنید."),
             new(
                 "m02-brief.line.2",
                 "narrative.m02.brief.aria",
                 NarrativeSpeakerId.Aria,
                 "Build a Barracks here, then train one rifle squad. That will make the post operational.",
-                "اینجا یک سربازخانه بسازید، سپس یک گروه تفنگدار آموزش دهید. با این کار پاسگاه دوباره فعال می‌شود."),
+                "اینجا یه سربازخانه بساز، بعد یه گروه تفنگدار آموزش بده. با همین دو کار، پاسگاه دوباره راه می‌افته."),
             new(
                 "m02-brief.line.3",
                 "narrative.m02.brief.samira",
                 NarrativeSpeakerId.Samira,
                 "The clinic and city crews use this road. Holding the post keeps their route open.",
-                "درمانگاه و نیروهای خدمات شهری از این مسیر استفاده می‌کنند. حفظ پاسگاه، راه آن‌ها را باز نگه می‌دارد.")
+                "امدادگرها و نیروهای خدمات شهری از این جاده می‌رن. اگه پاسگاه رو نگه داریم، راهشون باز می‌مونه.")
         };
 
         public static readonly M02NarrativeLocalizedLine[] Comms =
@@ -57,19 +57,19 @@ namespace Game.Configs
                 "narrative.m02.comms.dalia",
                 NarrativeSpeakerId.Dalia,
                 "Enemy patrol approaching from the west. Hold the post and keep them away from the clinic road.",
-                "یک گشت دشمن از غرب نزدیک می‌شود. پاسگاه را حفظ کنید و نگذارید به مسیر درمانگاه برسند."),
+                "گشت دشمن داره از غرب میاد. پاسگاه رو نگه دارید؛ نذارید به جادهٔ درمانگاه برسن."),
             new(
                 "m02-comms.line.2",
                 "narrative.m02.comms.aria",
                 NarrativeSpeakerId.Aria,
                 "We found a city access list on one attacker. It was copied before the first strike.",
-                "یک فهرست دسترسی شهری همراه یکی از مهاجمان پیدا شد. این فهرست پیش از نخستین حمله کپی شده است."),
+                "همراه یکی از مهاجم‌ها یه فهرست دسترسی شهری پیدا کردیم. قبل از اولین حمله کپی شده."),
             new(
                 "m02-comms.line.3",
                 "narrative.m02.comms.samira",
                 NarrativeSpeakerId.Samira,
                 "It marks power stations, service gates, and tunnels. Someone stole it before the attack.",
-                "در آن، پست‌های برق، ورودی‌های خدماتی و تونل‌ها مشخص شده‌اند. کسی پیش از حمله آن را دزدیده است.")
+                "جای پست‌های برق، ورودی‌های خدماتی و تونل‌ها توشه. یکی قبل از حمله این فهرست رو دزدیده.")
         };
 
         public static readonly M02NarrativeLocalizedLine[] Debrief =
@@ -79,19 +79,19 @@ namespace Game.Configs
                 "narrative.m02.debrief.samira",
                 NarrativeSpeakerId.Samira,
                 "The post is active again. The clinic road and city response teams are connected.",
-                "پاسگاه دوباره فعال است. مسیر درمانگاه و تیم‌های امداد شهری دوباره به هم متصل شده‌اند."),
+                "پاسگاه دوباره راه افتاد. حالا تیم‌های امداد می‌تونن از جادهٔ درمانگاه رفت‌وآمد کنن."),
             new(
                 "m02-debrief.line.2",
                 "narrative.m02.debrief.dalia",
                 NarrativeSpeakerId.Dalia,
                 "Commander, Dalia Rahim. I will lead the ground response from this post.",
-                "فرمانده، دالیا رحیم هستم. از این پاسگاه، هدایت نیروهای زمینی را بر عهده می‌گیرم."),
+                "فرمانده، من دالیا رحیمم. هدایت نیروهای زمینی رو از همین پاسگاه به عهده می‌گیرم."),
             new(
                 "m02-debrief.line.3",
                 "narrative.m02.debrief.aria",
                 NarrativeSpeakerId.Aria,
                 "The warning network ahead has gone dark. Armored vehicles are moving toward the next sector.",
-                "شبکه هشدار در مسیر پیش رو خاموش شده است. خودروهای زرهی به سمت منطقه بعدی حرکت می‌کنند.")
+                "شبکهٔ هشدار منطقهٔ بعدی قطع شده. خودروهای زرهی دارن به اون سمت می‌رن.")
         };
 
         public static bool TryGetTutorial(
@@ -110,13 +110,13 @@ namespace Game.Configs
                 (6, false) => ("Train a rifle squad", "Open production and recruit one rifle squad."),
                 (7, false) => ("Enemy patrol incoming", "An enemy patrol is approaching from the west. Prepare your squad at the marked lane."),
                 (8, false) => ("Defend the post", "Hold the marked lane and protect the forward post."),
-                (2, true) => ("منوی ساخت را باز کنید", "منوی ساخت را باز کنید."),
-                (3, true) => ("سربازخانه را انتخاب کنید", "سربازخانه را از فهرست ساختمان‌ها انتخاب کنید."),
-                (4, true) => ("سربازخانه را بسازید", "سربازخانه را داخل محدوده سبز قرار دهید و ساخت را تأیید کنید."),
-                (5, true) => ("مصالح را مدیریت کنید", "با ۱۲۰ واحد مصالح شروع کردید. سربازخانه ۹۰ واحد مصرف کرد و ۳۰ واحد مانده است. ۲۰ واحد برای آموزش گروه تفنگدار نگه دارید."),
-                (6, true) => ("یک گروه تفنگدار آموزش دهید", "بخش تولید را باز کنید و یک گروه تفنگدار آموزش دهید."),
-                (7, true) => ("گشت دشمن نزدیک می‌شود", "یک گشت دشمن از غرب نزدیک می‌شود. گروه خود را در مسیر علامت‌گذاری‌شده آماده کنید."),
-                (8, true) => ("از پاسگاه دفاع کنید", "مسیر علامت‌گذاری‌شده را حفظ کنید و از پاسگاه دفاع کنید."),
+                (2, true) => ("منوی ساخت رو باز کن", "منوی «ساخت» رو باز کن."),
+                (3, true) => ("سربازخانه رو انتخاب کن", "از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن."),
+                (4, true) => ("سربازخانه رو بساز", "سربازخانه رو توی محدودهٔ سبز بذار، بعد ساختش رو تأیید کن."),
+                (5, true) => ("مصالح رو مدیریت کن", "با صد و بیست واحد مصالح شروع کردی. سربازخانه نود تا مصرف کرد؛ سی تا مونده. بیست تاش رو برای آموزش گروه تفنگدار نگه دار."),
+                (6, true) => ("یک گروه تفنگدار آموزش بده", "بخش تولید رو باز کن و یه گروه تفنگدار آموزش بده."),
+                (7, true) => ("گشت دشمن نزدیک می‌شه", "گشت دشمن داره از غرب میاد. گروهت رو توی مسیر مشخص‌شده آماده کن."),
+                (8, true) => ("از پاسگاه دفاع کن", "مسیر مشخص‌شده رو نگه دار و از پاسگاه دفاع کن."),
                 _ => (string.Empty, string.Empty)
             };
             return step is >= 2 and <= 8;

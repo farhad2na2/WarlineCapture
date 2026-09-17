@@ -1,0 +1,94 @@
+{
+  "entries": [
+    {
+      "key": "narrative.m01.brief.dalia",
+      "source": "First contact is confirmed: three armed Ash Line operatives are blocking the clinic corridor in Old Market.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تماس تأیید شد. سه نیروی مسلح خط خاکستر، مسیر درمانگاه بازار قدیمی رو بستن."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.brief.aria",
+      "source": "Threat profiles: Courier carries orders, Warden controls the crossing, and Broker coordinates supplies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیک دستورها رو می‌رسونه، نگهبان چهارراه رو کنترل می‌کنه و کارگزار تدارکات رو هماهنگ می‌کنه."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.brief.samira",
+      "source": "Civilians are sheltering beyond the patrol. Clear the marked corridor; do not pursue outside the district.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مردم اون طرف گشت پناه گرفتن. مسیر مشخص‌شده رو باز کنید، ولی برای تعقیب از منطقه خارج نشید."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.comms.dalia",
+      "source": "Command squad, move to cover and confirm the armed patrol before engaging.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه فرماندهی، برید پشت پوشش. قبل از حمله مطمئن بشید هدف همون گشت مسلحه."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.comms.aria",
+      "source": "Courier, Warden, and Broker remain inside the marked corridor. Objective updates reflect verified mission state.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیک، نگهبان و کارگزار هنوز توی مسیر مشخص‌شده هستن. وضعیت هدف‌ها با گزارش‌های تأییدشده به‌روز می‌شه."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.comms.samira",
+      "source": "The evacuation path is holding. Keep the command squad intact.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسیر تخلیه هنوز بازه. مراقب باشید گروه فرماندهی سالم بمونه."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.debrief.dalia",
+      "source": "The corridor is secure. The patrol was coordinated, not opportunistic.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسیر امن شد. این گشت اتفاقی اینجا نبود؛ با هم هماهنگ بودن."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.debrief.aria",
+      "source": "Recovered traffic includes a fragment of a revoked civic-relay credential. The source identity is unresolved.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توی پیام‌های بازیابی‌شده، بخشی از یک شناسهٔ باطل‌شدهٔ شبکهٔ شهری پیدا کردم. هنوز معلوم نیست مال کیه."
+        }
+      ]
+    },
+    {
+      "key": "narrative.m01.debrief.samira",
+      "source": "Civilians are moving to safety. Command Base is online; the next operation is ready for review.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مردم دارن به جای امن می‌رن. پایگاه فرماندهی آماده‌ست؛ می‌تونید عملیات بعدی رو بررسی کنید."
+        }
+      ]
+    }
+  ]
+}

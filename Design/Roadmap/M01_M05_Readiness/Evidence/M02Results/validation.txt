@@ -1,0 +1,5 @@
+Synthetic result presentation fixtures; not gameplay journeys.
+M2 constructed=1, recruited=1 for victory; constructed=1, recruited=0 for partial failure.
+Both languages rendered at 1920x1080, reviewed.
+Focused test checks actual counts and restoring original combat labels when the view is reused.
+Wrapper /private/tmp/readiness-m05-journey-02.log exit 0 includes [M02ConstructionResults] result=Passed and [M02ConstructionResultCaptures] result=Passed.

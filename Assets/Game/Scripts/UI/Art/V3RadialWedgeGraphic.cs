@@ -42,6 +42,30 @@ namespace Game.UI.Runtime
             SetVerticesDirty();
         }
 
+        // A wedge shares the wheel's RectTransform, but its visible bounds occupy
+        // only one sector. Tutorial framing must follow that sector.
+        public void GetGuidanceWorldCorners(Vector3[] corners)
+        {
+            Rect rect = rectTransform.rect;
+            float radius = Mathf.Min(rect.width, rect.height) * .5f;
+            Vector2 min = new(float.PositiveInfinity, float.PositiveInfinity);
+            Vector2 max = new(float.NegativeInfinity, float.NegativeInfinity);
+            int segments = Mathf.Max(2, arcSegments);
+            for (int i = 0; i <= segments; i++)
+            {
+                float angle = (startAngle + sweepAngle * i / segments) * Mathf.Deg2Rad;
+                Vector2 direction = new(Mathf.Cos(angle), Mathf.Sin(angle));
+                Vector2 a = rect.center + direction * radius * innerRadius;
+                Vector2 b = rect.center + direction * radius * outerRadius;
+                min = Vector2.Min(min, Vector2.Min(a, b));
+                max = Vector2.Max(max, Vector2.Max(a, b));
+            }
+            corners[0] = rectTransform.TransformPoint(new Vector3(min.x, min.y));
+            corners[1] = rectTransform.TransformPoint(new Vector3(min.x, max.y));
+            corners[2] = rectTransform.TransformPoint(new Vector3(max.x, max.y));
+            corners[3] = rectTransform.TransformPoint(new Vector3(max.x, min.y));
+        }
+
         public void SetPalette(Color top, Color bottom, Color border)
         {
             topColor = top;

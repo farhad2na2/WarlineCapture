@@ -218,22 +218,6 @@ namespace Game.UI.Runtime
                     _gameTextResolver.Get("build.feedback.drawer_not_ready", "Build drawer is not ready.")));
             }
 
-            private void OnScanButtonClicked()
-            {
-                CaptureCommandUiClick();
-                if (!TryAcceptCapability(CommandCapability.Scan))
-                    return;
-
-                CloseBuildDrawerIfOpen();
-                bool queued = _selectionUiCommandSystem != null &&
-                    _selectionUiCommandSystem.RequestScanCommandMode();
-
-                if (!queued)
-                    ApplyCommandResult(TacticalCommandResult.Rejected(
-                        ResolveFallbackReason(CommandCapability.Scan),
-                        ResolveUnavailableFeedbackMessage(CommandCapability.Scan, ResolveFallbackReason(CommandCapability.Scan))));
-            }
-
             private void OnBoardButtonClicked()
             {
                 CaptureCommandUiClick();

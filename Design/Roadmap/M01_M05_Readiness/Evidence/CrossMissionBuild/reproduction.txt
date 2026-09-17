@@ -1,0 +1,5 @@
+Run: /private/tmp/readiness-shared-cues-01.log, wrapper exit 1
+Route: EN M1 victory → campaign → FA M1 replay victory → campaign → EN M3 lesson 3.
+Expected: usable highlighted Build control. Actual: blank Build slot, no guide; player replay stalls.
+Read-only live CLI inspection: BuildCommand activeSelf=True activeInHierarchy=True; CanvasGroup alpha=1 interactable=False; parent footer group interactable=True.
+Run 02: input ownership fixed; Build was hit-testable but rendered contents remained invisible. Live inspection showed all Build child graphics and button ColorBlock RGBA(0,0,0,0), disabled Reasons=None, OriginalColor=RGBA(0,0,0,0). Render review recorded a QA failure and the probe exited through its normal cleanup. Guard clearing absent reasons; add visible-label assertion to player replay.

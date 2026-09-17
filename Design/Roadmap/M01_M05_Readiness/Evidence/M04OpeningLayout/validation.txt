@@ -1,0 +1,5 @@
+2026-09-16 checked macOS GUI wrapper, exit 0
+Log: /private/tmp/readiness-m04-scroll-02.log
+[AriaScrollTransitions] result=Passed languages=EN,FA widths=1920,2400 newly-scrollable-top and existing-scroll-preserved
+[M04PlayerRoute] result=Passed shows=0 partialStage=0
+[M04EditorProbe] result=Passed Completed M4 profile with assistant Off: cinematic -> visible lesson one and Continue highlight -> lesson two next-action cue.

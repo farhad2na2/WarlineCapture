@@ -60,6 +60,7 @@ namespace Game.Runtime
             pooledSource.RequestId = 0;
             pooledSource.Priority = AudioPlaybackPriority.Low;
             pooledSource.BusId = null;
+            pooledSource.GameplayOnly = false;
             pooledSource.VolumeDecibels = 0f;
             pooledSource.FadeActive = false;
             pooledSource.FadeStartVolume = 0f;
@@ -178,6 +179,7 @@ namespace Game.Runtime
             public int RequestId;
             public AudioPlaybackPriority Priority;
             public string BusId;
+            public bool GameplayOnly;
             public float VolumeDecibels;
             public bool FadeActive;
             public float FadeStartVolume;

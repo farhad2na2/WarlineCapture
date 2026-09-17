@@ -95,6 +95,7 @@ namespace Game.Editor
                 BindClose(root, closeView, closeButtonView, closeButton);
 
                 MissionUiSerializedBindingsAuthoring.Apply(root);
+                V3UiLocalizationCatalogBuilder.BindExistingCatalog(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

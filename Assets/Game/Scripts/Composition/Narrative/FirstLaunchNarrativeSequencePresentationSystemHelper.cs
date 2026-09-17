@@ -52,7 +52,8 @@ namespace Game.Composition
             NarrativeSequenceView sequenceView,
             IGameTextResolver resolver,
             in UISettingsModel runtimeSettings,
-            NarrativeLocaleConfig localeConfig = null)
+            NarrativeLocaleConfig localeConfig = null,
+            bool storyOnly = false)
         {
             Cancel();
             config = sequenceConfig;
@@ -68,23 +69,13 @@ namespace Game.Composition
             if (config == null || speakerCatalog == null || punctuation == null || view == null)
                 return false;
 
-            List<FirstLaunchNarrativeSequenceStateDefinition> definitions = new(config.States.Count);
             for (int i = 0; i < config.States.Count; i++)
             {
                 NarrativeStateRecord state = config.States[i];
                 if (state == null || string.IsNullOrWhiteSpace(state.StateId) || !states.TryAdd(state.StateId, state))
                     return false;
-                float[] lineStartSeconds = new float[state.Lines.Count];
-                for (int lineIndex = 0; lineIndex < state.Lines.Count; lineIndex++)
-                    lineStartSeconds[lineIndex] = state.Lines[lineIndex].StartSeconds;
-                definitions.Add(new FirstLaunchNarrativeSequenceStateDefinition(
-                    state.StateId,
-                    state.Kind,
-                    state.ContinueStateId,
-                    state.SkipStateId,
-                    state.DurationSeconds,
-                    lineStartSeconds));
             }
+            var definitions = FirstLaunchNarrativeModelUtilitySystemHelper.CreatePlaybackDefinitions(config, storyOnly);
             for (int i = 0; i < speakerCatalog.Speakers.Count; i++)
             {
                 NarrativeSpeakerRecord speaker = speakerCatalog.Speakers[i];

@@ -1,7 +1,7 @@
 # WarlineCapture Skirmish Mode Implementation Spec
 
 Date: 2026-05-22
-Status: Active implementation spec
+Status: Broad design reference. The scoped September prototype is defined by [the current detailed roadmap plan](Roadmap/Skirmish_Prototype/PLAN.md), with a [source baseline](Roadmap/Skirmish_Prototype/BASELINE.md) and [acceptance matrix](Roadmap/Skirmish_Prototype/ACCEPTANCE.md). Its one-map/one-opponent scope supersedes the first-slice breadth and M1 fallback described below. Historical code paths in this document are not evidence of current runtime behavior.
 
 ## Purpose
 

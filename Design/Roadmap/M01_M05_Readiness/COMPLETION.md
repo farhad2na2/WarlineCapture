@@ -2,6 +2,8 @@
 
 Updated 2026-09-17. Current status: **Editor gameplay/recovery accepted; Android candidate built and verified.** Phone and unfamiliar-player acceptance remain separate gates.
 
+Final source milestone committed as `b9d17a700`. The subsequent-to-build M1 follow-up restores the full first-launch opening on campaign replay/retry in the saved language, removes the unused guidance-level setup, and loads the saved commander portrait before comic playback. Full EN/FA replay and 45 focused regression tests passed; see [the follow-up report](../../AgentReports/M01StoryReplay/README.md). The APK below predates those source changes and needs rebuilding before device acceptance.
+
 ## What changed
 
 - M1: restored the usable group-selection action and removed stale M4 selection routing on re-entry. The approved 18 EN/FA recordings are bound to the preserved legacy comic assets; those assets remain outside the interactive M1 opening because they have no panel artwork.

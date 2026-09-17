@@ -19,6 +19,11 @@ namespace Game.Runtime
 
         public static SaveService CreateDefault()
         {
+#if UNITY_EDITOR
+            string validationRoot = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT");
+            if (!string.IsNullOrWhiteSpace(validationRoot))
+                return new SaveService(new JsonSaveRepository(validationRoot));
+#endif
             return new SaveService(new JsonSaveRepository(Application.persistentDataPath));
         }
 
@@ -67,7 +72,10 @@ namespace Game.Runtime
 
         public QuickGameSaveData LoadQuickGame()
         {
-            return _repository.Load<QuickGameSaveData>(QuickGameFileName);
+            QuickGameSaveData data;
+            try { data = _repository.Load<QuickGameSaveData>(QuickGameFileName); }
+            catch (ArgumentException) { data = new QuickGameSaveData(); }
+            return SkirmishSaveMigration.Normalize(data);
         }
 
         public void SaveProfile(PlayerProfileSaveData data)
@@ -151,7 +159,7 @@ namespace Game.Runtime
 
         public void SaveQuickGame(QuickGameSaveData data)
         {
-            _repository.Save(QuickGameFileName, data);
+            _repository.SaveAtomic(QuickGameFileName, SkirmishSaveMigration.Normalize(data));
         }
 
         public SaveSlotInfo GetSlotInfo(string slotId, string fileName)

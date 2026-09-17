@@ -951,7 +951,8 @@ namespace Game.Runtime
                 return false;
             }
 
-            if (context.ProductionSystem == null ||
+            if (!SkirmishPopulationPolicy.CanQueue(entityManager,context.RuntimeBuildings,producerBuilding,unitPrefab,productionIndex) ||
+                context.ProductionSystem == null ||
                 !context.ProductionSystem.TryQueuePlayerUnitFromBuilding(
                     context.ProductionQueueContext,
                     producerBuilding,

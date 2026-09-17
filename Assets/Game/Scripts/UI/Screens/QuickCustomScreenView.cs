@@ -48,6 +48,7 @@ namespace Game.UI.Runtime
         private static readonly string[] WinConditionLabels = { "DESTROY", "SURVIVE", "SANDBOX" };
         private static readonly string[] StartingResourcesLabels = { "STANDARD", "LOW", "HIGH" };
 
+        [SerializeField] private bool baseAssaultPreset;
         private UiQuickCustomGameConfig _config;
         private IQuickCustomGameConfigStore _configStore;
         private IMatchLaunchCommand _launchCommand;
@@ -108,7 +109,7 @@ namespace Game.UI.Runtime
                 seedInput.SetTextWithoutNotify(config.MapSeed.ToString());
 
             if (mapNameText != null)
-                mapNameText.text = ResolveMapName(config);
+                mapNameText.text = baseAssaultPreset ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault_map", "DESERT BASE") : ResolveMapName(config);
         }
 
         public void BindRuntimeDependencies(
@@ -122,6 +123,7 @@ namespace Game.UI.Runtime
 
         public UiQuickCustomGameConfig ReadConfigFromControls()
         {
+            if (baseAssaultPreset) { _config.MapSeed = ReadSeed(_config.MapSeed); return _config; }
             _config.EnemyType = (UiQuickGameEnemyType)GetDropdownValue(enemyTypeDropdown, (int)_config.EnemyType);
             _config.EnemyCount = ReadEnemyCountStepper(_config.EnemyCount);
             _config.Difficulty = (UiAiDifficultySetting)GetSelectedSegment(difficultySegmented, (int)_config.Difficulty);

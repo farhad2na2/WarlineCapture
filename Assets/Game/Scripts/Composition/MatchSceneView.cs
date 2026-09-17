@@ -121,7 +121,8 @@ namespace Game.Composition
                 : mapSurfaceAuthoring;
         public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
         public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
-        public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
+        public BuildingPlacementSystemConfig BuildingPlacementConfig =>
+            IsSkirmishSession ? SkirmishPreset.buildingPlacement : buildingPlacementConfig;
         private MapBuildingPlacementConfig missionPlacementOverlay;
         public MapBuildingPlacementConfig MapBuildingPlacementConfig
         {
@@ -138,7 +139,7 @@ namespace Game.Composition
             }
         }
         public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
-            activeOperationMapSceneView != null
+            IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.VehiclePlacements
                 : mapVehiclePlacementConfig;
         public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
@@ -154,9 +155,10 @@ namespace Game.Composition
         public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
         public GameStringsConfig GameStringsConfig => gameStringsConfig;
         public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
-        public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
+        public AIPlanEntryStartupConfig AIPlanEntryConfig => IsSkirmishSession ? SkirmishPreset.aiPlan : aiPlanEntryConfig;
         public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
-        public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
+        public IReadOnlyList<AIControllerConfig> AIControllerConfigs =>
+            IsSkirmishSession ? SkirmishPreset.aiControllers : aiControllerConfigs;
         public OperationMapCatalogConfig OperationMapCatalog => ResolveOperationMapCatalog();
         public string OperationMapId => hasResolvedOperationMapLaunchSelection
             ? resolvedOperationMapLaunchSelection.OperationMapId.ToString()

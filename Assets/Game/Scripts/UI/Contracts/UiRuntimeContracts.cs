@@ -305,7 +305,8 @@ namespace Game.UI.Contracts
     {
         DestroyAllEnemies = 0,
         SurviveDuration = 1,
-        Sandbox = 2
+        Sandbox = 2,
+        BaseAssault = 3
     }
 
     public enum UiQuickGameStartingResources : byte
@@ -410,7 +411,7 @@ namespace Game.UI.Contracts
             Expansion = UiAiExpansionSetting.Normal,
             TargetPriority = UiAiTargetPriority.Balanced,
             PlayerAutoAIEnabled = false,
-            WinCondition = UiQuickGameWinCondition.DestroyAllEnemies,
+            WinCondition = UiQuickGameWinCondition.BaseAssault,
             FogOfWar = false,
             IntelReveal = true,
             StartingResources = UiQuickGameStartingResources.Standard,

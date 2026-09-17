@@ -82,6 +82,19 @@ namespace Game.Runtime
             context.EnsureSelectionDependencies?.Invoke(em);
             EnsureEntityQueries(em);
 
+            using(var skirmish=em.CreateEntityQuery(typeof(SkirmishMatchState)))
+            {
+                if(!skirmish.IsEmptyIgnoreFilter)
+                {
+                    _selected.Clear();
+                    using var group=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth));
+                    using var members=group.ToEntityArray(Allocator.Temp);
+                    foreach(var member in members)
+                        if(em.GetComponentData<SkirmishSquadMember>(member).Slot==(int)slot-1&&IsSelectablePlayerUnit(em,member))_selected.Add(member);
+                    if(_selected.Count==0){view.FlashDisabled(slot);return;}
+                    ApplySelection(context,em,_selected);_activeSlot=slot;view.SetSelectedSlot(slot);return;
+                }
+            }
             bool guidedMissionSquad = slot == MatchHudSquadTraySlot.Soldiers &&
                                       CampaignMissionGuidedMoveRouteUtility.IsGuidedMovePhaseActive(em);
             bool cycling = !guidedMissionSquad && _activeSlot == slot;

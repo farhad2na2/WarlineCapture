@@ -16,7 +16,8 @@ namespace Game.Configs
     {
         DestroyAllEnemies = 0,
         SurviveDuration = 1,
-        Sandbox = 2
+        Sandbox = 2,
+        BaseAssault = 3
     }
 
     public enum QuickGameStartingResources : byte
@@ -26,6 +27,7 @@ namespace Game.Configs
         High = 2
     }
 
+    [System.Serializable]
     public struct QuickGameConfig
     {
         public QuickGameEnemyType EnemyType;
@@ -62,12 +64,21 @@ namespace Game.Configs
             Expansion = AIExpansionSetting.Normal,
             TargetPriority = AITargetPriority.Balanced,
             PlayerAutoAIEnabled = false,
-            WinCondition = QuickGameWinCondition.DestroyAllEnemies,
+            WinCondition = QuickGameWinCondition.BaseAssault,
             FogOfWar = false,
             IntelReveal = true,
             StartingResources = QuickGameStartingResources.Standard,
             MapSeed = 104729
         };
+
+        // This release supports one tested preset. Preserve the seed, never pretend that
+        // legacy fog/difficulty/map controls are implemented by silently applying them.
+        public QuickGameConfig NormalizeForBaseAssault()
+        {
+            QuickGameConfig normalized = Defaults;
+            normalized.MapSeed = MapSeed > 0 ? MapSeed : Defaults.MapSeed;
+            return normalized;
+        }
 
         public static QuickGameConfig FromAISettingsSnapshot(AISettingsSnapshot snapshot)
         {

@@ -34,6 +34,27 @@ public sealed class CustomGameStartupSystemHelperTests
     }
 
     [Test]
+    public void FilteredRosterUsesBakedSourceIdentityRatherThanArrayPosition()
+    {
+        using var world=new World("FilteredSkirmishRegistry");var em=world.EntityManager;
+        var wrong=em.CreateEntity(typeof(Prefab),typeof(UnitSourcePrefabKey));
+        em.SetComponentData(wrong,new UnitSourcePrefabKey{Value=new FixedString64Bytes("Unit_Civilian")});
+        var correct=em.CreateEntity(typeof(Prefab),typeof(UnitSourcePrefabKey));
+        em.SetComponentData(correct,new UnitSourcePrefabKey{Value=new FixedString64Bytes("Unit_Rifle")});
+        var startup=em.CreateEntity(typeof(InitialUnitsSpawnConfig),typeof(UnitPrefabRegistryTag));
+        var entries=em.AddBuffer<UnitPrefabRegistryEntry>(startup);
+        entries.Add(new UnitPrefabRegistryEntry{Prefab=wrong});entries.Add(new UnitPrefabRegistryEntry{Prefab=correct});
+        var config=ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();var prefab=new GameObject("Unit_Rifle");
+        try
+        {
+            config.UnitSpawnPrefabs.Add(prefab);
+            new CustomGameStartupSystemHelper(em).InitializeFromLegacyConfigs(null,config);
+            Assert.AreEqual(correct,em.GetBuffer<UnitPrefabRegistryEntry>(startup)[0].Prefab);
+        }
+        finally{UnityEngine.Object.DestroyImmediate(config);UnityEngine.Object.DestroyImmediate(prefab);}
+    }
+
+    [Test]
     public void InitializeFromLegacyConfigsConsumesPackedRegistryOnStartupEntity()
     {
         using var world = new World("CustomGameStartupPackedRegistryTests");

@@ -22,7 +22,7 @@ namespace Game.Runtime
 
             if (focusedUnit != Entity.Null && em.Exists(focusedUnit))
             {
-                if (!IsPlayerControlled(em, focusedUnit) || em.HasComponent<CampaignMissionUnitRoleComponent>(focusedUnit))
+                if (!IsPlayerControlled(em, focusedUnit) || em.HasComponent<CampaignMissionUnitRoleComponent>(focusedUnit) || em.HasComponent<SkirmishMainBase>(focusedUnit))
                 {
                     rejectionReason = TacticalCommandReasonCode.TargetNotAttackable;
                     return true;
@@ -40,7 +40,7 @@ namespace Game.Runtime
                 for (int i = 0; i < selectedEntities.Length; i++)
                 {
                     Entity entity = selectedEntities[i];
-                    if(em.HasComponent<CampaignMissionUnitRoleComponent>(entity)) continue;
+                    if(em.HasComponent<CampaignMissionUnitRoleComponent>(entity) || em.HasComponent<SkirmishMainBase>(entity)) continue;
                     DestroyUnit(em, entity);
                     issuedCount++;
                 }

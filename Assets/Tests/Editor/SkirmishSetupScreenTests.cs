@@ -56,11 +56,8 @@ public sealed class SkirmishSetupScreenTests
         Assert.AreEqual(new Vector2(1672f, 941f), layout.ReferenceResolution);
         Assert.IsTrue(layout.ExpandToCanvasWidth, "SCN-13 must fill ultrawide canvases instead of leaving empty side bands.");
 
-        Transform rail = FindRecursive(prefab.transform, "PresetRail");
-        Assert.NotNull(rail);
-        for (int i = 0; i < 5; i++)
-            Assert.NotNull(FindRecursive(rail, $"Preset_{i}"), $"SCN-13 is missing preset card {i}.");
-
+        Assert.IsNull(FindRecursive(prefab.transform,"PresetRail"));
+        Assert.NotNull(FindRecursive(prefab.transform,"BaseAssaultRules"));
         Transform mapTransform = FindRecursive(prefab.transform, "MapPreview");
         Assert.NotNull(mapTransform);
         RawImage map = mapTransform.GetComponent<RawImage>();
@@ -74,18 +71,16 @@ public sealed class SkirmishSetupScreenTests
         AssertOuterBorder(prefab.transform, "WarlineLogo");
         AssertOuterBorder(prefab.transform, "ScreenTitlePanel");
         AssertOuterBorder(prefab.transform, "OperationPreview");
-        AssertOuterBorder(prefab.transform, "OpposingForce");
-        AssertOuterBorder(prefab.transform, "MatchEconomy");
+        AssertOuterBorder(prefab.transform, "BaseAssaultRules");
         AssertOuterBorder(prefab.transform, "ResetButton");
         AssertOuterBorder(prefab.transform, "RandomizeSeedButton");
         AssertOuterBorder(prefab.transform, "LaunchMissionButton");
 
-        Assert.GreaterOrEqual(prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length, 42,
+        Assert.GreaterOrEqual(prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length, 10,
             "SCN-13 must render directional V3 gradients instead of solid legacy panels.");
-        Assert.NotNull(FindRecursive(prefab.transform, "StartingMaterialsRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
-        Assert.NotNull(FindRecursive(prefab.transform, "IncomeRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
-        Assert.NotNull(FindRecursive(prefab.transform, "AggressionRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
-        Assert.NotNull(FindRecursive(prefab.transform, "WinConditionRow")?.GetComponent<SkirmishSetupV3CycleControlView>());
+        Assert.IsNull(FindRecursive(prefab.transform,"StartingMaterialsRow"));
+        Assert.IsNull(FindRecursive(prefab.transform,"WinConditionRow"));
+        Assert.NotNull(FindRecursive(prefab.transform,"MapSeedInput"));
     }
 
     [TearDown]
@@ -125,10 +120,9 @@ public sealed class SkirmishSetupScreenTests
         AssertRegionIsEmpty(content.ShellView, UIShellRegionId.FooterRegion);
         GameObject setup = AssertRegionHasChild(content.ShellView, UIShellRegionId.PopupLayer);
         Assert.NotNull(setup.GetComponent<QuickCustomScreenView>(), "Routed SCN-13 must own the config controller.");
-        Assert.NotNull(FindRecursive(setup.transform, "PresetRail"));
+        Assert.IsNull(FindRecursive(setup.transform, "PresetRail"));
         Assert.NotNull(FindRecursive(setup.transform, "OperationPreview"));
-        Assert.NotNull(FindRecursive(setup.transform, "OpposingForce"));
-        Assert.NotNull(FindRecursive(setup.transform, "MatchEconomy"));
+        Assert.NotNull(FindRecursive(setup.transform, "BaseAssaultRules"));
         Assert.NotNull(FindRecursive(setup.transform, "LaunchMissionButton"));
     }
 
@@ -258,45 +252,15 @@ public sealed class SkirmishSetupScreenTests
             var launcher = new FakeLaunchCommand();
             view.BindRuntimeDependencies(store, launcher);
 
-            UISegmentedControlView enemyCount = FindRecursive(instance.transform, "EnemyFactionStepper").GetComponent<UISegmentedControlView>();
-            UISegmentedControlView difficulty = FindRecursive(instance.transform, "Difficulty").GetComponent<UISegmentedControlView>();
-            UISegmentedControlView startingCredits = FindRecursive(instance.transform, "StartingCredits").GetComponent<UISegmentedControlView>();
-            UISegmentedControlView startingResources = FindRecursive(instance.transform, "StartingResources").GetComponent<UISegmentedControlView>();
-            UISegmentedControlView aggression = FindRecursive(instance.transform, "Aggression").GetComponent<UISegmentedControlView>();
-            UISegmentedControlView winCondition = FindRecursive(instance.transform, "WinCondition").GetComponent<UISegmentedControlView>();
-            UISliderRowView income = FindRecursive(instance.transform, "Income").GetComponent<UISliderRowView>();
             TMP_InputField seed = FindRecursive(instance.transform, "MapSeedInput").GetComponent<TMP_InputField>();
-            Toggle fog = FindRecursive(instance.transform, "FogOfWar").GetComponentInChildren<Toggle>(true);
-            Assert.NotNull(enemyCount);
-            Assert.NotNull(difficulty);
-            Assert.NotNull(startingCredits);
-            Assert.NotNull(startingResources);
-            Assert.NotNull(aggression);
-            Assert.NotNull(winCondition);
-            Assert.NotNull(income);
             Assert.NotNull(seed);
-            Assert.NotNull(fog);
-            Assert.IsFalse(fog.interactable, "Fog control must remain locked until fog runtime exists.");
-
-            enemyCount.Bind(new[] { "-", "3", "+" }, 1);
-            difficulty.Bind(new[] { "EASY", "NORMAL", "HARD", "BRUTAL" }, 2);
-            startingCredits.Bind(new[] { "LOW", "STANDARD", "HIGH" }, 2);
-            startingResources.Bind(new[] { "STANDARD", "LOW", "HIGH" }, 2);
-            aggression.Bind(new[] { "DEFENSIVE", "BALANCED", "AGGRESSIVE" }, 2);
-            winCondition.Bind(new[] { "DESTROY", "SURVIVE", "SANDBOX" }, 2);
-            income.Slider.SetValueWithoutNotify(1.5f);
             seed.SetTextWithoutNotify("424242");
-
             view.ApplyCurrentConfigToRuntime();
             UiQuickCustomGameConfig applied = store.Current;
-            Assert.AreEqual(3, applied.EnemyCount);
-            Assert.AreEqual(UiAiDifficultySetting.Hard, applied.Difficulty);
-            Assert.AreEqual(UiAiStartingMoneySetting.High, applied.StartingMoney);
-            Assert.AreEqual(UiQuickGameStartingResources.High, applied.StartingResources);
-            Assert.AreEqual(UiAiAggressionSetting.Aggressive, applied.Aggression);
-            Assert.AreEqual(UiQuickGameWinCondition.Sandbox, applied.WinCondition);
-            Assert.AreEqual(1.5f, applied.IncomeMultiplier, 0.001f);
+            Assert.AreEqual(1, applied.EnemyCount);
             Assert.AreEqual(424242, applied.MapSeed);
+            Assert.IsNull(FindRecursive(instance.transform,"FogOfWar"));
+            Assert.IsNull(FindRecursive(instance.transform,"Difficulty"));
 
             view.LaunchMatch();
             Assert.AreEqual(1, launcher.LaunchCount, "SCN-13 Launch must use IMatchLaunchCommand exactly once.");

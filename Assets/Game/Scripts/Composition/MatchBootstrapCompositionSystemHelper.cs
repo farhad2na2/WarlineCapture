@@ -180,9 +180,23 @@ namespace Game.Composition
             gameplayStartupSystem.BeginGameplay();
         }
 
+        private bool skirmishOwnershipNormalized;
         public void Update()
         {
             gameplayStartupSystem.Advance(BuildingRuntimeUpdate, _buildingRuntimeUpdateContext);
+            if(!skirmishOwnershipNormalized && runtimeWorld!=null && runtimeWorld.IsCreated &&
+               SkirmishLaunchProjection.TryGet(runtimeWorld.EntityManager,out _,out var skirmish) && skirmish.Phase==SkirmishPhase.Playing)
+            {
+                var em=runtimeWorld.EntityManager;
+                if(_buildingUiQueryContext.RuntimeBuildings!=null)
+                    foreach(var pair in _buildingUiQueryContext.RuntimeBuildings)
+                    {
+                        var building=pair.Value;
+                        if(building!=null && em.Exists(building.CombatEntity) && em.HasComponent<OperationMapBuildingComponent>(building.CombatEntity))
+                        {building.HasOwnerFaction=true;building.OwnerFactionId=0;}
+                    }
+                skirmishOwnershipNormalized=true;
+            }
 
             UpdateRuntime(
                 GameplayInitialized,
@@ -355,6 +369,9 @@ namespace Game.Composition
         {
             ReleaseRuntimeSettingsChangeSubscription();
             _runtimeGameplayStateSystem.ResetForMatchShutdown();
+            if (runtimeWorld != null && runtimeWorld.IsCreated &&
+                SkirmishLaunchProjection.TryGet(runtimeWorld.EntityManager, out Entity skirmishSession, out _))
+                runtimeWorld.EntityManager.DestroyEntity(skirmishSession);
             if (runtimeWorld != null && runtimeWorld.IsCreated)
                 _matchSceneReferenceSystem.Clear(runtimeWorld.EntityManager, sceneView);
             matchIntroStateQuery.Reset();

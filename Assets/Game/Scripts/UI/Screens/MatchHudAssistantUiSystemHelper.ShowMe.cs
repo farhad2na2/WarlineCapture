@@ -52,6 +52,18 @@ namespace Game.UI.Runtime
         private void RefreshShowMeAvailability()
         {
             if (_embeddedTutorialView?.ShowMeButton == null) return;
+            // Skirmish has a persistent objective briefing, not campaign tutorial actions.
+            // Do not re-enable a button that ApplyReadModel has just hidden: doing so
+            // alternates the rail's measured height during successive HUD updates.
+            if (UiShellRuntimeGateway.TryReadSkirmish(out _))
+            {
+                _embeddedTutorialView.ShowMeButton.gameObject.SetActive(false);
+                _embeddedTutorialView.SetContinueAvailable(false);
+                _embeddedTutorialView.SetSelectionActionAvailable(false);
+                _embeddedTutorialView.RefreshContentLayout();
+                _popupView?.SetShowMeAvailable(false);
+                return;
+            }
             if(!_selectionActionRequested) _embeddedTutorialView.SetSelectionActionAvailable(false);
             if (!UsesNextTutorialAction) { _embeddedTutorialView.ShowMeButton.gameObject.SetActive(true); _embeddedTutorialView.SetContinueAvailable(false); return; }
             if(_highlightPresentationSystem.HasVisibleDirectTutorialTarget) _tutorialFocusPendingUntil=0;

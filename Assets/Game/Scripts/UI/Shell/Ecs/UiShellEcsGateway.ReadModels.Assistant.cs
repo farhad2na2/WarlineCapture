@@ -85,6 +85,15 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
         {
             assistantPanel = UiAssistantPanelModel.Empty;
+            if(TrySkirmish(out _,out _,out var skirmish))
+            {
+                if(skirmish.Phase!=SkirmishPhase.Playing)return true;
+                assistantPanel=new UiAssistantPanelModel(1,"","","",false,false,true,
+                    GameText.Get("ui.skirmish.base_assault","BASE ASSAULT"),
+                    GameText.Get("ui.skirmish.match_help","Destroy the enemy Main Base. Tap a squad card, Move, then a destination. Use Attack on enemy targets. Tap either base in the objective bar to find it."),
+                    "","",false,false,false,false,"","");
+                return true;
+            }
             if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
                 return false;
 

@@ -1,0 +1,145 @@
+using System;
+using System.IO;
+using Game.Components;
+using Game.Composition;
+using Game.Configs;
+using Game.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
+using Game.UI.Contracts;
+using NUnit.Framework;
+using Unity.Entities;
+
+public sealed class SkirmishSessionTests
+{
+    [Test]
+    public void AttackApproachFindsAnOpenFiringPositionInsteadOfTheBlockedBaseCenter()
+    {
+        var grid=new GridConfig{Width=80,Height=80,CellSize=1};
+        using var walkable=new Unity.Collections.NativeArray<GridWalkable>(6400,Unity.Collections.Allocator.Temp);
+        using var blocked=new Unity.Collections.NativeBitArray(6400,Unity.Collections.Allocator.Temp);
+        var writable=walkable;
+        for(int i=0;i<writable.Length;i++)writable[i]=new GridWalkable{Value=1};
+        for(int y=35;y<=45;y++)for(int x=35;x<=45;x++)blocked.Set(y*80+x,true);
+        Assert.IsTrue(SkirmishCombatApproachSystem.TryFindApproach(grid,walkable,blocked,
+            new Unity.Mathematics.float3(5,0,40),new Unity.Mathematics.float3(40,0,40),new Unity.Mathematics.int2(1),16,out var goal));
+        Assert.IsFalse(blocked.IsSet(goal.y*80+goal.x));
+        Assert.Less(Unity.Mathematics.math.distance(new Unity.Mathematics.float2(goal.x,goal.y),new Unity.Mathematics.float2(40,40)),16);
+        blocked.SetBits(0,true,6400);
+        Assert.IsFalse(SkirmishCombatApproachSystem.TryFindApproach(grid,walkable,blocked,
+            new Unity.Mathematics.float3(5,0,40),new Unity.Mathematics.float3(40,0,40),new Unity.Mathematics.int2(1),16,out _));
+    }
+    [Test]
+    public void InfantryLimitReservesTheWholeProductionBatchForEitherFaction()
+    {
+        using var world=new World("SkirmishPopulation");
+        var em=world.EntityManager;
+        var session=em.CreateEntity(typeof(SkirmishMatchState));
+        em.SetComponentData(session,new SkirmishMatchState{Phase=SkirmishPhase.Playing});
+        var prefab=new UnityEngine.GameObject("unit_soldier");
+        try
+        {
+            foreach(byte faction in new byte[]{1,2})
+            {
+                for(int i=0;i<20;i++)
+                {
+                    var unit=em.CreateEntity(typeof(Faction),typeof(UnitHealth),typeof(UnitSourcePrefabKey));
+                    em.SetComponentData(unit,new Faction{Id=faction});
+                    em.SetComponentData(unit,new UnitHealth{Current=100,Max=100});
+                    em.SetComponentData(unit,new UnitSourcePrefabKey{Value="unit_soldier"});
+                }
+                var producer=new RuntimeBuildingEntity{OwnerFactionId=faction,
+                    Definition=new BuildingDefinition{ProductionSlots=new System.Collections.Generic.List<BuildingDefinition.ProductionSlotDefinition>{new(){Quantity=4}}},
+                    PendingProductions=new System.Collections.Generic.List<RuntimeBuildingEntity.PendingProduction>()};
+                var buildings=new System.Collections.Generic.Dictionary<int,RuntimeBuildingEntity>{{1,producer}};
+                Assert.IsTrue(SkirmishPopulationPolicy.CanQueue(em,buildings,producer,prefab,0));
+                producer.PendingProductions.Add(new RuntimeBuildingEntity.PendingProduction{Prefab=prefab,RemainingQuantity=4});
+                Assert.IsFalse(SkirmishPopulationPolicy.CanQueue(em,buildings,producer,prefab,0));
+                producer.PendingProductions[0].RemainingQuantity=1;
+                Assert.IsFalse(SkirmishPopulationPolicy.CanQueue(em,buildings,producer,prefab,0),"Three free spaces cannot accept four soldiers.");
+                producer.PendingProductions.Clear();
+                Assert.IsTrue(SkirmishPopulationPolicy.CanQueue(em,buildings,producer,prefab,0),"Cancellation releases the reservation.");
+            }
+        }
+        finally {UnityEngine.Object.DestroyImmediate(prefab);}
+    }
+    [Test]
+    public void SaveRoundTripPreservesSeedAndResultWithoutWritingCampaignProfile()
+    {
+        string directory=Path.Combine(Path.GetTempPath(),"skirmish-save-"+Guid.NewGuid().ToString("N"));
+        try
+        {
+            var save=new SaveService(new JsonSaveRepository(directory));
+            var data=save.LoadQuickGame(); data.configuration.MapSeed=7919;
+            data.lastResult=new SkirmishResultSaveData{sessionId="attempt",outcome="Victory",seed=7919};
+            save.SaveQuickGame(data);
+            var loaded=save.LoadQuickGame();
+            Assert.AreEqual(7919,loaded.configuration.MapSeed);
+            Assert.AreEqual("attempt",loaded.lastResult.sessionId);
+            Assert.AreEqual(QuickGameWinCondition.BaseAssault,loaded.configuration.WinCondition);
+            Assert.IsFalse(File.Exists(Path.Combine(directory,SaveService.ProfileFileName)));
+        }
+        finally { if(Directory.Exists(directory))Directory.Delete(directory,true); }
+    }
+    [Test]
+    public void LegacyAndUnsupportedConfigurationsBecomeTheSupportedPreset()
+    {
+        var legacy=SkirmishSaveMigration.Normalize(new QuickGameSaveData{enemyCount=3,fogOfWar=true});
+        Assert.AreEqual(1,legacy.configuration.EnemyCount); Assert.IsFalse(legacy.configuration.FogOfWar);
+        var bad=QuickGameConfig.Defaults; bad.EnemyCount=3;bad.PlayerAutoAIEnabled=true;bad.MapSeed=-1;
+        var normalized=bad.NormalizeForBaseAssault();
+        Assert.AreEqual(1,normalized.EnemyCount);Assert.IsFalse(normalized.PlayerAutoAIEnabled);
+        Assert.AreEqual(QuickGameConfig.Defaults.MapSeed,normalized.MapSeed);
+    }
+    [Test]
+    public void DuplicateDeployKeepsOneSessionAndOriginalSnapshot()
+    {
+        using var world=new World("SkirmishDuplicateDeploy");var em=world.EntityManager;
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em,QuickGameConfig.Defaults));
+        var changed=QuickGameConfig.Defaults;changed.MapSeed=37;
+        Assert.IsFalse(SkirmishLaunchProjection.TryQueue(em,changed));
+        Assert.IsTrue(SkirmishLaunchProjection.TryGet(em,out var entity,out var state));
+        Assert.AreEqual(QuickGameConfig.Defaults.MapSeed,state.Seed);
+        Assert.AreEqual(state.Seed,em.GetComponentObject<SkirmishLaunchSnapshot>(entity).Configuration.MapSeed);
+    }
+    [Test]
+    public void LaunchUsesExplicitSkirmishIdentity()
+    {
+        using var world=new World("SkirmishIdentity");
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(world.EntityManager,QuickGameConfig.Defaults));
+        Assert.IsTrue(MatchSceneView.OperationMapLaunchResolver.TryResolve(world,"wrong","wrong","wrong",out var selection,out _,out var error),error);
+        Assert.AreEqual(SkirmishLaunchProjection.MissionId,selection.MissionId.ToString());
+        Assert.AreEqual(SkirmishLaunchProjection.ScenarioId,selection.ScenarioId.ToString());
+    }
+
+    [Test]
+    public void OutcomesAreTerminalAndDestructionPrecedesTheDeadline()
+    {
+        var match=new SkirmishMatchState{Phase=SkirmishPhase.Playing,ElapsedSeconds=899.5f};
+        Assert.IsTrue(SkirmishOutcomeRules.Evaluate(ref match,true,false,1,true));
+        Assert.AreEqual(SkirmishOutcome.Victory,match.Outcome);
+        Assert.IsFalse(SkirmishOutcomeRules.Evaluate(ref match,false,true,20,true));
+        Assert.AreEqual(SkirmishOutcome.Victory,match.Outcome);
+        Assert.AreEqual(900,match.ElapsedSeconds);
+    }
+    [Test]
+    public void PauseFreezesClockAndBothDeadDraws()
+    {
+        var match=new SkirmishMatchState{Phase=SkirmishPhase.Playing,ElapsedSeconds=8};
+        Assert.IsFalse(SkirmishOutcomeRules.Evaluate(ref match,true,true,30,false));
+        Assert.AreEqual(8,match.ElapsedSeconds);
+        Assert.IsTrue(SkirmishOutcomeRules.Evaluate(ref match,false,false,0,true));
+        Assert.AreEqual(SkirmishEndReason.BothBasesDestroyed,match.Reason);
+        Assert.AreEqual(SkirmishOutcome.Draw,match.Outcome);
+    }
+    [Test]
+    public void TimeoutAndSurrenderHaveExplicitReasons()
+    {
+        var match=new SkirmishMatchState{Phase=SkirmishPhase.Playing,ElapsedSeconds=899};
+        Assert.IsTrue(SkirmishOutcomeRules.Evaluate(ref match,true,true,1,true));
+        Assert.AreEqual(SkirmishEndReason.TimeLimit,match.Reason);
+        match=new SkirmishMatchState{Phase=SkirmishPhase.Playing};
+        Assert.IsTrue(SkirmishOutcomeRules.Evaluate(ref match,true,true,0,false,true));
+        Assert.AreEqual(SkirmishOutcome.Defeat,match.Outcome);
+        Assert.AreEqual(SkirmishEndReason.Surrender,match.Reason);
+    }
+}

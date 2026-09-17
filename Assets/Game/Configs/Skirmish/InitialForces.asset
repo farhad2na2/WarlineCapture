@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a101000000000000000000000000000c, type: 3}
+  m_Name: InitialForces
+  m_EditorClassIdentifier: 
+  blockerPrefab: {fileID: 1237425064649014, guid: f6662b2cec4426449a750eba281d5fb0, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  factions:
+  - factionId: 1
+    spawnCell: {x: 900, y: 490}
+    units:
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 4
+      spawnOffset: {x: 0, y: 0}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 4
+      spawnOffset: {x: 12, y: 0}
+    - prefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+      count: 1
+      spawnOffset: {x: 5, y: 10}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: 10, y: 30}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 2
+      spawnOffset: {x: 0, y: 30}
+    buildings:
+    - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+      originOffset: {x: -13, y: -30}
+    - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+      originOffset: {x: -3, y: 50}
+    - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
+      originOffset: {x: -20, y: 83}
+    - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
+      originOffset: {x: 0, y: 100}
+    - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
+      originOffset: {x: 25, y: 80}
+  - factionId: 2
+    spawnCell: {x: 1190, y: 530}
+    units:
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 4
+      spawnOffset: {x: 0, y: 0}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 4
+      spawnOffset: {x: 12, y: 0}
+    - prefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+      count: 1
+      spawnOffset: {x: 5, y: 10}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: 10, y: 30}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 2
+      spawnOffset: {x: 0, y: 30}
+    buildings:
+    - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+      originOffset: {x: -10, y: -30}
+    - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+      originOffset: {x: -10, y: 40}
+    - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
+      originOffset: {x: -10, y: 90}
+    - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
+      originOffset: {x: 70, y: 10}
+    - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
+      originOffset: {x: 5, y: 110}
+  blockerCount: 0
+  spawnRadiusCells: 6
+  respawnDelaySeconds: 1
+  randomSeed: 1
+  initialDollars: 0
+  initialMaterials: 220
+  materialsCapacity: 600
+  initialAiMaterials: 220
+  aiMaterialsCapacity: 600
+  initialOil: 0
+  initialFuel: 160
+  createFactionBases: 0
+  baseWallPrefab: {fileID: 154980996532723225, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
+  baseGatePrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
+  baseCoreBuildingPrefab: {fileID: 1453209517915397753, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+  baseHalfWidthCells: 120
+  baseHalfHeightCells: 80
+  baseMinimumUnitsPerFaction: 18
+  enableBlockerChurn: 0
+  churnIntervalSeconds: 1
+  addRemovePerInterval: 50
+  sceneUnitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  sceneUnitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}

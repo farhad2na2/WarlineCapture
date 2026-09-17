@@ -1459,6 +1459,366 @@
           "value": "آموزش شروع شده. صبر کن گروه تفنگدار آماده بشه؛ لازم نیست چیزی بزنی. وقتی آماده شدن، مأموریت خودش ادامه پیدا می‌کنه."
         }
       ]
+    },
+    {
+      "key": "ui.skirmish.base_assault_map",
+      "source": "DESERT BASE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه کویری"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.base_assault",
+      "source": "BASE ASSAULT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حمله به پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.base_objective",
+      "source": "DESTROY THE ENEMY MAIN BASE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی دشمن رو نابود کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.seed",
+      "source": "AI SEED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بذر هوش مصنوعی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.seed_hint",
+      "source": "Same map. Seed changes AI choices.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نقشه همونه؛ بذر تصمیم‌های دشمن رو تغییر می‌ده."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.preset_summary",
+      "source": "1 opponent · Normal · 15-minute limit",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۱ حریف · عادی · حداکثر ۱۵ دقیقه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.objective_explanation",
+      "source": "Destroy the enemy's main Barracks and protect yours. If both survive when time runs out, the match is a draw.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخونهٔ اصلی دشمن رو نابود کن و از مال خودت محافظت کن. اگه تا آخر وقت هر دو سالم باشن، بازی مساوی می‌شه."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.starting_roster",
+      "source": "Each side starts with 2 rifle groups, 1 armored car and an automated supply base. Recruit more soldiers and build defenses.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر طرف با ۲ گروه تفنگدار، ۱ خودروی زرهی و پایگاه تدارکات خودکار شروع می‌کنه. سرباز بگیر و دفاع بساز."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.supply_explanation",
+      "source": "Spend Materials to build and recruit. Tankers deliver Oil for fabrication and refining. Only delivered Fuel is usable.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای ساخت و جذب نیرو مصالح خرج کن. تانکرها نفت رو به کارگاه و پالایشگاه می‌رسونن. فقط سوختی که تحویل شده قابل استفاده‌ست."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.prototype_scope",
+      "source": "Full map visibility · No campaign rewards",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دید کامل نقشه · بدون پاداش داستانی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.player_base",
+      "source": "YOUR BASE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه خودت"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.enemy_base",
+      "source": "ENEMY BASE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه دشمن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.time_remaining",
+      "source": "TIME LEFT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زمان باقی‌مونده"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.result.victory",
+      "source": "VICTORY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیروزی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.result.defeat",
+      "source": "DEFEAT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شکست"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.result.draw",
+      "source": "DRAW",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مساوی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.mainbasedestroyed",
+      "source": "A Main Base was destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یک پایگاه اصلی نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.bothbasesdestroyed",
+      "source": "Both Main Bases were destroyed together.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو پایگاه هم‌زمان نابود شدن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.timelimit",
+      "source": "Time is up. Both Main Bases survived.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "وقت تموم شد. هر دو پایگاه سالم موندن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.surrender",
+      "source": "You surrendered the match.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از نبرد انصراف دادی."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.statistics",
+      "source": "Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زمان {0} • تلفات خودی {1} / دشمن {2}\nساختمان‌های ازدست‌رفته {3} / نابودشده {4}"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.match_help",
+      "source": "Destroy the enemy Main Base. Tap a squad card, Move, then a destination. Use Attack on enemy targets. Tap either base in the objective bar to find it.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی دشمن رو نابود کن. کارت گروه رو بزن، بعد «حرکت» و مقصد رو انتخاب کن. برای هدف دشمن از «حمله» استفاده کن. برای دیدن هر پایگاه، دکمه‌ش رو توی نوار هدف بزن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.replay",
+      "source": "REPLAY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دوباره بازی کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.adjust_setup",
+      "source": "ADJUST SETUP",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تنظیم نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.main_menu",
+      "source": "MAIN MENU",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "منوی اصلی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.confirm",
+      "source": "CONFIRM",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تأیید"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.cancel",
+      "source": "CANCEL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "لغو"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.surrender",
+      "source": "SURRENDER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انصراف از نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.surrender_confirm",
+      "source": "Surrender this match? This records a defeat.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از این نبرد انصراف می‌دی؟ نتیجه‌ت شکست ثبت می‌شه."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.restart_confirm",
+      "source": "Restart this skirmish with the same setup?",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبرد رو با همین تنظیمات از اول شروع کنیم؟"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.population",
+      "source": "Infantry {0} / 24",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازها {0} از ۲۴"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.population_full",
+      "source": "Infantry limit reached (24, including queued soldiers).",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ظرفیت سربازها پره؛ سقف ۲۴ نفره و سربازهای توی صف هم حساب می‌شن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.squad",
+      "source": "SQUAD {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه {0}"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reserves",
+      "source": "RESERVES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی کمکی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.armor",
+      "source": "ARMORED CAR",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خودروی زرهی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.infantry",
+      "source": "Infantry",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام"
+        }
+      ]
     }
   ]
 }

@@ -154,6 +154,20 @@ namespace Game.UI.Shell.Ecs
                 selectedSlot = state.SelectedSlot;
             }
 
+            if(TrySkirmish(out _,out _,out _))
+            {
+                var counts=new int[5];var health=new int[5];var max=new int[5];
+                using var groups=entityManager.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth));
+                using var members=groups.ToEntityArray(Allocator.Temp);
+                foreach(var member in members){int slot=entityManager.GetComponentData<SkirmishSquadMember>(member).Slot;var hp=entityManager.GetComponentData<UnitHealth>(member);if(slot>=5||hp.Current<=0)continue;counts[slot]++;health[slot]+=hp.Current;max[slot]+=hp.Max;}
+                var cards=new UiMatchHudSquadTrayCardModel[5];
+                for(int i=0;i<5;i++)
+                {
+                    string label=i==4?GameText.Get("ui.skirmish.armor","ARMORED CAR"):i==3?GameText.Get("ui.skirmish.reserves","RESERVES"):GameText.Format("ui.skirmish.squad","SQUAD {0}",i+1);
+                    cards[i]=new UiMatchHudSquadTrayCardModel(true,label+" ("+counts[i]+")",health[i]+"/"+max[i],max[i]>0?(float)health[i]/max[i]:0);
+                }
+                squadTray=new UiMatchHudSquadTrayModel(selectedSlot,cards[0],cards[1],cards[2],cards[3],cards[4]);return true;
+            }
             UiMatchHudSquadTrayModel defaults = UiMatchHudSquadTrayModel.Default;
             squadTray = new UiMatchHudSquadTrayModel(
                 selectedSlot,

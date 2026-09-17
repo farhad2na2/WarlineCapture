@@ -117,6 +117,11 @@ namespace Game.UI.Runtime
 
         private void ShowRestart()
         {
+            if(UiShellRuntimeGateway.TryReadSkirmish(out _))
+            {
+                Object.FindAnyObjectByType<SkirmishMatchView>()?.Confirm(UiSkirmishAction.Restart);
+                return;
+            }
             SetActive(helpPanel, false);
             SetActive(restartConfirmation, true);
             SetText(restartStatusText, "RESTART THE CURRENT MISSION FROM THE BEGINNING?");
@@ -140,8 +145,27 @@ namespace Game.UI.Runtime
             UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
         }
 
+        private bool showingSkirmish;
+        private string campaignExitLabel;
         private void RefreshLiveText()
         {
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var skirmish))
+            {
+                if(!showingSkirmish && exitButton!=null)campaignExitLabel=exitButton.GetComponentInChildren<TMP_Text>()?.text;
+                showingSkirmish=true;
+                UiLocalizedText.Set(missionText,UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault","BASE ASSAULT"));
+                SetText(currentTimeText,skirmish.Clock);
+                SetText(objectiveText,skirmish.Objective);
+                if(exitButton!=null)UiLocalizedText.Set(exitButton.GetComponentInChildren<TMP_Text>(),UiShellRuntimeGateway.Localization.Get("ui.skirmish.surrender","SURRENDER"));
+                if(civilianRiskText!=null)civilianRiskText.transform.parent.gameObject.SetActive(false);
+                return;
+            }
+            if(showingSkirmish)
+            {
+                if(civilianRiskText!=null)civilianRiskText.transform.parent.gameObject.SetActive(true);
+                if(exitButton!=null)UiLocalizedText.Set(exitButton.GetComponentInChildren<TMP_Text>(),campaignExitLabel);
+                showingSkirmish=false;
+            }
             if (UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign) &&
                 campaign.IsValid && !string.IsNullOrWhiteSpace(campaign.SelectedMission.DisplayName))
             {

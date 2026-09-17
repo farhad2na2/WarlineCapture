@@ -9,6 +9,19 @@ namespace Game.Runtime
     {
         internal static void ApplyInitialResourceTotals(EntityManager em, InitialUnitsSpawnConfig config)
         {
+            // Streamed map authoring may publish an additional legacy seed after the
+            // mode config. It must neither overwrite this preset nor refill a live match.
+            using (var skirmish=em.CreateEntityQuery(typeof(SkirmishMatchState)))
+            {
+                if(skirmish.CalculateEntityCount()==1)
+                {
+                    if(skirmish.GetSingleton<SkirmishMatchState>().Phase>=SkirmishPhase.Playing)return;
+                    var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+                    var initial=preset.buildingPlacement.InitialUnitsConfig;
+                    config.InitialDollars=0;config.InitialMaterials=initial.InitialMaterials;config.MaterialsCapacity=initial.MaterialsCapacity;
+                    config.InitialAiMaterials=initial.InitialAiMaterials;config.AiMaterialsCapacity=initial.AiMaterialsCapacity;
+                }
+            }
             Entity playerEconomyEntity = Entity.Null;
             using NativeList<FactionMaterialsSeed> materialSeeds = new(Allocator.Temp);
             using (EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>()))

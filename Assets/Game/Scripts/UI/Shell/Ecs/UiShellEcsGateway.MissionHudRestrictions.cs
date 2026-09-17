@@ -10,6 +10,16 @@ namespace Game.UI.Shell.Ecs
         public bool TryReadMissionHudRestrictions(out UiMissionHudRestrictionsModel restrictions)
         {
             restrictions = UiMissionHudRestrictionsModel.Inactive;
+            if(TrySkirmish(out var skirmishEm,out _,out var skirmish))
+            {
+                int mask=0;
+                using var units=skirmishEm.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth));
+                using var members=units.ToEntityArray(Unity.Collections.Allocator.Temp);
+                foreach(var member in members)if(skirmishEm.GetComponentData<UnitHealth>(member).Current>0)mask|=1<<skirmishEm.GetComponentData<SkirmishSquadMember>(member).Slot;
+                restrictions=new UiMissionHudRestrictionsModel("skirmish.base_assault",false,false,false,true,true,
+                    skirmish.Phase!=SkirmishPhase.Playing,false,true,false,mask);
+                return true;
+            }
             if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
                 !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
                 !entityManager.HasComponent<CampaignMissionCatalogComponent>(root))

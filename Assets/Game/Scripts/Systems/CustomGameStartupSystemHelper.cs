@@ -689,7 +689,7 @@ namespace Game.Runtime
             UnitPrefabRegistryAuthoringConfig config,
             Entity startupEntity)
         {
-            Dictionary<string, Entity> lookup = new();
+            Dictionary<string, Entity> lookup = new(System.StringComparer.OrdinalIgnoreCase);
             AddExistingInitialSpawnPrefabsToLookup(em, initialUnitsConfig, startupEntity, lookup);
             if (config == null || config.UnitSpawnPrefabs == null || config.UnitSpawnPrefabs.Count == 0)
                 return lookup;
@@ -711,12 +711,15 @@ namespace Game.Runtime
                     continue;
 
                 DynamicBuffer<UnitPrefabRegistryEntry> entries = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-                int count = math.min(config.UnitSpawnPrefabs.Count, entries.Length);
+                int count = entries.Length;
                 for (int i = 0; i < count; i++)
                 {
-                    GameObject prefab = config.UnitSpawnPrefabs[i];
-                    string sourceKey = GetPrefabName(prefab);
                     Entity prefabEntity = entries[i].Prefab;
+                    // A scenario may filter/reorder its managed catalog. Baked registry
+                    // positions belong to the map's original catalog, not that scenario.
+                    string sourceKey = prefabEntity != Entity.Null && em.Exists(prefabEntity) && em.HasComponent<UnitSourcePrefabKey>(prefabEntity)
+                        ? em.GetComponentData<UnitSourcePrefabKey>(prefabEntity).Value.ToString()
+                        : i < config.UnitSpawnPrefabs.Count ? GetPrefabName(config.UnitSpawnPrefabs[i]) : string.Empty;
                     if (string.IsNullOrWhiteSpace(sourceKey) || prefabEntity == Entity.Null || !em.Exists(prefabEntity))
                         continue;
 

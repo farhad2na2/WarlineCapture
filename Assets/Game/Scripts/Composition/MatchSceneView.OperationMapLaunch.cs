@@ -33,6 +33,11 @@ namespace Game.Composition
                         out error);
 
                 EntityManager entityManager = world.EntityManager;
+                if (SkirmishLaunchProjection.TryGet(entityManager, out _, out _))
+                    return TryCreateFallback(
+                        SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
+                        SkirmishLaunchProjection.OperationMapId,
+                        out selection, out failureCode, out error);
                 using EntityQuery query = entityManager.CreateEntityQuery(
                     ComponentType.ReadOnly<CampaignMissionRootComponent>());
                 int rootCount = query.CalculateEntityCount();

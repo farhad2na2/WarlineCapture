@@ -1,6 +1,8 @@
 # Skirmish prototype acceptance matrix
 
-Status: **planned; no prototype acceptance cases have been run yet**. Implements the completion contract in [PLAN.md](PLAN.md). Baseline findings are in [BASELINE.md](BASELINE.md).
+Status: **implementation and internal validation in progress; acceptance is not complete**.
+
+Current evidence: [implementation report](../../AgentReports/SkirmishPrototype/README.md). Session/rule/persistence/population tests pass (9), and ARIA update stability passes in English and Farsi. Partial live evidence covers the setup/launch, starting roster, actual supply delivery, selection/movement, surrender, one replay and a normal-speed timeout. The earlier timeout run failed AI pressure/pacing review; it is not a gameplay acceptance pass. All matrix rows below require their complete evidence before sign-off. Implements the completion contract in [PLAN.md](PLAN.md). Baseline findings are in [BASELINE.md](BASELINE.md).
 
 ## Evidence rules
 

@@ -176,7 +176,7 @@ namespace Game.UI.Runtime
         private void ApplyHeaderText(in UiMatchHudHeaderModel header, bool resourceValuesApplied)
         {
             SetTextIfChanged(_materialsSlotValue, header.MaterialsText, ref _lastMaterialsText);
-            SetTextIfChanged(_civilianRiskSlotValue, header.CivilianRiskText, ref _lastCivilianRiskText);
+            SetTextIfChanged(_civilianRiskSlotValue, UiShellRuntimeGateway.TryReadSkirmish(out var skirmish)?skirmish.Infantry:header.CivilianRiskText, ref _lastCivilianRiskText);
 
             if (!resourceValuesApplied)
             {
@@ -276,7 +276,7 @@ namespace Game.UI.Runtime
             SetLabelIfChanged(_fuelSlotLabel, fuelLabel);
             SetLabelIfChanged(
                 _civilianRiskSlotLabel,
-                UiShellRuntimeGateway.Localization.Get("ui.hud.civilian_risk", "Civilian Risk"));
+                UiShellRuntimeGateway.TryReadSkirmish(out _) ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.infantry", "Infantry") : UiShellRuntimeGateway.Localization.Get("ui.hud.civilian_risk", "Civilian Risk"));
             _labelsApplied = true;
         }
 

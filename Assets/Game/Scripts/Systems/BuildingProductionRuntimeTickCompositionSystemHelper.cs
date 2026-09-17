@@ -148,6 +148,15 @@ namespace Game.Runtime
                 EntityManager entityManager = default;
                 bool hasEntityManager = context.TryGetEntityManager != null &&
                                         context.TryGetEntityManager(out entityManager);
+                if(hasEntityManager)
+                {
+                    using var skirmish=entityManager.CreateEntityQuery(typeof(Game.Components.SkirmishMatchState));
+                    if(!skirmish.IsEmptyIgnoreFilter)
+                    {
+                        var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+                        secondsPerDay=Mathf.Max(1f,preset.supplyDaySeconds);
+                    }
+                }
                 FactionResourceCompositionSystemHelper.ResourceProductionTickResult result;
                 if (hasEntityManager && context.RuntimeBuildingMap != null)
                 {

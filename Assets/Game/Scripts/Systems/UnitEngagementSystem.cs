@@ -170,7 +170,7 @@ namespace Game.Runtime
         }
 
         [BurstCompile]
-        [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent), typeof(CampaignMissionCombatSuppressedTag))]
+        [WithNone(typeof(StaticGridBlocker), typeof(EngageTarget), typeof(BaseBreachOrder), typeof(GroundMissileInFlightComponent), typeof(GroundMissileLauncherComponent), typeof(CampaignMissionCombatSuppressedTag))]
         private partial struct AcquireTargetsJob : IJobEntity
         {
             [ReadOnly] public GridConfig Grid;

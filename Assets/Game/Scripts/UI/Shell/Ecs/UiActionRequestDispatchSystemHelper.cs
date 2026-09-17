@@ -35,6 +35,12 @@ namespace Game.UI.Shell.Ecs
             switch (request.Kind)
             {
                 case UiActionKind.MatchMenu:
+                    if (UiShellRuntimeGateway.TryReadSkirmish(out var skirmish) && !skirmish.Finished)
+                    {
+                        var skirmishView=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
+                        if(skirmishView!=null)skirmishView.Confirm(UiSkirmishAction.Surrender);
+                        break;
+                    }
                     if (CampaignMissionExitDispatchUtility.TryHandle(
                             entityManager, uiBoundary, request.PayloadId))
                         break;

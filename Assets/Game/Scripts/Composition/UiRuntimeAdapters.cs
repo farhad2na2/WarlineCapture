@@ -213,15 +213,36 @@ namespace Game.Composition
 
     internal sealed class QuickCustomGameConfigStore : IQuickCustomGameConfigStore
     {
-        private AISettingsSnapshot currentSnapshot = AISettingsSnapshot.Defaults;
+        private SaveService saveService;
+        private QuickGameSaveData saved;
+        private QuickGameConfig currentConfig;
 
-        public UiQuickCustomGameConfig Current => ToUiConfig(QuickGameConfig.FromAISettingsSnapshot(currentSnapshot));
+        internal QuickCustomGameConfigStore(SaveService saveService = null)
+        {
+            this.saveService = saveService;
+        }
+
+        private void EnsureLoaded()
+        {
+            if (saved != null) return;
+            // The store is owned by a MonoBehaviour field initializer. Unity's
+            // persistentDataPath is only legal once the runtime asks for settings.
+            saveService ??= SaveService.CreateDefault();
+            saved = saveService.LoadQuickGame();
+            currentConfig = saved.configuration;
+        }
+
+        public UiQuickCustomGameConfig Current { get { EnsureLoaded(); return ToUiConfig(currentConfig); } }
         public UiQuickCustomGameConfig Defaults => ToUiConfig(QuickGameConfig.Defaults);
-        internal AISettingsSnapshot CurrentSnapshot => currentSnapshot;
+        internal AISettingsSnapshot CurrentSnapshot { get { EnsureLoaded(); return currentConfig.ToAISettingsSnapshot(); } }
+        internal QuickGameConfig CurrentConfig { get { EnsureLoaded(); return currentConfig; } }
 
         public void Apply(UiQuickCustomGameConfig config)
         {
-            currentSnapshot = ToRuntimeConfig(config).ToAISettingsSnapshot();
+            EnsureLoaded();
+            currentConfig = ToRuntimeConfig(config).NormalizeForBaseAssault();
+            saved.configuration = currentConfig;
+            saveService.SaveQuickGame(saved);
         }
 
         private static UiQuickCustomGameConfig ToUiConfig(QuickGameConfig config)
@@ -277,9 +298,10 @@ namespace Game.Composition
 
     internal sealed class MatchLaunchCommand : IMatchLaunchCommand
     {
+        private readonly QuickCustomGameConfigStore configStore;
         public MatchLaunchCommand(QuickCustomGameConfigStore configStore)
         {
-            _ = configStore;
+            this.configStore = configStore;
         }
 
         public void LaunchMatch(Component source)
@@ -332,6 +354,9 @@ namespace Game.Composition
 
             if (!alreadyQueued)
             {
+                if (!SkirmishLaunchProjection.TryQueue(entityManager, configStore.CurrentConfig))
+                    return false;
+                routeRequests = entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
                 routeRequests.Add(new UiShellRouteRequestComponent
                 {
                     Intent = UiShellRouteIntent.EnterMatch,

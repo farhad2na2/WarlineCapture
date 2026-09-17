@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85730297a3598ee4d92dcb41787af9ae, type: 3}
+  m_Name: Enemy
+  m_EditorClassIdentifier: 
+  enabled: 1
+  role: 0
+  difficulty: 1
+  factionId: 2
+  autoControlsPlayerFaction: 0
+  startingMoney: 0
+  incomeMultiplier: 1
+  oilSellPrice: 150
+  fuelSellPrice: 220
+  buildIntervalSeconds: 35
+  unitProductionIntervalSeconds: 15
+  attackIntervalSeconds: 45
+  maxActiveAttackGroups: 2
+  defenseRadiusCells: 55
+  aggression: 0.6
+  preferredBuildingIds:
+  - Building_GuardTower
+  preferredUnitIds:
+  - Unit_Chr_Soldier_Male_02_Alt_04
+  preferredVehicleIds: []

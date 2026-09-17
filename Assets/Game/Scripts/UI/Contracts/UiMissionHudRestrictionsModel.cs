@@ -46,7 +46,7 @@ namespace Game.UI.Contracts
         public bool HideUnrelatedControls { get; }
         public bool ShowMissionCredits { get; }
         public bool UsesMaterialsOnlyConstruction => IsActive &&
-            (MissionId == "saga.ch01.m01.first_contact" || MissionId == "saga.ch01.m02.establish_base");
+            (MissionId == "skirmish.base_assault" || MissionId == "saga.ch01.m01.first_contact" || MissionId == "saga.ch01.m02.establish_base");
     }
 
     public interface IUiMissionHudRestrictionsGateway

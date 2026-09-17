@@ -45,15 +45,16 @@ namespace Game.Runtime
                 !vehicle,
                 null,
                 owned && movable && !em.HasComponent<UnitTransportPassenger>(entity),
-                owned && !em.HasComponent<CampaignMissionUnitRoleComponent>(entity),
+                owned && !em.HasComponent<CampaignMissionUnitRoleComponent>(entity) && !em.HasComponent<SkirmishMainBase>(entity),
                 boardAvailable);
         }
         private bool CanDestroySelectedUnits(EntityManager em)
         {
             using var chunks = GetSelectedTagQuery(em).ToArchetypeChunkArray(Unity.Collections.Allocator.Temp);
             var missionRole = em.GetComponentTypeHandle<CampaignMissionUnitRoleComponent>(true);
+            var mainBase = em.GetComponentTypeHandle<SkirmishMainBase>(true);
             foreach (var chunk in chunks)
-                if (chunk.Has(ref missionRole)) return false;
+                if (chunk.Has(ref missionRole) || chunk.Has(ref mainBase)) return false;
             return chunks.Length > 0;
         }
     }

@@ -341,6 +341,10 @@ namespace Game.Runtime
                             spawnPlan.FootprintSize,
                             spawnPlan.IsAirUnit,
                             out cell);
+                        if(foundSpawnCell && !spawnPlan.IsAirUnit)
+                            foundSpawnCell=SkirmishSpawnPlacement.EnsureTraversable(em,grid,gridContext.Walkable,
+                                gridContext.DynamicBlocked,gridContext.Occupied,ref gridContext.Reserved,
+                                unitSpawn.Prefab,spawnPlan.FootprintSize,ref cell);
                         if (!foundSpawnCell)
                         {
                             if (EnableInitialSpawnDiagnostics)

@@ -11,6 +11,14 @@ namespace Game.Runtime
     {
         public bool DeleteBuildingById(Context context, int buildingId)
         {
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var em))
+            {
+                using var query = em.CreateEntityQuery(typeof(SkirmishMainBase), typeof(RuntimeBuildingCombatInfo), typeof(UnitHealth));
+                using var entities = query.ToEntityArray(Allocator.Temp);
+                foreach (var entity in entities)
+                    if (em.GetComponentData<RuntimeBuildingCombatInfo>(entity).RuntimeBuildingId == buildingId &&
+                        em.GetComponentData<UnitHealth>(entity).Current > 0) return false;
+            }
             return context.CombatSystem != null &&
                 context.CombatSystem.DeleteBuilding(
                     context.CombatContext,

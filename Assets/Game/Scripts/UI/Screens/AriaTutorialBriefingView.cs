@@ -109,6 +109,8 @@ namespace Game.UI.Runtime
             _executeRecommendationRequested = null;
         }
 
+        private bool usesExpandedBriefingLayout;
+
         public void Apply(UiAssistantPanelModel model)
         {
             if (_tutorialStep != model.TutorialStep || _tutorialStepCount != model.TutorialStepCount ||
@@ -116,7 +118,8 @@ namespace Game.UI.Runtime
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
             _defenseTutorial = _tutorialStepCount==12 && UiShellRuntimeGateway.TryReadMissionDefense(out _);
-            ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,model.LargeTextEnabled);
+            usesExpandedBriefingLayout = _tutorialStepCount is 8 or 9 or 12 || UiShellRuntimeGateway.TryReadSkirmish(out _);
+            ApplyMissionLayout(usesExpandedBriefingLayout,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
             ApplyLanguagePresentation();
@@ -201,12 +204,12 @@ namespace Game.UI.Runtime
 
         public void ApplyAccessibility(bool largeTextEnabled, bool highContrastEnabled)
         {
-            ApplyMissionLayout(_tutorialStepCount is 8 or 9 or 12,largeTextEnabled);
+            ApplyMissionLayout(usesExpandedBriefingLayout,largeTextEnabled);
             float scale = largeTextEnabled ? 1.08f : 1f;
             titleText.fontSize = 29f * scale;
             bodyText.fontSize = 21f * scale;
             progressText.fontSize = 17f * scale;
-            if(_tutorialStepCount is 8 or 9 or 12)
+            if(usesExpandedBriefingLayout)
             {
                 bodyText.textWrappingMode = TextWrappingModes.Normal;
                 titleText.fontSizeMin=largeTextEnabled ? 19 : 17; titleText.fontSizeMax=largeTextEnabled ? 22 : 20;

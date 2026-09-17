@@ -44,7 +44,7 @@ namespace Game.Runtime
             {
                 FocusedUnit = focusedUnit,
                 HasFocusedUnit = 1,
-                MissionProtected = em.HasComponent<CampaignMissionUnitRoleComponent>(focusedUnit) ? (byte)1 : (byte)0,
+                MissionProtected = em.HasComponent<CampaignMissionUnitRoleComponent>(focusedUnit) || em.HasComponent<SkirmishMainBase>(focusedUnit) ? (byte)1 : (byte)0,
                 OwnedByPlayer = selectionUiReadModelLookup.IsOwnedByPlayer(em, focusedUnit) ? (byte)1 : (byte)0,
                 IsVehicle = selectionUiReadModelLookup.IsVehicleUnit(em, focusedUnit) ? (byte)1 : (byte)0,
                 CanAttack = selectionUiReadModelLookup.CanAttack(em, focusedUnit) ? (byte)1 : (byte)0,

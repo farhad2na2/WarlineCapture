@@ -82,21 +82,16 @@ namespace Game.Editor
             var rightTargets = new List<RectTransform>();
             var widthTargets = new List<RectTransform>();
             BuildHeader(composition, rightTargets, widthTargets, out _);
-            BuildPresetRail(composition);
             BuildOperationPreview(composition, widthTargets, out TMP_InputField seedInput, out TMP_Text mapName);
-            BuildRules(
-                composition,
-                rightTargets,
-                out UISegmentedControlView enemyCount,
-                out UISegmentedControlView difficulty,
-                out UISegmentedControlView startingCredits,
-                out UISegmentedControlView startingResources,
-                out UISliderRowView income,
-                out UISegmentedControlView aggression,
-                out UISegmentedControlView winCondition,
-                out UIToggleRowView fog,
-                out UIToggleRowView intel);
+            ConfigureBaseAssaultPreview(composition);
+            BuildBaseAssaultRules(composition, rightTargets);
             BuildFooter(composition, rightTargets, widthTargets, out Button reset, out Button randomize, out Button launch);
+            UiLocalizedText.Set(launch.GetComponentInChildren<TMP_Text>(), "DEPLOY");
+            foreach (string name in new[] { "CreditsChip", "CommandChip" })
+            {
+                var chip = Find(composition, name);
+                if (chip != null) { rightTargets.Remove(chip as RectTransform); UnityEngine.Object.DestroyImmediate(chip.gameObject); }
+            }
 
             MainMenuV3SectionLayoutView layout = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
             layout.Configure(
@@ -108,15 +103,7 @@ namespace Game.Editor
                 widthTargets.ToArray());
 
             SerializedObject serializedScreen = new(screen);
-            SetReference(serializedScreen, "enemyCountStepper", enemyCount);
-            SetReference(serializedScreen, "difficultySegmented", difficulty);
-            SetReference(serializedScreen, "startingMoneySegmented", startingCredits);
-            SetReference(serializedScreen, "incomeMultiplierSlider", income);
-            SetReference(serializedScreen, "aggressionSegmented", aggression);
-            SetReference(serializedScreen, "winConditionSegmented", winCondition);
-            SetReference(serializedScreen, "startingResourcesSegmented", startingResources);
-            SetReference(serializedScreen, "fogOfWarToggle", fog);
-            SetReference(serializedScreen, "intelRevealToggle", intel);
+            serializedScreen.FindProperty("baseAssaultPreset").boolValue = true;
             SetReference(serializedScreen, "seedInput", seedInput);
             SetReference(serializedScreen, "mapNameText", mapName);
             SetReference(serializedScreen, "resetButton", reset);
@@ -149,21 +136,10 @@ namespace Game.Editor
             if (Find(prefab.transform, "HeaderContent") != null)
                 throw new InvalidOperationException("SCN-13 must preserve the shell header instead of installing a HeaderContent section.");
             Transform composition = Require(prefab.transform, "SkirmishSetupComposition");
-            Transform presetRail = Require(composition, "PresetRail");
-            for (int i = 0; i < 5; i++)
-                Require(presetRail, $"Preset_{i}");
+            Require(composition, "BaseAssaultRules");
+            if (Find(composition, "PresetRail") != null || Find(composition, "OpposingForce") != null)
+                throw new InvalidOperationException("Only the supported Base Assault preset may be offered.");
             Require(composition, "OperationPreview/MapPreviewClip/MapPreview");
-            Require(composition, "OpposingForce/EnemyFactionStepper");
-            Require(composition, "OpposingForce/Difficulty");
-            Require(composition, "MatchEconomy/CompatibilityControls/StartingCredits");
-            Require(composition, "MatchEconomy/CompatibilityControls/StartingResources");
-            Require(composition, "MatchEconomy/CompatibilityControls/Income");
-            Require(composition, "MatchEconomy/CompatibilityControls/Aggression");
-            Require(composition, "MatchEconomy/CompatibilityControls/WinCondition");
-            Require(composition, "MatchEconomy/IntelReveal");
-            Toggle fog = Require(composition, "MatchEconomy/FogOfWar").GetComponentInChildren<Toggle>(true);
-            if (fog == null || fog.interactable)
-                throw new InvalidOperationException("SCN-13 Fog of War must stay visibly locked until its runtime exists.");
 
             RawImage map = Require(composition, "OperationPreview/MapPreviewClip/MapPreview").GetComponent<RawImage>();
             AspectRatioFitter fitter = map != null ? map.GetComponent<AspectRatioFitter>() : null;
@@ -173,9 +149,9 @@ namespace Game.Editor
             if (layout == null || !layout.ExpandToCanvasWidth || layout.ReferenceResolution != ReferenceResolution)
                 throw new InvalidOperationException("SCN-13 must expand cleanly across 16:9 and 20:9 canvases.");
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
-            if (gradients < 42)
+            if (gradients < 10)
                 throw new InvalidOperationException($"SCN-13 requires procedural V3 gradients; found {gradients}.");
-            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} presets=5");
+            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} presets=1");
         }
 
         private static void LoadAssets()
@@ -254,6 +230,41 @@ namespace Game.Editor
             TMP_Text valueText = CreateText("Value", chip, value, 35f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(valueText.rectTransform, 94f, 37f, width - 102f, 50f);
             return chip;
+        }
+
+        private static void ConfigureBaseAssaultPreview(RectTransform root)
+        {
+            var panel = (RectTransform)Require(root, "OperationPreview");
+            SetTopLeft(panel, 14f, 125f, 780f, 671f);
+            Require(panel, "Metrics").gameObject.SetActive(false);
+            var objective = Require(panel, "ObjectiveRow/Objective").GetComponent<TMP_Text>();
+            objective.text = "DESTROY THE ENEMY MAIN BASE";
+            objective.fontSize = 27f;
+            var seedLabel = Require(panel, "SeedMetric/Label").GetComponent<TMP_Text>();
+            seedLabel.text = "AI SEED";
+            var seedHelp = CreateText("SeedHelp", panel, "Same map. Seed changes AI choices.", 24f, mediumFont, TextAlignmentOptions.Center, TextMuted);
+            SetHorizontalStretch(seedHelp.rectTransform, 20f, 20f, 520f, 60f);
+        }
+
+        private static void BuildBaseAssaultRules(RectTransform root, ICollection<RectTransform> rightTargets)
+        {
+            var panel = CreateTopLeft("BaseAssaultRules", root, 810f, 125f, 848f, 671f);
+            CreateGradientPanel(panel, DarkTop, DarkBottom, Border, 3f);
+            rightTargets.Add(panel);
+            void Label(string name, string value, float top, float height, float size, Color color)
+            {
+                var text = CreateText(name, panel, value, size, mediumFont, TextAlignmentOptions.TopLeft, color);
+                SetHorizontalStretch(text.rectTransform, 30f, 30f, top, height);
+                text.textWrappingMode = TextWrappingModes.Normal;
+                text.overflowMode = TextOverflowModes.Overflow;
+                text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure("", value);
+            }
+            Label("Title", "BASE ASSAULT", 22f, 58f, 40f, Cyan);
+            Label("Opponent", "1 opponent · Normal · 15-minute limit", 94f, 70f, 28f, TextPrimary);
+            Label("Objective", "Destroy the enemy's main Barracks and protect yours. If both survive when time runs out, the match is a draw.", 178f, 128f, 29f, TextPrimary);
+            Label("Roster", "Each side starts with 2 rifle groups, 1 armored car and an automated supply base. Recruit more soldiers and build defenses.", 322f, 128f, 28f, TextPrimary);
+            Label("Economy", "Spend Materials to build and recruit. Tankers deliver Oil for fabrication and refining. Only delivered Fuel is usable.", 466f, 120f, 27f, TextMuted);
+            Label("Intel", "Full map visibility · No campaign rewards", 608f, 46f, 25f, TextMuted);
         }
 
         private static void BuildPresetRail(RectTransform root)

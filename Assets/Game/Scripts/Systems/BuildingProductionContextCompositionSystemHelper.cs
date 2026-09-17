@@ -323,6 +323,7 @@ namespace Game.Runtime
             if (!source.TryGetEntityManager(out EntityManager entityManager))
                 return false;
 
+            if(!SkirmishPopulationPolicy.CanQueue(entityManager,source.RuntimeBuildings,building,spawnUnitPrefab,productionIndex))return false;
             return source.ProductionSystem.TryQueuePlayerUnitFromBuilding(
                 CreateProductionQueueContext(source),
                 building,

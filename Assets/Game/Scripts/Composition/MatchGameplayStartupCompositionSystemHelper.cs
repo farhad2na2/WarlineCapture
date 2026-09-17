@@ -161,6 +161,7 @@ namespace Game.Composition
 
                 case GameplayStartStep.ResetStats:
                     SetProgress(0.10f, "Resetting match state");
+                    if (world != null && world.IsCreated) SkirmishLaunchProjection.PrepareMap(world.EntityManager);
                     pendingAiSettingsSnapshot = AISettingsSnapshot.Defaults;
                     if (world != null && world.IsCreated)
                     {
@@ -197,6 +198,7 @@ namespace Game.Composition
                         customStartup.InitializeFromLegacyConfigs(
                             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
                             buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
+                        SkirmishLaunchProjection.ApplySeed(world.EntityManager);
                     }
                     else
                     {

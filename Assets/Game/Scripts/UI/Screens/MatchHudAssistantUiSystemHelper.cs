@@ -52,6 +52,7 @@ namespace Game.UI.Runtime
 
         private void TickTutorialPresentation(float unscaledTime)
         {
+            if(UiShellRuntimeGateway.TryReadSkirmish(out _))return;
             bool cinematicLocked =
                 UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions) &&

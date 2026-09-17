@@ -122,9 +122,30 @@ namespace Game.UI.Runtime
         }
 
         private int lastMissionSquadMask=-1;
+        private bool skirmishPortraitsApplied;
+        private Sprite[] campaignPortraits;
 
         internal void RefreshMissionRestrictions()
         {
+            if(UiShellRuntimeGateway.TryReadSkirmish(out _) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var skirmishCards))
+            {
+                if(!skirmishPortraitsApplied && cards.Length>=5)
+                {
+                    campaignPortraits=new Sprite[cards.Length];
+                    for(int i=0;i<cards.Length;i++)campaignPortraits[i]=cards[i].PortraitImage!=null?cards[i].PortraitImage.sprite:null;
+                    var rifle=cards[0].PortraitImage!=null?cards[0].PortraitImage.sprite:null;
+                    var armor=cards[1].PortraitImage!=null?cards[1].PortraitImage.sprite:null;
+                    for(int i=0;i<5;i++)if(cards[i].PortraitImage!=null)cards[i].PortraitImage.sprite=i==4?armor:rifle;
+                    skirmishPortraitsApplied=true;
+                }
+                for(int i=0;i<5;i++)if(TryGetCard(i,out var card))UiLocalizedText.Set(card.NameLabel,skirmishCards.GetCard(i).Title);
+            }
+            else if(skirmishPortraitsApplied)
+            {
+                for(int i=0;i<cards.Length && i<campaignPortraits.Length;i++)
+                    if(cards[i].PortraitImage!=null)cards[i].PortraitImage.sprite=campaignPortraits[i];
+                skirmishPortraitsApplied=false;
+            }
             int mask=-1;
             bool combatVehiclesDisabled = false;
             bool airDisabled = false;

@@ -105,9 +105,23 @@ namespace Game.Runtime
     [Serializable]
     public sealed class QuickGameSaveData
     {
+        public int schemaVersion;
+        public Game.Configs.QuickGameConfig configuration = Game.Configs.QuickGameConfig.Defaults;
+        public SkirmishResultSaveData lastResult;
         public string presetId = "balanced";
         public int enemyCount = 2;
         public string difficulty = "Normal";
         public bool fogOfWar = true;
+    }
+
+    [Serializable]
+    public sealed class SkirmishResultSaveData
+    {
+        public string sessionId;
+        public string outcome;
+        public string reason;
+        public float elapsedSeconds;
+        public int playerUnitsLost, enemyUnitsLost, playerBuildingsLost, enemyBuildingsLost;
+        public int seed;
     }
 }

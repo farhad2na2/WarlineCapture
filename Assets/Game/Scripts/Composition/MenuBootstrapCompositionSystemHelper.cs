@@ -646,7 +646,9 @@ namespace Game.Composition
             {
                 MatchAISettingsStartupProjection.Project(
                     entityManager,
-                    quickCustomGameConfigStore.CurrentSnapshot);
+                    SkirmishLaunchProjection.TryGet(entityManager, out Entity skirmishEntity, out _)
+                        ? entityManager.GetComponentObject<SkirmishLaunchSnapshot>(skirmishEntity).Configuration.ToAISettingsSnapshot()
+                        : Game.Configs.AISettingsSnapshot.Defaults);
                 Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
             }
             else

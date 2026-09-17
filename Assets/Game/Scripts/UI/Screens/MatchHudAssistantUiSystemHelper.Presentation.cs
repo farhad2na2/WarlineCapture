@@ -158,7 +158,15 @@ namespace Game.UI.Runtime
             _embeddedTutorialView.ApplyInteractionState(
                 _activeCommandMode,
                 _tutorialWorldTargetCompleted);
-            if (model.TutorialStep == 0 || !model.HasRecommendation)
+            if (UiShellRuntimeGateway.TryReadSkirmish(out var skirmish))
+            {
+                _embeddedTutorialView.SetPresentationVisible(!skirmish.Finished);
+                // Skirmish owns this persistent briefing; legacy tutorial scheduling
+                // and the old assistant popup must not replace it between updates.
+                if(IsPanelOpen)SetPanelOpen(false);
+                return;
+            }
+            else if (model.TutorialStep == 0 || !model.HasRecommendation)
                 _embeddedTutorialView.SetPresentationVisible(false);
             QueueTutorialPresentation(model, previousTutorialStep);
         }
@@ -364,6 +372,7 @@ namespace Game.UI.Runtime
         private void TogglePanel()
         {
             CaptureUiOnly();
+            if(UiShellRuntimeGateway.TryReadSkirmish(out _))return;
             if (_lastPanelModel.TutorialStep > 0)
             {
                 ShowEmbeddedTutorial();

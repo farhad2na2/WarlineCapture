@@ -47,7 +47,7 @@ namespace Game.Runtime
             {
                 All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(),
                     ComponentType.ReadOnly<UnitHealth>(), ComponentType.ReadOnly<AIControlledTag>() },
-                None = new[] { ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>() }
+                None = new[] { ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>(), ComponentType.ReadOnly<UnitResourceHauler>() }
             });
             _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
             _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());

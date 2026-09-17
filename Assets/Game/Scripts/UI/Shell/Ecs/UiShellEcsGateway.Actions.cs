@@ -83,6 +83,8 @@ namespace Game.UI.Shell.Ecs
 
         public static bool TryRestartCurrentMission()
         {
+            if (UiShellRuntimeGateway.TryReadSkirmish(out _))
+                return UiShellRuntimeGateway.TryRequestSkirmish(UiSkirmishAction.Restart);
             if (!TryGetMissionRoot(out EntityManager entityManager, out Entity root) ||
                 !entityManager.HasComponent<CampaignMissionRuntimeComponent>(root) ||
                 !entityManager.HasBuffer<CampaignMissionLaunchRequestElement>(root))

@@ -127,8 +127,10 @@ namespace Game.Runtime
 
         public bool PanCamera(Camera worldCamera, Vector2 screenDelta, float panSensitivity)
         {
-            if (worldCamera == null)
+            if (worldCamera == null || screenDelta.sqrMagnitude <= 0f)
                 return false;
+
+            CancelSmoothTransitionsForManualInput();
 
             Vector3 flatRight = worldCamera.transform.right;
             flatRight.y = 0f;
@@ -156,6 +158,8 @@ namespace Game.Runtime
         {
             if (worldCamera == null || Mathf.Approximately(zoomDirection, 0f))
                 return;
+
+            CancelSmoothTransitionsForManualInput();
 
             Vector3 zoomDelta = worldCamera.transform.forward * (zoomDirection * zoomSpeed * deltaTime);
             Vector3 currentPosition = worldCamera.transform.position;
@@ -185,6 +189,8 @@ namespace Game.Runtime
         {
             if (Mathf.Approximately(zoomDirection, 0f))
                 return;
+
+            CancelSmoothTransitionsForManualInput();
 
             FullscreenIsoTargetHeight = Mathf.Clamp(
                 FullscreenIsoTargetHeight - (zoomDirection * zoomSpeed * deltaTime),

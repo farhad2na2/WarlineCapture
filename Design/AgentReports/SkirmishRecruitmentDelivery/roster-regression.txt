@@ -1,0 +1,1 @@
+PASS restricted roster retains helicopter delivery without exposing helicopter recruitment

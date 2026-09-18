@@ -161,6 +161,28 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<UiResourceExchangeRecipeCardComponent> cards,
             DynamicBuffer<UiResourceExchangeQueueRowComponent> queueRows)
         {
+            // Physical inputs remain in storage until arrival but are already reserved.
+            // Show spendable stock, and reserve output capacity in the form as validation does.
+            var availablePhysical = physicalResources;
+            var availableMaterials = materials;
+            for (int i = 0; i < queue.Length; i++)
+            {
+                var item = queue[i];
+                if (item.FactionId != enabled.FactionId || item.OutputApplied != 0 ||
+                    item.State == ResourceExchangeQueueState.Completed || item.State == ResourceExchangeQueueState.Cancelled) continue;
+                int reserved = math.max(0, item.ReservedInputAmount);
+                if (item.InputResource == ResourceExchangeResourceKind.Oil) {
+                    availablePhysical.StoredOilBarrels -= reserved;
+                    availablePhysical.OilStorageCapacity -= reserved;
+                }
+                if (item.InputResource == ResourceExchangeResourceKind.Fuel) {
+                    availablePhysical.StoredFuelBarrels -= reserved;
+                    availablePhysical.FuelStorageCapacity -= reserved;
+                }
+                if (item.OutputResource == ResourceExchangeResourceKind.Oil) availablePhysical.OilStorageCapacity -= item.OutputAmount;
+                if (item.OutputResource == ResourceExchangeResourceKind.Fuel) availablePhysical.FuelStorageCapacity -= item.OutputAmount;
+                if (item.OutputResource == ResourceExchangeResourceKind.Materials) availableMaterials.Capacity -= item.OutputAmount;
+            }
             uiState.ExchangeEnabled = enabled.Enabled;
             uiState.ExportRecipeCount = CountRecipes(recipes, ResourceExchangeRouteType.Export);
             uiState.ImportRecipeCount = CountRecipes(recipes, ResourceExchangeRouteType.Import);
@@ -172,10 +194,10 @@ namespace Game.UI.Shell.Ecs
                 $"{summary.ActiveCount}/{math.max(0, enabled.MaxQueueItems)}");
             uiState.MaterialsText = Text.ToFixed32(materials.Current.ToString(CultureInfo.InvariantCulture));
             uiState.OilText = Text.ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
-                economy, materials, wallet, physicalResources,
+                economy, materials, wallet, availablePhysical,
                 ResourceExchangeResourceKind.Oil).ToString(CultureInfo.InvariantCulture));
             uiState.FuelText = Text.ToFixed32(ResourceExchangeResourceUtilitySystemHelper.GetAmount(
-                economy, materials, wallet, physicalResources,
+                economy, materials, wallet, availablePhysical,
                 ResourceExchangeResourceKind.Fuel).ToString(CultureInfo.InvariantCulture));
             uiState.RushTicketsText = Text.ToFixed32(wallet.RushTickets.ToString(CultureInfo.InvariantCulture));
             uiState.RushAllEnabled = HasRushableQueueItem(wallet, recipes, queue) ? (byte)1 : (byte)0;
@@ -183,7 +205,7 @@ namespace Game.UI.Shell.Ecs
             uiState.Version = math.max(uiState.Version + 1u, summary.Version);
 
             WriteRecipeCards(
-                enabled, economy, materials, wallet, physicalResources,
+                enabled, economy, availableMaterials, wallet, availablePhysical,
                 recipes, queue, ref uiState, ref detail,
                 cards);
             WriteQueueRows(wallet, recipes, queue, queueRows);
@@ -236,7 +258,7 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < recipes.Length && visibleIndex < MaxRecipeCards; i++)
             {
                 ResourceExchangeRecipeComponent recipe = recipes[i];
-                if (recipe.RouteType != activeRoute)
+                if (uiState.ActiveTab != UiResourceExchangeTab.All && recipe.RouteType != activeRoute)
                     continue;
 
                 if (visibleIndex == uiState.SelectedRecipeSlot)
@@ -276,7 +298,7 @@ namespace Game.UI.Shell.Ecs
 
             uiState.SelectedRecipeSlot = math.clamp(uiState.SelectedRecipeSlot, 0, visibleIndex - 1);
             if (selectedRecipeIndex < 0)
-                selectedRecipeIndex = FindRecipeIndexByVisibleSlot(recipes, activeRoute, uiState.SelectedRecipeSlot);
+                selectedRecipeIndex = FindRecipeIndexByVisibleSlot(recipes, uiState.ActiveTab, uiState.SelectedRecipeSlot);
 
             if (selectedRecipeIndex >= 0)
             {
@@ -350,10 +372,13 @@ namespace Game.UI.Shell.Ecs
             DynamicBuffer<UiResourceExchangeQueueRowComponent> queueRows)
         {
             queueRows.Clear();
-            int count = math.min(queue.Length, MaxQueueRows);
-            for (int i = 0; i < count; i++)
+            // Active jobs must never disappear behind old completed history.
+            for (int pass = 0; pass < 2; pass++)
+            for (int i = 0; i < queue.Length && queueRows.Length < MaxQueueRows; i++)
             {
                 ResourceExchangeQueueComponent item = queue[i];
+                bool history = item.State == ResourceExchangeQueueState.Completed || item.State == ResourceExchangeQueueState.Cancelled;
+                if (history != (pass == 1)) continue;
                 TryFindRecipe(recipes, item.RecipeId, out ResourceExchangeRecipeComponent recipe);
                 float progress = item.DurationSeconds <= 0f
                     ? 1f
@@ -370,7 +395,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     Visible = 1,
                     RushEnabled = rushable ? (byte)1 : (byte)0,
-                    CancelEnabled = active && item.OutputApplied == 0 ? (byte)1 : (byte)0,
+                    CancelEnabled = active && item.OutputApplied == 0 && item.PresentationStarted == 0 ? (byte)1 : (byte)0,
                     CompletedVisible = item.State == ResourceExchangeQueueState.Completed ? (byte)1 : (byte)0,
                     QueueItemId = item.QueueItemId,
                     State = ToUiQueueState(item.State),
@@ -456,13 +481,13 @@ namespace Game.UI.Shell.Ecs
 
         private static int FindRecipeIndexByVisibleSlot(
             DynamicBuffer<ResourceExchangeRecipeComponent> recipes,
-            ResourceExchangeRouteType routeType,
+            UiResourceExchangeTab tab,
             int visibleSlot)
         {
             int visibleIndex = 0;
             for (int i = 0; i < recipes.Length; i++)
             {
-                if (recipes[i].RouteType != routeType)
+                if (tab != UiResourceExchangeTab.All && recipes[i].RouteType != ToRouteType(tab))
                     continue;
 
                 if (visibleIndex == visibleSlot)

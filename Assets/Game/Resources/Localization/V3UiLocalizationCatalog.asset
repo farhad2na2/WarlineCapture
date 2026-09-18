@@ -2327,6 +2327,79 @@ MonoBehaviour:
       value: 1 MATERIALS -> {0} RUSH
     - key: ui.exchange.mission_ending
       value: Mission ending
+    - key: ui.exchange.mobile.0
+      value: RESOURCE EXCHANGE
+    - key: ui.exchange.mobile.1
+      value: Choose what to give and what to receive
+    - key: ui.exchange.mobile.10
+      value: Convert Oil to Fuel
+    - key: ui.exchange.mobile.11
+      value: Recover Oil from Fuel
+    - key: ui.exchange.mobile.12
+      value: Recover Materials from Fuel
+    - key: ui.exchange.mobile.13
+      value: Confirm to start a timed logistics exchange.
+    - key: ui.exchange.mobile.14
+      value: Insufficient Materials
+    - key: ui.exchange.mobile.15
+      value: Insufficient Oil
+    - key: ui.exchange.mobile.16
+      value: Insufficient Fuel
+    - key: ui.exchange.mobile.17
+      value: Queue full
+    - key: ui.exchange.mobile.18
+      value: Storage full
+    - key: ui.exchange.mobile.19
+      value: Storage missing
+    - key: ui.exchange.mobile.2
+      value: CHOOSE AN EXCHANGE
+    - key: ui.exchange.mobile.20
+      value: COMPLETE
+    - key: ui.exchange.mobile.21
+      value: IN PROGRESS
+    - key: ui.exchange.mobile.22
+      value: COMPLETING
+    - key: ui.exchange.mobile.23
+      value: QUEUED
+    - key: ui.exchange.mobile.24
+      value: CANCELLED
+    - key: ui.exchange.mobile.25
+      value: '{0} MATERIALS'
+    - key: ui.exchange.mobile.26
+      value: '{0} OIL'
+    - key: ui.exchange.mobile.27
+      value: '{0} FUEL'
+    - key: ui.exchange.mobile.28
+      value: CLEAR DONE
+    - key: ui.exchange.mobile.3
+      value: YOU GIVE
+    - key: ui.exchange.mobile.4
+      value: YOU RECEIVE
+    - key: ui.exchange.mobile.5
+      value: START EXCHANGE
+    - key: ui.exchange.mobile.6
+      value: EXCHANGE PROGRESS
+    - key: ui.exchange.mobile.7
+      value: 'No exchanges yet. Choose a route above.
+
+        Exchanges keep running
+        when you close this screen.'
+    - key: ui.exchange.mobile.8
+      value: Convert Oil to Materials
+    - key: ui.exchange.mobile.9
+      value: Convert Materials to Oil
+    - key: ui.exchange.mobile.short.0
+      value: "Available resources \u2014 choose an exchange"
+    - key: ui.exchange.mobile.short.1
+      value: Oil to Materials
+    - key: ui.exchange.mobile.short.2
+      value: Materials to Oil
+    - key: ui.exchange.mobile.short.3
+      value: Oil to Fuel
+    - key: ui.exchange.mobile.short.4
+      value: Fuel to Oil
+    - key: ui.exchange.mobile.short.5
+      value: Fuel to Materials
     - key: ui.exchange.no_requirements
       value: No special requirements.
     - key: ui.exchange.oil_amount
@@ -2751,6 +2824,8 @@ MonoBehaviour:
       value: You surrendered the match.
     - key: ui.skirmish.reason.timelimit
       value: Time is up. Both Main Bases survived.
+    - key: ui.skirmish.recruitment_accepted
+      value: Recruitment queued. A helicopter will deliver 4 soldiers to your base.
     - key: ui.skirmish.replay
       value: REPLAY
     - key: ui.skirmish.reserves
@@ -8683,7 +8758,7 @@ MonoBehaviour:
     - key: ui.build.produce
       value: "\u062A\u0648\u0644\u06CC\u062F"
     - key: ui.build.recruit
-      value: "\u0622\u0645\u0648\u0632\u0634"
+      value: "\u0627\u0633\u062A\u062E\u062F\u0627\u0645"
     - key: ui.build.title
       value: "\u0633\u0627\u062E\u062A {0}"
     - key: ui.build.valid_footprint
@@ -8799,11 +8874,11 @@ MonoBehaviour:
     - key: ui.exchange.cancel_unavailable
       value: "\u0644\u063A\u0648 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
     - key: ui.exchange.confirm_instruction
-      value: "\u0628\u0631\u0627\u06CC \u0634\u0631\u0648\u0639 \u0645\u0628\u0627\u062F\u0644\u0647
-        \u0632\u0645\u0627\u0646\u200C\u062F\u0627\u0631 \u0644\u062C\u0633\u062A\u06CC\u06A9\u06CC
-        \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646."
+      value: "\u0628\u0631\u0627\u06CC \u0634\u0631\u0648\u0639\u060C \u062F\u06A9\u0645\u0647\u0654
+        \u0632\u06CC\u0631 \u0631\u0648 \u0628\u0632\u0646. \u0632\u0645\u0627\u0646
+        \u0644\u0627\u0632\u0645 \u0631\u0648\u0628\u0647\u200C\u0631\u0648\u0633\u062A."
     - key: ui.exchange.fuel_amount
-      value: "{0} \u0633\u0648\u062E\u062A"
+      value: "{0} \u0628\u0646\u0632\u06CC\u0646"
     - key: ui.exchange.fuel_to_materials_rate
       value: "\u06F1 \u0633\u0648\u062E\u062A \u2190 {0} \u0645\u0635\u0627\u0644\u062D"
     - key: ui.exchange.fuel_to_oil_rate
@@ -8811,11 +8886,20 @@ MonoBehaviour:
     - key: ui.exchange.fuel_to_rush_rate
       value: "\u06F1 \u0633\u0648\u062E\u062A \u2190 {0} \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.exchange.insufficient_fuel
-      value: "\u0633\u0648\u062E\u062A \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A"
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
     - key: ui.exchange.insufficient_materials
-      value: "\u0645\u0635\u0627\u0644\u062D \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A"
+      value: "\u0645\u0635\u0627\u0644\u062D \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
     - key: ui.exchange.insufficient_oil
-      value: "\u0646\u0641\u062A \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A"
+      value: "\u0646\u0641\u062A \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
     - key: ui.exchange.insufficient_rush
       value: "\u0628\u0644\u06CC\u062A \u062A\u0633\u0631\u06CC\u0639 \u06A9\u0627\u0641\u06CC
         \u0646\u06CC\u0633\u062A"
@@ -8830,6 +8914,101 @@ MonoBehaviour:
     - key: ui.exchange.mission_ending
       value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u062F\u0631 \u062D\u0627\u0644
         \u067E\u0627\u06CC\u0627\u0646 \u0627\u0633\u062A"
+    - key: ui.exchange.mobile.0
+      value: "\u0645\u0628\u0627\u062F\u0644\u0647\u0654 \u0645\u0646\u0627\u0628\u0639"
+    - key: ui.exchange.mobile.1
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0686\u06CC \u0645\u06CC\u200C\u062F\u06CC
+        \u0648 \u0686\u06CC \u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC"
+    - key: ui.exchange.mobile.10
+      value: "\u0646\u0641\u062A \u0628\u0647 \u0628\u0646\u0632\u06CC\u0646"
+    - key: ui.exchange.mobile.11
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0646\u0641\u062A"
+    - key: ui.exchange.mobile.12
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.exchange.mobile.13
+      value: "\u0628\u0631\u0627\u06CC \u0634\u0631\u0648\u0639\u060C \u062F\u06A9\u0645\u0647\u0654
+        \u0632\u06CC\u0631 \u0631\u0648 \u0628\u0632\u0646. \u0632\u0645\u0627\u0646
+        \u0644\u0627\u0632\u0645 \u0631\u0648\u0628\u0647\u200C\u0631\u0648\u0633\u062A."
+    - key: ui.exchange.mobile.14
+      value: "\u0645\u0635\u0627\u0644\u062D \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
+    - key: ui.exchange.mobile.15
+      value: "\u0646\u0641\u062A \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
+    - key: ui.exchange.mobile.16
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u06AF\u0632\u06CC\u0646\u0647\u0654 \u062F\u06CC\u06AF\u0647\u200C\u0627\u06CC
+        \u0628\u0632\u0646."
+    - key: ui.exchange.mobile.17
+      value: "\u0635\u0641 \u067E\u0631\u0647. \u0635\u0628\u0631 \u06A9\u0646 \u06CC\u06A9
+        \u0645\u0628\u0627\u062F\u0644\u0647 \u062A\u0645\u0648\u0645 \u0628\u0634\u0647."
+    - key: ui.exchange.mobile.18
+      value: "\u0627\u0646\u0628\u0627\u0631 \u062C\u0627 \u0646\u062F\u0627\u0631\u0647.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u0627\u0646\u0628\u0627\u0631 \u0631\u0648 \u062E\u0627\u0644\u06CC \u06A9\u0646."
+    - key: ui.exchange.mobile.19
+      value: "\u0628\u0631\u0627\u06CC \u0627\u06CC\u0646 \u0645\u0628\u0627\u062F\u0644\u0647
+        \u0628\u0647 \u0627\u0646\u0628\u0627\u0631 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u06CC."
+    - key: ui.exchange.mobile.2
+      value: "\u0646\u0648\u0639 \u0645\u0628\u0627\u062F\u0644\u0647 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: ui.exchange.mobile.20
+      value: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F\u061B \u0645\u0646\u0627\u0628\u0639
+        \u0627\u0636\u0627\u0641\u0647 \u0634\u062F\u0646"
+    - key: ui.exchange.mobile.21
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0645\u0628\u0627\u062F\u0644\u0647"
+    - key: ui.exchange.mobile.22
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u062A\u062D\u0648\u06CC\u0644"
+    - key: ui.exchange.mobile.23
+      value: "\u062F\u0631 \u0635\u0641"
+    - key: ui.exchange.mobile.24
+      value: "\u0644\u063A\u0648 \u0634\u062F"
+    - key: ui.exchange.mobile.25
+      value: "{0} \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.exchange.mobile.26
+      value: "{0} \u0646\u0641\u062A"
+    - key: ui.exchange.mobile.27
+      value: "{0} \u0628\u0646\u0632\u06CC\u0646"
+    - key: ui.exchange.mobile.28
+      value: "\u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646 \u062A\u0645\u0627\u0645\u200C\u0634\u062F\u0647\u200C\u0647\u0627"
+    - key: ui.exchange.mobile.3
+      value: "\u0645\u06CC\u200C\u062F\u06CC"
+    - key: ui.exchange.mobile.4
+      value: "\u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC"
+    - key: ui.exchange.mobile.5
+      value: "\u0634\u0631\u0648\u0639 \u0645\u0628\u0627\u062F\u0644\u0647"
+    - key: ui.exchange.mobile.6
+      value: "\u0631\u0648\u0646\u062F \u0645\u0628\u0627\u062F\u0644\u0647"
+    - key: ui.exchange.mobile.7
+      value: "\u0647\u0646\u0648\u0632 \u0645\u0628\u0627\u062F\u0644\u0647\u200C\u0627\u06CC
+        \u0634\u0631\u0648\u0639 \u0646\u0634\u062F\u0647. \u06CC\u06A9 \u06AF\u0632\u06CC\u0646\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646.\n\u0627\u06AF\u0647 \u0627\u06CC\u0646
+        \u0635\u0641\u062D\u0647 \u0631\u0648 \u0628\u0628\u0646\u062F\u06CC\u060C
+        \u0645\u0628\u0627\u062F\u0644\u0647 \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: ui.exchange.mobile.8
+      value: "\u0646\u0641\u062A \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.exchange.mobile.9
+      value: "\u0645\u0635\u0627\u0644\u062D \u0628\u0647 \u0646\u0641\u062A"
+    - key: ui.exchange.mobile.short.0
+      value: "\u0645\u0646\u0627\u0628\u0639 \u0642\u0627\u0628\u0644\u200C\u0627\u0633\u062A\u0641\u0627\u062F\u0647\u061B
+        \u06CC\u06A9 \u0645\u0628\u0627\u062F\u0644\u0647 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646"
+    - key: ui.exchange.mobile.short.1
+      value: "\u0646\u0641\u062A \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.exchange.mobile.short.2
+      value: "\u0645\u0635\u0627\u0644\u062D \u0628\u0647 \u0646\u0641\u062A"
+    - key: ui.exchange.mobile.short.3
+      value: "\u0646\u0641\u062A \u0628\u0647 \u0628\u0646\u0632\u06CC\u0646"
+    - key: ui.exchange.mobile.short.4
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0646\u0641\u062A"
+    - key: ui.exchange.mobile.short.5
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.exchange.no_requirements
       value: "\u0634\u0631\u0627\u06CC\u0637 \u0648\u06CC\u0698\u0647\u200C\u0627\u06CC
         \u0644\u0627\u0632\u0645 \u0646\u06CC\u0633\u062A."
@@ -8842,7 +9021,8 @@ MonoBehaviour:
     - key: ui.exchange.oil_to_rush_rate
       value: "\u06F1 \u0646\u0641\u062A \u2190 {0} \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.exchange.queue_full
-      value: "\u0635\u0641 \u067E\u0631 \u0627\u0633\u062A"
+      value: "\u0635\u0641 \u067E\u0631\u0647. \u0635\u0628\u0631 \u06A9\u0646 \u06CC\u06A9
+        \u0645\u0628\u0627\u062F\u0644\u0647 \u062A\u0645\u0648\u0645 \u0628\u0634\u0647."
     - key: ui.exchange.route_locked
       value: "\u0645\u0633\u06CC\u0631 \u0642\u0641\u0644 \u0627\u0633\u062A"
     - key: ui.exchange.rush_amount
@@ -8857,11 +9037,12 @@ MonoBehaviour:
       value: "\u062A\u0633\u0631\u06CC\u0639 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
         \u0646\u06CC\u0633\u062A"
     - key: ui.exchange.storage_full
-      value: "\u0630\u062E\u06CC\u0631\u0647\u200C\u06AF\u0627\u0647 \u067E\u0631
-        \u0627\u0633\u062A"
+      value: "\u0627\u0646\u0628\u0627\u0631 \u062C\u0627 \u0646\u062F\u0627\u0631\u0647.
+        \u0645\u0642\u062F\u0627\u0631 \u0631\u0648 \u06A9\u0645 \u06A9\u0646 \u06CC\u0627
+        \u0627\u0646\u0628\u0627\u0631 \u0631\u0648 \u062E\u0627\u0644\u06CC \u06A9\u0646."
     - key: ui.exchange.storage_missing
-      value: "\u0630\u062E\u06CC\u0631\u0647\u200C\u06AF\u0627\u0647 \u0645\u0648\u062C\u0648\u062F
-        \u0646\u06CC\u0633\u062A"
+      value: "\u0628\u0631\u0627\u06CC \u0627\u06CC\u0646 \u0645\u0628\u0627\u062F\u0644\u0647
+        \u0628\u0647 \u0627\u0646\u0628\u0627\u0631 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u06CC."
     - key: ui.exchange.storage_required
       value: "\u0638\u0631\u0641\u06CC\u062A \u0630\u062E\u06CC\u0631\u0647\u200C\u0633\u0627\u0632\u06CC
         \u0644\u0627\u0632\u0645 \u0627\u0633\u062A."
@@ -9439,6 +9620,11 @@ MonoBehaviour:
       value: "\u0648\u0642\u062A \u062A\u0645\u0648\u0645 \u0634\u062F. \u0647\u0631
         \u062F\u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0633\u0627\u0644\u0645
         \u0645\u0648\u0646\u062F\u0646."
+    - key: ui.skirmish.recruitment_accepted
+      value: "\u062F\u0631\u062E\u0648\u0627\u0633\u062A \u0627\u0633\u062A\u062E\u062F\u0627\u0645
+        \u062B\u0628\u062A \u0634\u062F. \u0628\u0627\u0644\u06AF\u0631\u062F \u06F4
+        \u0633\u0631\u0628\u0627\u0632 \u0631\u0648 \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647\u062A
+        \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647."
     - key: ui.skirmish.replay
       value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0627\u0632\u06CC \u06A9\u0646"
     - key: ui.skirmish.reserves
@@ -10013,8 +10199,7 @@ MonoBehaviour:
       value: "\u0647\u0645\u0647 \u0645\u0646\u0627\u0637\u0642 \u062F\u0634\u0645\u0646
         \u0631\u0648 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u06A9\u0646"
     - key: ui.v3.clear_done.fc315cf6ac
-      value: "\u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0627\u0646\u062C\u0627\u0645
-        \u0634\u062F"
+      value: "\u067E\u0627\u06A9 \u06A9\u0631\u062F\u0646 \u062A\u0645\u0627\u0645\u200C\u0634\u062F\u0647\u200C\u0647\u0627"
     - key: ui.v3.close.f13a1ed0cf
       value: "\u0628\u0633\u062A\u0646"
     - key: ui.v3.col_alex_morgan.b76a455bf3
@@ -10085,7 +10270,8 @@ MonoBehaviour:
     - key: ui.v3.commands.92e37c53d8
       value: "\u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627"
     - key: ui.v3.complete.894981ff02
-      value: "\u062A\u06A9\u0645\u06CC\u0644\u200C\u0634\u062F\u0647"
+      value: "\u0627\u0646\u062C\u0627\u0645 \u0634\u062F\u061B \u0645\u0646\u0627\u0628\u0639
+        \u0627\u0636\u0627\u0641\u0647 \u0634\u062F\u0646"
     - key: ui.v3.complete_4_goals.8609c6e0fd
       value: "\u06F4 \u0647\u062F\u0641 \u0631\u0648 \u062A\u06A9\u0645\u06CC\u0644
         \u06A9\u0646"
@@ -10550,9 +10736,9 @@ MonoBehaviour:
     - key: ui.v3.fuel_to_materials.7b3d9a3858
       value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.v3.fuel_to_materials.de1ce4759a
-      value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.v3.fuel_to_oil.381cf522b7
-      value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0646\u0641\u062A"
+      value: "\u0628\u0646\u0632\u06CC\u0646 \u0628\u0647 \u0646\u0641\u062A"
     - key: ui.v3.fuel_to_oil.746dcb49e9
       value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0646\u0641\u062A"
     - key: ui.v3.full.cb6839cad0
@@ -10698,7 +10884,7 @@ MonoBehaviour:
         \u0632\u0631\u0647\u06CC \u0631\u0648 \u0627\u0641\u0632\u0627\u06CC\u0634
         \u0645\u06CC\u200C\u062F\u0647."
     - key: ui.v3.in_progress.6a506b74c4
-      value: "\u062F\u0631 \u062D\u0627\u0644 \u0627\u0646\u062C\u0627\u0645"
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0645\u0628\u0627\u062F\u0644\u0647"
     - key: ui.v3.includes.b8c21ee267
       value: "\u0634\u0627\u0645\u0644:"
     - key: ui.v3.includes_fixed_district_marker_s.5d6f7895b7

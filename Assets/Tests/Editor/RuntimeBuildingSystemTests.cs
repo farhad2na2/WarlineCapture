@@ -4,12 +4,65 @@ using Game.Runtime;
 using System;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Collections;
+using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
 
 public sealed class RuntimeBuildingSystemTests
 {
+    [Test]
+    public void BuildingTapIsHandledWhileUnrelatedPathfindingIsPending()
+    {
+        var selection = new BuildingSelectionClickUtilitySystemHelper();
+        Vector2 tap = new(250, 350);
+        bool selected = false;
+        var context = selection.CreateContext(
+            () => true,
+            (out GridConfig grid) => { grid = default; return true; },
+            (Vector2 position, GridConfig grid, out Vector2Int cell) =>
+            { cell = new Vector2Int(4, 5); return true; },
+            (position, cell) =>
+            {
+                Assert.AreEqual(tap, position);
+                Assert.AreEqual(new Vector2Int(4, 5), cell);
+                selected = true;
+                return true;
+            });
+
+        Assert.IsTrue(selection.HandleBuildingSelectionClick(context, tap));
+        Assert.IsTrue(selected, "Unit pathfinding must never discard a building tap.");
+    }
+
+    [Test]
+    public void SelectionGridReadDoesNotAcquireRoadBufferOwnedByAJob()
+    {
+        using var world = new World("BuildingSelectionPendingPath");
+        EntityManager em = world.EntityManager;
+        Entity entity = em.CreateEntity(typeof(GridConfig), typeof(GridRoad), typeof(DynamicBlockerComponent));
+        em.SetComponentData(entity, new GridConfig { Width = 16, Height = 16 });
+        var roads = em.GetBuffer<GridRoad>(entity);
+        roads.ResizeUninitialized(256);
+        // Model the independent path job that can still own the road buffer at a tap.
+        var job = new SelectionRoadReaderJob { Roads = roads.AsNativeArray() }.Schedule();
+        try
+        {
+            var data = new BuildingGameplayGridDataCompositionSystemHelper();
+            var queries = new BuildingGameplayEcsQueryCompositionSystemHelper();
+            Assert.IsTrue(data.TryGetGridForSelection(queries,
+                (out EntityManager manager) => { manager = em; return true; }, out GridConfig grid));
+            Assert.AreEqual(16, grid.Width);
+        }
+        finally { job.Complete(); }
+    }
+
+    private struct SelectionRoadReaderJob : IJob
+    {
+        [ReadOnly] public NativeArray<GridRoad> Roads;
+        public void Execute() { for (int i = 0; i < Roads.Length; i++) { _ = Roads[i]; } }
+    }
+
     [MenuItem("Tools/Validation/Static Reuse Owned Renderer Fallback Focused")]
     public static void RunOwnedRendererFallbackValidation()
     {

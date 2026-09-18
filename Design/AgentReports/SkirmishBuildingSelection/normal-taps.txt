@@ -1,0 +1,15 @@
+before pending=False
+selected=True label=Barracks
+building=0
+before pending=False
+selected=True label=Field Fabrication Depot
+building=1
+before pending=False
+selected=True label=Oil Pump
+building=2
+before pending=False
+selected=True label=Oil Refinery
+building=3
+before pending=True
+selected=True label=Fuel Bladder
+building=4

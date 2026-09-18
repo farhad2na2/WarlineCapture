@@ -1,0 +1,5 @@
+initialSoldiers=8
+drag starts during delivery phase=1 focus=True position=(813.90, 32.07, 579.03)
+drag released focus=False position=(801.94, 32.06, 580.97) soldiers=8
+PASS no pullback after release drift=0
+PASS delivery completed after manual interruption soldiers=12

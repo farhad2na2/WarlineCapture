@@ -21,7 +21,19 @@ namespace Game.Runtime
             TryGetEntityManagerDelegate tryGetEntityManager,
             out GridConfig grid)
         {
-            return TryGetGridData(ecsQuerySystem, tryGetEntityManager, out _, out grid, out _, out _);
+            grid = default;
+            if (!tryGetEntityManager(out EntityManager em))
+                return false;
+
+            ecsQuerySystem.EnsureEntityQueries(em);
+            EntityQuery query = ecsQuerySystem.GridDataQuery;
+            if (query.IsEmptyIgnoreFilter)
+                return false;
+
+            // Selection only projects the pointer into the grid. Do not acquire
+            // writable road buffers while pathfinding jobs may be reading them.
+            grid = em.GetComponentData<GridConfig>(query.GetSingletonEntity());
+            return true;
         }
 
         internal bool TryGetGridData(

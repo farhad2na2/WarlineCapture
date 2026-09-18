@@ -1,6 +1,6 @@
 # Operations child-page navigation — 2026-09-18
 
-Visible cyan-bordered, localized Back controls now occupy the top-left header of District Details, Command Feed, Armory, Raid confirmation, and End-of-Day Report. Armory retains its existing footer Back as well.
+Visible cyan-bordered, localized Back controls now occupy the top-left header of District Details, Command Feed, Armory, Raid confirmation, and End-of-Day Report. Armory uses only the header Back; the duplicate footer Back was removed after review.
 
 Page navigation pops shell history, preserving the actual parent when reached from Operations or another menu. Raid Back cancels without confirming or queueing a raid. Report Back uses the return-to-Operations callback, not Save & Continue. Builder source and generated prefabs are updated together; `ui.navigation.back` is in the localization configuration and generated catalog.
 
@@ -13,6 +13,10 @@ Page navigation pops shell history, preserving the actual parent when reached fr
 - QA used an isolated save in the authorized normal Unity Editor. No battle or Android-device testing was needed for this navigation change.
 
 The first nested Farsi probe selected an existing unbound scene placeholder with zero action buttons instead of the visible prefab instance. The retry scopes selection to the bound page; `deep.txt` preserves that probe failure and `deep-fa.txt` records the retry result.
+
+## Follow-up: duplicate Armory Back
+
+Removed the old footer Back from the builder and regenerated Armory. The existing navigation check now requires the header Back and rejects the duplicate footer Back; it passed in the connected Editor. Screenshots below predate this follow-up.
 
 ## Screenshots
 

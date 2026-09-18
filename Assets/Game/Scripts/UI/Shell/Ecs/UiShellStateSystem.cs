@@ -536,7 +536,7 @@ namespace Game.UI.Shell.Ecs
         {
             return new UiResourceExchangeStateComponent
             {
-                ActiveTab = UiResourceExchangeTab.Export,
+                ActiveTab = UiResourceExchangeTab.All,
                 SelectedRecipeSlot = 0,
                 QueueCapacityText = new FixedString32Bytes("0/0"),
                 MaterialsText = new FixedString32Bytes("0"),

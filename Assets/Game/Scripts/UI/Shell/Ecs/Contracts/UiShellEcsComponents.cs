@@ -230,7 +230,8 @@ namespace Game.UI.Shell.Contracts.Ecs
     public enum UiResourceExchangeTab : byte
     {
         Export = 0,
-        Import = 1
+        Import = 1,
+        All = 2
     }
 
     public enum UiResourceExchangeQueueState : byte

@@ -128,7 +128,7 @@ namespace Game.UI.Runtime
             string fuel,
             string rushTickets)
         {
-            SetText(titleText, "RESOURCE LOGISTICS EXCHANGE");
+            SetText(titleText, "RESOURCE EXCHANGE");
             SetText(queueCapacityText, queueCapacity);
             SetText(materialsText, materials);
             SetText(oilText, oil);
@@ -169,10 +169,12 @@ namespace Game.UI.Runtime
             SetText(detailRequirementsText, requirements);
             SetText(detailInstructionText, instruction);
             SetText(instructionText, instruction);
-            SetText(confirmButtonText, "CONVERT");
+            SetText(confirmButtonText, "START EXCHANGE");
             SetActive(detailWarningImage, warningVisible);
             if (confirmButton != null)
                 confirmButton.interactable = confirmEnabled;
+            if (footerConfirmButton != null)
+                footerConfirmButton.interactable = confirmEnabled;
         }
 
         public void ApplyModel(UiResourceExchangeModel model)
@@ -203,6 +205,8 @@ namespace Game.UI.Runtime
                 ResolveRecipeThumbnail(model.SelectedRecipeSlot));
             ApplyQueueRows(model);
             ApplyQueueControls(model.RushAllEnabled, model.ClearCompletedEnabled);
+            var empty = queueContentRoot != null ? queueContentRoot.parent.Find("EmptyQueue") : null;
+            if (empty != null) empty.gameObject.SetActive(model.QueueRowCount == 0);
         }
 
         public void ApplyRecipeCards(UiResourceExchangeModel model)
@@ -211,16 +215,14 @@ namespace Game.UI.Runtime
             if (cards == null)
                 return;
 
+            if (recipeContentRoot != null) recipeContentRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, model.RecipeCardCount * 108f);
             for (int i = 0; i < cards.Length; i++)
             {
                 ResourceExchangeRecipeCardView cardView = cards[i];
                 if (cardView == null)
                     continue;
 
-                // POP-12 V3 deliberately exposes four distinct exchange types. The
-                // additional serialized slots remain available to the typed runtime
-                // contract, but never spill below the target-locked card rail.
-                bool visible = i < Mathf.Min(model.RecipeCardCount, 4);
+                bool visible = i < model.RecipeCardCount;
                 cardView.gameObject.SetActive(visible);
                 if (!visible)
                     continue;
@@ -249,16 +251,14 @@ namespace Game.UI.Runtime
             if (rows == null)
                 return;
 
+            if (queueContentRoot != null) queueContentRoot.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, model.QueueRowCount * 140f);
             for (int i = 0; i < rows.Length; i++)
             {
                 ResourceExchangeQueueItemView rowView = rows[i];
                 if (rowView == null)
                     continue;
 
-                // The target lock is a three-slot queue. Keep the fourth backing slot
-                // serialized for save/runtime compatibility without rendering a second
-                // queue beyond the V3 capacity panel.
-                bool visible = i < Mathf.Min(model.QueueRowCount, 3);
+                bool visible = i < model.QueueRowCount;
                 rowView.gameObject.SetActive(visible);
                 if (!visible)
                     continue;
@@ -286,7 +286,10 @@ namespace Game.UI.Runtime
             if (rushAllButton != null)
                 rushAllButton.interactable = rushAllEnabled;
             if (clearCompletedButton != null)
+            {
                 clearCompletedButton.interactable = clearCompletedEnabled;
+                clearCompletedButton.gameObject.SetActive(clearCompletedEnabled);
+            }
         }
 
 
@@ -328,7 +331,7 @@ namespace Game.UI.Runtime
         private static void SetText(TMP_Text target, string value)
         {
             if (target != null)
-                target.text = value ?? string.Empty;
+                UiLocalizedText.Set(target, (value ?? string.Empty).Replace("Convert ", "").Replace("Recover Oil from Fuel", "Fuel to Oil").Replace("Recover Materials from Fuel", "Fuel to Materials"));
         }
 
         private static void SetImage(Image target, Sprite sprite)

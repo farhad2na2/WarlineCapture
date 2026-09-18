@@ -809,6 +809,62 @@ public sealed class RtsCameraSystemTests
     }
 
     [Test]
+    public void FocusProductionDelivery_ManualPanReleasesFocusAndZoomWithoutReturningAfterRelease()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        var requests = _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+        World.DefaultGameObjectInjectionWorld = _cameraSystemWorld;
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        var helper = new SelectionUiCameraSystemHelper(cameraSystem, requests);
+        try
+        {
+            helper.Init(null, camera);
+            Assert.IsTrue(helper.FocusProductionDelivery(new Vector3(100f, 0f, 120f)));
+            requests.QueuePan(_cameraSystemWorld.EntityManager, new Vector2(150f, 0f), 0.1f);
+            requests.ProcessPendingRequests(_cameraSystemWorld.EntityManager, cameraSystem, camera, null);
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+            Vector3 releasedPosition = camera.transform.position;
+            Quaternion releasedRotation = camera.transform.rotation;
+            for (int i = 0; i < 10; i++)
+            {
+                helper.UpdateZoomTransition();
+                requests.QueueUpdateSmoothFocus(_cameraSystemWorld.EntityManager, 0.25f);
+                requests.ProcessPendingRequests(_cameraSystemWorld.EntityManager, cameraSystem, camera, null);
+            }
+            Assert.That(Vector3.Distance(releasedPosition, camera.transform.position), Is.LessThan(0.001f));
+            Assert.That(Quaternion.Angle(releasedRotation, camera.transform.rotation), Is.LessThan(0.001f));
+        }
+        finally { helper.Dispose(); World.DefaultGameObjectInjectionWorld = previousWorld; }
+    }
+
+    [Test]
+    public void FocusProductionDelivery_ManualZoomCancelsFocusButIdleInputDoesNot()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        RtsCameraSystem cameraSystem = CreateCameraSystem();
+        var requests = _cameraSystemWorld.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+        World.DefaultGameObjectInjectionWorld = _cameraSystemWorld;
+        Camera camera = CreateCamera(new Vector3(0f, 24f, -20f), Quaternion.Euler(58f, 10f, 0f));
+        var helper = new SelectionUiCameraSystemHelper(cameraSystem, requests);
+        try
+        {
+            helper.Init(null, camera);
+            Assert.IsTrue(helper.FocusProductionDelivery(new Vector3(100f, 0f, 120f)));
+            cameraSystem.PanCamera(camera, Vector2.zero, 0.1f);
+            cameraSystem.UpdatePerspectiveZoom(camera, 0f, 10f, 0.1f, 10f, 60f);
+            Assert.IsTrue(cameraSystem.HasSmoothFocusTarget, "An idle pointer must not suppress the arrival presentation.");
+            requests.QueuePerspectiveZoom(_cameraSystemWorld.EntityManager, -1f, 10f, 0.1f, 10f, 60f);
+            requests.ProcessPendingRequests(_cameraSystemWorld.EntityManager, cameraSystem, camera, null);
+            Assert.IsFalse(cameraSystem.HasSmoothFocusTarget);
+            Vector3 zoomedPosition = camera.transform.position;
+            helper.UpdateZoomTransition();
+            Assert.That(Vector3.Distance(zoomedPosition, camera.transform.position), Is.LessThan(0.001f));
+        }
+        finally { helper.Dispose(); World.DefaultGameObjectInjectionWorld = previousWorld; }
+    }
+
+    [Test]
     public void MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

@@ -349,9 +349,7 @@ namespace Game.UI.Shell.Ecs
 
             exchange = new UiResourceExchangeModel(
                 state.Version,
-                state.ActiveTab == UiResourceExchangeTab.Import
-                    ? UiResourceExchangeTabKind.Import
-                    : UiResourceExchangeTabKind.Export,
+                (UiResourceExchangeTabKind)state.ActiveTab,
                 state.SelectedRecipeSlot,
                 state.ExportRecipeCount,
                 state.ImportRecipeCount,

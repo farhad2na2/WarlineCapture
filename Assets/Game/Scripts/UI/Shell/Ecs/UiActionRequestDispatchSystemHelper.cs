@@ -340,6 +340,12 @@ namespace Game.UI.Shell.Ecs
 
         private static bool TryResolveResourceExchangeTab(int payloadId, out UiResourceExchangeTab tab)
         {
+            if (payloadId == (int)UiResourceExchangeTab.All)
+            {
+                tab = UiResourceExchangeTab.All;
+                return true;
+            }
+
             if (payloadId == (int)UiResourceExchangeTab.Import)
             {
                 tab = UiResourceExchangeTab.Import;

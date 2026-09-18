@@ -182,6 +182,15 @@ namespace Game.Runtime
             SetProductionTransportDoorOpen01(transport, 0f);
             PrimeManagedDeliveryCount(context);
             building.ActiveTransport = transport;
+            // Frame the delivery while the helicopter approaches, not after the first drop begins.
+            // Enemy reinforcements must never take control of the player's camera.
+            if (transport.Mode == ProductionTransportMode.Helicopter && transport.HasCommittedDropPosition)
+            {
+                transport.FocusRequested = true;
+                if (!building.HasOwnerFaction || building.OwnerFactionId == FactionIdentity.PlayerFactionId ||
+                    building.OwnerFactionId == FactionIdentity.NeutralFactionId)
+                    context.FocusProductionDelivery?.Invoke(transport.CommittedDropPosition);
+            }
             _activeManagedDeliveryCount++;
             PublishManagedDeliveryReadModel(context);
             return true;

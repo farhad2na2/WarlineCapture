@@ -68,6 +68,29 @@ public sealed class UiResourceExchangeReadModelSystemTests
     }
 
     [Test]
+    public void AllRoutes_SelectsRecoveryAndKeepsActiveJobsAheadOfHistory()
+    {
+        using World world = new("AllRoutes");
+        var em = world.EntityManager;
+        var exchange = CreateExchangeData(em);
+        em.GetBuffer<ResourceExchangeRecipeComponent>(exchange).Add(ExportOilRecipe());
+        var recovery = ImportFuelRecipe();
+        em.GetBuffer<ResourceExchangeRecipeComponent>(exchange).Add(recovery);
+        for (int i = 0; i < 5; i++) em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(new ResourceExchangeQueueComponent { QueueItemId = i, State = ResourceExchangeQueueState.Completed });
+        em.GetBuffer<ResourceExchangeQueueComponent>(exchange).Add(new ResourceExchangeQueueComponent { QueueItemId = 99, PresentationStarted = 1, State = ResourceExchangeQueueState.InProgress, RecipeId = recovery.RecipeId, DurationSeconds = 60, RemainingSeconds = 30 });
+        var state = new UiResourceExchangeStateComponent { ActiveTab = UiResourceExchangeTab.All, SelectedRecipeSlot = 1 };
+        UiResourceExchangeDetailComponent detail = default;
+        var ui = CreateUiData(em);
+        UiResourceExchangeReadModelSystem.WriteReadModel(Enabled(3), Economy(), Materials(), Wallet(), PhysicalResources(), default,
+            em.GetBuffer<ResourceExchangeRecipeComponent>(exchange), em.GetBuffer<ResourceExchangeQueueComponent>(exchange), ref state, ref detail,
+            em.GetBuffer<UiResourceExchangeRecipeCardComponent>(ui), em.GetBuffer<UiResourceExchangeQueueRowComponent>(ui));
+        Assert.AreEqual(2, em.GetBuffer<UiResourceExchangeRecipeCardComponent>(ui).Length);
+        Assert.AreEqual(recovery.RecipeId, detail.RecipeId);
+        Assert.AreEqual(99, em.GetBuffer<UiResourceExchangeQueueRowComponent>(ui)[0].QueueItemId);
+        Assert.AreEqual(0, em.GetBuffer<UiResourceExchangeQueueRowComponent>(ui)[0].CancelEnabled, "Do not offer cancellation after the refund window closes.");
+    }
+
+    [Test]
     public void Update_ProjectsOnlyThePlayerOwnedExchange()
     {
         using World world = new(nameof(Update_ProjectsOnlyThePlayerOwnedExchange));
@@ -372,7 +395,7 @@ public sealed class UiResourceExchangeReadModelSystemTests
         Assert.AreEqual(1, state.ImportRecipeCount);
         Assert.AreEqual("1/3", state.QueueCapacityText.ToString());
         Assert.AreEqual("50", state.MaterialsText.ToString());
-        Assert.AreEqual("400", state.OilText.ToString());
+        Assert.AreEqual("300", state.OilText.ToString(), "Already reserved oil is not spendable.");
         Assert.AreEqual("2", state.RushTicketsText.ToString());
         Assert.AreEqual(1, state.RushAllEnabled);
         Assert.AreEqual(0, state.ClearCompletedEnabled);

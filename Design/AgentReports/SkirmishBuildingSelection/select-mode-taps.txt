@@ -1,0 +1,45 @@
+before pending=False
+selected=True label=Barracks
+building=0
+before pending=False
+selected=True label=Field Fabrication Depot
+building=1
+before pending=False
+selected=True label=Oil Pump
+building=2
+before pending=False
+selected=True label=Oil Refinery
+building=3
+before pending=False
+selected=True label=Fuel Bladder
+building=4
+before pending=False
+selected=True label=Barracks
+building=5
+before pending=False
+selected=True label=Field Fabrication Depot
+building=6
+before pending=False
+selected=True label=Oil Pump
+building=7
+before pending=False
+selected=True label=Oil Refinery
+building=8
+before pending=False
+selected=True label=Fuel Bladder
+building=9
+before pending=False
+selected=True label=Barracks
+building=10
+before pending=False
+selected=True label=Field Fabrication Depot
+building=11
+before pending=False
+selected=True label=Oil Pump
+building=12
+before pending=False
+selected=True label=Oil Refinery
+building=13
+before pending=False
+selected=True label=Fuel Bladder
+building=14

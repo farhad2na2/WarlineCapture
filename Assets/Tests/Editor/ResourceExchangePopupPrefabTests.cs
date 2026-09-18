@@ -94,6 +94,22 @@ public sealed class ResourceExchangePopupPrefabTests
     }
 
     [Test]
+    public void ConfirmUnavailable_DisablesTheVisibleSubmitButton()
+    {
+        var instance = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath));
+        try {
+            var view = instance.GetComponent<ResourceExchangePopupView>();
+            view.ApplyDetail("Oil to Materials", "", "", "100", "100 OIL", "300 MATERIALS", "00:45", "", "Insufficient Oil", false, true, null);
+            Assert.IsFalse(view.FooterConfirmButton.interactable);
+            Assert.IsTrue(view.FooterConfirmButton.gameObject.activeInHierarchy);
+            Assert.IsFalse(view.ConfirmButton.gameObject.activeInHierarchy, "Only one submit button should be visible.");
+            Assert.IsFalse(view.ExportTabButton.gameObject.activeInHierarchy);
+            Assert.IsFalse(view.ImportTabButton.gameObject.activeInHierarchy);
+            Assert.IsFalse(instance.transform.Find("ResourceExchangeRoot/DetailPanel/YourResources").gameObject.activeInHierarchy, "Sample balances must never be shown.");
+        } finally { UnityEngine.Object.DestroyImmediate(instance); }
+    }
+
+    [Test]
     public void ResourceExchangePopupRuntimeView_ShellUnbindClearsRefreshTarget()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
@@ -234,30 +250,30 @@ public sealed class ResourceExchangePopupPrefabTests
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/Header/CloseButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/RecipeColumn/ExportTab");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/RecipeColumn/ImportTab");
-        AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountStepper/AmountMinus");
-        AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountStepper/AmountPlus");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountMinus");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/AmountPlus");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/ConfirmButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/ExchangeQueuePanel/RushAllButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/ExchangeQueuePanel/ClearCompletedButton");
         AssertHasButton(prefab.transform, "ResourceExchangeRoot/Footer/CancelButton");
-        AssertHasButton(prefab.transform, "ResourceExchangeRoot/Footer/ConfirmExchangeButton");
+        AssertHasButton(prefab.transform, "ResourceExchangeRoot/DetailPanel/ConfirmExchangeButton");
 
         for (int i = 1; i <= 6; i++)
         {
-            Transform card = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/RecipeColumn/RecipeCards/RecipeCard{i}");
+            Transform card = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/RecipeColumn/RecipeViewport/RecipeCards/RecipeCard{i}");
             Assert.NotNull(card.GetComponent<ResourceExchangeRecipeCardView>(), $"RecipeCard{i} must carry ResourceExchangeRecipeCardView.");
             Assert.NotNull(card.GetComponent<Button>(), $"RecipeCard{i} must be directly selectable.");
         }
 
         for (int i = 1; i <= 4; i++)
         {
-            Transform row = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/ExchangeQueuePanel/Rows/QueueRow{i}");
+            Transform row = AssertHasTransform(prefab.transform, $"ResourceExchangeRoot/ExchangeQueuePanel/QueueViewport/Rows/QueueRow{i}");
             Assert.NotNull(row.GetComponent<ResourceExchangeQueueItemView>(), $"QueueRow{i} must carry ResourceExchangeQueueItemView.");
             AssertHasButton(row, "RushButton");
             AssertHasButton(row, "CancelButton");
         }
 
-        Transform lockedCard = AssertHasTransform(prefab.transform, "ResourceExchangeRoot/RecipeColumn/RecipeCards/RecipeCard6");
+        Transform lockedCard = AssertHasTransform(prefab.transform, "ResourceExchangeRoot/RecipeColumn/RecipeViewport/RecipeCards/RecipeCard6");
         Assert.IsTrue(lockedCard.Find("DisabledOverlay").gameObject.activeSelf, "Locked route card must expose a disabled overlay.");
         Assert.IsTrue(lockedCard.Find("Lock").gameObject.activeSelf, "Locked route card must expose a lock icon.");
         Assert.IsTrue(lockedCard.Find("Warning").gameObject.activeSelf, "Locked route card must expose a warning icon.");

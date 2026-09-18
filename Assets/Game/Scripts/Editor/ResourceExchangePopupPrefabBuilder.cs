@@ -21,7 +21,7 @@ namespace Game.Editor
         private const string BoldFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset";
         private const string MediumFontPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset";
 
-        private static readonly Vector2 ReferenceResolution = new(1672f, 941f);
+        private static readonly Vector2 ReferenceResolution = new(1280f, 720f);
         private static readonly Color Border = new Color32(64, 79, 84, 255);
         private static readonly Color DarkTop = new Color32(26, 38, 42, 255);
         private static readonly Color DarkBottom = new Color32(3, 11, 14, 255);
@@ -76,6 +76,8 @@ namespace Game.Editor
                 DetailRefs detail = BuildDetailPanel(composition, widthTargets);
                 QueueRefs queue = BuildQueuePanel(composition, rightTargets);
                 FooterRefs footer = BuildFooter(composition, widthTargets);
+
+                ApplyMobileLayout(composition, header, detail, queue, footer, cards, rightTargets, widthTargets);
 
                 MainMenuV3SectionLayoutView layout = composition.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
                 layout.Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center, rightTargets.ToArray(), true, null, widthTargets.ToArray());
@@ -133,7 +135,7 @@ namespace Game.Editor
                 SetObject(runtimeSerialized, "view", popupView);
                 runtimeSerialized.ApplyModifiedPropertiesWithoutUndo();
 
-                SeedPreview(popupView, cards, queue.Rows);
+
                 GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
                 if (prefab == null)
                     throw new InvalidOperationException($"Failed to save POP-12 V3 prefab: {PrefabPath}");
@@ -398,6 +400,121 @@ namespace Game.Editor
             SetObject(serialized, "inputText", input); SetObject(serialized, "outputText", output); SetObject(serialized, "timeText", time); SetObject(serialized, "percentText", percent); SetObject(serialized, "stateText", state);
             serialized.ApplyModifiedPropertiesWithoutUndo();
             return view;
+        }
+
+        // Two reading columns: choose a route, then review and start. The queue stays
+        // visible below the form; long lists scroll instead of shrinking touch targets.
+        private static void ApplyMobileLayout(RectTransform root,
+            HeaderRefs header, DetailRefs detail, QueueRefs queue, FooterRefs footer,
+            ResourceExchangeRecipeCardView[] cards, List<RectTransform> right, List<RectTransform> widths)
+        {
+            right.Clear(); widths.Clear();
+            void Place(string path, float x, float y, float w, float h) => TopLeft((RectTransform)root.Find(path), x, y, w, h);
+            void Hide(string path) => root.Find(path).gameObject.SetActive(false);
+            void Label(string path, string value, float size) { var t=root.Find(path).GetComponent<TMP_Text>(); t.text=value; t.fontSize=size; }
+            Place("Header",12,12,1256,78);
+            Hide("Header/LogoPanel");
+            Place("Header/TitlePanel",0,0,632,78); widths.Add((RectTransform)root.Find("Header/TitlePanel"));
+            Label("Header/TitlePanel/Title","RESOURCE EXCHANGE",30);
+            Horizontal(header.TitleText.rectTransform,20,16,4,40);
+            Label("Header/TitlePanel/Subtitle","Available resources — choose an exchange",22);
+            Horizontal(root.Find("Header/TitlePanel/Subtitle") as RectTransform,20,16,43,29);
+            string[] resources={"Materials","Oil","Fuel"};
+            for(int i=0;i<3;i++) {
+                string p="Header/"+resources[i]; Place(p,642+i*174,0,164,78); right.Add((RectTransform)root.Find(p));
+                Place(p+"/Icon",8,18,40,40); Place(p+"/Label",52,7,104,25); Label(p+"/Label",resources[i].ToUpperInvariant(),18);
+                Place(p+"/Value",52,31,104,40); Label(p+"/Value","0",26);
+            }
+            Place("Header/CloseButton",1172,0,84,84); right.Add((RectTransform)header.CloseButton.transform);
+            Place("RecipeColumn",12,102,400,606);
+            Place("RecipeColumn/Heading",16,10,368,40); Label("RecipeColumn/Heading","CHOOSE AN EXCHANGE",26);
+            Hide("RecipeColumn/Hint"); Hide("RecipeColumn/ExportTab"); Hide("RecipeColumn/ImportTab");
+            var recipeViewport=TopLeft("RecipeViewport",root.Find("RecipeColumn"),12,60,376,534);
+            recipeViewport.gameObject.AddComponent<RectMask2D>();
+            var content=(RectTransform)cards[0].transform.parent; content.SetParent(recipeViewport,false); TopLeft(content,0,0,376,7*108);
+            AddScroll(recipeViewport,content);
+            for(int i=0;i<cards.Length;i++) {
+                var c=cards[i].transform; TopLeft((RectTransform)c,0,i*108,376,100);
+                c.Find("IconPanel").gameObject.SetActive(false);
+                TopLeft((RectTransform)c.Find("Title"),14,9,316,38); c.Find("Title").GetComponent<TMP_Text>().fontSize=24;
+                TopLeft((RectTransform)c.Find("Input"),14,48,180,38); c.Find("Input").GetComponent<TMP_Text>().fontSize=20;
+                TopLeft((RectTransform)c.Find("Output"),198,48,166,38); c.Find("Output").GetComponent<TMP_Text>().fontSize=20;
+                c.Find("Duration").gameObject.SetActive(false); c.Find("Reason").gameObject.SetActive(false);
+                TopLeft((RectTransform)c.Find("SelectedCheck"),336,12,28,28);
+                TopLeft((RectTransform)c.Find("Lock"),336,12,28,28); TopLeft((RectTransform)c.Find("Warning"),302,12,28,28);
+                cards[i].gameObject.SetActive(false);
+            }
+            Place("DetailPanel",424,102,844,362); widths.Add((RectTransform)root.Find("DetailPanel"));
+            foreach(string n in new[]{"Thumbnail","SectionTitle","Name","RouteValue","YourResources","DetailsTitle","AmountTrack","RateLabel","RateValue","RequirementsLabel","RequirementsValue"}) {
+                var t=root.Find("DetailPanel/"+n); if(t!=null)t.gameObject.SetActive(false);
+            }
+            var panel=(RectTransform)root.Find("DetailPanel");
+            var spend=(RectTransform)panel.Find("Spend"); spend.anchorMin=new Vector2(0,1); spend.anchorMax=new Vector2(.5f,1); spend.pivot=new Vector2(0,1); spend.anchoredPosition=new Vector2(16,-12); spend.sizeDelta=new Vector2(-24,94);
+            var receive=(RectTransform)panel.Find("Receive"); receive.anchorMin=new Vector2(.5f,1); receive.anchorMax=new Vector2(1,1); receive.pivot=new Vector2(0,1); receive.anchoredPosition=new Vector2(8,-12); receive.sizeDelta=new Vector2(-24,94);
+            Label("DetailPanel/Spend/Label","YOU GIVE",24); Horizontal((RectTransform)spend.Find("Label"),12,12,6,32);
+            Label("DetailPanel/Receive/Label","YOU RECEIVE",24); Horizontal((RectTransform)receive.Find("Label"),12,12,6,32);
+            Horizontal(detail.Input.rectTransform,12,12,42,44); detail.Input.fontSize=32;
+            Horizontal(detail.Output.rectTransform,12,12,42,44); detail.Output.fontSize=32;
+            // Existing serialized fields keep their runtime bindings, with just one visible submit control.
+            foreach(Transform child in panel) if(child.name.StartsWith("Amount") || child.name.StartsWith("Duration")) child.gameObject.SetActive(false);
+            var minus=(RectTransform)detail.Minus.transform; minus.gameObject.SetActive(true); TopLeft(minus,16,118,94,88);
+            var plus=(RectTransform)detail.Plus.transform; plus.gameObject.SetActive(true); plus.anchorMin=plus.anchorMax=new Vector2(1,1); plus.pivot=new Vector2(1,1); plus.anchoredPosition=new Vector2(-16,-118); plus.sizeDelta=new Vector2(94,88);
+            detail.Amount.transform.parent.gameObject.SetActive(true);
+            // Amount is authored inside AmountStepper; move the three live controls out of it.
+            minus.SetParent(panel,false); TopLeft(minus,16,118,94,88);
+            plus.SetParent(panel,false); plus.anchorMin=plus.anchorMax=new Vector2(1,1); plus.pivot=new Vector2(1,1); plus.anchoredPosition=new Vector2(-16,-118); plus.sizeDelta=new Vector2(94,88);
+            detail.Amount.transform.SetParent(panel,false); Horizontal(detail.Amount.rectTransform,126,126,118,80); detail.Amount.fontSize=36;
+            var stepper=panel.Find("AmountStepper"); if(stepper!=null)stepper.gameObject.SetActive(false);
+            detail.Instruction.gameObject.SetActive(true); Horizontal(detail.Instruction.rectTransform,16,174,207,60); detail.Instruction.fontSize=22; detail.Instruction.textWrappingMode=TextWrappingModes.Normal; detail.Instruction.overflowMode=TextOverflowModes.Overflow;
+            detail.Duration.gameObject.SetActive(true); detail.Duration.rectTransform.anchorMin=detail.Duration.rectTransform.anchorMax=new Vector2(1,1); detail.Duration.rectTransform.pivot=new Vector2(1,1); detail.Duration.rectTransform.anchoredPosition=new Vector2(-16,-210); detail.Duration.rectTransform.sizeDelta=new Vector2(144,50); detail.Duration.fontSize=30;
+            if(detail.Warning!=null) { detail.Warning.transform.SetParent(detail.Confirm.transform,false); detail.Warning.gameObject.SetActive(false); }
+            detail.Confirm.gameObject.SetActive(false);
+            footer.CancelButton.gameObject.SetActive(false);
+            footer.ConfirmButton.transform.SetParent(panel,false); Horizontal((RectTransform)footer.ConfirmButton.transform,16,16,272,84);
+            footer.ConfirmButton.GetComponentInChildren<TMP_Text>().text="START EXCHANGE";
+            footer.ConfirmButton.transition=Selectable.Transition.ColorTint;
+            var colors=footer.ConfirmButton.colors; colors.disabledColor=new Color(.32f,.32f,.32f,1); footer.ConfirmButton.colors=colors;
+            Hide("Footer");
+            Place("ExchangeQueuePanel",424,476,844,232); widths.Add((RectTransform)root.Find("ExchangeQueuePanel"));
+            foreach(string n in new[]{"Subtitle","CapacityPanel","RushAllButton"}) Hide("ExchangeQueuePanel/"+n);
+            Place("ExchangeQueuePanel/Title",16,6,256,40); Label("ExchangeQueuePanel/Title","EXCHANGE PROGRESS",24);
+            queue.CapacityText.rectTransform.SetParent(root.Find("ExchangeQueuePanel"),false); TopLeft(queue.CapacityText.rectTransform,280,6,76,40); queue.CapacityText.fontSize=24;
+            var clear=(RectTransform)queue.ClearDone.transform; clear.anchorMin=clear.anchorMax=new Vector2(1,1); clear.pivot=new Vector2(1,1); clear.anchoredPosition=new Vector2(-12,-6); clear.sizeDelta=new Vector2(210,84);
+            queue.ClearDone.GetComponentInChildren<TMP_Text>().fontSize=22;
+            var qViewport=Horizontal("QueueViewport",root.Find("ExchangeQueuePanel"),12,12,98,122); qViewport.gameObject.AddComponent<RectMask2D>();
+            queue.Content.SetParent(qViewport,false); Horizontal(queue.Content,0,0,0,4*140); AddScroll(qViewport,queue.Content);
+            var empty=Text("EmptyQueue",qViewport,"No exchanges yet. Choose a route above.\nExchanges keep running when you close this screen.",24,medium,TextAlignmentOptions.Center,TextMuted); Stretch(empty.rectTransform); empty.textWrappingMode=TextWrappingModes.Normal;
+            for(int i=0;i<queue.Rows.Length;i++) {
+                var row=(RectTransform)queue.Rows[i].transform; Horizontal(row,0,0,i*140,130);
+                foreach(string n in new[]{"Thumb","Number","Input","Output","Percent","Completed","Warning","RushButton"})row.Find(n).gameObject.SetActive(false);
+                Horizontal((RectTransform)row.Find("Name"),14,180,6,40); row.Find("Name").GetComponent<TMP_Text>().fontSize=24;
+                Horizontal((RectTransform)row.Find("State"),14,300,46,38); row.Find("State").GetComponent<TMP_Text>().fontSize=22;
+                Horizontal((RectTransform)row.Find("ProgressTrack"),14,180,100,16);
+                var time=(RectTransform)row.Find("Time"); time.anchorMin=time.anchorMax=new Vector2(1,1); time.pivot=new Vector2(1,1); time.anchoredPosition=new Vector2(-188,-47); time.sizeDelta=new Vector2(100,36); time.GetComponent<TMP_Text>().fontSize=26;
+                var cancel=(RectTransform)row.Find("CancelButton"); cancel.anchorMin=cancel.anchorMax=new Vector2(1,1); cancel.pivot=new Vector2(1,1); cancel.anchoredPosition=new Vector2(-12,-24); cancel.sizeDelta=new Vector2(150,82); cancel.GetComponentInChildren<TMP_Text>().text="CANCEL"; cancel.GetComponentInChildren<TMP_Text>().fontSize=24;
+                row.gameObject.SetActive(false);
+            }
+            foreach(var text in root.GetComponentsInChildren<TMP_Text>(true)) {
+                string source=text.text;
+                var font=text.font; var alignment=text.alignment; float size=text.fontSize;
+                // Keep Arabic's taller line metrics from shrinking phone text to half size.
+                // Glyphs fit these spaced rows; their font line boxes may extend beyond them.
+                text.enableAutoSizing=true; text.fontSizeMin=size; text.fontSizeMax=size;
+                text.overflowMode=TextOverflowModes.Overflow;
+                var binding=text.GetComponent<V3LocalizedTextBindingView>() ?? text.gameObject.AddComponent<V3LocalizedTextBindingView>();
+                Game.Configs.GameLocalization.TryGetBySource(source, out string key, out _);
+                binding.Configure(key,source);
+                // OnEnable can localize in the Editor. Save stable English authoring defaults.
+                text.font=font; text.fontSharedMaterial=font.material; text.alignment=alignment;
+                text.fontSize=size; text.isRightToLeftText=false; text.text=source;
+            }
+        }
+
+        private static void AddScroll(RectTransform viewport, RectTransform content)
+        {
+            var hit=viewport.gameObject.AddComponent<UnityEngine.UI.Image>(); hit.color=Color.clear;
+            var scroll=viewport.gameObject.AddComponent<ScrollRect>(); scroll.viewport=viewport; scroll.content=content;
+            scroll.horizontal=false; scroll.vertical=true; scroll.movementType=ScrollRect.MovementType.Clamped; scroll.scrollSensitivity=40;
         }
 
         private static FooterRefs BuildFooter(RectTransform root, ICollection<RectTransform> widths)

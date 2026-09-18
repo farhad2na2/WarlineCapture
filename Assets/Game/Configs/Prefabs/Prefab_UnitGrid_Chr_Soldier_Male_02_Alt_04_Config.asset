@@ -24,8 +24,9 @@ MonoBehaviour:
   isAirUnit: 0
   canRequest: 1
   price: 10000
+  materialsCost: 0
   productionDurationSeconds: 5
-  productionTransportPrefab: {fileID: 0}
+  productionTransportPrefab: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
   isProductionTransportUnit: 0
   productionTransportArrivalSeconds: 5
   productionTransportHoldForNextReadySeconds: 4
@@ -33,12 +34,19 @@ MonoBehaviour:
   productionTransportRequiresAirportRunway: 0
   productionTransportUsesRunwayLanding: 0
   soldierTransportCapacity: 0
+  vehicleTransportCapacity: 0
+  cargoWeightCapacity: 0
+  transportCruiseHeight: 0
+  soldierParachuteVisualPrefab: {fileID: 0}
+  vehicleEmergencyDropVisualPrefab: {fileID: 0}
   runwayTaxiSpeed: 5
   speed: 4.8
   walkSpeed: 1.7
   roadSpeedMultiplier: 1.15
   arriveDistance: 0.05
   groundOffset: 0.1
+  groundFuelPerCell: 0
+  airFuelPerCell: 0
   displayName: Rifleman Male IV
   description: Regular soldier armed with a rifle. Reliable frontline infantry for
     patrols, defense, and direct engagements.

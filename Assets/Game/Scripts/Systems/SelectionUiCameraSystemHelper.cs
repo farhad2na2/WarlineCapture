@@ -147,6 +147,13 @@ namespace Game.Runtime
                 DeactivateMatchHudZoomTransition();
                 return;
             }
+            if (_matchHudZoomUsesSmoothFocusTarget && !_cameraSystem.HasSmoothFocusTarget)
+            {
+                // Manual pan/zoom cancels the delivery focus. Release its zoom as well,
+                // including when the gesture starts and ends between these update ticks.
+                DeactivateMatchHudZoomTransition();
+                return;
+            }
 
             _cameraRequestSystem.QueueUpdatePerspectiveMode(
                 em,

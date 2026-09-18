@@ -77,7 +77,7 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < recipes.Length; i++)
             {
                 ResourceExchangeRecipeComponent candidate = recipes[i];
-                if (candidate.RouteType != routeType)
+                if (state.ActiveTab != UiResourceExchangeTab.All && candidate.RouteType != routeType)
                     continue;
 
                 if (visibleIndex == selectedSlot)

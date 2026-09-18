@@ -70,7 +70,8 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.HasPendingTransportCommandRequests_DetectsTransportResults());
             RunCase(test => test.PendingCommandSummary_AggregatesRequestsResultsAndActiveMode());
             RunCase(test => test.SelectionCommandRequests_ProcessUiRequestsThroughCommandModeTransitions());
-            RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough());
+            RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(false));
+            RunCase(test => test.RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(true));
             RunCase(test => test.RuntimeInput_CapturedUiReleaseDoesNotSuppressNextWorldSelection());
             RunCase(test => test.RuntimeInput_ActiveWorldCommandClickDoesNotFallThroughToFocusSelection());
             RunCase(test => test.RuntimeInput_MoveCommandModeAllowsCameraPanWhileTargeting());
@@ -89,7 +90,7 @@ public sealed class RtsSelectionInputSystemTests
             RunCase(test => test.AttackTargetLookup_CompletesSelectionMarkerTransformWriteBeforeRuntimeBuildingRead());
             RunCase(test => test.AttackTargetLookup_RebindsAfterWorldReplacement());
             RunCase(test => test.AttackTargetLookup_SnapsAriaAttackPreviewToHighlightedEnemy());
-            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=64");
+            UnityEngine.Debug.Log("[RtsSelectionInputSystemValidation] result=Passed tests=65");
             ValidationExit.Exit(0);
         }
         catch (Exception exception)
@@ -2864,14 +2865,15 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(TacticalCommandMode.Attack, activeMode);
     }
 
-    [Test]
-    public void RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough()
+    [TestCase(false)]
+    [TestCase(true)]
+    public void RuntimeInput_HandledBuildingClickConsumesReleaseWithoutUnitFocusFallthrough(bool selectionModeActive)
     {
         var inputSystem = new RtsSelectionInputCompositionSystemHelper(Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager);
         var runtimeState = new RuntimeGameplayStateSystem(World.DefaultGameObjectInjectionWorld.EntityManager)
         {
             PlayRequested = true,
-            SelectionModeActive = false,
+            SelectionModeActive = selectionModeActive,
             BuildModeActive = false,
             SuppressNextWorldClick = true
         };

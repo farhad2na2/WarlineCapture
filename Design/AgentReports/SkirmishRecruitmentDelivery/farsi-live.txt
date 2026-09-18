@@ -1,0 +1,46 @@
+initialSoldiers=8
+t=0.0 soldiers=8 drawerOpen=True
+t=0.5 soldiers=8 drawerOpen=False
+phase=0 delivered=0 focus=True viewport=(0.17, 0.04, 35.17) transport=Unit_Veh_Helicopter_Transport
+t=1.0 soldiers=8 drawerOpen=False
+phase=0 delivered=0 focus=True viewport=(0.23, 0.03, 34.92) transport=Unit_Veh_Helicopter_Transport
+t=1.5 soldiers=8 drawerOpen=False
+phase=0 delivered=0 focus=True viewport=(0.29, 0.07, 35.95) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.36, 0.13, 37.74) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.41, 0.20, 39.72) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.44, 0.26, 41.52) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.47, 0.31, 43.08) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.48, 0.34, 44.24) transport=Unit_Veh_Helicopter_Transport
+phase=0 delivered=0 focus=True viewport=(0.49, 0.37, 45.07) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=0 focus=True viewport=(0.50, 0.39, 45.66) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=0 focus=True viewport=(0.50, 0.40, 46.05) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=0 focus=True viewport=(0.51, 0.40, 46.31) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=0 focus=True viewport=(0.51, 0.41, 46.48) transport=Unit_Veh_Helicopter_Transport
+t=7.1 soldiers=9 drawerOpen=False
+phase=1 delivered=1 focus=True viewport=(0.51, 0.41, 46.59) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=1 focus=True viewport=(0.51, 0.41, 46.66) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=1 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=1 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+t=9.2 soldiers=10 drawerOpen=False
+phase=1 delivered=2 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=2 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=2 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=2 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=2 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+t=11.7 soldiers=11 drawerOpen=False
+phase=1 delivered=3 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=3 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=3 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=1 delivered=3 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+t=13.7 soldiers=12 drawerOpen=False
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+phase=2 delivered=4 focus=True viewport=(0.51, 0.42, 46.74) transport=Unit_Veh_Helicopter_Transport
+PASS four soldiers delivered with visible helicopter/rope and departed

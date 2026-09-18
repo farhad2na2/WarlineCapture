@@ -159,7 +159,8 @@ public sealed class ArmoryV3PrefabTests
     public void Navigation_UsesOnlyExpectedV3Routes()
     {
         GameObject prefab = RequirePrefab();
-        AssertRoute(prefab, "BackButton", UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu);
+        AssertRoute(prefab, "HeaderBackButton", UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu);
+        Assert.IsNull(Find(prefab.transform, "BackButton"), "Armory must not retain the duplicate footer Back button.");
         AssertRoute(prefab, "CommanderProfileButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile);
         AssertRoute(prefab, "UpgradeButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory);
         AssertRoute(prefab, "EquipButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Armory);

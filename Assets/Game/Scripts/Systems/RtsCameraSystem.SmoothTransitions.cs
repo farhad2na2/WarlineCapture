@@ -18,6 +18,13 @@ namespace Game.Runtime
         public Vector3 SmoothFocusTarget { get; private set; }
         public bool HasSmoothPerspectiveTarget { get; private set; }
 
+        private void CancelSmoothTransitionsForManualInput()
+        {
+            // A player gesture takes ownership; an automatic focus must not pull the camera back.
+            ClearSmoothFocusTarget();
+            ClearSmoothPerspectiveTarget();
+        }
+
         public void SetSmoothFocusTarget(
             Vector3 focusWorldPosition,
             bool resetVelocity,

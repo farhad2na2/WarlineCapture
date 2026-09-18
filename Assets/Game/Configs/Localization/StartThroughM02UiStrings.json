@@ -806,7 +806,7 @@
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "آموزش"
+          "value": "استخدام"
         }
       ]
     },
@@ -2257,6 +2257,366 @@
         {
           "locale": "fa-IR",
           "value": "بازگشت"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.recruitment_accepted",
+      "source": "Recruitment queued. A helicopter will deliver 4 soldiers to your base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "درخواست استخدام ثبت شد. بالگرد ۴ سرباز رو به پایگاهت می‌رسونه."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.0",
+      "source": "RESOURCE EXCHANGE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مبادلهٔ منابع"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.1",
+      "source": "Choose what to give and what to receive",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انتخاب کن چی می‌دی و چی می‌گیری"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.2",
+      "source": "CHOOSE AN EXCHANGE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نوع مبادله رو انتخاب کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.3",
+      "source": "YOU GIVE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "می‌دی"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.4",
+      "source": "YOU RECEIVE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "می‌گیری"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.5",
+      "source": "START EXCHANGE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شروع مبادله"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.6",
+      "source": "EXCHANGE PROGRESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "روند مبادله"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.7",
+      "source": "No exchanges yet. Choose a route above.\nExchanges keep running when you close this screen.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هنوز مبادله‌ای شروع نشده. یک گزینه انتخاب کن.\nاگه این صفحه رو ببندی، مبادله ادامه پیدا می‌کنه."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.8",
+      "source": "Convert Oil to Materials",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفت به مصالح"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.9",
+      "source": "Convert Materials to Oil",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مصالح به نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.10",
+      "source": "Convert Oil to Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفت به بنزین"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.11",
+      "source": "Recover Oil from Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بنزین به نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.12",
+      "source": "Recover Materials from Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بنزین به مصالح"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.13",
+      "source": "Confirm to start a timed logistics exchange.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای شروع، دکمهٔ زیر رو بزن. زمان لازم روبه‌روست."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.14",
+      "source": "Insufficient Materials",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مصالح کافی نداری. مقدار رو کم کن یا گزینهٔ دیگه‌ای بزن."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.15",
+      "source": "Insufficient Oil",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفت کافی نداری. مقدار رو کم کن یا گزینهٔ دیگه‌ای بزن."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.16",
+      "source": "Insufficient Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بنزین کافی نداری. مقدار رو کم کن یا گزینهٔ دیگه‌ای بزن."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.17",
+      "source": "Queue full",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "صف پره. صبر کن یک مبادله تموم بشه."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.18",
+      "source": "Storage full",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انبار جا نداره. مقدار رو کم کن یا انبار رو خالی کن."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.19",
+      "source": "Storage missing",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای این مبادله به انبار نیاز داری."
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.20",
+      "source": "COMPLETE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انجام شد؛ منابع اضافه شدن"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.21",
+      "source": "IN PROGRESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در حال مبادله"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.22",
+      "source": "COMPLETING",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در حال تحویل"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.23",
+      "source": "QUEUED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در صف"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.24",
+      "source": "CANCELLED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "لغو شد"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.25",
+      "source": "{0} MATERIALS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} مصالح"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.26",
+      "source": "{0} OIL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.27",
+      "source": "{0} FUEL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0} بنزین"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.28",
+      "source": "CLEAR DONE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پاک کردن تمام‌شده‌ها"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.0",
+      "source": "Available resources — choose an exchange",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "منابع قابل‌استفاده؛ یک مبادله انتخاب کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.1",
+      "source": "Oil to Materials",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفت به مصالح"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.2",
+      "source": "Materials to Oil",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مصالح به نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.3",
+      "source": "Oil to Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفت به بنزین"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.4",
+      "source": "Fuel to Oil",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بنزین به نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.exchange.mobile.short.5",
+      "source": "Fuel to Materials",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بنزین به مصالح"
         }
       ]
     }

@@ -418,7 +418,9 @@ namespace Game.Runtime
                         context.ProcessSelectionRectangleRequests?.Invoke();
                     }
                 }
-                else if (!releasePointerOverBlockingUi)
+                // Building selection runs first and owns a handled tap. Respect
+                // that ownership in explicit Select mode as well as normal taps.
+                else if (!releasePointerOverBlockingUi && !runtime.SuppressNextWorldClick)
                 {
                     bool focused = context.TryFocusUnit?.Invoke(pointerPosition) == true;
                     context.LogClickDiagnostic?.Invoke($"selectionModeClickFocus result={focused} pos={pointerPosition}");

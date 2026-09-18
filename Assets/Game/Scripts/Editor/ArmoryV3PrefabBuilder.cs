@@ -583,15 +583,10 @@ namespace Game.Editor
             RectTransform bar = CreatePanel(
                 "FooterBar", root, 6f, 824f, 1655f, 99f,
                 DarkTop, DarkBottom, Line, 3f).rectTransform;
-            RectTransform back = BuildFooterButton(
-                bar, "BackButton", 0f, 0f, 303f, 99f,
-                "BACK", V3UiFoundationBuilder.CommanderBackIconPath,
-                RaisedTop, DarkBottom, Line);
             RectTransform profile = BuildFooterButton(
                 bar, "CommanderProfileButton", 521f, 0f, 703f, 99f,
                 "COMMANDER PROFILE", V3UiFoundationBuilder.MatchPlayerIconPath,
                 BlueTop, BlueBottom, Cyan);
-            AddRoute(back, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
             AddRoute(profile, UiShellRouteIntent.OpenMenuRoute, UIRoute.CommanderProfile, true);
             return new FooterBindings(bar, profile);
         }

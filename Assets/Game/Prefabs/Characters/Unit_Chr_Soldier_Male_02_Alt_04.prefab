@@ -81,6 +81,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 96b1210ff95041928735bc637b212429, type: 3}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: productionTransportPrefab
+      value: 
+      objectReference: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: animationGroundOffsets.Array.size
       value: 15
       objectReference: {fileID: 0}

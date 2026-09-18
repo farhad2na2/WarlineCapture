@@ -209,8 +209,14 @@ namespace Game.UI.Runtime
             }
 
             ApplyInstruction(BuildDrawerCatalogPresentationSystemHelper.FormatPrimarySuccessInstruction(_gameTextResolver, _selectedItem), BuildDrawerInstructionSeverity.Ready);
-            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView, TacticalCommandResult.Success(
-                _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}", UiLocalizedText.CatalogLabel(_selectedItem.ActionLabel), UiLocalizedText.CatalogLabel(_selectedItem.DisplayName))), _gameTextResolver);
+            string acceptedMessage = _selectedItem.Category == BuildDrawerCategory.Soldiers &&
+                UiShellRuntimeGateway.TryReadSkirmish(out _)
+                ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.recruitment_accepted",
+                    "Recruitment queued. A helicopter will deliver 4 soldiers to your base.")
+                : _gameTextResolver.Format("build.feedback.production_requested", "{0}: {1}",
+                    UiLocalizedText.CatalogLabel(_selectedItem.ActionLabel), UiLocalizedText.CatalogLabel(_selectedItem.DisplayName));
+            BattleHudRuntimeFeedbackUiSystemHelper.ApplyCommandResult(_runtimeFeedbackView,
+                TacticalCommandResult.Success(acceptedMessage), _gameTextResolver);
             AcceptUnit();
         }
 

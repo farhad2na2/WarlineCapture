@@ -8,9 +8,61 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Contracts;
 using NUnit.Framework;
 using Unity.Entities;
+using Unity.Collections;
+using Unity.Mathematics;
+using UnityEditor;
+using UnityEngine;
 
 public sealed class SkirmishSessionTests
 {
+    [Test]
+    public void BuildingPlacementRejectsSkirmishMountainsAndKeepsFlatGroundAvailable()
+    {
+        MapSurfaceDataAsset asset = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
+            "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset");
+        Assert.IsNotNull(asset);
+        Assert.IsTrue(asset.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> blob));
+        try
+        {
+            var surface = new MapSurfaceComponent
+            {
+                SurfaceBlob = blob,
+                GridOrigin = asset.GridOrigin,
+                CellSize = asset.CellSize,
+                Dimensions = new int2(asset.Dimensions.x, asset.Dimensions.y),
+                HasSurfaceData = 1
+            };
+            Assert.IsFalse(BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(
+                surface, new RectInt(766, 550, 8, 8)), "Mountain slope must block the whole building footprint.");
+            Assert.IsFalse(BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(
+                surface, new RectInt(768, 546, 2, 2)), "A small building must not fit on a mountain plateau.");
+            Assert.IsTrue(BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(
+                surface, new RectInt(800, 600, 8, 8)), "Ordinary flat ground must remain buildable.");
+            Assert.IsTrue(BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(
+                surface, new RectInt(831, 596, 8, 8)), "The player base area must remain buildable.");
+        }
+        finally { blob.Dispose(); }
+    }
+    [Test]
+    public void RifleRecruitmentRetainsHelicopterDeliveryWithTheRestrictedSkirmishRoster()
+    {
+        var preset = UnityEngine.Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+        var roster = preset.buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs;
+        var rifle = System.Linq.Enumerable.First(roster, prefab =>
+            prefab.name == "Unit_Chr_Soldier_Male_02_Alt_04");
+        var production = new BuildingProductionQueueCompositionSystemHelper();
+        production.ConfigureUnitProductionMetadataResolver(BuildingProductionUnitMetadataPrefabSystemHelper.TryGetMetadata);
+        var settings = production.ResolveProductionTransportSettings(rifle, roster, null, null);
+
+        Assert.IsNotNull(settings.TransportPrefab, "Recruitment must not silently fall back to instant spawning.");
+        Assert.AreEqual(BuildingProductionQueueCompositionSystemHelper.ProductionTransportMode.Helicopter, settings.Mode);
+        using var world = new World(nameof(RifleRecruitmentRetainsHelicopterDeliveryWithTheRestrictedSkirmishRoster));
+        world.EntityManager.CreateEntity(typeof(SkirmishMatchState));
+        Assert.IsTrue(SkirmishCatalogPolicy.Allows(world.EntityManager, rifle, false));
+        Assert.IsFalse(SkirmishCatalogPolicy.Allows(world.EntityManager, settings.TransportPrefab, false),
+            "The delivery carrier is presentation, not an extra recruitable Skirmish unit.");
+    }
+
     [Test]
     public void ChangingSetupPreservesAResultWrittenAfterTheSetupWasLoaded()
     {

@@ -52,7 +52,11 @@ namespace Game.UI.Runtime
 
             if (progressFillImage != null)
             {
-                progressFillImage.type = Image.Type.Filled;
+                // A sprite-less Image does not honor Filled geometry. Resize its rect.
+                progressFillImage.rectTransform.anchorMax = new Vector2(Mathf.Clamp01(progress01), 1f);
+                progressFillImage.rectTransform.offsetMin = Vector2.zero;
+                progressFillImage.rectTransform.offsetMax = Vector2.zero;
+                progressFillImage.type = Image.Type.Simple;
                 progressFillImage.fillMethod = Image.FillMethod.Horizontal;
                 progressFillImage.fillOrigin = 0;
                 progressFillImage.fillAmount = Mathf.Clamp01(progress01);
@@ -76,7 +80,7 @@ namespace Game.UI.Runtime
         private static void SetText(TMP_Text target, string value)
         {
             if (target != null)
-                target.text = value ?? string.Empty;
+                UiLocalizedText.Set(target, (value ?? string.Empty).Replace("Convert ", "").Replace("Recover Oil from Fuel", "Fuel to Oil").Replace("Recover Materials from Fuel", "Fuel to Materials"));
         }
 
         private static void SetImage(Image target, Sprite sprite)

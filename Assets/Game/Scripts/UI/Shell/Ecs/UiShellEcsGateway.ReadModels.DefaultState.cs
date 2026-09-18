@@ -155,7 +155,7 @@ namespace Game.UI.Shell.Ecs
             {
                 entityManager.AddComponentData(boundary, new UiResourceExchangeStateComponent
                 {
-                    ActiveTab = UiResourceExchangeTab.Export,
+                    ActiveTab = UiResourceExchangeTab.All,
                     SelectedRecipeSlot = 0,
                     QueueCapacityText = new FixedString32Bytes("0/0"),
                     MaterialsText = new FixedString32Bytes("0"),

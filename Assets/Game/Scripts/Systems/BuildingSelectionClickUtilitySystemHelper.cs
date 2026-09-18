@@ -52,13 +52,9 @@ namespace Game.Runtime
 
         public bool HandleBuildingSelectionClick(Context context, Vector2 screenPosition)
         {
-            if (context.HasPendingPathJob != null && context.HasPendingPathJob())
-            {
-                BuildingSelectionNativeDiagnostic.Log(
-                    $"[BuildingSelectionHitOwnerDiag] stage=outer-route tap=({screenPosition.x:F1},{screenPosition.y:F1}) result=blocked-pending-path");
-                return false;
-            }
-
+            // Picking a managed building and its UI must not drop the user's tap
+            // just because an unrelated unit is calculating a path. The selection
+            // grid query reads GridConfig only, never mutable pathfinding buffers.
             if (context.TryGetGrid == null || !context.TryGetGrid(out GridConfig grid))
             {
                 BuildingSelectionNativeDiagnostic.Log(

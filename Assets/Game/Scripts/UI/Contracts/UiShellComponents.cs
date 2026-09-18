@@ -117,7 +117,8 @@ namespace Game.UI.Contracts
     public enum UiResourceExchangeTabKind : byte
     {
         Export = 0,
-        Import = 1
+        Import = 1,
+        All = 2
     }
 
     public enum UiResourceExchangeQueueStateKind : byte

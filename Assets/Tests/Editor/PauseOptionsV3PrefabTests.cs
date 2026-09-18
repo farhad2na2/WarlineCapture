@@ -38,6 +38,37 @@ public sealed class PauseOptionsV3PrefabTests
     }
 
     [Test]
+    public void SkirmishPauseUsesLiveStatusWithoutCampaignOrAutosavePlaceholders()
+    {
+        string locale = Game.Configs.GameLocalization.CurrentLocaleCode;
+        Game.Configs.GameLocalization.SetLocale("en", false);
+        var root = UnityEngine.Object.Instantiate(Load());
+        try
+        {
+            var view = root.GetComponent<PauseOptionsV3PopupView>();
+            var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            typeof(PauseOptionsV3PopupView).GetMethod("ShowSkirmishStatus", flags).Invoke(view, new object[] {
+                new UiSkirmishModel { Objective = "Destroy the marked enemy Barracks. Protect your own main base.",
+                    PlayerBase = "YOUR BASE\n900 / 1200", EnemyBase = "ENEMY BASE\n800 / 1200", Infantry = "12 / 24" }
+            });
+            var status = Find(root.transform, "SkirmishStatusColumn");
+            Assert.IsTrue(status.gameObject.activeSelf);
+            Assert.IsFalse(Find(root.transform, "StatusColumn").gameObject.activeSelf);
+            var clock = Find(root.transform, "CurrentTimeText").GetComponent<TMPro.TMP_Text>();
+            typeof(PauseOptionsV3PopupView).GetMethod("SetText", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+                .Invoke(null, new object[] { clock, "TIME LEFT  13:20" });
+            foreach (var binding in root.GetComponentsInChildren<V3LocalizedTextBindingView>(true)) binding.ApplyLocalization();
+            StringAssert.Contains("13:20", clock.text, "A later localization refresh must not restore the authored fake clock.");
+            string text = string.Join("\n", System.Array.ConvertAll(status.GetComponentsInChildren<TMPro.TMP_Text>(), t => t.text));
+            StringAssert.Contains("900 / 1200", text);
+            StringAssert.Contains("800 / 1200", text);
+            StringAssert.Contains("12 / 24", text);
+            StringAssert.DoesNotContain("14:30", text);
+        }
+        finally { UnityEngine.Object.DestroyImmediate(root); Game.Configs.GameLocalization.SetLocale(locale, false); }
+    }
+
+    [Test]
     public void PauseOptions_UsesTargetHierarchyAndConstantBorders()
     {
         GameObject prefab = Load();

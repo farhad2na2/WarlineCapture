@@ -1,0 +1,42 @@
+time=1.63 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=21.69 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=41.70 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=61.70 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=81.70 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=101.70 phase=Playing outcome=None losses=0/1 bases=1200/1200
+time=121.71 phase=Playing outcome=None losses=0/8 bases=1200/1200
+time=141.73 phase=Playing outcome=None losses=1/16 bases=1200/1200
+time=161.65 phase=Playing outcome=None losses=1/16 bases=1200/1200
+time=181.67 phase=Playing outcome=None losses=1/16 bases=1200/1200
+time=201.68 phase=Playing outcome=None losses=1/24 bases=1200/1200
+time=221.69 phase=Playing outcome=None losses=1/27 bases=1200/1200
+time=241.69 phase=Playing outcome=None losses=1/32 bases=1200/1200
+time=261.69 phase=Playing outcome=None losses=1/36 bases=1200/1200
+time=281.70 phase=Playing outcome=None losses=1/40 bases=1200/1200
+time=301.71 phase=Playing outcome=None losses=1/46 bases=1200/1200
+time=321.71 phase=Playing outcome=None losses=1/48 bases=1200/1200
+time=341.72 phase=Playing outcome=None losses=1/53 bases=1200/1200
+time=361.73 phase=Playing outcome=None losses=1/56 bases=1200/1200
+time=381.74 phase=Playing outcome=None losses=1/56 bases=1200/1200
+time=401.74 phase=Playing outcome=None losses=3/56 bases=1200/1200
+time=421.74 phase=Playing outcome=None losses=6/66 bases=1200/1200
+time=441.74 phase=Playing outcome=None losses=18/71 bases=1200/1200
+time=461.76 phase=Playing outcome=None losses=25/73 bases=1200/1176
+time=481.76 phase=Playing outcome=None losses=25/73 bases=1200/1176
+time=501.77 phase=Playing outcome=None losses=25/76 bases=1200/1176
+time=521.76 phase=Playing outcome=None losses=25/80 bases=1200/1176
+time=541.78 phase=Playing outcome=None losses=25/80 bases=1200/1176
+time=561.80 phase=Playing outcome=None losses=25/87 bases=1200/1176
+time=568.384 phase=Finished outcome=Defeat losses=25/88 bases=1200/1176
+slot=2 hp=0 pos=float3(1202.498f, 0.3834451f, 551.4918f) rallied=True moving=False
+slot=2 hp=0 pos=float3(1199.482f, 0.4107671f, 553.4638f) rallied=True moving=False
+slot=2 hp=0 pos=float3(1208.269f, 0.0863233f, 547.5946f) rallied=True moving=False
+slot=3 hp=0 pos=float3(1209.118f, 0.0863233f, 545.3144f) rallied=True moving=False
+slot=1 hp=0 pos=float3(1197.442f, 0.0863233f, 553.379f) rallied=True moving=False
+slot=1 hp=0 pos=float3(1195.509f, 0.0863233f, 550.4866f) rallied=True moving=False
+slot=2 hp=0 pos=float3(1199.495f, 0.3937447f, 552.4843f) rallied=True moving=False
+slot=3 hp=0 pos=float3(1194.517f, 0.0863233f, 550.4888f) rallied=True moving=False
+slot=2 hp=0 pos=float3(1193.507f, 0.0863233f, 551.4913f) rallied=True moving=False
+slot=1 hp=0 pos=float3(1203.5f, 0.0863233f, 547.218f) rallied=False moving=False
+slot=1 hp=0 pos=float3(1196.283f, 0.0863233f, 554.0662f) rallied=False moving=False
+slot=1 hp=0 pos=float3(1194.514f, 0.0863233f, 549.4999f) rallied=False moving=False

@@ -1,0 +1,4 @@
+Clicked visible Destroy wedge for selected Field Fabrication Depot
+after removal Materials=120 fabricated=80
+replacement preview=ﻣﺤﻞ ﺳﺎﺧﺖ ﻣﻌﺘﺒﺮ )546،597( 61×91
+PASS replacement received Oil and completed fabrication. Materials=40 fabricated=100 spent=280

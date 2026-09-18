@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "Game.UI.Runtime.UiShellRuntimeGateway.TryReadShellState(out var s);var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;using var q=em.CreateEntityQuery(typeof(Game.Components.SkirmishMatchState));return s.CurrentMode+\" \"+s.Phase+\" \"+s.IsTransitionRunning+\" match=\"+(q.CalculateEntityCount()==1?q.GetSingleton<Game.Components.SkirmishMatchState>().SessionId+\" \"+q.GetSingleton<Game.Components.SkirmishMatchState>().Phase:\"none\");"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "MatchHud MatchHudReady False match=64bca06817d84434b9f502110094b301 Playing"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

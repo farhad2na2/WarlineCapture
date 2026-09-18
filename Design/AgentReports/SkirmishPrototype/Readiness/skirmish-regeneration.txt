@@ -1,0 +1,1 @@
+PASS preset, setup prefab and configured localization regenerated in Editor; builder validation passed.

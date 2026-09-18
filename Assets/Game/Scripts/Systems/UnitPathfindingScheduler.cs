@@ -183,6 +183,21 @@ namespace Game.Runtime
                         requestFactions[i],
                         out bool usedHierarchicalWaypoint,
                         out bool hierarchicalFallback);
+                    // The prototype's bases fit inside a single bounded detailed
+                    // search. Coarse sector representatives can sit across narrow
+                    // ruined alleys that a vehicle cannot traverse, causing the
+                    // same short fallback segment to repeat forever. Use the
+                    // footprint-aware detailed search for this bounded roster;
+                    // retain the existing request/expansion budgets and campaign path.
+                    bool detailedSkirmishPath = em.HasComponent<SkirmishCombatTuned>(requestEntities[i]) &&
+                        math.distancesq(start, requestedGoal) <=
+                        UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells * UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells;
+                    if (detailedSkirmishPath)
+                    {
+                        pathGoal = requestedGoal;
+                        usedHierarchicalWaypoint = false;
+                        hierarchicalFallback = false;
+                    }
                     if (usedHierarchicalWaypoint)
                         hierarchicalWaypointCount++;
                     if (hierarchicalFallback)
@@ -190,8 +205,8 @@ namespace Game.Runtime
                     bool isSegmentedRequest = !pathGoal.Equals(requestedGoal);
                     segmented[i] = (byte)(isSegmentedRequest ? 1 : 0);
                     bool cheapSegmentMode = isManualMove && !isVehicle;
-                    cheapSegmentModes[i] = (byte)(cheapSegmentMode ? 1 : 0);
-                    bool skipAlternateSearch = isManualMove && !isVehicle;
+                    cheapSegmentModes[i] = (byte)(detailedSkirmishPath && isVehicle ? 2 : cheapSegmentMode ? 1 : 0);
+                    bool skipAlternateSearch = isManualMove && (!isVehicle || detailedSkirmishPath);
                     alternateSearchSkipped[i] = (byte)(skipAlternateSearch ? 1 : 0);
                     alternateAttempts[i] = 0;
                     int2 assignedGoal = goalAssignment.FindNearestFreeGoal(

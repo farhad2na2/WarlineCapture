@@ -213,6 +213,35 @@ public sealed class SelectionUiReadModelLookupTests
     }
 
     [Test]
+    public void FocusedUnitTextRefreshesOnLocaleChangeWithoutReselecting()
+    {
+        string locale = Game.Configs.GameLocalization.CurrentLocaleCode;
+        try
+        {
+            var unit = CreateCommandableUnit("Unit_Veh_Light_Armored_Car", "Light Armored Car", typeof(UnitCombat));
+            var info = _entityManager.GetComponentData<UnitDisplayInfo>(unit);
+            info.Description = "Mobile armored vehicle for patrols, flanking maneuvers, and fast fire support.";
+            _entityManager.SetComponentData(unit, info);
+            var selection = new SelectionStateCompositionSystemHelper(); selection.SetFocusedUnit(unit);
+            var publisher = new FocusedUnitUiReadModelUiSystemHelper();
+            var transport = new UnitTransportCapacitySystem();
+            Game.Configs.GameLocalization.SetLocale("en", false);
+            publisher.Publish(_entityManager, selection, _lookup, transport, 1);
+            publisher.TryRead(_entityManager, out var english, out _);
+            Game.Configs.GameLocalization.SetLocale("fa-IR", false);
+            publisher.Publish(_entityManager, selection, _lookup, transport, 2);
+            publisher.TryRead(_entityManager, out var persian, out _);
+            Assert.AreNotEqual(english.Description, persian.Description);
+            StringAssert.Contains("خودرو", persian.Description.ToString());
+            Game.Configs.GameLocalization.SetLocale("en", false);
+            publisher.Publish(_entityManager, selection, _lookup, transport, 3);
+            publisher.TryRead(_entityManager, out var restored, out _);
+            Assert.AreEqual(english.Description, restored.Description);
+        }
+        finally { Game.Configs.GameLocalization.SetLocale(locale, false); }
+    }
+
+    [Test]
     public void FocusedUnitCommandStateVersion_ChangesOnlyWhenCommandStateChanges()
     {
         Entity soldier = CreateCommandableUnit("Unit_Chr_Rifle_Squad", "Rifle Squad", typeof(UnitCombat));

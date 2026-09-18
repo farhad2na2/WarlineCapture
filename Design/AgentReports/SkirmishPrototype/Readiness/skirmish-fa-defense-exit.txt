@@ -1,0 +1,5 @@
+FAIL System.InvalidOperationException: Control is unavailable.
+  at Game.Editor.SkirmishGameplayProbe.Click (UnityEngine.UI.Button button) [0x00133] in /Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/SkirmishGameplayProbe.cs:43 
+  at PipelineEvaluation.PipelineEval_deec5d2e+<>c__DisplayClass0_0.<Execute>b__0 () [0x001ee] in <bf851e3190004710898442394c7da5b1>:0 
+Player surrendered after failed counterattack; no living combat units remained.
+RESULT Defeat Surrender elapsed=510.4234 losses=25/72

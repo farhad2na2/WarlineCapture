@@ -1,0 +1,2 @@
+Counterattack mechanics check in Farsi; late scenery vehicles invalidate roster acceptance.
+elapsed=846.3121 phase=Playing outcome=None losses=9/7

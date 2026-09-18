@@ -1,0 +1,2 @@
+Interrupted fresh replay at 1.996371s seed=37 phase=Playing outcome=None
+PASS reloaded setup retained seed37; no active match, no fake resume or result.

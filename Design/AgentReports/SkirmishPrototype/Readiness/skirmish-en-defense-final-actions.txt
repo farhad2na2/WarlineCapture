@@ -1,0 +1,5 @@
+time=541.3456 slot=0 attack=tower target=Entity(2575:35)
+time=544.3734 slot=1 attack=tower target=Entity(2575:35)
+time=547.4218 slot=2 attack=tower target=Entity(2575:35)
+time=550.4459 slot=3 attack=tower target=Entity(2575:35)
+time=553.4625 slot=4 attack=tower target=Entity(2575:35)

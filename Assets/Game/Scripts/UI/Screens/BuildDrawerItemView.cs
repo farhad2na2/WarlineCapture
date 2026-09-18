@@ -101,6 +101,13 @@ namespace Game.UI.Runtime
             ApplyV3VisualState();
         }
 
+        public void SetUnavailableReason(string reason)
+        {
+            if (disabledOverlay == null) return;
+            var label = disabledOverlay.GetComponentInChildren<TMP_Text>(true);
+            if (label != null) UiLocalizedText.Set(label, reason);
+        }
+
         private void ApplyV3VisualState()
         {
             V3GradientGraphic gradient = GetComponent<V3GradientGraphic>();

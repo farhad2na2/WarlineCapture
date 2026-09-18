@@ -1,0 +1,2 @@
+Fresh roster/UI verification, not a completed acceptance journey.
+elapsed=496.3315 phase=Playing outcome=None losses=0/7 ownedAuthoredVehicles=0 baseHealth=912/1200

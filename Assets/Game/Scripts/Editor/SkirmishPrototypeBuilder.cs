@@ -27,19 +27,19 @@ namespace Game.Editor
             {
                 var faction=factions.GetArrayElementAtIndex(i);
                 faction.FindPropertyRelative("factionId").intValue=i+1;
-                faction.FindPropertyRelative("spawnCell").vector2IntValue=new Vector2Int(i==0?900:1190,i==0?490:530);
+                faction.FindPropertyRelative("spawnCell").vector2IntValue=new Vector2Int(i==0?835:1210,i==0?610:580);
                 var units=faction.FindPropertyRelative("units"); units.arraySize=5;
-                Unit(units,0,"Characters/Unit_Chr_Soldier_Male_02_Alt_04",4,new Vector2Int(0,0));
-                Unit(units,1,"Characters/Unit_Chr_Soldier_Male_02_Alt_04",4,new Vector2Int(12,0));
-                Unit(units,2,"Vehicles/Unit_Veh_Light_Armored_Car",1,new Vector2Int(5,10));
+                Unit(units,0,"Characters/Unit_Chr_Soldier_Male_02_Alt_04",4,new Vector2Int(i==0?30:-30,-5));
+                Unit(units,1,"Characters/Unit_Chr_Soldier_Male_02_Alt_04",4,new Vector2Int(i==0?30:-30,5));
+                Unit(units,2,"Vehicles/Unit_Veh_Light_Armored_Car",1,new Vector2Int(i==0?20:-20,0));
                 Unit(units,3,"Vehicles/Unit_Veh_Truck_Tanker",1,new Vector2Int(10,30));
                 Unit(units,4,"Vehicles/Unit_Veh_Truck_Tray",2,new Vector2Int(0,30));
                 var buildings=faction.FindPropertyRelative("buildings"); buildings.arraySize=5;
-                Building(buildings,0,"Building_Barrack",new Vector2Int(i==0?-13:-10,-30));
-                Building(buildings,1,"Building_Ammunition_Depot",new Vector2Int(i==0?-3:-10,i==0?50:40));
-                Building(buildings,2,"Building_OilPump",new Vector2Int(i==0?-20:-10,i==0?83:90));
-                Building(buildings,3,"Building_Refinery",new Vector2Int(i==0?0:70,i==0?100:10));
-                Building(buildings,4,"Building_Fuel_Bladder",new Vector2Int(i==0?25:5,i==0?80:110));
+                Building(buildings,0,"Building_Barrack",new Vector2Int(i==0?-18:-15,-21));
+                Building(buildings,1,"Building_Ammunition_Depot",new Vector2Int(i==0?-15:-7,i==0?35:32));
+                Building(buildings,2,"Building_OilPump",new Vector2Int(-10,i==0?65:52));
+                Building(buildings,3,"Building_Refinery",new Vector2Int(i==0?-16:-30,i==0?12:57));
+                Building(buildings,4,"Building_Fuel_Bladder",new Vector2Int(-10,i==0?-50:-57));
             }
             so.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(initial);
             var placement=Copy<BuildingPlacementSystemConfig>("Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset","Construction");
@@ -71,6 +71,10 @@ namespace Game.Editor
             Strings(so,"fallbackProductionUnitIds",new[]{"Unit_Chr_Soldier_Male_02_Alt_04"}); so.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(ai);
             var vehicles=Asset<MapVehiclePlacementConfig>(Root+"/MapVehicles.asset"); vehicles.EditorSetPlacements(new());
             var preset=Asset<SkirmishPresetConfig>("Assets/Game/Resources/SkirmishBaseAssault.asset");
+            preset.firstAttackSeconds=60f; preset.playerReinforcementRallyOffset=new Vector3(40,0,10);
+            preset.reinforcementInfantryTarget=16; preset.attackSquadSize=8;
+            preset.aiMaterialsReserve=80; preset.aiFuelReserve=160;
+            preset.watchtowerRange=55f; preset.watchtowerDamage=10; preset.watchtowerCooldown=.8f;
             preset.buildingPlacement=placement; preset.aiControllers=new[]{enemy,player}; preset.aiPlan=ai; preset.mapVehicles=vehicles;
             EditorUtility.SetDirty(preset); AssetDatabase.SaveAssets();
             Debug.Log("[SkirmishPrototypeBuilder] preset rebuilt");

@@ -582,12 +582,19 @@ namespace Game.Runtime
                 return false;
             }
 
+            var pending = building.PendingProductions[pendingProductionIndex];
+            int refund = pending.PaidQuantity > 0
+                ? (int)((long)pending.RefundableMaterials * Mathf.Clamp(pending.RemainingQuantity, 0, pending.PaidQuantity) / pending.PaidQuantity)
+                : 0;
             if (!context.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex))
             {
                 resultCode = BuildingUiProductionCommandResultElement.CancelRejected;
                 return false;
             }
 
+            // Remove (and clear the pooled receipt) before refunding, so a
+            // repeated cancel cannot credit the same production request twice.
+            if (refund > 0) RestoreUnitProductionResources(context, 0, refund);
             context.ProductionSystem.RebuildPendingProductionTimeline(
                 building.PendingProductions,
                 now,

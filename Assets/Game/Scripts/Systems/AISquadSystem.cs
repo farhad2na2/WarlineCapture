@@ -47,7 +47,7 @@ namespace Game.Runtime
             {
                 All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>(),
                     ComponentType.ReadOnly<UnitHealth>(), ComponentType.ReadOnly<AIControlledTag>() },
-                None = new[] { ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>(), ComponentType.ReadOnly<UnitResourceHauler>() }
+                None = new[] { ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(), ComponentType.ReadOnly<SkirmishBaseDefender>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>(), ComponentType.ReadOnly<UnitResourceHauler>() }
             });
             _squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<AISquad>());
             _factionGridQuery = state.GetEntityQuery(ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitGrid>());
@@ -70,6 +70,14 @@ namespace Game.Runtime
         {
             if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
                 return;
+
+            if (SystemAPI.HasSingleton<SkirmishMatchState>() && SystemAPI.GetSingleton<SkirmishMatchState>().Phase != SkirmishPhase.Playing) return;
+
+            if (SystemAPI.HasSingleton<SkirmishMatchState>())
+            {
+                state.Dependency.Complete();
+                SkirmishCombatPolicy.RetireEmptySquads(state.EntityManager);
+            }
 
             double elapsedTime = SystemAPI.Time.ElapsedTime;
             float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;

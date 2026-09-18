@@ -228,6 +228,13 @@ namespace Game.Runtime
                     if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
                         continue;
 
+                    // Reissuing the same order used to erase the approach path every
+                    // two seconds. Let the skirmish path finish before replanning.
+                    if (SystemAPI.HasSingleton<SkirmishMatchState>() &&
+                        em.HasComponent<BaseBreachOrder>(unit) &&
+                        em.GetComponentData<BaseBreachOrder>(unit).FinalTarget == squad.TargetEntity)
+                        continue;
+
                     if (!hasEcb)
                     {
                         ecb = new EntityCommandBuffer(Allocator.Temp);

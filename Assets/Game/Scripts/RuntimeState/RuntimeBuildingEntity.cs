@@ -70,6 +70,10 @@ namespace Game.Runtime
             public float TransportHoldForNextReadySeconds { get; set; }
             public int TransportMaxConcurrent { get; set; }
             public int RemainingQuantity { get; set; }
+            // Recorded only for paid skirmish requests. Refund the unspawned
+            // portion, never units already delivered or unpaid scripted queues.
+            public int RefundableMaterials { get; set; }
+            public int PaidQuantity { get; set; }
             public int TransportClearDropSearchStartRadius { get; set; }
             public ProductionTransportMode TransportMode { get; set; }
             public bool TransportRequiresAirportRunway { get; set; }

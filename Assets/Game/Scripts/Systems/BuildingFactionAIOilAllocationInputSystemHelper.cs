@@ -11,6 +11,7 @@ namespace Game.Runtime
         private EntityQuery _aiBuildPlanQuery;
         private EntityQuery _factionEconomyQuery;
         private EntityQuery _factionControlQuery;
+        private EntityQuery _skirmishQuery;
 
         internal BuildingFactionAIOilAllocationInputSystemHelper(
             BuildingGameplayEcsQueryCompositionSystemHelper querySource)
@@ -65,8 +66,21 @@ namespace Game.Runtime
                 factionId,
                 out float storedFuelBarrels,
                 out int fuelStorageCapacity);
+            int plannedMaterialsCost = decision.MaterialsCost;
+            if (!_skirmishQuery.IsEmptyIgnoreFilter)
+            {
+                var preset = UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(
+                    Game.Configs.SkirmishPresetConfig.ResourceName);
+                if (preset != null)
+                {
+                    // Recruitment keeps consuming Materials after construction finishes. A mostly
+                    // empty industrial tank must not divert every Oil delivery away from that supply.
+                    plannedMaterialsCost = UnityEngine.Mathf.Max(plannedMaterialsCost, preset.aiMaterialsReserve);
+                    fuelStorageCapacity = UnityEngine.Mathf.Min(fuelStorageCapacity, preset.aiFuelReserve);
+                }
+            }
             input = new BuildingResourceHaulerBridgeCompositionSystemHelper.FactionAIOilAllocationInput(
-                decision.MaterialsCost,
+                plannedMaterialsCost,
                 materials.Current,
                 materials.Capacity,
                 storedFuelBarrels,
@@ -81,6 +95,7 @@ namespace Game.Runtime
                 return;
 
             _queryWorld = world;
+            _skirmishQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
             _aiBuildPlanQuery = em.CreateEntityQuery(
                 ComponentType.ReadOnly<AIBuildPlan>(),
                 ComponentType.ReadOnly<AIBuildPlanEntry>());

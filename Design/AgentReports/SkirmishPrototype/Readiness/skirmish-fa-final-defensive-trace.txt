@@ -1,0 +1,17 @@
+time=17.17 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=37.29 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=57.31 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=77.32 phase=Playing outcome=None losses=0/0 bases=1200/1200
+time=96.16 phase=Playing outcome=None losses=0/1 bases=1200/1200
+time=116.18 phase=Playing outcome=None losses=0/5 bases=1200/1200
+time=136.19 phase=Playing outcome=None losses=0/16 bases=1200/1200
+time=156.20 phase=Playing outcome=None losses=0/16 bases=1200/1200
+time=176.21 phase=Playing outcome=None losses=0/16 bases=1200/1200
+time=196.22 phase=Playing outcome=None losses=0/24 bases=1200/1200
+time=216.23 phase=Playing outcome=None losses=0/31 bases=1200/1200
+time=236.24 phase=Playing outcome=None losses=0/32 bases=1200/1200
+time=256.24 phase=Playing outcome=None losses=0/32 bases=1200/1200
+time=276.25 phase=Playing outcome=None losses=0/32 bases=1200/1200
+time=296.25 phase=Playing outcome=None losses=3/32 bases=1200/1092
+time=315.58 phase=Playing outcome=None losses=11/32 bases=1200/744
+time=326.83 phase=Finished outcome=Victory losses=18/32 bases=1200/0

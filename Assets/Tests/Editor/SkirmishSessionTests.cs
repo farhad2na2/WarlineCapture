@@ -12,6 +12,46 @@ using Unity.Entities;
 public sealed class SkirmishSessionTests
 {
     [Test]
+    public void ChangingSetupPreservesAResultWrittenAfterTheSetupWasLoaded()
+    {
+        string directory = Path.Combine(Path.GetTempPath(), "skirmish-setup-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            var save = new SaveService(new JsonSaveRepository(directory));
+            var store = new QuickCustomGameConfigStore(save);
+            var config = store.Current;
+            var finished = save.LoadQuickGame();
+            finished.lastResult = new SkirmishResultSaveData { sessionId = "new-result", outcome = "Victory", seed = 37 };
+            save.SaveQuickGame(finished);
+            config.MapSeed = 7919;
+            store.Apply(config);
+            var loaded = save.LoadQuickGame();
+            Assert.AreEqual(7919, loaded.configuration.MapSeed);
+            Assert.AreEqual("new-result", loaded.lastResult.sessionId);
+            Assert.AreEqual("Victory", loaded.lastResult.outcome);
+            Assert.IsFalse(File.Exists(Path.Combine(directory, SaveService.ProfileFileName)));
+        }
+        finally { if (Directory.Exists(directory)) Directory.Delete(directory, true); }
+    }
+
+    [Test]
+    public void RetryClearsThePreviousStartFailureWithoutResettingRequestSequence()
+    {
+        using var world = new World("SkirmishRetryStartup");
+        var em = world.EntityManager;
+        var boundary = em.CreateEntity(typeof(MatchStartQueueComponent), typeof(MatchStartProgressComponent));
+        em.SetComponentData(boundary, new MatchStartQueueComponent { LastRequestId = 17, ActiveRequestId = 17, LastStatus = MatchStartStatusKind.Failed });
+        em.AddBuffer<MatchStartResultElement>(boundary).Add(new MatchStartResultElement { RequestId = 17, Status = MatchStartStatusKind.Failed });
+        em.AddBuffer<MatchStartRequestElement>(boundary);
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em, QuickGameConfig.Defaults));
+        var queue = em.GetComponentData<MatchStartQueueComponent>(boundary);
+        Assert.AreEqual(17, queue.LastRequestId);
+        Assert.AreEqual(MatchStartStatusKind.None, queue.LastStatus);
+        Assert.Zero(queue.ActiveRequestId);
+        Assert.Zero(em.GetBuffer<MatchStartResultElement>(boundary).Length);
+    }
+
+    [Test]
     public void AttackApproachFindsAnOpenFiringPositionInsteadOfTheBlockedBaseCenter()
     {
         var grid=new GridConfig{Width=80,Height=80,CellSize=1};
@@ -35,7 +75,7 @@ public sealed class SkirmishSessionTests
         var em=world.EntityManager;
         var session=em.CreateEntity(typeof(SkirmishMatchState));
         em.SetComponentData(session,new SkirmishMatchState{Phase=SkirmishPhase.Playing});
-        var prefab=new UnityEngine.GameObject("unit_soldier");
+        var prefab=UnityEngine.Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName).buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs[0];
         try
         {
             foreach(byte faction in new byte[]{1,2})
@@ -45,7 +85,7 @@ public sealed class SkirmishSessionTests
                     var unit=em.CreateEntity(typeof(Faction),typeof(UnitHealth),typeof(UnitSourcePrefabKey));
                     em.SetComponentData(unit,new Faction{Id=faction});
                     em.SetComponentData(unit,new UnitHealth{Current=100,Max=100});
-                    em.SetComponentData(unit,new UnitSourcePrefabKey{Value="unit_soldier"});
+                    em.SetComponentData(unit,new UnitSourcePrefabKey{Value=i%2==0?"unit_soldier_variant_a":"unit_soldier_variant_b"});
                 }
                 var producer=new RuntimeBuildingEntity{OwnerFactionId=faction,
                     Definition=new BuildingDefinition{ProductionSlots=new System.Collections.Generic.List<BuildingDefinition.ProductionSlotDefinition>{new(){Quantity=4}}},
@@ -60,7 +100,7 @@ public sealed class SkirmishSessionTests
                 Assert.IsTrue(SkirmishPopulationPolicy.CanQueue(em,buildings,producer,prefab,0),"Cancellation releases the reservation.");
             }
         }
-        finally {UnityEngine.Object.DestroyImmediate(prefab);}
+        finally { /* The configured prefab is a shared asset, owned by Unity. */ }
     }
     [Test]
     public void SaveRoundTripPreservesSeedAndResultWithoutWritingCampaignProfile()

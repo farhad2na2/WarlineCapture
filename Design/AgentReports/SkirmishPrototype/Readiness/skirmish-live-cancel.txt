@@ -1,0 +1,5 @@
+Materials before=260 queued=240 canceled=260
+FAIL System.InvalidOperationException: Control is unavailable.
+  at Game.Editor.SkirmishGameplayProbe.Click (UnityEngine.UI.Button button) [0x00133] in /Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/SkirmishGameplayProbe.cs:43 
+  at PipelineEvaluation.PipelineEval_2d31752e+<>c__DisplayClass0_0.<Execute>b__1 () [0x002a2] in <664e295640644035a74990fa9cf60060>:0 
+PASS paid refund 260 -> 240 -> 260. A later drawer-close probe used the placement-only Cancel control; the battle then ended while Build was open.

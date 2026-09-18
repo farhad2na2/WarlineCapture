@@ -83,6 +83,9 @@ namespace Game.Editor
             var widthTargets = new List<RectTransform>();
             BuildHeader(composition, rightTargets, widthTargets, out _);
             BuildOperationPreview(composition, widthTargets, out TMP_InputField seedInput, out TMP_Text mapName);
+            mapName.text = "DESERT BASE";
+            mapName.gameObject.AddComponent<V3LocalizedTextBindingView>()
+                .Configure("ui.skirmish.base_assault_map", "DESERT BASE", false);
             ConfigureBaseAssaultPreview(composition);
             BuildBaseAssaultRules(composition, rightTargets);
             BuildFooter(composition, rightTargets, widthTargets, out Button reset, out Button randomize, out Button launch);
@@ -181,14 +184,17 @@ namespace Game.Editor
             ICollection<RectTransform> widthTargets,
             out Button backButton)
         {
-            RectTransform logo = CreateTopLeft("WarlineLogo", root, 14f, 13f, 381f, 100f);
-            CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
-            Image invisibleHit = CreateImage("BackButton", logo, null, Color.clear, true);
-            Stretch(invisibleHit.rectTransform);
-            backButton = invisibleHit.gameObject.AddComponent<Button>();
-            backButton.targetGraphic = invisibleHit;
-            backButton.transition = Selectable.Transition.None;
+            backButton = CreateGradientButton("BackButton", root, 14f, 13f, 381f, 100f, DarkTop, DarkBottom, Cyan, 3f);
+            Image backIcon = CreateImage("BackIcon", backButton.transform,
+                RequireSprite(V3UiFoundationBuilder.CommanderBackIconPath), TextPrimary, false);
+            SetTopLeft(backIcon.rectTransform, 18f, 28f, 44f, 44f);
+            TMP_Text backLabel = CreateText("Label", backButton.transform, "BACK TO MAIN MENU", 28f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            SetHorizontalStretch(backLabel.rectTransform, 72f, 14f, 10f, 80f);
+            backLabel.enableAutoSizing = true;
+            backLabel.fontSizeMin = 22f;
+            backLabel.fontSizeMax = 28f;
+            backLabel.gameObject.AddComponent<V3LocalizedTextBindingView>()
+                .Configure("ui.navigation.back_to_main_menu", "BACK TO MAIN MENU", false);
             backButton.gameObject.AddComponent<UIShellRouteButtonView>()
                 .Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
             RectTransform title = CreateTopLeft("ScreenTitlePanel", root, 396f, 13f, 574f, 100f);
@@ -251,20 +257,20 @@ namespace Game.Editor
             var panel = CreateTopLeft("BaseAssaultRules", root, 810f, 125f, 848f, 671f);
             CreateGradientPanel(panel, DarkTop, DarkBottom, Border, 3f);
             rightTargets.Add(panel);
-            void Label(string name, string value, float top, float height, float size, Color color)
+            void Label(string name, string key, string value, float top, float height, float size, Color color)
             {
                 var text = CreateText(name, panel, value, size, mediumFont, TextAlignmentOptions.TopLeft, color);
                 SetHorizontalStretch(text.rectTransform, 30f, 30f, top, height);
                 text.textWrappingMode = TextWrappingModes.Normal;
                 text.overflowMode = TextOverflowModes.Overflow;
-                text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure("", value);
+                text.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure(key, value);
             }
-            Label("Title", "BASE ASSAULT", 22f, 58f, 40f, Cyan);
-            Label("Opponent", "1 opponent · Normal · 15-minute limit", 94f, 70f, 28f, TextPrimary);
-            Label("Objective", "Destroy the enemy's main Barracks and protect yours. If both survive when time runs out, the match is a draw.", 178f, 128f, 29f, TextPrimary);
-            Label("Roster", "Each side starts with 2 rifle groups, 1 armored car and an automated supply base. Recruit more soldiers and build defenses.", 322f, 128f, 28f, TextPrimary);
-            Label("Economy", "Spend Materials to build and recruit. Tankers deliver Oil for fabrication and refining. Only delivered Fuel is usable.", 466f, 120f, 27f, TextMuted);
-            Label("Intel", "Full map visibility · No campaign rewards", 608f, 46f, 25f, TextMuted);
+            Label("Title", "ui.skirmish.base_assault", "BASE ASSAULT", 22f, 58f, 40f, Cyan);
+            Label("Opponent", "ui.skirmish.preset_summary", "1 opponent · Normal · 15-minute limit", 94f, 70f, 28f, TextPrimary);
+            Label("Objective", "ui.skirmish.objective_explanation", "Destroy the enemy's main Barracks and protect yours. If both survive when time runs out, the match is a draw.", 178f, 128f, 29f, TextPrimary);
+            Label("Roster", "ui.skirmish.starting_roster", "Each side starts with 2 rifle groups, 1 armored car and an automated supply base. Recruit more soldiers and build defenses.", 322f, 128f, 28f, TextPrimary);
+            Label("Economy", "ui.skirmish.supply_explanation", "Spend Materials to build and recruit. Tankers deliver Oil for fabrication and refining. Only delivered Fuel is usable.", 466f, 120f, 27f, TextMuted);
+            Label("Intel", "ui.skirmish.prototype_scope", "Full map visibility · No campaign rewards", 608f, 46f, 25f, TextMuted);
         }
 
         private static void BuildPresetRail(RectTransform root)
@@ -624,7 +630,8 @@ namespace Game.Editor
 
             launch = CreateGradientButton("LaunchMissionButton", root, 979f, 812f, 679f, 114f, LaunchTop, LaunchBottom, Lime, 3f);
             rightTargets.Add(launch.GetComponent<RectTransform>());
-            TMP_Text launchLabel = CreateText("Label", launch.transform, "LAUNCH MISSION", 45f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            TMP_Text launchLabel = CreateText("Label", launch.transform, "START MATCH", 45f, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            launchLabel.gameObject.AddComponent<V3LocalizedTextBindingView>().Configure("ui.skirmish.start_match", "START MATCH");
             SetTopLeft(launchLabel.rectTransform, 118f, 10f, 443f, 92f);
             CreateChevronGroup(launch.transform, 46f, 57f, TextPrimary, true);
             CreateChevronGroup(launch.transform, 632f, 57f, TextPrimary, true);

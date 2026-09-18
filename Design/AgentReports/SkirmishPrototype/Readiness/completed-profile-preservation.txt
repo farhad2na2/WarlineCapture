@@ -1,0 +1,3 @@
+PASS: completed M1–M5 profile, XP 2230, Credits 11200, stars and unlocks unchanged after skirmish restart and surrender.
+Fixture includes previously completed onboarding. Only an isolated copy under /private/tmp was used.
+Before and after profile SHA256: d9c2de95094a9110d48822f55f50248328352bc7a426ee87b2874197a7107258

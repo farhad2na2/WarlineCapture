@@ -1,0 +1,23 @@
+time=181.403 leg=0 slot=0 target=(930.00, 0.00, 430.00)
+time=184.4288 leg=0 slot=1 target=(930.00, 0.00, 430.00)
+time=187.4485 leg=0 slot=2 target=(930.00, 0.00, 430.00)
+time=190.4692 leg=0 slot=3 target=(930.00, 0.00, 430.00)
+time=193.5039 leg=0 slot=4 target=(930.00, 0.00, 430.00)
+time=230.7841 gathered=25/25 leg=0
+time=242.8183 leg=1 slot=0 target=(1180.00, 0.00, 430.00)
+time=245.8374 leg=1 slot=1 target=(1180.00, 0.00, 430.00)
+time=248.8521 leg=1 slot=2 target=(1180.00, 0.00, 430.00)
+time=251.8727 leg=1 slot=3 target=(1180.00, 0.00, 430.00)
+time=254.8798 leg=1 slot=4 target=(1180.00, 0.00, 430.00)
+time=300.1764 gathered=25/25 leg=1
+READY: army gathered outside enemy range
+time=307.7786 slot=0 attack=tower target=Entity(2576:69)
+time=310.8037 slot=1 attack=tower target=Entity(2576:69)
+time=313.8416 slot=2 attack=tower target=Entity(2576:69)
+time=316.8727 slot=3 attack=tower target=Entity(2576:69)
+time=319.9001 slot=4 attack=tower target=Entity(2576:69)
+time=345.128 target destroyed=tower
+time=348.1505 slot=0 attack=base target=Entity(712:5)
+time=351.17 slot=1 attack=base target=Entity(712:5)
+time=354.1813 slot=2 attack=base target=Entity(712:5)
+time=357.2058 slot=3 attack=base target=Entity(712:5)

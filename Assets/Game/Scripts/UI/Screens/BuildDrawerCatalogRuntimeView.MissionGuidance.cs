@@ -33,6 +33,7 @@ namespace Game.UI.Runtime
         {
             if (view == null)
                 return;
+            _availability.Clear();
 
             // The drawer view/catalog can be bound after OnEnable during route
             // installation or a domain reload. Reassert the idempotent tab

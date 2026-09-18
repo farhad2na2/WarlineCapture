@@ -1,0 +1,7 @@
+Clicked visible Destroy wedge for selected Field Fabrication Depot
+live depots after demolition=0
+replacement preview=Blocked by road or blocker (820,645) 19x16
+FAIL System.InvalidOperationException: Control is unavailable.
+  at Game.Editor.SkirmishGameplayProbe.Click (UnityEngine.UI.Button button) [0x00133] in /Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/SkirmishGameplayProbe.cs:43 
+  at PipelineEvaluation.PipelineEval_ddced01d+<>c__DisplayClass0_0.<Execute>b__0 () [0x00127] in <51c77fe82f9f4374a4c0aa505ad1436a>:0 
+candidate=(805.00, 653.00) status=Valid placement (796,645) 19x16

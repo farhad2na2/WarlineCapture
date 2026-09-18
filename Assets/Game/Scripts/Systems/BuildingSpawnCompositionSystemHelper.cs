@@ -504,7 +504,7 @@ namespace Game.Runtime
 
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
             NativeBitArray occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
-            var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp);
+            var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.TempJob);
             try
             {
                 randomState = math.max(1u, randomState + 1u);
@@ -513,6 +513,19 @@ namespace Game.Runtime
                 ReserveBuildingBuffer(ref reserved, grid, building.OriginCell, size, 1);
                 ReserveRecentSpawnBuffers(context, em, ref reserved, grid);
                 int2 center = new(building.OriginCell.x + size.x / 2, building.OriginCell.y + size.y / 2);
+                if (!isAirUnit && !overrideCell.HasValue &&
+                    spawnUnitSourceKey.ToString().IndexOf("soldier", System.StringComparison.OrdinalIgnoreCase) >= 0)
+                {
+                    using var skirmish = em.CreateEntityQuery(typeof(SkirmishMatchState));
+                    if (!skirmish.IsEmptyIgnoreFilter)
+                    {
+                        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                        var surface = surfaces.CalculateEntityCount() == 1
+                            ? surfaces.GetSingleton<MapSurfaceComponent>() : default;
+                        SkirmishPopulationPolicy.ReserveDisconnectedSpawnCells(grid, walkable,
+                            blockerData.Blocked, center, building.OwnerFactionId == 2 ? -1 : 1, ref reserved, surface);
+                    }
+                }
                 cell = center;
                 if (overrideWorldPosition.HasValue && overrideCell.HasValue)
                 {
@@ -902,7 +915,8 @@ namespace Game.Runtime
                     : producedUnit.BuildingRuntimeId;
                 if (slotBuildingRuntimeId != productionSlotBuildingRuntimeId ||
                     producedUnit.ProductionSlotIndex != slotIndex ||
-                    !IsProducedUnitAlive(producedUnit.Unit, em))
+                    !IsProducedUnitAlive(producedUnit.Unit, em) ||
+                    SkirmishPopulationPolicy.ReleasesProductionSlot(em, producedUnit.Unit))
                 {
                     continue;
                 }

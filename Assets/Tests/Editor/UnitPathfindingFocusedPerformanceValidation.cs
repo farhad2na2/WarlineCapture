@@ -51,6 +51,42 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
     }
 
     [Test]
+    public void SkirmishVehicleCanDetourAroundABlockInsteadOfRepeatingNearbyFallbacks()
+    {
+        var world = new World("SkirmishVehicleDetour");
+        var em = world.EntityManager;
+        em.SetComponentData(em.CreateEntity(typeof(RuntimeGameplayStateComponent)),
+            new RuntimeGameplayStateComponent { PlayRequested = 1 });
+        var grid = CreateGrid(em, 128, 128, out var counts, out var blocked, out var occupied, out var friendly, out var pool);
+        var units = new NativeArray<Entity>(1, Allocator.Temp);
+        try
+        {
+            // A broad city block needs a detour beyond the old 12-cell search margin.
+            for (int y = 32; y <= 96; y++)
+                for (int x = 58; x <= 62; x++) blocked.Set(y * 128 + x, true);
+            var goal = new int2(110, 64);
+            units[0] = CreatePathfindingUnit(em, 2, new int2(20, 64), goal, true, false);
+            em.AddComponent<SkirmishCombatTuned>(units[0]);
+            var system = world.CreateSystem<UnitPathfindingSystem>();
+            RunPathfindingUntilComplete(world, em, system, units);
+            var range = em.GetComponentData<UnitPathRange>(units[0]);
+            var cells = em.GetComponentData<PathPoolComponent>(grid).Cells;
+            Assert.AreEqual(goal, cells[range.Start + range.Length - 1], "Reach the actual destination, not a short progress fallback.");
+            Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(units[0]));
+            bool detoured = false;
+            for (int i = 0; i < range.Length; i++)
+                detoured |= cells[range.Start + i].y < 32 || cells[range.Start + i].y > 96;
+            Assert.IsTrue(detoured);
+        }
+        finally
+        {
+            units.Dispose();
+            world.Dispose();
+            pool.Dispose(); friendly.Dispose(); occupied.Dispose(); blocked.Dispose(); counts.Dispose();
+        }
+    }
+
+    [Test]
     public void ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics()
     {
         ScenarioResult result = RunFocusedScenario(captureDiagnostics: true);

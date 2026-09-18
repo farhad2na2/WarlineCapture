@@ -26,6 +26,22 @@ namespace Game.Composition
                 if (em.GetBuffer<CampaignMissionLaunchRequestElement>(root).Length != 0) return false;
             using var query = em.CreateEntityQuery(typeof(SkirmishMatchState));
             if (!query.IsEmptyIgnoreFilter) return false;
+            // The start boundary survives scene unloads. A retry/replay must not
+            // inherit the previous attempt's Failed or Started status.
+            using (var starts = em.CreateEntityQuery(typeof(MatchStartQueueComponent)))
+            {
+                using var boundaries = starts.ToEntityArray(Allocator.Temp);
+                foreach (var boundary in boundaries)
+                    if (em.GetComponentData<MatchStartQueueComponent>(boundary).IsStartPending != 0) return false;
+                foreach (var boundary in boundaries)
+                {
+                    int sequence = em.GetComponentData<MatchStartQueueComponent>(boundary).LastRequestId;
+                    em.SetComponentData(boundary, new MatchStartQueueComponent { LastRequestId = sequence });
+                    if (em.HasBuffer<MatchStartRequestElement>(boundary)) em.GetBuffer<MatchStartRequestElement>(boundary).Clear();
+                    if (em.HasBuffer<MatchStartResultElement>(boundary)) em.GetBuffer<MatchStartResultElement>(boundary).Clear();
+                    if (em.HasComponent<MatchStartProgressComponent>(boundary)) em.SetComponentData(boundary, default(MatchStartProgressComponent));
+                }
+            }
             var entity = em.CreateEntity(typeof(SkirmishMatchState));
             config = config.NormalizeForBaseAssault();
             em.SetName(entity, "SkirmishSession");
@@ -78,6 +94,7 @@ namespace Game.Composition
         public static void ApplySeed(EntityManager em)
         {
             if (!TryGet(em, out _, out var state)) return;
+            Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
             using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
             if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("Skirmish requires one initial spawn configuration.");
             var config = query.GetSingleton<InitialUnitsSpawnConfig>(); config.RandomSeed = (uint)state.Seed;

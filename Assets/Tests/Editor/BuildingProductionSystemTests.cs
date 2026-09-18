@@ -4240,6 +4240,47 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         }
     }
 
+    [TestCase(true, 4, 100)]
+    [TestCase(true, 2, 90)]
+    [TestCase(true, 0, 80)]
+    [TestCase(false, 4, 80)]
+    public void PaidSkirmishCancellationRefundsOnlyUndeliveredUnitsOnce(bool skirmish, int remaining, int expectedMaterials)
+    {
+        using var world = new World("SkirmishPaidCancellation");
+        var em = world.EntityManager;
+        if (skirmish)
+            em.SetComponentData(em.CreateEntity(typeof(SkirmishMatchState)), new SkirmishMatchState { Phase = SkirmishPhase.Playing });
+        var preset = Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+        var prefab = preset.buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs.Find(p => p.name.Contains("Soldier"));
+        Assert.NotNull(prefab);
+        var producer = CreateProducerBuilding(24, "Barracks", prefab, true, FactionIdentity.PlayerFactionId);
+        producer.Definition.ProductionSlots[0].Quantity = 4;
+        var buildings = new Dictionary<int, RuntimeBuildingEntity> { [24] = producer };
+        var production = new BuildingProductionQueueCompositionSystemHelper();
+        var requests = new BuildingProductionRequestSystemHelper();
+        int materials = 100;
+        var context = CreateProducerSelectionContext(buildings, production, prefab, em,
+            trySpendMaterials: cost => { materials -= cost; return true; }, refundMaterials: amount => materials += amount);
+        int order = requests.EnqueueCampItemRequest(em, prefab, 20, false);
+        requests.ProcessPendingUiCampItemCommands(em, context, 88);
+        Assert.IsTrue(requests.TryGetUiCampItemCommandResult(em, order, out var result));
+        Assert.AreEqual(1, result.Accepted);
+        Assert.AreEqual(80, materials);
+        var paid = producer.PendingProductions[0];
+        Assert.AreEqual(skirmish ? 20 : 0, paid.RefundableMaterials);
+        paid.RemainingQuantity = remaining;
+        int cancel = requests.EnqueueCancelProduction(em, 24, 0);
+        requests.ProcessPendingUiProductionCommands(em, context, 0, 20f);
+        Assert.IsTrue(requests.TryGetUiProductionCommandResult(em, cancel, out var canceled));
+        Assert.AreEqual(1, canceled.Accepted);
+        Assert.AreEqual(expectedMaterials, materials);
+        Assert.Zero(producer.PendingProductions.Count);
+        Assert.Zero(paid.RefundableMaterials, "Pooled receipts must not leak into another request.");
+        requests.EnqueueCancelProduction(em, 24, 0);
+        requests.ProcessPendingUiProductionCommands(em, context, 0, 20f);
+        Assert.AreEqual(expectedMaterials, materials, "Repeated cancel must not pay twice.");
+    }
+
     [Test]
     public void BuildingUiCampItemCommandRequest_StartsConfiguredPlacementAndWritesResult()
     {

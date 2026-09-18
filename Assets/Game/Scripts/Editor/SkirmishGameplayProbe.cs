@@ -35,11 +35,36 @@ namespace Game.Editor
             EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
             if(hits.Count==0||hits[0].gameObject.GetComponentInParent<Button>()!=button)
                 throw new InvalidOperationException("Control is occluded: "+button.name);
-            button.onClick.Invoke();
+            var pointer = new PointerEventData(EventSystem.current) { position = point, button = PointerEventData.InputButton.Left };
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerDownHandler);
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerUpHandler);
+            ExecuteEvents.Execute(button.gameObject, pointer, ExecuteEvents.pointerClickHandler);
             Debug.Log("[SkirmishGameplay] click="+button.name+" screen="+point);
         }
         public static bool Move(float x,float z)=>WorldCommand(x,z,false);
         public static bool Attack(float x,float z)=>WorldCommand(x,z,true);
+        public static void PlacePreview(float x, float z)
+        {
+            var point = Camera.main.WorldToScreenPoint(new Vector3(x, 0, z));
+            if (point.z <= 0 || point.x < 0 || point.y < 0 || point.x > Screen.width || point.y > Screen.height)
+                throw new InvalidOperationException("Placement target is outside the current view.");
+            var hits = new List<RaycastResult>();
+            EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
+            if (hits.Count != 0) throw new InvalidOperationException("Placement target is covered by UI: " + hits[0].gameObject.name);
+            var position = new Vector2(point.x, point.y);
+            UnityEngine.InputSystem.InputSystem.QueueStateEvent(UnityEngine.InputSystem.Mouse.current,
+                new UnityEngine.InputSystem.LowLevel.MouseState { position = position }.WithButton(UnityEngine.InputSystem.LowLevel.MouseButton.Left));
+            double releaseAt = UnityEditor.EditorApplication.timeSinceStartup + .1;
+            UnityEditor.EditorApplication.CallbackFunction release = null;
+            release = () =>
+            {
+                if (UnityEditor.EditorApplication.timeSinceStartup < releaseAt) return;
+                UnityEditor.EditorApplication.update -= release;
+                UnityEngine.InputSystem.InputSystem.QueueStateEvent(UnityEngine.InputSystem.Mouse.current,
+                    new UnityEngine.InputSystem.LowLevel.MouseState { position = position });
+            };
+            UnityEditor.EditorApplication.update += release;
+        }
         private static bool WorldCommand(float x,float z,bool attack)
         {
             var match=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();

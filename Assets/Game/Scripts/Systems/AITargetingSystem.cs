@@ -97,6 +97,8 @@ namespace Game.Runtime
 
             _nextTargetRefreshTime = now + TargetRefreshSeconds;
 
+            if (SkirmishCombatPolicy.TryAssignTargets(state.EntityManager)) return;
+
             bool shouldLog = ShouldQueueDiagnostics(_runtimeDiagnosticsQuery);
             Entity diagnosticQueueEntity = shouldLog ? EnsureDiagnosticQueue(ref state) : Entity.Null;
 

@@ -1672,11 +1672,11 @@
     },
     {
       "key": "ui.skirmish.match_help",
-      "source": "Destroy the enemy Main Base. Tap a squad card, Move, then a destination. Use Attack on enemy targets. Tap either base in the objective bar to find it.",
+      "source": "Destroy the enemy base. Defend yours with Watchtowers and rifle squads. Tap a squad card, then Move or Attack.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پایگاه اصلی دشمن رو نابود کن. کارت گروه رو بزن، بعد «حرکت» و مقصد رو انتخاب کن. برای هدف دشمن از «حمله» استفاده کن. برای دیدن هر پایگاه، دکمه‌ش رو توی نوار هدف بزن."
+          "value": "پایگاه دشمن رو نابود کن. با برج و تفنگدار از پایگاهت دفاع کن. کارت گروه رو بزن، بعد «حرکت» یا «حمله»."
         }
       ]
     },
@@ -1817,6 +1817,436 @@
         {
           "locale": "fa-IR",
           "value": "پیاده‌نظام"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.logistics_full",
+      "source": "Limit: 2 cargo trucks and 1 tanker, including queued vehicles.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ظرفیت پره: ۲ کامیون باربری و ۱ تانکر، با احتساب صف تولید."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start_failed",
+      "source": "Skirmish could not start",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نبرد شروع نشد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start_failed.buildingplacement",
+      "source": "A starting building could not be placed on clear ground. Retry, or return to setup. No result was recorded.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یکی از ساختمان‌های شروع نبرد روی زمین آزاد جا نشد. دوباره امتحان کن یا به تنظیمات برگرد. نتیجه‌ای ثبت نشده."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start_failed.content",
+      "source": "The battlefield could not finish loading. Retry, or return to setup. No result was recorded.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بارگذاری میدان نبرد کامل نشد. دوباره امتحان کن یا به تنظیمات برگرد. نتیجه‌ای ثبت نشده."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start_failed.timeout",
+      "source": "The battlefield took too long to prepare. Retry, or return to setup. No result was recorded.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آماده شدن میدان نبرد بیش از حد طول کشید. دوباره امتحان کن یا به تنظیمات برگرد. نتیجه‌ای ثبت نشده."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.retry",
+      "source": "RETRY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دوباره امتحان کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.catalog.fabrication_depot",
+      "source": "Field Fabrication Depot",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارگاه تولید مصالح"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.catalog.fuel_bladder",
+      "source": "Fuel Bladder",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مخزن سوخت"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.catalog.oil_pump",
+      "source": "Oil Pump",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پمپ نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.catalog.oil_refinery",
+      "source": "Oil Refinery",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پالایشگاه نفت"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.catalog.rifle_squad",
+      "source": "Rifle squad (4)",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه تفنگدار (۴ نفر)"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.population_full.short",
+      "source": "Infantry limit reached.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ظرفیت پیاده‌نظام پره."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.logistics_full.short",
+      "source": "Supply vehicle limit reached.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ظرفیت ماشین‌های تدارکات پره."
+        }
+      ]
+    },
+    {
+      "key": "ui.catalog.transport_vehicle",
+      "source": "TRANSPORT VEHICLE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ماشین حمل‌ونقل"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.no_resume",
+      "source": "Leaving ends this match. Your setup is saved for a new match.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اگه خارج بشی، این بازی تموم می‌شه. تنظیماتت برای یه بازی تازه ذخیره می‌مونه."
+        }
+      ]
+    },
+    {
+      "key": "ui.help.select_squad_card",
+      "source": "Tap a squad card to select its units.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گروه رو بزن تا نیروهاش انتخاب بشن."
+        }
+      ]
+    },
+    {
+      "key": "ui.help.commands_button",
+      "source": "Tap Commands below the selected unit portrait.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زیر عکس نیروی انتخاب‌شده، «فرمان‌ها» رو بزن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.restart_match",
+      "source": "RESTART MATCH",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شروع دوبارهٔ نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.start_match",
+      "source": "START MATCH",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شروع نبرد"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.title",
+      "source": "BASE ASSAULT FIELD GUIDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "راهنمای حمله به پایگاه"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.enemy_base_destroyed",
+      "source": "You destroyed the enemy Main Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی دشمن رو نابود کردی."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.reason.player_base_destroyed",
+      "source": "The enemy destroyed your Main Base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دشمن پایگاه اصلیت رو نابود کرد."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.1.title",
+      "source": "WIN THE MATCH",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازی رو ببر"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.1.body",
+      "source": "Destroy the marked enemy Main Base and protect your own. Extra Barracks do not replace your Main Base. If neither base falls before the clock expires, the match is a draw.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلیِ علامت‌خوردهٔ دشمن رو نابود کن و مراقب پایگاه خودت باش. سربازخانهٔ اضافه جای پایگاه اصلیت رو نمی‌گیره. اگه تا پایان زمان هیچ‌کدوم نابود نشه، بازی مساوی می‌شه."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.1.example",
+      "source": "Tap YOUR BASE or ENEMY BASE above the battlefield to find it. Use the map to plan your approach.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بالای میدان، «پایگاه خودت» یا «پایگاه دشمن» رو بزن تا پیداش کنی. از نقشه برای انتخاب مسیر استفاده کن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.1.mistake",
+      "source": "You do not need to destroy every enemy or supply building. The marked Main Base is the objective.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "لازم نیست همهٔ نیروها یا ساختمان‌های تدارکاتی دشمن رو نابود کنی. هدف همون پایگاه اصلیِ علامت‌خورده‌ست."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.1.diagram",
+      "source": "Protect your base → break the defenses → destroy the enemy base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از پایگاهت دفاع کن ← دفاع دشمن رو بشکن ← پایگاه دشمن رو نابود کن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.2.title",
+      "source": "SELECT AND COMMAND",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انتخاب و فرمان"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.2.body",
+      "source": "Tap a squad card to select that group. Tap Move, then the ground to choose a destination. Tap Attack, then an enemy. Hold keeps the group in position while it fights enemies in range.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گروه رو بزن تا انتخاب بشه. برای جابه‌جایی، «حرکت» رو بزن و بعد مقصد رو روی زمین انتخاب کن. برای درگیری، «حمله» رو بزن و بعد دشمن رو انتخاب کن. «حفظ» گروه رو سر جاش نگه می‌داره و به دشمنِ توی برد شلیک می‌کنه."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.2.example",
+      "source": "Gather your groups outside enemy range, then attack together. Remove a defending Watchtower before attacking the base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه‌ها رو بیرون از برد دشمن جمع کن، بعد با هم حمله کن. قبل از حمله به پایگاه، برج دفاعی رو از بین ببر."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.2.mistake",
+      "source": "Move is a travel order. Sending a group into enemy fire before giving Attack can cost soldiers.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "«حرکت» برای جابه‌جاییه. اگه گروه رو قبل از فرمان حمله زیر آتش دشمن بفرستی، ممکنه تلفات بدی."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.2.diagram",
+      "source": "Squad card → command → destination or enemy",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کارت گروه ← فرمان ← مقصد یا دشمن"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.3.title",
+      "source": "BUILD AND REINFORCE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ساخت‌وساز و نیروی کمکی"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.3.body",
+      "source": "Open Build to add defenses or recruit rifle soldiers. Buildings need clear ground away from roads and sidewalks. Move or rotate the preview until it is green, then confirm. Accepted recruitment closes Build and joins your squad cards when ready.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "«ساخت» رو باز کن تا دفاع بسازی یا تفنگدار آموزش بدی. ساختمان رو روی زمینِ خالی و دور از جاده و پیاده‌رو بذار. پیش‌نمایش رو جابه‌جا کن یا بچرخون تا سبز بشه، بعد تأیید کن. با شروع آموزش، پنجره بسته می‌شه و نیروهای آماده به کارت‌های گروه اضافه می‌شن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.3.example",
+      "source": "The infantry counter shows your limit. Build defenses near your base, then spend Materials on replacements.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شمارندهٔ پیاده‌نظام سقف نیروهات رو نشون می‌ده. نزدیک پایگاه دفاع بساز و برای جایگزین کردن تلفات، مصالح نگه دار."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.3.mistake",
+      "source": "Rejected orders do not spend resources. Read the cost or capacity message before trying again.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فرمانی که قبول نشده منابع خرج نمی‌کنه. قبل از تلاش دوباره، پیام هزینه یا ظرفیت رو بخون."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.3.diagram",
+      "source": "Build → choose item → check cost and space → confirm",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ساخت ← انتخاب مورد ← بررسی هزینه و جا ← تأیید"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.4.title",
+      "source": "KEEP SUPPLY MOVING",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تدارکات رو فعال نگه دار"
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.4.body",
+      "source": "Trucks deliver Oil automatically. The fabrication depot turns delivered Oil into Materials; the refinery supplies usable Fuel. Protect the trucks and supply buildings. Replace a lost structure through Build if you can afford it.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کامیون‌ها نفت رو خودکار می‌رسونن. کارگاه، نفتِ تحویل‌گرفته‌شده رو به مصالح تبدیل می‌کنه و پالایشگاه سوخت آماده می‌ده. مراقب کامیون‌ها و ساختمان‌های تدارکاتی باش. اگه ساختمونی از دست رفت و منابع کافی داشتی، از «ساخت» جایگزینش کن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.4.example",
+      "source": "If Materials stop increasing, check that your Oil pump, cargo trucks and fabrication depot are still working.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اگه مصالح دیگه زیاد نمی‌شه، پمپ نفت، کامیون‌های باربری و کارگاه رو بررسی کن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.4.mistake",
+      "source": "Oil waiting at a source is not delivered supply. Keep routes open and allow the trucks time to complete the trip.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نفتی که هنوز کنار منبعه، تحویل داده نشده. مسیر رو باز نگه دار و فرصت بده کامیون‌ها رفت‌وبرگشتشون رو کامل کنن."
+        }
+      ]
+    },
+    {
+      "key": "ui.skirmish.guide.4.diagram",
+      "source": "Oil pump → cargo delivery → Materials or Fuel",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پمپ نفت ← تحویل بار ← مصالح یا سوخت"
+        }
+      ]
+    },
+    {
+      "key": "ui.navigation.back_to_main_menu",
+      "source": "BACK TO MAIN MENU",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازگشت به منوی اصلی"
         }
       ]
     }

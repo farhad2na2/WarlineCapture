@@ -1,0 +1,1 @@
+PASS SkirmishSetupPrefabUsesLockedV3Structure: visible BackButton retains V3 border.

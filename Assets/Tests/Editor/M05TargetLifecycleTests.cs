@@ -107,7 +107,9 @@ public sealed class M05TargetLifecycleTests
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             Assert.AreEqual(distance<=6?1:0,breach.FriendlyAtArchive);
             Assert.AreEqual(distance<=6?1000:0,breach.SecureHoldMilliseconds);
-            Assert.AreEqual(distance<=6?0:1,guidance.CanShow,"Show Me must remain available outside the actual recovery area");
+            Assert.AreEqual(1,guidance.CanShow,"The recovery area remains inspectable while waiting, as well as after leaving it.");
+            Assert.AreEqual(distance<=6?0:1,guidance.CanExecute,"Waiting in the archive must not request another movement order.");
+            Assert.AreEqual(distance<=6?AssistantRecommendationKind.Explain:AssistantRecommendationKind.Move,guidance.RecommendationKind);
         }
     }
 

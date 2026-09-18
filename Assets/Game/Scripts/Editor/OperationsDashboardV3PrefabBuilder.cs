@@ -170,13 +170,18 @@ namespace Game.Editor
 
         private static UIShellRouteButtonView BuildHeader(RectTransform root)
         {
-            RectTransform logo = CreateTopLeft("WarlineLogo", root, 5f, 6f, 391f, 102f);
-            V3GradientGraphic logoSurface = CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
-            logoSurface.raycastTarget = true;
-            Button logoButton = logo.gameObject.AddComponent<Button>();
-            logoButton.targetGraphic = logoSurface;
-            UIShellRouteButtonView backRoute = logo.gameObject.AddComponent<UIShellRouteButtonView>();
+            Button backButton = CreateGradientButton("BackButton", root, 5f, 6f, 391f, 102f, DarkTop, DarkBottom, Cyan, 3f);
+            Image backIcon = CreateImage("BackIcon", backButton.transform,
+                RequireSprite(V3UiFoundationBuilder.CommanderBackIconPath), theme.TextPrimary, false);
+            SetTopLeft(backIcon.rectTransform, 18f, 29f, 44f, 44f);
+            TMP_Text backLabel = CreateText("Label", backButton.transform, "BACK TO MAIN MENU", 28f, boldFont, TextAlignmentOptions.Center, theme.TextPrimary);
+            SetTopLeft(backLabel.rectTransform, 72f, 10f, 305f, 82f);
+            backLabel.enableAutoSizing = true;
+            backLabel.fontSizeMin = 22f;
+            backLabel.fontSizeMax = 28f;
+            backLabel.gameObject.AddComponent<V3LocalizedTextBindingView>()
+                .Configure("ui.navigation.back_to_main_menu", "BACK TO MAIN MENU", false);
+            UIShellRouteButtonView backRoute = backButton.gameObject.AddComponent<UIShellRouteButtonView>();
             backRoute.Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
 
             RectTransform titlePanel = CreateTopLeft("ScreenTitlePanel", root, 401f, 6f, 560f, 102f);

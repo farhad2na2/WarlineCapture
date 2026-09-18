@@ -105,8 +105,8 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
                 test => test.BuildDrawerPrimaryAction_RoutesBuildingPlacementRequestAndClosesDrawer(),
                 ref passed);
             RunValidationStep(
-                nameof(BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndKeepsDrawerOpen),
-                test => test.BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndKeepsDrawerOpen(),
+                nameof(BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndClosesDrawer),
+                test => test.BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndClosesDrawer(),
                 ref passed);
             RunValidationStep(
                 nameof(BuildDrawerPrimaryAction_RealBuildingRequestBeginsPlacementAndClosesDrawer),
@@ -649,6 +649,9 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.AreEqual(
             "Cannot recruit Bomb Suit Specialist: requires Barracks.",
             view.InstructionText.text);
+        var unavailableReason = view.ItemTemplate.transform.Find("DisabledOverlay/Reason").GetComponent<TMP_Text>();
+        Assert.AreEqual("Requires Barracks.", unavailableReason.text,
+            "The disabled card must report its actual requirement, not the old Forward HQ placeholder.");
     }
 
     [Test]
@@ -684,6 +687,56 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.AreEqual(
             "Cannot produce Light Vehicle: insufficient credits.",
             view.InstructionText.text);
+    }
+
+    [Test]
+    public void SkirmishBuildCardRecoversAvailabilityWithoutReopeningOrRecreatingIt()
+    {
+        var previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("SkirmishBuildAvailability");
+        World.DefaultGameObjectInjectionWorld = world;
+        var gatewayField = typeof(UiShellRuntimeGateway).GetField("current", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+        var previousGateway = (IUiShellRuntimeGateway)gatewayField.GetValue(null);
+        try
+        {
+            Game.UI.Shell.Ecs.UiShellEcsGateway.RegisterAsRuntimeGateway();
+            world.EntityManager.SetComponentData(world.EntityManager.CreateEntity(typeof(Game.Components.SkirmishMatchState)),
+                new Game.Components.SkirmishMatchState { Phase = Game.Components.SkirmishPhase.Playing });
+            var instance = UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath));
+            _createdObjects.Add(instance);
+            var view = instance.GetComponent<BuildDrawerView>();
+            var presenter = instance.GetComponent<BuildDrawerCatalogRuntimeView>();
+            var registry = CreateAsset<UnitPrefabRegistryAuthoringConfig>();
+            registry.UnitSpawnPrefabs.Add(Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName)
+                .buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs.Find(p => p.name.Contains("Truck_Tray")));
+            bool available = false;
+            ConfigurePresenterForTests(presenter, view, registry, null);
+            presenter.BindRuntimeCommands(new BuildingUiCommandAdapter(new BuildingUiCommandSystemHelper(), CreateCommandContext(
+                null, null, 1000, (GameObject p, int cost, out string producer) =>
+                {
+                    producer = string.Empty;
+                    return available ? BuildingUiCommandSystemHelper.CampRequestFailure.None : BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull;
+                })), null);
+            presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
+            var card = view.ItemTemplate;
+            presenter.RefreshSkirmishAvailability();
+            Assert.IsFalse(card.SelectionButton.interactable);
+            Assert.IsFalse(view.PrimaryActionButton.interactable);
+            available = true;
+            presenter.RefreshSkirmishAvailability();
+            Assert.AreSame(card, view.ItemTemplate);
+            Assert.IsTrue(card.SelectionButton.interactable);
+            Assert.IsTrue(view.PrimaryActionButton.interactable);
+            available = false;
+            presenter.RefreshSkirmishAvailability();
+            Assert.IsFalse(card.SelectionButton.interactable);
+            Assert.IsFalse(view.PrimaryActionButton.interactable);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellRuntimeGateway.Register(previousGateway);
+        }
     }
 
     [Test]
@@ -797,7 +850,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
     }
 
     [Test]
-    public void BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndKeepsDrawerOpen()
+    public void BuildDrawerPrimaryAction_RoutesUnitProductionRequestAndClosesDrawer()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(BuildDrawerPrefabPath);
         Assert.NotNull(prefab);
@@ -835,7 +888,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.AreSame(vehicle, requestedPrefab);
         Assert.AreEqual(5678, requestedPrice);
         Assert.IsFalse(requestedFocus);
-        Assert.IsFalse(closed, "Production/recruitment should keep the drawer open for queue feedback.");
+        Assert.IsTrue(closed, "Accepted production/recruitment closes the drawer, as requested for the shared Build flow.");
     }
 
     [Test]
@@ -942,7 +995,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
         Assert.AreEqual(0, producer.PendingProductions.Count);
         view.PrimaryActionButton.onClick.Invoke();
 
-        Assert.IsFalse(closed, "Production requests should keep the drawer open.");
+        Assert.IsTrue(closed, "Accepted production requests close the drawer and return to the match.");
         Assert.AreEqual(1, producer.PendingProductions.Count);
         Assert.AreSame(vehicle, producer.PendingProductions[0].Prefab);
         Assert.AreEqual(0, producer.PendingProductions[0].ProductionIndex);

@@ -40,6 +40,7 @@ namespace Game.UI.Runtime
             public readonly List<ButtonBinding> ItemBindings;
             public readonly Action<BuildDrawerItemView, BuildDrawerCatalogItem> SelectItem;
             public readonly GetCampRequestFailureDelegate GetCampRequestFailure;
+            public readonly int MaxQueuedUnitProductions;
 
             public Context(
                 BuildDrawerView view,
@@ -52,7 +53,8 @@ namespace Game.UI.Runtime
                 List<BuildDrawerItemView> runtimeItems,
                 List<ButtonBinding> itemBindings,
                 Action<BuildDrawerItemView, BuildDrawerCatalogItem> selectItem,
-                GetCampRequestFailureDelegate getCampRequestFailure)
+                GetCampRequestFailureDelegate getCampRequestFailure,
+                int maxQueuedUnitProductions = 4)
             {
                 View = view;
                 Query = query;
@@ -65,6 +67,7 @@ namespace Game.UI.Runtime
                 ItemBindings = itemBindings;
                 SelectItem = selectItem;
                 GetCampRequestFailure = getCampRequestFailure;
+                MaxQueuedUnitProductions = maxQueuedUnitProductions;
             }
         }
 
@@ -181,6 +184,8 @@ namespace Game.UI.Runtime
         {
             return failure switch
             {
+                BuildingUiCommandFailure.InfantryLimit => textResolver.Get("ui.skirmish.population_full.short", "Infantry limit reached."),
+                BuildingUiCommandFailure.LogisticsLimit => textResolver.Get("ui.skirmish.logistics_full.short", "Supply vehicle limit reached."),
                 BuildingUiCommandFailure.NotEnoughMoney => textResolver.Get("build.drawer.failure.short.not_enough_money", "Insufficient credits."),
                 BuildingUiCommandFailure.InsufficientCredits => textResolver.Get("build.drawer.failure.short.insufficient_credits", "Insufficient credits."),
                 BuildingUiCommandFailure.InsufficientMaterials => textResolver.Get("build.drawer.failure.short.insufficient_materials", "Insufficient materials."),
@@ -211,6 +216,8 @@ namespace Game.UI.Runtime
             string verb = FormatActionVerb(textResolver, selectedItem.Category).ToLowerInvariant();
             return failure switch
             {
+                BuildingUiCommandFailure.InfantryLimit => textResolver.Get("ui.skirmish.population_full", "Infantry limit reached (24, including queued soldiers)."),
+                BuildingUiCommandFailure.LogisticsLimit => textResolver.Get("ui.skirmish.logistics_full", "Supply vehicle limit reached (2 cargo trucks and 1 tanker, including queued vehicles)."),
                 BuildingUiCommandFailure.NotEnoughMoney =>
                     textResolver.Format("build.drawer.failure.insufficient_credits", "Cannot {0} {1}: insufficient credits.", verb, itemName),
                 BuildingUiCommandFailure.InsufficientCredits =>
@@ -346,8 +353,10 @@ namespace Game.UI.Runtime
                 FormatDuration(model),
                 FormatRequirements(context.TextResolver, model));
             item.BindThumbnail(model.CardPortrait);
-            BuildingUiCommandFailure failure = context.GetCampRequestFailure(model, out _);
+            BuildingUiCommandFailure failure = context.GetCampRequestFailure(model, out string requiredBuilding);
             item.SetInteractable(failure == BuildingUiCommandFailure.None);
+            item.SetUnavailableReason(failure == BuildingUiCommandFailure.None ? string.Empty :
+                FormatFailureMessage(context.TextResolver, failure, requiredBuilding, context.MaxQueuedUnitProductions));
             item.SetSelected(false, context.View.SelectedItemFrameSprite);
 
             Button button = item.SelectionButton;

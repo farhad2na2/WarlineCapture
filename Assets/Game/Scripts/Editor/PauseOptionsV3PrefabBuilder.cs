@@ -427,13 +427,13 @@ namespace Game.Editor
             SetTopLeft(title.rectTransform, 95f, 15f, 520f, 63f);
 
             BuildHelpRow(panel, 104f, V3UiFoundationBuilder.MatchSelectIconPath,
-                "SELECT", "Tap a unit or drag over a squad.");
+                "SELECT", "Tap a squad card to select its units.");
             BuildHelpRow(panel, 174f, V3UiFoundationBuilder.MatchMoveIconPath,
                 "MOVE", "Select Move, then tap the destination.");
             BuildHelpRow(panel, 244f, V3UiFoundationBuilder.MatchAttackIconPath,
                 "ATTACK", "Select Attack, then tap a hostile target.");
             BuildHelpRow(panel, 314f, V3UiFoundationBuilder.MatchHoldIconPath,
-                "COMMAND WHEEL", "Hold on a selected unit to open quick commands.");
+                "COMMAND WHEEL", "Tap Commands below the selected unit portrait.");
 
             close = CreateGradientButton("HelpCloseButton", panel, 499f, 388f, 196f, 67f,
                 new Color32(7, 105, 157, 255), new Color32(1, 34, 55, 255), Cyan, 3f);

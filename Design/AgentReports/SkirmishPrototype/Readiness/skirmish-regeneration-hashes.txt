@@ -1,0 +1,10 @@
+UNCHANGED Assets/Game/Configs/Skirmish/Player.asset
+UNCHANGED Assets/Game/Configs/Skirmish/UnitRegistry.asset
+UNCHANGED Assets/Game/Configs/Skirmish/Plan.asset
+UNCHANGED Assets/Game/Configs/Skirmish/MapVehicles.asset
+UNCHANGED Assets/Game/Configs/Skirmish/Construction.asset
+UNCHANGED Assets/Game/Configs/Skirmish/InitialForces.asset
+UNCHANGED Assets/Game/Configs/Skirmish/Enemy.asset
+UNCHANGED Assets/Game/Resources/SkirmishBaseAssault.asset
+CHANGED Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab
+UNCHANGED Assets/Game/Scenes/Menu.unity

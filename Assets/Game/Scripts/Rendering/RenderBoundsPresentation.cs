@@ -15,6 +15,23 @@ namespace Game.Rendering
 
         private sealed class Reader : IRenderBoundsPresentation
     {
+        public void CollectWaterFootprints(EntityManager manager, ref NativeList<RenderSurfaceFootprint> results)
+        {
+            using var query = manager.CreateEntityQuery(typeof(RenderMeshArray), typeof(MaterialMeshInfo), typeof(LocalToWorld));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                var mesh = manager.GetSharedComponentManaged<RenderMeshArray>(entity)
+                    .GetMesh(manager.GetComponentData<MaterialMeshInfo>(entity));
+                if (mesh == null || !mesh.name.Contains("Water_Plane")) continue;
+                var local = mesh.bounds;
+                var matrix = manager.GetComponentData<LocalToWorld>(entity).Value;
+                var world = AABB.Transform(matrix, new AABB { Center = local.center, Extents = local.extents });
+                results.Add(new RenderSurfaceFootprint { WorldToLocal = (Matrix4x4)math.inverse(matrix),
+                    LocalBounds = local, WorldBounds = new Bounds(world.Center, world.Extents * 2) });
+            }
+        }
+
         public bool TryReadWorldBounds(EntityManager manager, Entity entity, out Bounds bounds)
         {
             bounds = default;

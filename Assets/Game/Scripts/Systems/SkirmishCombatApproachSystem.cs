@@ -28,6 +28,8 @@ namespace Game.Runtime
             if(grids.CalculateEntityCount()!=1)return;
             var gridEntity=grids.GetSingletonEntity();
             var grid=em.GetComponentData<GridConfig>(gridEntity);
+            using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+            var surface = surfaces.CalculateEntityCount() == 1 ? surfaces.GetSingleton<MapSurfaceComponent>() : default;
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
                 All=new[]{ComponentType.ReadOnly<EngageTarget>(),ComponentType.ReadOnly<UnitAttack>(),ComponentType.ReadOnly<UnitFootprint>(),ComponentType.ReadOnly<LocalTransform>(),ComponentType.ReadOnly<UnitMove>()},
                 None=new[]{ComponentType.ReadOnly<UnitAirMovement>(),ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),ComponentType.ReadOnly<UnitDeathAnimationComponent>(),ComponentType.ReadOnly<HoldPositionOrderTag>(),ComponentType.ReadOnly<BaseBreachOrder>()}});
@@ -38,13 +40,16 @@ namespace Game.Runtime
                 if(!em.Exists(engage.Target)||!em.HasComponent<LocalTransform>(engage.Target))continue;
                 var target=em.GetComponentData<LocalTransform>(engage.Target).Position;
                 var origin=em.GetComponentData<LocalTransform>(unit).Position;
-                var size=em.GetComponentData<UnitFootprint>(unit).Size;
+                var footprint = em.GetComponentData<UnitFootprint>(unit);
+                var size = footprint.Size;
+                var behavior = em.HasComponent<UnitMovementBehavior>(unit) ? em.GetComponentData<UnitMovementBehavior>(unit) : default;
+                bool isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, behavior);
                 var targetSize=em.HasComponent<UnitFootprint>(engage.Target)?em.GetComponentData<UnitFootprint>(engage.Target).Size:new int2(1);
                 float range=em.GetComponentData<UnitAttack>(unit).Range+
                     (math.cmax(size)-1+math.cmax(targetSize)-1)*grid.CellSize*.5f;
                 if(range<=0||math.distance(origin.xz,target.xz)<=range)continue;
                 if(!TryFindApproach(grid,em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray(),
-                    em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked,origin,target,size,range,out var goal))continue;
+                    em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked,origin,target,size,range,out var goal,surface,isVehicle))continue;
                 // This existing order is cleared by Move/Hold/new Attack, so the
                 // approach cannot resume after the player gives a different order.
                 if(!UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em,unit,goal))continue;
@@ -56,9 +61,10 @@ namespace Game.Runtime
         }
 
         internal static bool TryFindApproach(GridConfig grid,NativeArray<GridWalkable> walkable,
-            NativeBitArray blocked,float3 origin,float3 target,int2 size,float range,out int2 goal)
+            NativeBitArray blocked,float3 origin,float3 target,int2 size,float range,out int2 goal, MapSurfaceComponent surface = default, bool isVehicle = false)
         {
             goal=default;float best=float.MaxValue;
+            var validation = new Pathfinding.MapSurfaceTraversalValidation();
             float angle=math.atan2(origin.z-target.z,origin.x-target.x);
             for(int i=0;i<32;i++)
             {
@@ -74,6 +80,7 @@ namespace Game.Runtime
                     int index=GridUtils.CellToIndex(c,grid.Width);
                     if(walkable[index].Value==0||blocked.IsSet(index)){free=false;break;}
                 }
+                free &= validation.CanTraverseFootprint(surface, surface.HasSurfaceData, grid, cell, size, isVehicle);
                 float distance=math.distancesq(origin.xz,point.xz);
                 if(!free||distance>=best)continue;
                 goal=cell;best=distance;

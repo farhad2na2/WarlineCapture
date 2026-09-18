@@ -3,7 +3,7 @@ namespace Game.UI.Contracts
     public enum UiSkirmishAction : byte { FocusPlayer, FocusEnemy, Surrender, Replay, AdjustSetup, MainMenu, Restart }
     public struct UiSkirmishModel
     {
-        public bool Finished, Paused;
+        public bool Finished, Paused, StartupFailed;
         public string Infantry;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
     }

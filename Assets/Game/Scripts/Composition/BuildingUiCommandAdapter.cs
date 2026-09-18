@@ -65,6 +65,8 @@ namespace Game.Composition
                 BuildingUiCommandSystemHelper.CampRequestFailure.MissingProducerBuilding => BuildingUiCommandFailure.MissingProducerBuilding,
                 BuildingUiCommandSystemHelper.CampRequestFailure.InvalidSelection => BuildingUiCommandFailure.InvalidSelection,
                 BuildingUiCommandSystemHelper.CampRequestFailure.ProductionQueueFull => BuildingUiCommandFailure.ProductionQueueFull,
+                BuildingUiCommandSystemHelper.CampRequestFailure.InfantryLimit => BuildingUiCommandFailure.InfantryLimit,
+                BuildingUiCommandSystemHelper.CampRequestFailure.LogisticsLimit => BuildingUiCommandFailure.LogisticsLimit,
                 BuildingUiCommandSystemHelper.CampRequestFailure.GlobalProductionQueueFull => BuildingUiCommandFailure.GlobalProductionQueueFull,
                 BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCredits => BuildingUiCommandFailure.InsufficientCredits,
                 BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientMaterials => BuildingUiCommandFailure.InsufficientMaterials,

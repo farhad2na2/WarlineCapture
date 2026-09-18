@@ -10,8 +10,15 @@ namespace Game.UI.Runtime
     public sealed class SkirmishMatchView : MonoBehaviour
     {
         private GameObject hud, modal;
+        private BuildDrawerView buildDrawer;
+        private MatchHudFullMapPopupView fullMap;
+        private RectTransform mapInformation;
+        private readonly System.Collections.Generic.List<GameObject> authoredMapInformation = new();
+        private TMP_Text mapName, mapPlayer, mapPlayerHealth, mapEnemy, mapEnemyHealth, mapClockHeading, mapClock;
+        private MatchHudThreatVisibilityView threatWarning;
+        private readonly Vector3[] warningCorners = new Vector3[4];
         private static TMP_FontAsset interfaceFont;
-        private TMP_Text player, enemy, clock, title, detail, statistics, confirmText;
+        private TMP_Text player, enemy, playerHealth, enemyHealth, clock, title, detail, statistics, confirmText, replayText;
         private GameObject resultActions, confirmationActions;
         private UiSkirmishAction pendingAction;
         private bool confirming;
@@ -38,9 +45,11 @@ namespace Game.UI.Runtime
             row.childScaleWidth=false;
             player=Button(strip,"YOUR MAIN BASE",()=>Send(UiSkirmishAction.FocusPlayer));
             player.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;player.fontSize=28;
+            playerHealth=HealthLabel(player);
             clock=Label(strip,"TIME LEFT",30);clock.gameObject.AddComponent<LayoutElement>().preferredWidth=240;
             enemy=Button(strip,"ENEMY MAIN BASE",()=>Send(UiSkirmishAction.FocusEnemy));
             enemy.transform.parent.GetComponent<LayoutElement>().preferredWidth=280;enemy.fontSize=28;
+            enemyHealth=HealthLabel(enemy);
             var shade=Panel("SkirmishResult",transform,false);modal=shade.gameObject;Stretch(shade);
             shade.gameObject.AddComponent<Image>().color=new Color(0,0,0,.72f);
             var box=Panel("ResultCard",shade);box.anchorMin=box.anchorMax=new Vector2(.5f,.5f);box.sizeDelta=new Vector2(830,620);
@@ -49,7 +58,7 @@ namespace Game.UI.Runtime
             title=Label(box,"BASE ASSAULT",42,70);detail=Label(box,"",30,90);statistics=Label(box,"",28,80);
             confirmText=Label(box,"",30,90);
             var result=Panel("ResultActions",box,false);resultActions=result.gameObject;Vertical(result);
-            Button(result,"REPLAY",()=>Send(UiSkirmishAction.Replay));
+            replayText=Button(result,"REPLAY",()=>Send(UiSkirmishAction.Replay));
             Button(result,"ADJUST SETUP",()=>Send(UiSkirmishAction.AdjustSetup));
             Button(result,"MAIN MENU",()=>Send(UiSkirmishAction.MainMenu));
             var confirmation=Panel("ConfirmationActions",box,false);confirmationActions=confirmation.gameObject;Vertical(confirmation);
@@ -65,19 +74,112 @@ namespace Game.UI.Runtime
         private void Update()
         {
             if(!UiShellRuntimeGateway.TryReadSkirmish(out var model)){hud.SetActive(false);modal.SetActive(false);return;}
-            bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning;
-            hud.SetActive(ready&&!model.Finished&&!confirming);
-            UiLocalizedText.Set(player,model.PlayerBase);UiLocalizedText.Set(enemy,model.EnemyBase);UiLocalizedText.Set(clock,model.Clock);
-            clock.color=model.Clock.Contains("  0:")?new Color(1,.65f,.1f):Color.white;
-            modal.SetActive(model.Finished||confirming);
+            bool ready=UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&
+                shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
+            if(buildDrawer==null)buildDrawer=FindAnyObjectByType<BuildDrawerView>();
+            ready &= buildDrawer==null||!buildDrawer.IsOpen;
+            if (fullMap == null) fullMap = FindAnyObjectByType<MatchHudFullMapPopupView>(FindObjectsInactive.Include);
+            ready &= fullMap == null || !fullMap.IsOpen;
+            RefreshMapInformation(model);
+            hud.SetActive(ready&&!model.Finished&&!model.StartupFailed&&!confirming);
+            if (hud.activeSelf) PositionBelowWarning();
+            SetBaseLabel(player,playerHealth,model.PlayerBase);SetBaseLabel(enemy,enemyHealth,model.EnemyBase);UiLocalizedText.Set(clock,model.Clock);
+            clock.color=(model.Clock??string.Empty).Contains("  0:")?new Color(1,.65f,.1f):Color.white;
+            bool terminal=model.Finished||model.StartupFailed;
+            modal.SetActive(terminal||confirming);
             if(!modal.activeSelf)return;
-            UiLocalizedText.Set(title,model.Finished?model.ResultTitle:"BASE ASSAULT");
-            UiLocalizedText.Set(detail,model.Finished?model.ResultDetail:model.Objective);
+            UiLocalizedText.Set(title,terminal?model.ResultTitle:"BASE ASSAULT");
+            UiLocalizedText.Set(detail,terminal?model.ResultDetail:model.Objective);
+            detail.GetComponent<LayoutElement>().preferredHeight=model.StartupFailed?160:90;
             statistics.gameObject.SetActive(model.Finished);UiLocalizedText.Set(statistics,model.Statistics);
-            confirmText.gameObject.SetActive(confirming&&!model.Finished);
-            resultActions.SetActive(model.Finished);confirmationActions.SetActive(confirming&&!model.Finished);
+            UiLocalizedText.Set(replayText,model.StartupFailed?"RETRY":"REPLAY");
+            confirmText.gameObject.SetActive(confirming&&!terminal);
+            resultActions.SetActive(terminal);confirmationActions.SetActive(confirming&&!terminal);
         }
+        private void RefreshMapInformation(UiSkirmishModel model)
+        {
+            if (fullMap == null || !fullMap.IsOpen) return;
+            if (mapInformation == null)
+            {
+                RectTransform source = null;
+                foreach (var rect in fullMap.GetComponentsInChildren<RectTransform>(true))
+                    if (rect.name == "MapInfoPanel") { source = rect; break; }
+                if (source == null) return;
+                foreach (Transform child in source)
+                    if (child.gameObject.activeSelf)
+                    {
+                        authoredMapInformation.Add(child.gameObject);
+                        child.gameObject.SetActive(false);
+                    }
+                mapInformation = Panel("SkirmishMapInformation", source, false);
+                Stretch(mapInformation);
+                var layout = mapInformation.gameObject.AddComponent<VerticalLayoutGroup>();
+                layout.padding = new RectOffset(10, 10, 12, 12);
+                layout.spacing = 6;
+                layout.childControlWidth = layout.childControlHeight = true;
+                layout.childForceExpandHeight = false;
+                mapName = Label(mapInformation, "", 22, 42);
+                mapName.color = Cyan;
+                mapPlayer = Label(mapInformation, "", 18, 30);
+                mapPlayerHealth = Label(mapInformation, "", 24, 32);
+                mapEnemy = Label(mapInformation, "", 18, 30);
+                mapEnemyHealth = Label(mapInformation, "", 24, 32);
+                mapClockHeading = Label(mapInformation, "", 18, 30);
+                mapClock = Label(mapInformation, "", 24, 32);
+            }
+            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault_map", "DESERT BASE"));
+            SetBaseLabel(mapPlayer, mapPlayerHealth, model.PlayerBase);
+            SetBaseLabel(mapEnemy, mapEnemyHealth, model.EnemyBase);
+            var time = (model.Clock ?? string.Empty).Split(new[] { "  " }, StringSplitOptions.None);
+            UiLocalizedText.Set(mapClockHeading, time[0]);
+            UiLocalizedText.Set(mapClock, time.Length > 1 ? time[1] : string.Empty);
+        }
+
+        private void OnDestroy()
+        {
+            // The map belongs to the shared HUD. Restore its authored content when
+            // this skirmish ends, even if the shell retains the popup for another mode.
+            foreach (var child in authoredMapInformation)
+                if (child != null) child.SetActive(true);
+            if (mapInformation != null) Destroy(mapInformation.gameObject);
+        }
+
         private static void Send(UiSkirmishAction action)=>UiShellRuntimeGateway.TryRequestSkirmish(action);
+        // Keep numeric health out of the RTL heading so current/maximum retains its order.
+        private static TMP_Text HealthLabel(TMP_Text heading)
+        {
+            heading.rectTransform.anchorMin=new Vector2(0,.5f);
+            var health=Label(heading.transform.parent,"",28);
+            Stretch(health.rectTransform);
+            health.rectTransform.anchorMax=new Vector2(1,.5f);
+            health.rectTransform.offsetMin=new Vector2(8,5);
+            health.rectTransform.offsetMax=new Vector2(-8,0);
+            return health;
+        }
+        private static void SetBaseLabel(TMP_Text heading,TMP_Text health,string source)
+        {
+            var lines=(source??string.Empty).Split('\n');
+            UiLocalizedText.Set(heading,lines[0]);
+            UiLocalizedText.Set(health,lines.Length>1?lines[1]:string.Empty);
+        }
+        private void PositionBelowWarning()
+        {
+            if (threatWarning == null) threatWarning = FindAnyObjectByType<MatchHudThreatVisibilityView>(FindObjectsInactive.Include);
+            float top = 110;
+            if (threatWarning != null && threatWarning.gameObject.activeInHierarchy)
+            {
+                var warningRect = (RectTransform)threatWarning.transform;
+                var canvas = warningRect.GetComponentInParent<Canvas>();
+                warningRect.GetWorldCorners(warningCorners);
+                var screen = RectTransformUtility.WorldToScreenPoint(canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera, warningCorners[0]);
+                var root = (RectTransform)transform;
+                if (RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out var bottom))
+                    top = Mathf.Max(top, root.rect.yMax - bottom.y + 12);
+            }
+            var rect = (RectTransform)hud.transform;
+            rect.offsetMin = new Vector2(rect.offsetMin.x, -top - 115);
+            rect.offsetMax = new Vector2(rect.offsetMax.x, -top);
+        }
         private static RectTransform Panel(string name,Transform parent,bool visible=true)
         {
             var go=new GameObject(name,typeof(RectTransform));var rect=go.GetComponent<RectTransform>();rect.SetParent(parent,false);

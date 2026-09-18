@@ -166,6 +166,7 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            SkirmishWorldSetup.SuppressUnselectedStartupConfigs(state.EntityManager);
             if (_activeConfigQuery.IsEmptyIgnoreFilter &&
                 _pendingFuelSeedQuery.IsEmptyIgnoreFilter)
             {
@@ -285,6 +286,19 @@ namespace Game.Runtime
                     {
                         progress.InitialFuelStorageApplied = 1;
                         em.SetComponentData(entity, progress);
+                    }
+                }
+
+                // Skirmish has exact authored building sites. Finish those requests
+                // before randomizing the starting units, otherwise a supply truck
+                // can occupy a pending site and make some seeds fail to launch.
+                using (var skirmish = em.CreateEntityQuery(typeof(SkirmishMatchState)))
+                {
+                    if (!skirmish.IsEmptyIgnoreFilter && progress.InitialBuildingsSpawned == 0)
+                    {
+                        PlaybackAndDisposeInitialSpawnStructuralChanges(em, ref ecb);
+                        factionSpawns.Dispose();
+                        continue;
                     }
                 }
 
@@ -1197,6 +1211,8 @@ namespace Game.Runtime
             string buildingId,
             int2 origin)
         {
+            using var skirmishQuery = em.CreateEntityQuery(typeof(SkirmishMatchState));
+            bool exactSkirmishSite = !skirmishQuery.IsEmptyIgnoreFilter;
             DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
                 em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
             requests.Add(new BuildingRuntimeSpawnRequest
@@ -1209,6 +1225,7 @@ namespace Game.Runtime
                 PreferredOrigin = origin,
                 EndOrigin = default,
                 RotateVertical = 0,
+                RequirePreferredOrigin = exactSkirmishSite ? (byte)1 : (byte)0,
                 AllowExistingWallOverlap = 0,
                 Status = BuildingRuntimeSpawnRequest.Pending,
                 PlanEntity = configEntity,
@@ -1546,6 +1563,7 @@ namespace Game.Runtime
                 }
                 else if (request.Status == BuildingRuntimeSpawnRequest.Failed)
                 {
+                    SkirmishStartupPolicy.Fail(em, SkirmishStartupFailureCode.BuildingPlacement);
                     diagnosticLogWriter.EnqueueWarning(
                         em,
                         $"[InitialSpawn] initial building request failed. faction={request.FactionId} buildingId={request.BuildingId.ToString()} result={DescribeRuntimeSpawnRequestResult(request.ResultCode)} origin=({request.PreferredOrigin.x},{request.PreferredOrigin.y})");

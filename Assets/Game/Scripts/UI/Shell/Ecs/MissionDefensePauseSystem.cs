@@ -33,18 +33,28 @@ namespace Game.UI.Shell.Ecs
                 airlift.SessionToken.Equals(runtime.SessionToken) && airlift.AttemptOrdinal==runtime.AttemptOrdinal && airlift.SourceVersion==runtime.SourceVersion &&
                 airlift.Initialized!=0 && runtime.Phase==MissionPhaseKind.Engage && runtime.Outcome==MissionOutcomeKind.None && gameplay.PlayRequested!=0;
             defense|=extraction;
+            bool hasSkirmish = SystemAPI.TryGetSingleton(out SkirmishMatchState skirmishMatch);
+            bool finishedSkirmish = hasSkirmish && skirmishMatch.Phase == SkirmishPhase.Finished;
+            bool skirmish = finishedSkirmish || (hasSkirmish &&
+                skirmishMatch.Phase == SkirmishPhase.Playing && gameplay.PlayRequested != 0);
+            var activeSession = skirmish ? skirmishMatch.SessionId : runtime.SessionToken;
+            int activeAttempt = skirmish ? 0 : runtime.AttemptOrdinal;
+            bool canPause = defense || skirmish;
             bool popup=SystemAPI.TryGetSingleton(out UiShellActivePopupComponent active) && active.Visible!=0 &&
                        active.PopupKind is UiShellPopupKind.Pause or UiShellPopupKind.Settings or UiShellPopupKind.MissionFieldGuide;
-            bool same=held && session.Equals(runtime.SessionToken) && attempt==runtime.AttemptOrdinal;
-            if(held && (!defense || !popup || !same))
+            // The result overlay is not a shell popup. Keep the completed world
+            // frozen until session teardown; replay/menu release this ownership.
+            popup |= finishedSkirmish;
+            bool same=held && session.Equals(activeSession) && attempt==activeAttempt;
+            if(held && (!canPause || !popup || !same))
             {
                 if(Time.timeScale==0) Time.timeScale=previousTimeScale;
-                if(same && defense) { gameplay.SimulationActive=previousSimulationActive; em.SetComponentData(gameplayEntity,gameplay); }
+                if(same && canPause) { gameplay.SimulationActive=previousSimulationActive; em.SetComponentData(gameplayEntity,gameplay); }
                 held=false;
             }
-            if(!defense || !popup) return;
+            if(!canPause || !popup) return;
             if(!held)
-            { previousTimeScale=Time.timeScale; previousSimulationActive=gameplay.SimulationActive; session=runtime.SessionToken; attempt=runtime.AttemptOrdinal; held=true; }
+            { previousTimeScale=Time.timeScale; previousSimulationActive=gameplay.SimulationActive; session=activeSession; attempt=activeAttempt; held=true; }
             Time.timeScale=0;
             if(gameplay.SimulationActive!=0) { gameplay.SimulationActive=0; em.SetComponentData(gameplayEntity,gameplay); }
         }

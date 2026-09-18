@@ -13,11 +13,11 @@ namespace Game.Runtime
         private uint revision;
         private MapSurfaceComponent surface;
         private GridConfig grid;
-        private bool[] mask, sidewalkMask;
+        private bool[] mask, sidewalkMask, waterMask;
 
         internal void Ensure(EntityManager em,EntityQuery query,GridConfig currentGrid)
         {
-            if(query.CalculateEntityCount()!=1) {mask=null;sidewalkMask=null;world=null;return;}
+            if(query.CalculateEntityCount()!=1) {mask=null;sidewalkMask=null;waterMask=null;world=null;return;}
             Entity entity=query.GetSingletonEntity();
             var current=em.GetComponentData<MapSurfaceComponent>(entity);
             uint version=em.HasComponent<MapSurfaceSceneOverlayRevision>(entity)
@@ -33,6 +33,7 @@ namespace Game.Runtime
             }
             world=em.World;owner=entity;revision=version;surface=current;grid=currentGrid;
             mask=new bool[grid.Width*grid.Height];
+            waterMask=SkirmishWaterPlacement.CreateMask(em,grid);
             BuildingPlacementRoadSurfaceMask.Append(em,entity,grid,mask);
             sidewalkMask=new bool[mask.Length];
             var live=GetLiveSidewalks();
@@ -76,6 +77,20 @@ namespace Game.Runtime
         private DynamicBuffer<GridRoadSidewalk> GetLiveSidewalks() => world!=null && world.IsCreated && world.EntityManager.Exists(sidewalkOwner)
             ? world.EntityManager.GetBuffer<GridRoadSidewalk>(sidewalkOwner,true) : default;
         internal bool[] GetSidewalks()=>sidewalkMask;
+        internal bool[] GetWater()=>waterMask;
+        internal void AppendWaterTo(bool[] target)
+        {
+            if(waterMask==null || waterMask.Length!=target.Length)return;
+            for(int i=0;i<target.Length;i++)target[i]|=waterMask[i];
+        }
+        internal bool OverlapsWater(GridConfig currentGrid,Vector2Int origin,Vector2Int footprint)
+        {
+            if(waterMask==null)return false;
+            if(!BuildingPlacementValidationUtilitySystemHelper.IsFootprintInsideGrid(origin,footprint,currentGrid))return true;
+            for(int y=origin.y;y<origin.y+footprint.y;y++)
+                for(int x=origin.x;x<origin.x+footprint.x;x++)if(waterMask[y*currentGrid.Width+x])return true;
+            return false;
+        }
         internal void AppendTo(bool[] target)
         {
             if(mask==null || mask.Length!=target.Length) return;

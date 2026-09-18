@@ -76,6 +76,12 @@ namespace Game.Runtime
                     ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
                     : new List<GameObject>();
             definitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
+            if (_config.InitialUnitsConfig?.Factions != null)
+                foreach (var faction in _config.InitialUnitsConfig.Factions)
+                    if (faction?.Units != null)
+                        foreach (var unit in faction.Units)
+                            if (unit?.Prefab != null)
+                                definitionSystem.RegisterInitialUnitPreviewPrefab(unit.Prefab);
             _buildPlaneY = _config.BuildPlaneY;
             _placementOutlineHeight = _config.PlacementOutlineHeight;
             _placementValidColor = _config.PlacementValidColor;

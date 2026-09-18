@@ -1,0 +1,3 @@
+Normal-speed idle-defense observation; not a complete journey.
+elapsed=537.3351 phase=Playing losses=0/22 bases=720/1200
+Enemy squads formed=6

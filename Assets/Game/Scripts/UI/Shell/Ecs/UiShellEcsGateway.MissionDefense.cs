@@ -83,6 +83,17 @@ namespace Game.UI.Shell.Ecs
 
         public bool TryRequestMissionDefenseAction(UiMissionDefenseAction action,int warningElementIndex,int guidanceId)
         {
+            if (action is UiMissionDefenseAction.OpenGuide or UiMissionDefenseAction.CloseGuide &&
+                TrySkirmish(out _, out _, out var skirmish))
+            {
+                if (skirmish.Phase != SkirmishPhase.Playing ||
+                    !TryGetBoundary(out var guideEm, out var guideRoot)) return false;
+                guideEm.GetBuffer<UiShellPopupRequestComponent>(guideRoot).Add(new UiShellPopupRequestComponent {
+                    PopupKind = UiShellPopupKind.MissionFieldGuide,
+                    Intent = action == UiMissionDefenseAction.OpenGuide ? UiShellPopupIntent.Show : UiShellPopupIntent.Hide
+                });
+                return true;
+            }
             if(action is UiMissionDefenseAction.SkipCameraTour or UiMissionDefenseAction.ReduceCameraMotion)
                 return RequestCameraTourAction(action);
             if(action is UiMissionDefenseAction.CloseWarning or UiMissionDefenseAction.OpenGuide or UiMissionDefenseAction.CloseGuide)

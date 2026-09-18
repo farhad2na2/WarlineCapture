@@ -42,9 +42,11 @@ namespace Game.Runtime
             var match=SystemAPI.GetSingleton<SkirmishMatchState>();
             var em=state.EntityManager;
             var gameplay=SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
+            if(match.StartupFailure!=SkirmishStartupFailureCode.None)return;
+            if(match.Phase is SkirmishPhase.Preparing or SkirmishPhase.Playing)
+                SkirmishWorldSetup.NormalizeScenery(em);
             if(match.Phase==SkirmishPhase.Preparing && gameplay.SimulationActive!=0)
             {
-                SkirmishWorldSetup.NormalizeScenery(em);
                 SkirmishWorldSetup.UseTacticalResources(em);
                 using var query=em.CreateEntityQuery(typeof(RuntimeBuildingCombatTag),typeof(UnitSourcePrefabKey),typeof(Faction),typeof(UnitHealth));
                 using var buildings=query.ToEntityArray(Allocator.Temp);
@@ -61,6 +63,8 @@ namespace Game.Runtime
                     em.AddComponentData(match.PlayerMainBase,new SkirmishMainBase{FactionId=1});
                     em.AddComponentData(match.EnemyMainBase,new SkirmishMainBase{FactionId=2});
                     SkirmishWorldSetup.SeedSupplyAndAnchors(em);
+                    SkirmishCombatPolicy.ApplyRoster(em,match);
+                    SkirmishCombatPolicy.AssignInitialDefenders(em);
                     match.Phase=SkirmishPhase.Playing;
                     TrackLosses(em,entity,ref match);
                 }
@@ -68,7 +72,9 @@ namespace Game.Runtime
                 return;
             }
             if(match.Phase!=SkirmishPhase.Playing)return;
+            SkirmishCombatPolicy.ApplyRoster(em,match);
             SkirmishSquadAssignment.Assign(em);
+            if (gameplay.SimulationActive != 0) SkirmishCombatPolicy.RallyPlayerReinforcements(em, match);
             TrackLosses(em,entity,ref match);
             bool ended=SkirmishOutcomeRules.Evaluate(ref match,Alive(em,match.PlayerMainBase),Alive(em,match.EnemyMainBase),
                 SystemAPI.Time.DeltaTime,gameplay.SimulationActive!=0,match.SurrenderRequested!=0);
@@ -94,7 +100,7 @@ namespace Game.Runtime
             // Exclude it in the query instead of scanning thousands of map buildings.
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
                 All=new[]{ComponentType.ReadOnly<Faction>(),ComponentType.ReadOnly<UnitHealth>()},
-                None=new[]{ComponentType.ReadOnly<OperationMapBuildingComponent>()}});
+                None=new[]{ComponentType.ReadOnly<OperationMapBuildingComponent>(),ComponentType.ReadOnly<OperationMapAuthoredVehiclePresentation>()}});
             using var units=query.ToEntityArray(Allocator.Temp);
             foreach(var unit in units)
             {

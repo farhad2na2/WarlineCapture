@@ -13,6 +13,22 @@ MonoBehaviour:
   m_Name: SkirmishBaseAssault
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishPresetConfig
   supplyDaySeconds: 120
+  rifleRange: 32
+  rifleDamage: 6
+  rifleCooldown: 0.8
+  armoredCarRange: 40
+  armoredCarDamage: 18
+  armoredCarCooldown: 1.2
+  watchtowerRange: 55
+  watchtowerDamage: 10
+  watchtowerCooldown: 0.8
+  firstAttackSeconds: 60
+  playerReinforcementRallyOffset: {x: 40, y: 0, z: 10}
+  reinforcementInfantryTarget: 16
+  attackSquadSize: 8
+  baseDefenseRadius: 70
+  aiMaterialsReserve: 80
+  aiFuelReserve: 160
   buildingPlacement: {fileID: 11400000, guid: 7542c1da61e97460e893f4634d428b37, type: 2}
   aiControllers:
   - {fileID: 11400000, guid: c3d7226b0272d44dfa219e9185a76087, type: 2}

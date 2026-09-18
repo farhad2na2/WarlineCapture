@@ -2223,6 +2223,8 @@ MonoBehaviour:
       value: Rifleman Male IV
     - key: ui.catalog.structure
       value: STRUCTURE
+    - key: ui.catalog.transport_vehicle
+      value: TRANSPORT VEHICLE
     - key: ui.chapter.aria_protocol
       value: ARIA PROTOCOL
     - key: ui.chapter.dalia
@@ -2409,6 +2411,10 @@ MonoBehaviour:
       value: Show dialogue subtitles.
     - key: ui.guidance.support_level
       value: SUPPORT LEVEL
+    - key: ui.help.commands_button
+      value: Tap Commands below the selected unit portrait.
+    - key: ui.help.select_squad_card
+      value: Tap a squad card to select its units.
     - key: ui.hud.aria_target
       value: ARIA TARGET
     - key: ui.hud.cargo_capacity
@@ -2544,6 +2550,8 @@ MonoBehaviour:
       value: CAPTIONS OFF
     - key: ui.narrative.subtitles_on
       value: CAPTIONS ON
+    - key: ui.navigation.back_to_main_menu
+      value: BACK TO MAIN MENU
     - key: ui.result.at_risk
       value: AT RISK
     - key: ui.result.combat_summary
@@ -2612,6 +2620,16 @@ MonoBehaviour:
       value: DESTROY THE ENEMY MAIN BASE
     - key: ui.skirmish.cancel
       value: CANCEL
+    - key: ui.skirmish.catalog.fabrication_depot
+      value: Field Fabrication Depot
+    - key: ui.skirmish.catalog.fuel_bladder
+      value: Fuel Bladder
+    - key: ui.skirmish.catalog.oil_pump
+      value: Oil Pump
+    - key: ui.skirmish.catalog.oil_refinery
+      value: Oil Refinery
+    - key: ui.skirmish.catalog.rifle_squad
+      value: Rifle squad (4)
     - key: ui.skirmish.confirm
       value: CONFIRM
     - key: ui.skirmish.enemy_base
@@ -2620,6 +2638,67 @@ MonoBehaviour:
       value: Hide unexplored areas.
     - key: ui.skirmish.fog_of_war
       value: FOG OF WAR
+    - key: ui.skirmish.guide.1.body
+      value: Destroy the marked enemy Main Base and protect your own. Extra Barracks
+        do not replace your Main Base. If neither base falls before the clock expires,
+        the match is a draw.
+    - key: ui.skirmish.guide.1.diagram
+      value: "Protect your base \u2192 break the defenses \u2192 destroy the enemy
+        base"
+    - key: ui.skirmish.guide.1.example
+      value: Tap YOUR BASE or ENEMY BASE above the battlefield to find it. Use the
+        map to plan your approach.
+    - key: ui.skirmish.guide.1.mistake
+      value: You do not need to destroy every enemy or supply building. The marked
+        Main Base is the objective.
+    - key: ui.skirmish.guide.1.title
+      value: WIN THE MATCH
+    - key: ui.skirmish.guide.2.body
+      value: Tap a squad card to select that group. Tap Move, then the ground to
+        choose a destination. Tap Attack, then an enemy. Hold keeps the group in
+        position while it fights enemies in range.
+    - key: ui.skirmish.guide.2.diagram
+      value: "Squad card \u2192 command \u2192 destination or enemy"
+    - key: ui.skirmish.guide.2.example
+      value: Gather your groups outside enemy range, then attack together. Remove
+        a defending Watchtower before attacking the base.
+    - key: ui.skirmish.guide.2.mistake
+      value: Move is a travel order. Sending a group into enemy fire before giving
+        Attack can cost soldiers.
+    - key: ui.skirmish.guide.2.title
+      value: SELECT AND COMMAND
+    - key: ui.skirmish.guide.3.body
+      value: Open Build to add defenses or recruit rifle soldiers. Buildings need
+        clear ground away from roads and sidewalks. Move or rotate the preview until
+        it is green, then confirm. Accepted recruitment closes Build and joins your
+        squad cards when ready.
+    - key: ui.skirmish.guide.3.diagram
+      value: "Build \u2192 choose item \u2192 check cost and space \u2192 confirm"
+    - key: ui.skirmish.guide.3.example
+      value: The infantry counter shows your limit. Build defenses near your base,
+        then spend Materials on replacements.
+    - key: ui.skirmish.guide.3.mistake
+      value: Rejected orders do not spend resources. Read the cost or capacity message
+        before trying again.
+    - key: ui.skirmish.guide.3.title
+      value: BUILD AND REINFORCE
+    - key: ui.skirmish.guide.4.body
+      value: Trucks deliver Oil automatically. The fabrication depot turns delivered
+        Oil into Materials; the refinery supplies usable Fuel. Protect the trucks
+        and supply buildings. Replace a lost structure through Build if you can afford
+        it.
+    - key: ui.skirmish.guide.4.diagram
+      value: "Oil pump \u2192 cargo delivery \u2192 Materials or Fuel"
+    - key: ui.skirmish.guide.4.example
+      value: If Materials stop increasing, check that your Oil pump, cargo trucks
+        and fabrication depot are still working.
+    - key: ui.skirmish.guide.4.mistake
+      value: Oil waiting at a source is not delivered supply. Keep routes open and
+        allow the trucks time to complete the trip.
+    - key: ui.skirmish.guide.4.title
+      value: KEEP SUPPLY MOVING
+    - key: ui.skirmish.guide.title
+      value: BASE ASSAULT FIELD GUIDE
     - key: ui.skirmish.income_multiplier
       value: Income Multiplier
     - key: ui.skirmish.infantry
@@ -2628,12 +2707,17 @@ MonoBehaviour:
       value: Reveal enemy tech on scout.
     - key: ui.skirmish.intel_reveal
       value: INTEL REVEAL
+    - key: ui.skirmish.logistics_full
+      value: 'Limit: 2 cargo trucks and 1 tanker, including queued vehicles.'
+    - key: ui.skirmish.logistics_full.short
+      value: Supply vehicle limit reached.
     - key: ui.skirmish.main_menu
       value: MAIN MENU
     - key: ui.skirmish.match_help
-      value: Destroy the enemy Main Base. Tap a squad card, Move, then a destination.
-        Use Attack on enemy targets. Tap either base in the objective bar to find
-        it.
+      value: Destroy the enemy base. Defend yours with Watchtowers and rifle squads.
+        Tap a squad card, then Move or Attack.
+    - key: ui.skirmish.no_resume
+      value: Leaving ends this match. Your setup is saved for a new match.
     - key: ui.skirmish.objective_explanation
       value: Destroy the enemy's main Barracks and protect yours. If both survive
         when time runs out, the match is a draw.
@@ -2647,14 +2731,20 @@ MonoBehaviour:
       value: Infantry {0} / 24
     - key: ui.skirmish.population_full
       value: Infantry limit reached (24, including queued soldiers).
+    - key: ui.skirmish.population_full.short
+      value: Infantry limit reached.
     - key: ui.skirmish.preset_summary
       value: "1 opponent \xB7 Normal \xB7 15-minute limit"
     - key: ui.skirmish.prototype_scope
       value: "Full map visibility \xB7 No campaign rewards"
     - key: ui.skirmish.reason.bothbasesdestroyed
       value: Both Main Bases were destroyed together.
+    - key: ui.skirmish.reason.enemy_base_destroyed
+      value: You destroyed the enemy Main Base.
     - key: ui.skirmish.reason.mainbasedestroyed
       value: A Main Base was destroyed.
+    - key: ui.skirmish.reason.player_base_destroyed
+      value: The enemy destroyed your Main Base.
     - key: ui.skirmish.reason.surrender
       value: You surrendered the match.
     - key: ui.skirmish.reason.timelimit
@@ -2665,18 +2755,35 @@ MonoBehaviour:
       value: RESERVES
     - key: ui.skirmish.restart_confirm
       value: Restart this skirmish with the same setup?
+    - key: ui.skirmish.restart_match
+      value: RESTART MATCH
     - key: ui.skirmish.result.defeat
       value: DEFEAT
     - key: ui.skirmish.result.draw
       value: DRAW
     - key: ui.skirmish.result.victory
       value: VICTORY
+    - key: ui.skirmish.retry
+      value: RETRY
     - key: ui.skirmish.seed
       value: AI SEED
     - key: ui.skirmish.seed_hint
       value: Same map. Seed changes AI choices.
     - key: ui.skirmish.squad
       value: SQUAD {0}
+    - key: ui.skirmish.start_failed
+      value: Skirmish could not start
+    - key: ui.skirmish.start_failed.buildingplacement
+      value: A starting building could not be placed on clear ground. Retry, or return
+        to setup. No result was recorded.
+    - key: ui.skirmish.start_failed.content
+      value: The battlefield could not finish loading. Retry, or return to setup.
+        No result was recorded.
+    - key: ui.skirmish.start_failed.timeout
+      value: The battlefield took too long to prepare. Retry, or return to setup.
+        No result was recorded.
+    - key: ui.skirmish.start_match
+      value: START MATCH
     - key: ui.skirmish.starting_money
       value: Starting Money
     - key: ui.skirmish.starting_roster
@@ -6166,7 +6273,8 @@ MonoBehaviour:
         \u0645\u0631\u062F\u0645 \u0648 \u067E\u0627\u0633\u06AF\u0627\u0647 \u0633\u062A\u0627\u0631\u0647\u0654
         \u0627\u0636\u0627\u0641\u06CC \u062F\u0627\u0631\u062F."
     - key: mission.m03.result.retry
-      value: "\u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647"
+      value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646"
     - key: mission.m03.result.rewards
       value: "\u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627"
     - key: mission.m03.result.safe
@@ -8610,6 +8718,8 @@ MonoBehaviour:
       value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0645\u0631\u062F \u06F4"
     - key: ui.catalog.structure
       value: "\u0633\u0627\u0632\u0647"
+    - key: ui.catalog.transport_vehicle
+      value: "\u0645\u0627\u0634\u06CC\u0646 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644"
     - key: ui.chapter.aria_protocol
       value: "\u067E\u0631\u0648\u062A\u06A9\u0644 \u0622\u0631\u06CC\u0627"
     - key: ui.chapter.dalia
@@ -8816,6 +8926,14 @@ MonoBehaviour:
         \u06AF\u0641\u062A\u06AF\u0648\u0647\u0627."
     - key: ui.guidance.support_level
       value: "\u0645\u06CC\u0632\u0627\u0646 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC"
+    - key: ui.help.commands_button
+      value: "\u0632\u06CC\u0631 \u0639\u06A9\u0633 \u0646\u06CC\u0631\u0648\u06CC
+        \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647\u060C \xAB\u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: ui.help.select_squad_card
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0628\u0632\u0646
+        \u062A\u0627 \u0646\u06CC\u0631\u0648\u0647\u0627\u0634 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0628\u0634\u0646."
     - key: ui.hud.aria_target
       value: "\u0647\u062F\u0641 \u0622\u0631\u06CC\u0627"
     - key: ui.hud.cargo_capacity
@@ -8980,6 +9098,9 @@ MonoBehaviour:
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u062E\u0627\u0645\u0648\u0634"
     - key: ui.narrative.subtitles_on
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u0631\u0648\u0634\u0646"
+    - key: ui.navigation.back_to_main_menu
+      value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u0628\u0647 \u0645\u0646\u0648\u06CC
+        \u0627\u0635\u0644\u06CC"
     - key: ui.result.at_risk
       value: "\u062F\u0631 \u062E\u0637\u0631"
     - key: ui.result.combat_summary
@@ -9072,6 +9193,18 @@ MonoBehaviour:
         \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646"
     - key: ui.skirmish.cancel
       value: "\u0644\u063A\u0648"
+    - key: ui.skirmish.catalog.fabrication_depot
+      value: "\u06A9\u0627\u0631\u06AF\u0627\u0647 \u062A\u0648\u0644\u06CC\u062F
+        \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.skirmish.catalog.fuel_bladder
+      value: "\u0645\u062E\u0632\u0646 \u0633\u0648\u062E\u062A"
+    - key: ui.skirmish.catalog.oil_pump
+      value: "\u067E\u0645\u067E \u0646\u0641\u062A"
+    - key: ui.skirmish.catalog.oil_refinery
+      value: "\u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647 \u0646\u0641\u062A"
+    - key: ui.skirmish.catalog.rifle_squad
+      value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        (\u06F4 \u0646\u0641\u0631)"
     - key: ui.skirmish.confirm
       value: "\u062A\u0623\u06CC\u06CC\u062F"
     - key: ui.skirmish.enemy_base
@@ -9081,6 +9214,143 @@ MonoBehaviour:
         \u0631\u0648 \u067E\u0646\u0647\u0627\u0646 \u06A9\u0646."
     - key: ui.skirmish.fog_of_war
       value: "\u0645\u0647 \u062C\u0646\u06AF"
+    - key: ui.skirmish.guide.1.body
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC\u0650
+        \u0639\u0644\u0627\u0645\u062A\u200C\u062E\u0648\u0631\u062F\u0647\u0654
+        \u062F\u0634\u0645\u0646 \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646
+        \u0648 \u0645\u0631\u0627\u0642\u0628 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u062E\u0648\u062F\u062A \u0628\u0627\u0634. \u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647\u0654
+        \u0627\u0636\u0627\u0641\u0647 \u062C\u0627\u06CC \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0627\u0635\u0644\u06CC\u062A \u0631\u0648 \u0646\u0645\u06CC\u200C\u06AF\u06CC\u0631\u0647.
+        \u0627\u06AF\u0647 \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646 \u0632\u0645\u0627\u0646
+        \u0647\u06CC\u0686\u200C\u06A9\u062F\u0648\u0645 \u0646\u0627\u0628\u0648\u062F
+        \u0646\u0634\u0647\u060C \u0628\u0627\u0632\u06CC \u0645\u0633\u0627\u0648\u06CC
+        \u0645\u06CC\u200C\u0634\u0647."
+    - key: ui.skirmish.guide.1.diagram
+      value: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647\u062A \u062F\u0641\u0627\u0639
+        \u06A9\u0646 \u2190 \u062F\u0641\u0627\u0639 \u062F\u0634\u0645\u0646 \u0631\u0648
+        \u0628\u0634\u06A9\u0646 \u2190 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646"
+    - key: ui.skirmish.guide.1.example
+      value: "\u0628\u0627\u0644\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u060C
+        \xAB\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062E\u0648\u062F\u062A\xBB \u06CC\u0627
+        \xAB\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646\xBB \u0631\u0648
+        \u0628\u0632\u0646 \u062A\u0627 \u067E\u06CC\u062F\u0627\u0634 \u06A9\u0646\u06CC.
+        \u0627\u0632 \u0646\u0642\u0634\u0647 \u0628\u0631\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0645\u0633\u06CC\u0631 \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646."
+    - key: ui.skirmish.guide.1.mistake
+      value: "\u0644\u0627\u0632\u0645 \u0646\u06CC\u0633\u062A \u0647\u0645\u0647\u0654
+        \u0646\u06CC\u0631\u0648\u0647\u0627 \u06CC\u0627 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u062A\u062F\u0627\u0631\u06A9\u0627\u062A\u06CC \u062F\u0634\u0645\u0646
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646\u06CC. \u0647\u062F\u0641
+        \u0647\u0645\u0648\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC\u0650
+        \u0639\u0644\u0627\u0645\u062A\u200C\u062E\u0648\u0631\u062F\u0647\u200C\u0633\u062A."
+    - key: ui.skirmish.guide.1.title
+      value: "\u0628\u0627\u0632\u06CC \u0631\u0648 \u0628\u0628\u0631"
+    - key: ui.skirmish.guide.2.body
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0628\u0632\u0646
+        \u062A\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0628\u0634\u0647. \u0628\u0631\u0627\u06CC
+        \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC\u060C \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0628\u0639\u062F \u0645\u0642\u0635\u062F
+        \u0631\u0648 \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646. \u0628\u0631\u0627\u06CC \u062F\u0631\u06AF\u06CC\u0631\u06CC\u060C
+        \xAB\u062D\u0645\u0644\u0647\xBB \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0628\u0639\u062F
+        \u062F\u0634\u0645\u0646 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646. \xAB\u062D\u0641\u0638\xBB \u06AF\u0631\u0648\u0647 \u0631\u0648
+        \u0633\u0631 \u062C\u0627\u0634 \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0647
+        \u0648 \u0628\u0647 \u062F\u0634\u0645\u0646\u0650 \u062A\u0648\u06CC \u0628\u0631\u062F
+        \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: ui.skirmish.guide.2.diagram
+      value: "\u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647 \u2190 \u0641\u0631\u0645\u0627\u0646
+        \u2190 \u0645\u0642\u0635\u062F \u06CC\u0627 \u062F\u0634\u0645\u0646"
+    - key: ui.skirmish.guide.2.example
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627 \u0631\u0648 \u0628\u06CC\u0631\u0648\u0646
+        \u0627\u0632 \u0628\u0631\u062F \u062F\u0634\u0645\u0646 \u062C\u0645\u0639
+        \u06A9\u0646\u060C \u0628\u0639\u062F \u0628\u0627 \u0647\u0645 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0642\u0628\u0644 \u0627\u0632 \u062D\u0645\u0644\u0647 \u0628\u0647
+        \u067E\u0627\u06CC\u06AF\u0627\u0647\u060C \u0628\u0631\u062C \u062F\u0641\u0627\u0639\u06CC
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0628\u0628\u0631."
+    - key: ui.skirmish.guide.2.mistake
+      value: "\xAB\u062D\u0631\u06A9\u062A\xBB \u0628\u0631\u0627\u06CC \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC\u0647.
+        \u0627\u06AF\u0647 \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0642\u0628\u0644
+        \u0627\u0632 \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647 \u0632\u06CC\u0631
+        \u0622\u062A\u0634 \u062F\u0634\u0645\u0646 \u0628\u0641\u0631\u0633\u062A\u06CC\u060C
+        \u0645\u0645\u06A9\u0646\u0647 \u062A\u0644\u0641\u0627\u062A \u0628\u062F\u06CC."
+    - key: ui.skirmish.guide.2.title
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0648 \u0641\u0631\u0645\u0627\u0646"
+    - key: ui.skirmish.guide.3.body
+      value: "\xAB\u0633\u0627\u062E\u062A\xBB \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646
+        \u062A\u0627 \u062F\u0641\u0627\u0639 \u0628\u0633\u0627\u0632\u06CC \u06CC\u0627
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0622\u0645\u0648\u0632\u0634
+        \u0628\u062F\u06CC. \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u0631\u0648
+        \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u0650 \u062E\u0627\u0644\u06CC
+        \u0648 \u062F\u0648\u0631 \u0627\u0632 \u062C\u0627\u062F\u0647 \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0631\u0648
+        \u0628\u0630\u0627\u0631. \u067E\u06CC\u0634\u200C\u0646\u0645\u0627\u06CC\u0634
+        \u0631\u0648 \u062C\u0627\u0628\u0647\u200C\u062C\u0627 \u06A9\u0646 \u06CC\u0627
+        \u0628\u0686\u0631\u062E\u0648\u0646 \u062A\u0627 \u0633\u0628\u0632 \u0628\u0634\u0647\u060C
+        \u0628\u0639\u062F \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646. \u0628\u0627
+        \u0634\u0631\u0648\u0639 \u0622\u0645\u0648\u0632\u0634\u060C \u067E\u0646\u062C\u0631\u0647
+        \u0628\u0633\u062A\u0647 \u0645\u06CC\u200C\u0634\u0647 \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0622\u0645\u0627\u062F\u0647 \u0628\u0647 \u06A9\u0627\u0631\u062A\u200C\u0647\u0627\u06CC
+        \u06AF\u0631\u0648\u0647 \u0627\u0636\u0627\u0641\u0647 \u0645\u06CC\u200C\u0634\u0646."
+    - key: ui.skirmish.guide.3.diagram
+      value: "\u0633\u0627\u062E\u062A \u2190 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0645\u0648\u0631\u062F \u2190 \u0628\u0631\u0631\u0633\u06CC \u0647\u0632\u06CC\u0646\u0647
+        \u0648 \u062C\u0627 \u2190 \u062A\u0623\u06CC\u06CC\u062F"
+    - key: ui.skirmish.guide.3.example
+      value: "\u0634\u0645\u0627\u0631\u0646\u062F\u0647\u0654 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
+        \u0633\u0642\u0641 \u0646\u06CC\u0631\u0648\u0647\u0627\u062A \u0631\u0648
+        \u0646\u0634\u0648\u0646 \u0645\u06CC\u200C\u062F\u0647. \u0646\u0632\u062F\u06CC\u06A9
+        \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0641\u0627\u0639 \u0628\u0633\u0627\u0632
+        \u0648 \u0628\u0631\u0627\u06CC \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u06A9\u0631\u062F\u0646 \u062A\u0644\u0641\u0627\u062A\u060C \u0645\u0635\u0627\u0644\u062D
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: ui.skirmish.guide.3.mistake
+      value: "\u0641\u0631\u0645\u0627\u0646\u06CC \u06A9\u0647 \u0642\u0628\u0648\u0644
+        \u0646\u0634\u062F\u0647 \u0645\u0646\u0627\u0628\u0639 \u062E\u0631\u062C
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647. \u0642\u0628\u0644 \u0627\u0632
+        \u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647\u060C \u067E\u06CC\u0627\u0645
+        \u0647\u0632\u06CC\u0646\u0647 \u06CC\u0627 \u0638\u0631\u0641\u06CC\u062A
+        \u0631\u0648 \u0628\u062E\u0648\u0646."
+    - key: ui.skirmish.guide.3.title
+      value: "\u0633\u0627\u062E\u062A\u200C\u0648\u0633\u0627\u0632 \u0648 \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0645\u06A9\u06CC"
+    - key: ui.skirmish.guide.4.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627 \u0646\u0641\u062A
+        \u0631\u0648 \u062E\u0648\u062F\u06A9\u0627\u0631 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0646.
+        \u06A9\u0627\u0631\u06AF\u0627\u0647\u060C \u0646\u0641\u062A\u0650 \u062A\u062D\u0648\u06CC\u0644\u200C\u06AF\u0631\u0641\u062A\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0645\u0635\u0627\u0644\u062D \u062A\u0628\u062F\u06CC\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u0647 \u0648 \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u0633\u0648\u062E\u062A \u0622\u0645\u0627\u062F\u0647 \u0645\u06CC\u200C\u062F\u0647.
+        \u0645\u0631\u0627\u0642\u0628 \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627
+        \u0648 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u062A\u062F\u0627\u0631\u06A9\u0627\u062A\u06CC \u0628\u0627\u0634. \u0627\u06AF\u0647
+        \u0633\u0627\u062E\u062A\u0645\u0648\u0646\u06CC \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A \u0648 \u0645\u0646\u0627\u0628\u0639 \u06A9\u0627\u0641\u06CC
+        \u062F\u0627\u0634\u062A\u06CC\u060C \u0627\u0632 \xAB\u0633\u0627\u062E\u062A\xBB
+        \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646\u0634 \u06A9\u0646."
+    - key: ui.skirmish.guide.4.diagram
+      value: "\u067E\u0645\u067E \u0646\u0641\u062A \u2190 \u062A\u062D\u0648\u06CC\u0644
+        \u0628\u0627\u0631 \u2190 \u0645\u0635\u0627\u0644\u062D \u06CC\u0627 \u0633\u0648\u062E\u062A"
+    - key: ui.skirmish.guide.4.example
+      value: "\u0627\u06AF\u0647 \u0645\u0635\u0627\u0644\u062D \u062F\u06CC\u06AF\u0647
+        \u0632\u06CC\u0627\u062F \u0646\u0645\u06CC\u200C\u0634\u0647\u060C \u067E\u0645\u067E
+        \u0646\u0641\u062A\u060C \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0631\u0628\u0631\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0627\u0647
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646."
+    - key: ui.skirmish.guide.4.mistake
+      value: "\u0646\u0641\u062A\u06CC \u06A9\u0647 \u0647\u0646\u0648\u0632 \u06A9\u0646\u0627\u0631
+        \u0645\u0646\u0628\u0639\u0647\u060C \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F\u0647
+        \u0646\u0634\u062F\u0647. \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627\u0632
+        \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u0641\u0631\u0635\u062A \u0628\u062F\u0647
+        \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627 \u0631\u0641\u062A\u200C\u0648\u0628\u0631\u06AF\u0634\u062A\u0634\u0648\u0646
+        \u0631\u0648 \u06A9\u0627\u0645\u0644 \u06A9\u0646\u0646."
+    - key: ui.skirmish.guide.4.title
+      value: "\u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0648 \u0641\u0639\u0627\u0644
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: ui.skirmish.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u062D\u0645\u0644\u0647
+        \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647"
     - key: ui.skirmish.income_multiplier
       value: "\u0636\u0631\u06CC\u0628 \u062F\u0631\u0622\u0645\u062F"
     - key: ui.skirmish.infantry
@@ -9091,19 +9361,28 @@ MonoBehaviour:
         \u0622\u0634\u06A9\u0627\u0631 \u06A9\u0646."
     - key: ui.skirmish.intel_reveal
       value: "\u0627\u0641\u0634\u0627\u06CC \u0627\u0637\u0644\u0627\u0639\u0627\u062A"
+    - key: ui.skirmish.logistics_full
+      value: "\u0638\u0631\u0641\u06CC\u062A \u067E\u0631\u0647: \u06F2 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u0628\u0627\u0631\u0628\u0631\u06CC \u0648 \u06F1 \u062A\u0627\u0646\u06A9\u0631\u060C
+        \u0628\u0627 \u0627\u062D\u062A\u0633\u0627\u0628 \u0635\u0641 \u062A\u0648\u0644\u06CC\u062F."
+    - key: ui.skirmish.logistics_full.short
+      value: "\u0638\u0631\u0641\u06CC\u062A \u0645\u0627\u0634\u06CC\u0646\u200C\u0647\u0627\u06CC
+        \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u067E\u0631\u0647."
     - key: ui.skirmish.main_menu
       value: "\u0645\u0646\u0648\u06CC \u0627\u0635\u0644\u06CC"
     - key: ui.skirmish.match_help
-      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646
-        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646. \u06A9\u0627\u0631\u062A
-        \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0628\u0632\u0646\u060C \u0628\u0639\u062F
-        \xAB\u062D\u0631\u06A9\u062A\xBB \u0648 \u0645\u0642\u0635\u062F \u0631\u0648
-        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0628\u0631\u0627\u06CC
-        \u0647\u062F\u0641 \u062F\u0634\u0645\u0646 \u0627\u0632 \xAB\u062D\u0645\u0644\u0647\xBB
-        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646. \u0628\u0631\u0627\u06CC
-        \u062F\u06CC\u062F\u0646 \u0647\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647\u060C
-        \u062F\u06A9\u0645\u0647\u200C\u0634 \u0631\u0648 \u062A\u0648\u06CC \u0646\u0648\u0627\u0631
-        \u0647\u062F\u0641 \u0628\u0632\u0646."
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062F\u0634\u0645\u0646 \u0631\u0648
+        \u0646\u0627\u0628\u0648\u062F \u06A9\u0646. \u0628\u0627 \u0628\u0631\u062C
+        \u0648 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647\u062A
+        \u062F\u0641\u0627\u0639 \u06A9\u0646. \u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647
+        \u0631\u0648 \u0628\u0632\u0646\u060C \u0628\u0639\u062F \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u06CC\u0627 \xAB\u062D\u0645\u0644\u0647\xBB."
+    - key: ui.skirmish.no_resume
+      value: "\u0627\u06AF\u0647 \u062E\u0627\u0631\u062C \u0628\u0634\u06CC\u060C
+        \u0627\u06CC\u0646 \u0628\u0627\u0632\u06CC \u062A\u0645\u0648\u0645 \u0645\u06CC\u200C\u0634\u0647.
+        \u062A\u0646\u0638\u06CC\u0645\u0627\u062A\u062A \u0628\u0631\u0627\u06CC
+        \u06CC\u0647 \u0628\u0627\u0632\u06CC \u062A\u0627\u0632\u0647 \u0630\u062E\u06CC\u0631\u0647
+        \u0645\u06CC\u200C\u0645\u0648\u0646\u0647."
     - key: ui.skirmish.objective_explanation
       value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0648\u0646\u0647\u0654 \u0627\u0635\u0644\u06CC
         \u062F\u0634\u0645\u0646 \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646
@@ -9128,6 +9407,9 @@ MonoBehaviour:
         \u067E\u0631\u0647\u061B \u0633\u0642\u0641 \u06F2\u06F4 \u0646\u0641\u0631\u0647
         \u0648 \u0633\u0631\u0628\u0627\u0632\u0647\u0627\u06CC \u062A\u0648\u06CC
         \u0635\u0641 \u0647\u0645 \u062D\u0633\u0627\u0628 \u0645\u06CC\u200C\u0634\u0646."
+    - key: ui.skirmish.population_full.short
+      value: "\u0638\u0631\u0641\u06CC\u062A \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
+        \u067E\u0631\u0647."
     - key: ui.skirmish.preset_summary
       value: "\u06F1 \u062D\u0631\u06CC\u0641 \xB7 \u0639\u0627\u062F\u06CC \xB7
         \u062D\u062F\u0627\u06A9\u062B\u0631 \u06F1\u06F5 \u062F\u0642\u06CC\u0642\u0647"
@@ -9137,9 +9419,15 @@ MonoBehaviour:
     - key: ui.skirmish.reason.bothbasesdestroyed
       value: "\u0647\u0631 \u062F\u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0647\u0645\u200C\u0632\u0645\u0627\u0646
         \u0646\u0627\u0628\u0648\u062F \u0634\u062F\u0646."
+    - key: ui.skirmish.reason.enemy_base_destroyed
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC \u062F\u0634\u0645\u0646
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F\u06CC."
     - key: ui.skirmish.reason.mainbasedestroyed
       value: "\u06CC\u06A9 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC
         \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: ui.skirmish.reason.player_base_destroyed
+      value: "\u062F\u0634\u0645\u0646 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0635\u0644\u06CC\u062A
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F."
     - key: ui.skirmish.reason.surrender
       value: "\u0627\u0632 \u0646\u0628\u0631\u062F \u0627\u0646\u0635\u0631\u0627\u0641
         \u062F\u0627\u062F\u06CC."
@@ -9155,12 +9443,18 @@ MonoBehaviour:
       value: "\u0646\u0628\u0631\u062F \u0631\u0648 \u0628\u0627 \u0647\u0645\u06CC\u0646
         \u062A\u0646\u0638\u06CC\u0645\u0627\u062A \u0627\u0632 \u0627\u0648\u0644
         \u0634\u0631\u0648\u0639 \u06A9\u0646\u06CC\u0645\u061F"
+    - key: ui.skirmish.restart_match
+      value: "\u0634\u0631\u0648\u0639 \u062F\u0648\u0628\u0627\u0631\u0647\u0654
+        \u0646\u0628\u0631\u062F"
     - key: ui.skirmish.result.defeat
       value: "\u0634\u06A9\u0633\u062A"
     - key: ui.skirmish.result.draw
       value: "\u0645\u0633\u0627\u0648\u06CC"
     - key: ui.skirmish.result.victory
       value: "\u067E\u06CC\u0631\u0648\u0632\u06CC"
+    - key: ui.skirmish.retry
+      value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646"
     - key: ui.skirmish.seed
       value: "\u0628\u0630\u0631 \u0647\u0648\u0634 \u0645\u0635\u0646\u0648\u0639\u06CC"
     - key: ui.skirmish.seed_hint
@@ -9169,6 +9463,30 @@ MonoBehaviour:
         \u0631\u0648 \u062A\u063A\u06CC\u06CC\u0631 \u0645\u06CC\u200C\u062F\u0647."
     - key: ui.skirmish.squad
       value: "\u06AF\u0631\u0648\u0647 {0}"
+    - key: ui.skirmish.start_failed
+      value: "\u0646\u0628\u0631\u062F \u0634\u0631\u0648\u0639 \u0646\u0634\u062F"
+    - key: ui.skirmish.start_failed.buildingplacement
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0634\u0631\u0648\u0639 \u0646\u0628\u0631\u062F \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646
+        \u0622\u0632\u0627\u062F \u062C\u0627 \u0646\u0634\u062F. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0645\u062A\u062D\u0627\u0646 \u06A9\u0646 \u06CC\u0627 \u0628\u0647
+        \u062A\u0646\u0638\u06CC\u0645\u0627\u062A \u0628\u0631\u06AF\u0631\u062F.
+        \u0646\u062A\u06CC\u062C\u0647\u200C\u0627\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: ui.skirmish.start_failed.content
+      value: "\u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC \u0645\u06CC\u062F\u0627\u0646
+        \u0646\u0628\u0631\u062F \u06A9\u0627\u0645\u0644 \u0646\u0634\u062F. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0645\u062A\u062D\u0627\u0646 \u06A9\u0646 \u06CC\u0627 \u0628\u0647
+        \u062A\u0646\u0638\u06CC\u0645\u0627\u062A \u0628\u0631\u06AF\u0631\u062F.
+        \u0646\u062A\u06CC\u062C\u0647\u200C\u0627\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: ui.skirmish.start_failed.timeout
+      value: "\u0622\u0645\u0627\u062F\u0647 \u0634\u062F\u0646 \u0645\u06CC\u062F\u0627\u0646
+        \u0646\u0628\u0631\u062F \u0628\u06CC\u0634 \u0627\u0632 \u062D\u062F \u0637\u0648\u0644
+        \u06A9\u0634\u06CC\u062F. \u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646 \u06CC\u0627 \u0628\u0647 \u062A\u0646\u0638\u06CC\u0645\u0627\u062A
+        \u0628\u0631\u06AF\u0631\u062F. \u0646\u062A\u06CC\u062C\u0647\u200C\u0627\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: ui.skirmish.start_match
+      value: "\u0634\u0631\u0648\u0639 \u0646\u0628\u0631\u062F"
     - key: ui.skirmish.starting_money
       value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u0622\u063A\u0627\u0632\u06CC\u0646"
     - key: ui.skirmish.starting_roster
@@ -11113,7 +11431,8 @@ MonoBehaviour:
     - key: ui.v3.resume_command.12532f4b18
       value: "\u0627\u0632\u0633\u0631\u06AF\u06CC\u0631\u06CC \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.retry.e464c6605a
-      value: "\u062A\u0644\u0627\u0634 \u062F\u0648\u0628\u0627\u0631\u0647"
+      value: "\u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u0645\u062A\u062D\u0627\u0646
+        \u06A9\u0646"
     - key: ui.v3.return.c3172d0be7
       value: "\u0628\u0627\u0632\u06AF\u0634\u062A"
     - key: ui.v3.review_approach.ec3077f4d8

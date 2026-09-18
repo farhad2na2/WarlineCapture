@@ -53,7 +53,9 @@ namespace Game.Runtime
             GlobalProductionQueueFull = 5,
             InsufficientCredits = 6,
             InsufficientMaterials = 7,
-            InsufficientCreditsAndMaterials = 8
+            InsufficientCreditsAndMaterials = 8,
+            InfantryLimit = 9,
+            LogisticsLimit = 10
         }
 
         public delegate bool TryGetConfiguredSpawnableDelegate(int index, out ConfiguredSpawnableEntry entry);

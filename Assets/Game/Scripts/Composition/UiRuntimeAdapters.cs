@@ -241,6 +241,9 @@ namespace Game.Composition
         {
             EnsureLoaded();
             currentConfig = ToRuntimeConfig(config).NormalizeForBaseAssault();
+            // Results are written by the match after this setup store was loaded.
+            // Refresh the document so changing setup cannot restore a stale result.
+            saved = saveService.LoadQuickGame();
             saved.configuration = currentConfig;
             saveService.SaveQuickGame(saved);
         }

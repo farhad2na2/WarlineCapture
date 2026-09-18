@@ -41,6 +41,7 @@ namespace Game.Runtime
         [ReadOnly] public ComponentLookup<UnitTarget> UnitTargetLookup;
         [ReadOnly] public ComponentLookup<UnitLongDistanceMove> LongDistanceMoveLookup;
         [ReadOnly] public ComponentLookup<ManualMoveGroupMemberTag> ManualMoveGroupLookup;
+        [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
         [ReadOnly] public ComponentLookup<CampaignMissionGuidedMoveInProgressTag> CampaignGuidedMoveLookup;
         [ReadOnly] public ComponentLookup<UnitTransportBoardingTarget> BoardingTargetLookup;
 
@@ -541,6 +542,13 @@ namespace Game.Runtime
 
         private void RequestSoftBlockerMove(int sortKey, Entity entity, int2 blockerCell, int2 vehicleCell)
         {
+            // Moving infantry already has an escape route. Replacing it with a
+            // one-cell yield loses the player's destination when that path ends.
+            // Vehicles already treat infantry occupancy as soft, so allow both
+            // orders to continue; only idle infantry needs a displacement order.
+            if (ManualMoveLookup.HasComponent(entity))
+                return;
+
             int2 bestGoal = blockerCell;
             bool found = false;
             int2 away = blockerCell - vehicleCell;
@@ -744,6 +752,7 @@ namespace Game.Runtime
                     UnitTargetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true),
                     LongDistanceMoveLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true),
                     ManualMoveGroupLookup = SystemAPI.GetComponentLookup<ManualMoveGroupMemberTag>(true),
+                    ManualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true),
                     CampaignGuidedMoveLookup = SystemAPI.GetComponentLookup<CampaignMissionGuidedMoveInProgressTag>(true),
                     BoardingTargetLookup = SystemAPI.GetComponentLookup<UnitTransportBoardingTarget>(true)
                 }.ScheduleParallel(state.Dependency);

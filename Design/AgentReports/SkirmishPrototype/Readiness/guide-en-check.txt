@@ -1,0 +1,1 @@
+PASS four pages opened through actual button, paused, next/close clickable

@@ -228,6 +228,9 @@ public sealed class M03WarningInteractionTests
             f.Em.SetComponentData(moving,new UnitCombat {CanAttack=1});
             f.Em.SetComponentData(moving,LocalTransform.Identity);
         }
+        // The lesson observes arrival of the selected squad, not every friendly
+        // unit anywhere on the map. Keep the command recipient selected.
+        f.Em.AddComponent<SelectedUnitTag>(moving);
         var results=f.Em.AddBuffer<UnitMoveOrderResultElement>(f.Root);
         results.Add(new UnitMoveOrderResultElement {RequestId=1,Entity=moving,Kind=UnitMoveOrderRequestKind.GroupedManual,Issued=1});
         var system=f.World.GetOrCreateSystem<CampaignMissionGuidanceProjectionSystem>();

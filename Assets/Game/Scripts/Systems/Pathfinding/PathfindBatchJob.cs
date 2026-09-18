@@ -303,7 +303,10 @@ namespace Game.Runtime
 
             int startIndex = GridUtils.CellToIndex(start, Grid.Width);
             int goalIndex = GridUtils.CellToIndex(goal, Grid.Width);
-            int searchBoundsPadding = isVehicle
+            // Mode 2 retains the vehicle expansion budget while allowing a
+            // bounded skirmish route to detour around entire ruined blocks.
+            int searchBoundsPadding = CheapSegmentModes.IsCreated && CheapSegmentModes[index] == 2
+                ? InfantrySegmentedSearchBoundsPaddingCells : isVehicle
                 ? VehicleSearchBoundsPaddingCells
                 : cheapSegmentMode ? InfantrySegmentedSearchBoundsPaddingCells : InfantrySearchBoundsPaddingCells;
             int minSearchX = math.max(0, math.min(start.x, goal.x) - searchBoundsPadding);

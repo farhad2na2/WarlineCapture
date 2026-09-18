@@ -1,0 +1,36 @@
+time=120.0213 phase=Playing outcome=None losses=0/7 bases=1200/1200
+faction=2 materials=90 fabricated=20 spent=150
+faction=1 materials=120 fabricated=40 spent=140
+time=150.049 phase=Playing outcome=None losses=0/16 bases=1200/1200
+faction=2 materials=70 fabricated=40 spent=190
+faction=1 materials=100 fabricated=40 spent=160
+time=180.0511 phase=Playing outcome=None losses=0/16 bases=1200/1200
+faction=2 materials=90 fabricated=60 spent=190
+faction=1 materials=100 fabricated=60 spent=180
+time=210.0539 phase=Playing outcome=None losses=1/28 bases=1200/1200
+faction=2 materials=70 fabricated=80 spent=230
+faction=1 materials=120 fabricated=80 spent=180
+time=240.0656 phase=Playing outcome=None losses=1/32 bases=1200/1200
+faction=2 materials=50 fabricated=100 spent=270
+faction=1 materials=120 fabricated=80 spent=180
+time=270.0711 phase=Playing outcome=None losses=1/37 bases=1200/1200
+faction=2 materials=50 fabricated=120 spent=290
+faction=1 materials=120 fabricated=80 spent=180
+time=300.0818 phase=Playing outcome=None losses=12/38 bases=1200/1110
+faction=2 materials=50 fabricated=140 spent=310
+faction=1 materials=140 fabricated=100 spent=180
+time=330.0856 phase=Playing outcome=None losses=21/38 bases=1200/1110
+faction=2 materials=70 fabricated=160 spent=310
+faction=1 materials=160 fabricated=120 spent=180
+time=360.093 phase=Playing outcome=None losses=21/48 bases=1200/1110
+faction=2 materials=50 fabricated=180 spent=350
+faction=1 materials=160 fabricated=120 spent=180
+time=390.0602 phase=Playing outcome=None losses=21/50 bases=1200/1110
+faction=2 materials=50 fabricated=200 spent=370
+faction=1 materials=180 fabricated=140 spent=180
+time=419.9756 phase=Playing outcome=None losses=21/59 bases=1200/1110
+faction=2 materials=30 fabricated=220 spent=410
+faction=1 materials=200 fabricated=160 spent=180
+time=449.986 phase=Playing outcome=None losses=21/64 bases=1200/1110
+faction=2 materials=30 fabricated=240 spent=430
+faction=1 materials=200 fabricated=160 spent=180

@@ -15,6 +15,78 @@ using Game.UI.Shell.Ecs;
 
 public sealed class SkirmishSetupScreenTests
 {
+    [Test]
+    public void MapTitleColdFarsiBindAndLocaleSwitchUseTheLocaleFont()
+    {
+        var catalog = AssetDatabase.LoadAssetAtPath<Game.Configs.GameLocalizationCatalog>(Game.Editor.V3UiLocalizationCatalogBuilder.CatalogPath);
+        string previousLocale = Game.Configs.GameLocalization.CurrentLocaleCode;
+        var root = new GameObject("Skirmish title regression", typeof(RectTransform));
+        V3LocalizedTextBindingView binding = null;
+        try
+        {
+            Game.Configs.GameLocalization.Initialize(catalog, "fa-IR", false);
+            var label = new GameObject("OperationName", typeof(RectTransform), typeof(TextMeshProUGUI)).GetComponent<TMP_Text>();
+            label.transform.SetParent(root.transform);
+            label.font = TMP_Settings.defaultFontAsset;
+            label.text = "SAHRIN OUTSKIRTS";
+            var view = root.AddComponent<QuickCustomScreenView>();
+            var serialized = new SerializedObject(view);
+            serialized.FindProperty("baseAssaultPreset").boolValue = true;
+            serialized.FindProperty("mapNameText").objectReferenceValue = label;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            view.Bind(default);
+            binding = label.GetComponent<V3LocalizedTextBindingView>();
+            Assert.NotNull(binding);
+            Assert.AreEqual(UiShellRuntimeGateway.Localization.CurrentFontAsset, label.font);
+            Assert.IsTrue(label.isRightToLeftText);
+            Assert.AreNotEqual(Game.Configs.GameLocalization.Get("ui.skirmish.base_assault_map"), label.text,
+                "Plain TMP needs shaped presentation text, not raw Persian characters.");
+            foreach (char glyph in label.text)
+                if (!char.IsWhiteSpace(glyph)) Assert.IsTrue(label.font.HasCharacter(glyph, true, true), "Missing glyph: " + (int)glyph);
+            typeof(V3LocalizedTextBindingView).GetMethod("OnEnable", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(binding, null);
+            Game.Configs.GameLocalization.SetLocale("en", false);
+            Assert.AreEqual("DESERT BASE", label.text);
+            Assert.IsFalse(label.isRightToLeftText);
+            Game.Configs.GameLocalization.SetLocale("fa-IR", false);
+            view.Bind(default);
+            Assert.IsTrue(label.isRightToLeftText);
+            Assert.AreEqual(UiShellRuntimeGateway.Localization.CurrentFontAsset, label.font);
+            Assert.AreEqual("ui.skirmish.base_assault_map", binding.LocalizationKey);
+        }
+        finally
+        {
+            if (binding != null)
+                typeof(V3LocalizedTextBindingView).GetMethod("OnDisable", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic).Invoke(binding, null);
+            UnityEngine.Object.DestroyImmediate(root);
+            Game.Configs.GameLocalization.Initialize(catalog, previousLocale, false);
+        }
+    }
+
+    [Test]
+    public void BaseAssaultRulesAndLaunchHaveExplicitLocalizationKeys()
+    {
+        var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
+        var rules = FindRecursive(prefab.transform, "BaseAssaultRules");
+        foreach (var label in rules.GetComponentsInChildren<TMP_Text>(true))
+        {
+            var binding = label.GetComponent<V3LocalizedTextBindingView>();
+            Assert.NotNull(binding, label.name);
+            Assert.That(binding.LocalizationKey, Does.StartWith("ui.skirmish."), label.name);
+        }
+        var launch = FindRecursive(prefab.transform, "LaunchMissionButton").GetComponentInChildren<TMP_Text>(true);
+        Assert.AreEqual("ui.skirmish.start_match", launch.GetComponent<V3LocalizedTextBindingView>().LocalizationKey);
+        var mapName = FindRecursive(prefab.transform, "OperationName").GetComponent<TMP_Text>();
+        var mapBinding = mapName.GetComponent<V3LocalizedTextBindingView>();
+        Assert.NotNull(mapBinding, "Map title needs locale font and shaping, not only translated text.");
+        Assert.AreEqual("ui.skirmish.base_assault_map", mapBinding.LocalizationKey);
+        Assert.AreEqual("DESERT BASE", mapBinding.EnglishFallback);
+        var back = FindRecursive(prefab.transform, "BackButton").GetComponent<Button>();
+        Assert.Greater(back.targetGraphic.color.a, 0.9f, "Back must be a visible control, not an invisible logo hit target.");
+        Assert.NotNull(FindRecursive(back.transform, "BackIcon"));
+        Assert.AreEqual("ui.navigation.back_to_main_menu",
+            back.GetComponentInChildren<V3LocalizedTextBindingView>(true).LocalizationKey);
+    }
+
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private World _previousWorld;
     private World _world;
@@ -68,7 +140,7 @@ public sealed class SkirmishSetupScreenTests
         Assert.AreEqual(AspectRatioFitter.AspectMode.EnvelopeParent, mapFitter.aspectMode,
             "SCN-13 preview must crop without stretching at both target aspect ratios.");
 
-        AssertOuterBorder(prefab.transform, "WarlineLogo");
+        AssertOuterBorder(prefab.transform, "BackButton");
         AssertOuterBorder(prefab.transform, "ScreenTitlePanel");
         AssertOuterBorder(prefab.transform, "OperationPreview");
         AssertOuterBorder(prefab.transform, "BaseAssaultRules");

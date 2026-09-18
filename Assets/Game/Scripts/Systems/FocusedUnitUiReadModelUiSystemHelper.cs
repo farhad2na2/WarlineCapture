@@ -13,6 +13,7 @@ namespace Game.Runtime
     {
         private World _queryWorld;
         private EntityQuery _readModelQuery;
+        private string _presentationLocale;
         private readonly List<SelectionUiReadModelLookup.TransportPassengerUiInfo> _passengerScratch = new();
 
         public void Publish(
@@ -39,7 +40,9 @@ namespace Game.Runtime
                 return;
             }
 
-            bool sameFocusedUnit = previousModel.HasFocusedUnit != 0 && previousModel.FocusedUnit == focusedUnit;
+            bool sameFocusedUnit = previousModel.HasFocusedUnit != 0 && previousModel.FocusedUnit == focusedUnit &&
+                                   _presentationLocale == GameLocalization.CurrentLocaleCode;
+            _presentationLocale = GameLocalization.CurrentLocaleCode;
             FocusedUnitUiReadModelComponent model = new()
             {
                 FocusedUnit = focusedUnit,

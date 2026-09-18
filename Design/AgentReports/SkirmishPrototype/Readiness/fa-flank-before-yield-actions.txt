@@ -1,0 +1,20 @@
+time=181.1002 leg=0 slot=0 target=(930.00, 0.00, 430.00)
+time=184.1481 leg=0 slot=1 target=(930.00, 0.00, 430.00)
+time=187.1798 leg=0 slot=2 target=(930.00, 0.00, 430.00)
+time=190.1972 leg=0 slot=3 target=(930.00, 0.00, 430.00)
+time=193.232 leg=0 slot=4 target=(930.00, 0.00, 430.00)
+time=246.6289 gathered=13/24 leg=0
+time=258.6458 leg=1 slot=0 target=(1180.00, 0.00, 430.00)
+time=261.6776 leg=1 slot=1 target=(1180.00, 0.00, 430.00)
+time=264.7004 leg=1 slot=2 target=(1180.00, 0.00, 430.00)
+time=267.713 leg=1 slot=3 target=(1180.00, 0.00, 430.00)
+time=270.72 leg=1 slot=4 target=(1180.00, 0.00, 430.00)
+time=364.3383 gathered=22/24 leg=1
+time=376.3685 leg=2 slot=0 target=(1200.00, 0.00, 530.00)
+time=379.3907 leg=2 slot=1 target=(1200.00, 0.00, 530.00)
+time=382.3994 leg=2 slot=2 target=(1200.00, 0.00, 530.00)
+time=385.4279 leg=2 slot=3 target=(1200.00, 0.00, 530.00)
+time=388.4411 leg=2 slot=4 target=(1200.00, 0.00, 530.00)
+time=439.8261 gathered=10/10 leg=2
+time=446.8544 slot=0 attack base
+time=449.8934 slot=3 attack base

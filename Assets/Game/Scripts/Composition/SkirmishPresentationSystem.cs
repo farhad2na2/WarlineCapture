@@ -17,15 +17,20 @@ namespace Game.Composition
         private string focusedSession;
         private float retrySaveAt;
         private int returnStage;
+        private string startupSession;
+        private double startupBeganAt;
         protected override void OnUpdate()
         {
             using var returns=EntityManager.CreateEntityQuery(typeof(SkirmishReturnRequest));
             if(returns.CalculateEntityCount()==1){HandleReturn(returns.GetSingletonEntity());return;}
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
-            if(match.Phase<SkirmishPhase.Playing)return;
+            ObserveStartup(session, ref match);
+            bool startupFailed=match.StartupFailure!=SkirmishStartupFailureCode.None;
+            if(startupFailed)SkirmishStartupPolicy.StopFailedStartup(EntityManager);
+            if(match.Phase<SkirmishPhase.Playing&&!startupFailed)return;
             if(view==null)view=SkirmishMatchView.Create();
-            if(UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
+            if(!startupFailed&&UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
             {Focus(match.PlayerMainBase,true);focusedSession=match.SessionId.ToString();}
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)
@@ -35,7 +40,7 @@ namespace Game.Composition
                 else if(action==SkirmishAction.FocusEnemy)Focus(match.EnemyMainBase,false);
                 else if(action==SkirmishAction.Surrender&&match.Phase==SkirmishPhase.Playing)
                 {match.SurrenderRequested=1;EntityManager.SetComponentData(session,match);UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);}
-                else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||action==SkirmishAction.Restart))
+                else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||startupFailed||action==SkirmishAction.Restart))
                 {
                     var entity=EntityManager.CreateEntity(typeof(SkirmishReturnRequest));
                     EntityManager.SetComponentData(entity,new SkirmishReturnRequest{Action=action,Seed=match.Seed});
@@ -59,6 +64,21 @@ namespace Game.Composition
                 catch(Exception e){retrySaveAt=UnityEngine.Time.unscaledTime+5;Debug.LogWarning("Skirmish result save failed: "+e.Message);}
             }
         }
+        private void ObserveStartup(Entity session, ref SkirmishMatchState match)
+        {
+            if(match.Phase>=SkirmishPhase.Playing||match.StartupFailure!=SkirmishStartupFailureCode.None)return;
+            if(!UiShellRuntimeGateway.TryReadShellState(out var shell)||shell.CurrentMode!=UiShellMode.Loading||shell.ActiveRoute!=UIRoute.Match)return;
+            string id=match.SessionId.ToString();
+            if(startupSession!=id){startupSession=id;startupBeganAt=UnityEngine.Time.realtimeSinceStartupAsDouble;}
+            using var starts=EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
+            var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            bool contentFailed=starts.CalculateEntityCount()==1&&starts.GetSingleton<MatchStartQueueComponent>().LastStatus==MatchStartStatusKind.Failed;
+            contentFailed|=scene!=null&&(!string.IsNullOrEmpty(scene.OperationMapContentFailure)||scene.GameplayStartFailed);
+            if(contentFailed)SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Content);
+            else if(UnityEngine.Time.realtimeSinceStartupAsDouble-startupBeganAt>=SkirmishStartupPolicy.TimeoutSeconds)
+                SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Timeout);
+            match=EntityManager.GetComponentData<SkirmishMatchState>(session);
+        }
         private void Focus(Entity entity,bool opening)
         {
             if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return;
@@ -67,8 +87,11 @@ namespace Game.Composition
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
-                Perspective=new Unity.Mathematics.float4(40,58,0,60),
-                World=EntityManager.GetComponentData<LocalTransform>(entity).Position+(opening?new Unity.Mathematics.float3(0,0,6):Unity.Mathematics.float3.zero)
+                // Start close to the troops. An explicit base lookup frames the
+                // whole Barracks and its defenses below the objective strip.
+                Perspective=new Unity.Mathematics.float4(opening?40:55,58,0,60),
+                World=EntityManager.GetComponentData<LocalTransform>(entity).Position+
+                    (opening?new Unity.Mathematics.float3(20,0,6):new Unity.Mathematics.float3(0,0,12))
             });
         }
         private void HandleReturn(Entity entity)

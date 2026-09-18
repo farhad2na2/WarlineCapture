@@ -1,0 +1,2 @@
+newSession=46a6c2d38b17486bb665e7ffe0bdbdda seed=7919 time=1.007268 timeScale=1 losses=0/0
+PASS

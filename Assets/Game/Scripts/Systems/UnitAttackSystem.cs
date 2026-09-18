@@ -117,6 +117,12 @@ namespace Game.Runtime
 
         public void OnUpdate(ref SystemState state)
         {
+            // A result is terminal, including attacks whose cooldown was ready
+            // on the finishing frame. Campaign combat retains its own lifecycle.
+            if (SystemAPI.TryGetSingleton<SkirmishMatchState>(out var skirmish) &&
+                skirmish.Phase == SkirmishPhase.Finished)
+                return;
+
             Entity gridEntity = _gridQuery.GetSingletonEntity();
             GridConfig grid = state.EntityManager.GetComponentData<GridConfig>(gridEntity);
             var em = state.EntityManager;

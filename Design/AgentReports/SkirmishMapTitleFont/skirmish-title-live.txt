@@ -1,0 +1,1 @@
+text=ﭘﺎﯾﮕﺎﻩ ﮐﻮﯾﺮﯼ font=NotoSansArabic-Narrative SDF rtl=True binding=ui.skirmish.base_assault_map

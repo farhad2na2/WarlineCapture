@@ -1,0 +1,10 @@
+1 Unit_Chr_Soldier_Male_02_Alt_04=8
+1 Unit_Veh_Light_Armored_Car=1
+1 Unit_Veh_Truck_Tanker=1
+1 Unit_Veh_Truck_Tray=2
+2 unit_chr_soldier_male_02_alt_04=4
+2 Unit_Chr_Soldier_Male_02_Alt_04=8
+2 Unit_Veh_Light_Armored_Car=1
+2 Unit_Veh_Truck_Tanker=1
+2 Unit_Veh_Truck_Tray=2
+Owned authored vehicles=0

@@ -1,0 +1,11 @@
+PASS saga.ch01.m01.first_contact locale=en opening=1 fullStoryClips=17 instruction=Tap Select mission group below. It selects the units needed for this lesson together. Then follow the next highlighted action.
+PASS saga.ch01.m02.establish_base locale=en opening=2 fullStoryClips=1 instruction=Open the Build menu.
+PASS saga.ch01.m03.radar_warning locale=en opening=1 fullStoryClips=1 instruction=Your mission: stop BOTH enemy convoys before they reach the post. Keep the post standing. First prepare your rifles; the convoy waits while you learn. Read the warning, then Continue.
+PASS saga.ch01.m04.airlift locale=en opening=1 fullStoryClips=1 instruction=Rescue all four specialists: APC first, helicopter second. You have ten minutes. Enemy kills are optional; keep the escort alive for a bonus star.
+PASS saga.ch01.m05.breach_assault locale=en opening=1 fullStoryClips=1 instruction=Break the gate, destroy the transmitter, then secure the archive for 20 seconds. You have 12 minutes. Keep the APC alive and finish under 9 minutes for bonus stars.
+PASS saga.ch01.m01.first_contact locale=fa-IR opening=1 fullStoryClips=17 instruction=پایین صفحه، «انتخاب گروه مأموریت» رو بزن تا نیروهای مورد نیاز این درس با هم انتخاب بشن. بعد راهنمای زرد بعدی رو دنبال کن.
+PASS saga.ch01.m02.establish_base locale=fa-IR opening=2 fullStoryClips=1 instruction=منوی «ساخت» رو باز کن.
+PASS saga.ch01.m03.radar_warning locale=fa-IR opening=1 fullStoryClips=1 instruction=هدفت اینه که هر دو کاروان رو قبل از رسیدن به پاسگاه متوقف کنی و پاسگاه رو سالم نگه داری. اول تفنگدارها رو آماده کن؛ کاروان تا پایان آموزش منتظر می‌مونه. هشدار رو بخون، بعد «ادامه» رو بزن.
+PASS saga.ch01.m04.airlift locale=fa-IR opening=1 fullStoryClips=1 instruction=باید هر چهار متخصص رو نجات بدی: اول با نفربر، بعد با بالگرد. ده دقیقه وقت داری. لازم نیست همهٔ دشمن‌ها رو بکشی؛ اگه محافظ‌ها سالم بمونن، یه ستارهٔ اضافه می‌گیری.
+PASS saga.ch01.m05.breach_assault locale=fa-IR opening=1 fullStoryClips=1 instruction=دروازه رو بشکن، فرستنده رو نابود کن، بعد بایگانی رو بیست ثانیه امن نگه دار. دوازده دقیقه وقت داری. اگه نفربر سالم بمونه و زیر نه دقیقه تموم کنی، ستارهٔ اضافه می‌گیری.
+PASS bilingual campaign entries after skirmish; M1 full opening and first actions verified.

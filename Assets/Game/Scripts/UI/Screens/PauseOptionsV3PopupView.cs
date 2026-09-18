@@ -130,6 +130,11 @@ namespace Game.UI.Runtime
         private void ShowHelp()
         {
             if(UiShellRuntimeGateway.TryReadMissionDefense(out _) && UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide)) return;
+            if (helpPanel != null)
+            {
+                SetText(helpPanel.transform.Find("SELECTHelpRow/Body")?.GetComponent<TMP_Text>(), "Tap a squad card to select its units.");
+                SetText(helpPanel.transform.Find("COMMAND WHEELHelpRow/Body")?.GetComponent<TMP_Text>(), "Tap Commands below the selected unit portrait.");
+            }
             SetActive(restartConfirmation, false);
             SetActive(helpPanel, true);
         }
@@ -147,6 +152,76 @@ namespace Game.UI.Runtime
 
         private bool showingSkirmish;
         private string campaignExitLabel;
+        private Transform campaignStatus;
+        private GameObject skirmishStatus;
+        private TMP_Text skirmishObjective, skirmishPlayerBase, skirmishEnemyBase, skirmishInfantry, skirmishSaveNote;
+        private TMP_Text skirmishPlayerHealth, skirmishEnemyHealth, skirmishInfantryCount;
+
+        private void ShowSkirmishStatus(UiSkirmishModel model)
+        {
+            if (campaignStatus == null && objectiveText != null)
+                campaignStatus = objectiveText.transform.parent.parent;
+            if (campaignStatus == null) return;
+            if (skirmishStatus == null)
+            {
+                skirmishStatus = new GameObject("SkirmishStatusColumn", typeof(RectTransform), typeof(V3GradientGraphic));
+                var rect = (RectTransform)skirmishStatus.transform;
+                var source = (RectTransform)campaignStatus;
+                rect.SetParent(source.parent, false);
+                rect.anchorMin = source.anchorMin; rect.anchorMax = source.anchorMax;
+                rect.pivot = source.pivot; rect.sizeDelta = source.sizeDelta; rect.anchoredPosition = source.anchoredPosition;
+                skirmishStatus.GetComponent<V3GradientGraphic>().Configure(new Color(.10f,.14f,.15f), new Color(.025f,.07f,.08f), new Color(.4f,.5f,.52f), 2);
+                var layout = skirmishStatus.AddComponent<VerticalLayoutGroup>();
+                layout.padding = new RectOffset(14,14,14,14); layout.spacing = 12;
+                layout.childControlWidth = true; layout.childControlHeight = true; layout.childForceExpandHeight = false;
+                skirmishObjective = StatusLabel(120, 19);
+                skirmishPlayerBase = StatusPair(70, 22, out skirmishPlayerHealth);
+                skirmishEnemyBase = StatusPair(70, 22, out skirmishEnemyHealth);
+                skirmishInfantry = StatusPair(70, 20, out skirmishInfantryCount);
+                skirmishSaveNote = StatusLabel(78, 17);
+            }
+            campaignStatus.gameObject.SetActive(false);
+            skirmishStatus.SetActive(true);
+            SetText(skirmishObjective, model.Objective);
+            SetBaseStatus(skirmishPlayerBase, skirmishPlayerHealth, model.PlayerBase);
+            SetBaseStatus(skirmishEnemyBase, skirmishEnemyHealth, model.EnemyBase);
+            SetText(skirmishInfantry, UiShellRuntimeGateway.Localization.Get("ui.skirmish.infantry", "Infantry"));
+            SetText(skirmishInfantryCount, model.Infantry);
+            SetText(skirmishSaveNote, UiShellRuntimeGateway.Localization.Get("ui.skirmish.no_resume", "Leaving ends this match. Your setup is saved for a new match."));
+        }
+
+        private static void SetBaseStatus(TMP_Text heading, TMP_Text value, string source)
+        {
+            var lines = (source ?? string.Empty).Split('\n');
+            SetText(heading, lines[0]);
+            SetText(value, lines.Length > 1 ? lines[1] : string.Empty);
+        }
+
+        private TMP_Text StatusPair(float height, float size, out TMP_Text value)
+        {
+            var heading = StatusLabel(height, size);
+            heading.alignment = TextAlignmentOptions.Top;
+            var go = new GameObject("Value", typeof(RectTransform), typeof(TextMeshProUGUI));
+            var rect = (RectTransform)go.transform;
+            rect.SetParent(heading.transform, false);
+            rect.anchorMin = Vector2.zero; rect.anchorMax = new Vector2(1, 0); rect.pivot = new Vector2(.5f, 0);
+            rect.sizeDelta = new Vector2(0, height * .5f); rect.anchoredPosition = Vector2.zero;
+            value = go.GetComponent<TMP_Text>(); value.font = objectiveText.font; value.fontSize = size;
+            value.color = Color.white; value.alignment = TextAlignmentOptions.Center; value.raycastTarget = false;
+            return heading;
+        }
+
+        private TMP_Text StatusLabel(float height, float size)
+        {
+            var go = new GameObject("Status", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(LayoutElement));
+            go.transform.SetParent(skirmishStatus.transform, false);
+            go.GetComponent<LayoutElement>().preferredHeight = height;
+            var label = go.GetComponent<TMP_Text>();
+            label.font = objectiveText.font; label.fontSize = size; label.color = Color.white;
+            label.alignment = TextAlignmentOptions.Center; label.textWrappingMode = TextWrappingModes.Normal; label.raycastTarget = false;
+            return label;
+        }
+
         private void RefreshLiveText()
         {
             if(UiShellRuntimeGateway.TryReadSkirmish(out var skirmish))
@@ -156,14 +231,19 @@ namespace Game.UI.Runtime
                 UiLocalizedText.Set(missionText,UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault","BASE ASSAULT"));
                 SetText(currentTimeText,skirmish.Clock);
                 SetText(objectiveText,skirmish.Objective);
+                ShowSkirmishStatus(skirmish);
                 if(exitButton!=null)UiLocalizedText.Set(exitButton.GetComponentInChildren<TMP_Text>(),UiShellRuntimeGateway.Localization.Get("ui.skirmish.surrender","SURRENDER"));
+                if(restartButton!=null)SetText(restartButton.GetComponentInChildren<TMP_Text>(),"RESTART MATCH");
                 if(civilianRiskText!=null)civilianRiskText.transform.parent.gameObject.SetActive(false);
                 return;
             }
             if(showingSkirmish)
             {
+                if (campaignStatus != null) campaignStatus.gameObject.SetActive(true);
+                if (skirmishStatus != null) skirmishStatus.SetActive(false);
                 if(civilianRiskText!=null)civilianRiskText.transform.parent.gameObject.SetActive(true);
                 if(exitButton!=null)UiLocalizedText.Set(exitButton.GetComponentInChildren<TMP_Text>(),campaignExitLabel);
+                if(restartButton!=null)SetText(restartButton.GetComponentInChildren<TMP_Text>(),"RESTART MISSION");
                 showingSkirmish=false;
             }
             if (UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel campaign) &&
@@ -245,8 +325,7 @@ namespace Game.UI.Runtime
 
         private static void SetText(TMP_Text target, string value)
         {
-            if (target != null && target.text != value)
-                target.text = value;
+            UiLocalizedText.Set(target, value);
         }
     }
 }

@@ -157,6 +157,13 @@ namespace Game.Composition
 
             try
             {
+                if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish) &&
+                    skirmish.StartupFailure != SkirmishStartupFailureCode.None)
+                {
+                    waitStatus = MatchStartStatusKind.Failed;
+                    message = Game.Configs.GameText.Get("ui.skirmish.start_failed", "Skirmish could not start");
+                    return false;
+                }
                 if (!matchScene.GameplayStartRequested)
                     matchScene.BeginGameplay();
 

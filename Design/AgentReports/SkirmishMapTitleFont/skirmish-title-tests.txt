@@ -1,0 +1,3 @@
+PASS BaseAssaultRulesAndLaunchHaveExplicitLocalizationKeys
+PASS MapTitleColdFarsiBindAndLocaleSwitchUseTheLocaleFont
+PASS SkirmishSetupPrefabUsesLockedV3Structure

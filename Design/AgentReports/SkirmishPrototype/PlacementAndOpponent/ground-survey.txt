@@ -1,0 +1,14 @@
+Ground survey cross-check against authored road/sidewalk mask captured from the live skirmish map.
+Origins below were observed in the prior live run and are now authored directly.
+A fresh launch with RequirePreferredOrigin still requires live validation.
+
+Faction 1: Barracks; origin (817,589); footprint 28x15; road cells 0; sidewalk cells 0
+Faction 1: Depot; origin (820,645); footprint 19x16; road cells 0; sidewalk cells 0
+Faction 1: Oil pump; origin (825,675); footprint 15x4; road cells 0; sidewalk cells 0
+Faction 1: Refinery; origin (819,622); footprint 25x15; road cells 0; sidewalk cells 0
+Faction 1: Fuel storage; origin (825,560); footprint 14x10; road cells 0; sidewalk cells 0
+Faction 2: Barracks; origin (1265,559); footprint 28x15; road cells 0; sidewalk cells 0
+Faction 2: Depot; origin (1268,612); footprint 19x16; road cells 0; sidewalk cells 0
+Faction 2: Oil pump; origin (1270,632); footprint 15x4; road cells 0; sidewalk cells 0
+Faction 2: Refinery; origin (1271,660); footprint 25x15; road cells 0; sidewalk cells 0
+Faction 2: Fuel storage; origin (1270,523); footprint 14x10; road cells 0; sidewalk cells 0

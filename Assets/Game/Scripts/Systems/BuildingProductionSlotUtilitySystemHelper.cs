@@ -25,7 +25,8 @@ namespace Game.Runtime
                     continue;
 
                 Entity occupant = building.ProducedUnitSlots[i];
-                if (IsProducedUnitAlive(occupant, entityManager))
+                if (IsProducedUnitAlive(occupant, entityManager) &&
+                    !SkirmishPopulationPolicy.ReleasesProductionSlot(entityManager, occupant))
                     continue;
 
                 if (occupant != Entity.Null)
@@ -85,7 +86,8 @@ namespace Game.Runtime
             }
 
             Entity occupant = building.ProducedUnitSlots[slotIndex];
-            bool occupied = IsProducedUnitAlive(occupant, em);
+            bool occupied = IsProducedUnitAlive(occupant, em) &&
+                !SkirmishPopulationPolicy.ReleasesProductionSlot(em, occupant);
             if (!occupied && occupant != Entity.Null)
                 building.ProducedUnitSlots[slotIndex] = Entity.Null;
 

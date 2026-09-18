@@ -35,7 +35,8 @@ namespace Game.Runtime
                 if (!IsRoad(center) || !BuildingPlacementVisualUpdateCompositionSystemHelper.TryResolveRoadGateCenter(center,IsRoad,out var roadCenter,out bool acrossRoad) ||
                     roadCenter!=center || acrossRoad!=rotateVertical) return false;
             }
-            return (roadGate || !RoadSurfaces.Overlaps(grid,placementRect.position,placementRect.size)) &&
+            return !RoadSurfaces.OverlapsWater(grid,placementRect.position,placementRect.size) &&
+                (roadGate || !RoadSurfaces.Overlaps(grid,placementRect.position,placementRect.size)) &&
                 BuildingPlacementValidationUtilitySystemHelper.IsPlacementRectValid(
                 placementRect,
                 grid,

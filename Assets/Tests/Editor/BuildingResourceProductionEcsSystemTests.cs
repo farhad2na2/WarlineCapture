@@ -979,7 +979,7 @@ public sealed class BuildingResourceProductionEcsSystemTests
                 syncedOil = syncedBuilding.StoredOilBarrels;
             });
 
-        new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceProduction(context);
+        new BuildingProductionRuntimeTickCompositionSystemHelper().UpdateResourceProduction(context, 0.25f);
 
         Assert.AreEqual(1, syncCount);
         Assert.AreEqual(building.StoredOilBarrels, syncedOil);
@@ -1383,6 +1383,28 @@ public sealed class BuildingResourceProductionEcsSystemTests
         long allocated = System.GC.GetAllocatedBytesForCurrentThread() - before;
         Assert.IsTrue(resolvedAll);
         Assert.AreEqual(0L, allocated, $"AI Oil allocation input reads allocated {allocated} managed bytes.");
+    }
+
+    [TestCase(131f, true)]
+    [TestCase(8f, false)]
+    public void AutomaticFuelLogisticsAIInput_SkirmishBalancesRecruitmentAndEmergencyFuel(float fuel, bool preferMaterials)
+    {
+        using var world = new World(nameof(AutomaticFuelLogisticsAIInput_SkirmishBalancesRecruitmentAndEmergencyFuel));
+        var em = world.EntityManager;
+        var queries = new BuildingGameplayEcsQueryCompositionSystemHelper();
+        CreateFactionAIOilInputState(em, 0, 10, 600, fuel, 5000);
+        Assert.IsTrue(queries.TryResolveFactionAIOilAllocationInput(em, 2, out var campaign));
+        Assert.AreEqual(0, campaign.PlannedMaterialsCost);
+        Assert.AreEqual(5000, campaign.FuelStorageCapacity);
+        em.CreateEntity(typeof(SkirmishMatchState));
+        Assert.IsTrue(queries.TryResolveFactionAIOilAllocationInput(em, 2, out var input));
+        Assert.AreEqual(80, input.PlannedMaterialsCost);
+        Assert.AreEqual(160, input.FuelStorageCapacity);
+        Assert.AreEqual(fuel, input.StoredFuelBarrels);
+        Assert.AreEqual(10, input.AvailableMaterials);
+        int materialsPriority = ResourceHaulerAIOilAllocationPolicySystemHelper.ResolveDestinationStrategicPriority(true, false, input);
+        int fuelPriority = ResourceHaulerAIOilAllocationPolicySystemHelper.ResolveDestinationStrategicPriority(false, true, input);
+        Assert.AreEqual(preferMaterials, materialsPriority > fuelPriority);
     }
 
     [Test]

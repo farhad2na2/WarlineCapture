@@ -23,6 +23,7 @@ namespace Game.Runtime
         private readonly Dictionary<ProductionSummaryKey, ProductionSummaryCounts> _productionSummaryCountsScratch = new();
         private readonly HashSet<int> _producedReadModelBuildingIdsScratch = new();
         private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
+        private readonly BuildingPlacementAuthoredRoadCache _skirmishRoads = new();
         private float _nextPublishAt;
         private bool _forcePublishNextUpdate;
         private bool _configuredReadModelsPublished;
@@ -359,6 +360,35 @@ namespace Game.Runtime
                     request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
                     WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                     continue;
+                }
+
+                // Initial scenario requests can arrive before the Build drawer has
+                // initialized its placement cache. Validate authored roads here too.
+                using (var skirmish = em.CreateEntityQuery(typeof(SkirmishMatchState)))
+                {
+                    if (!skirmish.IsEmptyIgnoreFilter && request.RequirePreferredOrigin != 0 &&
+                        runtimeSpawnContext.TryGetGridData(out _, out var skirmishGrid, out _, out _))
+                    {
+                        using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                        if (surfaces.CalculateEntityCount() != 1) continue;
+                        _skirmishRoads.Ensure(em, surfaces, skirmishGrid);
+                        var rect = runtimeSpawnContext.GetEffectivePlacementRect(definition,
+                            new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y), skirmishGrid, request.RotateVertical != 0);
+                        bool roadOverlap = _skirmishRoads.Overlaps(skirmishGrid, rect.position, rect.size) ||
+                            _skirmishRoads.OverlapsWater(skirmishGrid, rect.position, rect.size);
+                        var sidewalks = _skirmishRoads.GetSidewalks();
+                        for (int y = rect.yMin; !roadOverlap && y < rect.yMax; y++)
+                            for (int x = rect.xMin; x < rect.xMax; x++)
+                                if (x < 0 || y < 0 || x >= skirmishGrid.Width || y >= skirmishGrid.Height ||
+                                    sidewalks != null && sidewalks[y * skirmishGrid.Width + x]) { roadOverlap = true; break; }
+                        if (roadOverlap)
+                        {
+                            request.Status = BuildingRuntimeSpawnRequest.Failed;
+                            request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                            WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                            continue;
+                        }
+                    }
                 }
 
                 // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.

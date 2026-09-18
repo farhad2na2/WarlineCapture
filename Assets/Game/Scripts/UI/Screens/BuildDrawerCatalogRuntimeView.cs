@@ -43,6 +43,8 @@ namespace Game.UI.Runtime
         private Button _clearButton;
         private UnityAction _clearButtonListener;
         private float _nextQueueRefreshTime;
+        private string _instructionLocale;
+        private readonly Dictionary<BuildDrawerItemView, BuildingUiCommandFailure> _availability = new();
         private ICatalogPrefabSource _unitPrefabSourceOverride;
         private ICatalogPrefabSource _buildingPrefabSourceOverride;
 
@@ -64,6 +66,14 @@ namespace Game.UI.Runtime
                 return;
 
             _nextQueueRefreshTime = Time.unscaledTime + QueueRefreshIntervalSeconds;
+            string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
+            if (_instructionLocale != locale)
+            {
+                _instructionLocale = locale;
+                _availability.Clear();
+                ApplyInstructionForCurrentSelection();
+            }
+            RefreshSkirmishAvailability();
             RefreshQueue();
             view.RefreshResources();
         }
@@ -78,6 +88,7 @@ namespace Game.UI.Runtime
             BuildDrawerProductionQueueUiSystemHelper.ClearRuntimeItems(_runtimeQueueItems);
             _selectedItemView = null;
             _hasSelectedItem = false;
+            _availability.Clear();
             _nextQueueRefreshTime = 0f;
         }
 
@@ -103,6 +114,24 @@ namespace Game.UI.Runtime
         public void SelectCategoryForTests(BuildDrawerCategory category) => SelectCategory(category);
 
         public void RefreshForTests() => Refresh();
+
+        internal void RefreshSkirmishAvailability()
+        {
+            if (!UiShellRuntimeGateway.TryReadSkirmish(out _) || view == null) return;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                var item = i == 0 ? view.ItemTemplate : i - 1 < _runtimeItems.Count ? _runtimeItems[i - 1] : null;
+                if (item == null) continue;
+                var failure = GetCampRequestFailure(_items[i], out string requiredBuilding);
+                if (_availability.TryGetValue(item, out var previous) && previous == failure) continue;
+                _availability[item] = failure;
+                item.SetInteractable(failure == BuildingUiCommandFailure.None);
+                item.SetUnavailableReason(failure == BuildingUiCommandFailure.None ? string.Empty :
+                    BuildDrawerCatalogPresentationSystemHelper.FormatFailureMessage(
+                        _gameTextResolver, failure, requiredBuilding, MaxQueuedUnitProductions));
+                if (item == _selectedItemView) SelectItem(item, _items[i]);
+            }
+        }
 
         public void ApplyQueueSnapshotForTests(IReadOnlyList<BuildingPendingProductionUiEntry> entries)
         {
@@ -323,7 +352,8 @@ namespace Game.UI.Runtime
                 _runtimeItems,
                 _itemBindings,
                 SelectItem,
-                GetCampRequestFailure);
+                GetCampRequestFailure,
+                MaxQueuedUnitProductions);
         }
 
         private BuildDrawerProductionQueueUiSystemHelper.Context CreateQueueContext()

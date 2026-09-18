@@ -1,0 +1,2 @@
+PASS current skirmish runs preserve the post-campaign-entry fixture byte for byte.
+SHA256 9319e27a58e557d3dee29dbdc1445db48b92716670111c35d09e8c02498cdae5

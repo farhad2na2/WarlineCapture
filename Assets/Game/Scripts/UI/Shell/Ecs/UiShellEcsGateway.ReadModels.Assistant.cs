@@ -90,7 +90,7 @@ namespace Game.UI.Shell.Ecs
                 if(skirmish.Phase!=SkirmishPhase.Playing)return true;
                 assistantPanel=new UiAssistantPanelModel(1,"","","",false,false,true,
                     GameText.Get("ui.skirmish.base_assault","BASE ASSAULT"),
-                    GameText.Get("ui.skirmish.match_help","Destroy the enemy Main Base. Tap a squad card, Move, then a destination. Use Attack on enemy targets. Tap either base in the objective bar to find it."),
+                    GameText.Get("ui.skirmish.match_help","Destroy the enemy base. Defend yours with Watchtowers and rifle squads. Tap a squad card, then Move or Attack."),
                     "","",false,false,false,false,"","");
                 return true;
             }

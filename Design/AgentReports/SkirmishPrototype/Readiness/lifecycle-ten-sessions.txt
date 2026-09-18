@@ -1,0 +1,26 @@
+UI lifecycle run; normal clock; no gameplay facts changed
+READY cycle=0 seed=37 session=6b8444278bd2495581bca5c8b6283bef roster=17/17 entities=46008 managed=2493992960
+RESULT cycle=0 outcome=Defeat reason=Surrender elapsed=4.056917
+READY cycle=1 seed=37 session=b3e85b6c30d4413bb8a9119aa6bd6148 roster=17/17 entities=46008 managed=2583339008
+RESULT cycle=1 outcome=Defeat reason=Surrender elapsed=4.089612
+READY cycle=2 seed=37 session=f5c25d63774d45c38761ec51414eb223 roster=17/17 entities=46008 managed=2691522560
+RESULT cycle=2 outcome=Defeat reason=Surrender elapsed=3.974163
+READY cycle=3 seed=37 session=78487d62b5264c528507069da5f499a9 roster=17/17 entities=46008 managed=2621235200
+RESULT cycle=3 outcome=Defeat reason=Surrender elapsed=3.974997
+READY cycle=4 seed=37 session=bce56e6d57dc43ffad85f1837d3bb4c0 roster=17/17 entities=46008 managed=2745049088
+RESULT cycle=4 outcome=Defeat reason=Surrender elapsed=4.132526
+READY cycle=5 seed=37 session=1f65c4a8add54f63974239f8d512929e roster=17/17 entities=46008 managed=2424270848
+RESULT cycle=5 outcome=Defeat reason=Surrender elapsed=4.045638
+READY cycle=6 seed=7919 session=63e9537d4b5f489ca865e7c13efd08ad roster=17/17 entities=46008 managed=2551517184
+FAIL stage=3 cycle=6 System.InvalidOperationException: Control is occluded: CANCEL
+  at Game.Editor.SkirmishGameplayProbe.Click (UnityEngine.UI.Button button) [0x00133] in /Users/farhad/Projects/WarlineCapture/Assets/Game/Scripts/Editor/SkirmishGameplayProbe.cs:43 
+  at PipelineEvaluation.PipelineEval_531c747a+<>c__DisplayClass0_0.<Execute>b__2 () [0x004eb] in <e7e647600408434186d656b1635af541>:0 
+Resuming after transient popup transition; no match state edited
+RESULT cycle=6 outcome=Defeat reason=Surrender elapsed=4.001925
+READY cycle=7 seed=7919 session=edc13424bd0e40c58ec5d7dae29eabf7 roster=17/17 entities=46008 managed=2673303552
+RESULT cycle=7 outcome=Defeat reason=Surrender elapsed=4.01941
+READY cycle=8 seed=7919 session=97c15bfb4c964c598138dae6d0728897 roster=17/17 entities=46008 managed=2783256576
+RESULT cycle=8 outcome=Defeat reason=Surrender elapsed=4.03405
+READY cycle=9 seed=104729 session=a1306dee00824cd7925a3f9c03f5a789 roster=17/17 entities=46008 managed=2496794624
+RESULT cycle=9 outcome=Defeat reason=Surrender elapsed=4.148826
+PASS 10 sessions; replay, adjusted setup, pause, cancel restart, surrender, main menu; no squad/pause/session leak

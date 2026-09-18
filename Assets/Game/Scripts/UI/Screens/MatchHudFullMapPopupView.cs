@@ -81,6 +81,9 @@ namespace Game.UI.Runtime
 
         private void RequestCenterOnHq()
         {
+            if (UiShellRuntimeGateway.TryReadSkirmish(out _) &&
+                UiShellRuntimeGateway.TryRequestSkirmish(Game.UI.Contracts.UiSkirmishAction.FocusPlayer))
+                return;
             minimap?.RequestFocus(hqNormalizedPosition);
         }
 

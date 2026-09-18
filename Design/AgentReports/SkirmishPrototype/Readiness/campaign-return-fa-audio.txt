@@ -1,0 +1,13 @@
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p10_aria.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p11_dalia.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p12_samira.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p13_aria.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p14_commander_female.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p15_dalia.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p16_aria.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p17_dalia.wav
+fa-IR Assets/Game/Audio/Narrative/FirstLaunch/Voice/fa/p18_aria.wav
+fa-IR Assets/Game/Audio/Narrative/M02EstablishBase/Voice/fa/m02_brief_line_1_fa.wav
+fa-IR Assets/Game/Audio/Narrative/M03RadarWarning/Voice/fa/m03-brief-01.wav
+fa-IR Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav
+fa-IR Assets/Game/Audio/Narrative/M05BreachAssault/Voice/fa/m05-brief-01.wav

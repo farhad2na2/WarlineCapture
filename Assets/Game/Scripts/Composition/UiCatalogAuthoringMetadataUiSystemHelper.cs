@@ -19,7 +19,7 @@ namespace Game.Composition
             metadata = new UiBuildingCatalogMetadata(
                 authoring.ConfiguredDisplayName,
                 authoring.ConfiguredDescription,
-                authoring.ConfiguredCanRequest,
+                authoring.ConfiguredCanRequest && SkirmishCatalogPolicy.AllowsCurrentMatch(prefab, true),
                 authoring.ConfiguredPrice,
                 authoring.ConfiguredMaterialsCost,
                 authoring.ConfiguredProductionDurationSeconds,

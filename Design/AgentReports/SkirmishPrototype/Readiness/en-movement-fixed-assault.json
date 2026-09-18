@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "command": "command eval",
+  "data": {
+    "command": "eval",
+    "parameters": {
+      "code": "UnityEngine.ScreenCapture.CaptureScreenshot(\"/private/tmp/skirmish-en-final-assault.png\");var em=Unity.Entities.World.DefaultGameObjectInjectionWorld.EntityManager;\nvar s=new System.Text.StringBuilder();\nusing(var q=em.CreateEntityQuery(typeof(Game.Components.SkirmishMatchState))){var m=q.GetSingleton<Game.Components.SkirmishMatchState>();s.AppendLine($\"time={m.ElapsedSeconds} phase={m.Phase} outcome={m.Outcome} losses={m.PlayerUnitsLost}/{m.EnemyUnitsLost} bases={(em.Exists(m.PlayerMainBase)?em.GetComponentData<Game.Components.UnitHealth>(m.PlayerMainBase).Current:0)}/{(em.Exists(m.EnemyMainBase)?em.GetComponentData<Game.Components.UnitHealth>(m.EnemyMainBase).Current:0)}\");}\nusing(var q=em.CreateEntityQuery(typeof(Game.Components.SkirmishSquadMember),typeof(Game.Components.UnitHealth),typeof(Unity.Transforms.LocalTransform))){using var units=q.ToEntityArray(Unity.Collections.Allocator.Temp);foreach(var e in units)s.AppendLine($\"slot={em.GetComponentData<Game.Components.SkirmishSquadMember>(e).Slot} hp={em.GetComponentData<Game.Components.UnitHealth>(e).Current} pos={em.GetComponentData<Unity.Transforms.LocalTransform>(e).Position} rallied={em.HasComponent<Game.Components.SkirmishRallyAssigned>(e)} moving={em.HasComponent<Game.Components.UnitPathRequest>(e)||em.HasComponent<Game.Components.UnitPathFollow>(e)}\");}return s.ToString();"
+    },
+    "result": {
+      "output": null,
+      "diagnostics": [],
+      "success": true,
+      "result": "time=362.973 phase=Finished outcome=Victory losses=16/51 bases=1200/0\nslot=3 hp=0 pos=float3(1204.5f, 0.3940243f, 553.5347f) rallied=True moving=False\nslot=3 hp=0 pos=float3(1205.5f, 0.3290239f, 553.5001f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1205.485f, 0.3899315f, 552.5146f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1207.5f, 0.4146796f, 553.498f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1204.494f, 0.0863233f, 549.5f) rallied=True moving=False\nslot=3 hp=0 pos=float3(1205.461f, 0.0863233f, 549.4806f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1206.5f, 0.4006682f, 552.5f) rallied=True moving=False\nslot=3 hp=0 pos=float3(1203.513f, 0.2792336f, 550.5f) rallied=True moving=False\nslot=3 hp=0 pos=float3(1204.495f, 0.0863233f, 549.5f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1204.5f, 0.3765476f, 552.5f) rallied=True moving=False\nslot=1 hp=0 pos=float3(1203.456f, 0.3576416f, 552.5f) rallied=True moving=False\nslot=1 hp=0 pos=float3(1206.5f, 0.3634422f, 551.5f) rallied=True moving=False\nslot=0 hp=0 pos=float3(1204.5f, 0.3829832f, 551.5f) rallied=True moving=False\nslot=3 hp=0 pos=float3(1203.5f, 0.0863233f, 549.5f) rallied=True moving=False\nslot=2 hp=0 pos=float3(1204.5f, 0.3829832f, 551.5f) rallied=True moving=False\nslot=1 hp=0 pos=float3(1206.5f, 0.0863233f, 550.4998f) rallied=False moving=False\nslot=1 hp=0 pos=float3(1205.482f, 0.2573673f, 550.4819f) rallied=False moving=False\nslot=1 hp=0 pos=float3(1204.5f, 0.2852376f, 550.5f) rallied=False moving=False\nslot=0 hp=0 pos=float3(1205.5f, 0.3609242f, 551.5f) rallied=False moving=False\nslot=0 hp=0 pos=float3(1202.565f, 0.0863233f, 548.5654f) rallied=False moving=False\nslot=0 hp=0 pos=float3(1203.5f, 0.4153847f, 551.5f) rallied=False moving=False\nslot=1 hp=0 pos=float3(1206.5f, 0.0863233f, 549.4859f) rallied=False moving=False\nslot=4 hp=0 pos=float3(1201.57f, 0.009179592f, 541.5536f) rallied=False moving=False\n"
+    },
+    "target": {
+      "host": "127.0.0.1",
+      "port": 7800,
+      "projectPath": "/Users/farhad/Projects/WarlineCapture"
+    },
+    "success": true
+  },
+  "errors": [],
+  "warnings": []
+}

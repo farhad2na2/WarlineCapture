@@ -1,0 +1,1 @@
+surface connectivity averageMs=1.17226 blockedRock814575=True grid=2048x1024

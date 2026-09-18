@@ -167,6 +167,11 @@ public sealed class OperationsDashboardScreenTests
         Assert.NotNull(view.DailyBriefing);
         Assert.NotNull(view.ActiveWarnings);
         Assert.NotNull(view.CommandBar);
+        var back = view.BackRouteButton.GetComponent<Button>();
+        Assert.AreEqual("BackButton", back.name, "Navigation must not be hidden on the Warline logo.");
+        Assert.Greater(back.targetGraphic.color.a, 0.9f);
+        Assert.AreEqual("ui.navigation.back_to_main_menu",
+            back.GetComponentInChildren<V3LocalizedTextBindingView>(true).LocalizationKey);
         Assert.AreEqual(5, view.ReadinessCards.Length);
         Assert.AreEqual(5, view.DistrictButtons.Length);
         Assert.AreEqual(3, view.WarningButtons.Length);

@@ -10,12 +10,21 @@ namespace Game.UI.Shell.Ecs
         bool IUiSkirmishGateway.TryReadSkirmish(out UiSkirmishModel model)
         {
             model=default;
-            if(!TrySkirmish(out var em,out var session,out var match)||match.Phase<SkirmishPhase.Playing)return false;
+            if(!TrySkirmish(out var em,out var session,out var match)||(match.Phase<SkirmishPhase.Playing&&match.StartupFailure==SkirmishStartupFailureCode.None))return false;
+            if(match.StartupFailure!=SkirmishStartupFailureCode.None)
+            {
+                model.StartupFailed=true;
+                model.ResultTitle=GameText.Get("ui.skirmish.start_failed", "Skirmish could not start");
+                model.ResultDetail=GameText.Get("ui.skirmish.start_failed."+match.StartupFailure.ToString().ToLowerInvariant());
+                return true;
+            }
             int remaining=Mathf.Max(0,Mathf.CeilToInt(SkirmishPresetConfig.MatchDurationSeconds-match.ElapsedSeconds));
             using var gameplay=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
             bool paused=gameplay.CalculateEntityCount()==1&&gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive==0;
             string outcome=match.Outcome.ToString().ToLowerInvariant();
             string reason=match.Reason.ToString().ToLowerInvariant();
+            if (match.Reason == SkirmishEndReason.MainBaseDestroyed)
+                reason = match.Outcome == SkirmishOutcome.Victory ? "enemy_base_destroyed" : "player_base_destroyed";
             int infantry=0;
             using(var units=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth)))
             {
@@ -39,7 +48,9 @@ namespace Game.UI.Shell.Ecs
         }
         bool IUiSkirmishGateway.TryRequestSkirmish(UiSkirmishAction action)
         {
-            if(!TrySkirmish(out var em,out var entity,out var match)||match.Phase<SkirmishPhase.Playing)return false;
+            if(!TrySkirmish(out var em,out var entity,out var match)||(match.Phase<SkirmishPhase.Playing&&match.StartupFailure==SkirmishStartupFailureCode.None))return false;
+            if(match.StartupFailure!=SkirmishStartupFailureCode.None && action!=UiSkirmishAction.Replay &&
+                action!=UiSkirmishAction.AdjustSetup && action!=UiSkirmishAction.MainMenu)return false;
             var requests=em.GetBuffer<SkirmishActionRequest>(entity);
             if(requests.Length!=0)return false;
             requests.Add(new SkirmishActionRequest{Action=(SkirmishAction)action});return true;

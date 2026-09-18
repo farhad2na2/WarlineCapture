@@ -575,8 +575,8 @@ public sealed partial class M02EstablishBaseGuidanceTests
             out string warningPersianTitle,
             out string warningPersianBody,
             out bool warningPersianRtl));
-        Assert.AreEqual("گشت دشمن نزدیک می‌شود", warningPersianTitle);
-        Assert.That(warningPersianBody, Does.Contain("مسیر علامت‌گذاری‌شده"));
+        Assert.AreEqual("گشت دشمن نزدیک می‌شه", warningPersianTitle);
+        Assert.That(warningPersianBody, Does.Contain("مسیر مشخص‌شده"));
         Assert.IsTrue(warningPersianRtl);
 
         Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
@@ -588,8 +588,8 @@ public sealed partial class M02EstablishBaseGuidanceTests
             out string defensePersianTitle,
             out string defensePersianBody,
             out bool defensePersianRtl));
-        Assert.AreEqual("از پاسگاه دفاع کنید", defensePersianTitle);
-        Assert.That(defensePersianBody, Does.Contain("از پاسگاه دفاع کنید"));
+        Assert.AreEqual("از پاسگاه دفاع کن", defensePersianTitle);
+        Assert.That(defensePersianBody, Does.Contain("از پاسگاه دفاع کن"));
         Assert.IsTrue(defensePersianRtl);
     }
 
@@ -625,8 +625,8 @@ public sealed partial class M02EstablishBaseGuidanceTests
             out string barracksPersianTitle,
             out string barracksPersianBody,
             out bool barracksPersianRtl));
-        Assert.AreEqual("سربازخانه را انتخاب کنید", barracksPersianTitle);
-        Assert.AreEqual("سربازخانه را از فهرست ساختمان‌ها انتخاب کنید.", barracksPersianBody);
+        Assert.AreEqual("سربازخانه رو انتخاب کن", barracksPersianTitle);
+        Assert.AreEqual("از فهرست ساختمان‌ها، «سربازخانه» رو انتخاب کن.", barracksPersianBody);
         Assert.IsTrue(barracksPersianRtl);
 
         Assert.IsTrue(AssistantObjectiveProjectionUtility.TryBuildCampaignGuidanceRecommendation(
@@ -638,7 +638,7 @@ public sealed partial class M02EstablishBaseGuidanceTests
             out string riflePersianTitle,
             out string riflePersianBody,
             out bool riflePersianRtl));
-        Assert.AreEqual("یک گروه تفنگدار آموزش دهید", riflePersianTitle);
+        Assert.AreEqual("یک گروه تفنگدار آموزش بده", riflePersianTitle);
         Assert.That(riflePersianBody, Does.Contain("بخش تولید"));
         Assert.IsTrue(riflePersianRtl);
     }

@@ -1,8 +1,8 @@
 # Skirmish prototype acceptance matrix
 
-Status: **implementation and internal validation in progress; acceptance is not complete**.
+Status: **functional Editor prototype ready; broader device/player acceptance remains pending**. See the [completion report](COMPLETION.md) for evidence and explicit limits against each case below.
 
-Current evidence: [implementation report](../../AgentReports/SkirmishPrototype/README.md). Session/rule/persistence/population tests pass (9), and ARIA update stability passes in English and Farsi. Partial live evidence covers the setup/launch, starting roster, actual supply delivery, selection/movement, surrender, one replay and a normal-speed timeout. The earlier timeout run failed AI pressure/pacing review; it is not a gameplay acceptance pass. All matrix rows below require their complete evidence before sign-off. Implements the completion contract in [PLAN.md](PLAN.md). Baseline findings are in [BASELINE.md](BASELINE.md).
+Current evidence: [readiness report](../../AgentReports/SkirmishPrototype/Readiness/README.md). The regenerated assets pass 309 checks. Six final-layout tactical journeys cover direct pressure, defense and a combined force flank in EN/FA. Ten actual UI lifecycle sessions, exact dry-ground startup placement, startup retry/restart/cancel recovery, supply rebuilding and ten EN/FA campaign entry checks have recorded evidence. This is not a claim that Android, full application termination, every campaign mission replay or the original pacing target passed.
 
 ## Evidence rules
 

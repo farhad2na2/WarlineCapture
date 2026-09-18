@@ -321,6 +321,13 @@ namespace Game.Runtime
             return !string.IsNullOrEmpty(key) && _unitSpawnPrefabsByKey.TryGetValue(key, out prefab) && prefab != null;
         }
 
+        // Starting forces also need portraits and unit metadata, without becoming
+        // recruitable entries in the Build drawer.
+        public void RegisterInitialUnitPreviewPrefab(GameObject prefab)
+        {
+            RegisterSpawnableLookupAliases(_unitSpawnPrefabsByKey, prefab);
+        }
+
         public bool TryGetConfiguredUnitReadModel(
             int index,
             out GameObject prefab,

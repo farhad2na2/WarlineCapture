@@ -109,7 +109,19 @@ namespace Game.UI.Runtime
                 seedInput.SetTextWithoutNotify(config.MapSeed.ToString());
 
             if (mapNameText != null)
-                mapNameText.text = baseAssaultPreset ? UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault_map", "DESERT BASE") : ResolveMapName(config);
+            {
+                // Translate through the presentation binding as well as the catalog: assigning
+                // Persian directly to the authored Latin TMP font produces missing-glyph squares.
+                if (baseAssaultPreset)
+                {
+                    var binding = mapNameText.GetComponent<V3LocalizedTextBindingView>() ??
+                                  mapNameText.gameObject.AddComponent<V3LocalizedTextBindingView>();
+                    binding.Configure("ui.skirmish.base_assault_map", "DESERT BASE", false);
+                    binding.ApplyLocalization();
+                }
+                else
+                    UiLocalizedText.Set(mapNameText, ResolveMapName(config));
+            }
         }
 
         public void BindRuntimeDependencies(

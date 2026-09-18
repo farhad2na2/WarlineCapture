@@ -1,0 +1,2 @@
+Interrupted for confirmed empty AI squad bug; not a pacing pass.
+Seed=104729 elapsed=602.7228 phase=Playing outcome=None losses=9/8

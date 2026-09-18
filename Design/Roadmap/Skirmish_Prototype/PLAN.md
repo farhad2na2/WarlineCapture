@@ -1,8 +1,8 @@
 # Skirmish prototype — detailed delivery plan
 
-Date: 2026-09-17. Roadmap milestone 2. Status: **planning complete; implementation not started**.
+Updated: 2026-09-18. Roadmap milestone 2. Status: **S0–S4 implemented; S5 functional Editor validation complete with coverage limits; S6 pending**. The [completion report](COMPLETION.md) records exact checks, play results and unaccepted device/player/pacing criteria. The original plan below remains the scope reference.
 
-Campaign baseline: `b9d17a700` — M1–M5 implementation and internal Editor QA complete, including the M1 story/commander follow-up. Android device and unfamiliar-player acceptance remain separate. This plan does not reopen the campaign or claim that the prototype is already playable.
+Campaign baseline: `b9d17a700` — M1–M5 implementation and internal Editor QA complete, including the M1 story/commander follow-up. Android device and unfamiliar-player acceptance remain separate. Shared regressions and ten campaign entry checks were rerun during skirmish work; this was not a fresh full campaign playthrough.
 
 Companion documents: [code baseline and risks](BASELINE.md), [acceptance cases](ACCEPTANCE.md), [parent roadmap](../README.md).
 
@@ -148,7 +148,7 @@ Each package ends with a reviewable change, evidence and an updated issue regist
 | **S5 — Balance and recovery acceptance** | Depends on S4. Play aggressive, defensive and mixed strategies at normal speed; vary supported seeds; test repeated sessions, failure/retry, pause, language changes and campaign transitions. | [Acceptance matrix](ACCEPTANCE.md) closed for internal prototype; current input hashes and known limitations recorded |
 | **S6 — Player/device decision** | After S5. Observe unfamiliar players and test representative phones when available. Android gameplay is explicitly deferred by the current direction, not marked passed. | Decide iterate/keep/expand using comprehension, choices, duration, input and performance evidence |
 
-Implementation begins with **S0 then S1**, not another UI redesign or a new map generator. No schedule promise until the baseline run identifies how much of the existing opponent/economy is functional.
+S0–S5 implementation and internal evidence are now recorded in [COMPLETION.md](COMPLETION.md). Next is S6: unfamiliar-player evaluation and separately scheduled device validation, before expanding maps, difficulties or rewards.
 
 ## 8. Architecture and protection of completed missions
 

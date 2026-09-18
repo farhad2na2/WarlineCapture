@@ -1,0 +1,16 @@
+ATTACK time=51.26506 slot=0 base=float3(1209f, 0.009179778f, 566.5f)
+ATTACK time=57.27076 slot=1 base=float3(1209f, 0.009179778f, 566.5f)
+ATTACK time=63.285 slot=4 base=float3(1209f, 0.009179778f, 566.5f)
+time=65.29 bases=1200/1200 losses=0/0
+time=75.29 bases=1200/1200 losses=0/0
+time=85.26 bases=1200/1200 losses=0/0
+time=95.31 bases=1200/1182 losses=0/0
+time=105.01 bases=1200/1164 losses=5/0
+time=115.03 bases=1200/1164 losses=9/0
+time=125.04 bases=1200/1164 losses=9/0
+time=135.05 bases=1164/1164 losses=9/0
+time=145.06 bases=1056/1164 losses=9/0
+time=155.08 bases=966/1164 losses=9/0
+time=165.09 bases=582/1164 losses=9/0
+time=175.09 bases=60/1164 losses=9/0
+RESULT time=175.6323 outcome=Defeat reason=MainBaseDestroyed losses=9/0 seed=7919

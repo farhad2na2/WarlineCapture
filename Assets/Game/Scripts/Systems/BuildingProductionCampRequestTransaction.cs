@@ -18,6 +18,10 @@ namespace Game.Runtime
             if (prefab == null)
                 return CampRequestFailure.InvalidSelection;
 
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var catalogEm) &&
+                !SkirmishCatalogPolicy.Allows(catalogEm, prefab, context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab)))
+                return CampRequestFailure.InvalidSelection;
+
             if (context.ConfiguredDefinitionsByPrefab != null &&
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
             {
@@ -59,8 +63,8 @@ namespace Game.Runtime
                     context,
                     prefab,
                     requireQueueCapacity: false,
-                    out _,
-                    out _,
+                    out int populationProducerId,
+                    out int populationProductionIndex,
                     out string producerDisplayName))
             {
                 if (TryFindFirstFriendlyOperationMapProducer(
@@ -82,6 +86,11 @@ namespace Game.Runtime
                 TryGetRequiredProducerDisplayName(context, prefab, out requiredBuildingDisplayName);
                 return CampRequestFailure.MissingProducerBuilding;
             }
+
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var populationEm) &&
+                context.RuntimeBuildings != null && context.RuntimeBuildings.TryGetValue(populationProducerId, out var populationProducer) &&
+                !SkirmishPopulationPolicy.CanQueue(populationEm, context.RuntimeBuildings, populationProducer, prefab, populationProductionIndex))
+                return prefab.name.ToLowerInvariant().Contains("soldier") ? CampRequestFailure.InfantryLimit : CampRequestFailure.LogisticsLimit;
 
             if (!HasGlobalQueueCapacity(context))
                 return CampRequestFailure.GlobalProductionQueueFull;
@@ -217,6 +226,16 @@ namespace Game.Runtime
                 };
             }
 
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var paidWorld))
+            {
+                using var skirmish = paidWorld.CreateEntityQuery(typeof(SkirmishMatchState));
+                if (!skirmish.IsEmptyIgnoreFilter && producerBuilding.PendingProductions.Count > 0)
+                {
+                    var paid = producerBuilding.PendingProductions[producerBuilding.PendingProductions.Count - 1];
+                    paid.RefundableMaterials = materialsCost;
+                    paid.PaidQuantity = Mathf.Max(1, paid.RemainingQuantity);
+                }
+            }
             context.RecordUnitOrdered?.Invoke(prefab);
             return CampRequestFailure.None;
         }

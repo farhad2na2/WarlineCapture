@@ -253,7 +253,8 @@ namespace Game.Runtime
                     : producedUnit.BuildingRuntimeId;
                 if (slotBuildingRuntimeId != productionSlotBuildingRuntimeId ||
                     producedUnit.ProductionSlotIndex != slotIndex ||
-                    !IsProducedUnitAlive(producedUnit.Unit, entityManager))
+                    !IsProducedUnitAlive(producedUnit.Unit, entityManager) ||
+                    SkirmishPopulationPolicy.ReleasesProductionSlot(entityManager, producedUnit.Unit))
                 {
                     continue;
                 }
@@ -317,6 +318,7 @@ namespace Game.Runtime
             pending.TransportArrivalSeconds = 0f;
             pending.TransportHoldForNextReadySeconds = 0f;
             pending.TransportMaxConcurrent = pending.RemainingQuantity = pending.TransportClearDropSearchStartRadius = 0;
+            pending.RefundableMaterials = pending.PaidQuantity = 0;
             pending.TransportMode = default;
             pending.TransportRequiresAirportRunway = false;
             _pendingProductionPool.Push(pending);

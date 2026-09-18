@@ -38,6 +38,7 @@ namespace Game.Runtime
             startupSystem.FillRoadFootprintMask(grid, roadMask);
             if(tryGetEntityManager(out var em)) RoadSurfaces.Ensure(em,ecsQuerySystem.SurfaceQuery,grid);
             RoadSurfaces.AppendTo(roadMask);
+            RoadSurfaces.AppendWaterTo(roadMask);
 
             BuildingPlacementValidationUtilitySystemHelper.RebuildInvalidPrefix(
                 grid,

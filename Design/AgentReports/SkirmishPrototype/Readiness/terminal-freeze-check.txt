@@ -1,0 +1,38 @@
+outcome=Victory seed=7919 locale=fa-IR
+clock=359.0432/359.0432 timeScale=0
+unchanged=True
+BEFORE
+Entity(746:5) hp=125 pos=float3(1205.473f, 0.1628231f, 550.5009f)
+Entity(754:5) hp=125 pos=float3(1206.5f, -0.01250644f, 549.5f)
+Entity(770:5) hp=125 pos=float3(1206.5f, -0.01250644f, 550.5f)
+Entity(786:5) hp=90 pos=float3(1201.529f, 0.009179592f, 541.506f)
+Entity(839:77) hp=125 pos=float3(1203.539f, -0.01250644f, 549.5016f)
+Entity(901:7) hp=125 pos=float3(1203.5f, 0.1802435f, 550.5f)
+Entity(910:75) hp=113 pos=float3(1203.5f, 0.3202679f, 551.4533f)
+Entity(2608:71) hp=11 pos=float3(1206.5f, 0.2646125f, 551.5f)
+Entity(2609:73) hp=125 pos=float3(1205.484f, 0.2649287f, 551.4842f)
+Entity(2638:131) hp=5 pos=float3(1202.5f, 0.2843859f, 551.4854f)
+Entity(2682:287) hp=125 pos=float3(1204.5f, 0.2841535f, 551.5f)
+Entity(2994:71) hp=125 pos=float3(1205.492f, -0.01250644f, 549.5001f)
+Entity(3038:149) hp=125 pos=float3(1204.5f, 0.1864078f, 550.5f)
+faction=2 materials=10 spent=350 fabricated=140
+faction=1 materials=180 spent=180 fabricated=140
+AFTER
+Entity(746:5) hp=125 pos=float3(1205.473f, 0.1628231f, 550.5009f)
+Entity(754:5) hp=125 pos=float3(1206.5f, -0.01250644f, 549.5f)
+Entity(770:5) hp=125 pos=float3(1206.5f, -0.01250644f, 550.5f)
+Entity(786:5) hp=90 pos=float3(1201.529f, 0.009179592f, 541.506f)
+Entity(839:77) hp=125 pos=float3(1203.539f, -0.01250644f, 549.5016f)
+Entity(901:7) hp=125 pos=float3(1203.5f, 0.1802435f, 550.5f)
+Entity(910:75) hp=113 pos=float3(1203.5f, 0.3202679f, 551.4533f)
+Entity(2608:71) hp=11 pos=float3(1206.5f, 0.2646125f, 551.5f)
+Entity(2609:73) hp=125 pos=float3(1205.484f, 0.2649287f, 551.4842f)
+Entity(2638:131) hp=5 pos=float3(1202.5f, 0.2843859f, 551.4854f)
+Entity(2682:287) hp=125 pos=float3(1204.5f, 0.2841535f, 551.5f)
+Entity(2994:71) hp=125 pos=float3(1205.492f, -0.01250644f, 549.5001f)
+Entity(3038:149) hp=125 pos=float3(1204.5f, 0.1864078f, 550.5f)
+faction=2 materials=10 spent=350 fabricated=140
+faction=1 materials=180 spent=180 fabricated=140
+AUDIO
+Assets/Game/Audio/Music/music_match_calm_loop_01.wav
+PASS

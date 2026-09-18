@@ -1,0 +1,4 @@
+START
+PASS en district, feed, armory, raid, report return to Operations
+PASS fa-IR district, feed, armory, raid, report return to Operations
+COMPLETE

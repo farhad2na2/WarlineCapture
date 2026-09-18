@@ -207,8 +207,9 @@ namespace Game.Editor
             V3GradientGraphic bar = CreatePanel(
                 "HeaderBar", root, 6f, 8f, 1655f, 87f,
                 new Color32(27, 37, 42, 248), new Color32(4, 11, 14, 252), Line, 3f);
-            RectTransform logo = CreateTopLeft("Brand", root, 8f, 9f, 350f, 84f);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
+            RectTransform backRect = CreateTopLeft("HeaderBackButton", root, 8f, 9f, 350f, 84f);
+            Button back = ModePageNavigationPrefabBuilder.AddBackButton(backRect, boldFont);
+            AddRoute(backRect, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
 
             RectTransform credits = BuildResource(
                 root, "CreditsPanel", 1060f, "CREDITS", "24,750", Cyan, true);

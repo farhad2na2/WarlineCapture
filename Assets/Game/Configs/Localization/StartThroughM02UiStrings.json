@@ -2249,6 +2249,16 @@
           "value": "بازگشت به منوی اصلی"
         }
       ]
+    },
+    {
+      "key": "ui.navigation.back",
+      "source": "BACK",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازگشت"
+        }
+      ]
     }
   ]
 }

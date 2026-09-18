@@ -26,15 +26,10 @@ public sealed class CommandFeedV3PrefabTests
         AssertRoute(prefab.transform, "BackButton", UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu);
         AssertRoute(prefab.transform, "ViewOperationButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Operations);
         AssertRoute(prefab.transform, "OpenIntelButton", UiShellRouteIntent.OpenMenuRoute, UIRoute.Inbox);
-        Transform logo = Find(prefab.transform, "WarlineLogo");
-        Assert.NotNull(logo);
-        bool foundCanonicalLogo = false;
-        foreach (Image image in logo.GetComponentsInChildren<Image>(true))
-        {
-            if (AssetDatabase.GetAssetPath(image.sprite) == V3UiFoundationBuilder.MainMenuLogoPath)
-                foundCanonicalLogo = true;
-        }
-        Assert.IsTrue(foundCanonicalLogo, "SCN-18 must reuse the canonical V3 logo asset.");
+        Transform back = prefab.transform.Find("CommandFeedComposition/Header/BackButton");
+        Assert.NotNull(back, "Back must be visible in the header.");
+        Assert.NotNull(back.GetComponentInChildren<V3LocalizedTextBindingView>(true));
+
     }
 
     [Test]

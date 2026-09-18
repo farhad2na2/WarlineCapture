@@ -10,11 +10,13 @@ namespace Game.UI.Runtime
         [SerializeField] private UIPopupFrameView popupFrame;
         [SerializeField] private Button viewOperationsButton;
         [SerializeField] private Button saveContinueButton;
+        [SerializeField] private Button backButton;
 
         private Action _viewOperationsRequested;
         private Action _saveContinueRequested;
         private bool _eventsBound;
 
+        public Button BackButton => backButton;
         public Button ViewOperationsButton => viewOperationsButton;
         public Button SaveContinueButton => saveContinueButton;
 
@@ -43,6 +45,7 @@ namespace Game.UI.Runtime
         {
             if (_eventsBound)
                 return;
+            backButton?.onClick.AddListener(HandleViewOperations);
             viewOperationsButton?.onClick.AddListener(HandleViewOperations);
             saveContinueButton?.onClick.AddListener(HandleSaveContinue);
             _eventsBound = true;
@@ -52,6 +55,7 @@ namespace Game.UI.Runtime
         {
             if (!_eventsBound)
                 return;
+            backButton?.onClick.RemoveListener(HandleViewOperations);
             viewOperationsButton?.onClick.RemoveListener(HandleViewOperations);
             saveContinueButton?.onClick.RemoveListener(HandleSaveContinue);
             _eventsBound = false;
@@ -77,11 +81,13 @@ namespace Game.UI.Runtime
         public void Configure(
             UIPopupFrameView configuredPopupFrame,
             Button configuredViewOperationsButton,
-            Button configuredSaveContinueButton)
+            Button configuredSaveContinueButton,
+            Button configuredBackButton = null)
         {
             popupFrame = configuredPopupFrame;
             viewOperationsButton = configuredViewOperationsButton;
             saveContinueButton = configuredSaveContinueButton;
+            backButton = configuredBackButton;
         }
 #endif
     }

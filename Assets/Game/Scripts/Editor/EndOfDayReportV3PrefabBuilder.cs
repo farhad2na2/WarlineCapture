@@ -76,7 +76,7 @@ namespace Game.Editor
                     null,
                     body,
                     footer.ButtonRow);
-                reportView.Configure(popup, footer.ViewOperations, footer.SaveContinue);
+                reportView.Configure(popup, footer.ViewOperations, footer.SaveContinue, header.Back);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
@@ -153,8 +153,8 @@ namespace Game.Editor
         private static HeaderBindings BuildHeader(RectTransform parent)
         {
             RectTransform header = CreateTopLeft("Header", parent, 0f, 0f, Reference.x, 110f);
-            RectTransform logo = CreatePanel("HeaderLogoPanel", header, 10f, 10f, 361f, 98f, DarkTop, DarkBottom, Line, 3f);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
+            RectTransform backRect = CreateTopLeft("BackButton", header, 10f, 10f, 361f, 98f);
+            Button back = ModePageNavigationPrefabBuilder.AddBackButton(backRect, boldFont);
 
             RectTransform titlePanel = CreatePanel("TitlePanel", header, 379f, 10f, 740f, 98f, DarkTop, DarkBottom, Line, 3f);
             TMP_Text title = CreateText(titlePanel, "TitleText", 42f, 8f, 560f, 78f, "END OF DAY REPORT", 43f, theme.TextPrimary, TextAlignmentOptions.MidlineLeft, true);
@@ -162,7 +162,7 @@ namespace Game.Editor
 
             BuildResourcePanel(header, "CreditsResource", 1128f, "CREDITS", "24,750", catalog.CreditsIcon, Amber);
             BuildResourcePanel(header, "CommandResource", 1391f, "COMMAND", "8,430", catalog.CommandIcon, Cyan);
-            return new HeaderBindings(header, title);
+            return new HeaderBindings(header, title, back);
         }
 
         private static void BuildResourcePanel(
@@ -571,10 +571,12 @@ namespace Game.Editor
         {
             public readonly RectTransform Header;
             public readonly TMP_Text Title;
-            public HeaderBindings(RectTransform header, TMP_Text title)
+            public readonly Button Back;
+            public HeaderBindings(RectTransform header, TMP_Text title, Button back)
             {
                 Header = header;
                 Title = title;
+                Back = back;
             }
         }
 

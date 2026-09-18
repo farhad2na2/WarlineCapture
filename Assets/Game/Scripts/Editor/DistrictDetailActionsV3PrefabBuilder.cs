@@ -158,15 +158,9 @@ namespace Game.Editor
 
         private static UIShellRouteButtonView BuildHeader(RectTransform root)
         {
-            RectTransform logo = CreateTopLeft("WarlineLogo", root, 5f, 6f, 376f, 96f);
-            CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
-
-            V3GradientGraphic backHit = logo.GetComponent<V3GradientGraphic>();
-            backHit.raycastTarget = true;
-            Button backButton = logo.gameObject.AddComponent<Button>();
-            backButton.targetGraphic = backHit;
-            UIShellRouteButtonView backRoute = logo.gameObject.AddComponent<UIShellRouteButtonView>();
+            RectTransform backRect = CreateTopLeft("BackButton", root, 5f, 6f, 376f, 96f);
+            Button backButton = ModePageNavigationPrefabBuilder.AddBackButton(backRect, boldFont);
+            UIShellRouteButtonView backRoute = backButton.gameObject.AddComponent<UIShellRouteButtonView>();
             backRoute.Configure(UiShellRouteIntent.BackMenuRoute, UIRoute.Operations, false);
 
             RectTransform titlePanel = CreateTopLeft("ScreenTitlePanel", root, 387f, 6f, 631f, 96f);

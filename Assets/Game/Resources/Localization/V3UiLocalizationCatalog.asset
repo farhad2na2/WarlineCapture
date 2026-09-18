@@ -2550,6 +2550,8 @@ MonoBehaviour:
       value: CAPTIONS OFF
     - key: ui.narrative.subtitles_on
       value: CAPTIONS ON
+    - key: ui.navigation.back
+      value: BACK
     - key: ui.navigation.back_to_main_menu
       value: BACK TO MAIN MENU
     - key: ui.result.at_risk
@@ -9098,6 +9100,8 @@ MonoBehaviour:
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u062E\u0627\u0645\u0648\u0634"
     - key: ui.narrative.subtitles_on
       value: "\u0632\u06CC\u0631\u0646\u0648\u06CC\u0633 \u0631\u0648\u0634\u0646"
+    - key: ui.navigation.back
+      value: "\u0628\u0627\u0632\u06AF\u0634\u062A"
     - key: ui.navigation.back_to_main_menu
       value: "\u0628\u0627\u0632\u06AF\u0634\u062A \u0628\u0647 \u0645\u0646\u0648\u06CC
         \u0627\u0635\u0644\u06CC"

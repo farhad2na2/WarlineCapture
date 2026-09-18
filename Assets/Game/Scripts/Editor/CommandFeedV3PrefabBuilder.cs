@@ -93,11 +93,11 @@ namespace Game.Editor
             MainMenuV3SectionLayoutView layout = prefab.GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
             if (layout == null || !layout.ExpandToCanvasWidth || layout.ReferenceResolution != Reference)
                 throw new InvalidOperationException("Command Feed must expand across 16:9 and 20:9 canvases.");
-            Require(prefab.transform, "CommandFeedComposition/Header/WarlineLogo");
+            Require(prefab.transform, "CommandFeedComposition/Header/BackButton");
             Require(prefab.transform, "CommandFeedComposition/FilterRail/AllFilter");
             Require(prefab.transform, "CommandFeedComposition/FeedRows/FeedRow_4");
             Require(prefab.transform, "CommandFeedComposition/RightRail/AriaPanel/AriaPortrait");
-            RequireRoute(prefab.transform, "CommandFeedComposition/FilterRail/BackButton", UIRoute.MainMenu, UiShellRouteIntent.BackMenuRoute);
+            RequireRoute(prefab.transform, "CommandFeedComposition/Header/BackButton", UIRoute.MainMenu, UiShellRouteIntent.BackMenuRoute);
             RequireRoute(prefab.transform, "CommandFeedComposition/RightRail/ViewOperationButton", UIRoute.Operations, UiShellRouteIntent.OpenMenuRoute);
             RequireRoute(prefab.transform, "CommandFeedComposition/RightRail/OpenIntelButton", UIRoute.Inbox, UiShellRouteIntent.OpenMenuRoute);
             V3GradientGraphic[] gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true);
@@ -118,9 +118,9 @@ namespace Game.Editor
             out TMP_Text credits, out TMP_Text command)
         {
             RectTransform header = TopLeft("Header", root, 11f, 9f, 1650f, 90f);
-            RectTransform logo = TopLeft("WarlineLogo", header, 0f, 0f, 315f, 90f);
-            Panel(logo, DarkTop, DarkBottom, Border);
-            V3UiFoundationBuilder.AddMainMenuLogo(logo);
+            RectTransform backRect = TopLeft("BackButton", header, 0f, 0f, 315f, 90f);
+            Button back = ModePageNavigationPrefabBuilder.AddBackButton(backRect, bold);
+            Route(back, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
             RectTransform title = TopLeft("TitlePanel", header, 330f, 0f, 750f, 90f);
             Panel(title, DarkTop, DarkBottom, Border);
             TMP_Text titleText = TextBlock("Title", title, "COMMAND FEED", 47f, bold, TextAlignmentOptions.MidlineLeft, Text);
@@ -160,12 +160,7 @@ namespace Game.Editor
                 Panel(count, DarkTop, DarkBottom, colors[i]);
                 TMP_Text countText = TextBlock("Label", count, counts[i], 20f, bold, TextAlignmentOptions.Center, colors[i]); Stretch(countText.rectTransform);
             }
-            Button back = GradientButton("BackButton", rail, 0f, 721f, 315f, 86f, DarkTop, DarkBottom, Border);
-            Image backIcon = Image("Icon", back.transform, RequireSprite(V3UiFoundationBuilder.CommanderBackIconPath), Color.white, false);
-            TopLeft(backIcon.rectTransform, 20f, 18f, 48f, 48f); backIcon.preserveAspect = true;
-            TMP_Text backText = TextBlock("Label", back.transform, "BACK", 30f, bold, TextAlignmentOptions.Center, Text);
-            TopLeft(backText.rectTransform, 65f, 5f, 225f, 76f);
-            Route(back, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
+
         }
 
         private static void BuildFeed(Transform root, List<RectTransform> rightTargets, List<RectTransform> widthTargets,

@@ -1,0 +1,5 @@
+START
+DistrictDetailActionsComposition actions=7
+DistrictDetailActionsComposition actions=0
+PASS fa-IR all three nested return paths
+COMPLETE

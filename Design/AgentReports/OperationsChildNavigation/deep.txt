@@ -1,0 +1,5 @@
+START
+PASS en Inbox -> Feed -> Operations; Profile -> Armory -> Operations; Raid Back -> District without queueing -> Operations
+FAIL step=25 System.IndexOutOfRangeException: Index was outside the bounds of the array.
+  at PipelineEvaluation.PipelineEval_11f2a457+<>c__DisplayClass0_0.<Execute>b__16 () [0x00019] in <32d58e10aa5c424d8235e008eed669ca>:0 
+  at PipelineEvaluation.PipelineEval_11f2a457+<>c__DisplayClass0_0.<Execute>b__4 () [0x00049] in <32d58e10aa5c424d8235e008eed669ca>:0 

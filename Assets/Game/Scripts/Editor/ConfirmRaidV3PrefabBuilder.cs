@@ -80,6 +80,9 @@ namespace Game.Editor
                 ConfirmRaidV3PopupView state = root.GetComponent<ConfirmRaidV3PopupView>() ??
                     root.AddComponent<ConfirmRaidV3PopupView>();
                 state.Configure(bindings.CancelButton, bindings.ConfirmButton);
+                RectTransform backRect = CreateTopLeft("BackButton", bindings.Header, 10f, 8f, 222f, 72f);
+                Button back = ModePageNavigationPrefabBuilder.AddBackButton(backRect, boldFont);
+                UnityEditor.Events.UnityEventTools.AddPersistentListener(back.onClick, state.Cancel);
 
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }

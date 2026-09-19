@@ -126,7 +126,7 @@ namespace Game.UI.Runtime
             _defaultTitle = _rightToLeft
                 ? model.RecommendationTitle ?? string.Empty
                 : (model.RecommendationTitle ?? string.Empty).ToUpperInvariant();
-            _defaultBody = model.RecommendationBody ?? string.Empty;
+            _defaultBody = SkirmishWatchInstruction(model.RecommendationBody ?? string.Empty);
             ApplyInteractionState(TacticalCommandMode.None, worldTargetCompleted: false);
             showMeButton.interactable = model.CanShow;
             showMeButton.gameObject.SetActive(model.CanShow);

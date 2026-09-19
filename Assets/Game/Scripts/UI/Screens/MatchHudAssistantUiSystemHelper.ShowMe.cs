@@ -18,6 +18,7 @@ namespace Game.UI.Runtime
         public void RenderAttention(float unscaledTime)
         {
             _highlightPresentationSystem.TickAttention(unscaledTime);
+            TickWatch();
             var showMe = _embeddedTutorialView?.ShowMeButton;
             TutorialAttentionPulseView.Present(showMe?.transform as RectTransform, unscaledTime,
                 !_tutorialCinematicSuspended && showMe != null && showMe.IsActive() && showMe.IsInteractable(),

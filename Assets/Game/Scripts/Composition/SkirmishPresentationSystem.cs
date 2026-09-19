@@ -32,6 +32,13 @@ namespace Game.Composition
             if(view==null)view=SkirmishMatchView.Create();
             if(!startupFailed&&UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
             {Focus(match.PlayerMainBase,true);focusedSession=match.SessionId.ToString();}
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            var worldCamera = Camera.main;
+            bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
+                EntityManager.GetComponentData<UnitHealth>(match.EnemyMainBase).Current > 0 && EntityManager.HasComponent<LocalTransform>(match.EnemyMainBase);
+            view.PresentEnemyBaseMarker(baseAlive && worldCamera != null
+                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive);
+#endif
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)
             {

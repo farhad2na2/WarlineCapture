@@ -3104,6 +3104,38 @@ Allowed scopes are `system-helper`, `system-helper-growth`, `production-over-500
       "maxLines": 166,
       "maxBytes": 6374,
       "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs",
+      "trackerTaskId": "APH-714",
+      "decisionId": "D-216",
+      "maxLines": 171,
+      "maxBytes": 6898,
+      "scope": "system-helper"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickUiSystemHelper.cs",
+      "trackerTaskId": "APH-714",
+      "decisionId": "D-217",
+      "maxLines": 261,
+      "maxBytes": 12327,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-714",
+      "decisionId": "D-218",
+      "maxLines": 827,
+      "maxBytes": 43798,
+      "scope": "system-helper-growth"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputCompositionSystemHelper.cs",
+      "trackerTaskId": "APH-714",
+      "decisionId": "D-219",
+      "maxLines": 827,
+      "maxBytes": 43798,
+      "scope": "production-over-500-review"
     }
   ]
 }

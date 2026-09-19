@@ -3,6 +3,8 @@
 Date: 2026-05-22
 Status: Broad design reference. The scoped September prototype is defined by [the current detailed roadmap plan](Roadmap/Skirmish_Prototype/PLAN.md), with a [source baseline](Roadmap/Skirmish_Prototype/BASELINE.md) and [acceptance matrix](Roadmap/Skirmish_Prototype/ACCEPTANCE.md). Its one-map/one-opponent scope supersedes the first-slice breadth and M1 fallback described below. Historical code paths in this document are not evidence of current runtime behavior.
 
+2026-09-18 expansion: the owner's request for the wider roster and battles with hundreds of units is planned in [Skirmish Expansion](Roadmap/Skirmish_Expansion/PLAN.md). That plan defines the next delivery sequence and resolves conflicting future recommendations here. It is not a claim that those capabilities are implemented.
+
 ## Purpose
 
 Skirmish is the first production game mode to implement because it can exercise the existing RTS simulation, AI settings, economy pacing, unit production, building placement, combat, selection, transport, and balance probes without waiting for the full Campaign or Operations progression layer.

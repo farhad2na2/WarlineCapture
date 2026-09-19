@@ -524,6 +524,7 @@ namespace Game.UI.Runtime
 
             Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
             int markerIndex = 0;
+            _view.PresentedContacts.Clear();
             _markerScratch.Clear();
             _minimapDataSource?.GetMarkers(ToAreaModel(grid), _markerScratch);
             for (int i = 0; i < _markerScratch.Count && markerIndex < MaxMarkers; i++)
@@ -535,6 +536,7 @@ namespace Game.UI.Runtime
                     continue;
 
                 SetMarker(markerIndex, normalized, marker.Allegiance, ResolveMarkerColor(marker.Allegiance), mapRect, parentTopLeft);
+                _view.RecordPresentedContact(marker, _markerImagePool[markerIndex].rectTransform);
                 markerIndex++;
             }
 

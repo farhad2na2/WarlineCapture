@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace Game.UI.Runtime
 {
     /// <summary>Skirmish presentation only; all match changes cross the UI gateway.</summary>
-    public sealed class SkirmishMatchView : MonoBehaviour
+    public sealed partial class SkirmishMatchView : MonoBehaviour
     {
         private GameObject hud, modal;
         private BuildDrawerView buildDrawer;

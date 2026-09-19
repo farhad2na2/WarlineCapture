@@ -10,9 +10,19 @@ namespace Game.UI.Runtime
         [SerializeField] private RectTransform[] primaryActions;
         private MatchOverlayCommandControlsView commands;
         private BuildPlacementConfirmationBarView placement;
+        private MatchHudSelectionPanelView selection;
         private readonly Vector3[] corners=new Vector3[4];
         [SerializeField] private RectTransform dockBorder;
         public RectTransform Minimap => minimap;
+        private float commandDockBottom = 175;
+
+        public float AssistantHeight(RectTransform rail)
+        {
+            var header = (RectTransform)transform;
+            var limit = header.TransformPoint(new Vector3(header.rect.xMax,
+                header.rect.yMin + commandDockBottom));
+            return -rail.InverseTransformPoint(limit).y - 12;
+        }
 
         public void Apply(bool missionActive)
         {
@@ -32,15 +42,20 @@ namespace Game.UI.Runtime
             if(minimap.parent!=header) minimap.SetParent(header,false);
             if(commands==null) commands=transform.root.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
             if(placement==null) placement=transform.root.GetComponentInChildren<BuildPlacementConfirmationBarView>(true);
+            if(selection==null) selection=transform.root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
             float bottom=175;
             if(commands!=null && commands.BuildButton!=null)
                 bottom=TopInHeader((RectTransform)commands.BuildButton.transform)-header.rect.yMin+DockGap;
             if(placement!=null && placement.HasPendingPlacement && placement.Root.gameObject.activeInHierarchy)
                 bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
-            minimap.anchorMin=minimap.anchorMax=new Vector2(1,0);
-            minimap.pivot=new Vector2(1,0);
-            minimap.anchoredPosition=new Vector2(-15,bottom);
+            commandDockBottom=bottom;
+            minimap.anchorMin=minimap.anchorMax=Vector2.zero;
+            minimap.pivot=Vector2.zero;
+            // Squad cards are taller than the command buttons on the left rail.
+            bottom=Mathf.Max(bottom,230);
+            minimap.anchoredPosition=new Vector2(15,bottom);
             minimap.sizeDelta=new Vector2(320,220);
+            if(selection!=null) selection.FitAboveMinimap(minimap);
             if(dockBorder==null)
             {
                 if(dockBorder==null)

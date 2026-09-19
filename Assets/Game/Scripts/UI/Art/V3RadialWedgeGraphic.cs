@@ -44,6 +44,17 @@ namespace Game.UI.Runtime
 
         // A wedge shares the wheel's RectTransform, but its visible bounds occupy
         // only one sector. Tutorial framing must follow that sector.
+        public Vector3 GuidanceTouchPoint
+        {
+            get
+            {
+                Rect rect = rectTransform.rect;
+                float angle = (startAngle + sweepAngle * .5f) * Mathf.Deg2Rad;
+                float radius = Mathf.Min(rect.width, rect.height) * .25f * (innerRadius + outerRadius);
+                return rectTransform.TransformPoint(rect.center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius);
+            }
+        }
+
         public void GetGuidanceWorldCorners(Vector3[] corners)
         {
             Rect rect = rectTransform.rect;

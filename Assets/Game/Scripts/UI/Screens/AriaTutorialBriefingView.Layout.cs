@@ -19,7 +19,6 @@ namespace Game.UI.Runtime
         private RectTransform bodyViewport;
         private ScrollRect bodyScroll;
         private Scrollbar bodyScrollbar;
-        private readonly Vector3[] mapCorners=new Vector3[4];
         private float measuredAvailable;
 
         private void OnDisable() => Canvas.willRenderCanvases -= RefreshContentLayout;
@@ -47,14 +46,14 @@ namespace Game.UI.Runtime
             bool hasActions=actionCount>0;
             float actionGap=ContinueButton.gameObject.activeSelf?44:16;
             float actionSpacing=hasActions?actionGap+actionCount*84:12;
-            int utilityCount=ActiveButtonCount(utilityActions), extractionCount=ActiveButtonCount(extractionActions);
+            int utilityCount=ActiveButtonCount(utilityActions), extractionCount=ActiveButtonCount(extractionActions), watchCount=ActiveButtonCount(watchActions);
             contentActions.gameObject.SetActive(hasActions);
             if(mapDock==null) mapDock=GetComponentInParent<MissionHudTouchLayoutView>();
             float available=900;
             if(mapDock!=null && mapDock.Minimap!=null)
-            {mapDock.Minimap.GetWorldCorners(mapCorners);available=-rail.InverseTransformPoint(mapCorners[1]).y-12;}
+                available=mapDock.AssistantHeight(rail);
             int state=(hasActions?64:0)|(tutorial?1:0)|(opening?2:0)|(alert?4:0)|(_missionLayoutLarge?8:0)|
-                (utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0)|(selectionActive?128:0);
+                (watchCount<<20)|(utilityCount<<8)|(extractionCount<<12)|(actionCount<<16)|(ContinueButton.gameObject.activeSelf?32:0)|(selectionActive?128:0);
             if(!_layoutDirty && Mathf.Abs(measuredAvailable-available)<.1f && measuredState==state && measuredWidth==rail.rect.width && measuredFont==bodyText.font &&
                 measuredTitle==titleText.text && measuredBody==bodyText.text && measuredAlert==alertCopy?.text && measuredOpening==openingCopy?.text) return;
             bool newInstruction=measuredTitle!=titleText.text;
@@ -68,7 +67,7 @@ namespace Game.UI.Runtime
             float width=rail.rect.width-40;
             float titleHeight=tutorial ? Measure(titleText,width,26) : 0;
             float bodyHeight=tutorial ? Measure(bodyText,width,24) : 0;
-            float utilityHeight=(utilityCount+extractionCount)*84;
+            float utilityHeight=(utilityCount+extractionCount+watchCount)*84;
             float required=20+titleHeight+bodyHeight+(titleHeight>0 && bodyHeight>0?8:0)+(tutorial?actionSpacing:0)+utilityHeight;
             float portraitHeight=hasText ? Mathf.Clamp(available-required,62,114) : 230;
             missionPortraitStage.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,portraitHeight);
@@ -110,6 +109,8 @@ namespace Game.UI.Runtime
             {PlaceUtilityRow(utilityActions,y,width);y+=utilityCount*84;}
             if(extractionActions!=null && extractionActions.gameObject.activeSelf)
             {PlaceUtilityRow(extractionActions,y,width);y+=extractionCount*84;}
+            if(watchActions!=null && watchActions.gameObject.activeSelf)
+            {PlaceUtilityRow(watchActions,y,width);y+=watchCount*84;}
             rail.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,y);
         }
 

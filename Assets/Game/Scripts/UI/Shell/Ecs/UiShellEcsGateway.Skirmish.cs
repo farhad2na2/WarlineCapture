@@ -34,6 +34,7 @@ namespace Game.UI.Shell.Ecs
             model=new UiSkirmishModel
             {
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
+                InfantryCount=infantry, PlayerHealth=VisibleBaseHealth(em,match.PlayerMainBase), EnemyHealth=VisibleBaseHealth(em,match.EnemyMainBase),
                 Infantry=infantry+" / "+SkirmishPresetConfig.InfantryLimitPerFaction,
                 PlayerBase=BaseLabel(em,match.PlayerMainBase,"player_base","YOUR MAIN BASE"),
                 EnemyBase=BaseLabel(em,match.EnemyMainBase,"enemy_base","ENEMY MAIN BASE"),
@@ -63,6 +64,9 @@ namespace Game.UI.Shell.Ecs
             if(query.CalculateEntityCount()!=1)return false;
             entity=query.GetSingletonEntity();match=em.GetComponentData<SkirmishMatchState>(entity);return true;
         }
+        private static int VisibleBaseHealth(EntityManager em, Entity entity) =>
+            em.Exists(entity) && em.HasComponent<UnitHealth>(entity)
+                ? Mathf.CeilToInt(Mathf.Max(0, em.GetComponentData<UnitHealth>(entity).Current)) : 0;
         private static string BaseLabel(EntityManager em,Entity entity,string key,string fallback)
         {
             float health=0,max=0;

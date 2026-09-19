@@ -4,6 +4,8 @@ Date: 2026-07-08
 Status: Complete; ECS-aligned ARIA assistant vertical slice implemented, validated, documented, committed, and pushed
 Source design: `Design/ARIA_Assistant_ECS_Design.md`
 
+2026-09-18 follow-up: this completed checklist records the historical assistant slice. The new [Watch ARIA play delivery checklist](../Roadmap/Aria_Demonstration/DELIVERY.md) and [coverage matrix](../Roadmap/Aria_Demonstration/COVERAGE.md) track the planned touch-only, whole-match feature. None of the completed items below certifies its input integrity or all-mode gameplay. Its new architecture supersedes direct Do It/takeover actuation while retaining applicable ECS and presentation boundaries.
+
 ## Progress
 
 Overall progress: 100% complete, 68 of 68 checklist items complete.

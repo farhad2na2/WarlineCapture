@@ -3,6 +3,8 @@
 Date: 2026-07-08
 Status: Active high-level design contract
 
+2026-09-18 control amendment: the [Watch ARIA play plan](Roadmap/Aria_Demonstration/PLAN.md) now specifies the planned player-facing whole-match demonstration feature, including its [touch-only architecture](Roadmap/Aria_Demonstration/ARCHITECTURE.md). For that feature it supersedes the one-step Do It, three-action/30-second takeover and direct command execution described below. Retain ECS/assembly/naming/performance and character boundaries. Historical implementation status below is not evidence that the new feature exists or has passed QA.
+
 2026-07-10 narrative amendment: ARIA's Campaign identity and character arc are owned by `Campaign_Narrative_Bible.md`; first-launch presentation is owned by `First_Player_Experience_And_Story_Onboarding_Design.md`. This document remains the high-level ECS/UX contract for assistant behavior.
 
 ## Implementation Status

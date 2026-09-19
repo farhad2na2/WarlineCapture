@@ -158,7 +158,7 @@ namespace Game.UI.Runtime
                     if(UiShellRuntimeGateway.TryReadMissionExtraction(out var extraction))
                     {
                         if(!extraction.AircraftAtLanding) ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move);
-                        else ShowTutorialWorld(extraction.LandingCenter,false);
+                        else ShowTutorialWorld(extraction.LandingCenter,false,waitingArea:true);
                     }
                     else _highlightPresentationSystem.ClearDirectTutorialCue();
                     break;

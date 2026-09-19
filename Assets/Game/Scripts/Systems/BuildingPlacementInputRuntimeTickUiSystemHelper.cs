@@ -107,6 +107,13 @@ namespace Game.Runtime
             if (!hasPointer)
                 return new Result(afterOutline, afterMouse, afterUi, afterBuildingClick, afterInput);
 
+            if (pointer.WasCanceled)
+            {
+                _pendingBuildingSelectionClick = false;
+                context.PlacementInputSystem?.Reset();
+                return new Result(afterOutline, afterMouse, afterUi, afterBuildingClick, afterInput);
+            }
+
             BuildingPlacementLifecycleCompositionSystemHelper.PlacementState activePlacement = context.GetActivePlacement?.Invoke();
             if (activePlacement != null)
             {

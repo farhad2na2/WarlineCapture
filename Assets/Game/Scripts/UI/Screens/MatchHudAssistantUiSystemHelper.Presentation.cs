@@ -49,7 +49,7 @@ namespace Game.UI.Runtime
         {
             RebindState rebindState = CaptureRebindState(
                 headerContent != null && popupLayer != null && popupPrefab != null);
-            Unbind();
+            UnbindCore(headerContent != null && popupLayer != null && popupPrefab != null);
             RestoreRebindState(in rebindState);
             _highlightPresentationSystem.BindResourceStrip(_boundResourceStrip);
             _captureGameplayUiClick = captureGameplayUiClick;
@@ -97,8 +97,11 @@ namespace Game.UI.Runtime
             // ARIA augments the authored HUD. Mission objectives remain visible while its controls are bound.
         }
 
-        public void Unbind()
+        public void Unbind() => UnbindCore(false);
+
+        private void UnbindCore(bool preserveWatch)
         {
+            DisposeWatch(!preserveWatch);
             _commandControlsView?.SetTutorialBuildRequested(false);
             MirrorPanelOpen(false, force: true);
             if (_button != null)

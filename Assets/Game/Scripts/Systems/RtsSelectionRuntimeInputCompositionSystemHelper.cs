@@ -169,6 +169,14 @@ namespace Game.Runtime
             if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
                 return;
 
+            if (pointer.WasCanceled)
+            {
+                input.ClearQueuedMoveOrder();
+                input.ClearPointerReleaseState();
+                context.SetCameraDragging?.Invoke(false);
+                return;
+            }
+
             if (IsGameplayInputLocked(context))
             {
                 if (pointer.WasPressedThisFrame || pointer.WasReleasedThisFrame)

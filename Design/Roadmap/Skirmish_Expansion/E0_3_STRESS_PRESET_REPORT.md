@@ -2,7 +2,7 @@
 
 Status: authored on `cursor/e03-stress-preset-b6c7`. Edit-mode checks are source-authored. Play-mode **actual counts** and screenshots were **not** produced in the cloud VM (no Unity Editor). Do not invent PNG evidence. Do not treat requested recipe counts as spawned/alive/destroyed.
 
-Handoff: **Programmer 2** owns Unity self-validation and screenshots. There is no Game PM merge gate. Draft PR is a bookmark only. After Programmer 2 has census + PNGs, Game PM forwards that packet to Farhad. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots.
+Handoff: **Programmer 2** owns Unity self-validation and screenshots, and may push/fast-forward into `codex/m03-radar-warning` immediately when satisfied. Do not block on Farhad review. Send the screenshot/census folder to Game PM after landing. Draft PR is a bookmark only; there is no Game PM merge gate.
 
 Host: Desert Base geometry, real unit prefabs, existing Skirmish AI / projectiles / pathing. Player-facing Base Assault and City Crossroads are unchanged.
 
@@ -190,11 +190,11 @@ Do this on a machine with Unity Hub signed in and the Editor version in `Project
 
 P50 warmup spread, P200 concentrated dense combat, P100 air-only. 350/500 only if the machine survives. Same census rule: report spawned/alive/destroyed, not requested.
 
-### F. Packet Game PM forwards to Farhad
+### F. Evidence packet (land first, then send to Game PM)
 
-Programmer 2 captures. Game PM forwards. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen these shots. There is no Game PM merge gate.
+Programmer 2 captures and self-validates. When the shots and census look right, Programmer 2 may fast-forward this branch into `codex/m03-radar-warning` immediately. Send the folder to Game PM after the fact. Do not invent a missing PNG.
 
-Folder: `$TMPDIR/warline-e03-stress/` (macOS) or `%TEMP%\warline-e03-stress\` (Windows). The probe also writes `E0_3_STRESS_PACKET.md` with present/missing rows. Do not invent a missing PNG.
+Folder: `$TMPDIR/warline-e03-stress/` (macOS) or `%TEMP%\warline-e03-stress\` (Windows). The probe also writes `E0_3_STRESS_PACKET.md` with present/missing rows.
 
 | File | Required |
 |---|---|
@@ -208,7 +208,16 @@ Folder: `$TMPDIR/warline-e03-stress/` (macOS) or `%TEMP%\warline-e03-stress\` (W
 | `e03-destruction-spread-p100.png` | wreck/loss if `destroyedCombat` > 0 |
 | `e03-densecombat-concentrated-p100.png` | both armies in one camera (run D) |
 
-After Farhad has seen the packet, Programmer 2 / Game PM may land by fast-forward. Restore the Editor scene if a reversible QA snapshot was taken.
+Suggested land after a green Editor run (Programmer 2, not this cloud agent):
+
+```bash
+git fetch origin
+git checkout codex/m03-radar-warning
+git merge --ff-only origin/cursor/e03-stress-preset-b6c7
+git push origin codex/m03-radar-warning
+```
+
+Then copy the evidence folder to Game PM. Restore the Editor scene if a reversible QA snapshot was taken.
 
 ## Screenshots
 
@@ -243,4 +252,4 @@ If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot
 
 ## Next step
 
-Programmer 2: run A–D on this branch, paste **actual** census rows, and hand Game PM the folder listed in section F. Game PM forwards that packet to Farhad. Do not push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.
+Programmer 2: run A–D on this branch, paste **actual** census rows, land by fast-forward when satisfied, then send section F to Game PM. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.

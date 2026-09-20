@@ -191,8 +191,8 @@ namespace Game.Editor
             text.AppendLine("# E0.3 stress packet");
             text.AppendLine();
             text.AppendLine("- Capture owner: Programmer 2 (Unity Editor on a real machine)");
-            text.AppendLine("- Forward owner: Game PM sends this folder to Farhad");
-            text.AppendLine("- Do not invent missing PNGs. Recapture empty files after the Game view paints.");
+            text.AppendLine("- Land: Programmer 2 may fast-forward into codex/m03-radar-warning when satisfied");
+            text.AppendLine("- After land: send this folder to Game PM. Do not invent missing PNGs.");
             text.AppendLine("- Directory: `" + directory + "`");
             text.AppendLine();
             text.AppendLine("| File | Present |");

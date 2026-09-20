@@ -89,7 +89,7 @@ namespace Game.Editor
             Check(SkirmishStressEditorProbe.PlayerSetupScreenshotFile == "e03-player-setup-two-battles.png",
                 "Player-setup capture filename must stay stable.");
             Check(SkirmishStressEditorProbe.RequiredSpreadP100Files().Length == 8,
-                "Farhad packet must list census plus setup and six sequence shots.");
+                "Evidence packet must list census plus setup and six sequence shots.");
 
             using (var world = new World("Skirmish stress census validation"))
             {

@@ -171,10 +171,18 @@ namespace Game.Runtime
 
         internal readonly struct SpawnStatus
         {
-            public bool HasProgress;
-            public bool Finished;
-            public int Spawned;
-            public int Requested;
+            public readonly bool HasProgress;
+            public readonly bool Finished;
+            public readonly int Spawned;
+            public readonly int Requested;
+
+            public SpawnStatus(bool hasProgress, bool finished, int spawned, int requested)
+            {
+                HasProgress = hasProgress;
+                Finished = finished;
+                Spawned = spawned;
+                Requested = requested;
+            }
         }
 
         internal static SpawnStatus EvaluateSpawn(EntityManager em)
@@ -187,7 +195,7 @@ namespace Game.Runtime
             if (!em.HasBuffer<InitialUnitsFactionUnitSpawnEntry>(startup) ||
                 !em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(startup))
             {
-                return new SpawnStatus { Finished = initialized };
+                return new SpawnStatus(false, initialized, 0, 0);
             }
 
             var units = em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(startup);
@@ -206,13 +214,7 @@ namespace Game.Runtime
             }
             if (progress.Length < units.Length && !initialized)
                 finished = false;
-            return new SpawnStatus
-            {
-                HasProgress = true,
-                Finished = finished,
-                Spawned = spawned,
-                Requested = requested
-            };
+            return new SpawnStatus(true, finished, spawned, requested);
         }
 
         internal static bool TryCompleteSpawn(EntityManager em, ref SkirmishStressSession session, float dt)

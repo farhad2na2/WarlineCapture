@@ -25,7 +25,9 @@ public sealed class SkirmishStressPresetTests
         tests.StressLaunchWaitsForIdleMenuThenRequestsPlayAndSimulation();
         tests.StressKeepsPlayAndSimulationUntilPlaying();
         Debug.Log(SkirmishStressValidation.Run());
-        return "[SkirmishStressPreset] result=Passed tests=9";
+        const string marker = "[SkirmishStressPreset] result=Passed tests=9";
+        Debug.Log(marker);
+        return marker;
     }
 
     [Test]

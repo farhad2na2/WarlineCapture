@@ -2,7 +2,7 @@
 
 Date: 2026-09-20
 Baseline: `codex/m03-radar-warning` `61d7fcd12f767a03ea0eac4f04e90c51971b3420`
-Head: `e7c31f03f5c4140d2ed99010eb2ec3491b1a97e8`
+Head: `16b0dc867956010c1dd6378c874a07dc1001f972`
 PR: https://github.com/farhad2na2/WarlineCapture/pull/19
 Workflow path: pull request
 Task: collapse the City Crossroads raised-ground / floating-edge defect so authored visible grade and surface/foundation data agree.

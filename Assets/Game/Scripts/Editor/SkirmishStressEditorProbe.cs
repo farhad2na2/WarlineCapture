@@ -295,7 +295,7 @@ namespace Game.Editor
                     next = now + 2;
                     return;
                 }
-                var setup = Object.FindAnyObjectByType<QuickCustomScreenView>();
+                var setup = UnityEngine.Object.FindAnyObjectByType<QuickCustomScreenView>();
                 if (setup == null) return;
                 string path = CaptureNamedScreenshot(PlayerSetupScreenshotFile);
                 Debug.Log(SkirmishStressRecipe.ReportMarker + " setupScreenshot=" + path);

@@ -2,6 +2,12 @@
 
 Reviewed 2026-09-18 at `c69865400`. This is source/config inspection and review of existing reports, not a new gameplay or device run.
 
+## September 20 planning update
+
+The source findings below remain the dated September 18 audit, not a fresh inventory. Since then two small Base Assault scenarios and four default EN/FA ARIA victories have been documented in [current evidence](../../AgentReports/AriaWatchPlay/skirmish-two-scenario-delivery.md). They do not implement the larger roster or certify other seeds/device sizes. The CC floating-ground defect remains open.
+
+The current expansion target and concrete proposed choices are in [BATTLE_CATALOG.md](BATTLE_CATALOG.md), [MAPS.md](MAPS.md), [MATCH_SETUP.md](MATCH_SETUP.md) and [AI_AND_ARIA.md](AI_AND_ARIA.md): 120 selectable scenarios (not 120 maps), five maps, four fair enemy difficulties and reusable planners. Re-audit the source constraints below during E0 instead of assuming every historical limitation remains unchanged.
+
 ## Existing evidence
 
 [Prototype completion](../Skirmish_Prototype/COMPLETION.md) records a working 1v1 Base Assault loop in both languages, 24 infantry plus one starting armored car per faction, real logistics, and played outcomes. Its 309 checks cover a historical build; later fixes have their own reports. None certify this expansion or hundreds of units. Device performance, independent-player comprehension, and pacing remain open.

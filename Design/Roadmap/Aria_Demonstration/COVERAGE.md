@@ -1,6 +1,10 @@
 # Game-mode, match and skill coverage
 
-Updated: 2026-09-19. **M1–M5 guided baseline wins are verified in EN/FA; broader campaign certification and Skirmish remain open.** See [implementation evidence](../../AgentReports/AriaWatchPlay/implementation-status.md). [PLAN.md](PLAN.md) defines the complete release; [DELIVERY.md](DELIVERY.md) owns implementation.
+Updated: 2026-09-20. **M1–M5 guided baseline and both Skirmish Base Assault scenarios have EN/FA Editor wins. Broader release certification remains open.** See [implementation evidence](../../AgentReports/AriaWatchPlay/implementation-status.md). [PLAN.md](PLAN.md) defines the complete release; [DELIVERY.md](DELIVERY.md) owns implementation.
+
+## Planned expanded Skirmish catalog
+
+The [Skirmish expansion catalog](../Skirmish_Expansion/BATTLE_CATALOG.md) now targets 120 selectable battles on five maps, with a path to 200. Its [CSV](../Skirmish_Expansion/SCENARIO_CATALOG.csv) lists Planned entries; none inherit current S01/S02 acceptance. [Expanded AI/ARIA rules](../Skirmish_Expansion/AI_AND_ARIA.md) require reusable goal/route/role reasoning, matching skill capabilities, multiple seeds and EN/FA evidence per scenario. Existing S01/S02 labels below identify only the current small snapshots. Operations design is deferred to the owner's next separate planning task.
 
 ## Source inventory
 
@@ -13,7 +17,8 @@ Reviewed at `c69865400`. Campaign catalog: `Assets/Game/Configs/Campaign/Campaig
 | C03 | `saga.ch01.m03.radar_warning` | Place a gate on the carriageway matching preview; use optional construction deliberately; deploy/Hold defenders; understand Scan and convoy warnings; explain waits and handle both threats | Guided EN/FA baseline passed; recovery/device gates open |
 | C04 | `saga.ch01.m04.airlift` | Select the four specialists despite overlapping vehicles; board/unload ground transport; land and board helicopter; defend landing zone and depart; verify passenger counts and timers | Guided EN/FA baseline passed; recovery/device gates open |
 | C05 | `saga.ch01.m05.breach_assault` | Select a capable force, attack the visible gate between walls, enter the compound, neutralize radar/guards, secure the archive for the visible duration | Guided EN/FA baseline passed; recovery/device gates open |
-| S01 | `skirmish.base_assault`; scenario `scenario.skirmish.desert_base_standard`; map `opmap.skirmish.desert_base_01` | Defend own base, manage economy and recruitment/delivery, select/build legally, attack enemy base, handle victory/defeat/draw | Development preview; full-match validation pending |
+| S01 | `skirmish.base_assault`; scenario `scenario.skirmish.desert_base_standard`; map `opmap.skirmish.desert_base_01` | Defend own base, manage economy and recruitment/delivery, select/build legally, attack enemy base, handle victory/defeat/draw | EditorVerified default EN/FA wins (5:38 / 5:20); development preview, wider release gates open |
+| S02 | `skirmish.base_assault`; scenario `scenario.skirmish.city_crossroads`; map `opmap.skirmish.city_crossroads` | Select second battlefield, recruit and defend, navigate the city approach, destroy enemy base, cancel input on result | EditorVerified default EN/FA wins (6:17 / 6:22); development preview, wider release gates open |
 | O00 | Operations dashboard/district tactical routes | A0 must identify which public actions actually launch a tactical match and enumerate its ruleset/map/objectives; split into one row per playable type | Discovery required |
 
 Campaign rows describe intended capabilities against the current mission goals; A0 must verify the exact current instruction sequence and prerequisites in a live run. They do not authorize adding obsolete Stop/Radar buttons or optional mandatory steps.

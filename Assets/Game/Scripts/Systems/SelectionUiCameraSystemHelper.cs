@@ -101,6 +101,10 @@ namespace Game.Runtime
             if (_cameraRequestSystem == null || !TryGetDefaultEntityManager(out EntityManager em))
                 return;
 
+            // A map tap or viewport drag is manual camera ownership. A pending
+            // delivery focus must not pull it back after the gesture completes.
+            _cameraRequestSystem.QueueClearSmoothFocusTarget(em);
+            _cameraRequestSystem.QueueClearSmoothPerspectiveTarget(em);
             _cameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
             ProcessCameraRequests(em);
         }

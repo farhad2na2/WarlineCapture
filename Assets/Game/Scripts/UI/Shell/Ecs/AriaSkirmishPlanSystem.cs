@@ -38,14 +38,14 @@ namespace Game.UI.Shell.Ecs
                 // Replacing it with individual cards splits an otherwise coordinated army.
                 if (plan.GroupStage == 3 && view.SelectionVisible)
                 {
-                    plan.Slot = 0; plan.Cycle++; plan.ObserveUntil = view.Time + (touch.TargetId == -20001 ? 12 : 3);
+                    plan.Slot = 0; plan.Cycle++; plan.ObserveUntil = view.Time + (touch.TargetId == -20006 ? 8 : touch.TargetId == -20001 ? 12 : 8);
                     plan.Intent = AriaSkirmishIntent.ObserveBattle;
                     return;
                 }
                 plan.Slot++;
                 while (plan.Slot < 5 && (view.AvailableSquads & (1 << plan.Slot)) == 0) plan.Slot++;
                 plan.ObserveUntil = view.Time + 1;
-                if (plan.Slot >= 5) { plan.Slot = 0; plan.Cycle++; plan.ObserveUntil = view.Time + (touch.TargetId == -20001 ? 12 : 3); }
+                if (plan.Slot >= 5) { plan.Slot = 0; plan.Cycle++; plan.ObserveUntil = view.Time + (touch.TargetId == -20006 ? 8 : touch.TargetId == -20001 ? 12 : 8); }
                 // Finish issuing the army's orders before returning to production.
                 // Only near-total losses justify interrupting the coordinated advance.
                 if (plan.Slot != 0 && view.Infantry < 4 && view.Time >= plan.NextRecruitAt)
@@ -56,14 +56,14 @@ namespace Game.UI.Shell.Ecs
                 // Keep the opening gesture stable while the hand moves to the map.
                 // Advancing the plan here would cancel that touch before it lands.
                 plan.Intent = plan.GroupStage == 7 ? AriaSkirmishIntent.GroupForce : AriaSkirmishIntent.FindThreat;
-                Target(plan.GroupStage == 7 ? view.FocusGroup : view.FocusThreat, false, ref output);
+                Target(plan.AdvanceNavigation != 0 ? view.FocusAdvance : plan.GroupStage == 7 ? view.FocusGroup : view.FocusThreat, false, ref output);
                 return;
             }
             if (view.MapOpen)
             {
-                var focus = plan.GroupStage == 7 ? view.FocusGroup : view.FocusThreat;
-                bool drag = plan.GroupStage == 7 ? view.FocusGroupDrag : view.FocusThreatDrag;
-                var dragEnd = plan.GroupStage == 7 ? view.FocusGroupDragEnd : view.FocusThreatDragEnd;
+                var focus = plan.AdvanceNavigation != 0 ? view.FocusAdvance : plan.GroupStage == 7 ? view.FocusGroup : view.FocusThreat;
+                bool drag = plan.AdvanceNavigation != 0 ? view.FocusAdvanceDrag : plan.GroupStage == 7 ? view.FocusGroupDrag : view.FocusThreatDrag;
+                var dragEnd = plan.AdvanceNavigation != 0 ? view.FocusAdvanceDragEnd : plan.GroupStage == 7 ? view.FocusGroupDragEnd : view.FocusThreatDragEnd;
                 if (plan.MapOpenedAt == 0) plan.MapOpenedAt = view.Time;
                 if (plan.MapNavigationStage == 1 && !focus.Available && view.Time < plan.MapOpenedAt + 5)
                     return; // The full map needs a presentation frame before its markers are clickable.
@@ -72,7 +72,7 @@ namespace Game.UI.Shell.Ecs
                     plan.MapNavigationStage = 2; plan.MapFocusActions = touch.Actions;
                 }
                 if (plan.MapNavigationStage == 2 &&
-                    !((touch.TargetId == -20004 || touch.TargetId == -20008) && touch.Actions > plan.MapFocusActions))
+                    !((touch.TargetId == -20004 || touch.TargetId == -20008 || touch.TargetId == -20011) && touch.Actions > plan.MapFocusActions))
                 {
                     plan.Intent = plan.GroupStage == 7 ? AriaSkirmishIntent.GroupForce : AriaSkirmishIntent.FindThreat;
                     Target(focus, false, ref output);
@@ -87,7 +87,7 @@ namespace Game.UI.Shell.Ecs
             if (plan.MapNavigationStage == 3)
             {
                 if (plan.GroupStage == 7) { plan.GroupStage = 6; plan.GroupReadyAt = view.Time + 2.5f; }
-                plan.MapNavigationStage = 0; plan.MapOpenedAt = 0;
+                plan.MapNavigationStage = 0; plan.MapOpenedAt = 0; plan.AdvanceNavigation = 0;
                 plan.MapNavigationReadyAt = view.Time + 6;
                 plan.ObserveUntil = view.Time + 1;
             }
@@ -102,13 +102,15 @@ namespace Game.UI.Shell.Ecs
             }
             bool finishingBase = view.SelectedCount > 0 && view.AssaultAtBase &&
                 view.EnemyHealth > 0 && view.EnemyHealth <= 400;
-            if (plan.GroupStage == 3 && view.SelectedCount < 8 && !finishingBase)
+            if (plan.AssaultStarted != 0 && plan.GroupStage >= 3 && view.Infantry < 8 && !finishingBase)
             {
                 // Zero survivors is also a depleted assault. Rebuild before selecting
                 // replacement cards, otherwise each delivery is sent out on its own.
                 plan.GroupStage = 0; plan.AssaultStarted = 0; plan.OpeningUntil = view.Time + 90;
                 plan.Intent = AriaSkirmishIntent.Recruit;
             }
+            else if (plan.GroupStage == 3 && view.SelectedCount < 8 && !finishingBase)
+            { plan.GroupStage = 4; plan.Intent = AriaSkirmishIntent.ObserveBattle; }
             if (plan.RecruitDrawerSeen != 0 && !view.DrawerOpen)
             {
                 bool unavailable = plan.NextRecruitAt > view.Time;
@@ -124,6 +126,14 @@ namespace Game.UI.Shell.Ecs
                 view.Time < plan.NextRecruitAt) return;
             if (view.AvailableSquads == 0) { plan.Intent = AriaSkirmishIntent.Recruit; plan.GroupStage = 0; }
             bool groupStillFighting = plan.GroupStage == 3 && view.SelectionVisible && (view.SelectedCount >= 8 || finishingBase);
+            if (groupStillFighting && !finishingBase && view.Infantry < 20 &&
+                view.Time >= plan.NextRecruitAt && plan.Intent == AriaSkirmishIntent.ObserveBattle)
+            {
+                // Keep production working while the current army fights. Squad cards
+                // include the arrivals; do not wait for the selected force to be wiped out.
+                plan.GroupStage = 4; plan.RecruitBurstRemaining = 1;
+                plan.Intent = AriaSkirmishIntent.Recruit; groupStillFighting = false;
+            }
             if (!groupStillFighting && view.Infantry < 24 && view.Time >= plan.NextRecruitAt &&
                 plan.Intent is AriaSkirmishIntent.Recruit or AriaSkirmishIntent.ObserveBattle)
             {
@@ -141,8 +151,7 @@ namespace Game.UI.Shell.Ecs
             if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return; }
             if (plan.AssaultStarted == 0)
             {
-                // Idle defenders can approach and retaliate normally. A blanket Hold
-                // leaves them unable to answer enemies firing from longer range.
+                // Allow normal defensive engagement while recruitment finishes.
                 plan.Intent = AriaSkirmishIntent.ObserveBattle;
                 return;
             }
@@ -174,7 +183,13 @@ namespace Game.UI.Shell.Ecs
                     }
                     if (plan.GroupStage == 6 && view.Time < plan.GroupReadyAt) return;
                     if (plan.GroupStage == 2 && touch.TargetId == -20005 && touch.Actions > plan.GroupAction && view.SelectionVisible)
-                    { plan.GroupStage = 3; plan.RegroupAt = view.Time + 40; }
+                    {
+                        // A clipped rectangle can select only the visible half of an army.
+                        // In that case order every squad card, including the off-screen troops,
+                        // instead of treating a small selection as the whole assault.
+                        plan.GroupStage = view.SelectedCount >= UnityEngine.Mathf.Max(8, UnityEngine.Mathf.CeilToInt(view.Infantry * .75f)) ? 3 : 4;
+                        plan.RegroupAt = view.Time + 40;
+                    }
                     else if (HasSelectionRectangle(view))
                     {
                         // Select only arms rectangle selection; it never selects a squad.
@@ -208,11 +223,23 @@ namespace Game.UI.Shell.Ecs
                 plan.TargetPending = 1; plan.ActionsAtTarget = touch.Actions;
                 return;
             }
-            if (view.AdvancePreferred && !view.ThreatNearForce &&
-                (view.AdvanceGround.Available || !view.EnemyBase.Available))
+            // Attack Move handles enemies along the route. Retain the approach goal
+            // instead of repeatedly pulling the army toward incidental structures.
+            if (view.AdvancePreferred &&
+                (view.AdvanceGround.Available || view.FocusAdvance.Available || !view.EnemyBase.Available))
             {
                 if (!view.AdvanceGround.Available)
-                { plan.Intent = AriaSkirmishIntent.FindBase; Target(view.FocusEnemy, false, ref output); return; }
+                {
+                    plan.Intent = AriaSkirmishIntent.FindBase;
+                    if (view.FocusAdvance.Available)
+                    {
+                        if (view.FocusAdvance.Id == -20010)
+                        { plan.AdvanceNavigation = 1; plan.MapNavigationStage = 1; }
+                        Target(view.FocusAdvance, false, ref output);
+                    }
+                    else Target(view.FocusEnemy, false, ref output);
+                    return;
+                }
                 if (!view.AttackMode)
                 { plan.Intent = AriaSkirmishIntent.Attack; Target(view.Attack, false, ref output); return; }
                 plan.Intent = AriaSkirmishIntent.Advance;
@@ -236,13 +263,16 @@ namespace Game.UI.Shell.Ecs
             if (!view.AttackMode)
             { plan.Intent = AriaSkirmishIntent.Attack; Target(view.Attack, false, ref output); return; }
             plan.Intent = threat ? AriaSkirmishIntent.TargetThreat : AriaSkirmishIntent.TargetBase;
-            Target(threat ? view.Threat : view.EnemyBase, true, ref output);
+            Target(threat ? (view.ThreatGround.Available ? view.ThreatGround : view.Threat) : view.EnemyBase, true, ref output);
             plan.ActionsAtTarget = touch.Actions; plan.TargetPending = 1;
         }
         private static bool OpeningDefense(in AriaSkirmishObservation view, ref AriaSkirmishPlanComponent plan,
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
             if (plan.DefenseStage == 4) return false;
+            // Recruit before opening construction: the initial force must survive
+            // the first raid while the player is occupied with placement.
+            if (plan.DefenseStage == 0 && view.Infantry < 16) return false;
             if (plan.DefenseStage == 0)
             {
                 // Only attempt construction when its normal visible controls exist.

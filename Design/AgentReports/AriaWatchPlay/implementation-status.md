@@ -1,8 +1,8 @@
 ## Current Skirmish baseline — 2026-09-20
 
-The current touch-only planner completed S01 in Farsi (4:59, player base 1200, enemy base 0) and English (9:55, player base 1200, enemy base 0). The English match exercised recruitment and regrouping after the first assault. Both result screens were inspected; terminal input cancellation returned ARIA to Manual. Replay required fresh consent. A physical takeover stopped ARIA with no pressed/scheduled contact, and the player could cancel the in-progress placement afterward. Focused checks: 78 Skirmish planning, 14 shared decisions, 18 touch input.
+Both selectable Base Assault scenarios now have autonomous Editor victories in English and Farsi: S1 EN 5:38 / FA 5:20; S2 EN 6:17 / FA 6:22. Default seed 104729, normal rules, isolated saves, approved API start and shipping touch-only gameplay. All four results saved and cancelled terminal input. The final Farsi S1 result was state-verified; the other three victory screens were also visually reviewed.
 
-Evidence, including the earlier failed Farsi draw and per-revision source hashes: `skirmish-baseline-results.json`. These are Editor baseline results, not the roadmap's multi-seed/device/player-study certification. Scenario 2 is now being implemented as a separate north/south Base Assault battlefield; its setup, terrain and autonomous matches remain to be validated. Historical notes below describe earlier revisions and must not be read as the latest status.
+See [delivery and limitations](skirmish-two-scenario-delivery.md) and [per-run evidence](skirmish-two-scenario-results.json). Wider seed/device/player-study certification remains open; the development preview gate is retained. The older baseline JSON and historical notes below describe prior revisions.
 
 # Watch ARIA Play — implementation checkpoint
 

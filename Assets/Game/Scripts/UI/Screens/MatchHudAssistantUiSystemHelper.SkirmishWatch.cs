@@ -10,7 +10,8 @@ namespace Game.UI.Runtime
         private readonly float[] watchFrontDistances = new float[4];
         private SkirmishMatchView watchSkirmish;
         private Vector3 watchThreatPosition;
-        private bool watchThreatTracked;
+        private bool watchThreatTracked, watchFlankReached;
+        private int watchScenarioIndex;
         private MatchHudSquadTrayView watchSquads;
         private BuildDrawerView watchBuild;
         private BuildPlacementConfirmationBarView watchPlacement;
@@ -27,7 +28,8 @@ namespace Game.UI.Runtime
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {
             if (!UiShellRuntimeGateway.ReadAriaPlay().Active)
-            { watchThreatTracked = false; UiShellRuntimeGateway.PublishAriaSkirmishObservation(default); return; }
+            { watchThreatTracked = false; watchFlankReached = false; UiShellRuntimeGateway.PublishAriaSkirmishObservation(default); return; }
+            watchScenarioIndex = model.ScenarioIndex;
             if (watchSkirmish == null) watchSkirmish = Object.FindAnyObjectByType<SkirmishMatchView>();
             if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (watchBuild == null) watchBuild = Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
@@ -111,7 +113,7 @@ namespace Game.UI.Runtime
         }
         private void ObserveAdvanceGround(ref AriaSkirmishObservation view)
         {
-            if (view.MapOpen || view.DrawerOpen || watchMap == null || watchSkirmish == null ||
+            if (view.DrawerOpen || watchMap == null || watchSkirmish == null ||
                 !watchSkirmish.EnemyBaseObjectiveAlive || Camera.main == null) return;
             // Use the base objective and contacts already presented on the player's map.
             // A point on its approach lets ordinary Attack Move fight the route's defenders.
@@ -122,23 +124,98 @@ namespace Game.UI.Runtime
                 if (ally.Model.Allegiance != MatchHudMinimapMarkerAllegiance.Player) continue;
                 float d = (ally.Model.Position - objective).sqrMagnitude;
                 if (d < 45 * 45) close++;
-                if (d < 120 * 120) assault++;
+                if (d < 50 * 50) assault++;
                 if (d < distance) { distance = d; nearest = ally.Model.Position; }
             }
             int required = view.EnemyHealth > 0 && view.EnemyHealth <= 400
                 ? 1 : Mathf.Max(4, Mathf.Min(8, view.SelectedCount));
             view.AssaultAtBase = assault >= required;
             view.AdvancePreferred = close < 4;
-            if (!view.AdvancePreferred) return;
+            if (watchScenarioIndex == 1)
+            {
+                var forward = objective - watchSkirmish.PlayerBaseObjectivePosition; forward.y = 0; forward.Normalize();
+                var side = new Vector3(-forward.z, 0, forward.x);
+                var flank = objective - forward * 50 + side * 70;
+                int arrived = 0;
+                foreach (var ally in watchMap.PresentedContacts)
+                    if (ally.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Player &&
+                        (ally.Model.Position - flank).sqrMagnitude < 35 * 35) arrived++;
+                if (arrived >= 4) watchFlankReached = true;
+                var goal = watchFlankReached ? objective + side * 20 : flank;
+                view.AdvancePreferred = !view.AssaultAtBase;
+                // The labelled base control provides an exact, visible camera action
+                // for the final approach; reserve map navigation for the remote flank.
+                if (watchFlankReached) view.FocusAdvance = view.FocusEnemy;
+                else ObserveAdvanceMapFocus(goal, ref view);
+                if (!view.MapOpen)
+                {
+                    var point = Camera.main.WorldToScreenPoint(goal);
+                    view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = point,
+                        Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20006, true) };
+                }
+                return;
+            }
+            if (!view.AdvancePreferred || view.MapOpen) return;
             // The two labelled base objectives remain public when the camera leaves
             // the army. Keep a usable approach instead of repeatedly focusing the base.
             if (distance == float.MaxValue) nearest = watchSkirmish.PlayerBaseObjectivePosition;
             var direction = nearest - objective; direction.y = 0;
+            // Preserve the first battlefield's verified clear base approach. Wider
+            // offsets project behind its neutral ruins and become rejected attacks.
             var ground = objective + direction.normalized * 25;
-            var point = Camera.main.WorldToScreenPoint(ground);
-            view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = point,
-                Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20006, true) };
+            var screen = Camera.main.WorldToScreenPoint(ground);
+            view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = screen,
+                Available = screen.z > 0 && Screen.safeArea.Contains(screen) && WatchTargetIsReachable(screen, -20006, true) };
         }
+        private void ObserveAdvanceMapFocus(Vector3 goal, ref AriaSkirmishObservation view)
+        {
+            Vector2 point;
+            var rect = watchMap.MapRect;
+            var camera = ResolveEventCamera(watchMap.MapImage);
+            if (view.MapOpen)
+            {
+                if (!watchMap.TryGetPresentedMapPoint(goal, camera, out point)) return;
+            }
+            else point = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            watchRaycast.position = point; watchHits.Clear();
+            UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
+            bool reachable = watchHits.Count > 0 && watchHits[0].gameObject.GetComponentInParent<MatchHudMinimapView>() == watchMap;
+            view.FocusAdvance = new AriaTouchTarget { Id = view.MapOpen ? -20011 : -20010, Position = point, Available = reachable };
+            if (view.MapOpen && reachable && watchMap.ViewportRect != null &&
+                RectTransformUtility.RectangleContainsScreenPoint(watchMap.ViewportRect, point, camera))
+            {
+                var viewport = watchMap.ViewportRect;
+                var start = RectTransformUtility.WorldToScreenPoint(camera, viewport.TransformPoint(viewport.rect.center));
+                view.FocusAdvance.Position = start; view.FocusAdvanceDrag = true;
+                view.FocusAdvanceDragEnd = (start - point).sqrMagnitude > 25 ? point : point + Vector2.up * 12;
+            }
+        }
+        private AriaTouchTarget ObserveClearAttackGround(Vector3 objective, Vector3 approach, int id, float distance = 55)
+        {
+            approach.y = 0;
+            if (approach.sqrMagnitude < 1) return default;
+            approach.Normalize();
+            var side = Vector3.Cross(Vector3.up, approach);
+            // Ground taps must stay away from the visible contacts. Otherwise the
+            // normal hit test turns Attack Move into a direct building attack.
+            for (int ring = 0; ring < 3; ring++)
+            for (int lane = 0; lane < 3; lane++)
+            {
+                var ground = objective + approach * (distance + ring * 15) + side * (lane == 0 ? 0 : lane == 1 ? 35 : -35);
+                bool clear = true;
+                foreach (var contact in watchMap.PresentedContacts)
+                {
+                    float clearance = contact.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Enemy ? 15 : 8;
+                    if ((contact.Model.Position - ground).sqrMagnitude < clearance * clearance) { clear = false; break; }
+                }
+                if (!clear) continue;
+                var point = Camera.main.WorldToScreenPoint(ground);
+                if (point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, id, true))
+                    return new AriaTouchTarget { Id = id, Position = point, Available = true };
+            }
+            return default;
+        }
+
         private void ObserveGroupRectangle(ref AriaSkirmishObservation view)
         {
             if (watchMap == null || view.MapOpen || view.DrawerOpen || Camera.main == null) return;
@@ -230,6 +307,13 @@ namespace Game.UI.Runtime
             if (watchThreatTracked) watchThreatPosition = chosen.Model.Position;
             if (chosen.Marker == null || watchRaycast == null || UnityEngine.EventSystems.EventSystem.current == null) return;
             var mapPoint = RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(watchMap.MapImage), chosen.Marker.position);
+            // The small map opens from a fixed visible surface, not a contact that
+            // can leave its clipped bounds during the hand's approach.
+            if (!view.MapOpen)
+            {
+                var mapRect = watchMap.MapImage.rectTransform;
+                mapPoint = RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(watchMap.MapImage), mapRect.TransformPoint(mapRect.rect.center));
+            }
             watchRaycast.position = mapPoint;
             watchHits.Clear(); UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
             bool mapReachable = watchHits.Count > 0 && watchHits[0].gameObject.GetComponentInParent<MatchHudMinimapView>() == watchMap;
@@ -249,6 +333,7 @@ namespace Game.UI.Runtime
             view.ThreatNearForce = (chosen.Model.Position - armyCenter).sqrMagnitude <= 60 * 60;
             var point = Camera.main.WorldToScreenPoint(chosen.Model.Position + Vector3.up);
             bool onScreen = point.z > 0 && point.x > 0 && point.y > 0 && point.x < Screen.width && point.y < Screen.height;
+            view.ThreatGround = ObserveClearAttackGround(chosen.Model.Position, armyCenter - chosen.Model.Position, -20006, 35);
             view.Threat = new AriaTouchTarget { Id = -20002, Position = point, Available = onScreen && WatchTargetIsReachable(point, -20002, true) };
         }
     }

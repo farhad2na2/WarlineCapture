@@ -38,6 +38,11 @@ namespace Game.UI.Runtime
             }
             if (points == 0) return;
             mapPoint /= points;
+            if (!view.MapOpen)
+            {
+                var mapRect = watchMap.MapImage.rectTransform;
+                mapPoint = RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(watchMap.MapImage), mapRect.TransformPoint(mapRect.rect.center));
+            }
             watchRaycast.position = mapPoint; watchHits.Clear();
             UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
             bool reachable = watchHits.Count > 0 && watchHits[0].gameObject.GetComponentInParent<MatchHudMinimapView>() == watchMap;

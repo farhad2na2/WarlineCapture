@@ -6,6 +6,41 @@ using UnityEngine;
 public sealed class BuildingPlacementCameraHandoffTests
 {
     [Test]
+    public void MapFocusCancelsDeliveryTransitionAndRetainsTheRequestedCenter()
+    {
+        var previous = World.DefaultGameObjectInjectionWorld;
+        var go = new GameObject("MapFocusOwnershipTest");
+        using var world = new World("MapFocusOwnershipTest");
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            var camera = go.AddComponent<Camera>();
+            camera.transform.SetPositionAndRotation(new Vector3(1015, 32, 670), Quaternion.Euler(40, 10, 0));
+            camera.fieldOfView = 36;
+            var system = world.GetOrCreateSystemManaged<RtsCameraSystem>();
+            var requests = world.GetOrCreateSystemManaged<RtsCameraRequestSystem>();
+            var helper = new SelectionUiCameraSystemHelper(system, requests);
+            helper.Init(null, camera);
+            system.SetSmoothFocusTarget(new Vector3(1027, 0, 726), true);
+            system.SetSmoothPerspectiveTarget(40, 40, 10, 36, 1, true);
+            var destination = new Vector3(1185, 0, 434);
+            helper.MoveCameraGroundCenterTo(destination);
+            Assert.That(system.HasSmoothFocusTarget, Is.False);
+            Assert.That(system.HasSmoothPerspectiveTarget, Is.False);
+            Assert.That(Vector3.Distance(system.GetCameraGroundCenterWorld(camera), destination), Is.LessThan(.01f));
+            // A later smooth-update tick cannot restore the previous delivery focus.
+            requests.QueueUpdateSmoothFocus(world.EntityManager, 1);
+            requests.ProcessPendingRequests(world.EntityManager, system, camera);
+            Assert.That(Vector3.Distance(system.GetCameraGroundCenterWorld(camera), destination), Is.LessThan(.01f));
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previous;
+            Object.DestroyImmediate(go);
+        }
+    }
+
+    [Test]
     public void RemotePlacementCentersInPlayableViewportAtDifferentCameraPoses()
     {
         var go = new GameObject("PlacementCameraTest");

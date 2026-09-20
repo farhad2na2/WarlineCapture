@@ -6,8 +6,8 @@ namespace Game.UI.Shell.Contracts.Ecs
     public struct AriaSkirmishPlanComponent : IComponentData
     {
         public AriaSkirmishIntent Intent;
-        public int DefenseSite, DefenseSiteAction, DefenseSitePending, DefensePositioned, DefenseStage, DefenseActions, DefensesPlaced, Slot, ActionsAtTarget, Cycle, RecruitBurstRemaining, Infantry, MapFocusActions, GroupStage, GroupAction, RecruitAction, MapNavigationStage, DefendedSlots, HoldAction, OpeningSquads;
+        public int DefenseSite, DefenseSiteAction, DefenseSitePending, DefensePositioned, DefenseStage, DefenseActions, DefensesPlaced, Slot, ActionsAtTarget, Cycle, RecruitBurstRemaining, Infantry, MapFocusActions, GroupStage, GroupAction, RecruitAction, MapNavigationStage, OpeningSquads;
         public float DefenseDeadline, DefenseReadyAt, RecruitUnavailableAt, NextRecruitAt, ObserveUntil, LastProgressAt, EnemyHealth, PlayerHealth, ForceHealth, RegroupAt, GroupReadyAt, OpeningUntil, MapNavigationReadyAt, MapOpenedAt;
-        public byte TargetPending, RecruitDrawerSeen, AssaultStarted, HoldPending;
+        public byte AdvanceNavigation, TargetPending, RecruitDrawerSeen, AssaultStarted;
     }
 }

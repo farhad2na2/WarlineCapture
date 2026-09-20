@@ -524,6 +524,7 @@ namespace Game.UI.Runtime
 
             Vector2 parentTopLeft = new(markerParent.rect.xMin, markerParent.rect.yMax);
             int markerIndex = 0;
+            _view.PresentedProjection = grid;
             _view.PresentedContacts.Clear();
             _markerScratch.Clear();
             _minimapDataSource?.GetMarkers(ToAreaModel(grid), _markerScratch);

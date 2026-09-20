@@ -1,13 +1,23 @@
 # Skirmish expansion: combined arms and large battles
 
-Date: 2026-09-18. Status: proposed delivery plan; implementation has not started.
+Updated: 2026-09-20. Status: documented expansion target; large-roster/120-scenario implementation has not started. The separate two-scenario small baseline has EN/FA Editor victories; that does not certify this expansion.
 Source reviewed: `c69865400` on `codex/m03-radar-warning`.
 
 This plan answers the request to use the wider roster and fight battles involving hundreds of units. It follows the small [Base Assault prototype](../Skirmish_Prototype/COMPLETION.md) and changes the [roadmap](../README.md) priority: prove a richer, scalable Skirmish before investing in progression or more game modes. Historical prototype acceptance is not acceptance of this expansion.
 
+Detailed catalog: [120 battles and path to 200](BATTLE_CATALOG.md), [five map briefs](MAPS.md), [difficulty/starting packages/economy](MATCH_SETUP.md), [enemy AI and ARIA](AI_AND_ARIA.md), [all 120 candidate IDs](SCENARIO_CATALOG.csv). These supplements refine this plan; their explicit catalog/setup decisions supersede earlier conflicting proposals. Numerical costs/timings remain balance-test inputs. Operations planning is next and outside this task.
+
 Companions: [source audit](BASELINE.md), [delivery packages](DELIVERY.md), [acceptance and performance gates](ACCEPTANCE.md), [unit unlocks and upgrades](UNLOCKS_AND_UPGRADES.md).
 
 The unlock/upgrade direction was accepted for documentation on 2026-09-18. Later that day the owner requested the [Watch ARIA play plan](../Aria_Demonstration/PLAN.md) before expansion implementation. This expansion remains unstarted. Its new group, upgrade, air and objective mechanics must extend ARIA's shared skills and coverage as each package becomes playable.
+
+## Catalog target clarified with the owner
+
+The requested scale is **100–200 selectable battles on a few maps**, not twelve battles and not merely hundreds of units. Target **120 accepted scenarios on five maps**, with a planned extension to 200. The initial matrix is five maps × four objectives × three army configurations × two starting packages. Seeds, four difficulty levels and army sizes are replay options, not extra scenarios. Each combination must earn acceptance through distinct tactical decisions and complete systems; the matrix alone does not make content playable.
+
+The five maps are Desert Base, City Crossroads, Mountain Pass, Industrial Basin and Airfield Plains. Objectives are Base Assault, Frontline Control, Breakthrough and Convoy Escort. Army profiles are Ground Maneuver, Air Mobile and Combined Arms. Starts are Field Base and Established Base. Forty of the 120 candidates use the complete Combined Arms roster. Four difficulty levels are Recruit, Regular, Veteran and Commander, with shared resources/stats and different legal strategic behavior. See the companion specifications for exact starts, outcome rules, caps, routes and acceptance.
+
+Two existing introductory Base Assaults evolve into the first map equivalents; preserve their old snapshots for regression, not extra catalog count. The floating terrain shelf reported near the City Crossroads base remains an explicit open map defect. Current wins must not be presented as complete visual QA.
 
 ## 1. Recommended experience
 
@@ -15,7 +25,7 @@ Build a mobile combined-arms RTS: recruit specialist squads, deploy armor and ai
 
 The first expansion is one player versus one AI. The intended main scale is **about 200–240 simultaneously active combat units across both sides**, with a **300–350-unit large-battle preset** after performance validation. These are proposed targets, not demonstrated capacity. Later 2v2 support divides an already tested total battle budget among four factions before attempting a bigger total.
 
-Keep the existing Base Assault as the first expanded ruleset. Then add **Frontline Control**, which gives large armies several places to fight. A Sandbox follows for trying every supported unit and custom army composition. Persistent district consequences remain an Operations responsibility.
+Keep Base Assault as the first expanded ruleset, then add **Frontline Control**, **Breakthrough** and **Convoy Escort** with reusable objective policies. A Sandbox follows for trying every supported unit and custom army composition. Persistent district consequences remain an Operations responsibility.
 
 ## 2. What “hundreds of units” means
 
@@ -66,6 +76,8 @@ Desired rhythm, initially tested in Base Assault:
 4. **Commit:** combine infantry, armor, and supporting fire, or raid supply while a smaller group holds the front.
 5. **Resolve:** finish a visible objective, recover from a failed push, or surrender. Clear progress prevents unexplained waiting.
 
+Complete Breakthrough/Convoy rules, scenario-role asymmetry and all deadline values are defined in [BATTLE_CATALOG.md](BATTLE_CATALOG.md) and [MATCH_SETUP.md](MATCH_SETUP.md).
+
 No scripted requirement to press Hold then Scan, compulsory Continue chain, or camera lock during deliveries. A contextual hint may introduce a new control once; player decisions drive the match.
 
 ### Objectives
@@ -80,7 +92,7 @@ Only dismounted infantry captures. Proposed capture duration is eight unconteste
 
 ## 5. Maps and construction
 
-Reuse the desert environment with a **new Skirmish scenario layout**, preserving campaign anchors and the small preset. A larger match needs usable land and routes, not just wider camera bounds.
+Author the five battlefields in [MAPS.md](MAPS.md), beginning with the two existing regions and preserving campaign anchors and small regression presets. A larger match needs usable land and routes, not just wider camera bounds.
 
 - Two expandable bases, clear staging areas, separate production exits, suitable landing pads, and runway space for enabled aircraft.
 - At least three connected approaches: direct, flank, and a second contestable route. Measure width and travel time for the largest allowed vehicle.
@@ -89,7 +101,7 @@ Reuse the desert environment with a **new Skirmish scenario layout**, preserving
 - Gates match the wall opening or permitted carriageway, retain the preview's transform, and cannot silently relocate. Capture nodes and producer exits cannot be sealed by friendly construction.
 - Define whether a destroyed footprint is immediately clear, occupied by a traversable wreck, or blocked until a visible cleanup action; never leave an unexplained invisible blocker.
 
-Target first ground contact around 45–90 seconds of purposeful travel in Standard, with a flank meaningfully longer but still useful. Measure this using actual units, not world distance alone. Add a second authored map only after the first supports several approaches.
+Target first ground contact around 45–90 seconds of purposeful travel in Standard, with a flank meaningfully longer but still useful. Measure this using actual units, not world distance alone. Prove multiple approaches on the two existing map regions before authoring the remaining three. Each map ultimately supplies 24 accepted scenario combinations.
 
 ## 6. Mobile army command
 
@@ -115,7 +127,7 @@ Before balance claims, calculate time to first vehicle, first counter, first air
 
 Protect a recoverable core economy: the starting backbone operates immediately; additional income requires vulnerable expansion. Test supply loss, rebuilding, blocked deliveries, fuel shortage, and capacity reservations. No invisible free resource pulses or emergency enemy spawns.
 
-AI needs a base reserve, field groups, reactive counter-production, scouting, two-route pressure, transport use, and retreat/replacement. Use existing AI planning/order systems with mode configuration. Evaluate strategic choices at a bounded cadence; preserve responsiveness for nearby combat and immediate player commands. AI follows the same costs, caps, target visibility, transport rules, and loss accounting. Difficulty changes composition, timing, and coordination; any economy handicap must be explicit in setup.
+The shared enemy/ARIA planning boundaries, four objective policies, difficulty behavior and generalization tests are specified in [AI_AND_ARIA.md](AI_AND_ARIA.md). AI needs a base reserve, field groups, reactive counter-production, scouting, two-route pressure, transport use, and retreat/replacement. Use existing AI planning/order systems with mode configuration. Evaluate strategic choices at a bounded cadence; preserve responsiveness for nearby combat and immediate player commands. AI follows the same costs, caps, target visibility, transport rules, and loss accounting. Difficulty changes composition, timing, and coordination; any economy handicap must be explicit in setup.
 
 ## 8. Recon and full air warfare
 

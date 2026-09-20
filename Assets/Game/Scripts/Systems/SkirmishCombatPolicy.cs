@@ -89,6 +89,16 @@ namespace Game.Runtime
                     attack.Damage=tower?preset.watchtowerDamage:rifle?preset.rifleDamage:preset.armoredCarDamage;
                     attack.CooldownSeconds=tower?preset.watchtowerCooldown:rifle?preset.rifleCooldown:preset.armoredCarCooldown;
                     em.SetComponentData(entity,attack);
+                    // Buildings fire through this component, not UnitAttack. Keep the
+                    // actual weapon consistent with the skirmish roster for both sides.
+                    if(tower && em.HasComponent<BuildingDefenseWeapon>(entity))
+                    {
+                        var weapon=em.GetComponentData<BuildingDefenseWeapon>(entity);
+                        weapon.Range=attack.Range;
+                        weapon.Damage=attack.Damage;
+                        weapon.CooldownSeconds=attack.CooldownSeconds;
+                        em.SetComponentData(entity,weapon);
+                    }
                     if(em.HasComponent<UnitCombat>(entity))
                     {
                         var combat=em.GetComponentData<UnitCombat>(entity);

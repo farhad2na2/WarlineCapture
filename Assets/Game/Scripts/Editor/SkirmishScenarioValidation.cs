@@ -38,6 +38,24 @@ namespace Game.Editor
             Check(Mathf.Abs(a.y-b.y) > 300 && Mathf.Abs(a.x-b.x) < 100, "Second battlefield must use its north/south approach.");
             Check(first.rifleDamage == second.rifleDamage && first.armoredCarDamage == second.armoredCarDamage &&
                 first.reinforcementInfantryTarget == second.reinforcementInfantryTarget, "Shared combat difficulty must be preserved.");
+            using (var world = new Unity.Entities.World("Skirmish roster weapon validation"))
+            {
+                var em = world.EntityManager;
+                var match = new SkirmishMatchState { ScenarioIndex = 1 };
+                em.SetComponentData(em.CreateEntity(typeof(SkirmishMatchState)), match);
+                for (byte faction = 1; faction <= 2; faction++)
+                {
+                    var tower = em.CreateEntity(typeof(Faction), typeof(UnitSourcePrefabKey), typeof(UnitAttack), typeof(BuildingDefenseWeapon));
+                    em.SetComponentData(tower, new Faction { Id = faction });
+                    em.SetComponentData(tower, new UnitSourcePrefabKey { Value = "Building_GuardTower" });
+                    em.SetComponentData(tower, new BuildingDefenseWeapon { Range = 100, Damage = 99, CooldownSeconds = .3f, MaxConcurrentAttacks = 4, TraceWidth = .25f });
+                    SkirmishCombatPolicy.ApplyRoster(em, match);
+                    var weapon = em.GetComponentData<BuildingDefenseWeapon>(tower);
+                    Check(weapon.Range == second.watchtowerRange && weapon.Damage == second.watchtowerDamage &&
+                        weapon.CooldownSeconds == second.watchtowerCooldown, "Both factions must fire the configured skirmish tower weapon.");
+                    Check(weapon.MaxConcurrentAttacks == 4 && weapon.TraceWidth == .25f, "Roster tuning must preserve weapon presentation and slots.");
+                }
+            }
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
             Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario1") != null &&
                 prefab.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario2") != null, "Two visible scenario controls required.");

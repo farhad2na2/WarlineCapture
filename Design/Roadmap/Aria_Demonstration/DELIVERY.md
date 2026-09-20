@@ -1,6 +1,6 @@
 # ARIA implementation work packages
 
-Updated: 2026-09-18. Every implementation checklist item below is **pending**. Concept, mockup, source review and this planning package are complete; runtime and gameplay certification have not started.
+Updated: 2026-09-20. M1–M5 guided and both Skirmish Base Assault scenarios have EN/FA Editor baseline victories. See [current evidence](../../AgentReports/AriaWatchPlay/implementation-status.md). The checklists below describe the full release contract; baseline wins do not close their broader Operations, recovery, multi-seed, device and player-study requirements.
 
 ## Dependency order
 

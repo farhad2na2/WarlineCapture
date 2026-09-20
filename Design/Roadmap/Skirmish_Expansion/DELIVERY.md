@@ -1,27 +1,32 @@
 # Delivery packages
 
-Status on 2026-09-18: all implementation packages below are **planned**, not implemented or acceptance-tested. The planning/source-review work is complete. The owner accepted the [unlock and upgrade direction](UNLOCKS_AND_UPGRADES.md) for documentation and will provide the next instruction. Follow [PLAN.md](PLAN.md) and close each package against [ACCEPTANCE.md](ACCEPTANCE.md).
+Updated 2026-09-20: expansion packages remain **planned**, not implemented or acceptance-tested. Two small Base Assaults have separate EN/FA Editor evidence; they are not the expansion. The planning/source-review work is complete. The owner accepted the [unlock and upgrade direction](UNLOCKS_AND_UPGRADES.md) for documentation and will provide the next instruction. Follow [PLAN.md](PLAN.md) and close each package against [ACCEPTANCE.md](ACCEPTANCE.md).
 
 Maintain one issue ledger: `ID | reproduction/seed | expected | actual | severity | owner | narrow fix | impacted modes | evidence | status`. A screenshot, successful method call, or green unit test cannot alone close a player interaction bug.
+
+## Catalog and scope ownership
+
+Deliver the [120-scenario catalog](BATTLE_CATALOG.md), [five maps](MAPS.md), [setup packages](MATCH_SETUP.md) and [AI/ARIA behavior](AI_AND_ARIA.md). The catalog CSV is the planned inventory; add runtime content hashes and evidence when implementing. Operations is the next separate design task. Do not expand its gameplay or progression during this package.
 
 ## Sequence and review gates
 
 | Package | Prerequisite | Concrete deliverable | Required review decision |
 |---|---|---|---|
 | E0 — baseline and scale probe | None | Reproduce present placement/selection/recruitment paths; record all roster dispositions; deterministic scenario inputs for 50/100/200/350/500-entity probes; exact-build device baseline | Agree the first supported device tier, worst cost, and minimal ground roster. Fix blockers before expanding. |
-| E1 — match definitions and roster | E0 | Versioned preset/roster definitions, typed roles/counters, generic population reservation, producer mapping, five differentiated infantry roles and car/APC/tank | Complete production → delivery → selection → combat → death for each entry, with correct costs/refunds. |
+| E1 — match definitions and roster | E0 | Versioned scenario/map/objective/army/start/difficulty definitions, 120 stable catalog IDs and profile expansion; versioned roster definitions, typed roles/counters, generic population reservation, producer mapping, five differentiated infantry roles and car/APC/tank | Complete production → delivery → selection → combat → death for each entry, with correct costs/refunds. |
 | E2 — army control and movement | E1 | Stable squads/groups, large touch cards and Army panel, multi-select, rally points, compatible mixed orders, formation/traffic behavior | Move and fight a roughly 100-unit two-sided ground battle through real mobile controls; no stranded squads or precision-tap requirement. |
 | E3 — Standard ground battle | E2 | Expanded authored layout, sufficient supply throughput, counter-producing AI, ground Base Assault at Standard size | Full EN/FA matches with several viable compositions; understandable production/shortages; target-device Standard gate. |
 | E4 — visibility, helicopters and anti-air | E3 | Shared intel/target visibility, recon/Scan integration, helicopters, anti-air, batch transport and fuel/return behavior | Ground counter available before hostile air; no hidden-target leaks; full mixed match and 200-entity engineering gate. |
-| E5 — War and Frontline Control | E4 | War economy/cap/map validation, three-zone objective and tickets, multi-front AI, result/replay and long-session checkpoint package | Real 200-plus-unit scenario and sustainable device play; players can explain why they win and where to act; recovery accepted before making War the default. |
+| E5 — War and shared objectives | E4 | War economy/cap/map validation, Frontline tickets/capture, Breakthrough corridor/evacuation, Convoy Escort survival/delivery, reusable AI/ARIA objective policies, result/replay and checkpoint package | Real 200-plus-unit scenario and sustainable device play; players can explain why they win and where to act; recovery accepted before making War the default. |
 | E6 — advanced roster and Large War | E5 | Jets, siege, transport planes, remaining suitable variants/roles and larger layout | Every catalog entry has a final disposition; up to 340-unit preset passes supported-device and 30-minute tests. |
-| E7 — optional teams and Sandbox | E5; E6 for Large War size | Generalized team relations/objectives, 2v2 AI option within certified total cap, army Sandbox | No friendly targeting, faction resource leakage, asymmetric knowledge, or misleading unsupported setup choices. |
+| E7 — battle library and Sandbox | E5; E6 for full roster | Five map collections, filters/briefings, 120 manifest entries, Custom snapshots, Sandbox, completion/replay and migration | No unsupported combinations, hidden resource advantages, invalid side roles or falsely credited completion. Optional teams deferred beyond this 1v1 catalog. |
+| E8 — catalog acceptance | E0–E7 | All five map audits, 120 distinct accepted entries, four enemy difficulty levels, ARIA per-entry coverage and device/learning evidence | Each released entry meets its own acceptance; do not infer 120 passes from a handful of templates. |
 
 E0 begins performance work immediately. Within each package, measure the touched system and make focused improvements. Do not defer all scale work until E6, and do not do a wholesale engine rewrite before a richer small battle is playable. All feature switches default to the accepted existing preset until their new configuration is deliberately selected.
 
 ## E0 — establish facts before enlargement
 
-- **E0.1:** Pin code/config hashes and isolate QA saves. Recheck mountains, roads, full rotated footprints, buildings selectable with feedback, previews matching final spawn, recruitment deliveries and camera interruption, exchange balances, terminal voices, both languages.
+- **E0.1:** Fix the reported CC raised-ground/floating-edge defect with geometry/surface agreement and multi-angle visual review. Pin code/config hashes and isolate QA saves. Recheck mountains, roads, full rotated footprints, buildings selectable with feedback, previews matching final spawn, recruitment deliveries and camera interruption, exchange balances, terminal voices, both languages.
 - **E0.2:** Create the roster ledger described in [BASELINE.md](BASELINE.md). Flag duplicated names/portraits, noncombatants, missing producers, missing counters and unimplemented advertised abilities.
 - **E0.3:** Build a reproducible stress scene/preset using real unit definitions, AI, projectiles and map geometry. Establish separate warmup, idle, mass move, dense combat, air/transport and destruction phases. Test both spread-out armies and concentrated visibility. Report actual counts, not requested spawn counts.
 - **E0.4:** Profile Editor diagnostically and Android builds on identified devices. Use the existing CI wrappers and performance contracts. Rank CPU, GPU, memory, path-queue and allocation issues by measured contribution.
@@ -56,6 +61,15 @@ E3 is the first user review build. It should already feel materially richer than
 **Long sessions:** implement and validate a versioned match checkpoint before promoting War or Large War as the mobile default. Store stable unit/building/order/queue/visibility/objective data and remaining timers, never raw ECS entity IDs. Restore atomically into a fresh session, rebuild references and reservations, preserve exactly-once cost/result accounting, reject incompatible checkpoints with a clear safe return. Test suspend, OS termination, interrupted writes, upgrade migration and delivery in flight. Until accepted, disclose setup-only recovery in the setup/help flow and keep shorter presets primary.
 
 **Remaining roster:** audit every unexposed asset again after core systems mature. Make matching military appearances available through variants; place crew/civilians/scenario specialists in appropriate scenario or Sandbox roles. Each advanced unit must have useful counterplay, correct render/animation/fuel behavior, and a working producer. Do not add nominal ability buttons to close the ledger.
+
+## Catalog delivery and validation work
+
+1. **E1:** create typed composition/validation of map × objective × army × start. Resolve profile restrictions, resources, capacities, producers, inherited quantities and objective additions into one inspectable snapshot. Add a schema-level compiler report before any runtime spawn; no random name-based role assignment.
+2. **E2/E3:** implement four difficulty behavior profiles with resource/stat parity, and prove expanded DB BA-G-F plus CC regression. Add public semantics and ARIA group/recruit/camera skills as systems become available.
+3. **E4–E6:** shared fog/intel and air mechanics, then all objective policies and full-roster semantics. Stress mixed armies from the start. Remove ARIA's map-specific approach shortcuts through tested route reasoning, not blind deletion.
+4. **Map authoring:** prove DB and CC anchor/route contracts early; author MP/IB/AP after initial movement/air constraints are known. Asset visuals, navigation surfaces and shadow/height joins must be reviewed together.
+5. **E7/E8:** release slices of up to 24 accepted scenarios per map (24→48→72→96→120). Every candidate has a localized briefing, exact start, at least two viable strategies, role/counter accounting and its own recorded validation. Do not expose unfinished candidates as playable.
+6. **Post-120:** evaluate fifth objective/fourth army configuration for the 200 target; retain separate scope and readiness evidence. 2v2 and Operations are not required to manufacture scenario count.
 
 ## Change discipline
 

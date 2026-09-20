@@ -111,7 +111,7 @@ namespace Game.Editor
             Step(); Check(output.TargetId == 21, "activate rectangle selection only with valid drag ready");
             touch.Actions++; touch.TargetId = 21; view.SelectionMode = true;
             Step(); Check(output.Drag == 1 && output.DragEnd == view.GroupEnd.Position, "selection is a drag, never a soldier tap");
-            touch.Actions++; touch.TargetId = -20005; view.SelectionVisible = true;
+            touch.Actions++; touch.TargetId = -20005; view.SelectionVisible = true; view.SelectedCount = 24;
             Step(); Check(plan.GroupStage == 3 && output.TargetId == 22 && output.Drag == 0, "completed selection advances without repeating drag");
             view.SelectedSlot = -1; view.SelectionVisible = true; view.EnemyBase = new AriaTouchTarget { Available = true, Id = -20001 };
             plan.TargetPending = 1; plan.ActionsAtTarget = touch.Actions; touch.TargetId = -20001; touch.Actions++;
@@ -157,6 +157,7 @@ namespace Game.Editor
             Step(); Check(output.TargetId == 11 && plan.Slot == 1,
                 "depleted army recruits after an accepted order without waiting for every squad");
             view.Infantry = 12; plan.TargetPending = 1; plan.ActionsAtTarget = touch.Actions;
+            plan.AssaultStarted = 1; plan.GroupStage = 4;
             plan.Intent = AriaSkirmishIntent.Attack; plan.RecruitBurstRemaining = 0;
             touch.Actions++; Step();
             Check(plan.Intent != AriaSkirmishIntent.Recruit && plan.Slot == 2,
@@ -174,12 +175,15 @@ namespace Game.Editor
             Step(); Check(plan.GroupStage == 4 && output.TargetId == 23 && plan.RecruitBurstRemaining == 0,
                 "bounded replenishment resumes squad rotation without moving camera home");
             plan.GroupStage = 3; plan.RegroupAt = 0; view.Time = 47;
-            Step(); Check(plan.GroupStage == 0 && plan.AssaultStarted == 0,
-                "lost group selection starts a coordinated recovery");
+            Step(); Check(plan.GroupStage == 4 && plan.AssaultStarted == 1,
+                "lost selection with surviving army resumes squad cards instead of restarting opening");
             view = new AriaSkirmishObservation { Active = true, Time = 1, Infantry = 8,
+                Recruit = new AriaTouchTarget { Id = 11, Available = true },
                 DefenseBuild = new AriaTouchTarget { Id = 50, Available = true },
                 FocusPlayer = new AriaTouchTarget { Id = 51, Available = true } };
             plan = default; touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(output.TargetId == 11 && plan.DefenseStage == 0, "opening recruits before spending time on construction");
+            view.Infantry = 16;
             Step(); Check(output.TargetId == 51, "defensive construction first focuses our base through its button");
             touch.Actions++; view.Time = 2; Step();
             Check(output.Kind == AriaPlayObservationKind.Waiting, "construction waits for camera");
@@ -212,8 +216,12 @@ namespace Game.Editor
             view.AdvanceGround = new AriaTouchTarget { Available = true, Id = -20006 };
             view.Threat = new AriaTouchTarget { Available = true, Id = -20002 };
             view.ThreatNearForce = true;
-            Step(); Check(output.TargetId == -20002, "visible frontline threat gets coordinated focus instead of another advance");
-            view.ThreatNearForce = false;
+            Step(); Check(output.TargetId == -20006, "Attack Move retains its route when nearby enemies appear");
+            view.AdvancePreferred = false;
+            view.ThreatGround = new AriaTouchTarget { Available = true, Id = -20006 };
+            Step(); Check(output.TargetId == -20006, "nearby threat uses clear ground to preserve automatic engagement");
+            view.ThreatGround = default;
+            view.ThreatNearForce = false; view.AdvancePreferred = true;
             Step();
             touch.TargetId = -20006; touch.Actions++;
             Step(); Check(plan.Cycle == 1 && plan.TargetPending == 0,
@@ -244,7 +252,7 @@ namespace Game.Editor
             Step(); Check(plan.AssaultStarted == 0, "a partial army does not depart at the old ninety-second deadline");
             view.Infantry = 24;
             Step(); Check(plan.AssaultStarted == 1, "assembled army can advance after the threat clears");
-            view.AdvancePreferred = true; view.ThreatNearForce = true; view.SelectionVisible = true; view.SelectedSlot = 0;
+            view.AdvancePreferred = false; view.ThreatNearForce = true; view.SelectionVisible = true; view.SelectedSlot = 0;
             view.FocusThreat = new AriaTouchTarget { Available = true, Id = -20003 };
             plan.GroupStage = 4; plan.Intent = AriaSkirmishIntent.Attack;
             Step(); Check(output.TargetId == -20003, "offscreen frontline threat is brought into view instead of sending troops past it");
@@ -258,6 +266,9 @@ namespace Game.Editor
             Step(); Check(output.TargetId == 13 && plan.GroupStage == 3,
                 "healthy selected force continues its assault instead of opening production mid-fight");
             view.SelectedCount = 6; view.Infantry = 10;
+            Step(); Check(plan.GroupStage == 4 && plan.AssaultStarted == 1,
+                "partial selection recovers surviving squads without a full army rebuild");
+            plan.GroupStage = 3; view.Infantry = 6;
             Step(); Check(plan.GroupStage == 0 && plan.AssaultStarted == 0 && plan.OpeningUntil > view.Time,
                 "depleted assault rebuilds a force instead of feeding isolated replacements");
             view = new AriaSkirmishObservation { Active = true, Time = 100, Infantry = 16, AvailableSquads = 1,
@@ -321,6 +332,46 @@ namespace Game.Editor
             view.PlacementConfirm = default;
             Step(); Check(output.TargetId == 53 && plan.DefensesPlaced == 0,
                 "obscured sites and invalid preview cancel normally instead of blocking forever");
+            view = new AriaSkirmishObservation { Active = true, Time = 100, Infantry = 24,
+                AvailableSquads = 15, SelectionVisible = true, SelectedCount = 12, SelectedSlot = -1,
+                FocusPlayer = new AriaTouchTarget { Available = true, Id = 51 },
+                Squad0 = new AriaTouchTarget { Available = true, Id = 12 } };
+            plan = new AriaSkirmishPlanComponent { DefenseStage = 4, AssaultStarted = 1, GroupStage = 2, GroupAction = 4 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing, Actions = 5, TargetId = -20005 };
+            Step(); Check(plan.GroupStage == 4 && output.TargetId == 12,
+                "partial rectangle rotates all squad cards so off-screen reserves join the assault");
+            view.SelectedCount = 20; plan.GroupStage = 2;
+            Step(); Check(plan.GroupStage == 3, "a rectangle covering most of the army stays grouped");
+            view = new AriaSkirmishObservation { Active = true, Time = 100, Infantry = 18, AvailableSquads = 15,
+                SelectedCount = 16, SelectionVisible = true, Recruit = new AriaTouchTarget { Available = true, Id = 61 } };
+            plan = new AriaSkirmishPlanComponent { AssaultStarted = 1, DefenseStage = 4, GroupStage = 3,
+                Intent = AriaSkirmishIntent.ObserveBattle };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(output.TargetId == 61 && plan.GroupStage == 4 && plan.AssaultStarted == 1,
+                "viable assault recruits replacements before heavy casualties without restarting opening");
+            view.SelectionVisible = false; view.SelectedCount = 0; plan.GroupStage = 3;
+            Step(); Check(plan.AssaultStarted == 1, "hidden selection UI is not evidence the whole army died");
+            view.Infantry = 5; plan.GroupStage = 4;
+            Step(); Check(plan.AssaultStarted == 0 && plan.GroupStage == 0 && output.TargetId == 61,
+                "depleted card rotation also rebuilds rather than sending isolated deliveries");
+            view = new AriaSkirmishObservation { Active = true, Time = 100, Infantry = 24, AvailableSquads = 1,
+                SelectionVisible = true, SelectedCount = 24, SelectedSlot = -1, AdvancePreferred = true,
+                FocusAdvance = new AriaTouchTarget { Available = true, Id = -20010 } };
+            plan = new AriaSkirmishPlanComponent { DefenseStage = 4, AssaultStarted = 1, GroupStage = 3 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            Step(); Check(output.TargetId == -20010 && plan.AdvanceNavigation == 1, "obscured flank opens the visible map without discarding selection");
+            Step(); Check(output.TargetId == -20010 && plan.GroupStage == 3, "flank map opening stays pending until actual popup appears");
+            view.MapOpen = true; view.FocusAdvance.Id = -20011;
+            view.FocusAdvanceDrag = true; view.FocusAdvanceDragEnd = new UnityEngine.Vector2(600, 500);
+            view.CloseMap = new AriaTouchTarget { Available = true, Id = 62 };
+            Step(); Check(output.TargetId == -20011 && output.Drag == 1, "flank camera movement uses the visible map viewport drag");
+            touch.TargetId = -20011; touch.Actions++; Step();
+            Check(output.TargetId == 62, "completed flank focus closes the map exactly once");
+            view.MapOpen = false; Step();
+            Check(plan.GroupStage == 3 && plan.AdvanceNavigation == 0, "flank focus preserves the army selection and completes navigation");
+            view.Time += 10; view.FocusAdvance.Id = 63;
+            Step(); Check(output.TargetId == 63 && plan.MapNavigationStage == 0,
+                "final approach can use the labelled base camera button without entering a map loop");
             return $"[AriaSkirmishPlanValidation] result=Passed cases={checks}";
 
             void Step() => AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);

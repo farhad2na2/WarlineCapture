@@ -1,6 +1,6 @@
 # Expansion acceptance and performance plan
 
-All expansion cases are pending on 2026-09-18. Targets below are proposed unless explicitly inherited from the repository performance contract. No new Editor gameplay, Android performance or player-comprehension evidence was gathered for this planning task.
+Updated 2026-09-20: expanded catalog cases remain pending; small-scenario Editor victories are separate evidence. Targets below are proposed unless explicitly inherited from the repository performance contract. No new Editor gameplay, Android performance or player-comprehension evidence was gathered for this planning task.
 
 ## Gameplay acceptance matrix
 
@@ -67,6 +67,21 @@ If War fails a device gate, retain the certified Standard preset on that device,
 Capture 16:9 and 20:9, 1280×720 and 2400×1080 reference layouts, plus the target phone's real safe area and touch input. Inherit the 80-pixel minimum reference touch target from [technical targets](../../AAA_Mobile_Technical_Targets.md); judge physical readability as well. Required states: dense selected army, Army panel paging, short/long Farsi descriptions, unavailable production, queue full, no fuel, contested zone, timed progress, arrival notification, result and back navigation.
 
 For each new mechanic record a real input → acceptance/rejection → world outcome → UI cleanup sequence. Reflection-invoked commands and injected stress armies are valid technical tests only when labeled. An occluded button leaves the UI test open. Keep original profile and Editor state restored after isolated QA.
+
+## Catalog, scenario and planner gates
+
+- **X24 Catalog integrity:** 120 unique stable IDs, exactly 24 per map and ten per objective/army pairing; start/difficulty/size/seed are separately versioned. Four difficulties and randomized seeds never inflate the count. All 120 CSV entries begin Planned and advance individually.
+- **X25 Start package accounting:** expand every scenario at every certified size into exact per-side infantry/platform/support/facility counts, balances and capacities. Assert Supply/category/support limits including CE trucks, BT designated soldiers, loaded vehicle fuel and objective garrisons. Every starting unit has compatible production/replacement rules and legal terrain. Starting resource/scenario asymmetry matches the briefing.
+- **X26 Map completeness:** five maps × four objective anchor sets; both convoy routes and breakthrough corridors actually traversable. Inspect camera rotations/zoom, shadow seams, floating terrain, slopes and wrecks. Surface data and visible geometry agree. Correct CC's known raised-shelf defect before accepting that map.
+- **X27 Scenario distinction:** each entry changes meaningful decisions, has two viable strategies and usable counters. Reject clone/filler combinations and replace them honestly. Roster ledger covers every supported role in at least two map/objective contexts.
+- **X28 Difficulty legality:** all levels use identical stats/costs/visibility/start packages; differences trace to documented decision/coordination parameters. Verify actual reaction/scouting/retreat behavior under observed threats; no hidden free enemy production.
+- **X29 Shared planners:** new content needs data and reusable objective policies, not scenario-ID branches. Run held-out routes/seeds; confirm ARIA observations exclude hidden knowledge and actuator calls are only real touch inputs. Enemy AI obeys its own legal faction knowledge.
+- **X30 ARIA catalog evidence:** the three-seed × two-locale per-entry baseline and 20-seed stratified stress plan in AI_AND_ARIA.md are required. Record all losses and at least two wins per locale per entry in the minimum sample. This is finite evidence, not guaranteed winning or a statistical universal success rate. High-difficulty losses alone do not justify cheats or hidden tuning.
+- **X31 Briefing/library:** filters, all five collections, clear force/resource/asymmetry preview, exact objective failure rules, side roles, device size gating, back navigation, custom-label/result identity and saved selection work in EN/FA on real phones.
+- **X32 Four objective results:** exact FC ticket/capture transitions; BT corridor reset, boarding/disembarkation and eight-of-twelve accounting; CE truck role identity, routing, damage/repair, five-second delivery and impossible-win detection. Simultaneous events/deadline evaluated once; campaign states untouched.
+- **X33 Economy math:** simulate paid growth/replenishment and verify real-world deliveries at all size/start pairs. Test conversion storage-full behavior, consumed inputs, queue cancellation, research destruction/refund and fuel shortage. Meet useful first-counter/vehicle/air timings without resource pulses or preloaded hidden advantages.
+
+Before calling the full catalog ready, all required content entries pass normal-input full matches and separate device/readability gates. The existing 104729-seed wins certify only their recorded small versions. Scenario readiness records include map/content hashes, setup/difficulty/size, seed, locale, platform/device, human/ARIA/control method, outcome, command trace and open defects. A schema-valid CSV is planning evidence only.
 
 ## External technical references
 

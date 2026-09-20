@@ -58,7 +58,8 @@ namespace Game.Editor
             var preset = Copy<SkirmishPresetConfig>("Assets/Game/Resources/SkirmishBaseAssault.asset", "Assets/Game/Resources/SkirmishCityCrossroads.asset");
             preset.buildingPlacement = construction;
             preset.operationMap = map;
-            preset.playerReinforcementRallyOffset = new Vector3(16, 0, -35);
+            // Reinforcements join the starting infantry instead of arriving on the exposed eastern flank.
+            preset.playerReinforcementRallyOffset = new Vector3(-14, 0, -32);
             EditorUtility.SetDirty(preset);
             var root = PrefabUtility.LoadPrefabContents(SetupPath);
             try { ConfigureChoices(root); PrefabUtility.SaveAsPrefabAsset(root, SetupPath); }

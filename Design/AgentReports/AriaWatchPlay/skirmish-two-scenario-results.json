@@ -1,0 +1,143 @@
+{
+  "status": "EditorVerified_default_EN_FA",
+  "qaStart": "User-approved temporary API start; shipping touch driver for gameplay",
+  "runs": [
+    {
+      "scenario": 2,
+      "language": "en",
+      "telemetry": "/private/tmp/aria-s2-camera-en.jsonl",
+      "mapTrace": "/private/tmp/aria-s2-camera-map.txt",
+      "victoryScreenReviewed": true,
+      "terminalTouchStopReason": 5,
+      "state": {
+        "Seed": 104729,
+        "ScenarioIndex": 1,
+        "Phase": 3,
+        "StartupFailure": 0,
+        "Outcome": 1,
+        "Reason": 1,
+        "ElapsedSeconds": 377.6240539550781,
+        "PlayerUnitsLost": 13,
+        "EnemyUnitsLost": 36,
+        "PlayerBuildingsLost": 0,
+        "EnemyBuildingsLost": 4,
+        "ResultSaved": 1,
+        "SurrenderRequested": 0
+      },
+      "lastObservedPlayerBaseHealth": 1200,
+      "lastObservedInfantry": 21,
+      "completedGestures": 118,
+      "observedMapOpenings": 2
+    },
+    {
+      "scenario": 2,
+      "language": "fa-IR",
+      "telemetry": "/private/tmp/aria-s2-camera-fa.jsonl",
+      "victoryScreenReviewed": true,
+      "terminalTouchStopReason": 5,
+      "state": {
+        "Seed": 104729,
+        "ScenarioIndex": 1,
+        "Phase": 3,
+        "StartupFailure": 0,
+        "Outcome": 1,
+        "Reason": 1,
+        "ElapsedSeconds": 382.4259948730469,
+        "PlayerUnitsLost": 28,
+        "EnemyUnitsLost": 40,
+        "PlayerBuildingsLost": 0,
+        "EnemyBuildingsLost": 4,
+        "ResultSaved": 1,
+        "SurrenderRequested": 0
+      }
+    },
+    {
+      "scenario": 1,
+      "language": "en",
+      "telemetry": "/private/tmp/aria-s1-restored-en.jsonl",
+      "victoryScreenReviewed": true,
+      "terminalTouchStopReason": 5,
+      "state": {
+        "Seed": 104729,
+        "ScenarioIndex": 0,
+        "Phase": 3,
+        "StartupFailure": 0,
+        "Outcome": 1,
+        "Reason": 1,
+        "ElapsedSeconds": 338.17071533203125,
+        "PlayerUnitsLost": 21,
+        "EnemyUnitsLost": 45,
+        "PlayerBuildingsLost": 0,
+        "EnemyBuildingsLost": 1,
+        "ResultSaved": 1,
+        "SurrenderRequested": 0
+      }
+    },
+    {
+      "scenario": 1,
+      "language": "fa-IR",
+      "telemetry": "/private/tmp/aria-s1-focused-fa.jsonl",
+      "victoryScreenReviewed": false,
+      "visualReviewNote": "Computer-control screenshot unavailable at terminal; authoritative match result and touch cancellation verified. Other three victory screens reviewed.",
+      "terminalTouchStopReason": 5,
+      "completedGestures": 73,
+      "state": {
+        "Seed": 104729,
+        "ScenarioIndex": 0,
+        "Phase": 3,
+        "StartupFailure": 0,
+        "Outcome": 1,
+        "Reason": 1,
+        "ElapsedSeconds": 320.44146728515625,
+        "PlayerUnitsLost": 13,
+        "EnemyUnitsLost": 36,
+        "PlayerBuildingsLost": 1,
+        "EnemyBuildingsLost": 1,
+        "ResultSaved": 1,
+        "SurrenderRequested": 0
+      }
+    }
+  ],
+  "scope": "Two selectable Base Assault scenarios, default seed 104729 and normal rules. Multi-seed, Android and player-study certification remain open; development preview gate retained.",
+  "s2_validated_source_sha256": {
+    "Assets/Game/Resources/SkirmishCityCrossroads.asset": "7fd1694010a1057dfcf53fa584047fbf97abc7c5075d1d8efcefeafa60739e88",
+    "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs": "dc9cc87c62651d59ee52a154ca9cb2fd5b1cd206ab2b617ec352bbee2a11a26b",
+    "Assets/Game/Scripts/Editor/SkirmishScenarioAssetsBuilder.cs": "41a0a38586f682265630de176ae3edb4f453b74bf1df9a2e07f0cb7e08dbe045",
+    "Assets/Game/Scripts/Editor/SkirmishScenarioValidation.cs": "342835bb4e9653df6d6d23ed192a414a314320955b09ab6f017ed20d8e7c28eb",
+    "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs": "8ed718ff61c785ada964b1df6f19e6949e9c90502c9af6ff9f8dca21f3544d5f",
+    "Assets/Game/Scripts/Systems/SkirmishCombatPolicy.cs": "e927b5b8347ae385c237ecc9b6a6d24fb874795c16c014e75f471781bc421098",
+    "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs": "bdc3ab82bd0f8af596ab7428f9145db5e7b55f58fad3e7a0e62e313c633ccac7",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishGroup.cs": "2329af44271f4189d3a02dc2d6456e788b677630416a0bf38af023c52a200534",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs": "27b271c4d924a2202817dd092324645b03bf5cbec76b4df5955084604ede2c48",
+    "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs": "2666a6c9dbc62e391dab035a36072903058de8a39e27d2c57312e150d045cb65",
+    "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.Observation.cs": "8555159d1314b0e5f5bc0b58104ba90b17e595ad2f1278530502dbc443fe78f9",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs": "ff37ef641f26c1fb55616849caf89956902b981840d33fae99304d5c00a8d7c1",
+    "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs": "8e3e0302df3b5f15cb85fb74b15df83d8de45dba4548b5b2dd27c5794a5a033b",
+    "Assets/Tests/Editor/BuildingPlacementCameraHandoffTests.cs": "e94cabbf896db8e94d1c77203a12de8a09246da050d3e3139eb23670237860ec"
+  },
+  "revisionNote": "S2 accepted before the subsequent S1-only 25-unit approach restoration; S2 branch returns before that code and is unchanged.",
+  "final_source_sha256": {
+    "Assets/Game/Resources/SkirmishCityCrossroads.asset": "7fd1694010a1057dfcf53fa584047fbf97abc7c5075d1d8efcefeafa60739e88",
+    "Assets/Game/Scripts/Editor/AriaSkirmishPlanValidation.cs": "dc9cc87c62651d59ee52a154ca9cb2fd5b1cd206ab2b617ec352bbee2a11a26b",
+    "Assets/Game/Scripts/Editor/SkirmishScenarioAssetsBuilder.cs": "41a0a38586f682265630de176ae3edb4f453b74bf1df9a2e07f0cb7e08dbe045",
+    "Assets/Game/Scripts/Editor/SkirmishScenarioValidation.cs": "342835bb4e9653df6d6d23ed192a414a314320955b09ab6f017ed20d8e7c28eb",
+    "Assets/Game/Scripts/Systems/SelectionUiCameraSystemHelper.cs": "8ed718ff61c785ada964b1df6f19e6949e9c90502c9af6ff9f8dca21f3544d5f",
+    "Assets/Game/Scripts/Systems/SkirmishCombatPolicy.cs": "e927b5b8347ae385c237ecc9b6a6d24fb874795c16c014e75f471781bc421098",
+    "Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs": "bdc3ab82bd0f8af596ab7428f9145db5e7b55f58fad3e7a0e62e313c633ccac7",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishGroup.cs": "2329af44271f4189d3a02dc2d6456e788b677630416a0bf38af023c52a200534",
+    "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs": "797f41c1d11250f3dc30dd62390ce3fc5c2c1503076b00a09deb5701145d38ba",
+    "Assets/Game/Scripts/UI/Screens/MatchHudMinimapInputUiSystemHelper.cs": "2666a6c9dbc62e391dab035a36072903058de8a39e27d2c57312e150d045cb65",
+    "Assets/Game/Scripts/UI/Screens/MatchHudMinimapView.Observation.cs": "8555159d1314b0e5f5bc0b58104ba90b17e595ad2f1278530502dbc443fe78f9",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs": "ff37ef641f26c1fb55616849caf89956902b981840d33fae99304d5c00a8d7c1",
+    "Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs": "8e3e0302df3b5f15cb85fb74b15df83d8de45dba4548b5b2dd27c5794a5a033b",
+    "Assets/Tests/Editor/BuildingPlacementCameraHandoffTests.cs": "e94cabbf896db8e94d1c77203a12de8a09246da050d3e3139eb23670237860ec",
+    "Assets/Game/Scripts/Editor/AriaTouchInputValidation.cs": "fceb3255b83ecdc18ab3c31f69265a09568a232da2c6b43c40d0bdb14ecf17ed"
+  },
+  "checks": {
+    "planner": 96,
+    "decision": 14,
+    "scenario": 15,
+    "cameraOwnership": "passed",
+    "touchInput": "18 passed; isolated fixture now explicitly routes Editor input independently of panel focus and restores settings afterward"
+  }
+}

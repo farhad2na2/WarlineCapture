@@ -33,6 +33,9 @@ namespace Game.Editor
                 InputSystem.settings = fixtureSettings;
                 fixtureSettings.SetInternalFeatureFlag("RUN_PLAYER_UPDATES_IN_EDIT_MODE", true);
                 InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+                // Keep this isolated Dynamic-update fixture independent of Editor
+                // panel focus after returning from a real Play-mode session.
+                fixtureSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
                 events = new GameObject("AriaInputFixtureEvents", typeof(EventSystem), typeof(InputSystemUIInputModule));
                 typeof(EventSystem).GetMethod("OnEnable", System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.NonPublic).Invoke(events.GetComponent<EventSystem>(), null);

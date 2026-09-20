@@ -1,0 +1,121 @@
+scenario_id,map_id,objective_id,army_profile,start_profile,working_title_en,recommended_size,default_difficulty,side_rule,roster_requirement,status
+S001,DB,BA,G,F,Desert Base · Base Assault · Ground Maneuver · Field Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S002,DB,BA,G,E,Desert Base · Base Assault · Ground Maneuver · Established Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S003,DB,BA,A,F,Desert Base · Base Assault · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S004,DB,BA,A,E,Desert Base · Base Assault · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S005,DB,BA,C,F,Desert Base · Base Assault · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S006,DB,BA,C,E,Desert Base · Base Assault · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S007,DB,FC,G,F,Desert Base · Frontline Control · Ground Maneuver · Field Base,War,Regular,symmetric,ground_transport_intel,Planned
+S008,DB,FC,G,E,Desert Base · Frontline Control · Ground Maneuver · Established Base,War,Regular,symmetric,ground_transport_intel,Planned
+S009,DB,FC,A,F,Desert Base · Frontline Control · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S010,DB,FC,A,E,Desert Base · Frontline Control · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S011,DB,FC,C,F,Desert Base · Frontline Control · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S012,DB,FC,C,E,Desert Base · Frontline Control · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S013,DB,BT,G,F,Desert Base · Breakthrough · Ground Maneuver · Field Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S014,DB,BT,G,E,Desert Base · Breakthrough · Ground Maneuver · Established Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S015,DB,BT,A,F,Desert Base · Breakthrough · Air Mobile · Field Base,War,Regular,player_attacker,air_intel,Planned
+S016,DB,BT,A,E,Desert Base · Breakthrough · Air Mobile · Established Base,War,Regular,player_attacker,air_intel,Planned
+S017,DB,BT,C,F,Desert Base · Breakthrough · Combined Arms · Field Base,War,Regular,player_attacker,full_combined_arms,Planned
+S018,DB,BT,C,E,Desert Base · Breakthrough · Combined Arms · Established Base,War,Regular,player_attacker,full_combined_arms,Planned
+S019,DB,CE,G,F,Desert Base · Convoy Escort · Ground Maneuver · Field Base,War,Regular,player_escort,ground_transport_intel,Planned
+S020,DB,CE,G,E,Desert Base · Convoy Escort · Ground Maneuver · Established Base,War,Regular,player_escort,ground_transport_intel,Planned
+S021,DB,CE,A,F,Desert Base · Convoy Escort · Air Mobile · Field Base,War,Regular,player_escort,air_intel,Planned
+S022,DB,CE,A,E,Desert Base · Convoy Escort · Air Mobile · Established Base,War,Regular,player_escort,air_intel,Planned
+S023,DB,CE,C,F,Desert Base · Convoy Escort · Combined Arms · Field Base,War,Regular,player_escort,full_combined_arms,Planned
+S024,DB,CE,C,E,Desert Base · Convoy Escort · Combined Arms · Established Base,War,Regular,player_escort,full_combined_arms,Planned
+S025,CC,BA,G,F,City Crossroads · Base Assault · Ground Maneuver · Field Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S026,CC,BA,G,E,City Crossroads · Base Assault · Ground Maneuver · Established Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S027,CC,BA,A,F,City Crossroads · Base Assault · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S028,CC,BA,A,E,City Crossroads · Base Assault · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S029,CC,BA,C,F,City Crossroads · Base Assault · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S030,CC,BA,C,E,City Crossroads · Base Assault · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S031,CC,FC,G,F,City Crossroads · Frontline Control · Ground Maneuver · Field Base,War,Regular,symmetric,ground_transport_intel,Planned
+S032,CC,FC,G,E,City Crossroads · Frontline Control · Ground Maneuver · Established Base,War,Regular,symmetric,ground_transport_intel,Planned
+S033,CC,FC,A,F,City Crossroads · Frontline Control · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S034,CC,FC,A,E,City Crossroads · Frontline Control · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S035,CC,FC,C,F,City Crossroads · Frontline Control · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S036,CC,FC,C,E,City Crossroads · Frontline Control · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S037,CC,BT,G,F,City Crossroads · Breakthrough · Ground Maneuver · Field Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S038,CC,BT,G,E,City Crossroads · Breakthrough · Ground Maneuver · Established Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S039,CC,BT,A,F,City Crossroads · Breakthrough · Air Mobile · Field Base,War,Regular,player_attacker,air_intel,Planned
+S040,CC,BT,A,E,City Crossroads · Breakthrough · Air Mobile · Established Base,War,Regular,player_attacker,air_intel,Planned
+S041,CC,BT,C,F,City Crossroads · Breakthrough · Combined Arms · Field Base,War,Regular,player_attacker,full_combined_arms,Planned
+S042,CC,BT,C,E,City Crossroads · Breakthrough · Combined Arms · Established Base,War,Regular,player_attacker,full_combined_arms,Planned
+S043,CC,CE,G,F,City Crossroads · Convoy Escort · Ground Maneuver · Field Base,War,Regular,player_escort,ground_transport_intel,Planned
+S044,CC,CE,G,E,City Crossroads · Convoy Escort · Ground Maneuver · Established Base,War,Regular,player_escort,ground_transport_intel,Planned
+S045,CC,CE,A,F,City Crossroads · Convoy Escort · Air Mobile · Field Base,War,Regular,player_escort,air_intel,Planned
+S046,CC,CE,A,E,City Crossroads · Convoy Escort · Air Mobile · Established Base,War,Regular,player_escort,air_intel,Planned
+S047,CC,CE,C,F,City Crossroads · Convoy Escort · Combined Arms · Field Base,War,Regular,player_escort,full_combined_arms,Planned
+S048,CC,CE,C,E,City Crossroads · Convoy Escort · Combined Arms · Established Base,War,Regular,player_escort,full_combined_arms,Planned
+S049,MP,BA,G,F,Mountain Pass · Base Assault · Ground Maneuver · Field Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S050,MP,BA,G,E,Mountain Pass · Base Assault · Ground Maneuver · Established Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S051,MP,BA,A,F,Mountain Pass · Base Assault · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S052,MP,BA,A,E,Mountain Pass · Base Assault · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S053,MP,BA,C,F,Mountain Pass · Base Assault · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S054,MP,BA,C,E,Mountain Pass · Base Assault · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S055,MP,FC,G,F,Mountain Pass · Frontline Control · Ground Maneuver · Field Base,War,Regular,symmetric,ground_transport_intel,Planned
+S056,MP,FC,G,E,Mountain Pass · Frontline Control · Ground Maneuver · Established Base,War,Regular,symmetric,ground_transport_intel,Planned
+S057,MP,FC,A,F,Mountain Pass · Frontline Control · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S058,MP,FC,A,E,Mountain Pass · Frontline Control · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S059,MP,FC,C,F,Mountain Pass · Frontline Control · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S060,MP,FC,C,E,Mountain Pass · Frontline Control · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S061,MP,BT,G,F,Mountain Pass · Breakthrough · Ground Maneuver · Field Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S062,MP,BT,G,E,Mountain Pass · Breakthrough · Ground Maneuver · Established Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S063,MP,BT,A,F,Mountain Pass · Breakthrough · Air Mobile · Field Base,War,Regular,player_attacker,air_intel,Planned
+S064,MP,BT,A,E,Mountain Pass · Breakthrough · Air Mobile · Established Base,War,Regular,player_attacker,air_intel,Planned
+S065,MP,BT,C,F,Mountain Pass · Breakthrough · Combined Arms · Field Base,War,Regular,player_attacker,full_combined_arms,Planned
+S066,MP,BT,C,E,Mountain Pass · Breakthrough · Combined Arms · Established Base,War,Regular,player_attacker,full_combined_arms,Planned
+S067,MP,CE,G,F,Mountain Pass · Convoy Escort · Ground Maneuver · Field Base,War,Regular,player_escort,ground_transport_intel,Planned
+S068,MP,CE,G,E,Mountain Pass · Convoy Escort · Ground Maneuver · Established Base,War,Regular,player_escort,ground_transport_intel,Planned
+S069,MP,CE,A,F,Mountain Pass · Convoy Escort · Air Mobile · Field Base,War,Regular,player_escort,air_intel,Planned
+S070,MP,CE,A,E,Mountain Pass · Convoy Escort · Air Mobile · Established Base,War,Regular,player_escort,air_intel,Planned
+S071,MP,CE,C,F,Mountain Pass · Convoy Escort · Combined Arms · Field Base,War,Regular,player_escort,full_combined_arms,Planned
+S072,MP,CE,C,E,Mountain Pass · Convoy Escort · Combined Arms · Established Base,War,Regular,player_escort,full_combined_arms,Planned
+S073,IB,BA,G,F,Industrial Basin · Base Assault · Ground Maneuver · Field Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S074,IB,BA,G,E,Industrial Basin · Base Assault · Ground Maneuver · Established Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S075,IB,BA,A,F,Industrial Basin · Base Assault · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S076,IB,BA,A,E,Industrial Basin · Base Assault · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S077,IB,BA,C,F,Industrial Basin · Base Assault · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S078,IB,BA,C,E,Industrial Basin · Base Assault · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S079,IB,FC,G,F,Industrial Basin · Frontline Control · Ground Maneuver · Field Base,War,Regular,symmetric,ground_transport_intel,Planned
+S080,IB,FC,G,E,Industrial Basin · Frontline Control · Ground Maneuver · Established Base,War,Regular,symmetric,ground_transport_intel,Planned
+S081,IB,FC,A,F,Industrial Basin · Frontline Control · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S082,IB,FC,A,E,Industrial Basin · Frontline Control · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S083,IB,FC,C,F,Industrial Basin · Frontline Control · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S084,IB,FC,C,E,Industrial Basin · Frontline Control · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S085,IB,BT,G,F,Industrial Basin · Breakthrough · Ground Maneuver · Field Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S086,IB,BT,G,E,Industrial Basin · Breakthrough · Ground Maneuver · Established Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S087,IB,BT,A,F,Industrial Basin · Breakthrough · Air Mobile · Field Base,War,Regular,player_attacker,air_intel,Planned
+S088,IB,BT,A,E,Industrial Basin · Breakthrough · Air Mobile · Established Base,War,Regular,player_attacker,air_intel,Planned
+S089,IB,BT,C,F,Industrial Basin · Breakthrough · Combined Arms · Field Base,War,Regular,player_attacker,full_combined_arms,Planned
+S090,IB,BT,C,E,Industrial Basin · Breakthrough · Combined Arms · Established Base,War,Regular,player_attacker,full_combined_arms,Planned
+S091,IB,CE,G,F,Industrial Basin · Convoy Escort · Ground Maneuver · Field Base,War,Regular,player_escort,ground_transport_intel,Planned
+S092,IB,CE,G,E,Industrial Basin · Convoy Escort · Ground Maneuver · Established Base,War,Regular,player_escort,ground_transport_intel,Planned
+S093,IB,CE,A,F,Industrial Basin · Convoy Escort · Air Mobile · Field Base,War,Regular,player_escort,air_intel,Planned
+S094,IB,CE,A,E,Industrial Basin · Convoy Escort · Air Mobile · Established Base,War,Regular,player_escort,air_intel,Planned
+S095,IB,CE,C,F,Industrial Basin · Convoy Escort · Combined Arms · Field Base,War,Regular,player_escort,full_combined_arms,Planned
+S096,IB,CE,C,E,Industrial Basin · Convoy Escort · Combined Arms · Established Base,War,Regular,player_escort,full_combined_arms,Planned
+S097,AP,BA,G,F,Airfield Plains · Base Assault · Ground Maneuver · Field Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S098,AP,BA,G,E,Airfield Plains · Base Assault · Ground Maneuver · Established Base,Standard,Regular,symmetric,ground_transport_intel,Planned
+S099,AP,BA,A,F,Airfield Plains · Base Assault · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S100,AP,BA,A,E,Airfield Plains · Base Assault · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S101,AP,BA,C,F,Airfield Plains · Base Assault · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S102,AP,BA,C,E,Airfield Plains · Base Assault · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S103,AP,FC,G,F,Airfield Plains · Frontline Control · Ground Maneuver · Field Base,War,Regular,symmetric,ground_transport_intel,Planned
+S104,AP,FC,G,E,Airfield Plains · Frontline Control · Ground Maneuver · Established Base,War,Regular,symmetric,ground_transport_intel,Planned
+S105,AP,FC,A,F,Airfield Plains · Frontline Control · Air Mobile · Field Base,War,Regular,symmetric,air_intel,Planned
+S106,AP,FC,A,E,Airfield Plains · Frontline Control · Air Mobile · Established Base,War,Regular,symmetric,air_intel,Planned
+S107,AP,FC,C,F,Airfield Plains · Frontline Control · Combined Arms · Field Base,War,Regular,symmetric,full_combined_arms,Planned
+S108,AP,FC,C,E,Airfield Plains · Frontline Control · Combined Arms · Established Base,War,Regular,symmetric,full_combined_arms,Planned
+S109,AP,BT,G,F,Airfield Plains · Breakthrough · Ground Maneuver · Field Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S110,AP,BT,G,E,Airfield Plains · Breakthrough · Ground Maneuver · Established Base,War,Regular,player_attacker,ground_transport_intel,Planned
+S111,AP,BT,A,F,Airfield Plains · Breakthrough · Air Mobile · Field Base,War,Regular,player_attacker,air_intel,Planned
+S112,AP,BT,A,E,Airfield Plains · Breakthrough · Air Mobile · Established Base,War,Regular,player_attacker,air_intel,Planned
+S113,AP,BT,C,F,Airfield Plains · Breakthrough · Combined Arms · Field Base,War,Regular,player_attacker,full_combined_arms,Planned
+S114,AP,BT,C,E,Airfield Plains · Breakthrough · Combined Arms · Established Base,War,Regular,player_attacker,full_combined_arms,Planned
+S115,AP,CE,G,F,Airfield Plains · Convoy Escort · Ground Maneuver · Field Base,War,Regular,player_escort,ground_transport_intel,Planned
+S116,AP,CE,G,E,Airfield Plains · Convoy Escort · Ground Maneuver · Established Base,War,Regular,player_escort,ground_transport_intel,Planned
+S117,AP,CE,A,F,Airfield Plains · Convoy Escort · Air Mobile · Field Base,War,Regular,player_escort,air_intel,Planned
+S118,AP,CE,A,E,Airfield Plains · Convoy Escort · Air Mobile · Established Base,War,Regular,player_escort,air_intel,Planned
+S119,AP,CE,C,F,Airfield Plains · Convoy Escort · Combined Arms · Field Base,War,Regular,player_escort,full_combined_arms,Planned
+S120,AP,CE,C,E,Airfield Plains · Convoy Escort · Combined Arms · Established Base,War,Regular,player_escort,full_combined_arms,Planned

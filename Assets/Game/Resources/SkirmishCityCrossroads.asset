@@ -24,7 +24,7 @@ MonoBehaviour:
   watchtowerDamage: 10
   watchtowerCooldown: 0.8
   firstAttackSeconds: 60
-  playerReinforcementRallyOffset: {x: 16, y: 0, z: -35}
+  playerReinforcementRallyOffset: {x: -14, y: 0, z: -32}
   reinforcementInfantryTarget: 16
   attackSquadSize: 8
   baseDefenseRadius: 70

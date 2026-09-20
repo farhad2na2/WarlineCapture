@@ -15,7 +15,7 @@ namespace Game.Editor
 {
     public static class CityCrossroadsFloatingShelfValidation
     {
-        public const string Marker = "[CityCrossroadsFloatingShelfValidation] result=Passed cases=10";
+        public const string Marker = "[CityCrossroadsFloatingShelfValidation] result=Passed cases=11";
         private const string SurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
         private const string MapPath = "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset";
         private const string SurfaceGuid = "12f517deb32ab49698acbfdaf7c3eac7";
@@ -78,8 +78,8 @@ namespace Game.Editor
                     blob.Dispose();
                 }
 
-                if (cases != 10)
-                    throw new InvalidOperationException($"Expected 10 cases, executed {cases}.");
+                if (cases != 11)
+                    throw new InvalidOperationException($"Expected 11 cases, executed {cases}.");
                 Debug.Log(Marker);
             }
             catch (Exception exception)

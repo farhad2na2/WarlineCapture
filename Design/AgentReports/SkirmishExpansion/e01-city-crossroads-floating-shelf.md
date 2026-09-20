@@ -57,7 +57,7 @@ Independent Python decode of the live compact payload (v3 / encoding 1, 2048×10
 | `Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset` | Shared bake, unchanged bytes | `1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d` GUID `12f517deb32ab49698acbfdaf7c3eac7` |
 | `Assets/Game/Scripts/Components/MapSurfaceFloatingShelfCorrection.cs` | Correction + rim absorb | `072b259ac19d63f11975a795d98cdd7c86233666a6e12d8cd06684041f791a56` |
 | `Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs` | Load hook | `ed922291f83299d64a33e9c01ce8c61defcf582f967eb83aa5347fa17044a06f` |
-| `Assets/Game/Scripts/Editor/CityCrossroadsFloatingShelfValidation.cs` | Focused gate | `5b89f1dd29e9ffb8f630136598df7840b5e6b0ed69f22cfeccb00a0c4c0f9b3d` |
+| `Assets/Game/Scripts/Editor/CityCrossroadsFloatingShelfValidation.cs` | Focused gate | `ab90085482425d0f2d369c55a7601ad2532f570db3e2a1e45bb04051ca2eb9f7` |
 | `Assets/Tests/Editor/MapSurfaceFloatingShelfCorrectionTests.cs` | Tests | `e29e066aa873f2b730be6516e5fc340f6a85f9af19c94d4201d1871e77c026ee` |
 | `Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset` | CC map, unchanged | `4a8735f11b58f825512c27d57ab37662a33d5f7da1733f00398021ecf9426b90` |
 | `Assets/Game/Resources/SkirmishCityCrossroads.asset` | CC preset, unchanged | `7fd1694010a1057dfcf53fa584047fbf97abc7c5075d1d8efcefeafa60739e88` |
@@ -107,9 +107,9 @@ Focused tests added:
 - live City Crossroads / Skirmish 1 cells after blob load, including civic rim (1035,482)
 
 Editor executeMethod: `Game.Editor.CityCrossroadsFloatingShelfValidation.RunFocusedValidation`
-Pass marker: `[CityCrossroadsFloatingShelfValidation] result=Passed cases=10`
+Pass marker: `[CityCrossroadsFloatingShelfValidation] result=Passed cases=11`
 
-Independent offline decode of the published bake plus the C# thresholds reproduced all ten focused cases. Saves were not opened. No profile or Quick Game override was used.
+Independent offline decode of the published bake plus the C# thresholds reproduced all eleven focused cases. Saves were not opened. No profile or Quick Game override was used.
 
 Not run in this environment: Unity compile, Play Mode, EN/FA matches, recruitment camera, exchange, terminal voices, device certification. Those remain for the Unity lane. Placement/selection/preview/recruitment/exchange/voice behaviour was not re-executed in Editor; only the surface heights those systems sample were rechecked.
 

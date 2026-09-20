@@ -6,7 +6,8 @@
 **Inspected branch:** `codex/m03-radar-warning` (`61d7fcd12f76`, commit date 2026-09-20)  
 **Method:** GitHub API + `raw.githubusercontent.com` only (no clone)  
 **Authority:** `Design/Roadmap/Skirmish_Expansion/{BASELINE,PLAN,DELIVERY}.md`  
-**Inventory roots:** `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_*` (51), `Prefab_BuildingDefinition_*` (23)
+**Inventory roots:** `Assets/Game/Configs/Prefabs/Prefab_UnitGrid_*` (51), `Prefab_BuildingDefinition_*` (23)  
+**Companion:** [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md)
 
 Disposition enum (required): `standard roster` | `role variant` | `alt-faction` | `scenario-Sandbox-only` | `blocked`
 
@@ -207,13 +208,22 @@ Until Skirmish stops flattening all `soldier*` to one rifle profile, Heavy Gunne
 3. **Skirmish combat flattens infantry roles** — `SkirmishCombatPolicy.ApplyRoster` string-match `soldier` → one rifle profile; blocks E0.5 “differentiated infantry” acceptance.  
 4. **Barracks produces a single appearance** — `Building_Barrack_Config` → only `Soldier_Male_02_Alt_04` ×4; other roles live on tents / Expert Tent, not Skirmish Barracks path.  
 5. **Intel/recon buildings/units blocked on vision model** — Radar Tank + Satellite Dish + Drone claims vs PLAN §8 full-vision ground slice.  
-6. **Cost/fuel spreadsheet inputs incomplete** — UnitGrid YAML lacks `materialsCost` / fuel-per-cell; runtime fuel systems exist but rates UNKNOWN; `ResolveLegacyMaterialsCost` definition not located on branch.
+6. **Cost/fuel formulas now locked in E0.5** — see [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md). UnitGrid YAML still omits most `materialsCost` / fuel-per-cell fields; runtime uses `ResolveLegacyMaterialsCost` (`GameplayConfigModels.cs`) and default 0.05 / 0.25. **Supply** remains UNKNOWN (no runtime field).
 
 ---
 
-## E0.5 draft — first roles + cost/production/fuel
+## E0.5 — first roles + cost/production/fuel
 
-### Proposed first 5 infantry roles (from ledger)
+> **Updated after E0.5 evidence chase.** Full standalone map: [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md).
+
+### Locked formulas
+- **Materials** = `max(1, ceil(price/500))` when `materialsCost` unset/0 — `UnitGridAuthoringConfig.ResolveLegacyMaterialsCost` in `Assets/Game/Scripts/Configs/GameplayConfigModels.cs`.
+- **Ground fuel/cell** default **0.05** (ground vehicles), **0** infantry/air — `ResolveDefaultGroundFuelPerCell`.
+- **Air fuel/cell** default **0.25** (air units), else **0** — `ResolveDefaultAirFuelPerCell`.
+- **Enqueue:** credits ← `Price`; materials ← `MaterialsCost` via `BuildingDefinitionAuthoringMetadataPrefabSystemHelper` + `BuildingDefinitionUnitProductionResources` + `BuildingProductionCampRequestTransaction`.
+- **Supply:** no runtime field — remains **UNKNOWN / not charged**.
+
+### First 5 infantry roles (from ledger)
 
 | # | Role | Representative StableId | Justification (evidence) |
 |---|---|---|---|
@@ -225,7 +235,7 @@ Until Skirmish stops flattening all `soldier*` to one rifle profile, Heavy Gunne
 
 *Appearance variants (other gender/alts) stay under role-variant picker — not separate tray buttons (PLAN §3).*
 
-### Proposed first 3 vehicle roles
+### First 3 vehicle roles
 
 | # | Role | Representative StableId | Justification |
 |---|---|---|---|
@@ -233,27 +243,35 @@ Until Skirmish stops flattening all `soldier*` to one rifle profile, Heavy Gunne
 | 2 | Armored APC | `Veh_APC_Slow` *or* `Veh_APC_Heavy` | PLAN transport / protected assault; soldierCap 10; Heavy also shoots |
 | 3 | Battle Tank | `Veh_Tank_USA` | PLAN heavy armor; HP 1250 / dmg 180 |
 
-**All three vehicles remain disposition `blocked` until producer + pop policy change — do not claim available.**
+**All three vehicles remain disposition `blocked` until producer + pop policy + catalog change — do not claim available or match-ready.**
 
-### Cost / production / fuel table (numbers only where evidenced)
+### Cost / production / fuel table (locked materials/fuel)
 
-| Role | Credits (`price` YAML) | Materials | Supply (PLAN proposal) | Build time (`productionDurationSeconds`) | Fuel/cell | Producer (intended) | Evidence gap |
-|---|---:|---:|---:|---:|---:|---|---|
-| Rifleman | 10000 | UNKNOWN | 1 (PLAN text only) | 5 | n/a | Barracks | materialsCost absent; legacy resolver unevidenced |
-| Heavy Gunner | 14000 | UNKNOWN | 1 | 5 | n/a | Barracks *(not currently)* | same; not on Barracks productions |
-| Marksman | 11500 | UNKNOWN | 1 | 5 | n/a | Barracks *(not currently)* | same |
-| Assault Breacher | 13000 | UNKNOWN | 1 | 5 | n/a | Barracks *(not currently)* | same |
-| Ghillie Rocketeer | 16000 | UNKNOWN | 1 | 5 | n/a | Barracks *(not currently)*; on Expert Tent | same |
-| Light Armored Car | 28000 | UNKNOWN | 4 (PLAN) | 5 | UNKNOWN | **TBD ground producer** | Fuel Bladder only today; fuel rates unserialized |
-| Armored/Heavy APC | 38000 / 45000 | UNKNOWN | 4 (PLAN) | 5 | UNKNOWN | TBD | same |
-| Battle Tank | 65000 | UNKNOWN | 6 (PLAN) | 5 | UNKNOWN | TBD | same |
+| Role | Credits | Materials | Supply | Time (s) | gFuel | aFuel | Producer | Catalogued? |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| Rifleman Male IV | 10000 | **20** | UNKNOWN | 5 | 0 | 0 | Barracks | YES |
+| Heavy Gunner Male I | 14000 | **28** | UNKNOWN | 5 | 0 | 0 | Expert Tent only | NO |
+| Marksman Male I | 11500 | **23** | UNKNOWN | 5 | 0 | 0 | Soldier Tent | NO |
+| Assault Breacher Female II | 13000 | **26** | UNKNOWN | 5 | 0 | 0 | Soldier Tent | NO |
+| Ghillie Rocketeer | 16000 | **32** | UNKNOWN | 5 | 0 | 0 | Expert Tent | NO |
+| Light Armored Car | 28000 | **56** | UNKNOWN | 5 | **0.05** | 0 | Fuel Bladder (bad) | NO |
+| Armored APC | 38000 | **76** | UNKNOWN | 5 | **0.05** | 0 | Fuel Bladder (bad) | NO |
+| Battle Tank | 65000 | **130** | UNKNOWN | 5 | **0.05** | 0 | Fuel Bladder (bad) | NO |
 
-Building construction costs **are** evidenced (`price` + `materialsCost` on BuildingDefinition YAML) — use those for facility columns in the E0.5 sheet; unit materials remain UNKNOWN.
+Logistics (catalogued, not an honest factory path): Cargo Truck 12000 / **24** / Tanker 16000 / **32**; pop keys match `truck_tray` / `truck_tanker`. Fuel Bladder remains **BAD-PRODUCER**. Only Rifleman Male IV is catalogued + produced + pop-eligible.
+
+Building construction costs remain authored YAML (`price` + `materialsCost`); example Barracks 40000 / **90**.
+
+### Skirmish allowlist snapshot
+Units (3): Rifleman Male IV, Cargo Truck, Tanker Truck.  
+Buildings (6): Barracks, Guard Tower, Field Fabrication Depot, Oil Pump, Refinery, Fuel Bladder.  
+Source: `Configs/Skirmish/UnitRegistry.asset` + `Construction.asset` via `SkirmishCatalogPolicy`.
 
 ### Candidate runtime code paths (E0.5 mapping)
 
 | Concern | Path |
 |---|---|
+| Legacy materials + fuel defaults | `Assets/Game/Scripts/Configs/GameplayConfigModels.cs` (`UnitGridAuthoringConfig`) |
 | Queue eligibility / pop caps | `Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs` |
 | Catalog allowlist | `Assets/Game/Scripts/Systems/SkirmishCatalogPolicy.cs` |
 | Skirmish rifle flatten | `Assets/Game/Scripts/Systems/SkirmishCombatPolicy.cs` |
@@ -272,18 +290,18 @@ Building construction costs **are** evidenced (`price` + `materialsCost` on Buil
 
 ## What remains incomplete
 
-- Exact **materials** numbers per unit (YAML gap + missing `ResolveLegacyMaterialsCost` body).  
-- Exact **fuel per cell** defaults (unserialized; need baker/config SO defaults or play-mode probe).  
-- Confirm **Cargo/Tanker** prefab name keys match `truck_tray` / `truck_tanker` substrings used by population policy.  
-- Preset **allowlist** contents (`SkirmishPresetConfig` / buildingPlacement registries) not fully enumerated here — catalog may hide assets even if producers exist.  
+- **Supply** capacity cost — no UnitGrid/Skirmish field; PLAN numbers only (not charged).  
+- Whether any UnitGrid overrides `groundFuelPerCell` / `airFuelPerCell` away from defaults (sampled vehicles: field absent). Full 18-vehicle audit not re-run.  
+- Whether the `Ghillie` prefab name contains `soldier` for the pop key (likely **no** — queue blocker even after catalog add).  
 - Localization keys / portrait LOD / wreck/death presentation / delivery transport prefabs — not fully filled per BASELINE column list.  
 - Fabrication cycle fields on Field Fabrication Depot — partial.  
 - Dual-count disposition when an entry is both “design standard” and “runtime blocked” — parent should pick policy for E1 gating.  
+- Fuel Bladder vehicle menu reachability for catalogued trucks — play-mode confirmation still needed.  
 - No gameplay/device run; ledger is source/config inspection only (same caveat as BASELINE).
 
 ---
 
-*E0.2 deliverable for WarlineCapture Skirmish Expansion — usable for E0.5 role picks and producer/cost path finding; not an availability claim.*
+*E0.2 deliverable for WarlineCapture Skirmish Expansion. E0.5 locked materials/fuel live in [`E0_5_PRODUCER_COST_MAP.md`](./E0_5_PRODUCER_COST_MAP.md). Not an availability or match-readiness claim.*
 
 ---
 

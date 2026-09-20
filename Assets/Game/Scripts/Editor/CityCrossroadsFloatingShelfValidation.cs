@@ -15,7 +15,7 @@ namespace Game.Editor
 {
     public static class CityCrossroadsFloatingShelfValidation
     {
-        public const string Marker = "[CityCrossroadsFloatingShelfValidation] result=Passed cases=15";
+        public const string Marker = "[CityCrossroadsFloatingShelfValidation] result=Passed cases=18";
         private const string SurfacePath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
         private const string MapPath = "Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset";
         private const string EntityPresentationPath =
@@ -106,8 +106,59 @@ namespace Game.Editor
                         CityCrossroadsFloatingShelfBuildingCorrection.NorthernPlinthBuildingName),
                     "Dense-city entity presentation must still author the statue-side hall and sand plinths.");
 
-                if (cases != 15)
-                    throw new InvalidOperationException($"Expected 15 cases, executed {cases}.");
+                var civicSquare = CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquarePlate;
+                var civicStatue = CityCrossroadsFloatingShelfBuildingCorrection.CivicStatue;
+                var civicBase = CityCrossroadsFloatingShelfBuildingCorrection.CivicStatueBase;
+                Check(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        civicSquare,
+                        civicSquare.y,
+                        out float civicDelta) &&
+                    CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        civicStatue,
+                        civicStatue.y,
+                        out float statueDelta) &&
+                    CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        civicBase,
+                        civicBase.y,
+                        out _) &&
+                    civicDelta < -5f &&
+                    math.abs(statueDelta - civicDelta) < 0.001f &&
+                    civicSquare.y + civicDelta <= 0.02f &&
+                    civicStatue.y + statueDelta > 4f &&
+                    civicStatue.y + statueDelta < 5f,
+                    "Civic sand tile must drop to grade; the golden statue must keep its pedestal height.");
+
+                var northernSquare = CityCrossroadsFloatingShelfBuildingCorrection.NorthernGroundSquarePlate;
+                var northernStatue = CityCrossroadsFloatingShelfBuildingCorrection.NorthernStatue;
+                var mountainWorld = new float3(768f, 9.1f, 550f);
+                var childFollower = CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquarePlate;
+                Check(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        northernSquare,
+                        northernSquare.y,
+                        out float northernDelta) &&
+                    CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        northernStatue,
+                        northernStatue.y,
+                        out _) &&
+                    northernSquare.y + northernDelta <= 0.02f &&
+                    !CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        mountainWorld,
+                        mountainWorld.y,
+                        out _) &&
+                    !CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        childFollower,
+                        0f,
+                        out _),
+                    "Northern base-join tile must drop; mountain and parented children must not.");
+
+                Check(EntityPresentationAuthorsPlate(
+                        CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquareName,
+                        CityCrossroadsFloatingShelfBuildingCorrection.CivicStatueName,
+                        CityCrossroadsFloatingShelfBuildingCorrection.CivicStatueBaseName),
+                    "Dense-city entity presentation must still author the civic sand tile and golden statue.");
+
+                if (cases != 18)
+                    throw new InvalidOperationException($"Expected 18 cases, executed {cases}.");
                 Debug.Log(Marker);
             }
             catch (Exception exception)

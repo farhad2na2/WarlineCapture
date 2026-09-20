@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
@@ -89,6 +90,72 @@ public sealed class MapSurfaceFloatingShelfCorrectionTests
         Assert.That(hall.x, Is.EqualTo(1031.03f).Within(0.001f));
         Assert.That(civicPlinth.z, Is.EqualTo(488.48f).Within(0.001f));
         Assert.That(northernPlinth.z, Is.EqualTo(687.84f).Within(0.001f));
+    }
+
+    [Test]
+    public void LowersResidentSandTileAndKeepsStatueRelativeHeight()
+    {
+        var civicSquare = CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquarePlate;
+        var civicStatue = CityCrossroadsFloatingShelfBuildingCorrection.CivicStatue;
+        var civicBase = CityCrossroadsFloatingShelfBuildingCorrection.CivicStatueBase;
+        var northernSquare = CityCrossroadsFloatingShelfBuildingCorrection.NorthernGroundSquarePlate;
+        var northernStatue = CityCrossroadsFloatingShelfBuildingCorrection.NorthernStatue;
+        var mountain = new float3(768f, 9.1f, 550f);
+        var childFollower = CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquarePlate;
+
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            civicSquare,
+            civicSquare.y,
+            out float civicDelta));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            civicStatue,
+            civicStatue.y,
+            out float statueDelta));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            civicBase,
+            civicBase.y,
+            out float baseDelta));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            northernSquare,
+            northernSquare.y,
+            out float northernDelta));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            northernStatue,
+            northernStatue.y,
+            out _));
+        Assert.IsFalse(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            mountain,
+            mountain.y,
+            out _));
+        Assert.IsFalse(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+            childFollower,
+            0f,
+            out _));
+
+        Assert.That(civicDelta, Is.EqualTo(CityCrossroadsFloatingShelfBuildingCorrection.ResidentHeightDelta).Within(0.001f));
+        Assert.That(statueDelta, Is.EqualTo(civicDelta).Within(0.001f));
+        Assert.That(baseDelta, Is.EqualTo(civicDelta).Within(0.001f));
+        Assert.That(northernDelta, Is.EqualTo(civicDelta).Within(0.001f));
+        Assert.That(civicSquare.y + civicDelta, Is.EqualTo(0.01f).Within(0.001f));
+        Assert.That(civicStatue.y + statueDelta, Is.EqualTo(4.75f).Within(0.02f));
+        Assert.That(civicBase.y + baseDelta, Is.EqualTo(0.05f).Within(0.02f));
+        Assert.That(northernSquare.y + northernDelta, Is.EqualTo(0.01f).Within(0.001f));
+        Assert.That(mountain.y, Is.EqualTo(9.1f).Within(0.001f));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.ContainsShelf(civicSquare.x, civicSquare.z));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.ContainsShelf(civicStatue.x, civicStatue.z));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.ContainsShelf(northernSquare.x, northernSquare.z));
+        Assert.IsFalse(CityCrossroadsFloatingShelfBuildingCorrection.ContainsShelf(mountain.x, mountain.z));
+
+        var local = LocalTransform.FromPosition(new float3(-96.07f, 5.85f, 333.16f));
+        var world = new LocalToWorld
+        {
+            Value = float4x4.Translate(CityCrossroadsFloatingShelfBuildingCorrection.CivicGroundSquarePlate)
+        };
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(ref local, world));
+        Assert.That(local.Position.y, Is.EqualTo(0.01f).Within(0.001f));
+        Assert.That(local.Position.x, Is.EqualTo(-96.07f).Within(0.001f));
+        Assert.IsTrue(CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentWorldMatrix(ref world));
+        Assert.That(world.Position.y, Is.EqualTo(0.01f).Within(0.001f));
     }
 
     [Test]

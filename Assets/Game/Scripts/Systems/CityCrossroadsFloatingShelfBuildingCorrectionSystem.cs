@@ -1,13 +1,15 @@
 using Game.Components;
 using Unity.Burst;
 using Unity.Entities;
+using Unity.Rendering;
 using Unity.Transforms;
 
 namespace Game.Runtime
 {
     /// <summary>
-    /// One-shot-safe runtime pass: buildings already at grade no-op because
-    /// their Y falls outside the stale raised band.
+    /// One-shot-safe runtime pass. Building roots already at grade no-op
+    /// because their Y falls outside the stale raised band. Resident
+    /// RenderOnly plates no-op once their world Y leaves the raised band.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -24,6 +26,8 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             state.Dependency = new CorrectRaisedShelfBuildingsJob().ScheduleParallel(state.Dependency);
+            state.Dependency = new CorrectRaisedResidentVisualsJob().ScheduleParallel(state.Dependency);
+            state.Dependency = new CorrectRaisedResidentWorldMatricesJob().ScheduleParallel(state.Dependency);
         }
 
         [BurstCompile]
@@ -33,6 +37,51 @@ namespace Game.Runtime
             public void Execute(ref LocalTransform transform)
             {
                 CityCrossroadsFloatingShelfBuildingCorrection.TryCorrect(ref transform);
+            }
+        }
+
+        /// <summary>
+        /// Drops RenderOnly SubScene meshes (sand tiles, statues, leftover
+        /// hill props) whose world XZ sits in a shelf AABB. Local Y must also
+        /// be raised so parented children with local Y≈0 follow the corrected
+        /// parent instead of being lowered twice.
+        /// </summary>
+        [BurstCompile]
+        [WithNone(
+            typeof(OperationMapBuildingComponent),
+            typeof(UnitMove),
+            typeof(UnitAirComponent),
+            typeof(OperationMapRenderProxySlotComponent),
+            typeof(OperationMapAuthoredVehiclePresentation))]
+        private partial struct CorrectRaisedResidentVisualsJob : IJobEntity
+        {
+            public void Execute(ref LocalTransform transform, ref LocalToWorld localToWorld)
+            {
+                if (!CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentVisual(
+                        ref transform,
+                        localToWorld))
+                {
+                    return;
+                }
+
+                CityCrossroadsFloatingShelfBuildingCorrection.ApplyResidentWorldDelta(
+                    ref localToWorld,
+                    CityCrossroadsFloatingShelfBuildingCorrection.ResidentHeightDelta);
+            }
+        }
+
+        [BurstCompile]
+        [WithAll(typeof(MaterialMeshInfo))]
+        [WithNone(
+            typeof(LocalTransform),
+            typeof(Parent),
+            typeof(OperationMapBuildingComponent),
+            typeof(OperationMapRenderProxySlotComponent))]
+        private partial struct CorrectRaisedResidentWorldMatricesJob : IJobEntity
+        {
+            public void Execute(ref LocalToWorld localToWorld)
+            {
+                CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentWorldMatrix(ref localToWorld);
             }
         }
     }

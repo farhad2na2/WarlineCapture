@@ -8,6 +8,7 @@ This plan answers the request to use the wider roster and fight battles involvin
 Detailed catalog: [120 battles and path to 200](BATTLE_CATALOG.md), [five map briefs](MAPS.md), [difficulty/starting packages/economy](MATCH_SETUP.md), [enemy AI and ARIA](AI_AND_ARIA.md), [all 120 candidate IDs](SCENARIO_CATALOG.csv). These supplements refine this plan; their explicit catalog/setup decisions supersede earlier conflicting proposals. Numerical costs/timings remain balance-test inputs. Operations planning is next and outside this task.
 
 Companions: [source audit](BASELINE.md), [delivery packages](DELIVERY.md), [acceptance and performance gates](ACCEPTANCE.md), [unit unlocks and upgrades](UNLOCKS_AND_UPGRADES.md).
+UI wireframes: [P0 battle library](P0_BATTLE_LIBRARY_WIREFRAMES.md).
 
 The unlock/upgrade direction was accepted for documentation on 2026-09-18. Later that day the owner requested the [Watch ARIA play plan](../Aria_Demonstration/PLAN.md) before expansion implementation. This expansion remains unstarted. Its new group, upgrade, air and objective mechanics must extend ARIA's shared skills and coverage as each package becomes playable.
 

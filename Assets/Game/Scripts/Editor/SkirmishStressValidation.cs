@@ -78,6 +78,14 @@ namespace Game.Editor
                 "P500 ground requested combat must be 500.");
             var airOnly = SkirmishStressRecipe.Requested(SkirmishStressScale.P100, SkirmishStressPhase.AirTransport, false);
             Check(airOnly.Air == 6 && airOnly.Combat == 24, "Air-only P100 includes escort plus aircraft.");
+            Check(Mathf.Approximately(SkirmishStressRecipe.SpawnStallCompleteSeconds, 8f),
+                "Warmup must complete after 8s of frozen spawn progress so census can record missing cells.");
+            Check(SkirmishStressEditorProbe.ScreenshotFileName(new SkirmishStressSession
+            {
+                Scale = 100,
+                Layout = SkirmishStressLayoutCode.Spread
+            }, SkirmishStressPhaseCode.Idle) == "e03-idle-spread-p100.png",
+                "Programmer 2 screenshot filenames must stay stable.");
 
             using (var world = new World("Skirmish stress census validation"))
             {

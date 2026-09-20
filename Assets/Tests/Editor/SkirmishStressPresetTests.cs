@@ -16,8 +16,11 @@ public sealed class SkirmishStressPresetTests
         tests.NormalizationKeepsPlayerScenariosAndHiddenStressIndex();
         tests.CensusReportsMeasuredEntitiesInsteadOfRequestedCounts();
         tests.ForceProjectionWritesRequestedEntriesBeforeSpawn();
+        tests.SpawnStallCompletesWhenProgressStopsShortOfRequested();
+        tests.SpawnProgressResetPreventsFalseStall();
+        tests.ScreenshotNameUsesPhaseLayoutAndScale();
         Debug.Log(SkirmishStressValidation.Run());
-        return "[SkirmishStressPreset] result=Passed tests=4";
+        return "[SkirmishStressPreset] result=Passed tests=7";
     }
 
     [Test]
@@ -122,6 +125,65 @@ public sealed class SkirmishStressPresetTests
         Assert.AreEqual(56, requested, "P50 idle projects 50 combat + 6 support across both sides.");
         Assert.AreEqual(12, em.GetComponentData<InitialUnitsSpawnConfig>(startup).SpawnRadiusCells);
         Assert.AreEqual((uint)SkirmishStressRecipe.FixedSeed, em.GetComponentData<InitialUnitsSpawnConfig>(startup).RandomSeed);
+    }
+
+    [Test]
+    public void SpawnStallCompletesWhenProgressStopsShortOfRequested()
+    {
+        using var world = new World(nameof(SpawnStallCompletesWhenProgressStopsShortOfRequested));
+        var em = world.EntityManager;
+        CreatePartialSpawn(em, requested: 10, spawned: 4);
+        var session = new SkirmishStressSession { LastObservedSpawned = 4 };
+        Assert.IsFalse(SkirmishStressDirector.TryCompleteSpawn(em, ref session, 7.9f));
+        Assert.AreEqual(0, session.SpawnComplete);
+        Assert.IsTrue(SkirmishStressDirector.TryCompleteSpawn(em, ref session, 0.2f));
+        Assert.AreEqual(1, session.SpawnComplete);
+        Assert.AreEqual(1, session.SpawnStalled);
+        Assert.AreEqual(4, session.LastObservedSpawned);
+    }
+
+    [Test]
+    public void SpawnProgressResetPreventsFalseStall()
+    {
+        using var world = new World(nameof(SpawnProgressResetPreventsFalseStall));
+        var em = world.EntityManager;
+        CreatePartialSpawn(em, requested: 10, spawned: 7);
+        var session = new SkirmishStressSession { LastObservedSpawned = 5, SpawnStallSeconds = 7.5f };
+        Assert.IsFalse(SkirmishStressDirector.TryCompleteSpawn(em, ref session, 8.1f));
+        Assert.AreEqual(0, session.SpawnComplete);
+        Assert.AreEqual(0, session.SpawnStalled);
+        Assert.AreEqual(7, session.LastObservedSpawned);
+        Assert.AreEqual(0f, session.SpawnStallSeconds);
+    }
+
+    [Test]
+    public void ScreenshotNameUsesPhaseLayoutAndScale()
+    {
+        var session = new SkirmishStressSession
+        {
+            Scale = 100,
+            Layout = SkirmishStressLayoutCode.Concentrated
+        };
+        Assert.AreEqual("e03-densecombat-concentrated-p100.png",
+            SkirmishStressEditorProbe.ScreenshotFileName(session, SkirmishStressPhaseCode.DenseCombat));
+        session.Layout = SkirmishStressLayoutCode.Spread;
+        session.Scale = 50;
+        Assert.AreEqual("e03-warmup-spread-p50.png",
+            SkirmishStressEditorProbe.ScreenshotFileName(session, SkirmishStressPhaseCode.Warmup));
+    }
+
+    private static void CreatePartialSpawn(EntityManager em, int requested, int spawned)
+    {
+        var startup = em.CreateEntity(typeof(InitialUnitsSpawnConfig));
+        em.AddBuffer<InitialUnitsFactionUnitSpawnEntry>(startup).Add(new InitialUnitsFactionUnitSpawnEntry
+        {
+            FactionId = 1,
+            Count = requested
+        });
+        em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(startup).Add(new InitialUnitsFactionUnitSpawnProgress
+        {
+            Spawned = spawned
+        });
     }
 
     private static void Create(EntityManager em, byte faction, int health, string key, bool support, bool building, bool air = false)

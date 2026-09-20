@@ -21,7 +21,10 @@ namespace Game.Components
         public byte ForceProjected;
         public byte OrdersIssued;
         public byte SpawnComplete;
+        public byte SpawnStalled;
         public float PhaseElapsed;
+        public float SpawnStallSeconds;
+        public int LastObservedSpawned;
         public int RequestedCombat;
         public int RequestedAir;
         public int RequestedSupport;

@@ -1,6 +1,8 @@
 # E0.3 — reproducible stress scene/preset
 
-Status: authored and Editor-validated as additive Skirmish content. Play-mode entity counts were **not** measured in the cloud agent VM (no Unity Editor play mode). Do not treat requested recipe counts as spawned/alive/destroyed.
+Status: authored on `cursor/e03-stress-preset-b6c7`. Edit-mode checks are source-authored. Play-mode **actual counts** and screenshots were **not** produced in the cloud VM (no Unity Editor). Do not invent PNG evidence. Do not treat requested recipe counts as spawned/alive/destroyed.
+
+Handoff: **Programmer 2** runs the Editor self-test and captures screenshots. **Game PM** forwards those shots plus the census file to Farhad. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots. The draft PR is a bookmark only.
 
 Host: Desert Base geometry, real unit prefabs, existing Skirmish AI / projectiles / pathing. Player-facing Base Assault and City Crossroads are unchanged.
 
@@ -19,8 +21,13 @@ Deterministic inputs:
 ### Editor menus
 
 1. Optional rebuild after pulling: `Tools/Warline/Skirmish/Rebuild E0.3 Stress Preset`
-2. Launch the default sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`
-3. Or from the C# console / a one-off executeMethod:
+2. Launch the default spread sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`
+3. Concentrated visibility sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress/Concentrated Sequence P100`
+4. Single-phase menus under `Tools/Warline/Skirmish/Launch E0.3 Stress/…`
+5. Mid-run snapshot: `Tools/Warline/Skirmish/Capture E0.3 Census Now`
+6. Manual Game-view shots: `Tools/Warline/Skirmish/Capture E0.3 Screenshot/Player Setup Two Battles` and `…/Current Phase`
+
+Or from the C# console / a one-off executeMethod:
 
 ```csharp
 Game.Editor.SkirmishStressEditorProbe.Launch(
@@ -44,21 +51,37 @@ The probe opens `Assets/Game/Scenes/Menu.unity`, queues Scenario 2 with seed `10
 
 ### Focused Edit-mode check (no play mode)
 
+macOS:
+
 ```bash
 Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/warline-e03-stress.log -- \
   -quit -executeMethod SkirmishStressPresetTests.RunFocusedValidation
 ```
 
-Required marker: `[SkirmishStressPreset] result=Passed`. The same batch also prints `[SkirmishStressValidation] result=Passed`.
+Windows (checked wrapper only; do not invoke Unity.exe directly):
 
-### Play-mode census capture
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor>\Unity.exe" `
+  -ProjectPath (Get-Location).Path `
+  -ExecuteMethod SkirmishStressPresetTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\warline-e03-stress.log" `
+  -RequiredPassMarker "[SkirmishStressPreset] result=Passed"
+```
 
-After the probe finishes, copy:
+Required markers: `[SkirmishStressPreset] result=Passed` and `[SkirmishStressValidation] result=Passed`.
 
-- Console lines starting with `[SkirmishStress]`
-- `$TMPDIR/warline-e03-stress/E0_3_STRESS_CENSUS.md` (or `WARLINE_SKIRMISH_STRESS_REPORT_DIR`)
+### Play-mode census capture (actual counts)
 
-Those files contain **measured** spawned/alive/destroyed columns. Paste the table into the “Actual counts” section below. Do not copy the requested table into that section.
+After the probe finishes — or after `Capture E0.3 Census Now` — copy **measured** files. Never paste the requested table into the actual-count section.
+
+| Artifact | Default path |
+|---|---|
+| Census markdown | `$TMPDIR/warline-e03-stress/E0_3_STRESS_CENSUS.md` (macOS) or `%TEMP%\warline-e03-stress\E0_3_STRESS_CENSUS.md` (Windows) |
+| Override directory | env `WARLINE_SKIRMISH_STRESS_REPORT_DIR` |
+| Console filter | `[SkirmishStress]` and `[SkirmishStressProbe]` |
+
+The census table columns `Spawned` / `Alive` / `Destroyed` / `Missing spawn` are measured. `Requested` is authoring input only. `spawn-stalled` in the log means initial spawn stopped making progress for 8 seconds (typically `no-free-cell`); warmup still records whatever entities exist.
 
 ## Phase definitions
 
@@ -66,7 +89,7 @@ Each phase can run alone (`sequence: false`) or as the default sequence (`warmup
 
 | Phase | What it does | Force composition |
 |---|---|---|
-| warmup | Wait until initial spawn finishes. No orders. | Ground + support. Sequence also pre-spawns air. |
+| warmup | Wait until initial spawn finishes, or 8s of frozen spawn progress. No orders. | Ground + support. Sequence also pre-spawns air. |
 | idle | `Hold` on combat units. | Same as warmup. |
 | mass move | Immediate Move toward the map midline / opposite approach. | Ground + support. |
 | dense combat | Attack-move into contact so rifles, cars, APCs, tanks and traces run. | Ground + support. Prefer concentrated layout for all-units-visible. |
@@ -100,9 +123,9 @@ Real prefabs: `Unit_Chr_Soldier_Male_02_Alt_04`, `Unit_Chr_Ghillie_Male_01`, `Un
 
 ## Actual counts
 
-**Not measured in this delivery.** The cloud agent could not enter Unity play mode or screenshot the Editor.
+**Not measured in this delivery.** The cloud agent could not enter Unity play mode.
 
-Paste the probe census table here after a Game PM / QA Editor run:
+Programmer 2: paste the probe census table here after a real Editor run. Leave cells as `—` until then.
 
 | Phase | Requested combat | Spawned combat | Alive combat | Destroyed combat | Missing spawn | Spawned air | Alive air | Spawned support | Spawned buildings | Live traces | Elapsed |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
@@ -117,41 +140,76 @@ Paste the probe census table here after a Game PM / QA Editor run:
 
 Repeat at least once with `SkirmishStressLayout.Concentrated` so both spread-out and concentrated-visibility cases have measured rows.
 
-## Editor self-test / Game PM Unity gate
+## Editor self-test (Programmer 2)
 
-1. Confirm `ProjectSettings/ProjectVersion.txt` matches the machine Editor.
-2. Idle Editor, no dirty scenes. Unity Hub signed in.
-3. `Tools/Warline/Skirmish/Rebuild E0.3 Stress Preset` once, then save assets.
-4. Run `SkirmishStressPresetTests.RunFocusedValidation` through `invoke_unity_macos.sh`. Expect `[SkirmishStressPreset] result=Passed` and `[SkirmishStressValidation] result=Passed`.
-5. Confirm setup still shows only `1 · DESERT BASE` and `2 · CITY CROSSROADS`.
-6. Launch the default sequence. Wait until `[SkirmishStressProbe] Census samples=` appears.
-7. Record the census markdown and console lines. Compare spawned vs requested; never close the gate on requested counts alone.
-8. Optional: P50 warmup spread, P200 concentrated dense combat, P100 air-only, then a 350/500 engineering probe if the machine survives.
-9. Restore the Editor scene/profile if a reversible QA snapshot was taken.
+Do this on a machine with Unity Hub signed in and the Editor version in `ProjectSettings/ProjectVersion.txt`. Idle Editor, no dirty scenes. Keep Hub open. Use the macOS wrapper (no `-batchmode`) or the checked Windows PowerShell wrappers. Do not invoke Unity directly.
 
-Windows: use the checked PowerShell wrappers and the same executeMethod / pass marker. Do not invoke Unity directly.
+### A. Compile / Edit-mode
+
+1. Confirm no other Editor owns this worktree.
+2. Optional: `Tools/Warline/Skirmish/Rebuild E0.3 Stress Preset`, then save assets.
+3. Run `SkirmishStressPresetTests.RunFocusedValidation` through the platform wrapper above.
+4. Expect `[SkirmishStressPreset] result=Passed` and `[SkirmishStressValidation] result=Passed`.
+
+### B. Player setup still has two battles
+
+1. Play `Assets/Game/Scenes/Menu.unity`.
+2. Open Skirmish / Quick Custom setup.
+3. Confirm only `1 · DESERT BASE` and `2 · CITY CROSSROADS`. No third player button.
+4. Set Game view to 1920×1080.
+5. `Tools/Warline/Skirmish/Capture E0.3 Screenshot/Player Setup Two Battles`.
+6. Expected file: `$TMPDIR/warline-e03-stress/e03-player-setup-two-battles.png` (or `%TEMP%\warline-e03-stress\`).
+7. Exit play mode.
+
+### C. Default spread sequence + actual counts
+
+1. `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`.
+2. Console filter: `[SkirmishStress]`.
+3. Wait until `[SkirmishStressProbe] Census samples=` (sequence writes a Destruction row). Timeout is 420s.
+4. If spawn cannot place every unit, look for `[SkirmishStress] spawn-stalled` and a positive `missingSpawnCombat`. That is a measured shortfall, not a hang.
+5. Optional mid-phase: `Tools/Warline/Skirmish/Capture E0.3 Census Now`.
+6. Copy `$TMPDIR/warline-e03-stress/E0_3_STRESS_CENSUS.md` into the Actual counts table above.
+7. Collect PNGs the probe queued (end-of-frame `ScreenCapture`; wait one frame after the log line if a file is still empty):
+
+| File | What it must show |
+|---|---|
+| `e03-warmup-spread-p100.png` | Living armies on Desert Base, no orders yet |
+| `e03-idle-spread-p100.png` | Hold / idle |
+| `e03-massmove-spread-p100.png` | Ground units moving toward the midline |
+| `e03-densecombat-spread-p100.png` | Contact + attack traces if combat has started |
+| `e03-airtransport-spread-p100.png` | Helicopters moving |
+| `e03-destruction-spread-p100.png` | At least one wreck/loss if `destroyedCombat` > 0 |
+
+### D. Concentrated visibility
+
+1. Exit play mode.
+2. `Tools/Warline/Skirmish/Launch E0.3 Stress/Concentrated Sequence P100`.
+3. Collect `e03-*-concentrated-p100.png`, especially `e03-densecombat-concentrated-p100.png` with both armies in one camera.
+4. Keep the second census (rename the first file before this run if you need both).
+
+### E. Optional scale spots
+
+P50 warmup spread, P200 concentrated dense combat, P100 air-only. 350/500 only if the machine survives. Same census rule: report spawned/alive/destroyed, not requested.
+
+### F. After capture
+
+1. Restore the Editor scene/profile if a reversible QA snapshot was taken.
+2. Game PM forwards the census markdown + PNGs to Farhad.
+3. Do not push/fast-forward this branch into `codex/m03-radar-warning` until Farhad has seen the shots.
 
 ## Screenshots
 
-No Editor screenshots were captured in this VM.
+No Editor screenshots were captured in this VM. Filenames above are the contract for Programmer 2. Do not invent or reuse unrelated screenshots.
 
-Placeholder shots for Game PM / QA (1920×1080 Game view):
-
-1. Skirmish setup still showing two player battles.
-2. Stress warmup, spread, all living units, census line visible in console.
-3. Concentrated dense combat, both armies on screen, attack traces visible.
-4. Air/transport phase with helicopters moving.
-5. Destruction phase with at least one wreck/loss and a non-zero `destroyedCombat`.
-
-Do not invent or reuse unrelated screenshots.
+If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot/Current Phase` after the Game view has painted.
 
 ## Known blockers
 
-- Play-mode census is Editor-only until someone runs the probe. This report must not be read as a device or 500-entity performance pass.
+- Play-mode census is Editor-only until Programmer 2 runs the probe. This report is not a device or 500-entity performance pass.
 - `SkirmishPresetConfig.InfantryLimitPerFaction` is still 24. Stress scale uses initial spawn, not recruitment. Recruiting past 24 during a stress match is expected to refuse.
 - `SkirmishCombatPolicy.ApplyRoster` still retunes only soldier / light armored car / guard tower. Ghillie, APC, tank, and helicopters keep their prefab combat stats.
 - Spatial index 2048-entry bound, path queue, and render budget are unmeasured at 200/350/500. That is E0.4 work.
-- Large radii can still fail `no-free-cell` on Desert Base. Treat `missingSpawnCombat` as a real spawn failure, not a logging bug.
+- Large radii can still fail `no-free-cell` on Desert Base. Warmup now completes after 8s of frozen spawn progress so census can record `missingSpawnCombat` instead of hanging forever.
 - City Crossroads is not the stress host. The known CC floating-shelf defect is unchanged (E0.1).
 - Helipad placement may fail the existing Skirmish slope/height audit; air units still spawn from the initial-unit path.
 - Scenario index 2 is hidden. `QuickCustomScreenView.Bind` still clamps player setup to 0/1.
@@ -163,13 +221,13 @@ Do not invent or reuse unrelated screenshots.
 | `Assets/Game/Resources/SkirmishStressScaleProbe.asset` | Hidden Scenario 2 preset |
 | `Assets/Game/Configs/Skirmish/Stress/` | Construction, UnitRegistry, InitialForces |
 | `Assets/Game/Scripts/Configs/SkirmishStressRecipe.cs` | Seeds, phases, requested tables |
-| `Assets/Game/Scripts/Systems/SkirmishStressDirector.cs` | Projection, orders, phase machine |
+| `Assets/Game/Scripts/Systems/SkirmishStressDirector.cs` | Projection, orders, phase machine, 8s spawn-stall |
 | `Assets/Game/Scripts/Systems/SkirmishStressCensus.cs` | Measured counts |
-| `Assets/Game/Scripts/Editor/SkirmishStressEditorProbe.cs` | Play-mode launcher |
+| `Assets/Game/Scripts/Editor/SkirmishStressEditorProbe.cs` | Play-mode launcher + census/screenshot capture |
 | `Assets/Tests/Editor/SkirmishStressPresetTests.cs` | Focused Edit-mode validation |
 | `Assets/Game/Resources/SkirmishBaseAssault.asset` | Unchanged player preset 0 |
 | `Assets/Game/Resources/SkirmishCityCrossroads.asset` | Unchanged player preset 1 |
 
-## Next step for Game PM
+## Next step
 
-Run the Unity gate above on the `codex/m03-radar-warning` integration Editor, paste **actual** census rows into this file, and only then schedule E0.4 device profiling. E0.1 (CC float), E1 roster expansion, and other PR branches stay out of this package.
+Programmer 2: run A–D on this branch, paste **actual** census rows, attach the PNG paths listed above. Game PM: forward that packet to Farhad. Landing into `codex/m03-radar-warning` waits on Farhad after the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.

@@ -149,6 +149,7 @@ namespace Game.Runtime
             text.AppendLine("- Layout: `" + session.Layout + "`");
             text.AppendLine("- Mode: `" + (session.Sequence != 0 ? "sequence" : "single-phase") + "`");
             text.AppendLine("- Active phase: `" + session.ActivePhase + "`");
+            text.AppendLine("- Spawn complete: `" + session.SpawnComplete + "` stalled=`" + session.SpawnStalled + "`");
             text.AppendLine();
             text.AppendLine("| Phase | Requested combat | Spawned combat | Alive combat | Destroyed combat | Missing spawn | Spawned air | Alive air | Spawned support | Spawned buildings | Live traces | Elapsed |");
             text.AppendLine("|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|");

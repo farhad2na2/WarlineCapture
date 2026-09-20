@@ -92,6 +92,7 @@ namespace Game.Configs
         public const int DefaultDenseCombatSeconds = 12;
         public const int DefaultAirTransportSeconds = 10;
         public const int DefaultDestructionSeconds = 15;
+        public const float SpawnStallCompleteSeconds = 8f;
 
         public const string RiflePrefab = "Characters/Unit_Chr_Soldier_Male_02_Alt_04";
         public const string GhilliePrefab = "Characters/Unit_Chr_Ghillie_Male_01";

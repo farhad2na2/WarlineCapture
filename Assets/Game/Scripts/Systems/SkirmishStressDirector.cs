@@ -33,8 +33,8 @@ namespace Game.Runtime
 
             if (match.Phase == SkirmishPhase.Playing)
             {
-                if (session.SpawnComplete == 0 && SpawnFinished(em))
-                    session.SpawnComplete = 1;
+                if (session.SpawnComplete == 0)
+                    TryCompleteSpawn(em, ref session, SystemAPI.Time.DeltaTime);
                 if (session.SpawnComplete != 0)
                     Advance(em, entity, ref session, SystemAPI.Time.DeltaTime);
             }
@@ -169,19 +169,82 @@ namespace Game.Runtime
             return Entity.Null;
         }
 
-        private static bool SpawnFinished(EntityManager em)
+        internal readonly struct SpawnStatus
+        {
+            public bool HasProgress;
+            public bool Finished;
+            public int Spawned;
+            public int Requested;
+        }
+
+        internal static SpawnStatus EvaluateSpawn(EntityManager em)
         {
             using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
-            if (query.CalculateEntityCount() != 1) return false;
+            if (query.CalculateEntityCount() != 1)
+                return default;
             var startup = query.GetSingletonEntity();
+            bool initialized = em.HasComponent<InitialUnitsSpawnInitialized>(startup);
             if (!em.HasBuffer<InitialUnitsFactionUnitSpawnEntry>(startup) ||
                 !em.HasBuffer<InitialUnitsFactionUnitSpawnProgress>(startup))
-                return em.HasComponent<InitialUnitsSpawnInitialized>(startup);
+            {
+                return new SpawnStatus { Finished = initialized };
+            }
+
             var units = em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(startup);
             var progress = em.GetBuffer<InitialUnitsFactionUnitSpawnProgress>(startup);
-            if (progress.Length < units.Length) return false;
+            int spawned = 0;
+            int requested = 0;
+            bool finished = initialized || progress.Length >= units.Length;
+            int limit = math.min(units.Length, progress.Length);
             for (int i = 0; i < units.Length; i++)
-                if (progress[i].Spawned < units[i].Count) return false;
+                requested += units[i].Count;
+            for (int i = 0; i < limit; i++)
+            {
+                spawned += progress[i].Spawned;
+                if (progress[i].Spawned < units[i].Count)
+                    finished = initialized;
+            }
+            if (progress.Length < units.Length && !initialized)
+                finished = false;
+            return new SpawnStatus
+            {
+                HasProgress = true,
+                Finished = finished,
+                Spawned = spawned,
+                Requested = requested
+            };
+        }
+
+        internal static bool TryCompleteSpawn(EntityManager em, ref SkirmishStressSession session, float dt)
+        {
+            var status = EvaluateSpawn(em);
+            if (status.Finished)
+            {
+                session.SpawnComplete = 1;
+                session.LastObservedSpawned = status.Spawned;
+                return true;
+            }
+
+            if (!status.HasProgress)
+                return false;
+
+            if (status.Spawned != session.LastObservedSpawned)
+            {
+                session.LastObservedSpawned = status.Spawned;
+                session.SpawnStallSeconds = 0f;
+                return false;
+            }
+
+            session.SpawnStallSeconds += math.max(0f, dt);
+            if (session.SpawnStallSeconds < SkirmishStressRecipe.SpawnStallCompleteSeconds)
+                return false;
+
+            session.SpawnComplete = 1;
+            session.SpawnStalled = 1;
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " spawn-stalled spawnedProgress="
+                + status.Spawned + " requestedProgress=" + status.Requested
+                + " stallSeconds=" + session.SpawnStallSeconds.ToString("0.00")
+                + " missingProgress=" + math.max(0, status.Requested - status.Spawned));
             return true;
         }
 

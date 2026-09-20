@@ -27,9 +27,12 @@ namespace Game.Editor
             WriteDefaultForces(initial);
             var registry = Copy<UnitPrefabRegistryAuthoringConfig>(
                 "Assets/Game/Configs/Skirmish/UnitRegistry.asset", Root + "/UnitRegistry.asset");
-            registry.UnitSpawnPrefabs.Clear();
-            foreach (string path in SkirmishStressRecipe.RosterPrefabPaths)
-                registry.UnitSpawnPrefabs.Add(Prefab(path));
+            var registrySo = new SerializedObject(registry);
+            var spawnPrefabs = registrySo.FindProperty("unitSpawnPrefabs");
+            spawnPrefabs.arraySize = SkirmishStressRecipe.RosterPrefabPaths.Length;
+            for (int i = 0; i < SkirmishStressRecipe.RosterPrefabPaths.Length; i++)
+                spawnPrefabs.GetArrayElementAtIndex(i).objectReferenceValue = Prefab(SkirmishStressRecipe.RosterPrefabPaths[i]);
+            registrySo.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(registry);
             var construction = Copy<BuildingPlacementSystemConfig>(
                 "Assets/Game/Configs/Skirmish/Construction.asset", Root + "/Construction.asset");
@@ -130,6 +133,9 @@ namespace Game.Editor
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/" + path + ".prefab");
             if (prefab == null) throw new InvalidOperationException(path);
+            string expected = System.IO.Path.GetFileNameWithoutExtension(path);
+            if (prefab.name != expected)
+                throw new InvalidOperationException(path + " resolved to " + prefab.name + " instead of the unit root.");
             return prefab;
         }
     }

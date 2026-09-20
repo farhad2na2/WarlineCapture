@@ -174,6 +174,11 @@ namespace Game.Editor
             return path;
         }
 
+        public static bool CanAdvancePastPreparing(SkirmishPhase phase, int spawnedCombat)
+        {
+            return phase == SkirmishPhase.Playing || spawnedCombat > 0;
+        }
+
         public static string[] RequiredSpreadP100Files() => new[]
         {
             CensusFile,
@@ -255,12 +260,18 @@ namespace Game.Editor
                 if (query.CalculateEntityCount() != 1) return;
                 var match = query.GetSingleton<SkirmishMatchState>();
                 var session = query.GetSingleton<SkirmishStressSession>();
-                if (match.Phase != SkirmishPhase.Playing) return;
+                int spawnedCombat = 0;
+                if (match.Phase != SkirmishPhase.Playing)
+                    spawnedCombat = SkirmishStressCensus.Measure(em, session, 0f).SpawnedCombat;
+                if (!CanAdvancePastPreparing(match.Phase, spawnedCombat)) return;
                 if (stage == 1)
                 {
                     Debug.Log(SkirmishStressRecipe.ReportMarker + " playing seed=" + match.Seed
                         + " scale=" + session.Scale + " layout=" + session.Layout
-                        + " sequence=" + session.Sequence);
+                        + " sequence=" + session.Sequence
+                        + (match.Phase == SkirmishPhase.Playing
+                            ? ""
+                            : " phaseLagged=1 spawnedCombat=" + spawnedCombat));
                     CapturePhaseScreenshot(session, session.ActivePhase);
                     stage = 2;
                     next = now + 1;

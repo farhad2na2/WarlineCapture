@@ -26,10 +26,12 @@ namespace Game.Composition
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
             if(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
-               match.Phase<SkirmishPhase.Playing && match.StartupFailure==SkirmishStartupFailureCode.None)
+               match.Phase<SkirmishPhase.Playing && match.StartupFailure!=SkirmishStartupFailureCode.Content)
                 SkirmishLaunchProjection.DriveStressLaunch(EntityManager);
             ObserveStartup(session, ref match);
-            bool startupFailed=match.StartupFailure!=SkirmishStartupFailureCode.None;
+            bool startupFailed=match.StartupFailure!=SkirmishStartupFailureCode.None &&
+                !(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
+                  match.StartupFailure==SkirmishStartupFailureCode.Timeout);
             if(startupFailed)SkirmishStartupPolicy.StopFailedStartup(EntityManager);
             if(match.Phase<SkirmishPhase.Playing&&!startupFailed)return;
             if(view==null)view=SkirmishMatchView.Create();
@@ -85,7 +87,8 @@ namespace Game.Composition
             bool contentFailed=starts.CalculateEntityCount()==1&&starts.GetSingleton<MatchStartQueueComponent>().LastStatus==MatchStartStatusKind.Failed;
             contentFailed|=scene!=null&&(!string.IsNullOrEmpty(scene.OperationMapContentFailure)||scene.GameplayStartFailed);
             if(contentFailed)SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Content);
-            else if(UnityEngine.Time.realtimeSinceStartupAsDouble-startupBeganAt>=SkirmishStartupPolicy.TimeoutSeconds)
+            else if(UnityEngine.Time.realtimeSinceStartupAsDouble-startupBeganAt>=SkirmishStartupPolicy.TimeoutSeconds &&
+                    match.ScenarioIndex!=SkirmishPresetConfig.StressScaleProbeScenarioIndex)
                 SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Timeout);
             match=EntityManager.GetComponentData<SkirmishMatchState>(session);
         }

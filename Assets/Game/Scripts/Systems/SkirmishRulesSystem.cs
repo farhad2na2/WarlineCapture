@@ -42,7 +42,10 @@ namespace Game.Runtime
             var match=SystemAPI.GetSingleton<SkirmishMatchState>();
             var em=state.EntityManager;
             var gameplay=SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
-            if(match.StartupFailure!=SkirmishStartupFailureCode.None)return;
+            if(match.StartupFailure!=SkirmishStartupFailureCode.None &&
+               !(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
+                 match.StartupFailure==SkirmishStartupFailureCode.Timeout))
+                return;
             if(match.Phase is SkirmishPhase.Preparing or SkirmishPhase.Playing)
                 SkirmishWorldSetup.NormalizeScenery(em);
             if(match.Phase==SkirmishPhase.Preparing && gameplay.SimulationActive!=0)

@@ -32,10 +32,13 @@ namespace Game.Runtime
                 session.ForceProjected = (byte)(TryProjectForces(em, session) ? 1 : 0);
             TryKeepPlayRequested(em, match);
 
+            if (session.SpawnComplete == 0)
+                TryCompleteSpawn(em, ref session, SystemAPI.Time.DeltaTime);
+            if (session.SpawnComplete != 0)
+                TryReleaseLoadingGate(em);
+
             if (match.Phase == SkirmishPhase.Playing)
             {
-                if (session.SpawnComplete == 0)
-                    TryCompleteSpawn(em, ref session, SystemAPI.Time.DeltaTime);
                 if (session.SpawnComplete != 0)
                     Advance(em, entity, ref session, SystemAPI.Time.DeltaTime);
             }
@@ -86,17 +89,55 @@ namespace Game.Runtime
         internal static bool TryKeepPlayRequested(EntityManager em, in SkirmishMatchState match)
         {
             if (match.ScenarioIndex != SkirmishStressRecipe.ScenarioIndex) return false;
-            if (match.Phase >= SkirmishPhase.Playing || match.StartupFailure != SkirmishStartupFailureCode.None)
-                return false;
+            if (match.Phase >= SkirmishPhase.Playing) return false;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Content) return false;
             using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
             if (gameplay.CalculateEntityCount() != 1) return false;
             var entity = gameplay.GetSingletonEntity();
             var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
-            if (state.PlayRequested != 0) return true;
-            state.PlayRequested = 1;
-            em.SetComponentData(entity, state);
-            Debug.Log(SkirmishStressRecipe.ReportMarker + " director playRequested=1");
+            bool changed = false;
+            if (state.PlayRequested == 0)
+            {
+                state.PlayRequested = 1;
+                changed = true;
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " director playRequested=1");
+            }
+            if (match.Phase == SkirmishPhase.Preparing && state.SimulationActive == 0)
+            {
+                state.SimulationActive = 1;
+                changed = true;
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " director simulationActive=1");
+            }
+            if (changed)
+                em.SetComponentData(entity, state);
+            if (match.StartupFailure == SkirmishStartupFailureCode.Timeout)
+                TryClearStressTimeout(em);
             return true;
+        }
+
+        internal static bool TryReleaseLoadingGate(EntityManager em)
+        {
+            using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
+            if (query.CalculateEntityCount() != 1) return false;
+            var startup = query.GetSingletonEntity();
+            if (em.HasComponent<InitialUnitsSpawnInitialized>(startup)) return true;
+            em.AddComponent<InitialUnitsSpawnInitialized>(startup);
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " released loading gate after spawn-complete");
+            return true;
+        }
+
+        private static void TryClearStressTimeout(EntityManager em)
+        {
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishMatchState));
+            if (sessions.CalculateEntityCount() != 1) return;
+            var entity = sessions.GetSingletonEntity();
+            var live = em.GetComponentData<SkirmishMatchState>(entity);
+            if (live.ScenarioIndex != SkirmishStressRecipe.ScenarioIndex) return;
+            if (live.Phase >= SkirmishPhase.Playing) return;
+            if (live.StartupFailure != SkirmishStartupFailureCode.Timeout) return;
+            live.StartupFailure = SkirmishStartupFailureCode.None;
+            em.SetComponentData(entity, live);
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " cleared timeout so Playing can start");
         }
 
         internal static bool TryProjectForces(EntityManager em, in SkirmishStressSession session)

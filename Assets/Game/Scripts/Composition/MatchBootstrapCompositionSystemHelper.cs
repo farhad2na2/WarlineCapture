@@ -184,6 +184,8 @@ namespace Game.Composition
         public void Update()
         {
             gameplayStartupSystem.Advance(BuildingRuntimeUpdate, _buildingRuntimeUpdateContext);
+            if (runtimeWorld != null && runtimeWorld.IsCreated)
+                SkirmishLaunchProjection.DriveStressLaunch(runtimeWorld.EntityManager);
             if(!skirmishOwnershipNormalized && runtimeWorld!=null && runtimeWorld.IsCreated &&
                SkirmishLaunchProjection.TryGet(runtimeWorld.EntityManager,out _,out var skirmish) && skirmish.Phase==SkirmishPhase.Playing)
             {

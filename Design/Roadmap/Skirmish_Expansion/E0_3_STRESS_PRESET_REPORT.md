@@ -52,7 +52,7 @@ The probe opens `Assets/Game/Scenes/Menu.unity`, waits until the UI shell is idl
 
 Desert Base `OperationMapLaunchIdentity` (`scenario.skirmish.desert_base_standard`) is expected: stress reuses Desert Base geometry. Scenario 2 is the hidden preset, not a third player map.
 
-If the console previously showed `[SkirmishStressProbe] Timed out at stage 1` with `playRequested=0`, relaunch this revision. The probe must log `[SkirmishStress] queued … scenario=2` after MainMenu, then `[SkirmishStress] playing`, then census rows with measured `spawnedCombat` (non-zero when cells allow; `missingSpawnCombat` if short).
+If the console previously showed `[SkirmishStressProbe] Timed out at stage 1` with `playRequested=0 simulationActive=0`, relaunch this revision. Stress keeps `playRequested=1` and turns `simulationActive=1` as soon as the session is Preparing so `SkirmishRulesSystem` can enter Playing. A 120s Loading timeout must not clear those flags. The probe logs `[SkirmishStress] queued … scenario=2` after MainMenu, then `[SkirmishStress] playing` (or `phaseLagged=1 spawnedCombat=N` if Phase is late), then census rows with measured `spawnedCombat` (non-zero when cells allow; `missingSpawnCombat` if short).
 
 ### Focused Edit-mode check (no play mode)
 
@@ -234,6 +234,7 @@ If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot
 
 - Play-mode census is Editor-only until Programmer 2 runs the probe on this SHA. This report is not a device or 500-entity performance pass.
 - If first-launch narrative is still playing, the probe waits for MainMenu. Complete or skip it, or use a profile with `firstLaunchStatus=Completed`. Do not fire EnterMatch from splash.
+- After `b3e68f1`, Mac play still timed out at probe stage 1: warmup spawned combat (`48/106`) but `SkirmishPhase` never reached Playing, then LoadingGate logged `playRequested=0 simulationActive=0`. This revision keeps those flags through Preparing, does not let the 120s Loading timeout clear them, and the probe may advance stage 1 when `spawnedCombat>0` if Phase lags.
 - `[OperationMapLaunchIdentity] scenario=scenario.skirmish.desert_base_standard` is the Desert Base host, not a wrong-preset bug.
 - `SkirmishPresetConfig.InfantryLimitPerFaction` is still 24. Stress scale uses initial spawn, not recruitment. Recruiting past 24 during a stress match is expected to refuse.
 - `SkirmishCombatPolicy.ApplyRoster` still retunes only soldier / light armored car / guard tower. Ghillie, APC, tank, and helicopters keep their prefab combat stats.

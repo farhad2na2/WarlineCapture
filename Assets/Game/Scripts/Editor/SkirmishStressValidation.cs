@@ -135,9 +135,27 @@ namespace Game.Editor
                 Check(em.GetBuffer<UiShellRouteRequestComponent>(shell).Length == 1 &&
                     em.GetBuffer<UiShellRouteRequestComponent>(shell)[0].Intent == UiShellRouteIntent.EnterMatch,
                     "Stress enter must request the Match route.");
-                em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+                var gameplay = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
                 Check(SkirmishLaunchProjection.TryRequestPlay(em),
                     "Stress launch must request play so InitialUnits can spawn.");
+                Check(SkirmishLaunchProjection.TryGet(em, out var launchSession, out var queuedMatch),
+                    "Queued stress session must still exist before Preparing.");
+                queuedMatch.Phase = SkirmishPhase.Preparing;
+                em.SetComponentData(launchSession, queuedMatch);
+                Check(SkirmishLaunchProjection.TryActivateStressSimulation(em) &&
+                    em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).SimulationActive == 1,
+                    "Preparing stress must turn simulation on without waiting for barracks.");
+                em.SetComponentData(gameplay, new RuntimeGameplayStateComponent());
+                queuedMatch.StartupFailure = SkirmishStartupFailureCode.Timeout;
+                em.SetComponentData(launchSession, queuedMatch);
+                Check(SkirmishLaunchProjection.DriveStressLaunch(em) &&
+                    em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).PlayRequested == 1 &&
+                    em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).SimulationActive == 1 &&
+                    em.GetComponentData<SkirmishMatchState>(launchSession).StartupFailure == SkirmishStartupFailureCode.None,
+                    "Timeout must not clear playRequested or block simulation during stress launch.");
+                Check(SkirmishStressEditorProbe.CanAdvancePastPreparing(SkirmishPhase.Preparing, 48) &&
+                    !SkirmishStressEditorProbe.CanAdvancePastPreparing(SkirmishPhase.Preparing, 0),
+                    "Probe stage 1 may advance when combat already spawned even if Phase lags.");
             }
 
             using (var world = new World("Skirmish stress census validation"))

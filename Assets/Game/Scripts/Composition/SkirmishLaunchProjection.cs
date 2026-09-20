@@ -150,27 +150,35 @@ namespace Game.Composition
 
         public static bool TryActivateStressSimulation(EntityManager em)
         {
-            if (!TryGet(em, out _, out var match)) return false;
+            if (!TryGet(em, out var session, out var match)) return false;
             if (match.ScenarioIndex != SkirmishPresetConfig.StressScaleProbeScenarioIndex) return false;
-            if (match.StartupFailure != SkirmishStartupFailureCode.None) return false;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Content) return false;
             if (match.Phase != SkirmishPhase.Preparing) return false;
-            if (!HasBothFactionBarracks(em)) return false;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Timeout)
+            {
+                match.StartupFailure = SkirmishStartupFailureCode.None;
+                em.SetComponentData(session, match);
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " cleared timeout so Playing can start");
+            }
             using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
             if (gameplay.CalculateEntityCount() != 1) return false;
             var entity = gameplay.GetSingletonEntity();
             var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            bool changed = false;
             if (state.PlayRequested == 0)
             {
                 state.PlayRequested = 1;
+                changed = true;
             }
-            if (state.SimulationActive != 0)
+            if (state.SimulationActive == 0)
             {
-                em.SetComponentData(entity, state);
-                return true;
+                state.SimulationActive = 1;
+                changed = true;
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " simulationActive=1 preparing barracks="
+                    + (HasBothFactionBarracks(em) ? 1 : 0));
             }
-            state.SimulationActive = 1;
-            em.SetComponentData(entity, state);
-            Debug.Log(SkirmishStressRecipe.ReportMarker + " simulationActive=1 barracksReady");
+            if (changed)
+                em.SetComponentData(entity, state);
             return true;
         }
 
@@ -187,8 +195,10 @@ namespace Game.Composition
         {
             if (!TryGet(em, out _, out var match)) return false;
             if (match.ScenarioIndex != SkirmishPresetConfig.StressScaleProbeScenarioIndex) return false;
-            if (match.Phase >= SkirmishPhase.Playing || match.StartupFailure != SkirmishStartupFailureCode.None)
+            if (match.Phase >= SkirmishPhase.Playing)
                 return match.Phase == SkirmishPhase.Playing;
+            if (match.StartupFailure == SkirmishStartupFailureCode.Content)
+                return false;
             if (match.Phase == SkirmishPhase.Queued &&
                 (IsShellReadyToEnterMatch(em) || (TryGetShell(em, out _, out var shell) && shell.ActiveRoute == UIRoute.Match)))
                 TryEnterMatch(em);

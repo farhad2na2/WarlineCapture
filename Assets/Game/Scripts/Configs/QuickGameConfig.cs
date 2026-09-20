@@ -72,13 +72,15 @@ namespace Game.Configs
             MapSeed = 104729
         };
 
-        // Both authored battlefields share normal Base Assault rules. Preserve their
-        // identity and seed without reviving unsupported legacy difficulty controls.
+        // Player battlefields remain Desert Base and City Crossroads. Scenario 2 is
+        // the Editor-only E0.3 stress probe and is not offered in setup UI.
         public QuickGameConfig NormalizeForBaseAssault()
         {
             QuickGameConfig normalized = Defaults;
             normalized.MapSeed = MapSeed > 0 ? MapSeed : Defaults.MapSeed;
-            normalized.ScenarioIndex = ScenarioIndex == 1 ? 1 : 0;
+            normalized.ScenarioIndex = ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                || ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex
+                ? ScenarioIndex : 0;
             return normalized;
         }
 

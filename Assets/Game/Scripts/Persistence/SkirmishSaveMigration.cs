@@ -13,7 +13,11 @@ namespace Game.Runtime
                 ? data.configuration.NormalizeForBaseAssault()
                 : QuickGameConfig.Defaults;
             data.schemaVersion = Version;
-            data.presetId = data.configuration.ScenarioIndex == 1 ? "city_crossroads" : "base_assault";
+            data.presetId = data.configuration.ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex
+                ? "stress_scale_probe"
+                : data.configuration.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                    ? "city_crossroads"
+                    : "base_assault";
             data.enemyCount = 1;
             data.difficulty = "Normal";
             data.fogOfWar = false;

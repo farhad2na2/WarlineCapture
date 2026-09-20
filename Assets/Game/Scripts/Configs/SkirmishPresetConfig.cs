@@ -7,9 +7,15 @@ namespace Game.Configs
     {
         public const string ResourceName = "SkirmishBaseAssault";
         public const string SecondResourceName = "SkirmishCityCrossroads";
+        public const string StressResourceName = "SkirmishStressScaleProbe";
+        public const int DesertBaseScenarioIndex = 0;
+        public const int CityCrossroadsScenarioIndex = 1;
+        public const int StressScaleProbeScenarioIndex = 2;
         public OperationMapDefinition operationMap;
         public static SkirmishPresetConfig Load(int scenarioIndex) =>
-            Resources.Load<SkirmishPresetConfig>(scenarioIndex == 1 ? SecondResourceName : ResourceName);
+            Resources.Load<SkirmishPresetConfig>(
+                scenarioIndex == StressScaleProbeScenarioIndex ? StressResourceName :
+                scenarioIndex == CityCrossroadsScenarioIndex ? SecondResourceName : ResourceName);
         public const float MatchDurationSeconds = 900f;
         public const int InfantryLimitPerFaction = 24;
         [UnityEngine.Min(1)] public float supplyDaySeconds=120f;

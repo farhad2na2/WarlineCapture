@@ -1,0 +1,151 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a101000000000000000000000000000c, type: 3}
+  m_Name: InitialForces
+  m_EditorClassIdentifier: 
+  blockerPrefab: {fileID: 1237425064649014, guid: f6662b2cec4426449a750eba281d5fb0, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  factions:
+  - factionId: 1
+    spawnCell: {x: 835, y: 610}
+    units:
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: 30, y: -8}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: 30, y: 12}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: 48, y: 2}
+    - prefab: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
+      count: 8
+      spawnOffset: {x: 20, y: 22}
+    - prefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+      count: 4
+      spawnOffset: {x: 20, y: 0}
+    - prefab: {fileID: 1062745808108493596, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
+      count: 4
+      spawnOffset: {x: 16, y: -22}
+    - prefab: {fileID: 1857649803268194817, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+      count: 2
+      spawnOffset: {x: 12, y: -30}
+    - prefab: {fileID: 6311863523755839383, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
+      count: 2
+      spawnOffset: {x: 8, y: -38}
+    - prefab: {fileID: 6897554815549962487, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+      count: 1
+      spawnOffset: {x: 4, y: 42}
+    - prefab: {fileID: 8045928670439847003, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
+      count: 1
+      spawnOffset: {x: -8, y: 42}
+    - prefab: {fileID: 8770761866639941407, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+      count: 1
+      spawnOffset: {x: -16, y: 36}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: 10, y: 30}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 2
+      spawnOffset: {x: 0, y: 30}
+    buildings:
+    - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+      originOffset: {x: -18, y: -21}
+    - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+      originOffset: {x: -15, y: 35}
+    - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
+      originOffset: {x: -10, y: 65}
+    - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
+      originOffset: {x: -16, y: 12}
+    - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
+      originOffset: {x: -10, y: -50}
+    - prefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
+      originOffset: {x: 22, y: -42}
+  - factionId: 2
+    spawnCell: {x: 1210, y: 580}
+    units:
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: -30, y: -8}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: -30, y: 12}
+    - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+      count: 10
+      spawnOffset: {x: -48, y: 2}
+    - prefab: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
+      count: 8
+      spawnOffset: {x: -20, y: 22}
+    - prefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+      count: 4
+      spawnOffset: {x: -20, y: 0}
+    - prefab: {fileID: 1062745808108493596, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
+      count: 4
+      spawnOffset: {x: -16, y: -22}
+    - prefab: {fileID: 1857649803268194817, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+      count: 2
+      spawnOffset: {x: -12, y: -30}
+    - prefab: {fileID: 6311863523755839383, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
+      count: 2
+      spawnOffset: {x: -8, y: -38}
+    - prefab: {fileID: 6897554815549962487, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+      count: 1
+      spawnOffset: {x: -4, y: 42}
+    - prefab: {fileID: 8045928670439847003, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
+      count: 1
+      spawnOffset: {x: 8, y: 42}
+    - prefab: {fileID: 8770761866639941407, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+      count: 1
+      spawnOffset: {x: 16, y: 36}
+    - prefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+      count: 1
+      spawnOffset: {x: -10, y: 30}
+    - prefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+      count: 2
+      spawnOffset: {x: 0, y: 30}
+    buildings:
+    - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+      originOffset: {x: -15, y: -21}
+    - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+      originOffset: {x: -7, y: 32}
+    - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
+      originOffset: {x: -10, y: 52}
+    - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
+      originOffset: {x: -30, y: 57}
+    - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
+      originOffset: {x: -10, y: -57}
+    - prefab: {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
+      originOffset: {x: 22, y: -48}
+  blockerCount: 0
+  spawnRadiusCells: 18
+  respawnDelaySeconds: 1
+  randomSeed: 104729
+  initialDollars: 0
+  initialMaterials: 220
+  materialsCapacity: 600
+  initialAiMaterials: 220
+  aiMaterialsCapacity: 600
+  initialOil: 0
+  initialFuel: 160
+  createFactionBases: 0
+  baseWallPrefab: {fileID: 154980996532723225, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
+  baseGatePrefab: {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
+  baseCoreBuildingPrefab: {fileID: 1453209517915397753, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+  baseHalfWidthCells: 120
+  baseHalfHeightCells: 80
+  baseMinimumUnitsPerFaction: 18
+  enableBlockerChurn: 0
+  churnIntervalSeconds: 1
+  addRemovePerInterval: 50
+  sceneUnitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  sceneUnitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}

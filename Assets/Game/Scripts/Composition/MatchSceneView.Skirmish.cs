@@ -8,6 +8,7 @@ namespace Game.Composition
     public sealed partial class MatchSceneView
     {
         private SkirmishPresetConfig skirmishPreset;
+        private int loadedSkirmishScenarioIndex = -1;
         private bool IsSkirmishSession => MissionId == SkirmishLaunchProjection.MissionId || MissionId == "skirmish.city_crossroads";
 
         private SkirmishPresetConfig SkirmishPreset
@@ -15,8 +16,16 @@ namespace Game.Composition
             get
             {
                 if (!IsSkirmishSession) return null;
-                if (skirmishPreset == null)
-                    skirmishPreset = SkirmishPresetConfig.Load(MissionId == "skirmish.city_crossroads" ? 1 : 0);
+                int index = MissionId == "skirmish.city_crossroads" ? SkirmishPresetConfig.CityCrossroadsScenarioIndex : 0;
+                var world = World.DefaultGameObjectInjectionWorld;
+                if (world != null && world.IsCreated &&
+                    SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out var match))
+                    index = match.ScenarioIndex;
+                if (skirmishPreset == null || loadedSkirmishScenarioIndex != index)
+                {
+                    skirmishPreset = SkirmishPresetConfig.Load(index);
+                    loadedSkirmishScenarioIndex = index;
+                }
                 if (skirmishPreset == null || skirmishPreset.buildingPlacement == null ||
                     skirmishPreset.buildingPlacement.InitialUnitsConfig == null)
                     throw new System.InvalidOperationException("Base Assault preset is missing its startup configuration.");

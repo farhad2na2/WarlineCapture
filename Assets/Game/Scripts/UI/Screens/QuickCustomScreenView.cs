@@ -5,7 +5,7 @@ using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
 {
-    public sealed class QuickCustomScreenView : UIScreenView
+    public sealed partial class QuickCustomScreenView : UIScreenView
     {
         private readonly QuickCustomScreenFlowUiSystemHelper flowSystem = new();
 
@@ -56,11 +56,14 @@ namespace Game.UI.Runtime
         private void Awake()
         {
             WireEvents();
+            WireScenarioChoices();
+            UiShellRuntimeGateway.Localization.LocaleChanged += PresentScenarioChoices;
             flowSystem.Initialize(this, _configStore);
         }
 
         private void OnDestroy()
         {
+            UiShellRuntimeGateway.Localization.LocaleChanged -= PresentScenarioChoices;
             if (launchButton != null)
                 launchButton.onClick.RemoveListener(LaunchMatch);
 
@@ -74,6 +77,8 @@ namespace Game.UI.Runtime
         public void Bind(UiQuickCustomGameConfig config)
         {
             _config = config;
+            _config.ScenarioIndex = config.ScenarioIndex == 1 ? 1 : 0;
+            PresentScenarioChoices();
             SetDropdownValue(presetDropdown, 0);
             SetDropdownValue(enemyTypeDropdown, (int)config.EnemyType);
             BindEnemyCountStepper(Mathf.Clamp(config.EnemyCount, 1, 3));
@@ -116,7 +121,8 @@ namespace Game.UI.Runtime
                 {
                     var binding = mapNameText.GetComponent<V3LocalizedTextBindingView>() ??
                                   mapNameText.gameObject.AddComponent<V3LocalizedTextBindingView>();
-                    binding.Configure("ui.skirmish.base_assault_map", "DESERT BASE", false);
+                    binding.Configure(_config.ScenarioIndex == 1 ? "ui.skirmish.city_crossroads_map" : "ui.skirmish.base_assault_map",
+                        _config.ScenarioIndex == 1 ? "CITY CROSSROADS" : "DESERT BASE", false);
                     binding.ApplyLocalization();
                 }
                 else

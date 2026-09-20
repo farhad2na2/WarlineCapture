@@ -46,7 +46,7 @@ namespace Game.UI.Shell.Ecs
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
                 { if (touch.IsRunning) touch.Stop(); current.Pressed = 0; continue; }
                 if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match || !Application.isFocused || UnityEngine.Time.timeScale <= 0 ||
-                    UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5 ||
+                    (current.Phase != AriaPlayPhase.Starting && UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5) ||
                     observation.ValueRO.Kind == AriaPlayObservationKind.Finished)
                 {
                     touch.Stop(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0;
@@ -56,6 +56,12 @@ namespace Game.UI.Shell.Ecs
                 if (current.Phase == AriaPlayPhase.Starting)
                 {
                     if (UnityEngine.Time.unscaledTime < current.DueAt) continue;
+                    if (UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5)
+                    {
+                        if (UnityEngine.Time.unscaledTime - current.DueAt > 3)
+                        { current.Phase = AriaPlayPhase.Blocked; current.StopReason = 4; }
+                        continue;
+                    }
                     if (touch.Start()) current.Phase = AriaPlayPhase.Observing;
                     else if (UnityEngine.Time.unscaledTime - current.DueAt > 3) current.Phase = AriaPlayPhase.Blocked;
                     continue;
@@ -64,7 +70,8 @@ namespace Game.UI.Shell.Ecs
                 if (current.GestureRequested != 0)
                 {
                     current.GestureRequested = 0;
-                    if (!touch.TryGesture(current.Target, current.Target, .3f, 0, UnityEngine.Time.unscaledTime))
+                    if (!touch.TryGesture(current.Target, current.Drag != 0 ? current.DragEnd : current.Target,
+                        current.Drag != 0 ? .5f : hasSkirmish ? .15f : .3f, current.Drag != 0 ? .9f : 0, UnityEngine.Time.unscaledTime))
                     { touch.Stop(); current.Phase = AriaPlayPhase.Blocked; continue; }
                 }
                 touch.Tick(UnityEngine.Time.unscaledTime);
@@ -74,7 +81,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     current.Actions++;
                     current.Phase = AriaPlayPhase.Verifying;
-                    current.DueAt = UnityEngine.Time.unscaledTime + 1.5f;
+                    current.DueAt = UnityEngine.Time.unscaledTime + (hasSkirmish ? .65f : 1.5f);
                 }
             }
             if (!found && touch.IsRunning) touch.Stop();

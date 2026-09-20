@@ -591,6 +591,7 @@ namespace Game.Runtime
             RemoveIfPresent<UnitLongDistanceMove>(entityManager, ecb, entity);
             RemoveIfPresent<UnitTarget>(entityManager, ecb, entity);
             RemoveIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+            RemoveIfPresent<AttackMoveOrder>(entityManager, ecb, entity);
             RemoveIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
             RemoveIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
             RemoveIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);

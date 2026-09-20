@@ -16,7 +16,7 @@ namespace Game.Runtime
                 if(skirmish.CalculateEntityCount()==1)
                 {
                     if(skirmish.GetSingleton<SkirmishMatchState>().Phase>=SkirmishPhase.Playing)return;
-                    var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+                    var preset=SkirmishPresetResolver.Load(em);
                     var initial=preset.buildingPlacement.InitialUnitsConfig;
                     config.InitialDollars=0;config.InitialMaterials=initial.InitialMaterials;config.MaterialsCapacity=initial.MaterialsCapacity;
                     config.InitialAiMaterials=initial.InitialAiMaterials;config.AiMaterialsCapacity=initial.AiMaterialsCapacity;

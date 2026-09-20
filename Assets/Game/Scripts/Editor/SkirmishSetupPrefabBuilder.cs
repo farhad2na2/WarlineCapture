@@ -87,6 +87,7 @@ namespace Game.Editor
             mapName.gameObject.AddComponent<V3LocalizedTextBindingView>()
                 .Configure("ui.skirmish.base_assault_map", "DESERT BASE", false);
             ConfigureBaseAssaultPreview(composition);
+            SkirmishScenarioAssetsBuilder.ConfigureChoices(root);
             BuildBaseAssaultRules(composition, rightTargets);
             BuildFooter(composition, rightTargets, widthTargets, out Button reset, out Button randomize, out Button launch);
             UiLocalizedText.Set(launch.GetComponentInChildren<TMP_Text>(), "DEPLOY");
@@ -154,7 +155,7 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 10)
                 throw new InvalidOperationException($"SCN-13 requires procedural V3 gradients; found {gradients}.");
-            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} presets=1");
+            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} scenarios=2");
         }
 
         private static void LoadAssets()

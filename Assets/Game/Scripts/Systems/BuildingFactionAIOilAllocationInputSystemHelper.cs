@@ -69,8 +69,7 @@ namespace Game.Runtime
             int plannedMaterialsCost = decision.MaterialsCost;
             if (!_skirmishQuery.IsEmptyIgnoreFilter)
             {
-                var preset = UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(
-                    Game.Configs.SkirmishPresetConfig.ResourceName);
+                var preset = SkirmishPresetResolver.Load(em);
                 if (preset != null)
                 {
                     // Recruitment keeps consuming Materials after construction finishes. A mostly

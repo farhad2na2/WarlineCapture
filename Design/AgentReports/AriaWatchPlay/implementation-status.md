@@ -1,3 +1,9 @@
+## Current Skirmish baseline — 2026-09-20
+
+The current touch-only planner completed S01 in Farsi (4:59, player base 1200, enemy base 0) and English (9:55, player base 1200, enemy base 0). The English match exercised recruitment and regrouping after the first assault. Both result screens were inspected; terminal input cancellation returned ARIA to Manual. Replay required fresh consent. A physical takeover stopped ARIA with no pressed/scheduled contact, and the player could cancel the in-progress placement afterward. Focused checks: 78 Skirmish planning, 14 shared decisions, 18 touch input.
+
+Evidence, including the earlier failed Farsi draw and per-revision source hashes: `skirmish-baseline-results.json`. These are Editor baseline results, not the roadmap's multi-seed/device/player-study certification. Scenario 2 is now being implemented as a separate north/south Base Assault battlefield; its setup, terrain and autonomous matches remain to be validated. Historical notes below describe earlier revisions and must not be read as the latest status.
+
 # Watch ARIA Play — implementation checkpoint
 
 Date: 2026-09-19. Status: **guided M1–M5 baseline wins verified in both languages; broader release certification remains open**.
@@ -189,3 +195,109 @@ Added three terminal-scope regressions: prior campaign Victory plus playing Skir
 - Selection title and subtitle now overlay the portrait on a dark backing. The card measures the space above the minimap, adjusts portrait height, and caps its visible bounds with a 12-unit gap. Overflow details scroll within the card; the passenger drawer retains its separate floating rendering and input surface.
 - Live isolated Skirmish checked with English squad selection, then Farsi squad and vehicle selection. The map stayed at the same left position. Corrected portrait sibling order during visual QA so the image remains visible under the title strip.
 - Final code compiled; git diff whitespace check passed. Editor restored to Edit mode and validation save override cleared. Android device validation remains separate.
+
+## 2026-09-19: passenger drawer exception and Skirmish behavior follow-up
+
+Work in progress; **Skirmish autonomous victory is not certified**.
+
+- Replaced C# null-coalescing component creation with Unity-aware null checks for the compact selection panel's ScrollRect and passenger drawer Canvas. Live selection created the Canvas without the reported exception. Added a prefab-level repeat-layout regression check.
+- Removed tactical-map opening from the Skirmish planner. An already open map is closed before world orders; visible base focus controls provide navigation. Moving world contacts no longer perpetually restart the hand approach delay.
+- Added visible Select + drag-box grouping through the existing touch actuator, camera-settle delay, and recruitment backoff. These are still under gameplay evaluation.
+- Focused decision/input checks passed (14 decision, 23 Skirmish, 18 touch cases). Group cases cover camera settlement, selection mode, drag endpoints, and advancement after the gesture.
+- Live tests removed the map loop but did not establish a victory. The grouping observation failed to produce a clear rectangle in the crowded HUD view and fell back to one squad. Troops were lost in the initial navigation-only run. Do not present these changes as a winning strategy yet.
+- Live testing stopped because the Mac locked. The isolated run was stopped and the Editor restored to Edit mode. Resume with visible grouping/camera geometry diagnosis, then complete a hands-off normal Skirmish to a real terminal result. Preserve touch-only gameplay and the development-preview restriction.
+
+### Selection-mode correction
+
+The planner previously emitted Select before checking for a usable drag rectangle, then silently fell back to a squad card. It now requires both available corners and a non-degenerate rectangle before emitting Select. With a valid rectangle it emits the existing hold-and-drag gesture; without one it waits briefly and uses a squad card without pressing Select. Added regression cases for missing, incomplete, and zero-size rectangles; 26 planner and 18 touch checks passed. Ran an isolated live Skirmish smoke check and restored Edit mode. This does not certify a full Skirmish victory or resolve the remaining crowded-view rectangle detection issue above.
+
+## 2026-09-19: full-match defeat investigation (latest status)
+
+**Not ready; no autonomous victory verified.** The user's defeat report is reproduced. A completed normal Skirmish run ended in defeat at 3:08, with 29 units lost / 3 defeated and one building lost. Subsequent runs exposed additional planner sequencing faults; they are diagnostic runs, not passes.
+
+Changes under evaluation:
+- Try both selection-box diagonals to avoid crossing HUD panels.
+- Distinguish a single-card fallback from grouped selection; rotate orders through remaining squad cards. A box is not assumed to include the entire army either.
+- Recruit toward the displayed preset's 24-infantry capacity, back off eight seconds between orders, and assemble an opening force before advancing (bounded opening timeout).
+- Choose threats from all currently presented map contacts, not only those already inside the world camera. Navigate with a bounded open/focus/close sequence. This supersedes the earlier blanket map-opening removal.
+- Wait for full-map marker presentation; require completion of the specific -20004 focus gesture before closing. An increment caused by opening the map is not focus completion.
+- Keep camera settlement inside the attack sequence, preventing recruitment from pulling the camera away before the world attack.
+
+Focused planner validation: 30 cases passed. The latest full-match retest could not start because the Mac locked. Stopped the isolated run and restored the Editor. Latest changes remain uncommitted and must not be represented as a verified winning Skirmish implementation.
+
+Temporary diagnostic evidence: /private/tmp/aria-combat-run.jsonl, /private/tmp/aria-opening-run.jsonl, /private/tmp/aria-navigation-run.jsonl, /private/tmp/aria-focus-run.jsonl. These are read-only observations; no resources, unit stats, damage, or win conditions were modified to help ARIA.
+
+### Unlocked continuation: map gestures, startup, rally combat (2026-09-19)
+
+**Still not ready: no autonomous Skirmish victory verified.**
+
+- Reproduced an immediate Start cancellation (StopReason 4): input validation rejected stale observation data before the HUD published its first active observation. Starting now waits up to three seconds for a fresh observation; terminal, focus, route, and pause checks remain active. Subsequent live starts succeeded.
+- Full-map taps inside the camera viewport intentionally do nothing. ARIA now performs a real viewport drag for these contacts. A live sequence centered the enemy, closed the map, and issued Attack followed by a world target touch.
+- A completed subsequent run still ended in defeat at 3:08 (17 lost / 6 defeated). Opening and recruitment sequencing remain under evaluation. Do not equate the successful touch sequence with tactical success.
+- Current defensive opening uses the starting squad cards and Hold while recruiting. Newly delivered troops retain their automatic rally; they are not repeatedly stopped at delivery. Recruitment no longer interrupts the short wait between orders to different squads. Latest focused planner suite passed 35 cases.
+- Found a shared gameplay defect: automatic player reinforcement rally used the manual Move tag, suppressing engagement and retaliation while the path was active. The automatic rally now removes only the tag created by its own order. Existing player Move/Hold/Attack orders retain priority, and rally remains one-shot. The expanded PaidRecruitsRallyOnceAndNeverOverridePlayerOrders regression passed in the connected Editor.
+- Additional live diagnostics: /private/tmp/aria-viewport2-run.jsonl, /private/tmp/aria-defense-run.jsonl, /private/tmp/aria-hold-run.jsonl, /private/tmp/aria-rally-run.jsonl. These exposed tactical losses; none is a victory certificate.
+- The Mac locked again before the latest full-match retest could be started. Stopped the isolated run and restored Edit mode. Resume with the current defensive opening plus interruptible rally, complete a normal hands-off match, and inspect actual terminal outcome. Preserve the development-preview gate and touch-only gameplay. No stats, resources, enemy difficulty, or victory conditions were changed to help ARIA.
+
+### Recruitment cycle regression and latest live run (2026-09-19)
+
+**Not ready: no autonomous Skirmish victory verified.**
+
+- An empty final squad slot prevented the attack cycle from completing, starving recruitment. Completion now skips empty trailing slots before advancing the cycle. Empty armies also return to recruitment rather than rectangle selection around buildings. Focused planner suite passed 37 cases before this live run.
+- Normal Skirmish touch pacing uses a 0.65-second post-gesture pause; campaign pacing is unchanged. Recruitment retries after delivery use a three-second delay. No combat stats, resources, difficulty, or victory conditions were altered.
+- Read-only click diagnostics confirmed real Attack world touches were accepted. Diagnostics are Editor-only and disabled by default. Map narration now describes navigation without claiming every gesture is a tap.
+- Fresh EN Watch/Start run recorded 94 gestures, actual grouping, recruitment recovery, and two completed attack cycles. At the last active sample (338.6 seconds), the player base was still 1200/1200 but only one infantry remained; enemy base was 1200/1200. This is not a pass: casualties outpaced replenishment, and repeated navigation/regrouping consumed too much time.
+- The Mac locked during the run. Subsequent terminal read showed defeat at 6:09, 41 units lost / 27 defeated. Because active ARIA observation stopped before that outcome, distinguish the verified tactical attrition from the unattended terminal result. Earlier completed run was also a defeat at 3:35, 29 lost / 8 defeated.
+- Evidence: `/private/tmp/aria-cycle-run.jsonl`, `/private/tmp/aria-click-run.jsonl`. Restored Edit mode and cleared isolated save override after the lock. Next work: improve replenishment scheduling and reduce redundant navigation/regrouping, then complete uninterrupted EN/FA normal-speed matches. Keep the development-preview restriction.
+
+### Replenishment and target continuity follow-up (2026-09-19)
+
+**Still not ready; no autonomous victory.**
+
+- Removed repeated regrouping after each recruitment and on transient loss of selection. Surviving squad cards continue the existing rotation; Select remains restricted to an actual prepared rectangle drag.
+- Depleted forces can replenish after a completed attack gesture, without waiting for every squad slot. Replenishment is bounded to two orders before returning to combat; unavailable production preserves its longer backoff.
+- Removed the blanket opening Hold orders. The engagement code restricts held units to weapon range, preventing them from closing on longer-range attackers. Normal automatic engagement remains active during opening recruitment. Full infantry capacity can end the opening early.
+- Full EN run with the revised opening, before the latest two-order/visible-target changes, ended in **defeat at 7:49, 53 lost / 40 defeated**. Player base remained undamaged through much of the run, but attrition and navigation still prevented an offensive breakthrough. Evidence: `/private/tmp/aria-mobile-defence-run.jsonl`. Earlier partial diagnostic run stopped at 6:05 with 240 base health, 50 lost / 17 defeated (`/private/tmp/aria-replenish-run.jsonl`).
+- Target observation now prefers an enemy already on screen and reachable through the HUD, rather than opening the map for a slightly nearer off-screen contact. It still uses only presented map contacts and screen geometry. No hidden orders or game-balance changes.
+- Latest planner validation passed 42 cases. The Mac locked at Start confirmation for the combined retest; its start was not verified, and the Editor was restored to Edit mode. The latest target-continuity and two-order changes still need uninterrupted live EN/FA validation. Do not promote the preview to ready.
+
+### macOS screen-saver interruption: diagnosed and mitigated (2026-09-19)
+
+- Read-only Settings inspection: display sleep Never, automatic logout disabled, password delay eight hours. Those settings did not explain the repeated interruptions.
+- macOS loginwindow logs confirmed the actual trigger: `targetUserIdle = 1200.0`, followed by `starting screen saver due to user idle` and `kLWLockFromScreenSaverIdleLaunch`. The same check reported `preventIdleDisplaySleep = 0`. Unity's assertions prevented system sleep only.
+- With user authorization, started `/usr/bin/caffeinate -di -t 7200` for the QA session. `pmset -g assertions` verified `PreventUserIdleDisplaySleep = 1` and an owned caffeinate timeout. Password, screen saver preferences, and manual lock behavior were not changed.
+- Before future attended gameplay QA, start a bounded display/system keep-awake assertion and verify it with `pmset -g assertions`. Release the QA-owned process after testing, or let its timeout expire. Do not treat this as an unlock mechanism; a manually locked Mac still requires the user to unlock it. The current guard expires around 22:12 local time on 2026-09-19.
+
+### Attack Move and Skirmish continuation (2026-09-19)
+
+- User selected ground **Attack Move**: engage enemies encountered along the route, then resume the destination. Direct hostile taps retain focus fire. Uses the existing Attack button and ordinary movement, formation, terrain, combat and visibility rules. Move, Hold and direct attack cancel the old advance; automatic firing approaches preserve it. Added destination feedback and selection status in English and Farsi.
+- Connected Editor movement validation passed 20 cases, including retaining the destination during combat, resuming afterward and canceling on Move/Hold. Planner validation passed 54 cases, including visible ground gestures and recruitment drawer closure during affordability backoff.
+- Manual live EN touch check: squad card → Attack → clear ground produced the attack marker, movement and “Advancing and engaging” selection status. This verifies the player-facing interaction, not an autonomous victory.
+- Prior approach-fix run ended in defeat at 9:43 (81 lost / 49 defeated). Coordination run was stopped for diagnosis; tower-opening run built one tower through UI but later lost Unity focus. None passed the win gate. Evidence: `/private/tmp/aria-approach-fixed-run.jsonl`, `/private/tmp/aria-coordination-run.jsonl`, `/private/tmp/aria-tower-run.jsonl`.
+- First Attack Move planner diagnostic exposed reliance on a fog-filtered base contact; changed observation to the public base objective already used by Enemy Base navigation. ARIA still issues all gameplay through the shipping touch driver, and no combat stats/resources/difficulty/victory conditions were changed.
+- **Not ready: full autonomous EN/Farsi victories remain to be verified.**
+
+#### Full-map follow-up
+
+- Farsi Attack Move run ended in defeat at 5:47, 49 lost / 19 defeated; enemy base remained 1200. Recorded in `/private/tmp/aria-attack-move-fa.jsonl`.
+- Added ordinary visible ground placement gestures for defensive towers, with bounded candidate sites and confirmation only when the actual placement button is enabled. Planner now passes 58 cases.
+- Tower-backed EN diagnostic preserved full base health and reached 23 infantry, but exposed a long-distance pathfinding defect: stripping the manual-order tag also stripped commanded pathfinding behavior. Stopped that run for correction; it is not a victory. Evidence: `/private/tmp/aria-defense-advance-en.jsonl`.
+- Attack Move now retains commanded pathfinding priority. Shared combat explicitly permits engagement/retaliation for an Attack Move order while preserving plain Move behavior. Added a real ECS combat regression verifying hostile acquisition, neutral exclusion, interruption of travel and retention of destination; passed along with 20 movement cases and 58 planner cases.
+
+#### Frontline and building acquisition follow-up
+
+- Commanded-path EN run confirmed units advancing across the map but was stopped at about 8:38 with four infantry remaining and both bases at 1200 health. Not a victory (`/private/tmp/aria-commanded-advance-en.jsonl`).
+- Frontline target observation now uses four forward presented friendly contacts, preferring a nearby visible threat over another advance. Planner validation passed 59 cases. The next EN diagnostic built two towers using visible taps/confirmation and preserved the base, but suffered substantial infantry attrition without damaging the enemy base; stopped for investigation (`/private/tmp/aria-frontline-focus-en.jsonl`).
+- That investigation exposed a shared Attack Move gap: normal automatic acquisition omits static buildings. Added a separate hostile-building candidate list for Attack Move only, after mobile-threat acquisition. Neutral, friendly, dead and campaign-suppressed buildings remain excluded. Plain Move/Hold/idle behavior is unchanged. Added a real ECS regression for this behavior; validation pending at the time of this entry.
+- Autonomous victory acceptance remains open. Defensive survival and successful gestures are not sufficient to mark ARIA ready.
+
+- Connected Editor validation passed after the building-target change: 20 movement cases, hostile-unit interruption, hostile-building acquisition with neutral/allied/dead/suppressed exclusions, existing Hold acquisition regression, and 59 planner cases.
+- EN combined diagnostic (`/private/tmp/aria-building-advance-en.jsonl`) was started through visible Watch/Start controls. ARIA placed one valid tower, recruited and issued advances with its finger above the base HUD. At approximately six minutes, its base was still 1200 but infantry had dropped to seven and the enemy base remained 1200. Stopped for investigation; this is **not** a victory or readiness pass.
+- Remaining acceptance work: coordinated Skirmish assault/replenishment, complete autonomous EN and Farsi victories, and aircraft-specific Attack Move resume/fuel-return interactions. Ground interaction and focused combat regressions pass; full-mode readiness remains unverified.
+
+### Coordinated Skirmish assault work (2026-09-19 continuation)
+
+- Replaced the early 90-second departure with assembly up to 24 infantry, waiting for a nearby threat to clear, with a bounded fallback when production is constrained. Added public-contact target continuity so squad orders concentrate on a moving enemy instead of switching targets every observation.
+- The first assembly diagnostic still split its force; no victory (`/private/tmp/aria-assembled-force-en.jsonl`). The continuity run reduced hostile combatants from 21 to five, but then split into separated squad advances and suffered losses at the base approach. Stopped for correction, not counted as a completed acceptance run (`/private/tmp/aria-target-continuity-en.jsonl`, `/private/tmp/aria-continuity-combat.txt`).
+- Read-only combat evidence verified an actual rectangle-selected group of 16. The planner had immediately replaced that group with individual squad-card selections after its first order. Changed it to preserve the group across fights. It reads the existing localized selection heading count, avoids opening production while a substantial selected force fights, and rebuilds a depleted assault rather than streaming replacements separately.
+- New full-match verification is required. No stats, enemy difficulty, resources, or victory conditions were altered.

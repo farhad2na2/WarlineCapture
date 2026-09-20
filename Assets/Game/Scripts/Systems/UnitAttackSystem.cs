@@ -1178,7 +1178,7 @@ namespace Game.Runtime
 
             UnitCombat targetCombat = em.GetComponentData<UnitCombat>(target);
             bool hasActiveManualMove =
-                em.HasComponent<ManualMoveOrderTag>(target) &&
+                em.HasComponent<ManualMoveOrderTag>(target) && !em.HasComponent<AttackMoveOrder>(target) &&
                 (em.HasComponent<UnitPathFollow>(target) || em.HasComponent<UnitPathRequest>(target));
 
             if (targetCombat.CanAttack == 0 || targetCombat.AutoEngage == 0 || hasActiveManualMove)

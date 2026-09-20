@@ -54,11 +54,13 @@ namespace Game.UI.Runtime
                 if (surface == null) { surface = panel.gameObject.AddComponent<Image>(); surface.color = Color.clear; }
                 surface.raycastTarget = true;
                 if (panel.GetComponent<RectMask2D>() == null) panel.gameObject.AddComponent<RectMask2D>();
-                selectionScroll = panel.GetComponent<ScrollRect>() ?? panel.gameObject.AddComponent<ScrollRect>();
+                selectionScroll = panel.GetComponent<ScrollRect>();
+                if (selectionScroll == null) selectionScroll = panel.gameObject.AddComponent<ScrollRect>();
                 if (passengerDrawer != null)
                 {
                     // The passenger drawer floats beside the card and must not inherit its clipping.
-                    var drawerCanvas = passengerDrawer.GetComponent<Canvas>() ?? passengerDrawer.gameObject.AddComponent<Canvas>();
+                    var drawerCanvas = passengerDrawer.GetComponent<Canvas>();
+                    if (drawerCanvas == null) drawerCanvas = passengerDrawer.gameObject.AddComponent<Canvas>();
                     drawerCanvas.overrideSorting = true;
                     var parentCanvas = panel.GetComponentInParent<Canvas>();
                     drawerCanvas.sortingOrder = parentCanvas != null ? parentCanvas.sortingOrder + 1 : 1;

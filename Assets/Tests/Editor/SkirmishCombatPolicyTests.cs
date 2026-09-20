@@ -9,6 +9,48 @@ using UnityEngine;
 
 public sealed class SkirmishCombatPolicyTests
 {
+    [Test]
+    public void MovingAttackTargetEnteringRangeStopsApproachAndDeadTargetReleasesPath()
+    {
+        using var world = new World("Skirmish approach completion");
+        var em = world.EntityManager;
+        var target = em.CreateEntity(typeof(LocalTransform), typeof(UnitHealth));
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(50, 0, 0)));
+        em.SetComponentData(target, new UnitHealth { Current = 100, Max = 100 });
+        var unit = em.CreateEntity(typeof(BaseBreachOrder), typeof(UnitAttack), typeof(LocalTransform),
+            typeof(UnitPathFollow), typeof(ManualMoveOrderTag));
+        em.SetComponentData(unit, LocalTransform.FromPosition(float3.zero));
+        em.SetComponentData(unit, new UnitAttack { Range = 32 });
+        em.SetComponentData(unit, new BaseBreachOrder { FinalTarget = target, FinalPosition = new float3(50, 0, 0),
+            FinalCell = new int2(20, 0), Stage = BaseBreachOrder.StageMovingToFinalTarget, IsCommanded = 1 });
+        var grid = new GridConfig { Width = 100, Height = 100, CellSize = 1 };
+        SkirmishCombatApproachSystem.ResumeReadyApproaches(em, grid);
+        Assert.IsTrue(em.HasComponent<UnitPathFollow>(unit), "An out-of-range target still requires an approach.");
+        em.SetComponentData(target, LocalTransform.FromPosition(new float3(30, 0, 0)));
+        SkirmishCombatApproachSystem.ResumeReadyApproaches(em, grid);
+        Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(em.HasComponent<BaseBreachOrder>(unit));
+        var engage = em.GetComponentData<EngageTarget>(unit);
+        Assert.AreEqual(target, engage.Target);
+        Assert.AreEqual(new float3(30, 0, 0), engage.Position, "Use current target position, not old approach position.");
+        Assert.AreEqual(1, engage.IsCommanded);
+        em.RemoveComponent<EngageTarget>(unit);
+        em.AddComponent<UnitPathFollow>(unit); em.AddComponent<ManualMoveOrderTag>(unit);
+        em.AddComponentData(unit, new BaseBreachOrder { FinalTarget = target, Stage = BaseBreachOrder.StageMovingToFinalTarget });
+        em.SetComponentData(target, new UnitHealth { Current = 0, Max = 100 });
+        var breachSystem = world.CreateSystem<BaseBreachOrderSystem>();
+        breachSystem.Update(world.Unmanaged);
+        Assert.IsFalse(em.HasComponent<UnitPathFollow>(unit), "Dead targets must not leave a movement order suppressing combat.");
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
+        // A later explicit player Move has no breach component and must remain intact.
+        em.AddComponent<UnitPathFollow>(unit); em.AddComponent<ManualMoveOrderTag>(unit);
+        SkirmishCombatApproachSystem.ResumeReadyApproaches(em, grid);
+        Assert.IsTrue(em.HasComponent<UnitPathFollow>(unit));
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+    }
+
     [TestCase("en")]
     [TestCase("fa-IR")]
     public void SkirmishGuideHasLocalizedObjectiveOrdersBuildAndSupplyPages(string locale)
@@ -249,10 +291,16 @@ public sealed class SkirmishCombatPolicyTests
         SkirmishCombatPolicy.RallyPlayerReinforcements(em, match);
         Assert.IsTrue(em.HasComponent<UnitPathRequest>(fresh));
         Assert.IsTrue(em.HasComponent<SkirmishRallyAssigned>(fresh));
+        Assert.IsFalse(em.HasComponent<ManualMoveOrderTag>(fresh), "Automatic rally must permit combat interruption.");
         Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(commanded));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(commanded));
         em.RemoveComponent<UnitPathRequest>(fresh);
-        em.RemoveComponent<ManualMoveOrderTag>(fresh);
+        em.AddComponent<ManualMoveOrderTag>(fresh);
+        em.AddComponentData(fresh, new UnitPathRequest { Goal = new int2(20, 30) });
+        SkirmishCombatPolicy.RallyPlayerReinforcements(em, match);
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(fresh), "A later player Move retains its priority.");
+        Assert.AreEqual(new int2(20, 30), em.GetComponentData<UnitPathRequest>(fresh).Goal);
+        em.RemoveComponent<UnitPathRequest>(fresh);
         SkirmishCombatPolicy.RallyPlayerReinforcements(em, match);
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(fresh), "A completed rally is not reissued.");
     }

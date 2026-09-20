@@ -12,6 +12,7 @@ namespace Game.Components
     {
         public FixedString64Bytes SessionId;
         public int Seed;
+        public int ScenarioIndex;
         public SkirmishPhase Phase;
         public SkirmishStartupFailureCode StartupFailure;
         public SkirmishOutcome Outcome;
@@ -33,7 +34,7 @@ namespace Game.Components
     public struct SkirmishActionRequest : IBufferElementData { public SkirmishAction Action; }
     public struct SkirmishTrackedUnit : IBufferElementData
     { public Entity Entity; public byte FactionId; public byte Building; }
-    public struct SkirmishReturnRequest : IComponentData { public SkirmishAction Action; public int Seed; }
+    public struct SkirmishReturnRequest : IComponentData { public SkirmishAction Action; public int Seed; public int ScenarioIndex; }
 
     // Identity is attached once to the starting Barracks, never inferred again after death.
     public struct SkirmishMainBase : IComponentData { public byte FactionId; }

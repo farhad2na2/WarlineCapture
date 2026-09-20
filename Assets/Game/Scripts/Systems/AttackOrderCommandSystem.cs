@@ -164,7 +164,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (request.HasTargetEntity != 0)
+                if (request.HasTargetEntity != 0 || request.HasTargetCell != 0)
                 {
                     i++;
                     continue;
@@ -286,7 +286,7 @@ namespace Game.Runtime
             {
                 RtsSelectionCommandIntentRequestElement request = commandRequests[i];
                 if (request.Kind != RtsSelectionCommandIntentKind.Attack ||
-                    request.HasTargetEntity == 0)
+                    (request.HasTargetEntity == 0 && request.HasTargetCell == 0))
                 {
                     i++;
                     continue;
@@ -294,14 +294,20 @@ namespace Game.Runtime
 
                 commandRequests.RemoveAt(i);
                 handledAny = true;
-                int attackRequestId = UnitAttackOrderRequestSystem.EnqueueSelectedAttackTarget(em, request.TargetEntity);
-                UnitAttackOrderRequestSystem.ProcessPendingRequests(em, selectedAttackQuery, entityType);
-                Result result = UnitAttackOrderRequestSystem.TryGetResult(
-                    em,
-                    attackRequestId,
-                    out UnitAttackOrderResultElement attackResult)
-                    ? ToAttackResult(attackResult)
-                    : Result.Rejected(TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable));
+                Result result;
+                if (request.HasTargetCell != 0 && request.HasTargetEntity == 0)
+                {
+                    var command = AttackMoveSystem.IssueSelected(em, request.TargetCell, request.WorldPosition, request.Frame);
+                    result = command.Accepted ? Result.Accepted(command, Entity.Null, request.WorldPosition) : Result.Rejected(command);
+                }
+                else
+                {
+                    int attackRequestId = UnitAttackOrderRequestSystem.EnqueueSelectedAttackTarget(em, request.TargetEntity);
+                    UnitAttackOrderRequestSystem.ProcessPendingRequests(em, selectedAttackQuery, entityType);
+                    result = UnitAttackOrderRequestSystem.TryGetResult(em, attackRequestId, out UnitAttackOrderResultElement attackResult)
+                        ? ToAttackResult(attackResult)
+                        : Result.Rejected(TacticalCommandResult.Rejected(TacticalCommandReasonCode.CommandUnavailable));
+                }
 
                 AddCommandResult(em, commandEntity, commandResults, ToCommandResultElement(request, result));
                 if (em.Exists(commandEntity))

@@ -9,6 +9,55 @@ using Game.Runtime;
 public sealed class AutomaticCombatFactionTargetingTests
 {
     [Test]
+    public void AttackMove_AcquiresHostileBuildingButIgnoresNeutralDeadAndSuppressedBuildings()
+    {
+        using var world = new World("AttackMove building acquisition");
+        var em = world.EntityManager; CreateGrid(em);
+        var attacker = CreateCombatUnit(em, FactionIdentity.PlayerFactionId, new int2(10, 10), 8);
+        var enemy = CreateDefenseBuilding(em, FactionIdentity.EnemyFactionId, new float3(15, 0, 10));
+        CreateDefenseBuilding(em, FactionIdentity.NeutralFactionId, new float3(11, 0, 10));
+        CreateDefenseBuilding(em, FactionIdentity.PlayerFactionId, new float3(11, 0, 11));
+        var dead = CreateDefenseBuilding(em, FactionIdentity.EnemyFactionId, new float3(12, 0, 10));
+        em.SetComponentData(dead, new UnitHealth { Current = 0, Max = 100 });
+        var hidden = CreateDefenseBuilding(em, FactionIdentity.EnemyFactionId, new float3(13, 0, 10));
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(hidden);
+        var end = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        var engagement = world.CreateSystem<UnitEngagementSystem>();
+        world.SetTime(new TimeData(1, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.IsFalse(em.HasComponent<EngageTarget>(attacker), "Ordinary idle acquisition is unchanged.");
+        em.AddComponentData(attacker, new AttackMoveOrder { Destination = new int2(40, 40) });
+        world.SetTime(new TimeData(2, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.AreEqual(enemy, em.GetComponentData<EngageTarget>(attacker).Target);
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(attacker));
+    }
+
+    [Test]
+    public void AttackMove_InterruptsCommandedPathForHostileButPlainMoveDoesNot()
+    {
+        using var world = new World("AttackMove combat interruption");
+        var em = world.EntityManager; CreateGrid(em);
+        var attacker = CreateCombatUnit(em, FactionIdentity.PlayerFactionId, new int2(10, 10), 8);
+        var enemy = CreateCombatUnit(em, FactionIdentity.EnemyFactionId, new int2(13, 10), 8);
+        CreateCombatUnit(em, FactionIdentity.NeutralFactionId, new int2(11, 10), 8);
+        em.AddComponent<ManualMoveOrderTag>(attacker);
+        em.AddComponentData(attacker, new UnitPathRequest { Goal = new int2(40, 40) });
+        var end = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        var engagement = world.CreateSystem<UnitEngagementSystem>();
+        world.SetTime(new TimeData(1, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.IsFalse(em.HasComponent<EngageTarget>(attacker), "Plain Move keeps moving past enemies.");
+        em.AddComponentData(attacker, new AttackMoveOrder { Destination = new int2(40, 40) });
+        world.SetTime(new TimeData(2, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.AreEqual(enemy, em.GetComponentData<EngageTarget>(attacker).Target);
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(attacker), "Combat interrupts travel.");
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(attacker), "Destination survives the fight.");
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(attacker), "Commanded pathfinding priority survives.");
+    }
+
+    [Test]
     public void UnitEngagementSystem_IgnoresNeutralCitizenTargets()
     {
         using World world = new("AutomaticCombatFactionTargetingTests_UnitEngagement");

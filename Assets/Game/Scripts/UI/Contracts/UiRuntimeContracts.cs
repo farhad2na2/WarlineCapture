@@ -397,6 +397,7 @@ namespace Game.UI.Contracts
         public bool IntelReveal;
         public UiQuickGameStartingResources StartingResources;
         public int MapSeed;
+        public int ScenarioIndex;
 
         public static UiQuickCustomGameConfig Defaults => new()
         {

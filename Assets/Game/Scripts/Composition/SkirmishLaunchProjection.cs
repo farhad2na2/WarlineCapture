@@ -49,6 +49,7 @@ namespace Game.Composition
             {
                 SessionId = new FixedString64Bytes(Guid.NewGuid().ToString("N")),
                 Seed = config.MapSeed,
+                ScenarioIndex = config.ScenarioIndex,
                 Phase = SkirmishPhase.Queued
             });
             em.AddBuffer<SkirmishActionRequest>(entity);

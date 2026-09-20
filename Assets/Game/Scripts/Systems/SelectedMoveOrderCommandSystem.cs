@@ -183,7 +183,7 @@ namespace Game.Runtime
                 factionId);
         }
 
-        private static Result TryIssueMoveOrderToCell(
+        internal static Result TryIssueMoveOrderToCell(
             EntityManager em,
             NativeArray<Entity> selectedEntities,
             EntityQuery gridConfigQuery,
@@ -192,14 +192,14 @@ namespace Game.Runtime
             int2 goal,
             Vector3 clickWorldPoint,
             int currentFrame,
-            byte factionId)
+            byte factionId, bool applyCampaignGuidance = true, NativeList<Entity> acceptedUnits = default)
         {
             if (gridConfigQuery.IsEmptyIgnoreFilter)
                 return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
 
             Entity gridEntity = gridConfigQuery.GetSingletonEntity();
             GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-            if (TryIssueCampaignGuidedMove(
+            if (applyCampaignGuidance && TryIssueCampaignGuidedMove(
                     em, grid, selectedEntities, goal, currentFrame, factionId, out Result guidedResult))
                 return guidedResult;
 
@@ -271,7 +271,10 @@ namespace Game.Runtime
             for (int i = 0; i < entities.Length; i++)
             {
                 if (skipIssue[i])
+                {
+                    if (acceptedUnits.IsCreated) { acceptedUnits.Add(entities[i]); issuedMoveOrder = true; }
                     continue;
+                }
 
                 Entity entity = entities[i];
                 int2 issuedGoal = issuedGoals[i];
@@ -313,6 +316,7 @@ namespace Game.Runtime
                     continue;
                 }
 
+                if (acceptedUnits.IsCreated) acceptedUnits.Add(entity);
                 structuralAdds += commandResult.StructuralAdds;
                 structuralRemoves += commandResult.StructuralRemoves;
                 pathRequestCount += commandResult.PathRequests;

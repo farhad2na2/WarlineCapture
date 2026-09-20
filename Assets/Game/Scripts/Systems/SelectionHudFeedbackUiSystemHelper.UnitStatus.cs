@@ -14,6 +14,7 @@ namespace Game.Runtime
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.AirDefenseReloading => Text("selection.order.reloading", "Reloading"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => Text("selection.order.engaging_target", "Engaging target"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.Moving => Text("selection.order.moving", "Moving"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.AttackMoving => Text("selection.order.attack_move", "Advancing and engaging"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.Holding => Text("mission.m03.order.holding", "Holding position"),
                 _ => Text("selection.order.idle", "Idle")
             };

@@ -37,7 +37,7 @@ namespace Game.Composition
             bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
                 EntityManager.GetComponentData<UnitHealth>(match.EnemyMainBase).Current > 0 && EntityManager.HasComponent<LocalTransform>(match.EnemyMainBase);
             view.PresentEnemyBaseMarker(baseAlive && worldCamera != null
-                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive);
+                ? worldCamera.WorldToScreenPoint(EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position) : Vector3.back, baseAlive, baseAlive ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.EnemyMainBase).Position : default, EntityManager.Exists(match.PlayerMainBase) && EntityManager.HasComponent<LocalTransform>(match.PlayerMainBase) ? (Vector3)EntityManager.GetComponentData<LocalTransform>(match.PlayerMainBase).Position : default);
 #endif
             var requests=EntityManager.GetBuffer<SkirmishActionRequest>(session);
             if(requests.Length>0)
@@ -50,7 +50,7 @@ namespace Game.Composition
                 else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||startupFailed||action==SkirmishAction.Restart))
                 {
                     var entity=EntityManager.CreateEntity(typeof(SkirmishReturnRequest));
-                    EntityManager.SetComponentData(entity,new SkirmishReturnRequest{Action=action,Seed=match.Seed});
+                    EntityManager.SetComponentData(entity,new SkirmishReturnRequest{Action=action,Seed=match.Seed,ScenarioIndex=match.ScenarioIndex});
                     returnStage=0;
                 }
             }
@@ -62,7 +62,7 @@ namespace Game.Composition
                     data.lastResult=new SkirmishResultSaveData
                     {
                         sessionId=match.SessionId.ToString(),outcome=match.Outcome.ToString(),reason=match.Reason.ToString(),
-                        elapsedSeconds=match.ElapsedSeconds,seed=match.Seed,
+                        elapsedSeconds=match.ElapsedSeconds,seed=match.Seed,scenarioIndex=match.ScenarioIndex,
                         playerUnitsLost=match.PlayerUnitsLost,enemyUnitsLost=match.EnemyUnitsLost,
                         playerBuildingsLost=match.PlayerBuildingsLost,enemyBuildingsLost=match.EnemyBuildingsLost
                     };
@@ -119,7 +119,7 @@ namespace Game.Composition
             if(shell.CurrentMode!=UiShellMode.MainMenu||SkirmishLaunchProjection.TryGet(EntityManager,out _,out _))return;
             if(request.Action==SkirmishAction.Replay||request.Action==SkirmishAction.Restart)
             {
-                var config=QuickGameConfig.Defaults;config.MapSeed=request.Seed;
+                var config=QuickGameConfig.Defaults;config.MapSeed=request.Seed;config.ScenarioIndex=request.ScenarioIndex;
                 if(!SkirmishLaunchProjection.TryQueue(EntityManager,config))return;
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch,UIRoute.Match,false);
             }

@@ -68,6 +68,7 @@ namespace Game.Runtime
                 result.StructuralRemoves += RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity) ? 1 : 0;
+                result.StructuralRemoves += RemoveComponentIfPresent<AttackMoveOrder>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity) ? 1 : 0;
@@ -143,6 +144,7 @@ namespace Game.Runtime
                 RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+                RemoveComponentIfPresent<AttackMoveOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
@@ -179,6 +181,7 @@ namespace Game.Runtime
                 SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal });
                 RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+                RemoveComponentIfPresent<AttackMoveOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
@@ -225,6 +228,7 @@ namespace Game.Runtime
             RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
             RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
             RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<AttackMoveOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportBoardingTarget>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);

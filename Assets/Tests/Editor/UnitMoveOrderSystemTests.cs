@@ -25,6 +25,7 @@ public sealed class UnitMoveOrderSystemTests
     {
         try
         {
+            RunCase(test => test.AttackMove_ResumesAfterCombatAndExplicitMoveCancelsDestination());
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
             RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
             RunCase(test => test.IssueImmediateMoveCommand_GroundUnitWritesTargetPathRequestAndManualTag());
@@ -44,7 +45,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=19");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=20");
         }
         catch (System.Exception ex)
         {
@@ -481,6 +482,44 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
+    }
+
+    [Test]
+    public void AttackMove_ResumesAfterCombatAndExplicitMoveCancelsDestination()
+    {
+        CreateGrid(32, 32);
+        var em = _entityManager;
+        var unit = em.CreateEntity(typeof(SelectedUnitTag), typeof(Faction), typeof(UnitMove), typeof(UnitGrid),
+            typeof(UnitFootprint), typeof(UnitAttack), typeof(UnitCombat), typeof(UnitHealth), typeof(LocalTransform));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitMove { Speed = 5, WalkSpeed = 5, RoadSpeedMultiplier = 1 });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        em.SetComponentData(unit, new UnitFootprint { Size = new int2(1) });
+        em.SetComponentData(unit, new UnitAttack { Damage = 10, Range = 3 });
+        em.SetComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(2.5f, 0, 2.5f)));
+        Assert.IsTrue(AttackMoveSystem.IssueSelected(em, new int2(20, 20), new float3(20, 0, 20), 1).Accepted);
+        var destination = em.GetComponentData<AttackMoveOrder>(unit).Destination;
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit), "Advance retains player-order pathfinding priority.");
+        em.RemoveComponent<UnitPathRequest>(unit);
+        var enemy = em.CreateEntity();
+        em.AddComponentData(unit, new EngageTarget { Target = enemy });
+        AttackMoveSystem.ResumeTravel(em, 2);
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit), "Do not resume while fighting.");
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+        em.RemoveComponent<EngageTarget>(unit);
+        AttackMoveSystem.ResumeTravel(em, 3);
+        Assert.AreEqual(destination, em.GetComponentData<UnitPathRequest>(unit).Goal);
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+        Assert.IsTrue(UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, unit, new int2(5, 5)));
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit), "Player Move replaces the advance permanently.");
+        Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
+        Assert.IsTrue(AttackMoveSystem.IssueSelected(em, new int2(20, 20), new float3(20, 0, 20), 4).Accepted);
+        em.AddComponent<HoldPositionOrderTag>(unit);
+        AttackMoveSystem.ResumeTravel(em, 5);
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit), "Hold must cancel the old destination.");
     }
 
     [Test]

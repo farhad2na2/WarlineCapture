@@ -127,7 +127,7 @@ namespace Game.UI.Runtime
                 mapClockHeading = Label(mapInformation, "", 18, 30);
                 mapClock = Label(mapInformation, "", 24, 32);
             }
-            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get("ui.skirmish.base_assault_map", "DESERT BASE"));
+            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get(model.ScenarioIndex == 1 ? "ui.skirmish.city_crossroads_map" : "ui.skirmish.base_assault_map", model.ScenarioIndex == 1 ? "CITY CROSSROADS" : "DESERT BASE"));
             SetBaseLabel(mapPlayer, mapPlayerHealth, model.PlayerBase);
             SetBaseLabel(mapEnemy, mapEnemyHealth, model.EnemyBase);
             var time = (model.Clock ?? string.Empty).Split(new[] { "  " }, StringSplitOptions.None);

@@ -65,7 +65,11 @@ namespace Game.UI.Runtime
             bool fa = UiShellRuntimeGateway.Localization.IsRightToLeft;
             return UiShellRuntimeGateway.ReadAriaSkirmishIntent() switch
             {
-                AriaSkirmishIntent.FindThreat => fa ? "روی نقطهٔ قرمز نقشه می‌زنم تا دشمن نزدیک نیروهامون رو ببینیم." : "I’ll tap the red map contact to see the enemy nearest our force.",
+                AriaSkirmishIntent.BuildDefense => fa ? "اول نزدیک پایگاه برج نگهبانی می‌سازم تا نیروهامون فرصت جمع شدن داشته باشن." : "I'll build watchtowers near our base so our troops have time to gather.",
+                AriaSkirmishIntent.DefendBase => fa ? "گروه رو روی حفظ می‌ذارم تا از پایگاه دفاع کنه. هم‌زمان نیروی کمکی می‌گیریم." : "I’ll put this squad on Hold to defend our base while reinforcements arrive.",
+                AriaSkirmishIntent.GroupForce => fa ? "نیروهای نزدیک رو با کشیدن کادر انتخاب می‌کنم تا با هم حمله کنن." : "I’ll drag a selection box around our nearby troops so they fight together.",
+                AriaSkirmishIntent.FindThreat => fa ? "با نقشه، دشمن نزدیک نیروهامون رو میارم توی دید." : "I’ll use the map to bring the nearest enemy into view.",
+                AriaSkirmishIntent.Advance => fa ? "روی زمین می‌زنم تا نیروها جلو برن و توی مسیر با دشمن‌ها بجنگن." : "I’ll tap the ground to advance and engage enemies along the route.",
                 AriaSkirmishIntent.TargetThreat => fa ? "اول این دشمن رو می‌زنیم تا نیروهامون بتونن جلو برن." : "We’ll deal with this enemy before advancing on the base.",
                 AriaSkirmishIntent.Recruit => fa ? "از منوی ساخت نیروی کمکی می‌گیرم. اگه منابع کافی نباشه، با همین نیروها ادامه می‌دیم." : "I'll recruit reinforcements through Build. If we cannot afford them, we'll use our current force.",
                 AriaSkirmishIntent.SelectSquad => fa ? "اول کارت گروه رو می‌زنم تا نیروها انتخاب بشن." : "I'll tap a squad card to select its soldiers.",

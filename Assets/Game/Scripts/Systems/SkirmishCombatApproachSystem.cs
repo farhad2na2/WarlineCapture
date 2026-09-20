@@ -28,6 +28,7 @@ namespace Game.Runtime
             if(grids.CalculateEntityCount()!=1)return;
             var gridEntity=grids.GetSingletonEntity();
             var grid=em.GetComponentData<GridConfig>(gridEntity);
+            ResumeReadyApproaches(em, grid);
             using var surfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
             var surface = surfaces.CalculateEntityCount() == 1 ? surfaces.GetSingleton<MapSurfaceComponent>() : default;
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
@@ -52,11 +53,55 @@ namespace Game.Runtime
                     em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked,origin,target,size,range,out var goal,surface,isVehicle))continue;
                 // This existing order is cleared by Move/Hold/new Attack, so the
                 // approach cannot resume after the player gives a different order.
+                bool advancing = em.HasComponent<AttackMoveOrder>(unit);
+                var advance = advancing ? em.GetComponentData<AttackMoveOrder>(unit) : default;
                 if(!UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em,unit,goal))continue;
+                if (advancing) em.AddComponentData(unit, advance);
                 em.RemoveComponent<EngageTarget>(unit);
                 em.AddComponentData(unit,new BaseBreachOrder{
                     FinalTarget=engage.Target,FinalCell=goal,FinalPosition=target,
                     Stage=BaseBreachOrder.StageMovingToFinalTarget,IsCommanded=engage.IsCommanded});
+            }
+        }
+
+        internal static void ResumeReadyApproaches(EntityManager em, GridConfig grid)
+        {
+            using var query = em.CreateEntityQuery(typeof(BaseBreachOrder), typeof(UnitAttack), typeof(LocalTransform));
+            using var units = query.ToEntityArray(Allocator.Temp);
+            foreach (var unit in units)
+            {
+                var order = em.GetComponentData<BaseBreachOrder>(unit);
+                // Only the simple Skirmish firing approach; real gate-breach orders
+                // keep their existing staged behavior and player overrides cancel this component.
+                if (order.BreachTarget != Entity.Null || order.Stage != BaseBreachOrder.StageMovingToFinalTarget) continue;
+                bool alive = em.Exists(order.FinalTarget) && em.HasComponent<LocalTransform>(order.FinalTarget) &&
+                    (!em.HasComponent<UnitHealth>(order.FinalTarget) || em.GetComponentData<UnitHealth>(order.FinalTarget).Current > 0);
+                float3 target = alive ? em.GetComponentData<LocalTransform>(order.FinalTarget).Position : default;
+                if (alive)
+                {
+                    var size = em.HasComponent<UnitFootprint>(unit) ? em.GetComponentData<UnitFootprint>(unit).Size : new int2(1);
+                    var targetSize = em.HasComponent<UnitFootprint>(order.FinalTarget) ? em.GetComponentData<UnitFootprint>(order.FinalTarget).Size : new int2(1);
+                    float range = em.GetComponentData<UnitAttack>(unit).Range +
+                        (math.cmax(size) - 1 + math.cmax(targetSize) - 1) * grid.CellSize * .5f;
+                    if (range <= 0 || math.distance(em.GetComponentData<LocalTransform>(unit).Position.xz, target.xz) > range) continue;
+                }
+                // A moving target can enter range before the old destination is
+                // reached. Stop walking now; a dead target must not leave a stale Move.
+                em.RemoveComponent<UnitPathRequest>(unit);
+                em.RemoveComponent<UnitPathFollow>(unit);
+                em.RemoveComponent<UnitPathRange>(unit);
+                em.RemoveComponent<UnitPathRetryCooldown>(unit);
+                em.RemoveComponent<UnitTarget>(unit);
+                em.RemoveComponent<ManualMoveOrderTag>(unit);
+                em.RemoveComponent<ManualMoveGroupMemberTag>(unit);
+                em.RemoveComponent<BaseBreachOrder>(unit);
+                if (alive)
+                {
+                    var engage = new EngageTarget { Target = order.FinalTarget, Cell = GridUtils.WorldToCell(grid, target),
+                        Position = target, IsCommanded = order.IsCommanded };
+                    if (em.HasComponent<EngageTarget>(unit)) em.SetComponentData(unit, engage);
+                    else em.AddComponentData(unit, engage);
+                }
             }
         }
 

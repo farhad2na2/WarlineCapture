@@ -75,6 +75,7 @@ namespace Game.Editor
                 {
                     var setup = UnityEngine.Object.FindAnyObjectByType<QuickCustomScreenView>();
                     if (setup == null) return;
+                    setup.SelectScenario(setupMission == -2 ? 1 : 0);
                     setup.LaunchMatch(); EditorApplication.update -= SetupMatch;
                 }
                 else if (Deploy(setupMission) == "True") EditorApplication.update -= SetupMatch;
@@ -107,6 +108,33 @@ namespace Game.Editor
                 result = JsonUtility.ToJson(q.GetSingleton<AriaPlaySessionComponent>()) + "\n" + JsonUtility.ToJson(q.GetSingleton<AriaPlayObservationComponent>());
             var aria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
             return result + "\n" + (aria != null ? aria.CurrentInstructionBody : "no ARIA view");
+        }
+        public static string ValidateSelectionCanvas()
+        {
+            if (EditorApplication.isPlaying) throw new InvalidOperationException("Requires Edit mode.");
+            var root = PrefabUtility.LoadPrefabContents("Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab");
+            try
+            {
+                // Runtime content is hosted by the shell canvas.
+                if (root.GetComponent<Canvas>() == null) root.AddComponent<Canvas>();
+                var selection = root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+                var drawer = root.GetComponentInChildren<MatchHudTransportPassengerDrawerView>(true);
+                var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+                typeof(MatchHudSelectionPanelView).GetMethod("CachePassengerChipLayout", flags).Invoke(selection, null);
+                // The runtime HUD hides the legacy command row before compact layout.
+                var commands = (GameObject)typeof(MatchHudSelectionPanelView).GetField("_commandButtonsRoot", flags).GetValue(selection);
+                commands.SetActive(false);
+                root.SetActive(true);
+                selection.SetSelectionVisible(true, null);
+                typeof(MatchHudSelectionPanelView).GetMethod("LateUpdate", flags).Invoke(selection, null);
+                var canvas = drawer.GetComponent<Canvas>();
+                // Unity does not expose effective sorting on an inactive drawer in a prefab preview scene.
+                if (canvas == null || drawer.GetComponent<UnityEngine.UI.GraphicRaycaster>() == null)
+                    throw new InvalidOperationException($"Passenger drawer setup failed: canvas={canvas != null}, sorting={canvas != null && canvas.overrideSorting}, raycaster={drawer.GetComponent<UnityEngine.UI.GraphicRaycaster>() != null}, panel={selection.VisiblePanelRect != null}, commands={commands.activeSelf}.");
+                typeof(MatchHudSelectionPanelView).GetMethod("LateUpdate", flags).Invoke(selection, null);
+                return "[AriaSelectionCanvasValidation] result=Passed";
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
         }
         public static void Restore()
         {

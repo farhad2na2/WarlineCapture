@@ -298,6 +298,14 @@ namespace Game.Runtime
             if (!targetBoundary.TryGetClickedAttackTargetEntity(screenPosition, em, out Entity targetEntity) ||
                 !AssistantPreviewAttackTargetUtility.IsDirectResolvedAttackTarget(em, targetEntity))
             {
+                // Only empty terrain in explicit Attack mode starts an advance.
+                // A direct unit/building tap keeps its ordinary target validation.
+                if (explicitAttackTargetModeActive && targetEntity == Entity.Null &&
+                    targetBoundary.TryGetMoveCommandCell(screenPosition, em, out int2 cell, out Vector3 position))
+                {
+                    queuedResolvedTarget = context.InputSystem.QueueAttackMoveCommandRequest(screenPosition, cell, position, frame);
+                    return queuedResolvedTarget;
+                }
                 return context.InputSystem.QueueAttackCommandRequest(screenPosition, explicitAttackTargetModeActive, frame);
             }
 

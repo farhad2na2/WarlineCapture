@@ -11,7 +11,7 @@ namespace Game.Runtime
         {
             using var session = em.CreateEntityQuery(typeof(SkirmishMatchState));
             if (session.IsEmptyIgnoreFilter) return true;
-            var preset = Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+            var preset = SkirmishPresetResolver.Load(em);
             if (prefab == null || preset == null || preset.buildingPlacement == null) return false;
             var allowed = building ? preset.buildingPlacement.Spawnables :
                 preset.buildingPlacement.UnitPrefabRegistryConfig.UnitSpawnPrefabs;

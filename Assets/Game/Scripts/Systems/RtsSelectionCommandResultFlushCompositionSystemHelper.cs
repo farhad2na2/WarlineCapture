@@ -957,7 +957,9 @@ namespace Game.Runtime
                     TryEmitCommandConfirmationVoice(context, result.Kind, result.Accepted != 0);
                 }
                 if (result.HasCommandResult != 0)
-                    context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                    context.ApplyHudCommandResult?.Invoke(result.Accepted != 0 && result.HasTargetEntity == 0 && result.HasWorldPosition != 0
+                        ? TacticalCommandResult.Success(GameText.Get("tactical.feedback.attack_move", "Advancing — engaging enemies along the route."))
+                        : ToTacticalCommandResult(result));
 
                 if (result.Accepted == 0)
                     continue;

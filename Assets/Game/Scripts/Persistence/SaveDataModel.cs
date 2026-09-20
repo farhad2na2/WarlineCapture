@@ -123,5 +123,6 @@ namespace Game.Runtime
         public float elapsedSeconds;
         public int playerUnitsLost, enemyUnitsLost, playerBuildingsLost, enemyBuildingsLost;
         public int seed;
+        public int scenarioIndex;
     }
 }

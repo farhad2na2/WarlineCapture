@@ -575,6 +575,17 @@ namespace Game.Runtime
             });
         }
 
+        public bool QueueAttackMoveCommandRequest(Vector2 screenPosition, int2 cell, Vector3 position, int frame)
+        {
+            return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Attack, Frame = frame,
+                TargetCell = cell, WorldPosition = position, ScreenPosition = ToFloat2(screenPosition),
+                TargetKind = RtsSelectionCommandTargetKind.Cell, ExplicitAttackTargetMode = 1,
+                HasTargetCell = 1, HasWorldPosition = 1, HasScreenPosition = 1
+            });
+        }
+
         public bool QueueScanCommandRequest(Vector2 screenPosition, int frame)
         {
             return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement

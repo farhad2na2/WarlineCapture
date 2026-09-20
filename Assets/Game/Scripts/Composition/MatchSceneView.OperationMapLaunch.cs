@@ -33,11 +33,25 @@ namespace Game.Composition
                         out error);
 
                 EntityManager entityManager = world.EntityManager;
-                if (SkirmishLaunchProjection.TryGet(entityManager, out _, out _))
+                if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
+                {
+                    if (skirmish.ScenarioIndex == 1)
+                    {
+                        var preset = SkirmishPresetConfig.Load(1);
+                        var map = preset != null ? preset.operationMap : null;
+                        if (map == null || !map.TryValidateMetadata(out error))
+                            return Reject("City Crossroads map is missing or invalid: " + error, out failureCode, out error);
+                        selection = new OperationMapLaunchSelection(
+                            new FixedString64Bytes("skirmish.city_crossroads"),
+                            new FixedString64Bytes("scenario.skirmish.city_crossroads"),
+                            new FixedString64Bytes(map.OperationMapId), map, false);
+                        return true;
+                    }
                     return TryCreateFallback(
                         SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
                         SkirmishLaunchProjection.OperationMapId,
                         out selection, out failureCode, out error);
+                }
                 using EntityQuery query = entityManager.CreateEntityQuery(
                     ComponentType.ReadOnly<CampaignMissionRootComponent>());
                 int rootCount = query.CalculateEntityCount();

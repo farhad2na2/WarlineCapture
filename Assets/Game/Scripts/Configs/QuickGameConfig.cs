@@ -48,6 +48,7 @@ namespace Game.Configs
         public bool IntelReveal;
         public QuickGameStartingResources StartingResources;
         public int MapSeed;
+        public int ScenarioIndex;
 
         public static QuickGameConfig Defaults => new()
         {
@@ -71,12 +72,13 @@ namespace Game.Configs
             MapSeed = 104729
         };
 
-        // This release supports one tested preset. Preserve the seed, never pretend that
-        // legacy fog/difficulty/map controls are implemented by silently applying them.
+        // Both authored battlefields share normal Base Assault rules. Preserve their
+        // identity and seed without reviving unsupported legacy difficulty controls.
         public QuickGameConfig NormalizeForBaseAssault()
         {
             QuickGameConfig normalized = Defaults;
             normalized.MapSeed = MapSeed > 0 ? MapSeed : Defaults.MapSeed;
+            normalized.ScenarioIndex = ScenarioIndex == 1 ? 1 : 0;
             return normalized;
         }
 

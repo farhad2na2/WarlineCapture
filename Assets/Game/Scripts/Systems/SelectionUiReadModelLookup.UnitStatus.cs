@@ -16,7 +16,8 @@ namespace Game.Runtime
             TrackingAirTarget = 6,
             InterceptingMissile = 7,
             AirDefenseReloading = 8,
-            Holding = 9
+            Holding = 9,
+            AttackMoving = 10
         }
         public FocusedUnitUiStatus GetFocusedUnitUiStatus(EntityManager entityManager, Entity entity)
         {
@@ -43,6 +44,9 @@ namespace Game.Runtime
 
             if (entityManager.HasComponent<EngageTarget>(entity))
                 return FocusedUnitUiStatus.Engaged;
+
+            if (entityManager.HasComponent<AttackMoveOrder>(entity))
+                return FocusedUnitUiStatus.AttackMoving;
 
             if (entityManager.HasComponent<UnitTarget>(entity) ||
                 entityManager.HasComponent<UnitPathRequest>(entity) ||

@@ -1713,6 +1713,8 @@ MonoBehaviour:
       value: 'Health: {0}/{1}'
     - key: selection.order.airspace_clear
       value: Airspace clear
+    - key: selection.order.attack_move
+      value: Advancing and engaging
     - key: selection.order.boarding_transport
       value: Boarding transport
     - key: selection.order.engaging_target
@@ -1888,7 +1890,7 @@ MonoBehaviour:
     - key: tactical.command.cease_fire
       value: CEASE FIRE
     - key: tactical.command.instruction.attack
-      value: Tap hostile target.
+      value: Tap an enemy to focus fire, or ground to advance and engage.
     - key: tactical.command.instruction.board
       value: Select a transport.
     - key: tactical.command.instruction.build
@@ -1969,6 +1971,8 @@ MonoBehaviour:
       value: Select units before stopping orders.
     - key: tactical.feedback.air_defense_auto_engage
       value: Air defense auto-engages aircraft and incoming missiles.
+    - key: tactical.feedback.attack_move
+      value: "Advancing \u2014 engaging enemies along the route."
     - key: tactical.feedback.boarding_transport
       value: Boarding transport.
     - key: tactical.feedback.camera_follow_active
@@ -2705,6 +2709,8 @@ MonoBehaviour:
       value: Oil Refinery
     - key: ui.skirmish.catalog.rifle_squad
       value: Rifle squad (4)
+    - key: ui.skirmish.city_crossroads_map
+      value: CITY CROSSROADS
     - key: ui.skirmish.confirm
       value: CONFIRM
     - key: ui.skirmish.enemy_base
@@ -2892,38 +2898,6 @@ MonoBehaviour:
       value: 05D 08H
     - key: ui.v3.07d.ccdbe96e50
       value: 07D
-    - key: ui.v3.100_fuel.41f50b3a86
-      value: 100 FUEL
-    - key: ui.v3.100_materials.794efffac8
-      value: 100 MATERIALS
-    - key: ui.v3.100_oil.631a4f1d2f
-      value: 100 OIL
-    - key: ui.v3.120_command.943c192343
-      value: 120 COMMAND
-    - key: ui.v3.120_fps.e3f90dba7a
-      value: 120 FPS
-    - key: ui.v3.120_kb.c4a2c403be
-      value: 120 KB
-    - key: ui.v3.120_oil.0cfb20dec6
-      value: 120 OIL
-    - key: ui.v3.12_000_credits.3d6adb00ee
-      value: 12,000 CREDITS
-    - key: ui.v3.12_450_18_000_xp.948176b250
-      value: 12,450 / 18,000 XP
-    - key: ui.v3.12d_08h.36612ca9b2
-      value: 12D 08H
-    - key: ui.v3.12k.eca723cb12
-      value: 12K
-    - key: ui.v3.140m.02337792ae
-      value: 140m
-    - key: ui.v3.15_680_24_000_xp.6d13e2b710
-      value: 15,680 / 24,000 XP
-    - key: ui.v3.15_oil.4d43218552
-      value: 15 OIL
-    - key: ui.v3.180_materials.b42b11fe20
-      value: 180 MATERIALS
-    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
-      value: 18,560 / 24,000 XP
     - key: ui.v3.1_1_mb.74472ccf96
       value: 1.1 MB
     - key: ui.v3.1_4_mb.e253fd925c
@@ -2948,14 +2922,40 @@ MonoBehaviour:
       value: 1 RUSH TICKET
     - key: ui.v3.1_slot_required.da134e76cb
       value: 1 SLOT REQUIRED
+    - key: ui.v3.100_fuel.41f50b3a86
+      value: 100 FUEL
+    - key: ui.v3.100_materials.794efffac8
+      value: 100 MATERIALS
+    - key: ui.v3.100_oil.631a4f1d2f
+      value: 100 OIL
+    - key: ui.v3.12_000_credits.3d6adb00ee
+      value: 12,000 CREDITS
+    - key: ui.v3.12_450_18_000_xp.948176b250
+      value: 12,450 / 18,000 XP
+    - key: ui.v3.120_command.943c192343
+      value: 120 COMMAND
+    - key: ui.v3.120_fps.e3f90dba7a
+      value: 120 FPS
+    - key: ui.v3.120_kb.c4a2c403be
+      value: 120 KB
+    - key: ui.v3.120_oil.0cfb20dec6
+      value: 120 OIL
+    - key: ui.v3.12d_08h.36612ca9b2
+      value: 12D 08H
+    - key: ui.v3.12k.eca723cb12
+      value: 12K
+    - key: ui.v3.140m.02337792ae
+      value: 140m
+    - key: ui.v3.15_680_24_000_xp.6d13e2b710
+      value: 15,680 / 24,000 XP
+    - key: ui.v3.15_oil.4d43218552
+      value: 15 OIL
+    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
+      value: 18,560 / 24,000 XP
+    - key: ui.v3.180_materials.b42b11fe20
+      value: 180 MATERIALS
     - key: ui.v3.1h_ago.e87791916d
       value: 1h ago
-    - key: ui.v3.200_command.0b2871a190
-      value: 200 COMMAND
-    - key: ui.v3.21m_ago.5106bdae68
-      value: 21m ago
-    - key: ui.v3.28d_12h_remaining.aecded76a7
-      value: 28D 12H REMAINING
     - key: ui.v3.2_1_mb.afc38615e7
       value: 2.1 MB
     - key: ui.v3.2_500_credits.c73607a755
@@ -2970,24 +2970,14 @@ MonoBehaviour:
       value: 2 OPERATION SUPPLIES
     - key: ui.v3.2_rush_tickets.61e998e7e3
       value: 2 RUSH TICKETS
+    - key: ui.v3.200_command.0b2871a190
+      value: 200 COMMAND
+    - key: ui.v3.21m_ago.5106bdae68
+      value: 21m ago
+    - key: ui.v3.28d_12h_remaining.aecded76a7
+      value: 28D 12H REMAINING
     - key: ui.v3.2m_ago.35abf1daad
       value: 2m ago
-    - key: ui.v3.300_command.51589ca8d9
-      value: 300 COMMAND
-    - key: ui.v3.300_command_support_parts.d92a338ea3
-      value: 300 COMMAND + SUPPORT PARTS
-    - key: ui.v3.300_materials.e8187c76ae
-      value: 300 MATERIALS
-    - key: ui.v3.30_fps.39f81d2101
-      value: 30 FPS
-    - key: ui.v3.330_command.99f1655563
-      value: 330 COMMAND
-    - key: ui.v3.33_fuel.fc5e545c22
-      value: 33 FUEL
-    - key: ui.v3.34m_ago.3bd84c4c0c
-      value: 34m ago
-    - key: ui.v3.350_command.256201b16b
-      value: 350 COMMAND
     - key: ui.v3.3_3_slots_used.04e0af3bec
       value: 3 / 3 SLOTS USED
     - key: ui.v3.3_3_stars.d909a26811
@@ -2996,16 +2986,32 @@ MonoBehaviour:
       value: 3 REPAIR CONVOYS
     - key: ui.v3.3_rush_tickets.2ca4c7176e
       value: 3 RUSH TICKETS
+    - key: ui.v3.30_fps.39f81d2101
+      value: 30 FPS
+    - key: ui.v3.300_command.51589ca8d9
+      value: 300 COMMAND
+    - key: ui.v3.300_command_support_parts.d92a338ea3
+      value: 300 COMMAND + SUPPORT PARTS
+    - key: ui.v3.300_materials.e8187c76ae
+      value: 300 MATERIALS
+    - key: ui.v3.33_fuel.fc5e545c22
+      value: 33 FUEL
+    - key: ui.v3.330_command.99f1655563
+      value: 330 COMMAND
+    - key: ui.v3.34m_ago.3bd84c4c0c
+      value: 34m ago
+    - key: ui.v3.350_command.256201b16b
+      value: 350 COMMAND
     - key: ui.v3.3h_ago.6868cc1381
       value: 3h ago
     - key: ui.v3.3x3.97a611ef57
       value: 3x3
+    - key: ui.v3.4_rush_tickets.653ef6a6cc
+      value: 4 RUSH TICKETS
     - key: ui.v3.420_kb.8a1b888916
       value: 420 KB
     - key: ui.v3.45m_ago.83ae378f24
       value: 45m ago
-    - key: ui.v3.4_rush_tickets.653ef6a6cc
-      value: 4 RUSH TICKETS
     - key: ui.v3.5_000_credits.8aa25223b1
       value: 5,000 CREDITS
     - key: ui.v3.5_rush_tickets.cbcbb87747
@@ -3016,18 +3022,18 @@ MonoBehaviour:
       value: 60 FPS
     - key: ui.v3.680_kb.91b32ba212
       value: 680 KB
-    - key: ui.v3.72h_remaining.f5e571f89a
-      value: 72H REMAINING
-    - key: ui.v3.750_command.75c3e8ddaa
-      value: 750 COMMAND
     - key: ui.v3.7_500_credits.9369404454
       value: 7,500 CREDITS
     - key: ui.v3.7_500_credits_200_command.5b07872dcc
       value: 7,500 CREDITS + 200 COMMAND
-    - key: ui.v3.820_kb.82984f307a
-      value: 820 KB
+    - key: ui.v3.72h_remaining.f5e571f89a
+      value: 72H REMAINING
+    - key: ui.v3.750_command.75c3e8ddaa
+      value: 750 COMMAND
     - key: ui.v3.8_000_credits.b7abe8f3a5
       value: 8,000 CREDITS
+    - key: ui.v3.820_kb.82984f307a
+      value: 820 KB
     - key: ui.v3.8m_ago.e09bde6930
       value: 8m ago
     - key: ui.v3.940_kb.d317067525
@@ -8121,6 +8127,8 @@ MonoBehaviour:
     - key: selection.order.airspace_clear
       value: "\u062D\u0631\u06CC\u0645 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u0646
         \u0627\u0633\u062A"
+    - key: selection.order.attack_move
+      value: "\u062D\u0631\u06A9\u062A \u0648 \u062F\u0631\u06AF\u06CC\u0631\u06CC"
     - key: selection.order.boarding_transport
       value: "\u062F\u0631 \u062D\u0627\u0644 \u0633\u0648\u0627\u0631\u0634\u062F\u0646
         \u0628\u0647 \u0648\u0633\u06CC\u0644\u0647 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644"
@@ -8334,7 +8342,11 @@ MonoBehaviour:
     - key: tactical.command.cease_fire
       value: "\u0642\u0637\u0639 \u0622\u062A\u0634"
     - key: tactical.command.instruction.attack
-      value: "\u0631\u0648\u06CC \u0647\u062F\u0641 \u062F\u0634\u0645\u0646 \u0628\u0632\u0646."
+      value: "\u0631\u0648\u06CC \u062F\u0634\u0645\u0646 \u0628\u0632\u0646 \u062A\u0627
+        \u0628\u0647\u0634 \u062D\u0645\u0644\u0647 \u06A9\u0646\u06CC\u060C \u06CC\u0627
+        \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646 \u0628\u0632\u0646 \u062A\u0627
+        \u062A\u0648\u06CC \u0645\u0633\u06CC\u0631 \u062D\u0631\u06A9\u062A \u0628\u0627
+        \u062F\u0634\u0645\u0646\u200C\u0647\u0627 \u0628\u062C\u0646\u06AF\u06CC."
     - key: tactical.command.instruction.board
       value: "\u06CC\u0647 \u0648\u0633\u06CC\u0644\u0647\u0654 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644
         \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646."
@@ -8460,6 +8472,10 @@ MonoBehaviour:
         \u0648 \u0645\u0648\u0634\u06A9\u200C\u0647\u0627\u06CC\u06CC \u06A9\u0647
         \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646 \u0634\u0644\u06CC\u06A9
         \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: tactical.feedback.attack_move
+      value: "\u0628\u0647 \u0633\u0645\u062A \u0645\u0642\u0635\u062F \u0645\u06CC\u200C\u0631\u06CC\u0645\u061B
+        \u062A\u0648\u06CC \u0645\u0633\u06CC\u0631 \u0628\u0627 \u062F\u0634\u0645\u0646\u200C\u0647\u0627
+        \u0645\u06CC\u200C\u062C\u0646\u06AF\u06CC\u0645."
     - key: tactical.feedback.boarding_transport
       value: "\u0646\u06CC\u0631\u0648\u0647\u0627 \u062F\u0627\u0631\u0646 \u0633\u0648\u0627\u0631
         \u0645\u06CC\u200C\u0634\u0646."
@@ -9390,6 +9406,8 @@ MonoBehaviour:
     - key: ui.skirmish.catalog.rifle_squad
       value: "\u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
         (\u06F4 \u0646\u0641\u0631)"
+    - key: ui.skirmish.city_crossroads_map
+      value: "\u0686\u0647\u0627\u0631\u0631\u0627\u0647 \u0634\u0647\u0631"
     - key: ui.skirmish.confirm
       value: "\u062A\u0623\u06CC\u06CC\u062F"
     - key: ui.skirmish.enemy_base
@@ -9723,38 +9741,6 @@ MonoBehaviour:
       value: "05 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
     - key: ui.v3.07d.ccdbe96e50
       value: "07 \u0631\u0648\u0632"
-    - key: ui.v3.100_fuel.41f50b3a86
-      value: "100 \u0633\u0648\u062E\u062A"
-    - key: ui.v3.100_materials.794efffac8
-      value: "100 \u0645\u0635\u0627\u0644\u062D"
-    - key: ui.v3.100_oil.631a4f1d2f
-      value: "100 \u0646\u0641\u062A"
-    - key: ui.v3.120_command.943c192343
-      value: "120 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.120_fps.e3f90dba7a
-      value: 120 FPS
-    - key: ui.v3.120_kb.c4a2c403be
-      value: 120 KB
-    - key: ui.v3.120_oil.0cfb20dec6
-      value: "120 \u0646\u0641\u062A"
-    - key: ui.v3.12_000_credits.3d6adb00ee
-      value: "12,000 \u0627\u0639\u062A\u0628\u0627\u0631"
-    - key: ui.v3.12_450_18_000_xp.948176b250
-      value: 12,450 / 18,000 XP
-    - key: ui.v3.12d_08h.36612ca9b2
-      value: "12 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
-    - key: ui.v3.12k.eca723cb12
-      value: 12K
-    - key: ui.v3.140m.02337792ae
-      value: 140m
-    - key: ui.v3.15_680_24_000_xp.6d13e2b710
-      value: 15,680 / 24,000 XP
-    - key: ui.v3.15_oil.4d43218552
-      value: "15 \u0646\u0641\u062A"
-    - key: ui.v3.180_materials.b42b11fe20
-      value: "180 \u0645\u0635\u0627\u0644\u062D"
-    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
-      value: 18,560 / 24,000 XP
     - key: ui.v3.1_1_mb.74472ccf96
       value: 1.1 MB
     - key: ui.v3.1_4_mb.e253fd925c
@@ -9779,14 +9765,40 @@ MonoBehaviour:
       value: "1 \u0628\u0644\u06CC\u062A \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.1_slot_required.da134e76cb
       value: "1 \u062C\u0627\u06CC\u06AF\u0627\u0647 \u0644\u0627\u0632\u0645"
+    - key: ui.v3.100_fuel.41f50b3a86
+      value: "100 \u0633\u0648\u062E\u062A"
+    - key: ui.v3.100_materials.794efffac8
+      value: "100 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.v3.100_oil.631a4f1d2f
+      value: "100 \u0646\u0641\u062A"
+    - key: ui.v3.12_000_credits.3d6adb00ee
+      value: "12,000 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.v3.12_450_18_000_xp.948176b250
+      value: 12,450 / 18,000 XP
+    - key: ui.v3.120_command.943c192343
+      value: "120 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.120_fps.e3f90dba7a
+      value: 120 FPS
+    - key: ui.v3.120_kb.c4a2c403be
+      value: 120 KB
+    - key: ui.v3.120_oil.0cfb20dec6
+      value: "120 \u0646\u0641\u062A"
+    - key: ui.v3.12d_08h.36612ca9b2
+      value: "12 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
+    - key: ui.v3.12k.eca723cb12
+      value: 12K
+    - key: ui.v3.140m.02337792ae
+      value: 140m
+    - key: ui.v3.15_680_24_000_xp.6d13e2b710
+      value: 15,680 / 24,000 XP
+    - key: ui.v3.15_oil.4d43218552
+      value: "15 \u0646\u0641\u062A"
+    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
+      value: 18,560 / 24,000 XP
+    - key: ui.v3.180_materials.b42b11fe20
+      value: "180 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.v3.1h_ago.e87791916d
       value: "1 \u0633\u0627\u0639\u062A \u067E\u06CC\u0634"
-    - key: ui.v3.200_command.0b2871a190
-      value: "200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.21m_ago.5106bdae68
-      value: "21 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.28d_12h_remaining.aecded76a7
-      value: "28 \u0631\u0648\u0632 \u0648 12 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.2_1_mb.afc38615e7
       value: 2.1 MB
     - key: ui.v3.2_500_credits.c73607a755
@@ -9801,25 +9813,14 @@ MonoBehaviour:
       value: "2 \u0639\u0645\u0644\u06CC\u0627\u062A \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
     - key: ui.v3.2_rush_tickets.61e998e7e3
       value: "2 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
+    - key: ui.v3.200_command.0b2871a190
+      value: "200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.21m_ago.5106bdae68
+      value: "21 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.28d_12h_remaining.aecded76a7
+      value: "28 \u0631\u0648\u0632 \u0648 12 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.2m_ago.35abf1daad
       value: "2 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.300_command.51589ca8d9
-      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.300_command_support_parts.d92a338ea3
-      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC + \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
-        \u0642\u0637\u0639\u0627\u062A"
-    - key: ui.v3.300_materials.e8187c76ae
-      value: "300 \u0645\u0635\u0627\u0644\u062D"
-    - key: ui.v3.30_fps.39f81d2101
-      value: 30 FPS
-    - key: ui.v3.330_command.99f1655563
-      value: "330 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.33_fuel.fc5e545c22
-      value: "33 \u0633\u0648\u062E\u062A"
-    - key: ui.v3.34m_ago.3bd84c4c0c
-      value: "34 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.350_command.256201b16b
-      value: "350 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.3_3_slots_used.04e0af3bec
       value: "3 / 3 \u062C\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0633\u062A\u0641\u0627\u062F\u0647\u200C\u0634\u062F\u0647"
     - key: ui.v3.3_3_stars.d909a26811
@@ -9828,16 +9829,33 @@ MonoBehaviour:
       value: "3 \u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC \u062A\u0639\u0645\u06CC\u0631"
     - key: ui.v3.3_rush_tickets.2ca4c7176e
       value: "3 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
+    - key: ui.v3.30_fps.39f81d2101
+      value: 30 FPS
+    - key: ui.v3.300_command.51589ca8d9
+      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.300_command_support_parts.d92a338ea3
+      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC + \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0642\u0637\u0639\u0627\u062A"
+    - key: ui.v3.300_materials.e8187c76ae
+      value: "300 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.v3.33_fuel.fc5e545c22
+      value: "33 \u0633\u0648\u062E\u062A"
+    - key: ui.v3.330_command.99f1655563
+      value: "330 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.34m_ago.3bd84c4c0c
+      value: "34 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.350_command.256201b16b
+      value: "350 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.3h_ago.6868cc1381
       value: "3 \u0633\u0627\u0639\u062A \u067E\u06CC\u0634"
     - key: ui.v3.3x3.97a611ef57
       value: 3x3
+    - key: ui.v3.4_rush_tickets.653ef6a6cc
+      value: "4 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.420_kb.8a1b888916
       value: 420 KB
     - key: ui.v3.45m_ago.83ae378f24
       value: "45 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.4_rush_tickets.653ef6a6cc
-      value: "4 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.5_000_credits.8aa25223b1
       value: "5,000 \u0627\u0639\u062A\u0628\u0627\u0631"
     - key: ui.v3.5_rush_tickets.cbcbb87747
@@ -9848,18 +9866,18 @@ MonoBehaviour:
       value: 60 FPS
     - key: ui.v3.680_kb.91b32ba212
       value: 680 KB
-    - key: ui.v3.72h_remaining.f5e571f89a
-      value: "\u06F7\u06F2 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
-    - key: ui.v3.750_command.75c3e8ddaa
-      value: "750 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.7_500_credits.9369404454
       value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631"
     - key: ui.v3.7_500_credits_200_command.5b07872dcc
       value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631 + 200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.820_kb.82984f307a
-      value: 820 KB
+    - key: ui.v3.72h_remaining.f5e571f89a
+      value: "\u06F7\u06F2 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
+    - key: ui.v3.750_command.75c3e8ddaa
+      value: "750 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.8_000_credits.b7abe8f3a5
       value: "8,000 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.v3.820_kb.82984f307a
+      value: 820 KB
     - key: ui.v3.8m_ago.e09bde6930
       value: "8 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
     - key: ui.v3.940_kb.d317067525

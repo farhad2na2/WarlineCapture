@@ -76,7 +76,9 @@ namespace Game.UI.Runtime
             {
                 watchOverlay = new GameObject("AriaTouchPresentation", typeof(RectTransform), typeof(Canvas));
                 var canvas = watchOverlay.GetComponent<Canvas>();
-                canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32000;
+                // Above the Skirmish objective HUD (32700) and tutorial cues (32750).
+                // Keep within Unity's signed 16-bit sorting-order range.
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32760;
                 watchOverlay.AddComponent<GraphicRaycaster>();
                 watchStop = Object.Instantiate(_embeddedTutorialView.WatchButton, watchOverlay.transform);
                 watchStop.name = "AriaInstantStop";

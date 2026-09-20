@@ -17,7 +17,7 @@ namespace Game.Runtime
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if (grids.CalculateEntityCount() != 1) return;
             var grid = grids.GetSingleton<GridConfig>();
-            var preset = Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+            var preset = SkirmishPresetResolver.Load(em);
             var rally = em.GetComponentData<LocalTransform>(match.PlayerMainBase).Position + (float3)preset.playerReinforcementRallyOffset;
             using var producers = em.CreateEntityQuery(typeof(BuildingProducedUnitReadModel));
             using var roots = producers.ToEntityArray(Allocator.Temp);
@@ -38,9 +38,14 @@ namespace Game.Runtime
             foreach (var unit in recruits)
             {
                 em.AddComponent<SkirmishRallyAssigned>(unit);
-                if (em.HasComponent<ManualMoveOrderTag>(unit) || em.HasComponent<HoldPositionOrderTag>(unit) || em.HasComponent<EngageTarget>(unit)) continue;
+                if (em.HasComponent<AttackMoveOrder>(unit) || em.HasComponent<ManualMoveOrderTag>(unit) || em.HasComponent<HoldPositionOrderTag>(unit) || em.HasComponent<EngageTarget>(unit)) continue;
                 var spread = new float3((unit.Index % 3) * 2 - 2, 0, (unit.Index % 5) * 2 - 4);
-                UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, unit, GridUtils.WorldToCell(grid, rally + spread));
+                if (UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, unit, GridUtils.WorldToCell(grid, rally + spread)))
+                {
+                    // This is an automatic rally, not a player instruction to ignore combat.
+                    // Allow normal engagement/retaliation to interrupt the path.
+                    em.RemoveComponent<ManualMoveOrderTag>(unit);
+                }
             }
         }
 
@@ -67,7 +72,7 @@ namespace Game.Runtime
         // Shared by both factions and every replacement. Campaign prefab values stay intact.
         internal static void ApplyRoster(EntityManager em, SkirmishMatchState match)
         {
-            var preset=Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+            var preset=SkirmishPresetResolver.Load(em);
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
                 All=new[]{ComponentType.ReadOnly<Faction>(),ComponentType.ReadOnly<UnitAttack>(),ComponentType.ReadOnly<UnitSourcePrefabKey>()},
                 None=new[]{ComponentType.ReadOnly<SkirmishCombatTuned>(),ComponentType.ReadOnly<OperationMapBuildingComponent>()}});
@@ -115,7 +120,7 @@ namespace Game.Runtime
             if(session.CalculateEntityCount()!=1)return false;
             var match=session.GetSingleton<SkirmishMatchState>();
             if(match.Phase!=SkirmishPhase.Playing)return true;
-            var preset=Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+            var preset=SkirmishPresetResolver.Load(em);
             using var squads=em.CreateEntityQuery(typeof(AISquad));
             using var squadEntities=squads.ToEntityArray(Allocator.Temp);
             using var enemies=em.CreateEntityQuery(new EntityQueryDesc{

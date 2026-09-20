@@ -153,7 +153,7 @@ namespace Game.Runtime
                     using var skirmish=entityManager.CreateEntityQuery(typeof(Game.Components.SkirmishMatchState));
                     if(!skirmish.IsEmptyIgnoreFilter)
                     {
-                        var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+                        var preset=SkirmishPresetResolver.Load(entityManager);
                         secondsPerDay=Mathf.Max(1f,preset.supplyDaySeconds);
                     }
                 }

@@ -6,6 +6,7 @@ namespace Game.UI.Contracts
         public bool Finished, Paused, StartupFailed;
         public string Infantry;
         // Numeric mirrors of the displayed counts, at the same visible precision.
+        public int ScenarioIndex;
         public int InfantryCount, PlayerHealth, EnemyHealth;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
     }

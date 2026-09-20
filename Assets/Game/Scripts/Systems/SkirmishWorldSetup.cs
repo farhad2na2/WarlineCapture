@@ -53,7 +53,7 @@ namespace Game.Runtime
         }
         public static void SeedSupplyAndAnchors(EntityManager em)
         {
-            var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+            var preset=SkirmishPresetResolver.Load(em);
             using(var query=em.CreateEntityQuery(typeof(AIBuildPlan)))
             {
                 using var entities=query.ToEntityArray(Allocator.Temp);
@@ -103,7 +103,7 @@ namespace Game.Runtime
         }
         public static void UseTacticalResources(EntityManager em)
         {
-            var preset=UnityEngine.Resources.Load<Game.Configs.SkirmishPresetConfig>(Game.Configs.SkirmishPresetConfig.ResourceName);
+            var preset=SkirmishPresetResolver.Load(em);
             var initial=preset.buildingPlacement.InitialUnitsConfig;
             FactionTacticalMaterialsStartupSystemHelper.ApplyInitialResourceTotals(em,new InitialUnitsSpawnConfig
             {InitialMaterials=initial.InitialMaterials,MaterialsCapacity=initial.MaterialsCapacity,InitialAiMaterials=initial.InitialAiMaterials,AiMaterialsCapacity=initial.AiMaterialsCapacity});

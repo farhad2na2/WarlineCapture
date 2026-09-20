@@ -22,7 +22,7 @@ namespace Game.Runtime
             var roads=new bool[grid.Width*grid.Height];cache.AppendTo(roads);
             var sidewalks=cache.GetSidewalks();
             var water=cache.GetWater();
-            var preset=Resources.Load<SkirmishPresetConfig>(SkirmishPresetConfig.ResourceName);
+            var preset=SkirmishPresetResolver.Load(em);
             var report=new StringBuilder();int found=0,failures=0;
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
                 All=new[]{ComponentType.ReadOnly<RuntimeBuildingCombatInfo>(),ComponentType.ReadOnly<UnitSourcePrefabKey>()},

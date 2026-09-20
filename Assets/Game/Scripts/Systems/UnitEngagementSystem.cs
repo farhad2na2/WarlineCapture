@@ -18,6 +18,7 @@ namespace Game.Runtime
         private EntityQuery _ecbSingletonQuery;
         private EntityQuery _unitsQuery;
         private EntityQuery _acquisitionQuery;
+        private EntityQuery _buildingTargetsQuery;
         private double _nextTargetAcquisitionTime;
 
         public void OnCreate(ref SystemState state)
@@ -71,6 +72,12 @@ namespace Game.Runtime
                 }
             });
 
+            _buildingTargetsQuery = state.GetEntityQuery(new EntityQueryDesc
+            {
+                All = new[] { ComponentType.ReadOnly<Faction>(), ComponentType.ReadOnly<UnitHealth>(), ComponentType.ReadOnly<LocalTransform>() },
+                Any = new[] { ComponentType.ReadOnly<StaticGridBlocker>(), ComponentType.ReadOnly<RuntimeBuildingCombatTag>() },
+                None = new[] { ComponentType.ReadOnly<CampaignMissionCombatSuppressedTag>() }
+            });
             state.RequireForUpdate(_ecbSingletonQuery);
         }
 
@@ -128,10 +135,12 @@ namespace Game.Runtime
             var ecbSystem = state.EntityManager.GetComponentData<EndSimulationEntityCommandBufferSystem.Singleton>(ecbEntity);
             var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
+            var buildingTargets = _buildingTargetsQuery.ToEntityArray(Allocator.TempJob);
             var acquireJob = new AcquireTargetsJob
             {
                 Grid = grid,
                 SpatialMap = map,
+                BuildingTargets = buildingTargets,
                 AttackerCounts = attackerCounts,
                 FactionLookup = factionLookup,
                 TransformLookup = transformLookup,
@@ -139,6 +148,7 @@ namespace Game.Runtime
                 HealthLookup = healthLookup,
                 RecentAttackerLookup = recentAttackerLookup,
                 ManualMoveLookup = manualMoveLookup,
+                AttackMoveLookup = SystemAPI.GetComponentLookup<AttackMoveOrder>(true),
                 PathFollowLookup = pathFollowLookup,
                 PathRequestLookup = pathRequestLookup,
                 HoldPositionLookup = holdPositionLookup,
@@ -146,7 +156,7 @@ namespace Game.Runtime
                 Ecb = ecb
             }.ScheduleParallel(buildHandle);
 
-            var mapDisposeHandle = map.Dispose(acquireJob);
+            var mapDisposeHandle = map.Dispose(buildingTargets.Dispose(acquireJob));
             state.Dependency = attackerCounts.Dispose(mapDisposeHandle);
         }
 
@@ -176,6 +186,7 @@ namespace Game.Runtime
             [ReadOnly] public GridConfig Grid;
             [ReadOnly] public NativeParallelMultiHashMap<int, Entity> SpatialMap;
             [ReadOnly] public NativeParallelHashMap<Entity, int> AttackerCounts;
+            [ReadOnly] public NativeArray<Entity> BuildingTargets;
 
             [ReadOnly] public ComponentLookup<Faction> FactionLookup;
             [ReadOnly] public ComponentLookup<LocalTransform> TransformLookup;
@@ -183,6 +194,7 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<UnitHealth> HealthLookup;
             [ReadOnly] public ComponentLookup<RecentAttacker> RecentAttackerLookup;
             [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
+            [ReadOnly] public ComponentLookup<AttackMoveOrder> AttackMoveLookup;
             [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
             [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
             [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
@@ -193,13 +205,13 @@ namespace Game.Runtime
             {
                 if (combat.CanAttack == 0)
                     return;
-                if (combat.AutoEngage == 0)
+                if (combat.AutoEngage == 0 && !AttackMoveLookup.HasComponent(entity))
                     return;
                 if (selfFaction.Id == FactionIdentity.NeutralFactionId)
                     return;
 
                 bool hasActiveManualMove =
-                    ManualMoveLookup.HasComponent(entity) &&
+                    ManualMoveLookup.HasComponent(entity) && !AttackMoveLookup.HasComponent(entity) &&
                     (PathFollowLookup.HasComponent(entity) || PathRequestLookup.HasComponent(entity));
 
                 bool holdingPosition = HoldPositionLookup.HasComponent(entity);
@@ -313,6 +325,12 @@ namespace Game.Runtime
                     }
                 }
 
+                // Attack Move also clears hostile structures along the route. Keep
+                // mobile threats first and preserve ordinary Move/Hold acquisition.
+                if (best == Entity.Null && AttackMoveLookup.HasComponent(entity))
+                    foreach (var building in BuildingTargets)
+                        EvaluateEnemyCandidate(building, selfFaction.Id, selfTransform.Position,
+                            maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                 if (best == Entity.Null)
                     return;
 

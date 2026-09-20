@@ -269,7 +269,8 @@ namespace Game.Composition
                 FogOfWar = config.FogOfWar,
                 IntelReveal = config.IntelReveal,
                 StartingResources = (UiQuickGameStartingResources)config.StartingResources,
-                MapSeed = config.MapSeed
+                MapSeed = config.MapSeed,
+                ScenarioIndex = config.ScenarioIndex
             };
         }
 
@@ -294,7 +295,8 @@ namespace Game.Composition
                 FogOfWar = config.FogOfWar,
                 IntelReveal = config.IntelReveal,
                 StartingResources = (QuickGameStartingResources)config.StartingResources,
-                MapSeed = config.MapSeed
+                MapSeed = config.MapSeed,
+                ScenarioIndex = config.ScenarioIndex
             };
         }
     }

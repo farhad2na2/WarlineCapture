@@ -48,7 +48,14 @@ namespace Game.Editor
                 true, Game.Missions.Contracts.MissionOutcomeKind.None), "Skirmish terminal outcome stops control");
             Check(AriaPlayInputSystem.IsCurrentMatchFinished(false, default,
                 true, Game.Missions.Contracts.MissionOutcomeKind.Victory), "campaign terminal outcome still stops control");
-            return "[AriaPlayDecisionValidation] result=Passed cases=13";
+            s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            o = new AriaPlayObservationComponent { Kind = AriaPlayObservationKind.WorldTarget, TargetId = -20002,
+                Position = new Vector2(300, 300), Time = 1 };
+            AriaPlayDecisionSystem.Step(o, ref s);
+            o.Time = 2; o.Position = new Vector2(340, 300);
+            AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.GestureRequested == 1 && s.Target == o.Position, "moving hostile receives tap at current visible position");
+            return "[AriaPlayDecisionValidation] result=Passed cases=14";
         }
         private static void Check(bool condition, string reason)
         { if (!condition) throw new InvalidOperationException(reason); }

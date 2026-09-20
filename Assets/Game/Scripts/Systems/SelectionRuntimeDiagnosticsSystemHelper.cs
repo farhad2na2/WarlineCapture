@@ -7,7 +7,13 @@ namespace Game.Runtime
 {
     public sealed class SelectionRuntimeDiagnosticsSystemHelper
     {
+#if UNITY_EDITOR
+        public static bool EditorClickDiagnosticsEnabled;
+#endif
         public static bool EnableSelectionClickDiagnostics =>
+#if UNITY_EDITOR
+            EditorClickDiagnosticsEnabled ||
+#endif
             !Application.isEditor && Debug.isDebugBuild;
         public static readonly bool EnableMoveCommandTrace = false;
         public static readonly bool EnableScanCommandTrace = false;

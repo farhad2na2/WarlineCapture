@@ -64,6 +64,9 @@ namespace Game.Runtime
 
                 if (!IsAliveTarget(order.FinalTarget))
                 {
+                    // The approach belongs to this attack. Do not leave its manual
+                    // movement suppressing combat after the target is destroyed.
+                    RemovePathingState(entity);
                     Ecb.RemoveComponent<BaseBreachOrder>(entity);
                     return;
                 }

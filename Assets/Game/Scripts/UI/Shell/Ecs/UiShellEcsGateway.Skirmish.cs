@@ -33,6 +33,7 @@ namespace Game.UI.Shell.Ecs
             }
             model=new UiSkirmishModel
             {
+                ScenarioIndex=match.ScenarioIndex,
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
                 InfantryCount=infantry, PlayerHealth=VisibleBaseHealth(em,match.PlayerMainBase), EnemyHealth=VisibleBaseHealth(em,match.EnemyMainBase),
                 Infantry=infantry+" / "+SkirmishPresetConfig.InfantryLimitPerFaction,

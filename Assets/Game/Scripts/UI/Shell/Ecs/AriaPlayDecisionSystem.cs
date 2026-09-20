@@ -59,9 +59,14 @@ namespace Game.UI.Shell.Ecs
                 session.DueAt = now + .9f;
                 return;
             }
-            // Never press a control that moved while the hand was approaching it.
+            // A moving world contact (or a map contact) must not postpone its tap forever.
+            // Refresh from the latest visible observation immediately before submitting it.
+            if (observation.Kind == AriaPlayObservationKind.WorldTarget || observation.TargetId == -20004)
+                session.Target = observation.Position;
+            // Layout controls still need a stable position before pressing.
             if ((session.Target - observation.Position).sqrMagnitude > 9f)
             { session.Target = observation.Position; session.DueAt = now + .35f; return; }
+            session.Drag = observation.Drag; session.DragEnd = observation.DragEnd;
             session.GestureRequested = 1;
             session.Phase = AriaPlayPhase.Touching;
             session.Attempts++;

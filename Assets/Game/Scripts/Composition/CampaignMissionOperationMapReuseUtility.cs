@@ -24,21 +24,36 @@ namespace Game.Composition
             using EntityQuery missionQuery = entityManager.CreateEntityQuery(
                 ComponentType.ReadOnly<CampaignMissionRootComponent>(),
                 ComponentType.ReadOnly<CampaignMissionLaunchRequestElement>());
-            if (mapQuery.CalculateEntityCount() != 1 || missionQuery.CalculateEntityCount() != 1)
+            if (mapQuery.CalculateEntityCount() != 1)
                 return false;
 
             Entity mapRoot = mapQuery.GetSingletonEntity();
-            Entity missionRoot = missionQuery.GetSingletonEntity();
-            DynamicBuffer<CampaignMissionLaunchRequestElement> requests =
-                entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionRoot);
-            if (requests.Length == 0)
-                return false;
+            CampaignMissionLaunchRequestElement request;
+            if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish) && skirmish.ScenarioIndex == 1)
+            {
+                // A logical Skirmish window has the same physical-source contract as
+                // a campaign window, but no campaign launch request owns its lifetime.
+                var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
+                if (preset == null || preset.operationMap == null) return false;
+                request = new CampaignMissionLaunchRequestElement
+                {
+                    MissionId = new Unity.Collections.FixedString64Bytes("skirmish.city_crossroads"),
+                    ScenarioId = new Unity.Collections.FixedString64Bytes("scenario.skirmish.city_crossroads"),
+                    OperationMapId = new Unity.Collections.FixedString64Bytes(preset.operationMap.OperationMapId)
+                };
+            }
+            else
+            {
+                if (missionQuery.CalculateEntityCount() != 1) return false;
+                var requests = entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(missionQuery.GetSingletonEntity());
+                if (requests.Length != 1) return false;
+                request = requests[0];
+            }
 
             ActiveOperationMapComponent active =
                 entityManager.GetComponentData<ActiveOperationMapComponent>(mapRoot);
             OperationMapMetadataComponent metadata =
                 entityManager.GetComponentData<OperationMapMetadataComponent>(mapRoot);
-            CampaignMissionLaunchRequestElement request = requests[0];
             if (!metadata.Blob.IsCreated || active.Generation != metadata.Generation ||
                 !active.OperationMapId.Equals(request.OperationMapId) ||
                 !active.ScenarioId.Equals(request.ScenarioId) ||

@@ -1,0 +1,11 @@
+Faction 1 Building_Barrack: origin=int2(1020, 730) size=int2(28, 15) roads=0 sidewalks=0 water=0
+Faction 1 Building_Ammunition_Depot: origin=int2(1000, 760) size=int2(19, 16) roads=0 sidewalks=0 water=0
+Faction 1 Building_OilPump: origin=int2(1035, 769) size=int2(15, 4) roads=0 sidewalks=0 water=0
+Faction 1 Building_Refinery: origin=int2(990, 738) size=int2(25, 15) roads=0 sidewalks=0 water=0
+Faction 1 Building_Fuel_Bladder: origin=int2(1000, 720) size=int2(14, 10) roads=0 sidewalks=0 water=0
+Faction 2 Building_Barrack: origin=int2(1116, 361) size=int2(28, 15) roads=0 sidewalks=0 water=0
+Faction 2 Building_Ammunition_Depot: origin=int2(1125, 394) size=int2(19, 16) roads=0 sidewalks=0 water=0
+Faction 2 Building_OilPump: origin=int2(1170, 406) size=int2(15, 4) roads=0 sidewalks=0 water=0
+Faction 2 Building_Refinery: origin=int2(1040, 395) size=int2(25, 15) roads=0 sidewalks=0 water=0
+Faction 2 Building_Fuel_Bladder: origin=int2(1198, 400) size=int2(14, 10) roads=0 sidewalks=0 water=0
+[SkirmishLayout] result=Passed buildings=10 failures=0

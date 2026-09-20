@@ -6,6 +6,10 @@ namespace Game.Configs
     public sealed class SkirmishPresetConfig : ScriptableObject
     {
         public const string ResourceName = "SkirmishBaseAssault";
+        public const string SecondResourceName = "SkirmishCityCrossroads";
+        public OperationMapDefinition operationMap;
+        public static SkirmishPresetConfig Load(int scenarioIndex) =>
+            Resources.Load<SkirmishPresetConfig>(scenarioIndex == 1 ? SecondResourceName : ResourceName);
         public const float MatchDurationSeconds = 900f;
         public const int InfantryLimitPerFaction = 24;
         [UnityEngine.Min(1)] public float supplyDaySeconds=120f;

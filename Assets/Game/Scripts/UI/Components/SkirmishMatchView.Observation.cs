@@ -4,13 +4,17 @@ namespace Game.UI.Runtime
 {
     public sealed partial class SkirmishMatchView
     {
+        public Button PlayerFocusButton => player != null ? player.GetComponentInParent<Button>() : null;
         public Button EnemyFocusButton => enemy != null ? enemy.GetComponentInParent<Button>() : null;
         // Supplied by the shared objective presentation, not by the ARIA planner.
         public Vector2 VisibleEnemyBasePoint { get; private set; }
+        public Vector3 EnemyBaseObjectivePosition { get; private set; }
+        public Vector3 PlayerBaseObjectivePosition { get; private set; }
         public bool EnemyBaseMarkerVisible { get; private set; }
+        public bool EnemyBaseObjectiveAlive { get; private set; }
         private RectTransform baseMarker;
         private string baseMarkerLocale;
-        public void PresentEnemyBaseMarker(Vector3 screen, bool alive)
+        public void PresentEnemyBaseMarker(Vector3 screen, bool alive, Vector3 worldPosition, Vector3 playerPosition)
         {
             if (baseMarker == null)
             {
@@ -24,6 +28,9 @@ namespace Game.UI.Runtime
                 screen.x > 0 && screen.y > 0 && screen.x < Screen.width && screen.y < Screen.height;
             baseMarker.gameObject.SetActive(shown);
             EnemyBaseMarkerVisible = shown;
+            EnemyBaseObjectiveAlive = alive;
+            EnemyBaseObjectivePosition = worldPosition;
+            PlayerBaseObjectivePosition = playerPosition;
             VisibleEnemyBasePoint = screen;
             if (!shown) return;
             baseMarker.position = screen;

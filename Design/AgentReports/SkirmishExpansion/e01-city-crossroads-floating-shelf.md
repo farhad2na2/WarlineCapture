@@ -2,7 +2,7 @@
 
 Date: 2026-09-20
 Baseline: `codex/m03-radar-warning` `61d7fcd12f767a03ea0eac4f04e90c51971b3420`
-Head: (this commit)
+Head: `a89006888b1430f0a9a25b18ebcf9e360643cbb2`
 PR: https://github.com/farhad2na2/WarlineCapture/pull/19
 Workflow path: pull request
 Task: remove the player-visible City Crossroads floating ground plate at the statue / base join, and make surface plus resident geometry agree there. Do not treat the earlier northern/civic height samples as sufficient.

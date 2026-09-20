@@ -8,6 +8,7 @@ namespace Game.Components
     /// Collapses stale raised plateaus that sit on a one-cell cliff above grade.
     /// Dense-city visual grading archived interior hills, but the shared baked
     /// surface still carried those heights, so units and foundations floated.
+    /// A rim pass then absorbs leftover 1.5–3.99 m skirts beside those stamps.
     /// </summary>
     public static class MapSurfaceFloatingShelfCorrection
     {
@@ -19,8 +20,8 @@ namespace Game.Components
         public const float MinimumMeanHeight = 4.5f;
         public const float MinimumCliffRatio = 0.05f;
         public const float MaximumGradualRatio = 0.22f;
-        public const float RemnantMinHeight = 3f;
-        public const float RemnantDrop = 2.5f;
+        public const float RemnantMinHeight = 1.5f;
+        public const float RemnantDrop = 1.45f;
         public const int MinimumComponentCells = 64;
         public const int MaximumComponentCells = 6000;
 

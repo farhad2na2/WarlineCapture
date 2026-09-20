@@ -171,6 +171,8 @@ public sealed class SkirmishStressPresetTests
         Assert.AreEqual("e03-warmup-spread-p50.png",
             SkirmishStressEditorProbe.ScreenshotFileName(session, SkirmishStressPhaseCode.Warmup));
         Assert.AreEqual("e03-player-setup-two-battles.png", SkirmishStressEditorProbe.PlayerSetupScreenshotFile);
+        CollectionAssert.Contains(SkirmishStressEditorProbe.RequiredSpreadP100Files(), "E0_3_STRESS_CENSUS.md");
+        CollectionAssert.Contains(SkirmishStressEditorProbe.RequiredSpreadP100Files(), "e03-destruction-spread-p100.png");
     }
 
     private static void CreatePartialSpawn(EntityManager em, int requested, int spawned)

@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.IO;
+using System.Text;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -19,6 +20,8 @@ namespace Game.Editor
     {
         private const string Key = "Warline.SkirmishStressProbe";
         public const string PlayerSetupScreenshotFile = "e03-player-setup-two-battles.png";
+        public const string CensusFile = "E0_3_STRESS_CENSUS.md";
+        public const string PacketFile = "E0_3_STRESS_PACKET.md";
         private static int stage;
         private static double next;
         private static double deadline;
@@ -165,6 +168,43 @@ namespace Game.Editor
             string path = Path.Combine(ReportDirectory(), fileName);
             ScreenCapture.CaptureScreenshot(path);
             Debug.Log(SkirmishStressRecipe.ReportMarker + " screenshot queued=" + path);
+            WritePacketChecklist();
+            return path;
+        }
+
+        public static string[] RequiredSpreadP100Files() => new[]
+        {
+            CensusFile,
+            PlayerSetupScreenshotFile,
+            "e03-warmup-spread-p100.png",
+            "e03-idle-spread-p100.png",
+            "e03-massmove-spread-p100.png",
+            "e03-densecombat-spread-p100.png",
+            "e03-airtransport-spread-p100.png",
+            "e03-destruction-spread-p100.png"
+        };
+
+        public static string WritePacketChecklist()
+        {
+            string directory = ReportDirectory();
+            var text = new StringBuilder();
+            text.AppendLine("# E0.3 stress packet");
+            text.AppendLine();
+            text.AppendLine("- Capture owner: Programmer 2 (Unity Editor on a real machine)");
+            text.AppendLine("- Forward owner: Game PM sends this folder to Farhad");
+            text.AppendLine("- Do not invent missing PNGs. Recapture empty files after the Game view paints.");
+            text.AppendLine("- Directory: `" + directory + "`");
+            text.AppendLine();
+            text.AppendLine("| File | Present |");
+            text.AppendLine("|---|---|");
+            var files = RequiredSpreadP100Files();
+            for (int i = 0; i < files.Length; i++)
+            {
+                bool present = File.Exists(Path.Combine(directory, files[i]));
+                text.Append("| `").Append(files[i]).Append("` | ").Append(present ? "yes" : "no").AppendLine(" |");
+            }
+            string path = Path.Combine(directory, PacketFile);
+            File.WriteAllText(path, text.ToString());
             return path;
         }
 
@@ -321,8 +361,9 @@ namespace Game.Editor
 
         private static string WriteReport(string report)
         {
-            string path = Path.Combine(ReportDirectory(), "E0_3_STRESS_CENSUS.md");
+            string path = Path.Combine(ReportDirectory(), CensusFile);
             File.WriteAllText(path, report);
+            WritePacketChecklist();
             return path;
         }
 

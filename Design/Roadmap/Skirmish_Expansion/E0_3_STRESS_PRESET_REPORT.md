@@ -190,11 +190,25 @@ Do this on a machine with Unity Hub signed in and the Editor version in `Project
 
 P50 warmup spread, P200 concentrated dense combat, P100 air-only. 350/500 only if the machine survives. Same census rule: report spawned/alive/destroyed, not requested.
 
-### F. After capture
+### F. Packet Game PM forwards to Farhad
 
-1. Restore the Editor scene/profile if a reversible QA snapshot was taken.
-2. Programmer 2 owns the Unity evidence packet (census + PNGs). Game PM forwards it to Farhad. There is no Game PM merge gate.
-3. Do not push/fast-forward this branch into `codex/m03-radar-warning` until Farhad has seen the shots.
+Programmer 2 captures. Game PM forwards. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen these shots. There is no Game PM merge gate.
+
+Folder: `$TMPDIR/warline-e03-stress/` (macOS) or `%TEMP%\warline-e03-stress\` (Windows). The probe also writes `E0_3_STRESS_PACKET.md` with present/missing rows. Do not invent a missing PNG.
+
+| File | Required |
+|---|---|
+| `E0_3_STRESS_CENSUS.md` | measured spawned/alive/destroyed table |
+| `e03-player-setup-two-battles.png` | only Desert Base + City Crossroads |
+| `e03-warmup-spread-p100.png` | living armies, no orders |
+| `e03-idle-spread-p100.png` | Hold |
+| `e03-massmove-spread-p100.png` | midline move |
+| `e03-densecombat-spread-p100.png` | contact / traces |
+| `e03-airtransport-spread-p100.png` | helicopters |
+| `e03-destruction-spread-p100.png` | wreck/loss if `destroyedCombat` > 0 |
+| `e03-densecombat-concentrated-p100.png` | both armies in one camera (run D) |
+
+After Farhad has seen the packet, Programmer 2 / Game PM may land by fast-forward. Restore the Editor scene if a reversible QA snapshot was taken.
 
 ## Screenshots
 
@@ -229,4 +243,4 @@ If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot
 
 ## Next step
 
-Programmer 2: run A–D on this branch, paste **actual** census rows, attach the PNG paths listed above. Game PM forwards that packet to Farhad. Landing (push/fast-forward into `codex/m03-radar-warning`) waits until Farhad has seen the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.
+Programmer 2: run A–D on this branch, paste **actual** census rows, and hand Game PM the folder listed in section F. Game PM forwards that packet to Farhad. Do not push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.

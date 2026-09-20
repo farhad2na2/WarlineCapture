@@ -1,7 +1,6 @@
 using Game.Components;
 using Unity.Burst;
 using Unity.Entities;
-using Unity.Rendering;
 using Unity.Transforms;
 
 namespace Game.Runtime
@@ -10,6 +9,9 @@ namespace Game.Runtime
     /// One-shot-safe runtime pass. Building roots already at grade no-op
     /// because their Y falls outside the stale raised band. Resident
     /// RenderOnly plates no-op once their world Y leaves the raised band.
+    /// Game.Runtime must not reference Unity.Entities.Graphics; the visible
+    /// sand tiles and statues carry LocalTransform, so the resident pass
+    /// does not filter on MaterialMeshInfo.
     /// </summary>
     [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
@@ -27,7 +29,6 @@ namespace Game.Runtime
         {
             state.Dependency = new CorrectRaisedShelfBuildingsJob().ScheduleParallel(state.Dependency);
             state.Dependency = new CorrectRaisedResidentVisualsJob().ScheduleParallel(state.Dependency);
-            state.Dependency = new CorrectRaisedResidentWorldMatricesJob().ScheduleParallel(state.Dependency);
         }
 
         [BurstCompile]
@@ -67,21 +68,6 @@ namespace Game.Runtime
                 CityCrossroadsFloatingShelfBuildingCorrection.ApplyResidentWorldDelta(
                     ref localToWorld,
                     CityCrossroadsFloatingShelfBuildingCorrection.ResidentHeightDelta);
-            }
-        }
-
-        [BurstCompile]
-        [WithAll(typeof(MaterialMeshInfo))]
-        [WithNone(
-            typeof(LocalTransform),
-            typeof(Parent),
-            typeof(OperationMapBuildingComponent),
-            typeof(OperationMapRenderProxySlotComponent))]
-        private partial struct CorrectRaisedResidentWorldMatricesJob : IJobEntity
-        {
-            public void Execute(ref LocalToWorld localToWorld)
-            {
-                CityCrossroadsFloatingShelfBuildingCorrection.TryCorrectResidentWorldMatrix(ref localToWorld);
             }
         }
     }

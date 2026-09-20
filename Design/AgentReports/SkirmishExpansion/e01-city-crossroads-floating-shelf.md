@@ -88,7 +88,7 @@ A second Burst pass now lowers **non-building** `LocalTransform` + `LocalToWorld
 
 Those entities receive a uniform delta of `0.01 − 5.85 = −5.84` m (the leftover `Ground_Square` height). The civic tile lands on grade; the statue keeps ~4.75 m of pedestal height. Gameplay building roots stay on the slam-to-0.01 path so hall/plinth origins do not float.
 
-Unparented additional render entities (`MaterialMeshInfo` without `LocalTransform` / `Parent` / proxy slot) get the same world-matrix Y delta.
+`Game.Runtime` does not filter on `MaterialMeshInfo`. Architecture forbids that assembly from referencing `Unity.Entities.Graphics`; the leftover sand tiles and statues already carry `LocalTransform`, so the resident pass is the visual correction.
 
 Movers (`UnitMove`, `UnitAirComponent`), authored vehicles, virtualized proxy slots, and rooftop pipeline placements (render-DB WorldMatrix at 7–13 m) are excluded. Powerline proxies at 6.20 m around the northern base stay put.
 
@@ -103,7 +103,7 @@ Movers (`UnitMove`, `UnitAirComponent`), authored vehicles, virtualized proxy sl
 | `Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset` | Shared bake, unchanged bytes | `1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d` GUID `12f517deb32ab49698acbfdaf7c3eac7` |
 | `Assets/Game/Scripts/Components/MapSurfaceFloatingShelfCorrection.cs` | Surface correction + 1.5 m rim absorb | `a7c39568afbe258fc6aa6486a0a1dac1199c70b6be6a83de3e75268a4d6ee4d4` |
 | `Assets/Game/Scripts/Components/CityCrossroadsFloatingShelfBuildingCorrection.cs` | Building slam + resident world-space plate/statue delta | `a6245975b1c428590398aaa357fbcc9d61f7dcef6b9055b3c25b7bdd214c7f70` |
-| `Assets/Game/Scripts/Systems/CityCrossroadsFloatingShelfBuildingCorrectionSystem.cs` | Runtime ECS pass (buildings + RenderOnly visuals) | `8573e82625ead3c1265e780a5578da06b4b10bedbf58e8decf27c9db9c23ebb8` |
+| `Assets/Game/Scripts/Systems/CityCrossroadsFloatingShelfBuildingCorrectionSystem.cs` | Runtime ECS pass (buildings + RenderOnly visuals; no Entities.Graphics) | `59a4d8f219dfbea3c899f6697ce7f43b1c792c089fd9c77252ad4a2e76b31c67` |
 | `Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs` | Load hook, unchanged | `ed922291f83299d64a33e9c01ce8c61defcf582f967eb83aa5347fa17044a06f` |
 | `Assets/Game/Scripts/Editor/CityCrossroadsFloatingShelfValidation.cs` | Focused gate (18 cases) | `3cbeada4e5169c83ae5dc489bbe3d47d2d1b470850dd26853edacb7d78a96551` |
 | `Assets/Tests/Editor/MapSurfaceFloatingShelfCorrectionTests.cs` | Tests | `fe71452a999525b66cce131c2448886297d98f57fc917197e4d922f25efb7170` |
@@ -164,3 +164,5 @@ A later official rebake of the shared surface plus a rebake of the dense-city en
 A few small 1.5–3 m pads remain after remnant absorb (~246 cells, not adjacent enough to the collapsed seeds). They are not the statue-side plate.
 
 Mac Game View on seed 104729 is still required before merge. Do not treat the 18-case gate as a substitute for framing the civic statue plate.
+
+Mac Editor compile on tip `f5d43088` failed CS0234/CS0246 because the resident pass briefly filtered `MaterialMeshInfo` from `Game.Runtime`. That assembly must not reference `Unity.Entities.Graphics`. The filter was removed; the sand-tile/statue job still uses `LocalTransform` + `LocalToWorld`.

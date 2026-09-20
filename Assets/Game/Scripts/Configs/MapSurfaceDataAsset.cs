@@ -454,6 +454,7 @@ namespace Game.Configs
                 };
             }
 
+            MapSurfaceFloatingShelfCorrection.ApplyCompact(samples, width, height, minHeight, heightStep);
             surfaceBlob = builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator);
             return surfaceBlob.IsCreated;
         }
@@ -523,8 +524,34 @@ namespace Game.Configs
                 };
             }
 
+            if (serializedConnectionCount == 0 &&
+                sampleCount == dimensions.x * dimensions.y &&
+                SamplesAreSingleLayerGrid(samples, dimensions.x, dimensions.y))
+            {
+                MapSurfaceFloatingShelfCorrection.ApplySamples(samples, dimensions.x, dimensions.y);
+            }
+
             surfaceBlob = builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator);
             return surfaceBlob.IsCreated;
+        }
+
+        private static bool SamplesAreSingleLayerGrid(
+            BlobBuilderArray<MapSurfaceSample> samples,
+            int width,
+            int height)
+        {
+            int cellCount = width * height;
+            if (samples.Length != cellCount)
+                return false;
+
+            for (int i = 0; i < cellCount; i++)
+            {
+                MapSurfaceSample sample = samples[i];
+                if (sample.Cell.x != i % width || sample.Cell.y != i / width)
+                    return false;
+            }
+
+            return true;
         }
 
         private static float3 ToFloat3(Vector3 value)

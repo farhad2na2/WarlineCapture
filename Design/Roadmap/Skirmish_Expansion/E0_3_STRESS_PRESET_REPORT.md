@@ -48,7 +48,11 @@ Game.Editor.SkirmishStressEditorProbe.Launch(
     sequence: false);
 ```
 
-The probe opens `Assets/Game/Scenes/Menu.unity`, queues Scenario 2 with seed `104729`, and enters the match route. It does not click the two player scenario buttons.
+The probe opens `Assets/Game/Scenes/Menu.unity`, waits until the UI shell is idle `MainMenu` (first-launch / splash finished, not transitioning), then queues Scenario 2 with seed `104729` and enters the match route. It does not click the two player scenario buttons.
+
+Desert Base `OperationMapLaunchIdentity` (`scenario.skirmish.desert_base_standard`) is expected: stress reuses Desert Base geometry. Scenario 2 is the hidden preset, not a third player map.
+
+If the console previously showed `[SkirmishStressProbe] Timed out at stage 1` with `playRequested=0`, relaunch this revision. The probe must log `[SkirmishStress] queued … scenario=2` after MainMenu, then `[SkirmishStress] playing`, then census rows with measured `spawnedCombat` (non-zero when cells allow; `missingSpawnCombat` if short).
 
 ### Focused Edit-mode check (no play mode)
 
@@ -164,7 +168,8 @@ Do this on a machine with Unity Hub signed in and the Editor version in `Project
 
 1. `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`.
 2. Console filter: `[SkirmishStress]`.
-3. Wait until `[SkirmishStressProbe] Census samples=` (sequence writes a Destruction row). Timeout is 420s.
+3. Expect `waiting for idle MainMenu`, then `queued … scenario=2`, then `playing`. `[OperationMapLaunchIdentity] … desert_base_standard` is the host map.
+4. Wait until `[SkirmishStressProbe] Census samples=` (sequence writes a Destruction row). Timeout is 420s.
 4. If spawn cannot place every unit, look for `[SkirmishStress] spawn-stalled` and a positive `missingSpawnCombat`. That is a measured shortfall, not a hang.
 5. Optional mid-phase: `Tools/Warline/Skirmish/Capture E0.3 Census Now`.
 6. Copy `$TMPDIR/warline-e03-stress/E0_3_STRESS_CENSUS.md` into the Actual counts table above.
@@ -227,7 +232,9 @@ If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot
 
 ## Known blockers
 
-- Play-mode census is Editor-only until Programmer 2 runs the probe. This report is not a device or 500-entity performance pass.
+- Play-mode census is Editor-only until Programmer 2 runs the probe on this SHA. This report is not a device or 500-entity performance pass.
+- If first-launch narrative is still playing, the probe waits for MainMenu. Complete or skip it, or use a profile with `firstLaunchStatus=Completed`. Do not fire EnterMatch from splash.
+- `[OperationMapLaunchIdentity] scenario=scenario.skirmish.desert_base_standard` is the Desert Base host, not a wrong-preset bug.
 - `SkirmishPresetConfig.InfantryLimitPerFaction` is still 24. Stress scale uses initial spawn, not recruitment. Recruiting past 24 during a stress match is expected to refuse.
 - `SkirmishCombatPolicy.ApplyRoster` still retunes only soldier / light armored car / guard tower. Ghillie, APC, tank, and helicopters keep their prefab combat stats.
 - Spatial index 2048-entry bound, path queue, and render budget are unmeasured at 200/350/500. That is E0.4 work.

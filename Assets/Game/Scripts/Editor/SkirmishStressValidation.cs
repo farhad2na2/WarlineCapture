@@ -2,8 +2,11 @@
 using System;
 using System.Collections.Generic;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -90,6 +93,52 @@ namespace Game.Editor
                 "Player-setup capture filename must stay stable.");
             Check(SkirmishStressEditorProbe.RequiredSpreadP100Files().Length == 8,
                 "Evidence packet must list census plus setup and six sequence shots.");
+
+            using (var launchWorld = new World("Skirmish stress launch validation"))
+            {
+                var em = launchWorld.EntityManager;
+                var shell = em.CreateEntity(typeof(UiShellRootComponent), typeof(UiShellStateComponent));
+                em.AddBuffer<UiShellRouteRequestComponent>(shell);
+                em.SetComponentData(shell, new UiShellStateComponent
+                {
+                    CurrentMode = UiShellMode.None,
+                    IsTransitionRunning = 1
+                });
+                em.AddComponentData(shell, new UiShellStartupDispositionComponent
+                {
+                    Value = UiShellStartupDisposition.FirstLaunch
+                });
+                Check(!SkirmishLaunchProjection.IsShellReadyToEnterMatch(em),
+                    "Stress launch must wait for idle MainMenu.");
+                var launch = QuickGameConfig.Defaults;
+                launch.ScenarioIndex = 2;
+                launch.MapSeed = SkirmishStressRecipe.FixedSeed;
+                Check(SkirmishLaunchProjection.TryQueue(em, launch), "Stress TryQueue must accept scenario 2.");
+                Check(SkirmishLaunchProjection.TryGet(em, out _, out var queued) &&
+                    queued.ScenarioIndex == 2 && queued.Seed == SkirmishStressRecipe.FixedSeed,
+                    "Queued stress session must keep scenario 2 and seed 104729.");
+                SkirmishLaunchProjection.DriveStressLaunch(em);
+                Check(em.GetBuffer<UiShellRouteRequestComponent>(shell).Length == 0,
+                    "First-launch / splash must not consume EnterMatch.");
+                em.SetComponentData(shell, new UiShellStateComponent
+                {
+                    CurrentMode = UiShellMode.MainMenu,
+                    IsTransitionRunning = 0
+                });
+                em.SetComponentData(shell, new UiShellStartupDispositionComponent
+                {
+                    Value = UiShellStartupDisposition.EnterMenu
+                });
+                Check(SkirmishLaunchProjection.IsShellReadyToEnterMatch(em) &&
+                    SkirmishLaunchProjection.TryEnterMatch(em),
+                    "Idle MainMenu must enter the match route.");
+                Check(em.GetBuffer<UiShellRouteRequestComponent>(shell).Length == 1 &&
+                    em.GetBuffer<UiShellRouteRequestComponent>(shell)[0].Intent == UiShellRouteIntent.EnterMatch,
+                    "Stress enter must request the Match route.");
+                em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+                Check(SkirmishLaunchProjection.TryRequestPlay(em),
+                    "Stress launch must request play so InitialUnits can spawn.");
+            }
 
             using (var world = new World("Skirmish stress census validation"))
             {

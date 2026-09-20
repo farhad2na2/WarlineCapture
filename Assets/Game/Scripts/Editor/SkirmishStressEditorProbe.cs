@@ -8,7 +8,6 @@ using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
-using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -26,6 +25,7 @@ namespace Game.Editor
         private static double next;
         private static double deadline;
         private static int lastCapturedSamples;
+        private static bool loggedIdleWait;
 
         static SkirmishStressEditorProbe()
         {
@@ -44,6 +44,7 @@ namespace Game.Editor
             next = 0;
             deadline = 0;
             lastCapturedSamples = 0;
+            loggedIdleWait = false;
             EditorApplication.update -= Tick;
             EditorApplication.update += Tick;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920, 1080);
@@ -118,6 +119,7 @@ namespace Game.Editor
             next = 0;
             deadline = 0;
             lastCapturedSamples = 0;
+            loggedIdleWait = false;
             EditorApplication.update -= Tick;
             EditorApplication.update += Tick;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920, 1080);
@@ -232,11 +234,23 @@ namespace Game.Editor
                 var em = world.EntityManager;
                 if (stage == 0)
                 {
+                    GameLocalization.SetLocale("en", false);
+                    if (!SkirmishLaunchProjection.IsShellReadyToEnterMatch(em))
+                    {
+                        if (!loggedIdleWait)
+                        {
+                            Debug.Log(SkirmishStressRecipe.ReportMarker + " waiting for idle MainMenu before EnterMatch");
+                            loggedIdleWait = true;
+                        }
+                        next = now + 0.5;
+                        return;
+                    }
                     if (!TryQueue(em)) return;
                     stage = 1;
                     next = now + 2;
                     return;
                 }
+                SkirmishLaunchProjection.DriveStressLaunch(em);
                 using var query = em.CreateEntityQuery(typeof(SkirmishMatchState), typeof(SkirmishStressSession));
                 if (query.CalculateEntityCount() != 1) return;
                 var match = query.GetSingleton<SkirmishMatchState>();
@@ -309,31 +323,31 @@ namespace Game.Editor
 
         private static bool TryQueue(EntityManager em)
         {
+            if (!SkirmishLaunchProjection.IsShellReadyToEnterMatch(em)) return false;
             var config = QuickGameConfig.Defaults;
             config.MapSeed = SessionState.GetInt(Key + ".Seed", SkirmishStressRecipe.FixedSeed);
             config.ScenarioIndex = SkirmishPresetConfig.StressScaleProbeScenarioIndex;
-            using var shell = em.CreateEntityQuery(
-                ComponentType.ReadOnly<UiShellRootComponent>(),
-                ComponentType.ReadWrite<UiShellStateComponent>(),
-                ComponentType.ReadWrite<UiShellRouteRequestComponent>());
-            if (shell.IsEmptyIgnoreFilter) return false;
-            if (!SkirmishLaunchProjection.TryQueue(em, config)) return false;
-            if (!SkirmishLaunchProjection.TryGet(em, out var session, out _)) return false;
-            em.AddComponentData(session, new SkirmishStressLaunchRequest
+            if (!SkirmishLaunchProjection.TryGet(em, out var session, out var match) ||
+                match.ScenarioIndex != config.ScenarioIndex)
             {
-                Seed = config.MapSeed,
-                Scale = SessionState.GetInt(Key + ".Scale", (int)SkirmishStressScale.P100),
-                Phase = (SkirmishStressPhaseCode)SessionState.GetInt(Key + ".Phase", 0),
-                Layout = (SkirmishStressLayoutCode)SessionState.GetInt(Key + ".Layout", 0),
-                Sequence = SessionState.GetBool(Key + ".Sequence", true) ? (byte)1 : (byte)0
-            });
-            var routes = em.GetBuffer<UiShellRouteRequestComponent>(shell.GetSingletonEntity());
-            routes.Add(new UiShellRouteRequestComponent
+                if (SkirmishLaunchProjection.TryGet(em, out _, out _)) return false;
+                if (!SkirmishLaunchProjection.TryQueue(em, config)) return false;
+                if (!SkirmishLaunchProjection.TryGet(em, out session, out match)) return false;
+            }
+            if (!em.HasComponent<SkirmishStressLaunchRequest>(session))
             {
-                Intent = UiShellRouteIntent.EnterMatch,
-                Route = UIRoute.Match,
-                PushHistory = 0
-            });
+                em.AddComponentData(session, new SkirmishStressLaunchRequest
+                {
+                    Seed = config.MapSeed,
+                    Scale = SessionState.GetInt(Key + ".Scale", (int)SkirmishStressScale.P100),
+                    Phase = (SkirmishStressPhaseCode)SessionState.GetInt(Key + ".Phase", 0),
+                    Layout = (SkirmishStressLayoutCode)SessionState.GetInt(Key + ".Layout", 0),
+                    Sequence = SessionState.GetBool(Key + ".Sequence", true) ? (byte)1 : (byte)0
+                });
+            }
+            if (!SkirmishLaunchProjection.TryEnterMatch(em)) return false;
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " queued seed=" + match.Seed
+                + " scenario=" + match.ScenarioIndex + " phase=" + match.Phase);
             return true;
         }
 

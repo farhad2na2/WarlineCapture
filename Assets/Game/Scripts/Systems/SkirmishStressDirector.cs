@@ -30,6 +30,7 @@ namespace Game.Runtime
             var session = em.GetComponentData<SkirmishStressSession>(entity);
             if (session.ForceProjected == 0)
                 session.ForceProjected = (byte)(TryProjectForces(em, session) ? 1 : 0);
+            TryKeepPlayRequested(em, match);
 
             if (match.Phase == SkirmishPhase.Playing)
             {
@@ -81,6 +82,22 @@ namespace Game.Runtime
             Layout = SkirmishStressLayoutCode.Spread,
             Sequence = 1
         };
+
+        internal static bool TryKeepPlayRequested(EntityManager em, in SkirmishMatchState match)
+        {
+            if (match.ScenarioIndex != SkirmishStressRecipe.ScenarioIndex) return false;
+            if (match.Phase >= SkirmishPhase.Playing || match.StartupFailure != SkirmishStartupFailureCode.None)
+                return false;
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1) return false;
+            var entity = gameplay.GetSingletonEntity();
+            var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            if (state.PlayRequested != 0) return true;
+            state.PlayRequested = 1;
+            em.SetComponentData(entity, state);
+            Debug.Log(SkirmishStressRecipe.ReportMarker + " director playRequested=1");
+            return true;
+        }
 
         internal static bool TryProjectForces(EntityManager em, in SkirmishStressSession session)
         {

@@ -1,8 +1,11 @@
 using System;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using Game.Editor;
 using Game.Runtime;
+using Game.UI.Contracts;
+using Game.UI.Shell.Contracts.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
 using UnityEngine;
@@ -19,8 +22,9 @@ public sealed class SkirmishStressPresetTests
         tests.SpawnStallCompletesWhenProgressStopsShortOfRequested();
         tests.SpawnProgressResetPreventsFalseStall();
         tests.ScreenshotNameUsesPhaseLayoutAndScale();
+        tests.StressLaunchWaitsForIdleMenuThenRequestsPlayAndSimulation();
         Debug.Log(SkirmishStressValidation.Run());
-        return "[SkirmishStressPreset] result=Passed tests=7";
+        return "[SkirmishStressPreset] result=Passed tests=8";
     }
 
     [Test]
@@ -157,6 +161,79 @@ public sealed class SkirmishStressPresetTests
     }
 
     [Test]
+    public void StressLaunchWaitsForIdleMenuThenRequestsPlayAndSimulation()
+    {
+        using var world = new World(nameof(StressLaunchWaitsForIdleMenuThenRequestsPlayAndSimulation));
+        var em = world.EntityManager;
+        var shell = em.CreateEntity(typeof(UiShellRootComponent), typeof(UiShellStateComponent));
+        em.AddBuffer<UiShellRouteRequestComponent>(shell);
+        em.SetComponentData(shell, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.None,
+            IsTransitionRunning = 1
+        });
+        em.AddComponentData(shell, new UiShellStartupDispositionComponent
+        {
+            Value = UiShellStartupDisposition.FirstLaunch
+        });
+        Assert.IsFalse(SkirmishLaunchProjection.IsShellReadyToEnterMatch(em));
+
+        var config = QuickGameConfig.Defaults;
+        config.ScenarioIndex = SkirmishPresetConfig.StressScaleProbeScenarioIndex;
+        config.MapSeed = SkirmishStressRecipe.FixedSeed;
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em, config));
+        Assert.IsTrue(SkirmishLaunchProjection.TryGet(em, out var session, out var match));
+        Assert.AreEqual(2, match.ScenarioIndex);
+        Assert.AreEqual(SkirmishStressRecipe.FixedSeed, match.Seed);
+        Assert.AreEqual(SkirmishPhase.Queued, match.Phase);
+
+        SkirmishLaunchProjection.DriveStressLaunch(em);
+        Assert.AreEqual(0, em.GetBuffer<UiShellRouteRequestComponent>(shell).Length,
+            "Splash / first-launch must not enqueue EnterMatch.");
+
+        em.SetComponentData(shell, new UiShellStateComponent
+        {
+            CurrentMode = UiShellMode.MainMenu,
+            IsTransitionRunning = 0
+        });
+        em.SetComponentData(shell, new UiShellStartupDispositionComponent
+        {
+            Value = UiShellStartupDisposition.EnterMenu
+        });
+        Assert.IsTrue(SkirmishLaunchProjection.IsShellReadyToEnterMatch(em));
+        Assert.IsTrue(SkirmishLaunchProjection.TryEnterMatch(em));
+        var routes = em.GetBuffer<UiShellRouteRequestComponent>(shell);
+        Assert.AreEqual(1, routes.Length);
+        Assert.AreEqual(UiShellRouteIntent.EnterMatch, routes[0].Intent);
+        Assert.AreEqual(UIRoute.Match, routes[0].Route);
+
+        var gameplay = em.CreateEntity(typeof(RuntimeGameplayStateComponent));
+        Assert.IsTrue(SkirmishLaunchProjection.TryRequestPlay(em));
+        Assert.AreEqual(1, em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).PlayRequested);
+        Assert.IsTrue(SkirmishStressDirector.TryKeepPlayRequested(em, match));
+        Assert.IsFalse(SkirmishLaunchProjection.TryActivateStressSimulation(em),
+            "Simulation stays off until both faction barracks exist.");
+
+        match.Phase = SkirmishPhase.Preparing;
+        em.SetComponentData(session, match);
+        CreateBarrack(em, 1);
+        CreateBarrack(em, 2);
+        Assert.IsTrue(SkirmishLaunchProjection.TryActivateStressSimulation(em));
+        Assert.AreEqual(1, em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).SimulationActive);
+
+        em.SetComponentData(session, new SkirmishMatchState
+        {
+            ScenarioIndex = 0,
+            Phase = SkirmishPhase.Preparing
+        });
+        em.SetComponentData(gameplay, new RuntimeGameplayStateComponent { PlayRequested = 1, SimulationActive = 0 });
+        Assert.IsFalse(SkirmishLaunchProjection.TryActivateStressSimulation(em));
+        Assert.Zero(em.GetComponentData<RuntimeGameplayStateComponent>(gameplay).SimulationActive);
+        Assert.IsFalse(SkirmishStressDirector.TryKeepPlayRequested(em,
+            em.GetComponentData<SkirmishMatchState>(session)));
+    }
+
+    [Test]
     public void ScreenshotNameUsesPhaseLayoutAndScale()
     {
         var session = new SkirmishStressSession
@@ -187,6 +264,18 @@ public sealed class SkirmishStressPresetTests
         {
             Spawned = spawned
         });
+    }
+
+    private static void CreateBarrack(EntityManager em, byte faction)
+    {
+        var entity = em.CreateEntity(
+            typeof(RuntimeBuildingCombatTag),
+            typeof(UnitSourcePrefabKey),
+            typeof(Faction),
+            typeof(UnitHealth));
+        em.SetComponentData(entity, new Faction { Id = faction });
+        em.SetComponentData(entity, new UnitHealth { Current = 40, Max = 40 });
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = "Building_Barrack" });
     }
 
     private static void Create(EntityManager em, byte faction, int health, string key, bool support, bool building, bool air = false)

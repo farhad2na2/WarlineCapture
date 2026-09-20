@@ -25,6 +25,9 @@ namespace Game.Composition
             if(returns.CalculateEntityCount()==1){HandleReturn(returns.GetSingletonEntity());return;}
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
+            if(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
+               match.Phase<SkirmishPhase.Playing && match.StartupFailure==SkirmishStartupFailureCode.None)
+                SkirmishLaunchProjection.DriveStressLaunch(EntityManager);
             ObserveStartup(session, ref match);
             bool startupFailed=match.StartupFailure!=SkirmishStartupFailureCode.None;
             if(startupFailed)SkirmishStartupPolicy.StopFailedStartup(EntityManager);

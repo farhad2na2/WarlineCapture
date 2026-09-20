@@ -49,8 +49,10 @@ namespace Game.Editor
                     ref MapSurfaceBlob data = ref blob.Value;
                     Check(Sample(ref data, 1010, 710) < 1.5f && Sample(ref data, 1008, 708) < 1.5f,
                         "Northern City Crossroads shelf must sit on authored grade.");
-                    Check(Sample(ref data, 1027, 481) < 1.5f && Sample(ref data, 1080, 600) < 1.5f,
-                        "Civic City Crossroads shelves must sit on authored grade.");
+                    Check(Sample(ref data, 1027, 481) < 1.5f &&
+                        Sample(ref data, 1080, 600) < 1.5f &&
+                        Sample(ref data, 1035, 482) < 1.5f,
+                        "Civic City Crossroads shelves and leftover 3.9 m rim must sit on authored grade.");
                     Check(Sample(ref data, 1020, 750) < 0.75f && Sample(ref data, 1100, 400) < 0.75f,
                         "City Crossroads bases must remain near grade.");
                     Check(Sample(ref data, 768, 550) > 4f, "Skirmish mountain peak must remain raised.");

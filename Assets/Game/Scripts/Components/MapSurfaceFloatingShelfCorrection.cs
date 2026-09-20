@@ -19,6 +19,8 @@ namespace Game.Components
         public const float MinimumMeanHeight = 4.5f;
         public const float MinimumCliffRatio = 0.05f;
         public const float MaximumGradualRatio = 0.22f;
+        public const float RemnantMinHeight = 3f;
+        public const float RemnantDrop = 2.5f;
         public const int MinimumComponentCells = 64;
         public const int MaximumComponentCells = 6000;
 
@@ -153,6 +155,14 @@ namespace Game.Components
                     heights[component[i]] = targetHeight;
                     flattened++;
                 }
+
+                flattened += AbsorbUnsupportedRim(
+                    heights,
+                    visited,
+                    width,
+                    height,
+                    component,
+                    targetHeight);
             }
 
             return flattened;
@@ -221,6 +231,44 @@ namespace Game.Components
             gradeHeights.Sort();
             targetHeight = gradeHeights[gradeHeights.Count / 2];
             return true;
+        }
+
+        private static int AbsorbUnsupportedRim(
+            float[] heights,
+            byte[] visited,
+            int width,
+            int height,
+            List<int> seed,
+            float targetHeight)
+        {
+            int absorbed = 0;
+            int head = 0;
+            while (head < seed.Count)
+            {
+                int index = seed[head++];
+                int x = index % width;
+                int y = index / width;
+                for (int dir = 0; dir < Cardinals.Length; dir++)
+                {
+                    int nx = x + Cardinals[dir].x;
+                    int ny = y + Cardinals[dir].y;
+                    if ((uint)nx >= (uint)width || (uint)ny >= (uint)height)
+                        continue;
+
+                    int neighbor = nx + ny * width;
+                    float neighborHeight = heights[neighbor];
+                    if (neighborHeight < RemnantMinHeight ||
+                        neighborHeight - targetHeight < RemnantDrop)
+                        continue;
+
+                    heights[neighbor] = targetHeight;
+                    visited[neighbor] = 1;
+                    seed.Add(neighbor);
+                    absorbed++;
+                }
+            }
+
+            return absorbed;
         }
 
         private static ushort PackHeight(float height, float minHeight, float heightStep)

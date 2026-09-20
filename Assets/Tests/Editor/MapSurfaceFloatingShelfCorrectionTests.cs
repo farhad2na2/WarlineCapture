@@ -29,6 +29,25 @@ public sealed class MapSurfaceFloatingShelfCorrectionTests
     }
 
     [Test]
+    public void AbsorbsJustUnderThresholdRimBesideCollapsedShelf()
+    {
+        const int width = 16;
+        const int height = 12;
+        var heights = new float[width * height];
+        for (int y = 2; y <= 9; y++)
+        for (int x = 2; x <= 12; x++)
+            heights[x + y * width] = 5.85f;
+        for (int x = 2; x <= 12; x++)
+            heights[x + 10 * width] = 3.7f;
+
+        int flattened = MapSurfaceFloatingShelfCorrection.Apply(heights, width, height);
+
+        Assert.GreaterOrEqual(flattened, 64 + 11);
+        Assert.That(heights[7 + 10 * width], Is.EqualTo(0f).Within(0.001f));
+        Assert.That(heights[2 + 10 * width], Is.EqualTo(0f).Within(0.001f));
+    }
+
+    [Test]
     public void PreservesGradualMountainRampAndPeak()
     {
         const int width = 16;
@@ -75,6 +94,7 @@ public sealed class MapSurfaceFloatingShelfCorrectionTests
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1010, 710), out MapSurfaceSample shelfEdge));
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1008, 708), out MapSurfaceSample shelfInterior));
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1027, 481), out MapSurfaceSample civicShelf));
+            Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1035, 482), out MapSurfaceSample civicRim));
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1020, 750), out MapSurfaceSample northBase));
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(1100, 400), out MapSurfaceSample southBase));
             Assert.IsTrue(MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface, new int2(768, 550), out MapSurfaceSample mountain));
@@ -82,6 +102,7 @@ public sealed class MapSurfaceFloatingShelfCorrectionTests
             Assert.Less(shelfEdge.Height, 1.5f, "Northern CC shelf edge must not remain a 5.85 m floating plateau.");
             Assert.Less(shelfInterior.Height, 1.5f, "Northern CC shelf interior must follow the authored city grade.");
             Assert.Less(civicShelf.Height, 1.5f, "Civic CC shelf must follow the authored city grade.");
+            Assert.Less(civicRim.Height, 1.5f, "Civic CC 3.9 m leftover rim must collapse with the shelf.");
             Assert.That(northBase.Height, Is.LessThan(0.75f));
             Assert.That(southBase.Height, Is.LessThan(0.75f));
             Assert.Greater(mountain.Height, 4f, "Skirmish mountain peak must remain raised.");

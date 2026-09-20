@@ -6,6 +6,7 @@ using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using UnityEditor;
@@ -17,6 +18,7 @@ namespace Game.Editor
     public static class SkirmishStressEditorProbe
     {
         private const string Key = "Warline.SkirmishStressProbe";
+        public const string PlayerSetupScreenshotFile = "e03-player-setup-two-battles.png";
         private static int stage;
         private static double next;
         private static double deadline;
@@ -26,6 +28,24 @@ namespace Game.Editor
         {
             if (SessionState.GetBool(Key, false))
                 EditorApplication.update += Tick;
+        }
+
+        [MenuItem("Tools/Warline/Skirmish/Launch E0.3 Player Setup Capture")]
+        public static void LaunchPlayerSetupCapture()
+        {
+            if (EditorApplication.isPlaying)
+                throw new InvalidOperationException("Exit play mode before launching the setup capture.");
+            SessionState.SetBool(Key + ".SetupOnly", true);
+            SessionState.SetBool(Key, true);
+            stage = 0;
+            next = 0;
+            deadline = 0;
+            lastCapturedSamples = 0;
+            EditorApplication.update -= Tick;
+            EditorApplication.update += Tick;
+            MainMenuV3PrefabBuilder.SetGameViewResolution(1920, 1080);
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
+            EditorApplication.EnterPlaymode();
         }
 
         [MenuItem("Tools/Warline/Skirmish/Launch E0.3 Stress Sequence")]
@@ -67,7 +87,7 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying)
                 throw new InvalidOperationException("Enter play mode on Skirmish setup first, then capture.");
-            string path = CaptureNamedScreenshot("e03-player-setup-two-battles.png");
+            string path = CaptureNamedScreenshot(PlayerSetupScreenshotFile);
             Debug.Log(SkirmishStressRecipe.ReportMarker + " setupScreenshot=" + path);
         }
 
@@ -89,6 +109,7 @@ namespace Game.Editor
             SessionState.SetInt(Key + ".Layout", (int)layout);
             SessionState.SetBool(Key + ".Sequence", sequence);
             SessionState.SetInt(Key + ".Seed", SkirmishStressRecipe.FixedSeed);
+            SessionState.SetBool(Key + ".SetupOnly", false);
             SessionState.SetBool(Key, true);
             stage = 0;
             next = 0;
@@ -151,6 +172,11 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying) return;
             double now = EditorApplication.timeSinceStartup;
+            if (SessionState.GetBool(Key + ".SetupOnly", false))
+            {
+                TickSetupCapture(now);
+                return;
+            }
             if (deadline == 0) deadline = now + 420;
             if (now > deadline)
             {
@@ -201,6 +227,39 @@ namespace Game.Editor
                 string path = WriteReport(report);
                 Debug.Log(SkirmishStressRecipe.ReportMarker + " report=" + path);
                 Finish("Census samples=" + samples.Length);
+            }
+            catch (Exception exception)
+            {
+                Finish(exception.ToString());
+            }
+        }
+
+        private static void TickSetupCapture(double now)
+        {
+            if (deadline == 0) deadline = now + 60;
+            if (now > deadline)
+            {
+                Finish("Setup capture timed out at stage " + stage);
+                return;
+            }
+            if (now < next) return;
+            try
+            {
+                if (stage == 0)
+                {
+                    GameLocalization.SetLocale("en", false);
+                    if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(
+                            UiShellRouteIntent.OpenMenuRoute, UIRoute.QuickCustomSetup, false))
+                        return;
+                    stage = 1;
+                    next = now + 2;
+                    return;
+                }
+                var setup = Object.FindAnyObjectByType<QuickCustomScreenView>();
+                if (setup == null) return;
+                string path = CaptureNamedScreenshot(PlayerSetupScreenshotFile);
+                Debug.Log(SkirmishStressRecipe.ReportMarker + " setupScreenshot=" + path);
+                Finish("Player setup captured=" + path);
             }
             catch (Exception exception)
             {
@@ -290,6 +349,7 @@ namespace Game.Editor
         private static void Finish(string message)
         {
             SessionState.SetBool(Key, false);
+            SessionState.SetBool(Key + ".SetupOnly", false);
             EditorApplication.update -= Tick;
             Debug.Log("[SkirmishStressProbe] " + message);
         }

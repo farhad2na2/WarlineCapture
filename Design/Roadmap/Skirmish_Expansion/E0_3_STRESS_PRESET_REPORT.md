@@ -2,7 +2,7 @@
 
 Status: authored on `cursor/e03-stress-preset-b6c7`. Edit-mode checks are source-authored. Play-mode **actual counts** and screenshots were **not** produced in the cloud VM (no Unity Editor). Do not invent PNG evidence. Do not treat requested recipe counts as spawned/alive/destroyed.
 
-Handoff: **Programmer 2** runs the Editor self-test and captures screenshots. **Game PM** forwards those shots plus the census file to Farhad. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots. The draft PR is a bookmark only.
+Handoff: **Programmer 2** owns Unity self-validation and screenshots. There is no Game PM merge gate. Draft PR is a bookmark only. After Programmer 2 has census + PNGs, Game PM forwards that packet to Farhad. Do **not** push/fast-forward into `codex/m03-radar-warning` until Farhad has seen the shots.
 
 Host: Desert Base geometry, real unit prefabs, existing Skirmish AI / projectiles / pathing. Player-facing Base Assault and City Crossroads are unchanged.
 
@@ -21,11 +21,12 @@ Deterministic inputs:
 ### Editor menus
 
 1. Optional rebuild after pulling: `Tools/Warline/Skirmish/Rebuild E0.3 Stress Preset`
-2. Launch the default spread sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`
-3. Concentrated visibility sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress/Concentrated Sequence P100`
-4. Single-phase menus under `Tools/Warline/Skirmish/Launch E0.3 Stress/…`
-5. Mid-run snapshot: `Tools/Warline/Skirmish/Capture E0.3 Census Now`
-6. Manual Game-view shots: `Tools/Warline/Skirmish/Capture E0.3 Screenshot/Player Setup Two Battles` and `…/Current Phase`
+2. Player-setup two-battle shot: `Tools/Warline/Skirmish/Launch E0.3 Player Setup Capture`
+3. Launch the default spread sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress Sequence`
+4. Concentrated visibility sequence: `Tools/Warline/Skirmish/Launch E0.3 Stress/Concentrated Sequence P100`
+5. Single-phase menus under `Tools/Warline/Skirmish/Launch E0.3 Stress/…`
+6. Mid-run snapshot: `Tools/Warline/Skirmish/Capture E0.3 Census Now`
+7. Manual Game-view shots: `Tools/Warline/Skirmish/Capture E0.3 Screenshot/Player Setup Two Battles` and `…/Current Phase`
 
 Or from the C# console / a one-off executeMethod:
 
@@ -153,13 +154,11 @@ Do this on a machine with Unity Hub signed in and the Editor version in `Project
 
 ### B. Player setup still has two battles
 
-1. Play `Assets/Game/Scenes/Menu.unity`.
-2. Open Skirmish / Quick Custom setup.
-3. Confirm only `1 · DESERT BASE` and `2 · CITY CROSSROADS`. No third player button.
-4. Set Game view to 1920×1080.
-5. `Tools/Warline/Skirmish/Capture E0.3 Screenshot/Player Setup Two Battles`.
-6. Expected file: `$TMPDIR/warline-e03-stress/e03-player-setup-two-battles.png` (or `%TEMP%\warline-e03-stress\`).
-7. Exit play mode.
+1. `Tools/Warline/Skirmish/Launch E0.3 Player Setup Capture`.
+2. Confirm only `1 · DESERT BASE` and `2 · CITY CROSSROADS`. No third player button.
+3. The probe sets Game view to 1920×1080 and writes `$TMPDIR/warline-e03-stress/e03-player-setup-two-battles.png` (or `%TEMP%\warline-e03-stress\`).
+4. If the file is empty, stay in play on setup and use `Capture E0.3 Screenshot/Player Setup Two Battles`.
+5. Exit play mode.
 
 ### C. Default spread sequence + actual counts
 
@@ -194,7 +193,7 @@ P50 warmup spread, P200 concentrated dense combat, P100 air-only. 350/500 only i
 ### F. After capture
 
 1. Restore the Editor scene/profile if a reversible QA snapshot was taken.
-2. Game PM forwards the census markdown + PNGs to Farhad.
+2. Programmer 2 owns the Unity evidence packet (census + PNGs). Game PM forwards it to Farhad. There is no Game PM merge gate.
 3. Do not push/fast-forward this branch into `codex/m03-radar-warning` until Farhad has seen the shots.
 
 ## Screenshots
@@ -230,4 +229,4 @@ If `ScreenCapture` writes an empty file, recapture with `Capture E0.3 Screenshot
 
 ## Next step
 
-Programmer 2: run A–D on this branch, paste **actual** census rows, attach the PNG paths listed above. Game PM: forward that packet to Farhad. Landing into `codex/m03-radar-warning` waits on Farhad after the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.
+Programmer 2: run A–D on this branch, paste **actual** census rows, attach the PNG paths listed above. Game PM forwards that packet to Farhad. Landing (push/fast-forward into `codex/m03-radar-warning`) waits until Farhad has seen the shots. E0.1 (CC float), E1 roster expansion, and PR #18/#19/#20 stay out of this package.

@@ -86,6 +86,8 @@ namespace Game.Editor
                 Layout = SkirmishStressLayoutCode.Spread
             }, SkirmishStressPhaseCode.Idle) == "e03-idle-spread-p100.png",
                 "Programmer 2 screenshot filenames must stay stable.");
+            Check(SkirmishStressEditorProbe.PlayerSetupScreenshotFile == "e03-player-setup-two-battles.png",
+                "Player-setup capture filename must stay stable.");
 
             using (var world = new World("Skirmish stress census validation"))
             {

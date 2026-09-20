@@ -170,6 +170,7 @@ public sealed class SkirmishStressPresetTests
         session.Scale = 50;
         Assert.AreEqual("e03-warmup-spread-p50.png",
             SkirmishStressEditorProbe.ScreenshotFileName(session, SkirmishStressPhaseCode.Warmup));
+        Assert.AreEqual("e03-player-setup-two-battles.png", SkirmishStressEditorProbe.PlayerSetupScreenshotFile);
     }
 
     private static void CreatePartialSpawn(EntityManager em, int requested, int spawned)

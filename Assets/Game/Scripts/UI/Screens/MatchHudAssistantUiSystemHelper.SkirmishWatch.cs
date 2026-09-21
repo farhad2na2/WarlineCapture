@@ -1,3 +1,4 @@
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.Tactical.Contracts;
 using UnityEngine;
@@ -131,7 +132,7 @@ namespace Game.UI.Runtime
                 ? 1 : Mathf.Max(4, Mathf.Min(8, view.SelectedCount));
             view.AssaultAtBase = assault >= required;
             view.AdvancePreferred = close < 4;
-            if (watchScenarioIndex == 1)
+            if (watchScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex)
             {
                 var forward = objective - watchSkirmish.PlayerBaseObjectivePosition; forward.y = 0; forward.Normalize();
                 var side = new Vector3(-forward.z, 0, forward.x);
@@ -149,11 +150,22 @@ namespace Game.UI.Runtime
                 else ObserveAdvanceMapFocus(goal, ref view);
                 if (!view.MapOpen)
                 {
-                    var point = Camera.main.WorldToScreenPoint(goal);
-                    view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = point,
-                        Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20006, true) };
+                    view.AdvanceGround = ObserveClearAttackGround(goal,
+                        watchSkirmish.PlayerBaseObjectivePosition - goal, -20006, 20);
+                    if (!view.AdvanceGround.Available)
+                    {
+                        var point = Camera.main.WorldToScreenPoint(goal);
+                        view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = point,
+                            Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20006, true) };
+                    }
                 }
                 return;
+            }
+            if (watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+            {
+                // NW→SE basin uses the verified base-relative approach corridor below.
+                // City Crossroads' wide eastern flank projected into blocked fabric here.
+                view.AdvancePreferred = !view.AssaultAtBase && close < 8;
             }
             if (!view.AdvancePreferred || view.MapOpen) return;
             // The two labelled base objectives remain public when the camera leaves
@@ -162,10 +174,21 @@ namespace Game.UI.Runtime
             var direction = nearest - objective; direction.y = 0;
             // Preserve the first battlefield's verified clear base approach. Wider
             // offsets project behind its neutral ruins and become rejected attacks.
-            var ground = objective + direction.normalized * 25;
+            float standoff = watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? 30f : 25f;
+            var ground = objective + direction.normalized * standoff;
+            if (watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex)
+            {
+                view.AdvanceGround = ObserveClearAttackGround(ground,
+                    watchSkirmish.PlayerBaseObjectivePosition - objective, -20006, 25);
+                if (view.AdvanceGround.Available) return;
+            }
             var screen = Camera.main.WorldToScreenPoint(ground);
             view.AdvanceGround = new AriaTouchTarget { Id = -20006, Position = screen,
                 Available = screen.z > 0 && Screen.safeArea.Contains(screen) && WatchTargetIsReachable(screen, -20006, true) };
+            if (!view.AdvanceGround.Available &&
+                watchScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex &&
+                view.FocusEnemy.Available)
+                view.FocusAdvance = view.FocusEnemy;
         }
         private void ObserveAdvanceMapFocus(Vector3 goal, ref AriaSkirmishObservation view)
         {

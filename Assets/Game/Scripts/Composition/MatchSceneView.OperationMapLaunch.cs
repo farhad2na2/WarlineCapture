@@ -35,18 +35,29 @@ namespace Game.Composition
                 EntityManager entityManager = world.EntityManager;
                 if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
                 {
-                    if (skirmish.ScenarioIndex == 1)
+                    var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);
+                    var map = preset != null ? preset.operationMap : null;
+                    if (map != null)
                     {
-                        var preset = SkirmishPresetConfig.Load(1);
-                        var map = preset != null ? preset.operationMap : null;
-                        if (map == null || !map.TryValidateMetadata(out error))
-                            return Reject("City Crossroads map is missing or invalid: " + error, out failureCode, out error);
+                        if (!map.TryValidateMetadata(out error))
+                            return Reject("Skirmish map is missing or invalid: " + error, out failureCode, out error);
+                        string missionId = skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                            ? SkirmishPresetConfig.IndustrialBasinMissionId
+                            : skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                                ? "skirmish.city_crossroads"
+                                : SkirmishLaunchProjection.MissionId;
+                        string scenarioId = skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                            ? SkirmishPresetConfig.IndustrialBasinScenarioSetupId
+                            : skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                                ? "scenario.skirmish.city_crossroads"
+                                : SkirmishLaunchProjection.ScenarioId;
                         selection = new OperationMapLaunchSelection(
-                            new FixedString64Bytes("skirmish.city_crossroads"),
-                            new FixedString64Bytes("scenario.skirmish.city_crossroads"),
+                            new FixedString64Bytes(missionId),
+                            new FixedString64Bytes(scenarioId),
                             new FixedString64Bytes(map.OperationMapId), map, false);
                         return true;
                     }
+
                     return TryCreateFallback(
                         SkirmishLaunchProjection.MissionId, SkirmishLaunchProjection.ScenarioId,
                         SkirmishLaunchProjection.OperationMapId,

@@ -22,11 +22,18 @@ namespace Game.UI.Shell.Ecs
             if (plan.OpeningUntil == 0) { plan.OpeningUntil = view.Time + 180; plan.OpeningSquads = view.AvailableSquads; }
             // Assemble a force and finish the nearby defensive fight before advancing.
             // A deadline prevents waiting forever when production is unaffordable.
-            if (!view.ThreatNearForce && (view.Infantry >= 24 ||
-                (view.Infantry >= 16 && view.Time >= plan.OpeningUntil)) ||
+            bool awaitingAssault = plan.AssaultStarted == 0;
+            // After the opening window, depart with a viable force even if a contact is still nearby.
+            // Dense maps otherwise keep ThreatNearForce true until OpeningUntil+60 while the clock burns.
+            if (!view.ThreatNearForce && view.Infantry >= 24 ||
+                view.Infantry >= 16 && view.Time >= plan.OpeningUntil ||
                 view.Time >= plan.OpeningUntil + 60) plan.AssaultStarted = 1;
             if (plan.LastProgressAt == 0 || plan.EnemyHealth != view.EnemyHealth || plan.PlayerHealth != view.PlayerHealth || plan.ForceHealth != view.ForceHealth || plan.Infantry != view.Infantry)
             { plan.LastProgressAt = view.Time; plan.EnemyHealth = view.EnemyHealth; plan.PlayerHealth = view.PlayerHealth; plan.ForceHealth = view.ForceHealth; plan.Infantry = view.Infantry; }
+            // Opening assembly is deliberate waiting for the assault deadline, not a stuck tap loop.
+            // Dense maps can hold a nearby contact without health changes until OpeningUntil+60.
+            // Refresh on the transition frame too so the deadline itself is not treated as stall.
+            if (awaitingAssault) plan.LastProgressAt = view.Time;
             // A loop of successful taps is not evidence that the match is progressing.
             if (view.Time - plan.LastProgressAt > 150) { touch.Phase = AriaPlayPhase.Blocked; return; }
             if (touch.Phase == AriaPlayPhase.Touching) return;
@@ -106,7 +113,8 @@ namespace Game.UI.Shell.Ecs
             {
                 // Zero survivors is also a depleted assault. Rebuild before selecting
                 // replacement cards, otherwise each delivery is sent out on its own.
-                plan.GroupStage = 0; plan.AssaultStarted = 0; plan.OpeningUntil = view.Time + 90;
+                plan.GroupStage = 0; plan.AssaultStarted = 0; plan.OpeningUntil = view.Time + 45;
+                plan.NextRecruitAt = view.Time;
                 plan.Intent = AriaSkirmishIntent.Recruit;
             }
             else if (plan.GroupStage == 3 && view.SelectedCount < 8 && !finishingBase)
@@ -151,8 +159,32 @@ namespace Game.UI.Shell.Ecs
             if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return; }
             if (plan.AssaultStarted == 0)
             {
-                // Allow normal defensive engagement while recruitment finishes.
+                // Contest nearby contacts during assembly. Returning without a touch left
+                // the opening army idle under fire on dense maps until OpeningUntil+60.
+                // Fight campers even while rebuilding; map threat navigation needs a force.
                 plan.Intent = AriaSkirmishIntent.ObserveBattle;
+                bool openingThreat = view.Threat.Available;
+                if (openingThreat)
+                {
+                    if (!view.AttackMode)
+                    { plan.Intent = AriaSkirmishIntent.Attack; Target(view.Attack, false, ref output); return; }
+                    plan.Intent = AriaSkirmishIntent.TargetThreat;
+                    Target(view.ThreatGround.Available ? view.ThreatGround : view.Threat, true, ref output);
+                    plan.ActionsAtTarget = touch.Actions; plan.TargetPending = 1;
+                    return;
+                }
+                if (view.Infantry < 8 || view.AvailableSquads == 0)
+                {
+                    plan.Intent = AriaSkirmishIntent.Recruit;
+                    return;
+                }
+                if (view.FocusThreat.Available && view.Time >= plan.MapNavigationReadyAt)
+                {
+                    plan.Intent = AriaSkirmishIntent.FindThreat;
+                    plan.MapNavigationStage = 1;
+                    Target(view.FocusThreat, false, ref output);
+                    return;
+                }
                 return;
             }
             if (view.AvailableSquads == 0) return;
@@ -233,8 +265,18 @@ namespace Game.UI.Shell.Ecs
                     plan.Intent = AriaSkirmishIntent.FindBase;
                     if (view.FocusAdvance.Available)
                     {
+                        // Match FindThreat: one map trip per settle window. Re-opening
+                        // immediately after Close Map is a no-progress gesture loop.
                         if (view.FocusAdvance.Id == -20010)
-                        { plan.AdvanceNavigation = 1; plan.MapNavigationStage = 1; }
+                        {
+                            if (view.Time < plan.MapNavigationReadyAt)
+                            {
+                                if (view.FocusEnemy.Available)
+                                    Target(view.FocusEnemy, false, ref output);
+                                return;
+                            }
+                            plan.AdvanceNavigation = 1; plan.MapNavigationStage = 1;
+                        }
                         Target(view.FocusAdvance, false, ref output);
                     }
                     else Target(view.FocusEnemy, false, ref output);

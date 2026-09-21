@@ -36,6 +36,7 @@ namespace Game.Configs
         public const string ResourceName = "SkirmishBattleCatalog";
         public const string DesertBaseScenarioId = "S001";
         public const string CityCrossroadsScenarioId = "S025";
+        public const string IndustrialBasinScenarioId = "S073";
 
         [SerializeField] private SkirmishBattleCatalogEntry[] entries =
             Array.Empty<SkirmishBattleCatalogEntry>();
@@ -147,9 +148,17 @@ namespace Game.Configs
                 return false;
             }
 
-            if (playable < 2)
+            if (!TryGet(IndustrialBasinScenarioId, out SkirmishBattleCatalogEntry basin) ||
+                !basin.IsPlayable ||
+                basin.PlayableScenarioIndex != SkirmishPresetConfig.IndustrialBasinScenarioIndex)
             {
-                error = "Skirmish battle catalog requires at least the two playable prototypes.";
+                error = "S073 must be Playable at scenario index 3.";
+                return false;
+            }
+
+            if (playable < 3)
+            {
+                error = "Skirmish battle catalog requires at least the three playable prototypes.";
                 return false;
             }
 

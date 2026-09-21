@@ -15,9 +15,11 @@ namespace Game.Runtime
             data.schemaVersion = Version;
             data.presetId = data.configuration.ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex
                 ? "stress_scale_probe"
-                : data.configuration.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
-                    ? "city_crossroads"
-                    : "base_assault";
+                : data.configuration.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                    ? "industrial_basin"
+                    : data.configuration.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                        ? "city_crossroads"
+                        : "base_assault";
             data.enemyCount = 1;
             data.difficulty = "Normal";
             data.fogOfWar = false;

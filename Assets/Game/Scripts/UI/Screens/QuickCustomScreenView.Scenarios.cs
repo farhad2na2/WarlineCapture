@@ -561,6 +561,22 @@ namespace Game.UI.Runtime
                 Status = SkirmishBattleCatalogStatus.Playable,
                 PlayableScenarioIndex = SkirmishPresetConfig.CityCrossroadsScenarioIndex
             });
+            destination.Add(new SkirmishBattleCatalogEntry
+            {
+                ScenarioId = SkirmishBattleCatalogConfig.IndustrialBasinScenarioId,
+                MapId = "IB",
+                ObjectiveId = "BA",
+                ArmyProfile = "G",
+                StartProfile = "F",
+                TitleKey = "ui.skirmish.industrial_basin_map",
+                TitleEnglish = "INDUSTRIAL BASIN",
+                DescriptionEnglish =
+                    "Advance from the northwest industrial yard toward the southeast base. Use the freight avenue or service ring.",
+                DescriptionFarsi =
+                    "از حیاط صنعتی شمال‌غربی به پایگاه جنوب‌شرقی حمله کن؛ از مسیر باربری یا حلقه خدماتی جلو برو.",
+                Status = SkirmishBattleCatalogStatus.Playable,
+                PlayableScenarioIndex = SkirmishPresetConfig.IndustrialBasinScenarioIndex
+            });
         }
     }
 

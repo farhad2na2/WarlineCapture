@@ -9,14 +9,21 @@ namespace Game.Composition
     {
         private SkirmishPresetConfig skirmishPreset;
         private int loadedSkirmishScenarioIndex = -1;
-        private bool IsSkirmishSession => MissionId == SkirmishLaunchProjection.MissionId || MissionId == "skirmish.city_crossroads";
+        private bool IsSkirmishSession =>
+            MissionId == SkirmishLaunchProjection.MissionId ||
+            MissionId == "skirmish.city_crossroads" ||
+            MissionId == SkirmishPresetConfig.IndustrialBasinMissionId;
 
         private SkirmishPresetConfig SkirmishPreset
         {
             get
             {
                 if (!IsSkirmishSession) return null;
-                int index = MissionId == "skirmish.city_crossroads" ? SkirmishPresetConfig.CityCrossroadsScenarioIndex : 0;
+                int index = MissionId == SkirmishPresetConfig.IndustrialBasinMissionId
+                    ? SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                    : MissionId == "skirmish.city_crossroads"
+                        ? SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                        : SkirmishPresetConfig.DesertBaseScenarioIndex;
                 var world = World.DefaultGameObjectInjectionWorld;
                 if (world != null && world.IsCreated &&
                     SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out var match))

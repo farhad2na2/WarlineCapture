@@ -7,15 +7,26 @@ namespace Game.Configs
     {
         public const string ResourceName = "SkirmishBaseAssault";
         public const string SecondResourceName = "SkirmishCityCrossroads";
+        public const string ThirdResourceName = "SkirmishIndustrialBasin";
         public const string StressResourceName = "SkirmishStressScaleProbe";
         public const int DesertBaseScenarioIndex = 0;
         public const int CityCrossroadsScenarioIndex = 1;
         public const int StressScaleProbeScenarioIndex = 2;
+        public const int IndustrialBasinScenarioIndex = 3;
+        public const string IndustrialBasinMissionId = "skirmish.industrial_basin";
+        public const string IndustrialBasinScenarioSetupId = "scenario.skirmish.industrial_basin";
+        public const string IndustrialBasinOperationMapId = "opmap.skirmish.industrial_basin";
         public OperationMapDefinition operationMap;
         public static SkirmishPresetConfig Load(int scenarioIndex) =>
             Resources.Load<SkirmishPresetConfig>(
                 scenarioIndex == StressScaleProbeScenarioIndex ? StressResourceName :
+                scenarioIndex == IndustrialBasinScenarioIndex ? ThirdResourceName :
                 scenarioIndex == CityCrossroadsScenarioIndex ? SecondResourceName : ResourceName);
+
+        public static bool IsPlayerBattlefield(int scenarioIndex) =>
+            scenarioIndex == DesertBaseScenarioIndex ||
+            scenarioIndex == CityCrossroadsScenarioIndex ||
+            scenarioIndex == IndustrialBasinScenarioIndex;
         public const float MatchDurationSeconds = 900f;
         public const int InfantryLimitPerFaction = 24;
         [UnityEngine.Min(1)] public float supplyDaySeconds=120f;

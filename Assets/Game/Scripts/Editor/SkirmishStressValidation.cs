@@ -204,8 +204,13 @@ namespace Game.Editor
                 "Legacy fixed Scenario1 control must be removed.");
             var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(
                 SkirmishBattleCatalogBuilder.AssetPath);
-            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 2,
-                "Player setup catalog must list 120 battles with only two playable.");
+            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 3,
+                "Battle catalog must keep 120 entries with three player playables.");
+            Check(SkirmishPresetConfig.IndustrialBasinScenarioIndex == 3,
+                "Industrial Basin must occupy player scenario index 3.");
+            var basin = SkirmishPresetConfig.Load(SkirmishPresetConfig.IndustrialBasinScenarioIndex);
+            Check(basin != null && basin != desert && basin != city && basin != probe,
+                "Industrial Basin preset must be additive and distinct.");
             return "[SkirmishStressValidation] result=Passed cases=" + checks;
         }
 

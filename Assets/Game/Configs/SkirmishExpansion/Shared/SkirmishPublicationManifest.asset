@@ -16,6 +16,7 @@ MonoBehaviour:
   rows:
   - CatalogId: S002
     DefinitionId: skirmish.s002
-    Status: 1
+    Status: 2
     EvidencePath: Design/AgentReports/SkirmishExpansion/S002/
-    Notes: SK-12 library/HUD copy + publication validator scaffolding. Asset existence cannot set Playable. Not Playable/ARIA/War certified.
+    Notes: SK-13 Programmer 1 Game View evidence + matching hashes. Counted ARIA/device
+      matrix still open.

@@ -22,7 +22,14 @@ namespace Game.Composition
         protected override void OnUpdate()
         {
             using var returns=EntityManager.CreateEntityQuery(typeof(SkirmishReturnRequest));
-            if(returns.CalculateEntityCount()==1){HandleReturn(returns.GetSingletonEntity());return;}
+            if(returns.CalculateEntityCount()==1)
+            {
+                if(SkirmishLaunchProjection.TryGet(EntityManager,out var liveSession,out _) &&
+                   SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplayRequest(EntityManager,liveSession))
+                    EntityManager.DestroyEntity(returns.GetSingletonEntity());
+                else HandleReturn(returns.GetSingletonEntity());
+                return;
+            }
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
             if(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
@@ -54,13 +61,29 @@ namespace Game.Composition
                 {match.SurrenderRequested=1;EntityManager.SetComponentData(session,match);UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);}
                 else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||startupFailed||action==SkirmishAction.Restart))
                 {
+                    if(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplay(EntityManager,session,action))
+                    {
+                        UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
+                        return;
+                    }
                     var entity=EntityManager.CreateEntity(typeof(SkirmishReturnRequest));
                     EntityManager.SetComponentData(entity,new SkirmishReturnRequest{Action=action,Seed=match.Seed,ScenarioIndex=match.ScenarioIndex});
                     returnStage=0;
                 }
             }
+            if(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplayRequest(EntityManager,session))
+                UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
             if(match.Phase==SkirmishPhase.Finished&&match.ResultSaved==0&&UnityEngine.Time.unscaledTime>=retrySaveAt)
             {
+                if(SkirmishCheckpointCompositionSystemHelper.TrySettleExpandedPresentation(EntityManager,session))
+                {
+                    if(EntityManager.HasComponent<SkirmishResultComponent>(session) &&
+                       EntityManager.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged!=0)
+                    {
+                        match.ResultSaved=1;EntityManager.SetComponentData(session,match);
+                    }
+                }
+                else
                 try
                 {
                     var save=SaveService.CreateDefault();var data=save.LoadQuickGame();

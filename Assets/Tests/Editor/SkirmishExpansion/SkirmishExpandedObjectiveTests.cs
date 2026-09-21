@@ -140,6 +140,78 @@ namespace Game.Tests.Editor
             Assert.IsFalse(SkirmishBaseAssaultObjectiveSystem.TryEvaluate(in facts, out _, out _));
         }
 
+        [Test]
+        public void HiddenHealthProjectsVisibleLastSeenAndUnknown()
+        {
+            using var world = new World(nameof(HiddenHealthProjectsVisibleLastSeenAndUnknown));
+            EntityManager em = world.EntityManager;
+            var sessionId = new FixedString64Bytes("hud-s002");
+            Entity session = em.CreateEntity();
+            em.AddComponentData(session, new SkirmishExpandedSessionComponent
+            {
+                SessionId = sessionId,
+                CatalogId = "S002",
+                IsLegacy = 0,
+                Phase = SkirmishSessionPhase.Playing
+            });
+            em.AddComponentData(session, new SkirmishMatchState { SessionId = sessionId });
+
+            Entity player = SkirmishScenarioSpawnSystem.CreateStructure(
+                em,
+                sessionId,
+                new SkirmishResolvedStructureEntry
+                {
+                    FactionId = 1,
+                    StructureId = SkirmishStructureIds.Barracks,
+                    ObjectiveRoleId = SkirmishObjectiveIds.BasePlayer,
+                    DesignatedBase = true
+                });
+            Entity enemy = SkirmishScenarioSpawnSystem.CreateStructure(
+                em,
+                sessionId,
+                new SkirmishResolvedStructureEntry
+                {
+                    FactionId = 2,
+                    StructureId = SkirmishStructureIds.Barracks,
+                    ObjectiveRoleId = SkirmishObjectiveIds.BaseEnemy,
+                    DesignatedBase = true
+                });
+            em.AddComponentData(player, new UnitHealth { Current = 800, Max = 800 });
+            em.AddComponentData(enemy, new UnitHealth { Current = 800, Max = 800 });
+            em.AddComponentData(player, new SkirmishContactSightComponent { Sight = SkirmishContactSight.Unknown });
+            em.AddComponentData(enemy, new SkirmishContactSightComponent { Sight = SkirmishContactSight.Visible });
+
+            SkirmishBaseAssaultHudProjection.Observe(em, session, 0.5f, false);
+            SkirmishHealthReadout visible = SkirmishBaseAssaultHudProjection.ReadEnemyBase(em, session);
+            Assert.AreEqual(SkirmishHealthReadout.Visible, visible.Knowledge);
+            Assert.AreEqual(800, visible.DisplayedCurrent);
+            Assert.AreEqual(0f, visible.AgeSeconds);
+            SkirmishHealthReadout hidden = SkirmishBaseAssaultHudProjection.ReadPlayerBase(em, session);
+            Assert.AreEqual(SkirmishHealthReadout.Hidden, hidden.Knowledge);
+            Assert.AreEqual(0, hidden.DisplayedCurrent);
+
+            var enemyHealth = em.GetComponentData<UnitHealth>(enemy);
+            enemyHealth.Current = 410;
+            em.SetComponentData(enemy, enemyHealth);
+            SkirmishBaseAssaultHudProjection.Observe(em, session, 0.5f, false);
+            Assert.AreEqual(410, SkirmishBaseAssaultHudProjection.ReadEnemyBase(em, session).DisplayedCurrent);
+
+            em.SetComponentData(enemy, new SkirmishContactSightComponent { Sight = SkirmishContactSight.LastSeen });
+            enemyHealth.Current = 90;
+            em.SetComponentData(enemy, enemyHealth);
+            SkirmishBaseAssaultHudProjection.Observe(em, session, 2f, false);
+            SkirmishHealthReadout lastSeen = SkirmishBaseAssaultHudProjection.ReadEnemyBase(em, session);
+            Assert.AreEqual(SkirmishHealthReadout.LastSeen, lastSeen.Knowledge);
+            Assert.AreEqual(410, lastSeen.DisplayedCurrent);
+            Assert.GreaterOrEqual(lastSeen.AgeSeconds, 2f);
+
+            SkirmishBaseAssaultHudProjection.Observe(em, session, 5f, true);
+            Assert.AreEqual(lastSeen.AgeSeconds,
+                SkirmishBaseAssaultHudProjection.ReadEnemyBase(em, session).AgeSeconds);
+            Assert.AreEqual(enemy, em.GetComponentData<SkirmishMatchState>(session).EnemyMainBase);
+            Assert.AreEqual(player, em.GetComponentData<SkirmishMatchState>(session).PlayerMainBase);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -150,6 +222,7 @@ namespace Game.Tests.Editor
                 suite.BothDesignatedDeadIsDrawRegardlessOfReplacement();
                 suite.SurrenderRequiresPlaying();
                 suite.DesignatedFactsIgnoreReplacementBarracks();
+                suite.HiddenHealthProjectsVisibleLastSeenAndUnknown();
                 Debug.Log("[SkirmishExpandedObjectiveTests] result=Passed");
             }
             catch (Exception exception)

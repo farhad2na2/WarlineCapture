@@ -2,6 +2,8 @@ using Game.Components;
 using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Game.Runtime
 {
@@ -12,7 +14,7 @@ namespace Game.Runtime
             Entity session,
             out SkirmishCommandDecision decision)
         {
-            return Issue(em, session, SkirmishGroupOrderKind.Hold, Entity.Null, out decision);
+            return Issue(em, session, SkirmishGroupOrderKind.Hold, Entity.Null, default, out decision);
         }
 
         public static bool TryMove(
@@ -20,7 +22,16 @@ namespace Game.Runtime
             Entity session,
             out SkirmishCommandDecision decision)
         {
-            return Issue(em, session, SkirmishGroupOrderKind.Move, Entity.Null, out decision);
+            return TryMove(em, session, SkirmishWorldMovementService.DefaultAdvance(em, session), out decision);
+        }
+
+        public static bool TryMove(
+            EntityManager em,
+            Entity session,
+            float3 destination,
+            out SkirmishCommandDecision decision)
+        {
+            return Issue(em, session, SkirmishGroupOrderKind.Move, Entity.Null, destination, out decision);
         }
 
         public static bool TryAttack(
@@ -57,7 +68,10 @@ namespace Game.Runtime
                 return false;
             }
 
-            return Issue(em, session, SkirmishGroupOrderKind.Attack, target, out decision);
+            float3 destination = em.HasComponent<LocalTransform>(target)
+                ? em.GetComponentData<LocalTransform>(target).Position
+                : SkirmishWorldMovementService.DefaultAdvance(em, session);
+            return Issue(em, session, SkirmishGroupOrderKind.Attack, target, destination, out decision);
         }
 
         public static bool TryIssueGroupOrder(
@@ -134,8 +148,12 @@ namespace Game.Runtime
                     }
                 }
 
-                if (order == SkirmishGroupOrderKind.Hold && !em.HasComponent<HoldPositionOrderTag>(unit))
-                    em.AddComponent<HoldPositionOrderTag>(unit);
+                float3 destination = order == SkirmishGroupOrderKind.Attack &&
+                                     target != Entity.Null &&
+                                     em.HasComponent<LocalTransform>(target)
+                    ? em.GetComponentData<LocalTransform>(target).Position
+                    : SkirmishWorldMovementService.DefaultAdvance(em, session);
+                ApplyOrder(em, unit, order, destination);
                 issued++;
             }
 
@@ -173,6 +191,7 @@ namespace Game.Runtime
             Entity session,
             SkirmishGroupOrderKind order,
             Entity target,
+            float3 destination,
             out SkirmishCommandDecision decision)
         {
             decision = default;
@@ -199,7 +218,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                ApplyOrder(em, unit, order);
+                ApplyOrder(em, unit, order, destination);
                 issued++;
             }
 
@@ -232,17 +251,23 @@ namespace Game.Runtime
                    domain == SkirmishPopulationCategory.LogisticsSupport;
         }
 
-        private static void ApplyOrder(EntityManager em, Entity unit, SkirmishGroupOrderKind order)
+        private static void ApplyOrder(
+            EntityManager em,
+            Entity unit,
+            SkirmishGroupOrderKind order,
+            float3 destination)
         {
             if (order == SkirmishGroupOrderKind.Hold)
             {
                 if (!em.HasComponent<HoldPositionOrderTag>(unit))
                     em.AddComponent<HoldPositionOrderTag>(unit);
+                SkirmishWorldMovementService.ClearIntent(em, unit);
                 return;
             }
 
             if (em.HasComponent<HoldPositionOrderTag>(unit))
                 em.RemoveComponent<HoldPositionOrderTag>(unit);
+            SkirmishWorldMovementService.AssignIntent(em, unit, destination, order);
         }
 
         private static void StampGroups(EntityManager em, Entity session, SkirmishGroupOrderKind order)

@@ -250,4 +250,39 @@ namespace Game.Components
         public byte Spawned;
         public byte FromRegistry;
     }
+
+    public struct SkirmishMoveIntentComponent : IComponentData
+    {
+        public float DestinationX;
+        public float DestinationZ;
+        public byte Active;
+        public SkirmishGroupOrderKind Order;
+    }
+
+    public struct SkirmishObservedHealthComponent : IComponentData
+    {
+        public int LastSeenHealth;
+        public int LastSeenMax;
+        public float AgeSeconds;
+        public byte Known;
+    }
+
+    public struct SkirmishArmyDrawerSlot : IBufferElementData
+    {
+        public uint GroupId;
+        public SkirmishRoleKind Role;
+        public int AliveCount;
+        public byte Selected;
+        public SkirmishGroupOrderKind LastOrder;
+    }
+
+    public struct SkirmishExpandedReplayRequest : IComponentData
+    {
+        public byte Requested;
+    }
+
+    public struct SkirmishExpandedPauseRequest : IComponentData
+    {
+        public byte Paused;
+    }
 }

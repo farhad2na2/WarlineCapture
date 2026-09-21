@@ -122,5 +122,112 @@ namespace Game.Composition
             reason = SkirmishReasonCode.None;
             return true;
         }
+
+        public static bool TryReplayLive(EntityManager em, Entity session, out string newSessionId)
+        {
+            newSessionId = string.Empty;
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+                !em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
+                em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup == null)
+                return false;
+
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            var replay = new SkirmishReplayRequest
+            {
+                SourceSessionId = state.SessionId.ToString(),
+                CatalogId = state.CatalogId.ToString(),
+                DifficultyId = state.DifficultyId,
+                SizeId = state.SizeId,
+                Seed = state.Seed,
+                Mode = SkirmishReplayMode.FreshStart
+            };
+            SkirmishLaunchPayload payload = SkirmishReplayService.CreateFreshLaunch(replay, setup);
+            SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, state.SessionId);
+            ResetExpandedSessionOwned(em, session);
+            if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+            {
+                em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog?.Dispose();
+                em.RemoveComponent<SkirmishVisualPrefabCatalogRecord>(session);
+            }
+
+            if (em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                em.RemoveComponent<SkirmishExpandedSessionComponent>(session);
+
+            if (!SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup))
+                return false;
+            newSessionId = payload.SessionId;
+            return newSessionId != replay.SourceSessionId;
+        }
+
+        public static bool TryConsumeExpandedReplay(
+            EntityManager em,
+            Entity session,
+            SkirmishAction action)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
+                return false;
+            if (action != SkirmishAction.Replay && action != SkirmishAction.Restart)
+                return false;
+            TryReplayLive(em, session, out _);
+            return true;
+        }
+
+        public static bool TryConsumeExpandedReplayRequest(EntityManager em, Entity session)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
+                return false;
+            if (!em.HasComponent<SkirmishExpandedReplayRequest>(session) ||
+                em.GetComponentData<SkirmishExpandedReplayRequest>(session).Requested == 0)
+                return false;
+            return TryReplayLive(em, session, out _);
+        }
+
+        public static bool TrySettleExpandedPresentation(EntityManager em, Entity session)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
+                return false;
+            if (em.HasComponent<SkirmishResultComponent>(session) &&
+                em.GetComponentData<SkirmishResultComponent>(session).Frozen != 0 &&
+                em.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged == 0)
+            {
+                SkirmishExpandedSessionControlService.TrySettle(em, session);
+            }
+
+            return true;
+        }
+
+        private static void ResetExpandedSessionOwned(EntityManager em, Entity session)
+        {
+            RemoveIfPresent<SkirmishEconomyStockComponent>(em, session);
+            RemoveIfPresent<SkirmishCapacityComponent>(em, session);
+            RemoveIfPresent<SkirmishEnemyStockComponent>(em, session);
+            RemoveIfPresent<SkirmishEnemyCapacityComponent>(em, session);
+            RemoveIfPresent<SkirmishEnemyStrategyComponent>(em, session);
+            RemoveIfPresent<SkirmishObjectiveClockComponent>(em, session);
+            RemoveIfPresent<SkirmishBaseAssaultFactComponent>(em, session);
+            RemoveIfPresent<SkirmishObjectiveStateComponent>(em, session);
+            RemoveIfPresent<SkirmishResultComponent>(em, session);
+            RemoveIfPresent<SkirmishArmySelectionComponent>(em, session);
+            RemoveIfPresent<SkirmishFogStateComponent>(em, session);
+            RemoveIfPresent<SkirmishCheckpointRequestComponent>(em, session);
+            RemoveIfPresent<SkirmishExpandedPauseRequest>(em, session);
+            RemoveIfPresent<SkirmishExpandedReplayRequest>(em, session);
+            RemoveIfPresent<SkirmishResolvedSetupComponent>(em, session);
+            if (em.HasBuffer<SkirmishProductionReservation>(session))
+                em.GetBuffer<SkirmishProductionReservation>(session).Clear();
+            if (em.HasBuffer<SkirmishArmyGroupRecord>(session))
+                em.GetBuffer<SkirmishArmyGroupRecord>(session).Clear();
+            if (em.HasBuffer<SkirmishArmyDrawerSlot>(session))
+                em.GetBuffer<SkirmishArmyDrawerSlot>(session).Clear();
+            if (em.HasComponent<SkirmishCheckpointDocumentRecord>(session))
+                em.RemoveComponent<SkirmishCheckpointDocumentRecord>(session);
+        }
+
+        private static void RemoveIfPresent<T>(EntityManager em, Entity session) where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(session))
+                em.RemoveComponent<T>(session);
+        }
     }
 }

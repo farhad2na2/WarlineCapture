@@ -184,6 +184,87 @@ namespace Game.Tests.Editor
                 replayWorld.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(replaySession).Materials);
         }
 
+        [Test]
+        public void LivePauseSettlesOnceAndReplayReseedsFreshSession()
+        {
+            using var world = new World(nameof(LivePauseSettlesOnceAndReplayReseedsFreshSession));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
+            var playing = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            playing.Phase = SkirmishSessionPhase.Playing;
+            em.SetComponentData(session, playing);
+            var spent = em.GetComponentData<SkirmishEconomyStockComponent>(session);
+            spent.Materials = 780;
+            em.SetComponentData(session, spent);
+
+            Assert.IsTrue(SkirmishExpandedSessionControlService.TryPause(
+                em, session, out SkirmishCheckpointDocument paused));
+            Assert.AreEqual(1, em.GetComponentData<SkirmishObjectiveClockComponent>(session).Paused);
+            Assert.AreEqual(1, paused.Payload.Paused);
+            Assert.AreEqual(780, paused.Payload.PlayerMaterials);
+            Assert.IsTrue(SkirmishExpandedSessionControlService.TryResume(em, session));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishObjectiveClockComponent>(session).Paused);
+
+            em.AddComponentData(session, new SkirmishResultComponent
+            {
+                Outcome = SkirmishOutcomeKind.Victory,
+                Reason = SkirmishEndReasonKind.MainBaseDestroyed,
+                SetupHash = setup.SetupHash,
+                SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                Frozen = 1
+            });
+            Assert.IsTrue(SkirmishExpandedSessionControlService.TrySettle(em, session));
+            Assert.AreEqual(1, em.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged);
+            Assert.IsTrue(SkirmishExpandedSessionControlService.TrySettle(em, session));
+
+            string sourceId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.ToString();
+            Assert.IsTrue(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplay(
+                em, session, SkirmishAction.Replay));
+            Assert.AreEqual(0, em.CreateEntityQuery(typeof(SkirmishReturnRequest)).CalculateEntityCount());
+            Entity replayed = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            string replayId = em.GetComponentData<SkirmishExpandedSessionComponent>(replayed).SessionId.ToString();
+            Assert.AreNotEqual(sourceId, replayId);
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, replayed, setup, out _, out _));
+            Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(replayed).Materials);
+            Assert.IsFalse(em.HasComponent<SkirmishResultComponent>(replayed));
+        }
+
+        [Test]
+        public void CustomAndLegacySessionsAreNotExpandedCompletion()
+        {
+            using var world = new World(nameof(CustomAndLegacySessionsAreNotExpandedCompletion));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
+            var custom = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            custom.IsCustom = 1;
+            em.SetComponentData(session, custom);
+            em.AddComponentData(session, new SkirmishResultComponent
+            {
+                Outcome = SkirmishOutcomeKind.Victory,
+                Reason = SkirmishEndReasonKind.MainBaseDestroyed,
+                SetupHash = setup.SetupHash,
+                SessionId = custom.SessionId,
+                Frozen = 1
+            });
+            var journal = new SkirmishExpandedResultJournal();
+            Assert.IsFalse(SkirmishResultSettlementService.TrySettleSession(
+                em, session, journal, out _, out SkirmishReasonCode customBlocked));
+            Assert.AreEqual(SkirmishReasonCode.UnsupportedCapability, customBlocked);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishResultComponent>(session).SaveAcknowledged);
+
+            custom.IsCustom = 0;
+            custom.IsLegacy = 1;
+            em.SetComponentData(session, custom);
+            Assert.IsFalse(SkirmishExpandedSessionControlService.IsExpanded(em, session));
+            Assert.IsFalse(SkirmishExpandedSessionControlService.TryPause(em, session, out _));
+            Assert.IsFalse(SkirmishCheckpointCompositionSystemHelper.TryConsumeExpandedReplay(
+                em, session, SkirmishAction.Replay));
+            Assert.IsFalse(SkirmishResultSettlementService.TrySettleSession(
+                em, session, journal, out _, out SkirmishReasonCode legacyBlocked));
+            Assert.AreEqual(SkirmishReasonCode.UnsupportedCapability, legacyBlocked);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -193,6 +274,8 @@ namespace Game.Tests.Editor
                 suite.AtomicWriteAndFreshRestoreConservesPauseAndStocks();
                 suite.IncompatibleContentVersionIsRejected();
                 suite.ResultSettlesOnceAndReplayOpensFreshSession();
+                suite.LivePauseSettlesOnceAndReplayReseedsFreshSession();
+                suite.CustomAndLegacySessionsAreNotExpandedCompletion();
                 Debug.Log("[SkirmishExpandedCheckpointTests] result=Passed");
             }
             catch (Exception exception)

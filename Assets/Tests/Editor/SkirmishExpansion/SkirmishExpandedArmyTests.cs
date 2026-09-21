@@ -7,6 +7,8 @@ using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Game.Tests.Editor
@@ -153,6 +155,72 @@ namespace Game.Tests.Editor
             Assert.AreEqual(startingRifle, wounded.GroupId);
         }
 
+        [Test]
+        public void StandardGroundUnitsAdvanceWorldTransformOnMove()
+        {
+            using var world = new World(nameof(StandardGroundUnitsAdvanceWorldTransformOnMove));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            uint tankGroup = FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId;
+            uint apcGroup = FirstPlayerGroup(em, session, SkirmishRoleKind.ApcArmored).GroupId;
+            uint rifleGroup = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, tankGroup, false, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, apcGroup, true, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, rifleGroup, true, out _));
+
+            Entity tank = FirstGroupMember(em, tankGroup);
+            Entity apc = FirstGroupMember(em, apcGroup);
+            Entity rifle = FirstGroupMember(em, rifleGroup);
+            Place(em, tank, new float3(0f, 0f, 0f));
+            Place(em, apc, new float3(0f, 0f, 2f));
+            Place(em, rifle, new float3(0f, 0f, 4f));
+            var destination = new float3(20f, 0f, 0f);
+            Assert.IsTrue(SkirmishArmyCommandService.TryMove(em, session, destination, out SkirmishCommandDecision move));
+            Assert.GreaterOrEqual(move.IssuedCount, 3);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishMoveIntentComponent>(tank).Active);
+
+            Assert.Greater(SkirmishWorldMovementService.Step(em, session, 1f, false), 0);
+            float tankX = em.GetComponentData<LocalTransform>(tank).Position.x;
+            float apcX = em.GetComponentData<LocalTransform>(apc).Position.x;
+            float rifleX = em.GetComponentData<LocalTransform>(rifle).Position.x;
+            Assert.Greater(tankX, 0f);
+            Assert.Greater(apcX, 0f);
+            Assert.Greater(rifleX, 0f);
+            Assert.Less(tankX, destination.x);
+            Assert.Greater(tankX, rifleX);
+
+            float pausedX = tankX;
+            Assert.AreEqual(0, SkirmishWorldMovementService.Step(em, session, 1f, true));
+            Assert.AreEqual(pausedX, em.GetComponentData<LocalTransform>(tank).Position.x);
+
+            Assert.IsTrue(SkirmishArmyCommandService.TryHold(em, session, out _));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishMoveIntentComponent>(tank).Active);
+            Assert.IsTrue(em.HasComponent<HoldPositionOrderTag>(tank));
+        }
+
+        [Test]
+        public void ArmyDrawerProjectsCurrentPlayerPage()
+        {
+            using var world = new World(nameof(ArmyDrawerProjectsCurrentPlayerPage));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            uint rifle = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, rifle, false, out _));
+            Assert.AreEqual(4, SkirmishArmyDrawerProjection.Project(em, session));
+            DynamicBuffer<SkirmishArmyDrawerSlot> slots = em.GetBuffer<SkirmishArmyDrawerSlot>(session);
+            bool found = false;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (slots[i].GroupId != rifle)
+                    continue;
+                Assert.AreEqual(1, slots[i].Selected);
+                Assert.AreEqual(4, slots[i].AliveCount);
+                found = true;
+            }
+
+            Assert.IsTrue(found);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -163,6 +231,8 @@ namespace Game.Tests.Editor
                 suite.SharedFogGatesAttackEligibility();
                 suite.GroundMoveExcludesAirAndHoldStampsGroup();
                 suite.ProducedTankJoinsNewGroupAndDeathKeepsIdentity();
+                suite.StandardGroundUnitsAdvanceWorldTransformOnMove();
+                suite.ArmyDrawerProjectsCurrentPlayerPage();
                 Debug.Log("[SkirmishExpandedArmyTests] result=Passed");
             }
             catch (Exception exception)
@@ -271,6 +341,15 @@ namespace Game.Tests.Editor
             }
 
             return Entity.Null;
+        }
+
+        private static void Place(EntityManager em, Entity unit, float3 position)
+        {
+            var transform = LocalTransform.FromPosition(position);
+            if (em.HasComponent<LocalTransform>(unit))
+                em.SetComponentData(unit, transform);
+            else
+                em.AddComponentData(unit, transform);
         }
 
         private static Entity FirstSelected(EntityManager em)

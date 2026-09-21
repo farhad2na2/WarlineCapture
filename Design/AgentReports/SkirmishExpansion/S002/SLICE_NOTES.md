@@ -97,8 +97,18 @@ merge commit. That tree was not edited in this slice.
   ages a previously seen enemy to LastSeen and rejects Attack
   (`HiddenContact`). Reveal restores Visible.
 - Move / Hold / Attack stamp the selected groups. Ground Move excludes air
-  members instead of silently forcing them onto a ground destination. This is
-  **not** live path/world movement or an Army drawer HUD.
+  members instead of silently forcing them onto a ground destination.
+- Live Standard ground movement now drives `LocalTransform` (and the bound
+  GameObject when a visual exists). Infantry advance at 4 m/s, tanks / APC /
+  other ground at 8 m/s or the shared `UnitMove.Speed` when that component is
+  present. Hold clears the intent. Pause freezes the stepper.
+- Shared path is reused, not rewritten: if `UnitMove` and a `GridConfig` exist,
+  Move/Attack write `UnitPathRequest`. When `UnitPathFollow` or
+  `UnitPathRequest` already owns the unit, the local stepper only syncs the
+  visual. Editor match worlds without a grid still walk in world space.
+- A cheap Army drawer projection writes the current player page into
+  `SkirmishArmyDrawerSlot` (group, role, alive count, selected, last order).
+  It is not a full drawer HUD.
 
 ### Base Assault objective depth (SK-06)
 - `SkirmishBaseAssaultFacts` + `SkirmishObjectiveFactProjectionSystem`.
@@ -108,6 +118,14 @@ merge commit. That tree was not edited in this slice.
   Surrender is accepted only while Playing. Same-tick both-designated-dead is
   Draw / BothBasesDestroyed.
 - `SkirmishOutcomeSystem` remains the only terminal writer.
+- Hidden-health HUD: **Visible** shows live current health; **LastSeen** keeps
+  the last observed value and ages it (pause freezes the age); **Unknown**
+  displays Hidden 0. A known Barracks marker is not a live hidden-health feed.
+  The shell reads this projection on expanded sessions only.
+- Pause / result / replay on the live expanded session now go through the
+  SK-10 codec path. Presentation no longer writes a legacy
+  `SkirmishReturnRequest` or Quick Game save for expanded Replay/Restart.
+  Custom and legacy receipts still cannot satisfy expanded completion.
 
 ### Launch path
 - `SkirmishExpandedLaunchResolver.TryCompileAndQueue` compiles Skirmish
@@ -163,20 +181,25 @@ merge commit. That tree was not edited in this slice.
 - `SkirmishCheckpointService` captures/applies pause, stocks, designated Base
   Assault flags, living actors and reservations, then checks conservation
   before the session is treated as restored.
-- `SkirmishCheckpointSystem` / `SkirmishResultSettlementSystem` are the live
-  hooks. Settlement is once per session/definition/version/difficulty/size.
-  Custom and legacy receipts cannot satisfy expanded completion. Replay queues
-  a **new** session with the same selected Regular Standard start.
-- This is pause/result scaffolding only. It does not claim device, OS
+- `SkirmishCheckpointSystem` / `SkirmishResultSettlementSystem` /
+  `SkirmishExpandedSessionControlSystem` are the live hooks. Pause captures a
+  checksummed document, settlement is once per
+  session/definition/version/difficulty/size, and Replay destroys attempt-owned
+  actors then queues a **new** session id with fresh Regular Standard stocks
+  (900 Materials). Custom and legacy receipts cannot satisfy expanded
+  completion.
+- This is live Base Assault pause/result/replay wiring, not device, OS
   interruption, War/Large War, or full recovery certification.
 
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
-  legal enemy/ARIA BA skills + registry GameObject visuals / Ground Staging
-  yard + checkpoint/result/replay scaffolding) but **not Playable**, not
-  ARIA/War certified, not Accepted. Programmer 1 validated tip `bf96ba4d5`
-  (definitions, objectives, economy, army, aria, visual).
+  live Standard ground movement + legal enemy/ARIA BA skills + registry
+  GameObject visuals / Ground Staging yard + hidden-health HUD + live
+  pause/result/replay through the SK-10 codec) but **not Playable**, not
+  ARIA/War certified, not Accepted. Programmer 1 validated tip `69f72c638`
+  (definitions, objectives, economy, army, aria, visual, checkpoint). This
+  slice extends those seven suites; it does not add an eighth marker.
 
 ## Remaining ticket gaps
 
@@ -184,10 +207,10 @@ merge commit. That tree was not edited in this slice.
 |---|---|
 | Ground roster and production visual ticket (SK-02) | Air roles; combat certification; live match still uses stand-ins when the scene registry is not supplied to launch |
 | Ground capacity reservation ticket (SK-03) | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
-| Army control, fog, and movement ticket (SK-04) | Live path/world movement, transport boarding, formation/columns, Army drawer HUD, terrain-blocked sight |
+| Army control, fog, and movement ticket (SK-04) | Transport boarding, formation/columns, full Army drawer HUD, terrain-blocked sight; path reuse still needs a live `GridConfig` + `UnitMove` |
 | Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
-| Base Assault objective depth (SK-06) | Hidden-health HUD, world-damage fixtures, pause/result replay through live match |
-| Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery; this slice is codec/round-trip scaffolding only |
+| Base Assault objective depth (SK-06) | World-damage fixtures; EN/FA last-seen copy; device-facing pause chrome |
+| Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery |
 | Measured layout ticket (SK-11) | Measured Desert Base layout, legal pads, route times |
 | Publication and localization ticket (SK-12) | Quick Custom briefing/HUD, EN/FA catalog wiring, publication validator |
 | Acceptance evidence ticket (SK-13) | Manual + ARIA win matrix, device/recovery evidence |
@@ -269,15 +292,21 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedCheckpointTests] result=Passed"
 ```
 
-Required markers:
+Required markers (same seven suites; new cases live inside army, objective, and
+checkpoint):
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
 - `[SkirmishExpandedObjectiveTests] result=Passed`
+  (adds `HiddenHealthProjectsVisibleLastSeenAndUnknown`)
 - `[SkirmishExpandedEconomyTests] result=Passed`
 - `[SkirmishExpandedArmyTests] result=Passed`
+  (adds `StandardGroundUnitsAdvanceWorldTransformOnMove` and
+  `ArmyDrawerProjectsCurrentPlayerPage`)
 - `[SkirmishExpandedAriaTests] result=Passed`
 - `[SkirmishExpandedVisualTests] result=Passed`
 - `[SkirmishExpandedCheckpointTests] result=Passed`
+  (adds `LivePauseSettlesOnceAndReplayReseedsFreshSession` and
+  `CustomAndLegacySessionsAreNotExpandedCompletion`)
 
 Optional compiler / Ground Staging rebuild:
 

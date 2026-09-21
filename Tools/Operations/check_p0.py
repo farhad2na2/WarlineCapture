@@ -14,7 +14,7 @@ CATALOG = ROOT / "Design/Roadmap/Operations/MISSION_CATALOG.csv"
 CONTRACTS_ASMDEF = ROOT / "Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef"
 TESTS_ASMDEF = ROOT / "Assets/Tests/Editor/Operations/Game.Operations.Tests.Editor.asmdef"
 SEGMENT = re.compile(r"[a-z0-9][a-z0-9_]*")
-PASS_MARKER = "[OperationsP0Validation] result=Passed checks=12"
+PASS_MARKER = "[OperationsP0Validation] result=Passed checks=13"
 
 FORBIDDEN_ASMDEFS = [
     "Assets/Game/Scripts/Configs/Game.Configs.asmdef",
@@ -145,6 +145,7 @@ def check_types_exist() -> None:
         "class OperationsRosterLedger",
         "interface IUiOperationsGateway",
         "class OperationsIdentityRules",
+        "class OperationsShadowProject",
     ]
     contracts_dir = ROOT / "Assets/Game/Scripts/Operations/Contracts"
     text = "\n".join(path.read_text() for path in contracts_dir.glob("*.cs"))
@@ -164,6 +165,26 @@ def check_fixtures() -> None:
         fail("missing_fixture")
 
 
+def check_shadow_project() -> None:
+    text = (ROOT / "Assets/Game/Scripts/Operations/Contracts/OperationsShadowProject.cs").read_text()
+    if 'SharedWindowsCheckout = @"D:\\Projects\\WarlineCapture"' not in text:
+        fail("shared_checkout_constant")
+    if 'ShadowWindowsCheckout = @"D:\\Projects\\WarlineCapture-Operations"' not in text:
+        fail("shadow_checkout_constant")
+    for relative in (
+        "Tools/Operations/Ensure-OperationsShadowWorktree.ps1",
+        "Tools/Operations/Invoke-OperationsP0Validation.ps1",
+        "Design/Roadmap/Operations/P0_SHADOW_PROJECT.md",
+    ):
+        if not (ROOT / relative).exists():
+            fail(f"missing={relative}")
+    shared_mentions = (ROOT / "Tools/Operations/Invoke-OperationsP0Validation.ps1").read_text()
+    if "D:\\Projects\\WarlineCapture-Operations" not in shared_mentions:
+        fail("validation_script_missing_shadow")
+    if '-ProjectPath $shared' in shared_mentions:
+        fail("validation_script_uses_shared_project")
+
+
 def check_identity_source() -> None:
     rules = (ROOT / "Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs").read_text()
     if 'IsEqual(value, segments[1], "operations")' in rules:
@@ -178,6 +199,7 @@ def main() -> None:
     check_types_exist()
     check_fixtures()
     check_identity_source()
+    check_shadow_project()
     if (ROOT / ".git").exists():
         try:
             check_shared_untouched()

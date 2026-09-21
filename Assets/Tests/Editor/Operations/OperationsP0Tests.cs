@@ -17,6 +17,7 @@ namespace Game.Tests.Editor.Operations
         [Test] public void AssemblyManifestForbidsSharedEdits() => OperationsP0Checks.AssemblyManifestForbidsSharedEdits();
         [Test] public void SharedIdentityStillRejectsOperationsNamespace() => OperationsP0Checks.SharedIdentityStillRejectsOperationsNamespace();
         [Test] public void HostFilesStayInsideOperationsOwnership() => OperationsP0Checks.HostFilesStayInsideOperationsOwnership();
+        [Test] public void ShadowProjectIsIsolatedFromSharedCheckout() => OperationsP0Checks.ShadowProjectIsIsolatedFromSharedCheckout();
     }
 }
 #endif

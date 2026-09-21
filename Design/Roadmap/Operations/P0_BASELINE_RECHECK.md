@@ -40,6 +40,8 @@ Shared files that later packages will need, and that this branch **must not edit
 
 In-progress Skirmish files on `main` (E0 stress, 120-battle library, City Crossroads) were left intact. This package adds no Skirmish types and does not assume Skirmish checkpoint facilities exist.
 
+Windows validation is later and only on the shadow worktree `D:\Projects\WarlineCapture-Operations`. The shared checkout `D:\Projects\WarlineCapture` stays with Programmer 1 / other tracks; do not open or lock its Library. See [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md).
+
 ## False-type watch list
 
 These names appear in Operations design docs as **new** work. They were **not** found as existing gameplay types:

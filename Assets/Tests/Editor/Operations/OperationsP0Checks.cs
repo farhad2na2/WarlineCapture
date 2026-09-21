@@ -7,8 +7,8 @@ namespace Game.Tests.Editor.Operations
 {
     public static class OperationsP0Checks
     {
-        public const int ExpectedCheckCount = 12;
-        public const string PassMarker = "[OperationsP0Validation] result=Passed checks=12";
+        public const int ExpectedCheckCount = 13;
+        public const string PassMarker = "[OperationsP0Validation] result=Passed checks=13";
 
         public static void RunAll()
         {
@@ -24,6 +24,7 @@ namespace Game.Tests.Editor.Operations
             AssemblyManifestForbidsSharedEdits();
             SharedIdentityStillRejectsOperationsNamespace();
             HostFilesStayInsideOperationsOwnership();
+            ShadowProjectIsIsolatedFromSharedCheckout();
         }
 
         public static void IdentityAcceptsCanonicalValues()
@@ -216,10 +217,34 @@ namespace Game.Tests.Editor.Operations
                 "Assets/Tests/Editor/Operations/Fixtures/operations_save_missing.json",
                 "Assets/Tests/Editor/Operations/Fixtures/operations_save_legacy.json",
                 "Assets/Tests/Editor/Operations/Fixtures/operations_save_current.json",
-                "Assets/Tests/Editor/Operations/Fixtures/operations_save_unknown.json"
+                "Assets/Tests/Editor/Operations/Fixtures/operations_save_unknown.json",
+                "Tools/Operations/Ensure-OperationsShadowWorktree.ps1",
+                "Tools/Operations/Invoke-OperationsP0Validation.ps1",
+                "Design/Roadmap/Operations/P0_SHADOW_PROJECT.md"
             };
             for (int index = 0; index < fixtures.Length; index++)
                 Require(File.Exists(Path.Combine(root, fixtures[index])), fixtures[index]);
+        }
+
+        public static void ShadowProjectIsIsolatedFromSharedCheckout()
+        {
+            Require(OperationsShadowProject.SharedWindowsCheckout == @"D:\Projects\WarlineCapture");
+            Require(OperationsShadowProject.ShadowWindowsCheckout == @"D:\Projects\WarlineCapture-Operations");
+            Require(OperationsShadowProject.IsSharedWindowsCheckout(@"D:\Projects\WarlineCapture"));
+            Require(OperationsShadowProject.IsSharedWindowsCheckout(@"D:/Projects/WarlineCapture/Library"));
+            Require(!OperationsShadowProject.IsSharedWindowsCheckout(@"D:\Projects\WarlineCapture-Operations"));
+            Require(!OperationsShadowProject.IsSharedWindowsCheckout(@"D:\Projects\WarlineCapture-Operations\Library"));
+            Require(OperationsShadowProject.IsShadowWindowsCheckout(@"D:\Projects\WarlineCapture-Operations"));
+            Require(OperationsShadowProject.IsApprovedWindowsValidationPath(@"D:\Projects\WarlineCapture-Operations"));
+            Require(!OperationsShadowProject.IsApprovedWindowsValidationPath(@"D:\Projects\WarlineCapture"));
+            Require(OperationsShadowProject.TryRejectSharedWindowsCheckout(@"D:\Projects\WarlineCapture", out string error));
+            Require(error.IndexOf("WarlineCapture-Operations", StringComparison.Ordinal) >= 0);
+
+#if UNITY_EDITOR
+            string unityRoot = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, ".."));
+            if (OperationsShadowProject.TryRejectSharedWindowsCheckout(unityRoot, out string unityError))
+                throw new InvalidOperationException(unityError);
+#endif
         }
 
         public static OperationsLaunchPayload CreateLaunch(

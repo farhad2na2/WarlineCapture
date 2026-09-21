@@ -128,8 +128,9 @@ suites must not persist Playable.
 
 1. `Tools/Warline/Skirmish/Launch S002 Regular Standard Game View` queues
    expanded Regular Standard seed `104731`, enters the match, dumps
-   `_Evidence/s002-regular-standard-104731-playing.png` plus a sidecar, and
-   stays in Play Mode. It does not inject an army or force Victory.
+   repo-root `_Evidence/s002-regular-standard-104731-playing.png` plus a
+   sidecar (and a copy under this report folder), and stays in Play Mode.
+   It does not inject an army or force Victory.
 2. Play the match at normal speed if a counted manual win is still needed.
 3. `Tools/Warline/Skirmish/Flip S002 Playable If Evidence Ready` writes
    Playable only when compiler hashes still match **and** the required

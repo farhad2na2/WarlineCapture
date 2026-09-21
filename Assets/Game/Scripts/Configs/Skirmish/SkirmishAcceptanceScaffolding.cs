@@ -368,7 +368,8 @@ namespace Game.Configs
     public static class SkirmishAcceptanceScaffold
     {
         public const string RelativeDirectory = "Design/AgentReports/SkirmishExpansion/S002";
-        public const string RelativeEvidenceDirectory = "Design/AgentReports/SkirmishExpansion/S002/_Evidence";
+        public const string RelativeEvidenceDirectory = "_Evidence";
+        public const string RelativeReportEvidenceDirectory = "Design/AgentReports/SkirmishExpansion/S002/_Evidence";
         public const string PlayingPngFileName = "s002-regular-standard-104731-playing.png";
         public const string GameViewSidecarFileName = "s002-regular-standard-104731-gameview.json";
         public const string RunsFileName = "runs.csv";
@@ -379,6 +380,39 @@ namespace Game.Configs
             PlayingPngFileName,
             GameViewSidecarFileName
         };
+
+        public static readonly string[] EvidenceDirectoryCandidates =
+        {
+            RelativeEvidenceDirectory,
+            RelativeReportEvidenceDirectory
+        };
+
+        public static string ResolveEvidenceDirectory(string projectRoot, Func<string, bool> fileExists)
+        {
+            if (string.IsNullOrEmpty(projectRoot))
+                return RelativeEvidenceDirectory;
+            for (int i = 0; i < EvidenceDirectoryCandidates.Length; i++)
+            {
+                string directory = Path.Combine(projectRoot, EvidenceDirectoryCandidates[i]);
+                if (HasRequiredGameViewEvidence(directory, fileExists))
+                    return directory;
+            }
+
+            return Path.Combine(projectRoot, RelativeEvidenceDirectory);
+        }
+
+        public static bool HasRequiredGameViewEvidence(string directory, Func<string, bool> fileExists)
+        {
+            if (fileExists == null || string.IsNullOrEmpty(directory))
+                return false;
+            for (int i = 0; i < RequiredGameViewEvidenceFiles.Length; i++)
+            {
+                if (!fileExists(Path.Combine(directory, RequiredGameViewEvidenceFiles[i])))
+                    return false;
+            }
+
+            return true;
+        }
         public const string RequiredHeader =
             "run_id,catalog_id,definition_version,code_hash,config_hash,size,difficulty,seed,locale,device,executor,normal_speed,started_at,result,end_reason,duration_seconds,input_violations,human_interventions,trace_path,log_path";
 

@@ -7,7 +7,7 @@ Required files for the guarded publication flip:
 
 | File | Source |
 |---|---|
-| `s002-regular-standard-104731-playing.png` | `Tools/Warline/Skirmish/Launch S002 Regular Standard Game View` |
+| `s002-regular-standard-104731-playing.png` | Primary dump is repo-root `_Evidence/`; this folder gets a copy |
 | `s002-regular-standard-104731-gameview.json` | Written by the same probe (seed/definition/phase; `forcedVictory=0`) |
 
 The probe queues expanded S002 Regular Standard seed `104731`, enters the

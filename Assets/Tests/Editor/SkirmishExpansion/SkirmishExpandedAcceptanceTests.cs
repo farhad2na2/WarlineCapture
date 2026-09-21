@@ -251,6 +251,12 @@ namespace Game.Tests.Editor
             Assert.IsTrue(authored.Publication.TryGet("S002", out SkirmishPublicationRowConfig after));
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, after.Status);
             Assert.IsTrue(SkirmishS002GameViewCapture.DescribeLaunchPayload().IndexOf("seed=104731", StringComparison.Ordinal) >= 0);
+            Assert.AreEqual("_Evidence", SkirmishAcceptanceScaffold.RelativeEvidenceDirectory);
+            Assert.IsTrue(SkirmishAcceptanceScaffold.HasRequiredGameViewEvidence("ok", path => true));
+            Assert.IsFalse(SkirmishAcceptanceScaffold.HasRequiredGameViewEvidence("ok", path => false));
+            Assert.AreEqual(
+                Path.Combine("proj", "_Evidence"),
+                SkirmishAcceptanceScaffold.ResolveEvidenceDirectory("proj", path => false));
         }
 
         public static void RunFocusedValidation()

@@ -16,6 +16,8 @@ namespace Game.Editor
         [MenuItem("Tools/Warline/Skirmish/Flip S002 Playable If Evidence Ready")]
         public static void FlipMenu() => Debug.Log(TryWriteS002Playable(true));
 
+        public static void RunFocusedFlipDryRun() => Debug.Log(EvaluateS002PlayableFlip());
+
         public static string EvaluateS002PlayableFlip() => TryWriteS002Playable(false);
 
         public static string TryWriteS002Playable(bool confirmWrite)
@@ -53,7 +55,7 @@ namespace Game.Editor
                 SetupHash = census.SetupHash,
                 DifficultyId = SkirmishDifficultyId.Regular,
                 SizeId = SkirmishSizeId.Standard,
-                EvidenceDirectory = Path.Combine(root, SkirmishAcceptanceScaffold.RelativeEvidenceDirectory),
+                EvidenceDirectory = SkirmishAcceptanceScaffold.ResolveEvidenceDirectory(root, File.Exists),
                 RequiredRelativeFiles = SkirmishAcceptanceScaffold.RequiredGameViewEvidenceFiles,
                 ConfirmWrite = confirmWrite
             };

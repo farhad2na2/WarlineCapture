@@ -33,6 +33,8 @@ namespace Game.Editor
         [MenuItem("Tools/Warline/Skirmish/Launch S002 Regular Standard Game View")]
         public static void LaunchRegularStandardMenu() => LaunchRegularStandard();
 
+        public static void RunFocusedLaunchRegularStandard() => LaunchRegularStandard();
+
         public static void LaunchRegularStandard()
         {
             if (EditorApplication.isPlaying)
@@ -66,6 +68,12 @@ namespace Game.Editor
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             return Path.Combine(root, SkirmishAcceptanceScaffold.RelativeEvidenceDirectory);
+        }
+
+        public static string ReportEvidenceDirectory()
+        {
+            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            return Path.Combine(root, SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory);
         }
 
         public static string DescribeLaunchPayload()
@@ -198,23 +206,46 @@ namespace Game.Editor
 
         private static string CapturePlayingFrame(in SkirmishMatchState match)
         {
-            string directory = EvidenceDirectory();
-            Directory.CreateDirectory(directory);
-            string png = Path.Combine(directory, SkirmishAcceptanceScaffold.PlayingPngFileName);
-            string sidecar = Path.Combine(directory, SkirmishAcceptanceScaffold.GameViewSidecarFileName);
+            string primary = EvidenceDirectory();
+            string report = ReportEvidenceDirectory();
+            Directory.CreateDirectory(primary);
+            Directory.CreateDirectory(report);
+            string png = Path.Combine(primary, SkirmishAcceptanceScaffold.PlayingPngFileName);
             ScreenCapture.CaptureScreenshot(png);
-            File.WriteAllText(sidecar, string.Format(
-                CultureInfo.InvariantCulture,
-                "{{\"catalog\":\"S002\",\"definition\":\"skirmish.s002\",\"size\":\"Standard\",\"difficulty\":\"Regular\",\"seed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"forcedVictory\":0}}\n",
-                match.Seed,
-                match.Phase,
-                match.Outcome));
+            WriteSidecar(primary, in match);
+            WriteSidecar(report, in match);
             Debug.Log("[SkirmishS002GameView] captured " + png);
             return png;
         }
 
+        private static void WriteSidecar(string directory, in SkirmishMatchState match)
+        {
+            File.WriteAllText(
+                Path.Combine(directory, SkirmishAcceptanceScaffold.GameViewSidecarFileName),
+                string.Format(
+                    CultureInfo.InvariantCulture,
+                    "{{\"catalog\":\"S002\",\"definition\":\"skirmish.s002\",\"size\":\"Standard\",\"difficulty\":\"Regular\",\"seed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"forcedVictory\":0}}\n",
+                    match.Seed,
+                    match.Phase,
+                    match.Outcome));
+        }
+
+        private static void CopyPngToReportFolder()
+        {
+            string source = Path.Combine(EvidenceDirectory(), SkirmishAcceptanceScaffold.PlayingPngFileName);
+            if (!File.Exists(source))
+                return;
+            Directory.CreateDirectory(ReportEvidenceDirectory());
+            File.Copy(
+                source,
+                Path.Combine(ReportEvidenceDirectory(), SkirmishAcceptanceScaffold.PlayingPngFileName),
+                true);
+        }
+
         private static void Finish(string reason)
         {
+            if (reason == "captured")
+                CopyPngToReportFolder();
             EditorApplication.update -= Tick;
             SessionState.SetBool(Key, false);
             string previous = SessionState.GetString("Warline.AriaPlayValidation", "");

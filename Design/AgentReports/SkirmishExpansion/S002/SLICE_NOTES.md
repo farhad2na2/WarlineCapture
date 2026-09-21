@@ -276,10 +276,11 @@ This slice did not edit `V3UiLocalizationCatalog`.
   definition / size / difficulty / seed / locale payload and log the
   selected configuration. They do not inject an army or award Victory.
 - `Tools/Warline/Skirmish/Launch S002 Regular Standard Game View` queues
-  Regular Standard seed `104731`, dumps Game View PNGs under `_Evidence/`,
-  and stays in Play Mode. `Flip S002 Playable If Evidence Ready` writes
-  Playable only when hashes match and those evidence files exist. Focused
-  tests call the dry-run path only.
+  Regular Standard seed `104731`, dumps Game View PNGs under repo-root
+  `_Evidence/` (and a copy under the S002 report `_Evidence/`), and stays
+  in Play Mode. `Flip S002 Playable If Evidence Ready` writes Playable
+  only when hashes match and those evidence files exist. Focused tests
+  call the dry-run path only.
 
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +

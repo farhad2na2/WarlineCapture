@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b6aad14ab16f497897dbd4a0ae8ca79, type: 3}
+  m_Name: SkirmishIndustrialBasin
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishPresetConfig
+  operationMap: {fileID: 11400000, guid: 20949d67846d14fc0862faf37b2ba0e9, type: 2}
+  supplyDaySeconds: 120
+  rifleRange: 32
+  rifleDamage: 6
+  rifleCooldown: 0.8
+  armoredCarRange: 40
+  armoredCarDamage: 18
+  armoredCarCooldown: 1.2
+  watchtowerRange: 55
+  watchtowerDamage: 10
+  watchtowerCooldown: 0.8
+  firstAttackSeconds: 60
+  playerReinforcementRallyOffset: {x: 18, y: 0, z: -22}
+  reinforcementInfantryTarget: 16
+  attackSquadSize: 8
+  baseDefenseRadius: 70
+  aiMaterialsReserve: 80
+  aiFuelReserve: 160
+  buildingPlacement: {fileID: 11400000, guid: 79bf06dc9b9c142249fbdc78c6e9a8ef, type: 2}
+  aiControllers:
+  - {fileID: 11400000, guid: c3d7226b0272d44dfa219e9185a76087, type: 2}
+  - {fileID: 11400000, guid: 4e7dd2768a00645fab3308d56ba9352b, type: 2}
+  aiPlan: {fileID: 11400000, guid: eeead70461e414c80a3753a7987c3f58, type: 2}
+  mapVehicles: {fileID: 11400000, guid: adc602e7fd7764b2a89b3c5d9a801ddf, type: 2}

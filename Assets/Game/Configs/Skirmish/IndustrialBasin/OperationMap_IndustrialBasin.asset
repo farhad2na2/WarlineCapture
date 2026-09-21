@@ -1,0 +1,129 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f935472054514bc4baed4554d4d90758, type: 3}
+  m_Name: OperationMap_IndustrialBasin
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
+  operationMapId: opmap.skirmish.industrial_basin
+  schemaVersion: 1
+  contentVersion: 1
+  sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+  contentHash: b7d58db0daa713fa555864067ee57a968027aba8067ebb86cb39c665ee190e97
+  generatedMetadataHash: 051c356985c587ef52442bbdfdc508d8a02432be33bcf3ff633acc579bfc7f8f
+  sourceBinding:
+    sourceOperationMapId: opmap.skirmish.desert_base_01
+    sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+    sourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  bounds:
+    worldMin: {x: 0, y: -6.9545445, z: 0}
+    worldMax: {x: 2048, y: 100, z: 1024}
+    playableMin: {x: 480, y: -6.9545445, z: 220}
+    playableMax: {x: 860, y: 40.375454, z: 640}
+    cameraMin: {x: 480, y: 4, z: 220}
+    cameraMax: {x: 860, y: 100, z: 640}
+  gridMetadata:
+    assetGuid: b201000000000000000000000000000b
+    contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
+    origin: {x: 0, y: 0, z: 0}
+    dimensions: {x: 2048, y: 1024}
+    cellSize: 1
+    authoredBlockedCellCount: 0
+  surfaceMetadata:
+    assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
+    contentHash: cf25bb0edf3375531b4a0e3fab1659f5a9e20008b13381be54ba0d17c6e10b5b
+    runtimeBlobHash: bbe23826402ec39b275c405cc946484f
+    surfaceCount: 2097152
+    payloadVersion: 3
+    payloadEncoding: 1
+    minimumHeight: -5.31082
+    maximumHeight: 17.199179
+  navigationMetadata:
+    authoredSubSceneGuid: c00140f2e94a04c3084c8dcb0c18cbd0
+    gridAuthoringLocalId: 146043441
+    staticGridBlockerCount: 0
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
+  cameras:
+  - cameraId: camera.skirmish.industrial_basin.start
+    position: {x: 560, y: 70, z: 480}
+    eulerAngles: {x: 47.1211, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 50
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  planningCameraId: camera.skirmish.industrial_basin.start
+  battleCameraId: camera.skirmish.industrial_basin.start
+  minimap:
+    minimapId: minimap.skirmish.industrial_basin
+    projectionOrigin: {x: 480, y: 0, z: 220}
+    projectionSize: {x: 380, y: 420}
+    orientationDegrees: 0
+  anchors:
+  - anchorId: anchor.skirmish.industrial_basin.deployment.faction_1
+    kind: 3
+    position: {x: 560, y: 0, z: 550}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 8
+    factionId: 1
+    laneIndex: -1
+  - anchorId: anchor.skirmish.industrial_basin.deployment.faction_2
+    kind: 3
+    position: {x: 760, y: 0, z: 280}
+    eulerAngles: {x: -0, y: 0, z: 0}
+    radius: 8
+    factionId: 2
+    laneIndex: -1
+  presentationKind: 1
+  renderResidencyMode: 1
+  sourceSceneReference:
+    m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  optionalHeavyMetadataReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  staticPresentationManifestReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  mapSurfaceDataReference:
+    m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  minimapRasterReference:
+    m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  buildingPlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  vehiclePlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  additionalBuildingPlacements: {fileID: 0}

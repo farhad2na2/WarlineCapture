@@ -131,6 +131,21 @@ namespace Game.Editor
             touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             Step(); Check(plan.AssaultStarted == 0 && output.Kind == AriaPlayObservationKind.Waiting,
                 "opening preserves normal engagement while waiting for the next recruitment");
+            view.ThreatNearForce = true;
+            view.Threat = new AriaTouchTarget { Available = true, Id = -20002 };
+            view.Attack = new AriaTouchTarget { Available = true, Id = 14 };
+            Step(); Check(output.TargetId == 14, "opening arms Attack when a nearby contact is already on screen");
+            view.AttackMode = true;
+            Step(); Check(output.TargetId == -20002 && plan.Intent == AriaSkirmishIntent.TargetThreat,
+                "opening contests the nearby contact instead of idling until the assault deadline");
+            view.Infantry = 0; view.AvailableSquads = 0; view.Threat = default; view.FocusThreat =
+                new AriaTouchTarget { Available = true, Id = -20003 };
+            plan.MapNavigationReadyAt = 0;
+            Step(); Check(plan.Intent == AriaSkirmishIntent.Recruit && output.TargetId != -20003,
+                "empty opening force rebuilds instead of opening the threat map");
+            view.ThreatNearForce = false; view.Threat = default; view.FocusThreat = default; view.AttackMode = false;
+            view.Infantry = 8; view.AvailableSquads = 1;
+            plan.Intent = AriaSkirmishIntent.ObserveBattle; plan.NextRecruitAt = 999;
             view.SelectionVisible = true; view.SelectedSlot = 0;
             view.Hold = new AriaTouchTarget { Available = true, Id = 30 };
             Step(); Check(output.TargetId != 30, "opening does not pin defenders with Hold");
@@ -141,7 +156,7 @@ namespace Game.Editor
                 "new arrivals retain their automatic rally instead of being stopped at delivery");
             view.AvailableSquads = 0; view.Infantry = 0; view.Time = 20;
             view.Recruit = new AriaTouchTarget { Available = true, Id = 11 };
-            plan.Intent = AriaSkirmishIntent.GroupForce; plan.AssaultStarted = 1;
+            plan.Intent = AriaSkirmishIntent.GroupForce; plan.AssaultStarted = 1; plan.NextRecruitAt = 0;
             Step(); Check(output.TargetId == 11 && plan.Intent == AriaSkirmishIntent.Recruit,
                 "empty army recruits instead of selecting building markers");
             view.AvailableSquads = 9; view.Infantry = 6; view.Time = 30;
@@ -248,7 +263,14 @@ namespace Game.Editor
             plan = new AriaSkirmishPlanComponent { DefenseStage = 4, NextRecruitAt = 999 };
             touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             Step(); Check(plan.AssaultStarted == 0, "a full army finishes the nearby defensive fight before departing");
+            view.Time = 260; plan.OpeningUntil = 100; plan.LastProgressAt = 10;
+            plan.EnemyHealth = view.EnemyHealth; plan.PlayerHealth = view.PlayerHealth;
+            plan.ForceHealth = view.ForceHealth; plan.Infantry = view.Infantry;
+            Step(); Check(touch.Phase != AriaPlayPhase.Blocked && plan.AssaultStarted == 1,
+                "opening standoff waits for the assault deadline instead of timing out as a stuck loop");
             view.Infantry = 15; view.ThreatNearForce = false; view.Time = 200;
+            plan = new AriaSkirmishPlanComponent { DefenseStage = 4, NextRecruitAt = 999 };
+            touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             Step(); Check(plan.AssaultStarted == 0, "a partial army does not depart at the old ninety-second deadline");
             view.Infantry = 24;
             Step(); Check(plan.AssaultStarted == 1, "assembled army can advance after the threat clears");
@@ -369,6 +391,11 @@ namespace Game.Editor
             Check(output.TargetId == 62, "completed flank focus closes the map exactly once");
             view.MapOpen = false; Step();
             Check(plan.GroupStage == 3 && plan.AdvanceNavigation == 0, "flank focus preserves the army selection and completes navigation");
+            view.FocusAdvance = new AriaTouchTarget { Available = true, Id = -20010 };
+            view.FocusEnemy = new AriaTouchTarget { Available = true, Id = 13 };
+            view.Time = plan.MapNavigationReadyAt - 1f;
+            Step(); Check(output.TargetId == 13 && plan.MapNavigationStage == 0 && plan.AdvanceNavigation == 0,
+                "advance settle uses the labelled enemy camera instead of reopening the map");
             view.Time += 10; view.FocusAdvance.Id = 63;
             Step(); Check(output.TargetId == 63 && plan.MapNavigationStage == 0,
                 "final approach can use the labelled base camera button without entering a map loop");

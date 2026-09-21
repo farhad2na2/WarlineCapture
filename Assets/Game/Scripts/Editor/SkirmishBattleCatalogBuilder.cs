@@ -76,8 +76,8 @@ namespace Game.Editor
                     throw new InvalidOperationException(error ?? "Catalog invalid.");
                 if (catalog.Entries.Count != 120)
                     throw new InvalidOperationException($"Expected 120 catalog entries, got {catalog.Entries.Count}.");
-                if (catalog.CountPlayable() != 2)
-                    throw new InvalidOperationException($"Expected 2 playable entries, got {catalog.CountPlayable()}.");
+                if (catalog.CountPlayable() != 3)
+                    throw new InvalidOperationException($"Expected 3 playable entries, got {catalog.CountPlayable()}.");
 
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SetupPrefabPath);
                 if (prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary") == null)
@@ -137,6 +137,18 @@ namespace Game.Editor
                         "Attack from the north toward the southern base. Use city streets or flank around the blocks.";
                     entry.DescriptionFarsi =
                         "از شمال شهر به پایگاه جنوبی حمله کن؛ از خیابون‌ها یا مسیرهای کناری جلو برو.";
+                    entries[i] = entry;
+                }
+                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.IndustrialBasinScenarioId)
+                {
+                    entry.Status = SkirmishBattleCatalogStatus.Playable;
+                    entry.PlayableScenarioIndex = SkirmishPresetConfig.IndustrialBasinScenarioIndex;
+                    entry.TitleKey = "ui.skirmish.industrial_basin_map";
+                    entry.TitleEnglish = "INDUSTRIAL BASIN";
+                    entry.DescriptionEnglish =
+                        "Advance from the northwest industrial yard toward the southeast base. Use the freight avenue or service ring.";
+                    entry.DescriptionFarsi =
+                        "از حیاط صنعتی شمال‌غربی به پایگاه جنوب‌شرقی حمله کن؛ از مسیر باربری یا حلقه خدماتی جلو برو.";
                     entries[i] = entry;
                 }
                 else

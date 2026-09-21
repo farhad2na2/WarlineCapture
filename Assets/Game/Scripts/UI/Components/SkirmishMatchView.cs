@@ -1,4 +1,5 @@
 using System;
+using Game.Configs;
 using Game.UI.Contracts;
 using TMPro;
 using UnityEngine;
@@ -127,7 +128,17 @@ namespace Game.UI.Runtime
                 mapClockHeading = Label(mapInformation, "", 18, 30);
                 mapClock = Label(mapInformation, "", 24, 32);
             }
-            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get(model.ScenarioIndex == 1 ? "ui.skirmish.city_crossroads_map" : "ui.skirmish.base_assault_map", model.ScenarioIndex == 1 ? "CITY CROSSROADS" : "DESERT BASE"));
+            string mapTitleKey = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                ? "ui.skirmish.industrial_basin_map"
+                : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                    ? "ui.skirmish.city_crossroads_map"
+                    : "ui.skirmish.base_assault_map";
+            string mapTitleFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                ? "INDUSTRIAL BASIN"
+                : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                    ? "CITY CROSSROADS"
+                    : "DESERT BASE";
+            UiLocalizedText.Set(mapName, UiShellRuntimeGateway.Localization.Get(mapTitleKey, mapTitleFallback));
             SetBaseLabel(mapPlayer, mapPlayerHealth, model.PlayerBase);
             SetBaseLabel(mapEnemy, mapEnemyHealth, model.EnemyBase);
             var time = (model.Clock ?? string.Empty).Split(new[] { "  " }, StringSplitOptions.None);

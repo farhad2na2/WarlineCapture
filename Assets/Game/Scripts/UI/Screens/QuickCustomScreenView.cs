@@ -106,7 +106,11 @@ namespace Game.UI.Runtime
                 }
             }
             else
-                _config.ScenarioIndex = config.ScenarioIndex == 1 ? 1 : 0;
+            {
+                _config.ScenarioIndex = SkirmishPresetConfig.IsPlayerBattlefield(config.ScenarioIndex)
+                    ? config.ScenarioIndex
+                    : SkirmishPresetConfig.DesertBaseScenarioIndex;
+            }
             PresentScenarioChoices();
             SetDropdownValue(presetDropdown, 0);
             SetDropdownValue(enemyTypeDropdown, (int)config.EnemyType);

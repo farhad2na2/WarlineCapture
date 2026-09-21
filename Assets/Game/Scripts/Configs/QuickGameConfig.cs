@@ -72,15 +72,18 @@ namespace Game.Configs
             MapSeed = 104729
         };
 
-        // Player battlefields remain Desert Base and City Crossroads. Scenario 2 is
-        // the Editor-only E0.3 stress probe and is not offered in setup UI.
+        // Player battlefields: Desert Base (0), City Crossroads (1), Industrial Basin (3).
+        // Scenario 2 remains the Editor-only E0.3 stress probe.
         public QuickGameConfig NormalizeForBaseAssault()
         {
             QuickGameConfig normalized = Defaults;
             normalized.MapSeed = MapSeed > 0 ? MapSeed : Defaults.MapSeed;
-            normalized.ScenarioIndex = ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
-                || ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex
-                ? ScenarioIndex : 0;
+            normalized.ScenarioIndex =
+                ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ||
+                ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex ||
+                ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                    ? ScenarioIndex
+                    : SkirmishPresetConfig.DesertBaseScenarioIndex;
             return normalized;
         }
 

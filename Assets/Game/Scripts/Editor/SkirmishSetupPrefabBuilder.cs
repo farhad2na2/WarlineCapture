@@ -155,7 +155,7 @@ namespace Game.Editor
             int gradients = prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length;
             if (gradients < 10)
                 throw new InvalidOperationException($"SCN-13 requires procedural V3 gradients; found {gradients}.");
-            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} scenarios=2");
+            Debug.Log($"[SkirmishSetupV3Validation] result=Passed gradients={gradients} scenarios=3");
         }
 
         private static void LoadAssets()

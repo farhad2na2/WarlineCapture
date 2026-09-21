@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using Game.Components;
+using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -75,7 +76,11 @@ namespace Game.Editor
                 {
                     var setup = UnityEngine.Object.FindAnyObjectByType<QuickCustomScreenView>();
                     if (setup == null) return;
-                    setup.SelectScenario(setupMission == -2 ? 1 : 0);
+                    setup.SelectScenario(setupMission == -3
+                        ? SkirmishPresetConfig.IndustrialBasinScenarioIndex
+                        : setupMission == -2
+                            ? SkirmishPresetConfig.CityCrossroadsScenarioIndex
+                            : SkirmishPresetConfig.DesertBaseScenarioIndex);
                     setup.LaunchMatch(); EditorApplication.update -= SetupMatch;
                 }
                 else if (Deploy(setupMission) == "True") EditorApplication.update -= SetupMatch;

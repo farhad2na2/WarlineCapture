@@ -193,6 +193,66 @@ namespace Game.Tests.Editor
             Assert.IsTrue(census.IndexOf("playable=0", StringComparison.Ordinal) >= 0);
         }
 
+        [Test]
+        public void PlayableFlipRequiresHashesAndEvidencePaths()
+        {
+            LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            Assert.IsTrue(SkirmishAcceptanceCensusCapture.TryCaptureRegularStandard(
+                authored, matrix, out SkirmishAcceptanceCensus census, out _));
+            authored.Publication.TryGet("S002", out SkirmishPublicationRowConfig row);
+            var setup = new SkirmishResolvedSetup
+            {
+                CatalogId = census.CatalogId,
+                DefinitionId = census.DefinitionId,
+                ContentHash = census.ContentHash,
+                SetupHash = census.SetupHash,
+                DifficultyId = SkirmishDifficultyId.Regular,
+                SizeId = SkirmishSizeId.Standard
+            };
+            var missing = new SkirmishPlayableFlipRequest
+            {
+                CatalogId = census.CatalogId,
+                DefinitionId = census.DefinitionId,
+                ContentHash = census.ContentHash,
+                SetupHash = census.SetupHash,
+                DifficultyId = SkirmishDifficultyId.Regular,
+                SizeId = SkirmishSizeId.Standard,
+                EvidenceDirectory = "missing-evidence",
+                RequiredRelativeFiles = SkirmishAcceptanceScaffold.RequiredGameViewEvidenceFiles,
+                ConfirmWrite = true
+            };
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS002, setup, in missing, path => false,
+                out SkirmishPublicationStatus missingStatus, out List<SkirmishCompileReason> missingReasons));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, missingStatus);
+            Assert.AreEqual(SkirmishReasonCode.MissingReadiness, missingReasons[0].Code);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
+
+            var stale = missing;
+            stale.ContentHash = "stale.hash";
+            stale.EvidenceDirectory = "present";
+            Assert.IsFalse(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS002, setup, in stale, path => true,
+                out _, out List<SkirmishCompileReason> hashReasons));
+            Assert.AreEqual(SkirmishReasonCode.MatrixMismatch, hashReasons[0].Code);
+
+            var ready = missing;
+            ready.EvidenceDirectory = "present";
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS002, setup, in ready, path => true,
+                out SkirmishPublicationStatus readyStatus, out _));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
+
+            string dryRun = SkirmishPublicationFlipMenu.EvaluateS002PlayableFlip();
+            Assert.IsTrue(dryRun.IndexOf("playable=0", StringComparison.Ordinal) >= 0);
+            Assert.IsFalse(dryRun.IndexOf("playable=1", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(authored.Publication.TryGet("S002", out SkirmishPublicationRowConfig after));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, after.Status);
+            Assert.IsTrue(SkirmishS002GameViewCapture.DescribeLaunchPayload().IndexOf("seed=104731", StringComparison.Ordinal) >= 0);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -204,6 +264,7 @@ namespace Game.Tests.Editor
                 suite.FirstVisitPayloadRejectsWarAndUnknownLocale();
                 suite.AriaPlayAndWatchFacilitiesLogSelectedConfiguration();
                 suite.PendingRunRowKeepsEmptyResultAndCensusProbeDoesNotPublish();
+                suite.PlayableFlipRequiresHashesAndEvidencePaths();
                 Debug.Log("[SkirmishExpandedAcceptanceTests] result=Passed");
             }
             catch (Exception exception)

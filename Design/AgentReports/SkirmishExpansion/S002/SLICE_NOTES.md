@@ -275,6 +275,11 @@ This slice did not edit `V3UiLocalizationCatalog`.
   existing Industrial Basin watch probe now accept the immutable
   definition / size / difficulty / seed / locale payload and log the
   selected configuration. They do not inject an army or award Victory.
+- `Tools/Warline/Skirmish/Launch S002 Regular Standard Game View` queues
+  Regular Standard seed `104731`, dumps Game View PNGs under `_Evidence/`,
+  and stays in Play Mode. `Flip S002 Playable If Evidence Ready` writes
+  Playable only when hashes match and those evidence files exist. Focused
+  tests call the dry-run path only.
 
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
@@ -286,8 +291,9 @@ This slice did not edit `V3UiLocalizationCatalog`.
   routes + library/HUD copy wiring + acceptance scaffold / hash census)
   but **not Playable**, not ARIA/War certified, not Accepted. Programmer 1
   validated tip `f73637f59` (eight suites). This slice adds a ninth
-  acceptance-scaffold marker. Game PM decides whether Editor evidence
-  alone can flip the publication row.
+  acceptance-scaffold marker. Game PM authorised Programmer 1 to flip
+  Playable after Game View evidence via the guarded menu; focused tests
+  do not persist that write.
 
 ## Remaining ticket gaps
 
@@ -301,7 +307,7 @@ This slice did not edit `V3UiLocalizationCatalog`.
 | Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery |
 | Measured layout ticket (SK-11) | Device-measured navigation on the shared Desert Base scene; War/Large War staging reservations; City Crossroads / Mountain Pass / Industrial Basin / Airfield Plains packets |
 | Publication and localization ticket (SK-12) | RTL/long-copy/device HUD review; expose certified extra sizes only after SK-13 evidence |
-| Acceptance evidence ticket (SK-13) | Counted normal-speed manual and ARIA wins, filled `runs.csv` rows, device/recovery evidence. Scaffold and hashes are in place; Game PM owns the Playable flip |
+| Acceptance evidence ticket (SK-13) | Counted normal-speed manual and ARIA wins, filled `runs.csv` rows, device/recovery evidence. Scaffold, hashes, Game View launch, and a guarded flip menu are in place |
 
 ## How to validate in Editor
 
@@ -433,7 +439,8 @@ Required markers (same eight suites plus acceptance scaffold/hash plumbing):
   `RegularStandardCensusCapturesStableHashesWithoutPlayable`,
   `FirstVisitPayloadRejectsWarAndUnknownLocale`,
   `AriaPlayAndWatchFacilitiesLogSelectedConfiguration`,
-  `PendingRunRowKeepsEmptyResultAndCensusProbeDoesNotPublish`)
+  `PendingRunRowKeepsEmptyResultAndCensusProbeDoesNotPublish`,
+  `PlayableFlipRequiresHashesAndEvidencePaths`)
 
 Optional compiler / Ground Staging rebuild:
 
@@ -444,6 +451,8 @@ Tools/Warline/Skirmish/Rebuild Desert Base Layout
 Tools/Warline/Skirmish/Validate S002 Publication
 Tools/Warline/Skirmish/Capture S002 Regular Standard Census
 Tools/Warline/Skirmish/Log S002 Regular Standard ARIA Watch Payload
+Tools/Warline/Skirmish/Launch S002 Regular Standard Game View
+Tools/Warline/Skirmish/Flip S002 Playable If Evidence Ready
 ```
 
 A live Editor match on Desert Base Regular Standard should show starting

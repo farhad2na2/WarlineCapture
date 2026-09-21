@@ -55,5 +55,22 @@ namespace Game.Configs
             row = default;
             return false;
         }
+
+        public bool TrySetStatus(string catalogId, SkirmishPublicationStatus status, string notes)
+        {
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (rows[i].CatalogId != catalogId)
+                    continue;
+                SkirmishPublicationRowConfig row = rows[i];
+                row.Status = status;
+                if (!string.IsNullOrEmpty(notes))
+                    row.Notes = notes;
+                rows[i] = row;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

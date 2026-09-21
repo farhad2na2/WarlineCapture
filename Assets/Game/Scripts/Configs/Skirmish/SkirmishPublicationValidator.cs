@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Game.Skirmish.Contracts;
 
@@ -17,6 +18,19 @@ namespace Game.Configs
         public bool RecoveryEvidence;
         public bool DeviceEvidence;
         public bool AssetExists;
+    }
+
+    public struct SkirmishPlayableFlipRequest
+    {
+        public string CatalogId;
+        public string DefinitionId;
+        public string ContentHash;
+        public uint SetupHash;
+        public SkirmishDifficultyId DifficultyId;
+        public SkirmishSizeId SizeId;
+        public string EvidenceDirectory;
+        public string[] RequiredRelativeFiles;
+        public bool ConfirmWrite;
     }
 
     public static class SkirmishPublicationValidator
@@ -122,6 +136,89 @@ namespace Game.Configs
             evidence.EdgeFixtures &&
             evidence.RecoveryEvidence &&
             evidence.DeviceEvidence;
+
+        public static bool TryEvaluatePlayableFlip(
+            SkirmishPublicationRowConfig row,
+            SkirmishScenarioDefinitionConfig definition,
+            SkirmishResolvedSetup setup,
+            in SkirmishPlayableFlipRequest request,
+            Func<string, bool> fileExists,
+            out SkirmishPublicationStatus status,
+            out List<SkirmishCompileReason> reasons)
+        {
+            var evidence = new SkirmishPublicationEvidence
+            {
+                CatalogId = request.CatalogId,
+                DefinitionId = request.DefinitionId,
+                ContentHash = request.ContentHash,
+                SetupHash = request.SetupHash,
+                DifficultyId = request.DifficultyId,
+                SizeId = request.SizeId,
+                AssetExists = true
+            };
+            if (!TryEvaluate(row, definition, setup, in evidence, out status, out reasons))
+                return false;
+
+            reasons.Clear();
+            if (string.IsNullOrEmpty(request.EvidenceDirectory))
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.MissingReadiness,
+                    "evidenceDirectory",
+                    "Game View evidence path is required."));
+                status = SkirmishPublicationStatus.InProgress;
+                return true;
+            }
+
+            if (request.RequiredRelativeFiles == null || request.RequiredRelativeFiles.Length == 0)
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.MissingReadiness,
+                    "evidenceFiles",
+                    "Required Game View evidence files are missing from the flip request."));
+                status = SkirmishPublicationStatus.InProgress;
+                return true;
+            }
+
+            if (fileExists == null)
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.MissingReadiness,
+                    "evidenceFiles",
+                    "Evidence path probe is required."));
+                status = SkirmishPublicationStatus.InProgress;
+                return true;
+            }
+
+            for (int i = 0; i < request.RequiredRelativeFiles.Length; i++)
+            {
+                string relative = request.RequiredRelativeFiles[i];
+                string path = CombineEvidencePath(request.EvidenceDirectory, relative);
+                if (!fileExists(path))
+                {
+                    reasons.Add(new SkirmishCompileReason(
+                        SkirmishReasonCode.MissingReadiness,
+                        "evidenceFiles",
+                        path));
+                    status = SkirmishPublicationStatus.InProgress;
+                    return true;
+                }
+            }
+
+            status = SkirmishPublicationStatus.Playable;
+            return true;
+        }
+
+        public static string CombineEvidencePath(string directory, string relativeFile)
+        {
+            if (string.IsNullOrEmpty(directory))
+                return relativeFile ?? string.Empty;
+            if (string.IsNullOrEmpty(relativeFile))
+                return directory;
+            if (directory.EndsWith("/", StringComparison.Ordinal) || directory.EndsWith("\\", StringComparison.Ordinal))
+                return directory + relativeFile;
+            return directory + "/" + relativeFile;
+        }
 
         public static void ApplyLegacyPrototypeCompatibility(
             SkirmishBattleCatalogEntry[] entries,

@@ -45,6 +45,18 @@ namespace Game.UI.Shell.Ecs
                 playerBase=HiddenAwareBaseLabel(playerReadout,"player_base","YOUR MAIN BASE");
                 enemyBase=HiddenAwareBaseLabel(enemyReadout,"enemy_base","ENEMY MAIN BASE");
             }
+            string objective=GameText.Get("ui.skirmish.objective_explanation","Destroy the marked enemy Barracks. Protect your own main base.");
+            string resultTitle=GameText.Get("ui.skirmish.result."+outcome,match.Outcome.ToString());
+            string resultDetail=GameText.Get("ui.skirmish.reason."+reason,match.Reason.ToString());
+            if(SkirmishExpandedSessionControlService.IsExpanded(em,session) &&
+               SkirmishExpandedHudCopy.TryResolve(em,session,match,GameLocalization.CurrentLocaleCode,out string expandedObjective,out string expandedResult,out string expandedDetail))
+            {
+                objective=expandedObjective;
+                if(!string.IsNullOrEmpty(expandedResult))
+                    resultTitle=expandedResult;
+                if(!string.IsNullOrEmpty(expandedDetail))
+                    resultDetail=expandedDetail;
+            }
             model=new UiSkirmishModel
             {
                 ScenarioIndex=match.ScenarioIndex,
@@ -54,9 +66,9 @@ namespace Game.UI.Shell.Ecs
                 PlayerBase=playerBase,
                 EnemyBase=enemyBase,
                 Clock=GameText.Get("ui.skirmish.time_remaining","TIME LEFT")+"  "+remaining/60+":"+(remaining%60).ToString("00"),
-                Objective=GameText.Get("ui.skirmish.objective_explanation","Destroy the marked enemy Barracks. Protect your own main base."),
-                ResultTitle=GameText.Get("ui.skirmish.result."+outcome,match.Outcome.ToString()),
-                ResultDetail=GameText.Get("ui.skirmish.reason."+reason,match.Reason.ToString()),
+                Objective=objective,
+                ResultTitle=resultTitle,
+                ResultDetail=resultDetail,
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };

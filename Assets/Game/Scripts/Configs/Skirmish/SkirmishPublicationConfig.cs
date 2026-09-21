@@ -36,7 +36,7 @@ namespace Game.Configs
                     DefinitionId = "skirmish.s002",
                     Status = SkirmishPublicationStatus.InProgress,
                     EvidencePath = "Design/AgentReports/SkirmishExpansion/S002/",
-                    Notes = "Compiler + overlays + Base Assault facts + capacity + legal army groups + legal enemy/ARIA BA skills + registry GameObject visuals / Ground Staging yard + measured Desert Base pads/routes. Not Playable/ARIA/War certified."
+                    Notes = "SK-12 library/HUD copy + publication validator scaffolding. Asset existence cannot set Playable. Not Playable/ARIA/War certified."
                 }
             };
         }

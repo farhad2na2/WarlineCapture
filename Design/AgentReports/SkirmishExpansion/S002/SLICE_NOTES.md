@@ -243,6 +243,22 @@ This slice did not edit `V3UiLocalizationCatalog`.
 - Not yet: baked navigation probes, wreck blockage, War/Large War staging
   growth, or the other four map packets. No scene geometry was edited.
 
+### Library, copy and publication ticket (SK-12)
+- Quick Custom library cards and briefing resolve the existing
+  `skirmish.s002.*` keys for Regular Standard without making the row Ready.
+  Status on the card is **In Progress**. Launch stays disabled. War / Custom
+  do not take the first-visit briefing.
+- Expanded HUD objective and result lines use the same keys
+  (`objective`, `result.victory` / `defeat` / `draw_bases` / `draw_deadline` /
+  `surrender`). `MatchSceneView` was not rewritten.
+- `SkirmishPublicationValidator` requires matching definition/content/setup
+  hashes and Regular Standard. An asset’s existence cannot set Playable.
+  Manual, ARIA, edge, recovery and device evidence are all required. The
+  authored row stays **InProgress**.
+- The three legacy prototypes remain Playable only through compatibility
+  version 1. A different version does not stamp those overrides.
+- `V3UiLocalizationCatalog` was not edited in this slice.
+
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
@@ -250,10 +266,9 @@ This slice did not edit `V3UiLocalizationCatalog`.
   GameObject visuals / Ground Staging yard + hidden-health HUD + live
   pause/result/replay through the SK-10 codec + HQ/Ground Staging research
   scaffolding and 75% mid-produce refunds + measured Desert Base pads and
-  routes) but **not Playable**, not ARIA/War certified, not Accepted.
-  Programmer 1 validated tip `d39dd7cb2` (definitions, objectives, economy,
-  army, aria, visual, checkpoint). This slice extends the definition suite
-  inside the same seven markers.
+  routes + library/HUD copy wiring) but **not Playable**, not ARIA/War
+  certified, not Accepted. Programmer 1 validated tip `3445eb97f` (seven
+  suites). This slice adds an eighth catalog/publication marker.
 
 ## Remaining ticket gaps
 
@@ -266,7 +281,7 @@ This slice did not edit `V3UiLocalizationCatalog`.
 | Base Assault objective depth (SK-06) | World-damage fixtures; EN/FA last-seen copy; device-facing pause chrome |
 | Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery |
 | Measured layout ticket (SK-11) | Device-measured navigation on the shared Desert Base scene; War/Large War staging reservations; City Crossroads / Mountain Pass / Industrial Basin / Airfield Plains packets |
-| Publication and localization ticket (SK-12) | Quick Custom briefing/HUD, EN/FA catalog wiring, publication validator |
+| Publication and localization ticket (SK-12) | RTL/long-copy/device HUD review; expose certified extra sizes only after SK-13 evidence |
 | Acceptance evidence ticket (SK-13) | Manual + ARIA win matrix, device/recovery evidence |
 
 ## How to validate in Editor
@@ -346,7 +361,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedCheckpointTests] result=Passed"
 ```
 
-Required markers (same seven suites; new cases live inside definitions):
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedCatalogTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-catalog.log" `
+  -RequiredPassMarker "[SkirmishExpandedCatalogTests] result=Passed"
+```
+
+Required markers (same seven suites plus catalog/publication):
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
   (adds `CompilerAcceptsTypedDesertBaseLayout`,
@@ -368,6 +392,13 @@ Required markers (same seven suites; new cases live inside definitions):
 - `[SkirmishExpandedCheckpointTests] result=Passed`
   (adds `LivePauseSettlesOnceAndReplayReseedsFreshSession` and
   `CustomAndLegacySessionsAreNotExpandedCompletion`)
+- `[SkirmishExpandedCatalogTests] result=Passed`
+  (`RegularStandardResolvesS002BriefingAndHudKeys`,
+  `WarAndCustomDoNotResolveFirstVisitBriefing`,
+  `AssetExistenceDoesNotSetPlayable`,
+  `HashMismatchAndWrongMatrixRejectPlayable`,
+  `LegacyPrototypeCompatibilityIsVersionedAndDoesNotPublishS002`,
+  `CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress`)
 
 Optional compiler / Ground Staging rebuild:
 
@@ -375,6 +406,7 @@ Optional compiler / Ground Staging rebuild:
 Tools/Warline/Skirmish/Rebuild Expanded Definitions
 Tools/Warline/Skirmish/Rebuild Ground Staging
 Tools/Warline/Skirmish/Rebuild Desert Base Layout
+Tools/Warline/Skirmish/Validate S002 Publication
 ```
 
 A live Editor match on Desert Base Regular Standard should show starting

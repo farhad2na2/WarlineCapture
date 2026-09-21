@@ -33,13 +33,15 @@ MonoBehaviour:
     ObjectiveId: BA
     ArmyProfile: G
     StartProfile: E
-    TitleKey: 
-    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
-      Base"
-    DescriptionEnglish: 
-    DescriptionFarsi: 
+    TitleKey: skirmish.s002.title
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Established"
+    DescriptionEnglish: Use the starting tank and APC to contest the highway. Keep one infantry squad at home. Press now or scout the south sweep before siege.
+    DescriptionFarsi: با تانک و نفربر شروع‌شده بزرگراه را بگیر. یک دسته پیاده در خانه بماند. یا سریع فشار بده یا جنوب را شناسایی کن.
     Status: 0
     PlayableScenarioIndex: -1
+    DefinitionId: skirmish.s002
+    ContentVersion: 1
+    ReadinessManifestId: publication.skirmish.s002
   - ScenarioId: S003
     MapId: DB
     ObjectiveId: BA

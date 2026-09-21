@@ -130,6 +130,14 @@ public sealed class SkirmishSetupScreenTests
 
         Assert.IsNull(FindRecursive(prefab.transform,"PresetRail"));
         Assert.NotNull(FindRecursive(prefab.transform,"BaseAssaultRules"));
+        Assert.NotNull(FindRecursive(prefab.transform, "BattleLibrary"),
+            "SCN-13 must host the scalable battle library scroll root.");
+        Assert.NotNull(FindRecursive(prefab.transform, "BattleLibraryMapTabs"),
+            "SCN-13 must host map collection tabs.");
+        Assert.NotNull(FindRecursive(prefab.transform, "BattleLibrarySearch"),
+            "SCN-13 must host battle search.");
+        Assert.IsNull(FindRecursive(prefab.transform, "ScenarioChoices"),
+            "Legacy fixed ScenarioChoices strip must be removed.");
         Transform mapTransform = FindRecursive(prefab.transform, "MapPreview");
         Assert.NotNull(mapTransform);
         RawImage map = mapTransform.GetComponent<RawImage>();

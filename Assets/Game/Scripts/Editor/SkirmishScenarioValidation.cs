@@ -57,8 +57,20 @@ namespace Game.Editor
                 }
             }
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
-            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario1") != null &&
-                prefab.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario2") != null, "Two visible scenario controls required.");
+            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary") != null,
+                "Battle library scroll root required.");
+            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs") != null,
+                "Battle library map tabs required.");
+            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrarySearch") != null,
+                "Battle library search field required.");
+            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary/Viewport/Content") != null,
+                "Battle library content root required.");
+            Check(prefab.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices") == null,
+                "Legacy ScenarioChoices must be removed.");
+            var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogBuilder.AssetPath);
+            Check(catalog != null && catalog.TryValidate(out _), "Battle catalog asset must validate.");
+            Check(catalog.Entries.Count == 120 && catalog.CountPlayable() == 2,
+                "Catalog must list 120 scenarios with exactly two playable entries.");
             return $"[SkirmishScenarioValidation] result=Passed cases={checks}";
         }
     }

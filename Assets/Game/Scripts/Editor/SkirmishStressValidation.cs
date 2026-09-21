@@ -196,10 +196,16 @@ namespace Game.Editor
 
             var setup = AssetDatabase.LoadAssetAtPath<GameObject>(
                 "Assets/Game/Prefabs/UI/Shell/Content/SCN13_SkirmishSetupContent.prefab");
-            Check(setup.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario1") != null
-                && setup.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario2") != null
-                && setup.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario3") == null,
-                "Player setup must still expose only the two small battles.");
+            Check(setup.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary") != null,
+                "Player setup must expose the scalable battle library.");
+            Check(setup.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibraryMapTabs") != null,
+                "Player setup must expose map collection tabs.");
+            Check(setup.transform.Find("SkirmishSetupComposition/OperationPreview/ScenarioChoices/Scenario1") == null,
+                "Legacy fixed Scenario1 control must be removed.");
+            var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(
+                SkirmishBattleCatalogBuilder.AssetPath);
+            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 2,
+                "Player setup catalog must list 120 battles with only two playable.");
             return "[SkirmishStressValidation] result=Passed cases=" + checks;
         }
 

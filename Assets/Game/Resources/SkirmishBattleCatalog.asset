@@ -1,0 +1,1449 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d27fbfd9b6e4275aa4cc07fe2265ea, type: 3}
+  m_Name: SkirmishBattleCatalog
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishBattleCatalogConfig
+  entries:
+  - ScenarioId: S001
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: ui.skirmish.base_assault_map
+    TitleEnglish: DESERT BASE
+    DescriptionEnglish: Advance from the western base. Fight through the city or
+      approach around its edge.
+    DescriptionFarsi: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u063A\u0631\u0628\u06CC
+      \u062C\u0644\u0648 \u0628\u0631\u0648\u061B \u0627\u0632 \u0648\u0633\u0637
+      \u0634\u0647\u0631 \u06CC\u0627 \u0645\u0633\u06CC\u0631 \u06A9\u0646\u0627\u0631
+      \u0634\u0647\u0631 \u0628\u0647 \u062F\u0634\u0645\u0646 \u0628\u0631\u0633."
+    Status: 1
+    PlayableScenarioIndex: 0
+  - ScenarioId: S002
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S003
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S004
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S005
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Combined Arms \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S006
+    MapId: DB
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S007
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S008
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S009
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S010
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S011
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S012
+    MapId: DB
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Frontline Control \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S013
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S014
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S015
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S016
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S017
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Combined Arms \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S018
+    MapId: DB
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Breakthrough \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S019
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S020
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S021
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S022
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S023
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Combined Arms \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S024
+    MapId: DB
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Desert Base \xB7 Convoy Escort \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S025
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: ui.skirmish.city_crossroads_map
+    TitleEnglish: CITY CROSSROADS
+    DescriptionEnglish: Attack from the north toward the southern base. Use city
+      streets or flank around the blocks.
+    DescriptionFarsi: "\u0627\u0632 \u0634\u0645\u0627\u0644 \u0634\u0647\u0631 \u0628\u0647
+      \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0646\u0648\u0628\u06CC \u062D\u0645\u0644\u0647
+      \u06A9\u0646\u061B \u0627\u0632 \u062E\u06CC\u0627\u0628\u0648\u0646\u200C\u0647\u0627
+      \u06CC\u0627 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC \u06A9\u0646\u0627\u0631\u06CC
+      \u062C\u0644\u0648 \u0628\u0631\u0648."
+    Status: 1
+    PlayableScenarioIndex: 1
+  - ScenarioId: S026
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S027
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S028
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Base Assault \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S029
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Base Assault \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S030
+    MapId: CC
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Base Assault \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S031
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S032
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S033
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S034
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S035
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S036
+    MapId: CC
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S037
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S038
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S039
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S040
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S041
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S042
+    MapId: CC
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Breakthrough \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S043
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S044
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S045
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S046
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S047
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S048
+    MapId: CC
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "City Crossroads \xB7 Convoy Escort \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S049
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S050
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S051
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S052
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S053
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S054
+    MapId: MP
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Base Assault \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S055
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S056
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S057
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S058
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S059
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S060
+    MapId: MP
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Frontline Control \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S061
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S062
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S063
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S064
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S065
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S066
+    MapId: MP
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Breakthrough \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S067
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S068
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S069
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S070
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S071
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S072
+    MapId: MP
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Mountain Pass \xB7 Convoy Escort \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S073
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S074
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S075
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S076
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S077
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S078
+    MapId: IB
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Base Assault \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S079
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S080
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S081
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S082
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S083
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S084
+    MapId: IB
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S085
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S086
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S087
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S088
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S089
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S090
+    MapId: IB
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Breakthrough \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S091
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Ground Maneuver \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S092
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Ground Maneuver \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S093
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S094
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S095
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S096
+    MapId: IB
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Industrial Basin \xB7 Convoy Escort \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S097
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S098
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S099
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S100
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S101
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S102
+    MapId: AP
+    ObjectiveId: BA
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Base Assault \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S103
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S104
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Ground Maneuver \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S105
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S106
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S107
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S108
+    MapId: AP
+    ObjectiveId: FC
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Frontline Control \xB7 Combined Arms \xB7
+      Established Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S109
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S110
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S111
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Air Mobile \xB7 Field Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S112
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S113
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S114
+    MapId: AP
+    ObjectiveId: BT
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Breakthrough \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S115
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S116
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: G
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Ground Maneuver \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S117
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Air Mobile \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S118
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: A
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Air Mobile \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S119
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: F
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Combined Arms \xB7 Field
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1
+  - ScenarioId: S120
+    MapId: AP
+    ObjectiveId: CE
+    ArmyProfile: C
+    StartProfile: E
+    TitleKey: 
+    TitleEnglish: "Airfield Plains \xB7 Convoy Escort \xB7 Combined Arms \xB7 Established
+      Base"
+    DescriptionEnglish: 
+    DescriptionFarsi: 
+    Status: 0
+    PlayableScenarioIndex: -1

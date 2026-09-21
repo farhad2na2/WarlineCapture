@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Game.Configs;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -64,6 +65,8 @@ namespace Game.UI.Runtime
         private void OnDestroy()
         {
             UiShellRuntimeGateway.Localization.LocaleChanged -= PresentScenarioChoices;
+            if (_librarySearchWired && battleLibrarySearch != null)
+                battleLibrarySearch.onValueChanged.RemoveListener(OnLibrarySearchChanged);
             if (launchButton != null)
                 launchButton.onClick.RemoveListener(LaunchMatch);
 
@@ -77,7 +80,33 @@ namespace Game.UI.Runtime
         public void Bind(UiQuickCustomGameConfig config)
         {
             _config = config;
-            _config.ScenarioIndex = config.ScenarioIndex == 1 ? 1 : 0;
+            if (baseAssaultPreset)
+            {
+                EnsureLibraryCards();
+                if (!string.IsNullOrEmpty(_selectedScenarioId) &&
+                    TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry browsing))
+                {
+                    if (browsing.IsPlayable)
+                        _config.ScenarioIndex = browsing.PlayableScenarioIndex;
+                }
+                else if (TryFindByScenarioIndex(config.ScenarioIndex, out SkirmishBattleCatalogEntry bound))
+                {
+                    _selectedScenarioId = bound.ScenarioId;
+                }
+                else
+                {
+                    for (int i = 0; i < _catalogEntries.Count; i++)
+                    {
+                        if (!_catalogEntries[i].IsPlayable)
+                            continue;
+                        _selectedScenarioId = _catalogEntries[i].ScenarioId;
+                        _config.ScenarioIndex = _catalogEntries[i].PlayableScenarioIndex;
+                        break;
+                    }
+                }
+            }
+            else
+                _config.ScenarioIndex = config.ScenarioIndex == 1 ? 1 : 0;
             PresentScenarioChoices();
             SetDropdownValue(presetDropdown, 0);
             SetDropdownValue(enemyTypeDropdown, (int)config.EnemyType);
@@ -119,11 +148,34 @@ namespace Game.UI.Runtime
                 // Persian directly to the authored Latin TMP font produces missing-glyph squares.
                 if (baseAssaultPreset)
                 {
+                    ResolveSelectedPlayable(out SkirmishBattleCatalogEntry selected);
+                    string titleKey;
+                    string titleEnglish;
+                    if (selected.IsPlayable && !string.IsNullOrEmpty(selected.TitleKey))
+                    {
+                        titleKey = selected.TitleKey;
+                        titleEnglish = selected.TitleEnglish;
+                    }
+                    else if (!string.IsNullOrEmpty(selected.TitleEnglish))
+                    {
+                        titleKey = string.Empty;
+                        titleEnglish = selected.ScenarioId + " · " + selected.TitleEnglish;
+                    }
+                    else
+                    {
+                        titleKey = "ui.skirmish.base_assault_map";
+                        titleEnglish = "DESERT BASE";
+                    }
+
                     var binding = mapNameText.GetComponent<V3LocalizedTextBindingView>() ??
                                   mapNameText.gameObject.AddComponent<V3LocalizedTextBindingView>();
-                    binding.Configure(_config.ScenarioIndex == 1 ? "ui.skirmish.city_crossroads_map" : "ui.skirmish.base_assault_map",
-                        _config.ScenarioIndex == 1 ? "CITY CROSSROADS" : "DESERT BASE", false);
-                    binding.ApplyLocalization();
+                    if (!string.IsNullOrEmpty(titleKey))
+                    {
+                        binding.Configure(titleKey, titleEnglish, false);
+                        binding.ApplyLocalization();
+                    }
+                    else
+                        UiLocalizedText.Set(mapNameText, titleEnglish);
                 }
                 else
                     UiLocalizedText.Set(mapNameText, ResolveMapName(config));
@@ -182,6 +234,14 @@ namespace Game.UI.Runtime
 
         public void LaunchMatch()
         {
+            if (baseAssaultPreset)
+            {
+                EnsureLibraryCards();
+                if (!TryFindEntry(_selectedScenarioId, out SkirmishBattleCatalogEntry selected) || !selected.IsPlayable)
+                    return;
+                _config.ScenarioIndex = selected.PlayableScenarioIndex;
+            }
+
             flowSystem.LaunchMatch(this, _configStore, _launchCommand);
         }
 

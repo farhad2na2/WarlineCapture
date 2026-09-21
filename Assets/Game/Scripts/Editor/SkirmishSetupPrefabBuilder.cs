@@ -242,7 +242,7 @@ namespace Game.Editor
         private static void ConfigureBaseAssaultPreview(RectTransform root)
         {
             var panel = (RectTransform)Require(root, "OperationPreview");
-            SetTopLeft(panel, 14f, 125f, 780f, 671f);
+            SetTopLeft(panel, 14f, 125f, 1080f, 671f);
             Require(panel, "Metrics").gameObject.SetActive(false);
             var objective = Require(panel, "ObjectiveRow/Objective").GetComponent<TMP_Text>();
             objective.text = "DESTROY THE ENEMY MAIN BASE";
@@ -255,7 +255,7 @@ namespace Game.Editor
 
         private static void BuildBaseAssaultRules(RectTransform root, ICollection<RectTransform> rightTargets)
         {
-            var panel = CreateTopLeft("BaseAssaultRules", root, 810f, 125f, 848f, 671f);
+            var panel = CreateTopLeft("BaseAssaultRules", root, 1108f, 125f, 550f, 671f);
             CreateGradientPanel(panel, DarkTop, DarkBottom, Border, 3f);
             rightTargets.Add(panel);
             void Label(string name, string key, string value, float top, float height, float size, Color color)

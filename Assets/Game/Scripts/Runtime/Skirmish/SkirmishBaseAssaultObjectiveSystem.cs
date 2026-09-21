@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -8,14 +9,20 @@ namespace Game.Runtime
     [UpdateBefore(typeof(SkirmishOutcomeSystem))]
     public partial struct SkirmishBaseAssaultObjectiveSystem : ISystem
     {
+        private EntityQuery designatedBases;
+
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
             state.RequireForUpdate<SkirmishObjectiveStateComponent>();
+            designatedBases = state.GetEntityQuery(
+                ComponentType.ReadOnly<SkirmishObjectiveRoleComponent>(),
+                ComponentType.ReadOnly<UnitHealth>());
         }
 
         public void OnUpdate(ref SystemState state)
         {
+            EntityManager em = state.EntityManager;
             foreach ((RefRO<SkirmishExpandedSessionComponent> session,
                       RefRW<SkirmishObjectiveStateComponent> objective,
                       RefRO<SkirmishResolvedSetupComponent> setup) in
@@ -28,8 +35,8 @@ namespace Game.Runtime
                 if (objective.ValueRO.Kind != SkirmishObjectiveKind.BaseAssault || objective.ValueRO.Terminal != 0)
                     continue;
 
-                bool playerAlive = IsDesignatedBaseAlive(ref state, SkirmishObjectiveRoleKind.PlayerBase);
-                bool enemyAlive = IsDesignatedBaseAlive(ref state, SkirmishObjectiveRoleKind.EnemyBase);
+                bool playerAlive = IsDesignatedBaseAlive(em, designatedBases, SkirmishObjectiveRoleKind.PlayerBase);
+                bool enemyAlive = IsDesignatedBaseAlive(em, designatedBases, SkirmishObjectiveRoleKind.EnemyBase);
                 float elapsed = 0f;
                 if (SystemAPI.TryGetSingleton(out SkirmishMatchState match))
                     elapsed = match.ElapsedSeconds;
@@ -105,16 +112,19 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool IsDesignatedBaseAlive(ref SystemState state, SkirmishObjectiveRoleKind role)
+        private static bool IsDesignatedBaseAlive(
+            EntityManager em,
+            EntityQuery query,
+            SkirmishObjectiveRoleKind role)
         {
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             bool found = false;
-            foreach ((RefRO<SkirmishObjectiveRoleComponent> roleRef, RefRO<UnitHealth> health) in
-                     SystemAPI.Query<RefRO<SkirmishObjectiveRoleComponent>, RefRO<UnitHealth>>())
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (roleRef.ValueRO.Role != role)
+                if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entities[i]).Role != role)
                     continue;
                 found = true;
-                if (health.ValueRO.Current > 0)
+                if (em.GetComponentData<UnitHealth>(entities[i]).Current > 0)
                     return true;
             }
 

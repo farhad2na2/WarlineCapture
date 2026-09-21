@@ -25,6 +25,7 @@ namespace Game.Operations.Strategic
             "commandAuthority",
             "starsEarned",
             "campaignMissionProgress",
+            "chapterOpeningSeen",
             "commanderXp"
         };
 

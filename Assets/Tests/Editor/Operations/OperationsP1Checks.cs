@@ -416,7 +416,7 @@ namespace Game.Tests.Editor.Operations
 
         public static void RewardsStayInsideOperationsEnvelope()
         {
-            byte[] campaign = { 7, 7, 7, 7 };
+            byte[] campaign = System.Text.Encoding.UTF8.GetBytes("{\"chapterOpeningSeen\":true}");
             byte[] quick = { 6, 6 };
             OperationsStrategicSession session = NewRun(1214, campaign, quick);
             OperationsDistrictComponent before = session.GetDistrict(1);

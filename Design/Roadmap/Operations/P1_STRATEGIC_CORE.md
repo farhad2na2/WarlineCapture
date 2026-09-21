@@ -33,14 +33,14 @@ P1 did not edit these. Attaching the city to the shipping profile or to ECS worl
 
 | Seam | Why it is still blocked |
 |---|---|
-| `Assets/Game/Scripts/Persistence/SaveDataModel.cs` | The Operations envelope is not yet a field on `PlayerProfileSaveData`. Campaign, quick-game, and wallet fields stay outside the commit document |
+| `Assets/Game/Scripts/Persistence/SaveDataModel.cs` | The Operations envelope is not yet a field on `PlayerProfileSaveData`. Campaign, quick-game, and wallet fields stay outside the commit document. Gridlock added `chapterOpeningSeen` on main; this package does not edit that file and refuses the field name in the Operations commit |
 | `Assets/Game/Scripts/Components/Game.Components.asmdef` | `IComponentData` / buffer types need a reference to `Game.Operations.Contracts` |
 | `Assets/Game/Scripts/Game.Runtime.asmdef` | `ISystem` scheduling needs that reference and must not depend on UI or Composition |
 | `Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs` | Mode launch is package 3 |
 | `Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs` | Shared validator still rejects `operations` map and scenario ids |
-| Existing asmdefs and the localization catalog | Unchanged |
+| Existing asmdefs and the localization catalog | Not edited by this package. Gridlock catalog changes arrived only through the main merge |
 
-`OperationsCommitJson` refuses account field names `credits`, `materials`, `fuel`, `intel`, `commandAuthority`, `starsEarned`, `campaignMissionProgress`, and `commanderXp`. Reward totals use `operationsRewardCredits` and `operationsRewardCommanderXp` inside the Operations document. Campaign and quick-game bytes are held beside the store and are not serialized.
+`OperationsCommitJson` refuses account field names `credits`, `materials`, `fuel`, `intel`, `commandAuthority`, `starsEarned`, `campaignMissionProgress`, `chapterOpeningSeen`, and `commanderXp`. Reward totals use `operationsRewardCredits` and `operationsRewardCommanderXp` inside the Operations document. Campaign and quick-game bytes are held beside the store and are not serialized. Gridlock mission content and bilingual voices stay on the Campaign path.
 
 ## Editor self-validation still open
 

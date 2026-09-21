@@ -62,7 +62,9 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
   stay stable through losses. A produced tank or rifle squad opens a new group.
 - Legal player selection is one group or an explicit multi-group union. Enemy
   and empty groups are rejected. Shared `SelectedUnitTag` is the selection
-  truth so existing command owners can see the same set.
+  truth so existing command owners can see the same set. Clearing a selection
+  writes group records first, then removes tags, so the army-group buffer is
+  never held across that structural change.
 - Paging is independent of group IDs (Standard page size 4). Page 0 holds the
   first four player groups; page 1 slot 3 is the starting tank for this roster.
 - Shared fog seeds from the intel config (`SharedFog=true`,

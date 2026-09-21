@@ -73,17 +73,22 @@ namespace Game.Runtime
         {
             if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
                 return;
+
+            var selectedGroups = new NativeList<uint>(8, Allocator.Temp);
             DynamicBuffer<SkirmishArmyGroupRecord> buffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
             for (int i = 0; i < buffer.Length; i++)
             {
                 SkirmishArmyGroupRecord record = buffer[i];
                 if (record.Selected == 0)
                     continue;
-                ApplyTags(em, session, record.GroupId, false);
+                selectedGroups.Add(record.GroupId);
                 record.Selected = 0;
                 buffer[i] = record;
             }
 
+            for (int i = 0; i < selectedGroups.Length; i++)
+                ApplyTags(em, session, selectedGroups[i], false);
+            selectedGroups.Dispose();
             Recount(em, session);
         }
 

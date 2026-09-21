@@ -197,4 +197,41 @@ namespace Game.Components
     {
         public SkirmishContactSight Sight;
     }
+
+    public struct SkirmishEnemyStockComponent : IComponentData
+    {
+        public int Materials;
+        public int Oil;
+        public int Fuel;
+        public int MaterialsCapacity;
+        public int OilCapacity;
+        public int FuelCapacity;
+    }
+
+    public struct SkirmishEnemyCapacityComponent : IComponentData
+    {
+        public int InfantryCap;
+        public int GroundCap;
+        public int AirCap;
+        public int SupplyCap;
+        public int InfantryLive;
+        public int GroundLive;
+        public int AirLive;
+        public int SupplyLive;
+        public int InfantryReserved;
+        public int GroundReserved;
+        public int AirReserved;
+        public int SupplyReserved;
+        public uint NextReservationId;
+    }
+
+    public struct SkirmishEnemyStrategyComponent : IComponentData
+    {
+        public SkirmishStrategyPriority Priority;
+        public SkirmishRoleKind RecruitRole;
+        public int LastScore;
+        public byte Personality;
+        public int FailedAttempts;
+        public uint LastGroupId;
+    }
 }

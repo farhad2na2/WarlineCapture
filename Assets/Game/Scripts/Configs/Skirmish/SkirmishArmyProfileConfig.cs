@@ -18,6 +18,22 @@ namespace Game.Configs
         public string[] ExcludedRoleIds => excludedRoleIds;
         public int ContentVersion => contentVersion;
 
+        private static SkirmishArmyProfileConfig cachedGround;
+
+        public static SkirmishArmyProfileConfig ResolveCached(SkirmishArmyProfileId id)
+        {
+            if (id != SkirmishArmyProfileId.GroundManeuver)
+                return null;
+            if (cachedGround == null)
+            {
+                cachedGround = CreateInstance<SkirmishArmyProfileConfig>();
+                cachedGround.ConfigureGroundManeuver();
+                cachedGround.hideFlags = HideFlags.HideAndDontSave;
+            }
+
+            return cachedGround;
+        }
+
         public void ConfigureGroundManeuver()
         {
             profileId = "G";

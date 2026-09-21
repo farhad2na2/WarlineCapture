@@ -60,6 +60,114 @@ namespace Game.Runtime
             return Issue(em, session, SkirmishGroupOrderKind.Attack, target, out decision);
         }
 
+        public static bool TryIssueGroupOrder(
+            EntityManager em,
+            Entity session,
+            uint groupId,
+            byte actingFaction,
+            SkirmishGroupOrderKind order,
+            Entity target,
+            out SkirmishCommandDecision decision)
+        {
+            decision = default;
+            decision.Order = order;
+            decision.GroupId = groupId;
+            decision.Field = "groupId";
+            if (!SkirmishArmyGroupSystem.TryGet(em, session, groupId, out SkirmishArmyGroupRecord record) ||
+                record.FactionId != actingFaction ||
+                record.AliveCount <= 0)
+            {
+                decision.Reason = SkirmishReasonCode.InvalidSelection;
+                return false;
+            }
+
+            if (order == SkirmishGroupOrderKind.Attack)
+            {
+                if (target == Entity.Null || !em.Exists(target) || !em.HasComponent<SkirmishAttemptOwnedComponent>(target))
+                {
+                    decision.Reason = SkirmishReasonCode.MissingReference;
+                    decision.Field = "target";
+                    return false;
+                }
+
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(target);
+                if (owned.FactionId == actingFaction)
+                {
+                    decision.Reason = SkirmishReasonCode.InvalidSelection;
+                    return false;
+                }
+
+                if (!SkirmishFogService.IsVisible(em, target))
+                {
+                    decision.Reason = SkirmishReasonCode.HiddenContact;
+                    return false;
+                }
+            }
+
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(
+                typeof(SkirmishArmyGroupMembershipComponent),
+                typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            int issued = 0;
+            int excluded = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity unit = entities[i];
+                var unitOwned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (!unitOwned.SessionId.Equals(sessionId) || unitOwned.FactionId != actingFaction)
+                    continue;
+                if (em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).GroupId != groupId)
+                    continue;
+                if (!SkirmishArmyGroupSystem.IsAlive(em, unit))
+                    continue;
+                if (order == SkirmishGroupOrderKind.Move)
+                {
+                    SkirmishPopulationCategory domain =
+                        em.GetComponentData<SkirmishArmyGroupMembershipComponent>(unit).Domain;
+                    if (domain != SkirmishPopulationCategory.Infantry &&
+                        domain != SkirmishPopulationCategory.Ground &&
+                        domain != SkirmishPopulationCategory.LogisticsSupport)
+                    {
+                        excluded++;
+                        continue;
+                    }
+                }
+
+                if (order == SkirmishGroupOrderKind.Hold && !em.HasComponent<HoldPositionOrderTag>(unit))
+                    em.AddComponent<HoldPositionOrderTag>(unit);
+                issued++;
+            }
+
+            decision.IssuedCount = issued;
+            decision.ExcludedCount = excluded;
+            if (issued == 0)
+            {
+                decision.Reason = excluded > 0
+                    ? SkirmishReasonCode.IncompatibleOrder
+                    : SkirmishReasonCode.InvalidSelection;
+                return false;
+            }
+
+            if (em.HasBuffer<SkirmishArmyGroupRecord>(session))
+            {
+                DynamicBuffer<SkirmishArmyGroupRecord> buffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+                for (int i = 0; i < buffer.Length; i++)
+                {
+                    SkirmishArmyGroupRecord stamped = buffer[i];
+                    if (stamped.GroupId != groupId)
+                        continue;
+                    stamped.LastOrder = order;
+                    buffer[i] = stamped;
+                    break;
+                }
+            }
+
+            decision.Accepted = true;
+            decision.Reason = SkirmishReasonCode.None;
+            return true;
+        }
+
         private static bool Issue(
             EntityManager em,
             Entity session,

@@ -120,6 +120,10 @@ namespace Game.Runtime
             int groundLive = 0;
             int airLive = 0;
             int supplyLive = 0;
+            int enemyInfantryLive = 0;
+            int enemyGroundLive = 0;
+            int enemyAirLive = 0;
+            int enemySupplyLive = 0;
             uint openGroupId = 0;
             byte openFaction = 0;
             SkirmishRoleKind openRole = SkirmishRoleKind.None;
@@ -161,18 +165,30 @@ namespace Game.Runtime
 
                     SkirmishArmyGroupSystem.BindMember(em, session, spawned, openGroupId);
                     openFill++;
-                    if (force.FactionId == 1)
+                    if (category == SkirmishPopulationCategory.Infantry ||
+                        category == SkirmishPopulationCategory.Ground ||
+                        category == SkirmishPopulationCategory.Air)
                     {
-                        if (category == SkirmishPopulationCategory.Infantry)
-                            infantryLive++;
-                        else if (category == SkirmishPopulationCategory.Ground)
-                            groundLive++;
-                        else if (category == SkirmishPopulationCategory.Air)
-                            airLive++;
-                        if (category == SkirmishPopulationCategory.Infantry ||
-                            category == SkirmishPopulationCategory.Ground ||
-                            category == SkirmishPopulationCategory.Air)
+                        if (force.FactionId == 1)
+                        {
+                            if (category == SkirmishPopulationCategory.Infantry)
+                                infantryLive++;
+                            else if (category == SkirmishPopulationCategory.Ground)
+                                groundLive++;
+                            else
+                                airLive++;
                             supplyLive += perMemberSupply;
+                        }
+                        else if (force.FactionId == 2)
+                        {
+                            if (category == SkirmishPopulationCategory.Infantry)
+                                enemyInfantryLive++;
+                            else if (category == SkirmishPopulationCategory.Ground)
+                                enemyGroundLive++;
+                            else
+                                enemyAirLive++;
+                            enemySupplyLive += perMemberSupply;
+                        }
                     }
                 }
             }
@@ -194,6 +210,50 @@ namespace Game.Runtime
                 var snapshot = SkirmishCapacityLedger.ToSnapshot(capacity);
                 SkirmishCapacityLedger.SeedLive(ref snapshot, infantryLive, groundLive, airLive, supplyLive);
                 em.SetComponentData(session, SkirmishCapacityLedger.FromSnapshot(capacity, snapshot));
+            }
+
+            if (!em.HasComponent<SkirmishEnemyStockComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishEnemyStockComponent
+                {
+                    Materials = setup.MaterialsEach,
+                    Oil = setup.OilEach,
+                    Fuel = setup.UsableFuelEach,
+                    MaterialsCapacity = setup.MaterialsCapacityEach,
+                    OilCapacity = setup.OilCapacityEach,
+                    FuelCapacity = setup.FuelCapacityEach
+                });
+            }
+
+            if (!em.HasComponent<SkirmishEnemyCapacityComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishEnemyCapacityComponent
+                {
+                    InfantryCap = setup.InfantryCapEach,
+                    GroundCap = setup.GroundCapEach,
+                    AirCap = setup.TacticalAirCapEach,
+                    SupplyCap = setup.SupplyCapEach,
+                    NextReservationId = 1000
+                });
+            }
+
+            if (em.HasComponent<SkirmishEnemyCapacityComponent>(session))
+            {
+                var enemyCap = em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
+                enemyCap.InfantryLive = enemyInfantryLive;
+                enemyCap.GroundLive = enemyGroundLive;
+                enemyCap.AirLive = enemyAirLive;
+                enemyCap.SupplyLive = enemySupplyLive;
+                em.SetComponentData(session, enemyCap);
+            }
+
+            if (!em.HasComponent<SkirmishEnemyStrategyComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishEnemyStrategyComponent
+                {
+                    Priority = SkirmishStrategyPriority.Reserve,
+                    Personality = (byte)(setup.Seed % 3)
+                });
             }
 
             SkirmishFogService.Project(em, session);

@@ -94,10 +94,41 @@ merge commit. That tree was not edited in this slice.
   `MatchSceneView` catalog-identity switch. Map hint remains Desert Base
   (index 0) for scene load only.
 
+### Enemy strategy and public ARIA skills (SK-05)
+- `SkirmishEnemyStrategySystem` scores Base Assault with shared
+  `SkirmishStrategyScoring` (objective 40 / prevent-loss 100 / counter 20,
+  hysteresis 15, ~25% Supply reserve). It issues only
+  `SkirmishProductionService.TryProduce` (faction 2) and
+  `SkirmishArmyCommandService.TryIssueGroupOrder` — no private producer or
+  designated-base mutation. Enemy Materials/capacity live on
+  `SkirmishEnemyStockComponent` / `SkirmishEnemyCapacityComponent`
+  (`NextReservationId` starts at 1000) so player stocks stay untouched.
+- Perception is fog-honest: visible player combat only
+  (`SkirmishFogService.IsVisible`). Hostile Materials stay unknown unless
+  `KnowsHostileMaterials` is set. Full-vision Skirmish mission 4 therefore
+  sees the starting tank and recruits a rocketeer (120 Materials) when
+  affordable, then attacks the designated player Barracks when that contact
+  is Visible.
+- Live `OnUpdate` resolves Ground Maneuver through a cached army profile
+  (no per-tick `CreateInMemory`). Tests pass the authored
+  `ArmyGround` ScriptableObject.
+- `AriaSkirmishPlanSystem.Step` routes expanded sessions through
+  `StepExpandedBaseAssault`. It only targets presented `AriaTouchTarget`
+  controls (Recruit / SelectSquad / Attack / Hold / Inspect / Handback).
+  Three failed attempts at the same action choose an alternative or
+  Handback. The ARIA assembly still has no gameplay mutation API.
+- Shared eligibility (`SkirmishProductionEligibility` with
+  `EnforceStocks=true`) is the affordability boundary for UI, enemy, and
+  ARIA. `SkirmishAriaPublicProjection` reads the player wallet only.
+- Not yet: Frontline Control / Breakthrough / Convoy Escort policies,
+  four difficulty behaviour profiles, structures/research/transport/scout
+  camera skills, EN/FA teaching copy, or a counted normal-speed ARIA win.
+
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
-  overlays + designated Base Assault facts + capacity + legal army groups) but
-  **not Playable**, not ARIA/War certified, not Accepted.
+  overlays + designated Base Assault facts + capacity + legal army groups +
+  legal enemy/ARIA BA skills) but **not Playable**, not ARIA/War certified,
+  not Accepted.
 
 ## Remaining ticket gaps
 
@@ -106,7 +137,7 @@ merge commit. That tree was not edited in this slice.
 | Ground roster and production visual ticket (SK-02) | Registry GameObject instantiate, Ground Staging prefab/pads, air roles, combat certification |
 | Ground capacity reservation ticket (SK-03) | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
 | Army control, fog, and movement ticket (SK-04) | Live path/world movement, transport boarding, formation/columns, Army drawer HUD, terrain-blocked sight |
-| Enemy strategy ticket (SK-05) | Enemy strategy + ARIA visible-control skills |
+| Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
 | Base Assault objective depth (SK-06) | Hidden-health HUD, world-damage fixtures, pause/result replay through live match |
 | Checkpoint ticket (SK-10) | Checkpoint/result/replay DTOs and atomic restore |
 | Measured layout ticket (SK-11) | Measured Desert Base layout, legal pads, route times |
@@ -163,12 +194,22 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedArmyTests] result=Passed"
 ```
 
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria.log" `
+  -RequiredPassMarker "[SkirmishExpandedAriaTests] result=Passed"
+```
+
 Required markers:
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
 - `[SkirmishExpandedObjectiveTests] result=Passed`
 - `[SkirmishExpandedEconomyTests] result=Passed`
 - `[SkirmishExpandedArmyTests] result=Passed`
+- `[SkirmishExpandedAriaTests] result=Passed`
 
 Optional compiler rebuild:
 

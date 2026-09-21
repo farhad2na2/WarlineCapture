@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7abfe36b979b4cd09baeca4c6ef9f880, type: 3}
+  m_Name: SkirmishEconomy_V1
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishEconomyConfig
+  economyId: skirmish.economy.v1
+  fieldMaterials: 450
+  fieldOil: 120
+  fieldFuel: 350
+  fieldMaterialsCapacity: 800
+  fieldOilCapacity: 500
+  fieldFuelCapacity: 800
+  establishedMaterials: 900
+  establishedOil: 240
+  establishedFuel: 700
+  establishedMaterialsCapacity: 1800
+  establishedOilCapacity: 1000
+  establishedFuelCapacity: 1600
+  contentVersion: 1

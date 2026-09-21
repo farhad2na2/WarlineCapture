@@ -9,13 +9,18 @@ namespace Game.UI.Contracts
         public Vector2 Position;
         public bool Available;
     }
-    public enum AriaSkirmishIntent : byte { Recruit, SelectSquad, FindBase, Attack, TargetBase, ObserveBattle, FindThreat, TargetThreat, GroupForce, DefendBase, BuildDefense, Advance }
+    public enum AriaSkirmishIntent : byte
+    {
+        Recruit, SelectSquad, FindBase, Attack, TargetBase, ObserveBattle, FindThreat, TargetThreat,
+        GroupForce, DefendBase, BuildDefense, Advance, Hold, Inspect, Scout, Handback
+    }
     [System.Serializable]
     public struct AriaSkirmishObservation
     {
         public bool Active, Finished, DrawerOpen, SelectionVisible, AttackMode, MapOpen, MapContactInView, SelectionMode, FocusThreatDrag, FocusGroupDrag, FocusAdvanceDrag, PlacementOpen, AdvancePreferred, ThreatNearForce, AssaultAtBase;
+        public bool ExpandedSession, PlayerDesignatedAlive, EnemyDesignatedAlive, CanAffordRifle, CanAffordRocketeer, CanAffordTank;
         public Vector2 FocusThreatDragEnd, FocusGroupDragEnd, FocusAdvanceDragEnd;
-        public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame;
+        public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame, VisibleHostileCombat, OwnMaterials, ExpandedRetries;
         public float Time, PlayerHealth, EnemyHealth, ForceHealth;
         public AriaTouchTarget Squad0, Squad1, Squad2, Squad3, Squad4;
         public AriaTouchTarget Site0, Site1, Site2, Site3, Site4, Site5;

@@ -18,6 +18,16 @@ namespace Game.UI.Shell.Ecs
             ref AriaPlaySessionComponent touch, ref AriaPlayObservationComponent output)
         {
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
+            if (view.ExpandedSession)
+            {
+                // Manual is idle / pre-consent: still publish the presented control so
+                // the cyan hand and DecisionSystem can see TargetId. Blocked/Starting
+                // are takeover or not-ready. Touching is held inside StepExpanded.
+                if (!view.Finished && touch.Phase is AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
+                    return;
+                StepExpandedBaseAssault(view, ref plan, ref touch, ref output);
+                return;
+            }
             if (view.Finished || touch.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked or AriaPlayPhase.Starting) return;
             if (plan.OpeningUntil == 0) { plan.OpeningUntil = view.Time + 180; plan.OpeningSquads = view.AvailableSquads; }
             // Assemble a force and finish the nearby defensive fight before advancing.
@@ -393,6 +403,58 @@ namespace Game.UI.Shell.Ecs
             return view.GroupStart.Available && view.GroupEnd.Available &&
                 UnityEngine.Mathf.Abs(size.x) >= 20 && UnityEngine.Mathf.Abs(size.y) >= 20;
         }
+        private static void StepExpandedBaseAssault(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            // Public visible controls only. No gameplay Entity mutation from this planner.
+            if (view.Finished)
+            {
+                plan.Intent = AriaSkirmishIntent.Handback;
+                output.Kind = AriaPlayObservationKind.Finished;
+                return;
+            }
+            if (touch.Phase == AriaPlayPhase.Touching) return;
+            if (view.ExpandedRetries >= 3)
+            {
+                if (view.Hold.Available && plan.Intent == AriaSkirmishIntent.Attack)
+                {
+                    plan.Intent = AriaSkirmishIntent.Hold;
+                    Target(view.Hold, false, ref output);
+                    return;
+                }
+                plan.Intent = AriaSkirmishIntent.Handback;
+                output.Kind = AriaPlayObservationKind.Waiting;
+                return;
+            }
+            if (view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.Recruit, false, ref output);
+                return;
+            }
+            if (!view.SelectionVisible && view.Squad0.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.SelectSquad;
+                Target(view.Squad0, false, ref output);
+                return;
+            }
+            if (view.EnemyDesignatedAlive && view.Attack.Available && view.SelectionVisible)
+            {
+                plan.Intent = AriaSkirmishIntent.Attack;
+                Target(view.Attack, false, ref output);
+                return;
+            }
+            if (view.Hold.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Hold;
+                Target(view.Hold, false, ref output);
+                return;
+            }
+            plan.Intent = AriaSkirmishIntent.Inspect;
+            output.Kind = AriaPlayObservationKind.Waiting;
+        }
+
         private static void Target(AriaTouchTarget target, bool world, ref AriaPlayObservationComponent output)
         {
             if (!target.Available) { output.Kind = AriaPlayObservationKind.Unavailable; return; }

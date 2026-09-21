@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Configs;
+using Game.Runtime;
 using Game.UI.Contracts;
 using Unity.Entities;
 using UnityEngine;
@@ -31,18 +32,43 @@ namespace Game.UI.Shell.Ecs
                 using var entities=units.ToEntityArray(Unity.Collections.Allocator.Temp);
                 foreach(var unit in entities)if(em.GetComponentData<SkirmishSquadMember>(unit).Slot<4&&em.GetComponentData<UnitHealth>(unit).Current>0)infantry++;
             }
+            int playerHealth=VisibleBaseHealth(em,match.PlayerMainBase);
+            int enemyHealth=VisibleBaseHealth(em,match.EnemyMainBase);
+            string playerBase=BaseLabel(em,match.PlayerMainBase,"player_base","YOUR MAIN BASE");
+            string enemyBase=BaseLabel(em,match.EnemyMainBase,"enemy_base","ENEMY MAIN BASE");
+            if(SkirmishExpandedSessionControlService.IsExpanded(em,session))
+            {
+                var playerReadout=SkirmishBaseAssaultHudProjection.ReadPlayerBase(em,session);
+                var enemyReadout=SkirmishBaseAssaultHudProjection.ReadEnemyBase(em,session);
+                playerHealth=playerReadout.DisplayedCurrent;
+                enemyHealth=enemyReadout.DisplayedCurrent;
+                playerBase=HiddenAwareBaseLabel(playerReadout,"player_base","YOUR MAIN BASE");
+                enemyBase=HiddenAwareBaseLabel(enemyReadout,"enemy_base","ENEMY MAIN BASE");
+            }
+            string objective=GameText.Get("ui.skirmish.objective_explanation","Destroy the marked enemy Barracks. Protect your own main base.");
+            string resultTitle=GameText.Get("ui.skirmish.result."+outcome,match.Outcome.ToString());
+            string resultDetail=GameText.Get("ui.skirmish.reason."+reason,match.Reason.ToString());
+            if(SkirmishExpandedSessionControlService.IsExpanded(em,session) &&
+               SkirmishExpandedHudCopy.TryResolve(em,session,match,GameLocalization.CurrentLocaleCode,out string expandedObjective,out string expandedResult,out string expandedDetail))
+            {
+                objective=expandedObjective;
+                if(!string.IsNullOrEmpty(expandedResult))
+                    resultTitle=expandedResult;
+                if(!string.IsNullOrEmpty(expandedDetail))
+                    resultDetail=expandedDetail;
+            }
             model=new UiSkirmishModel
             {
                 ScenarioIndex=match.ScenarioIndex,
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
-                InfantryCount=infantry, PlayerHealth=VisibleBaseHealth(em,match.PlayerMainBase), EnemyHealth=VisibleBaseHealth(em,match.EnemyMainBase),
+                InfantryCount=infantry, PlayerHealth=playerHealth, EnemyHealth=enemyHealth,
                 Infantry=infantry+" / "+SkirmishPresetConfig.InfantryLimitPerFaction,
-                PlayerBase=BaseLabel(em,match.PlayerMainBase,"player_base","YOUR MAIN BASE"),
-                EnemyBase=BaseLabel(em,match.EnemyMainBase,"enemy_base","ENEMY MAIN BASE"),
+                PlayerBase=playerBase,
+                EnemyBase=enemyBase,
                 Clock=GameText.Get("ui.skirmish.time_remaining","TIME LEFT")+"  "+remaining/60+":"+(remaining%60).ToString("00"),
-                Objective=GameText.Get("ui.skirmish.objective_explanation","Destroy the marked enemy Barracks. Protect your own main base."),
-                ResultTitle=GameText.Get("ui.skirmish.result."+outcome,match.Outcome.ToString()),
-                ResultDetail=GameText.Get("ui.skirmish.reason."+reason,match.Reason.ToString()),
+                Objective=objective,
+                ResultTitle=resultTitle,
+                ResultDetail=resultDetail,
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };
@@ -73,6 +99,11 @@ namespace Game.UI.Shell.Ecs
             float health=0,max=0;
             if(em.Exists(entity)&&em.HasComponent<UnitHealth>(entity)){var h=em.GetComponentData<UnitHealth>(entity);health=Mathf.Max(0,h.Current);max=h.Max;}
             return GameText.Get("ui.skirmish."+key,fallback)+"\n"+Mathf.CeilToInt(health)+" / "+Mathf.CeilToInt(max);
+        }
+        private static string HiddenAwareBaseLabel(SkirmishHealthReadout readout,string key,string fallback)
+        {
+            return GameText.Get("ui.skirmish."+key,fallback)+"\n"+
+                   Mathf.Max(0,readout.DisplayedCurrent)+" / "+Mathf.Max(0,readout.Max);
         }
     }
 }

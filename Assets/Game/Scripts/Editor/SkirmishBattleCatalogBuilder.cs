@@ -29,7 +29,9 @@ namespace Game.Editor
             Directory.CreateDirectory("Assets/Game/Resources");
             SkirmishBattleCatalogEntry[] entries = ParseCsv(
                 Path.GetFullPath(Path.Combine(Application.dataPath, "..", CsvPath)));
-            ApplyPlayableOverrides(entries);
+            SkirmishPublicationValidator.ApplyLegacyPrototypeCompatibility(
+                entries,
+                SkirmishPublicationValidator.LegacyPrototypeCompatibilityVersion);
 
             var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(AssetPath);
             if (catalog == null)
@@ -107,57 +109,6 @@ namespace Game.Editor
             {
                 Debug.LogError($"[SkirmishBattleLibraryValidation] result=Failed\n{exception}");
                 EditorApplication.Exit(1);
-            }
-        }
-
-        private static void ApplyPlayableOverrides(SkirmishBattleCatalogEntry[] entries)
-        {
-            for (int i = 0; i < entries.Length; i++)
-            {
-                SkirmishBattleCatalogEntry entry = entries[i];
-                if (entry.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseScenarioId)
-                {
-                    entry.Status = SkirmishBattleCatalogStatus.Playable;
-                    entry.PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseScenarioIndex;
-                    entry.TitleKey = "ui.skirmish.base_assault_map";
-                    entry.TitleEnglish = "DESERT BASE";
-                    entry.DescriptionEnglish =
-                        "Advance from the western base. Fight through the city or approach around its edge.";
-                    entry.DescriptionFarsi =
-                        "از پایگاه غربی جلو برو؛ از وسط شهر یا مسیر کنار شهر به دشمن برس.";
-                    entries[i] = entry;
-                }
-                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.CityCrossroadsScenarioId)
-                {
-                    entry.Status = SkirmishBattleCatalogStatus.Playable;
-                    entry.PlayableScenarioIndex = SkirmishPresetConfig.CityCrossroadsScenarioIndex;
-                    entry.TitleKey = "ui.skirmish.city_crossroads_map";
-                    entry.TitleEnglish = "CITY CROSSROADS";
-                    entry.DescriptionEnglish =
-                        "Attack from the north toward the southern base. Use city streets or flank around the blocks.";
-                    entry.DescriptionFarsi =
-                        "از شمال شهر به پایگاه جنوبی حمله کن؛ از خیابون‌ها یا مسیرهای کناری جلو برو.";
-                    entries[i] = entry;
-                }
-                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.IndustrialBasinScenarioId)
-                {
-                    entry.Status = SkirmishBattleCatalogStatus.Playable;
-                    entry.PlayableScenarioIndex = SkirmishPresetConfig.IndustrialBasinScenarioIndex;
-                    entry.TitleKey = "ui.skirmish.industrial_basin_map";
-                    entry.TitleEnglish = "INDUSTRIAL BASIN";
-                    entry.DescriptionEnglish =
-                        "Deploy in the northern clearing and push southeast along the industrial approach. Defend your base before advancing.";
-                    entry.DescriptionFarsi =
-                        "در محوطه باز شمالی مستقر شو و از مسیر صنعتی به سمت جنوب‌شرق پیش برو. قبل از پیشروی از پایگاهت دفاع کن.";
-                    entries[i] = entry;
-                }
-                else
-                {
-                    entry.Status = SkirmishBattleCatalogStatus.Planned;
-                    entry.PlayableScenarioIndex = -1;
-                    entry.TitleKey = string.Empty;
-                    entries[i] = entry;
-                }
             }
         }
 

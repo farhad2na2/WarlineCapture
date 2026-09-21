@@ -6,6 +6,7 @@
         "Game.Components",
         "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
+        "Game.Skirmish.Contracts",
         "Game.Tactical.Contracts",
         "Unity.Addressables",
         "Unity.Collections",

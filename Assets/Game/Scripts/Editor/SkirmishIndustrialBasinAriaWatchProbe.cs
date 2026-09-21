@@ -39,6 +39,15 @@ namespace Game.Editor
                 EditorApplication.update += Tick;
         }
 
+        public static string AcceptExpandedPayload(in SkirmishAriaAcceptancePayload payload)
+        {
+            if (!payload.TryValidate(out string error))
+                throw new ArgumentException(error, nameof(payload));
+            string line = "[SkirmishIndustrialBasinAriaWatch] selected " + payload.FormatSelectedConfiguration();
+            Debug.Log(line);
+            return line;
+        }
+
         [MenuItem("Tools/Warline/Skirmish/Launch S3 Industrial Basin ARIA Watch EN")]
         public static void LaunchEnglish()
         {

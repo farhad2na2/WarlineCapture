@@ -2072,6 +2072,26 @@ MonoBehaviour:
       value: '{0} TRANSPORTS'
     - key: selection.title.vehicles
       value: '{0} VEHICLES'
+    - key: skirmish.s002.brief
+      value: Use the starting tank and APC to contest the highway. Keep one infantry squad at home. Press now or scout the south sweep before siege.
+    - key: skirmish.s002.objective
+      value: Destroy the original enemy Barracks while your original Barracks survives.
+    - key: skirmish.s002.result.defeat
+      value: Your main base was destroyed.
+    - key: skirmish.s002.result.draw_bases
+      value: Both original bases were destroyed.
+    - key: skirmish.s002.result.draw_deadline
+      value: Time expired with both original bases standing.
+    - key: skirmish.s002.result.surrender
+      value: Surrender accepted.
+    - key: skirmish.s002.result.victory
+      value: Enemy main base destroyed.
+    - key: skirmish.s002.title
+      value: Desert Base · Base Assault · Established
+    - key: skirmish.s002.warning.offensive_air
+      value: Ground Maneuver cannot queue attack helicopters or jets.
+    - key: skirmish.s002.warning.replacement_base
+      value: A replacement Barracks is not the designated victory base.
     - key: tactical.airdrop.cargo_drop_blocked
       value: Cargo drop blocked.
     - key: tactical.airdrop.emergency_drop_visual_missing
@@ -8974,6 +8994,26 @@ MonoBehaviour:
       value: "{0} \u0648\u0633\u06CC\u0644\u0647 \u062D\u0645\u0644\u200C\u0648\u0646\u0642\u0644"
     - key: selection.title.vehicles
       value: "{0} \u062E\u0648\u062F\u0631\u0648\u0647\u0627"
+    - key: skirmish.s002.brief
+      value: با تانک و نفربر شروع‌شده بزرگراه را بگیر. یک دسته پیاده در خانه بماند. یا سریع فشار بده یا جنوب را شناسایی کن.
+    - key: skirmish.s002.objective
+      value: سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است.
+    - key: skirmish.s002.result.defeat
+      value: پایگاه اصلی تو نابود شد.
+    - key: skirmish.s002.result.draw_bases
+      value: هر دو پایگاه اصلی نابود شدند.
+    - key: skirmish.s002.result.draw_deadline
+      value: زمان تمام شد و هر دو پایگاه اصلی سالم ماندند.
+    - key: skirmish.s002.result.surrender
+      value: تسلیم پذیرفته شد.
+    - key: skirmish.s002.result.victory
+      value: پایگاه اصلی دشمن نابود شد.
+    - key: skirmish.s002.title
+      value: پایگاه صحرا · حمله به پایگاه · پایگاه برقرار
+    - key: skirmish.s002.warning.offensive_air
+      value: پروفایل زمینی حمله هوایی تهاجمی را صف نمی‌کند.
+    - key: skirmish.s002.warning.replacement_base
+      value: سربازخانه جایگزین پایگاه پیروزی تعیین‌شده نیست.
     - key: tactical.airdrop.cargo_drop_blocked
       value: "\u0627\u06CC\u0646\u062C\u0627 \u0646\u0645\u06CC\u200C\u0634\u0647
         \u0628\u0627\u0631 \u0631\u0648 \u067E\u0627\u06CC\u06CC\u0646 \u0627\u0646\u062F\u0627\u062E\u062A."

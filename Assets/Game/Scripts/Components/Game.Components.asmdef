@@ -4,6 +4,7 @@
     "references": [
         "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
+        "Game.Skirmish.Contracts",
         "Unity.Collections",
         "Unity.Entities",
         "Unity.Entities.Graphics",

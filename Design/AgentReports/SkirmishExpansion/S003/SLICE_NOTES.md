@@ -3,7 +3,7 @@
 Catalog identity **S003** is named once here: Desert Base · Base Assault · Air Mobile · Field Base.
 Handoff ordinal 5. First visit: Regular / Standard. Seeds: `104732`, `130366`, `155924`.
 
-Started from `main` at `a9cea343d` (S002 Playable, PR #23). This slice does not edit Operations trees, shared `SaveDataModel`, `MatchSceneView`, `V3UiLocalizationCatalog`, or Campaign/Gridlock.
+Started from `main` at `a9cea343d` (S002 Playable, PR #23). This lane does not edit Operations trees, shared `SaveDataModel`, `MatchSceneView`, or Campaign/Gridlock. EN/FA catalog copy was merged from Game Design and was not re-authored here.
 
 S002 publication on the checked-in manifest stays **Playable**. Rebuild of expanded definitions restores that status if the asset was already Playable.
 
@@ -60,21 +60,19 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 | Game View | No Regular Standard Playing capture for seed `104732` |
 | Playable | Row stays InProgress until a human win and the evidence files exist |
 | ARIA matrix | Seeds `104732` / `130366` / `155924` × EN/FA are not run. `runs.csv` is not opened for S003. The shell does not yet present the AA or pad controls |
-| Localization | Keys below are listed for Game Design. `V3UiLocalizationCatalog` was not edited |
+| Localization | EN/FA keys are merged from Game Design (`c01a4772b`, PR #28). ARIA matrix runs in both locales are still open |
 | Library / HUD | S002 copy projection is unchanged. S003 is not a Quick Custom card |
 | Combat certification | Air overlay health, damage, and range are uncertified |
 
-### Localization keys for Game Design (EN/FA)
+### Localization
 
-Do not treat this list as catalog copy. `V3UiLocalizationCatalog` was left unchanged.
+EN/FA keys are merged from `cursor/skirmish-s003-localization-f9f7` at `c01a4772b` (PR #28). The merge kept Game Design’s `V3UiLocalizationCatalog.asset` and `Assets/Game/Configs/Localization/SkirmishS003UiStrings.json`. Keys were not re-authored on this branch.
 
 - `skirmish.s003.title`
 - `skirmish.s003.brief`
 - `skirmish.s003.objective`
-- `skirmish.s003.warning.missing_helipad`
-- `skirmish.s003.warning.missing_airport`
-- `skirmish.s003.warning.pad_not_ready`
-- `skirmish.s003.warning.aa_before_air`
+- `skirmish.s003.warning.offensive_air`
+- `skirmish.s003.warning.replacement_base`
 - `skirmish.s003.result.victory`
 - `skirmish.s003.result.defeat`
 - `skirmish.s003.result.draw_bases`

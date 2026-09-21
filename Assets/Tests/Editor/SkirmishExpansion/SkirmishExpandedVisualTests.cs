@@ -156,7 +156,7 @@ namespace Game.Tests.Editor
                 }
 
                 standIn.Dispose();
-                Object.DestroyImmediate(registry);
+                UnityEngine.Object.DestroyImmediate(registry);
             }
         }
 

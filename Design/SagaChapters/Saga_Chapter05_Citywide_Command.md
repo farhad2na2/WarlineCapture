@@ -67,6 +67,12 @@ Any feature still Partial or Scaffolded at detailed-design time must be simplifi
 | Captain Laila Nasser | Keeps the last air corridor open and connects the multi-front battlefield. |
 | Nadir Qassem | Is defeated and exposed as the architect of the manufactured crisis. The story does not validate his terrorism as necessary. |
 
+## Planned environment implementation — Demo 2
+
+Reuse the accepted Logistics, Utilities and Perimeter modules from earlier chapters under the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md). Last Corridor uses freight/medical supply dressing; Network Collapse and Command Node use legible relay/service compounds; citywide defense and evacuation retain existing desert districts and clear civilian routes.
+
+Record exact adapted prefab GUIDs, map/content versions, role ownership and D2-V1–V6 evidence in future production plans. Reuse cannot add a new finale mechanic or replace shared objective/ARIA logic; confirm combined-arms, evacuation, sightline and logistics clearance on the final layout rather than inheriting another map's success.
+
 ## Mission Arc
 
 | Mission | Story and objective | Dominant mastery | Character beat | Evidence beat |

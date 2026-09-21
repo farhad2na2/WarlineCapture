@@ -53,6 +53,8 @@ Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign 
 
 ## Content Authoring Order
 
+2026-09-21 asset sourcing amendment: use the [Demo 2 asset reuse plan](Demo2_Asset_Reuse_Plan.md) for selected modern logistics, utility, perimeter and crossing assets alongside the existing desert kit. Campaign Chapters 2–4, Operations Industrial Belt/River Crossing and Skirmish Industrial Basin are the priority uses. This is planned environment reuse, not runtime acceptance or an expansion of mission/map counts. Preserve narrative, map identity, feature readiness and per-mode acceptance gates.
+
 WarlineCapture should author content in this order:
 
 1. Preserve the accepted high-level campaign arc and character roles in `Campaign_Narrative_Bible.md`.
@@ -102,6 +104,7 @@ Every authored mission must use this structure.
 | `RequiredFeatureReadiness` | Readiness classification for every required mechanic using the feature maturity/exposure matrix. |
 | `ScenarioSetup` | Operation map id, district id, spawn rules, starting units/buildings/resources, enemy setup, allowed catalog ids from `BalanceConfigs/Combat_Balance_Config_v0_1.json` and prefab display data from `Assets/Game/Configs/Prefabs`. |
 | `MapViewContract` | Required for playable missions: `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`, operation metadata asset, camera bounds, and named anchors for spawns/routes/objectives/deployment/build zones. |
+| `EnvironmentAssetManifest` | Source/adapted prefab GUIDs, material overrides, decoration/surface/gameplay ownership, target map/content version, footprints and evidence. For Demo 2 reuse follow `Demo2_Asset_Integration_Guide.md` and `VisualConfigs/Demo2_Environment_Asset_Manifest.json`; planned art never grants gameplay readiness. |
 | `Objectives` | Required objectives with exact thresholds and HUD visibility. |
 | `StarGoals` | Three visible star goals with thresholds and result presentation. |
 | `CivilianDistrictConsequences` | Trust/security/intel/infrastructure/heat/civilian deltas, including zero-delta tutorial cases. |
@@ -154,6 +157,7 @@ Skirmish presets should mirror mission archetypes so testing and balance reports
 A mission is not design-ready until:
 
 - It uses the required mission spec template.
+- Environment art has explicit source/output identities and ownership; adopted Demo 2 content follows [D2-V1–V6](Demo2_Asset_Integration_Guide.md#6-validate-and-record-acceptance). Design-ready missions may list these as pending implementation prerequisites; playable/release claims require the appropriate evidence.
 - It maps to a north-star mission archetype and threat family.
 - It preserves the chapter story beat, character role, and evidence state from the narrative bible.
 - It identifies the named story faction and explains how hostile identity is confirmed.

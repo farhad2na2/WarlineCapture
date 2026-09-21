@@ -6,6 +6,8 @@ This document covers existing-map ECS authoring, building and vehicle ownership,
 
 ## 1. Source, Candidate, And Runtime Boundaries
 
+For the planned Polygon Battle Royale additions, follow the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md). The kit uses these same source/candidate, placement, surface and visual-state ownership rules. Create project-owned variants, change the owning source/config, and regenerate only scoped outputs. Some existing bake/minimap/Addressables menus still target fixed desert-map paths; inspect inputs and outputs before use. The kit does not authorize production presentation cutover or mutation of the frozen rollback package.
+
 The accepted authoring sources are:
 
 - operation-map scene: `Assets/Game/Scenes/OperationMaps/Skirmish/opmap_skirmish_desert_base_01.unity`;

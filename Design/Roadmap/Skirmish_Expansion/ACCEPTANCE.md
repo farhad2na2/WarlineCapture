@@ -93,6 +93,10 @@ For each new mechanic record a real input → acceptance/rejection → world out
 
 Before calling the full catalog ready, all required content entries pass normal-input full matches and separate device/readability gates. The existing 104729-seed wins certify only their recorded small versions. Scenario readiness records include map/content hashes, setup/difficulty/size, seed, locale, platform/device, human/ARIA/control method, outcome, command trace and open defects. A schema-valid CSV is planning evidence only.
 
+## Demo 2 environment adoption gates
+
+For any scenario using the adapted kit, require [D2-V1–V6](../../Demo2_Asset_Integration_Guide.md#6-validate-and-record-acceptance): verified source/output GUIDs and material dependencies; desert/readability review; one visual/gameplay owner; actual surface/blocker and vehicle/convoy/air clearance; target-map-only rebuild and lifecycle; measured device/package impact; and affected manual/ARIA/recovery evidence against the new content hash. Record these alongside X34–X40, not as replacement passes. Reused IB art, a new preview or a shared module pass does not increase the accepted scenario count. Playable Battle Royale vehicles remain outside this environment package.
+
 ## External technical references
 
 - [Unity Profiler documentation](https://docs.unity.com/en-us/engine/6000.0/manual/analysis/profiler) supports using device captures and custom profiling markers. Project-specific capacity still requires measurement.

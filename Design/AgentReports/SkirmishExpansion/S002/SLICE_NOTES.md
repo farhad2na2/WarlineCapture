@@ -10,6 +10,13 @@ merge commit. That tree was not edited in this slice.
 is merged here. Demo 2 Industrial Basin logistics yard is **not** imported
 into Skirmish mission 4 and does not replace this Desert Base milestone.
 
+`origin/main` then moved to `10371a2cf` (Campaign Chapter 2 Mission 1
+Gridlock, including `848a3cfe` / `73d2113c`) and is merged here with a
+merge commit. This slice does **not** implement Gridlock. Shared
+campaign / narrative / audio / localisation files were auto-merged;
+`V3UiLocalizationCatalog` was not re-edited. Gridlock contracts stay on
+main’s copies. Operations trees were not edited.
+
 Game Design’s S002 EN/FA catalog keys landed on
 `cursor/skirmish-s002-localization-35c1` at `87fffc598` and are merged here.
 This slice did not edit `V3UiLocalizationCatalog`.
@@ -285,7 +292,8 @@ This slice did not edit `V3UiLocalizationCatalog`.
   `SkirmishSessionInitializationSystem` added session components while
   still iterating the live query. Init (and spawn, which had the same
   pattern) now snapshot entities first, then apply structural changes.
-  Publication is still **InProgress**.
+  Publication is still **InProgress** until Programmer 1 Game View
+  evidence. The Gridlock main merge does not flip that row.
 
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +

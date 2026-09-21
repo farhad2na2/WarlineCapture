@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
   operationMapId: opmap.skirmish.industrial_basin
   schemaVersion: 1
-  contentVersion: 1
+  contentVersion: 2
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: b7d58db0daa713fa555864067ee57a968027aba8067ebb86cb39c665ee190e97
-  generatedMetadataHash: 051c356985c587ef52442bbdfdc508d8a02432be33bcf3ff633acc579bfc7f8f
+  contentHash: cbbaa8366cbfb5e0ad9bc6bf70a98b48503df10e3d0c5c45757295af841a7a6d
+  generatedMetadataHash: 56d6934576d9337eb961516f60267b5bca80c3253a35e37223f24eaa2f6ff162
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -25,10 +25,10 @@ MonoBehaviour:
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
-    playableMin: {x: 480, y: -6.9545445, z: 220}
-    playableMax: {x: 860, y: 40.375454, z: 640}
-    cameraMin: {x: 480, y: 4, z: 220}
-    cameraMax: {x: 860, y: 100, z: 640}
+    playableMin: {x: 740, y: -6.9545445, z: 420}
+    playableMax: {x: 990, y: 40.375454, z: 660}
+    cameraMin: {x: 620, y: 4, z: 300}
+    cameraMax: {x: 1110, y: 100, z: 780}
   gridMetadata:
     assetGuid: b201000000000000000000000000000b
     contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
@@ -54,7 +54,7 @@ MonoBehaviour:
     supportsDynamicOccupancy: 1
   cameras:
   - cameraId: camera.skirmish.industrial_basin.start
-    position: {x: 560, y: 70, z: 480}
+    position: {x: 800, y: 70, z: 530}
     eulerAngles: {x: 47.1211, y: 0, z: 0}
     orthographic: 0
     fieldOfView: 50
@@ -64,20 +64,20 @@ MonoBehaviour:
   battleCameraId: camera.skirmish.industrial_basin.start
   minimap:
     minimapId: minimap.skirmish.industrial_basin
-    projectionOrigin: {x: 480, y: 0, z: 220}
-    projectionSize: {x: 380, y: 420}
+    projectionOrigin: {x: 740, y: 0, z: 420}
+    projectionSize: {x: 250, y: 240}
     orientationDegrees: 0
   anchors:
   - anchorId: anchor.skirmish.industrial_basin.deployment.faction_1
     kind: 3
-    position: {x: 560, y: 0, z: 550}
+    position: {x: 800, y: 0, z: 600}
     eulerAngles: {x: -0, y: 0, z: 0}
     radius: 8
     factionId: 1
     laneIndex: -1
   - anchorId: anchor.skirmish.industrial_basin.deployment.faction_2
     kind: 3
-    position: {x: 760, y: 0, z: 280}
+    position: {x: 930, y: 0, z: 470}
     eulerAngles: {x: -0, y: 0, z: 0}
     radius: 8
     factionId: 2

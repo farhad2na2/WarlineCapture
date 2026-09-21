@@ -81,18 +81,23 @@ namespace Game.Editor
                   map.SourceBinding.IsConfigured, "Third map identity/binding.");
             Check(map.TryValidateMetadata(out _) && map.TryValidateLocalContentReferences(out _),
                 "Third map metadata/content.");
+            Check(map.Bounds.CameraMin.x <= map.Bounds.PlayableMin.x - 120 &&
+                  map.Bounds.CameraMax.x >= map.Bounds.PlayableMax.x + 120 &&
+                  map.Bounds.CameraMin.z <= map.Bounds.PlayableMin.z - 120 &&
+                  map.Bounds.CameraMax.z >= map.Bounds.PlayableMax.z + 120,
+                "Camera frustum needs room to center both bases without clamping them off-screen.");
             var a = third.buildingPlacement.InitialUnitsConfig.Factions[0].SpawnCell;
             var b = third.buildingPlacement.InitialUnitsConfig.Factions[1].SpawnCell;
-            Check(a.x < b.x && a.y > b.y && Mathf.Abs(a.x - b.x) > 150 && Mathf.Abs(a.y - b.y) > 150,
-                "Third battlefield must use its northwest/southeast approach.");
+            Check(a.x >= 770 && a.x <= 840 && a.y >= 580 && a.y <= 620 && a.y > b.y && Vector2Int.Distance(a, b) > 170,
+                "Industrial Basin opening must stay on the eastern clearing, outside the northern mountains.");
             Check(a.x < SkirmishIndustrialBasinAssetsBuilder.PlayableMax.x &&
                   b.x > SkirmishIndustrialBasinAssetsBuilder.PlayableMin.x &&
                   a.y < SkirmishIndustrialBasinAssetsBuilder.PlayableMax.y &&
                   b.y > SkirmishIndustrialBasinAssetsBuilder.PlayableMin.y,
                 "Industrial Basin spawns must stay inside the authored window.");
-            Check(!(a.x >= 900 && a.x <= 1300 && a.y >= 260 && a.y <= 875) &&
-                  !(b.x >= 900 && b.x <= 1300 && b.y >= 260 && b.y <= 875),
-                "Industrial Basin spawns must not sit inside City Crossroads.");
+            Check(a != second.buildingPlacement.InitialUnitsConfig.Factions[0].SpawnCell &&
+                  b != second.buildingPlacement.InitialUnitsConfig.Factions[1].SpawnCell,
+                "Industrial Basin must retain its own deployment sites.");
             Check(first.rifleDamage == third.rifleDamage && first.armoredCarDamage == third.armoredCarDamage &&
                   first.reinforcementInfantryTarget == third.reinforcementInfantryTarget,
                 "Shared combat difficulty must be preserved.");

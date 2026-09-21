@@ -146,9 +146,9 @@ namespace Game.Editor
                     entry.TitleKey = "ui.skirmish.industrial_basin_map";
                     entry.TitleEnglish = "INDUSTRIAL BASIN";
                     entry.DescriptionEnglish =
-                        "Advance from the northwest industrial yard toward the southeast base. Use the freight avenue or service ring.";
+                        "Deploy in the northern clearing and push southeast along the industrial approach. Defend your base before advancing.";
                     entry.DescriptionFarsi =
-                        "از حیاط صنعتی شمال‌غربی به پایگاه جنوب‌شرقی حمله کن؛ از مسیر باربری یا حلقه خدماتی جلو برو.";
+                        "در محوطه باز شمالی مستقر شو و از مسیر صنعتی به سمت جنوب‌شرق پیش برو. قبل از پیشروی از پایگاهت دفاع کن.";
                     entries[i] = entry;
                 }
                 else

@@ -123,6 +123,8 @@ namespace Game.Runtime
 
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
+            SkirmishArmyGroupSystem.AssignProduced(em, session, reservationId);
+            SkirmishFogService.Project(em, session);
             return true;
         }
 
@@ -149,6 +151,9 @@ namespace Game.Runtime
             em.SetComponentData(unit, owned);
             em.SetComponentData(session, SkirmishCapacityLedger.FromSnapshot(capacity, snapshot));
             DecrementReservation(em, session, owned.ReservationId);
+            using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            SkirmishArmyGroupSystem.RefreshAlive(em, session, ownedQuery, sessionId);
             return true;
         }
 

@@ -113,12 +113,17 @@ namespace Game.Runtime
             if (!em.HasBuffer<SkirmishProductionReservation>(session))
                 em.AddBuffer<SkirmishProductionReservation>(session);
 
+            SkirmishArmyGroupSystem.EnsureSession(em, session, setup);
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             bool startingSetBound = true;
             int infantryLive = 0;
             int groundLive = 0;
             int airLive = 0;
             int supplyLive = 0;
+            uint openGroupId = 0;
+            byte openFaction = 0;
+            SkirmishRoleKind openRole = SkirmishRoleKind.None;
+            int openFill = 0;
 
             for (int i = 0; i < setup.Forces.Length; i++)
             {
@@ -128,9 +133,10 @@ namespace Game.Runtime
                 string prefabKey = force.RuntimePrefabKey ?? string.Empty;
                 if (string.IsNullOrEmpty(prefabKey))
                     startingSetBound = false;
+                SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
                 for (int member = 0; member < quantity; member++)
                 {
-                    CreateForceMember(
+                    Entity spawned = CreateForceMember(
                         em,
                         sessionId,
                         force,
@@ -138,9 +144,25 @@ namespace Game.Runtime
                         member,
                         perMemberSupply,
                         prefabKey);
+                    bool infantry = category == SkirmishPopulationCategory.Infantry;
+                    bool needNew = openGroupId == 0 ||
+                                   force.FactionId != openFaction ||
+                                   force.RoleKind != openRole ||
+                                   !infantry ||
+                                   openFill >= SkirmishRoleIds.InfantrySquadMembers;
+                    if (needNew)
+                    {
+                        openGroupId = SkirmishArmyGroupSystem.OpenGroup(
+                            em, session, force.FactionId, force.RoleKind, category);
+                        openFaction = force.FactionId;
+                        openRole = force.RoleKind;
+                        openFill = 0;
+                    }
+
+                    SkirmishArmyGroupSystem.BindMember(em, session, spawned, openGroupId);
+                    openFill++;
                     if (force.FactionId == 1)
                     {
-                        SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
                         if (category == SkirmishPopulationCategory.Infantry)
                             infantryLive++;
                         else if (category == SkirmishPopulationCategory.Ground)
@@ -174,6 +196,7 @@ namespace Game.Runtime
                 em.SetComponentData(session, SkirmishCapacityLedger.FromSnapshot(capacity, snapshot));
             }
 
+            SkirmishFogService.Project(em, session);
             return true;
         }
 

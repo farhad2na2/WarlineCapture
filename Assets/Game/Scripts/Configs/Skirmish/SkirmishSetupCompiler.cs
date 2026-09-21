@@ -273,6 +273,19 @@ namespace Game.Configs
             if (setup.PlayerSupply > setup.SupplyCapEach)
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientCapacity, "supply_cap_each", setup.PlayerSupply.ToString(CultureInfo.InvariantCulture)));
 
+            if (definition.IntelConfig != null)
+            {
+                setup.SharedFog = definition.IntelConfig.SharedFog;
+                setup.DevelopmentFullVision = definition.IntelConfig.DevelopmentFullVision;
+                setup.LastSeenExpireSeconds = definition.IntelConfig.LastSeenExpireSeconds;
+            }
+            else
+            {
+                setup.SharedFog = true;
+                setup.DevelopmentFullVision = true;
+                setup.LastSeenExpireSeconds = 20;
+            }
+
             setup.Structures = BuildStructures(definition, vector);
             setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();

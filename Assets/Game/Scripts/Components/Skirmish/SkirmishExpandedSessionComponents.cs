@@ -158,4 +158,43 @@ namespace Game.Components
     {
         public byte RemoveAttemptOwned;
     }
+
+    public struct SkirmishArmyGroupMembershipComponent : IComponentData
+    {
+        public uint GroupId;
+        public SkirmishPopulationCategory Domain;
+        public byte Leader;
+    }
+
+    public struct SkirmishArmyGroupRecord : IBufferElementData
+    {
+        public uint GroupId;
+        public byte FactionId;
+        public SkirmishRoleKind Role;
+        public SkirmishPopulationCategory Domain;
+        public int MemberCount;
+        public int AliveCount;
+        public SkirmishGroupOrderKind LastOrder;
+        public byte Selected;
+    }
+
+    public struct SkirmishArmySelectionComponent : IComponentData
+    {
+        public int SelectedGroupCount;
+        public int PageIndex;
+        public int PageSize;
+        public uint NextGroupId;
+    }
+
+    public struct SkirmishFogStateComponent : IComponentData
+    {
+        public byte SharedFog;
+        public byte DevelopmentFullVision;
+        public int LastSeenExpireSeconds;
+    }
+
+    public struct SkirmishContactSightComponent : IComponentData
+    {
+        public SkirmishContactSight Sight;
+    }
 }

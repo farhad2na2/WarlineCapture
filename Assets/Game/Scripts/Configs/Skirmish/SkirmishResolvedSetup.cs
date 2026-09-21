@@ -90,6 +90,9 @@ namespace Game.Configs
         public SkirmishRoleOverlay[] RoleOverlays = Array.Empty<SkirmishRoleOverlay>();
         public string PlayerBaseObjectId = "obj.base.player";
         public string EnemyBaseObjectId = "obj.base.enemy";
+        public bool SharedFog = true;
+        public bool DevelopmentFullVision = true;
+        public int LastSeenExpireSeconds = 20;
         public string CheckpointVersion = "skirmish.checkpoint.v1";
         public string Report = string.Empty;
     }

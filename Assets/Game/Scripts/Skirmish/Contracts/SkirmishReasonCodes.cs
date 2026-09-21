@@ -28,6 +28,9 @@ namespace Game.Skirmish.Contracts
         MissingResolvedSetup = 23,
         SpawnBoundaryUnavailable = 24,
         CleanupRequired = 25,
-        ProductionRejected = 26
+        ProductionRejected = 26,
+        HiddenContact = 27,
+        IncompatibleOrder = 28,
+        InvalidSelection = 29
     }
 }

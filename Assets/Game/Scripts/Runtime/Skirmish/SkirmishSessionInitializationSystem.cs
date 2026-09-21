@@ -83,6 +83,8 @@ namespace Game.Runtime
 
             if (!em.HasBuffer<SkirmishProductionReservation>(session))
                 em.AddBuffer<SkirmishProductionReservation>(session);
+
+            SkirmishArmyGroupSystem.EnsureSession(em, session, setup);
         }
 
         private static void Fail(ref SkirmishExpandedSessionComponent session, SkirmishReasonCode code)

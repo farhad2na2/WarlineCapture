@@ -14,6 +14,18 @@
 
 Asset paths in this table are relative to `Assets/Game/`. An existing logical/source binding is not proof the full target layout is built. If a physical/logical definition is reused unchanged, retain its stable ID; scenario army/start/size changes belong in layout/setup references. Do not publish a new map by relabeling the same inaccessible region.
 
+## Demo 2 assets: authoring work inside the five maps
+
+Follow the [integration guide](../../Demo2_Asset_Integration_Guide.md) and [manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). D2-A01 creates project-owned variants/materials; D2-A02 stages one IB candidate yard before broader adoption. For each placement record source/output GUID, resolved decoration/surface/gameplay owner, world transform/footprint, typed anchor if interactive, content hash and evidence. Keep roof props attached to building visual states and use the existing source/config → bake chain; never write a second render/gameplay copy into generated output.
+
+- **DB:** optional sparse logistics/perimeter pieces; preserve desert appearance and both base exits.
+- **CC:** service-yard/damage accents; measure curb/height transitions and fix the existing floating shelf before claiming visual acceptance.
+- **MP:** small utility/perimeter compounds clear of bypass and infantry paths; a bridge is conditional geometry, not a required new mechanic.
+- **IB:** warehouse/container/pallet and generator/transformer cluster beside the freight/service routes. Preserve all BA/FC/BT/CE layout anchors, truck turning/holding areas and independent routes.
+- **AP:** perimeter/comms/logistics around the existing runway contract; warehouse and wreck models do not supply validated hangars, runways or aircraft behavior.
+
+Rebuild affected placements, navigation/surfaces, presentation, hashes, preview/minimap and dependency layout with explicit target-map inputs. Review fixed-path bake tool limitations in the guide. D2-V1–V6 are additive to the map geometry and scenario gates; all 24 scenarios sharing a changed map require the relevant updated evidence. A module preview cannot publish an S-ID.
+
 ## New layout schema and files
 
 `SkirmishMapLayoutConfig` contains map ID/version, bounds/grid/content hashes, local authoring frame, typed anchors, route graph, build pads and clearance footprints, objective geometry, initial force/garrison slots and size staging variants. Use `OperationMapDefinition` and `ScenarioSetupConfig.RequiredAnchors` for existing shared binding; add typed extra metadata rather than a new scene loader.

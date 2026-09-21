@@ -261,6 +261,10 @@ Historical immediate UI phase plans have been archived under `Archive/LegacyUI_2
 
 ## Visual Direction And Production Art
 
+- [Demo2_Asset_Integration_Guide.md](Demo2_Asset_Integration_Guide.md) - practical Editor/CLI authoring instructions, project-owned variants/materials, decoration/surface/gameplay binding, scoped rebuilds, delivery packages and validation gates; [23 verified source prefabs](VisualConfigs/Demo2_Environment_Asset_Manifest.json) have proposed output paths and separate pending acceptance.
+
+- [Demo2_Asset_Reuse_Plan.md](Demo2_Asset_Reuse_Plan.md) - reviewed Polygon Battle Royale scene assets selected for planned Campaign, Operations and Skirmish environment reuse, with exact shortlist, mode assignments, source inventory and integration gates. Production acceptance remains pending.
+
 - `3D_SingleMap_Gameplay_Direction.md` - active visual/gameplay production direction for 3D operation maps and command-base menu art.
 - `M01_FirstContact_Production_Contract.md` - first implementation handoff for M01 First Contact and the target contract for the UI/gameplay/art agents.
 - `Art_Asset_Requirements_Register.md` and `Art_Asset_Requirements_Register.csv` - consolidated approval checklist for production art, including combat, UI, Saga, store, Commander Identity, and ARIA assistant assets.

@@ -37,6 +37,12 @@ Map greyboxes for D01 and one second district begin during P2 so the rules are n
 
 B12 is **O001/O002/O003, O011/O012, O021/O022, O031/O032, O041/O042, O051**. This intentionally includes the vertical-slice repair mission and defers O052 to B30. B30 is O001–O005, O011–O015, O021–O025, O031–O035, O041–O045, O051–O055. B60 adds every remaining catalog row. These are cumulative **published** counts; isolated engineering fixtures/prototypes are not released missions. All six district finales and city completion are unavailable until their dependencies are certified; early builds clearly label themselves a development slice.
 
+## Demo 2 environment tasks within P2/P6
+
+Use [D2-A01–A04](../../Demo2_Asset_Integration_Guide.md#7-delivery-packages-and-handoff). During P2 greyboxing, identify module needs and resolve source/GUID/ownership without waiting for all 120 Skirmish battles. P6 authors project-owned variants or reuses already qualified shared ones, then places district-specific Logistics/Utilities in D03 and Crossing in D04, with smaller D02/D05/D06 accents. A shared IB art pilot may supply qualified assets; an entire Skirmish gameplay package is not an art prerequisite. Existing desert assets remain the fallback while qualification is pending.
+
+The map owner records typed roles, material overrides, surface/clearance and scoped bake/hash changes. Integration/QA closes D2-V1–V6 with each affected B12/B30/B60 mission's own gameplay/ARIA evidence. Perimeter meshes cannot increase enemy budgets; utility art cannot create new production/electrical mechanics. This work leaves P0–P7 order, O001–O060 and the first D01 three-mission slice intact.
+
 ## Work ownership for multiple assigned agents
 
 | Lane | Files owned | Depends on | Must not independently change |

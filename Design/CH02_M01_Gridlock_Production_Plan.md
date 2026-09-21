@@ -104,6 +104,14 @@ Integrate matching EN/FA story and tutorial voice clips as a production delivera
 
 ## Implementation packages
 
+### Optional Demo 2 presentation pass
+
+Use the [integration guide](Demo2_Asset_Integration_Guide.md) and its manifest for a later G5 environment pass: medical crates/generator at the relief yard, and damaged-road/wreck visuals where they clarify the authored blocked route. Keep the current relief tents, crew semantics, obstruction identity/health/work policy and actual traversable service lane until the replacement earns acceptance. This is planned art work, not a prerequisite that reopens G0 or replaces concurrent implementation.
+
+The inspected working tree has `Assets/Game/Scripts/Editor/CH02M01GridlockWorldBuilder.cs` and attempt-owned placement output. Implement presentation changes through that owner with project-owned prefab inputs; preserve footprints, named roles and retry/exit cleanup. Do not place permanent duplicate obstacles in the shared city. Record D2-V1–V6 and rerun affected G6 traversal, objective, manual/ARIA, EN/FA and recovery evidence after any geometry/input change. Update mission/briefing images to the accepted art revision; no claim of new acceptance is made by this amendment.
+
+### Existing gameplay/content packages
+
 Complete in dependency order. No calendar estimate is asserted before G0 resolves the physical route and crew/vehicle feasibility.
 
 | Package | Work | Exit evidence |

@@ -15,6 +15,8 @@ This supersedes the 2.5D isometric macro-tile direction and the prior strategic-
 
 ## Product Fantasy
 
+2026-09-21 environment sourcing: [Demo 2 asset reuse](Demo2_Asset_Reuse_Plan.md) adds selected Polygon Battle Royale industrial, utility and military infrastructure to the planned art palette. Keep the established desert terrain and Sahrin architecture; newer districts may use adapted warehouses, containers, electrical equipment, checkpoints and crossings. The demo island biome, scene lighting and playable roster are not adopted wholesale. Use project-owned variants and pass the plan's visual, navigation and mobile gates before production integration.
+
 WarlineCapture is a mobile-first 3D command RTS about preparing and executing operations in a fictional Middle Eastern-inspired city where armed terrorist and insurgent cells exploit populated infrastructure, roads, compounds, markets, and district systems.
 
 The player is a field commander preparing to attack, raid, intercept, contain, evacuate, reinforce, or defend based on imperfect intel. The pressure is not only defeating hostiles. The commander must protect civilians, avoid reckless collateral damage, keep infrastructure usable, and live with district consequences after the mission.
@@ -32,6 +34,8 @@ Live with the district consequences.
 ```
 
 ## Gameplay Model
+
+Environment authors use the [Demo 2 integration guide](Demo2_Asset_Integration_Guide.md) for project-owned prefab/material creation, typed ownership, map-scoped baking and acceptance. Its manifest is a source shortlist, not a runtime prefab registry. Preserve the selected map's existing presentation architecture and separate visual reuse from unit/building capability.
 
 WarlineCapture should play as a single-world RTS, not a dual-layer strategy/tactics game.
 

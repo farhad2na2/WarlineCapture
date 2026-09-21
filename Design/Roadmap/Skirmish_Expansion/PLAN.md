@@ -15,6 +15,8 @@ The unlock/upgrade direction was accepted for documentation on 2026-09-18. Later
 
 ## Catalog target clarified with the owner
 
+Environment sourcing amendment (2026-09-21): follow the [Demo 2 asset reuse plan](../../Demo2_Asset_Reuse_Plan.md). Pilot a warehouse/logistics/utility module in an isolated Industrial Basin candidate, then consider perimeter/service accents for the other four maps. This fits the existing five-map scope and does not change S001–S120, roster commitments or the gameplay delivery order. Models are not new unit roles; geometry and presentation changes must earn the existing map and scenario acceptance.
+
 The requested scale is **100–200 selectable battles on a few maps**, not twelve battles and not merely hundreds of units. Target **120 accepted scenarios on five maps**, with a planned extension to 200. The initial matrix is five maps × four objectives × three army configurations × two starting packages. Seeds, four difficulty levels and army sizes are replay options, not extra scenarios. Each combination must earn acceptance through distinct tactical decisions and complete systems; the matrix alone does not make content playable.
 
 The five maps are Desert Base, City Crossroads, Mountain Pass, Industrial Basin and Airfield Plains. Objectives are Base Assault, Frontline Control, Breakthrough and Convoy Escort. Army profiles are Ground Maneuver, Air Mobile and Combined Arms. Starts are Field Base and Established Base. Forty of the 120 candidates use the complete Combined Arms roster. Four difficulty levels are Recruit, Regular, Veteran and Commander, with shared resources/stats and different legal strategic behavior. See the companion specifications for exact starts, outcome rules, caps, routes and acceptance.
@@ -22,6 +24,8 @@ The five maps are Desert Base, City Crossroads, Mountain Pass, Industrial Basin 
 Two existing introductory Base Assaults evolve into the first map equivalents; preserve their old snapshots for regression, not extra catalog count. The floating terrain shelf reported near the City Crossroads base remains an explicit open map defect. Current wins must not be presented as complete visual QA.
 
 ## 1. Recommended experience
+
+Implement environment adoption through the [practical guide](../../Demo2_Asset_Integration_Guide.md), [verified source manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json) and SK-11 tasks. The guide gives exact prefab sources/proposed destinations, Editor steps, ownership rules, scoped build limitations and D2-V1–V6 acceptance. Keep environment adaptation separate from roster capability and per-scenario publication.
 
 Build a mobile combined-arms RTS: recruit specialist squads, deploy armor and aircraft, maintain supply, take useful ground, and coordinate attacks on several fronts. The player should be able to command a large army through a few stable groups, see why an order succeeded or failed, and recover from a lost fight.
 

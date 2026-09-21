@@ -57,6 +57,8 @@ These are source findings, not a Unity/device/ARIA run. Existing shared-source m
 
 ## Fixed decisions agents can implement without asking for design
 
+Environment asset implementation now includes the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [source/output planning manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). Assign D2-A01/A02 within SK-11 to qualify a small IB warehouse/logistics/utility candidate. Integrate accepted modules through each map's owning source/config and presentation path; retain stable S-IDs, map IDs, roster roles and the DB first-ground-slice priority. D2-A03/A04 join the affected SK-11/SK-13 acceptance work. Art selection is resolved; actual output GUIDs, dimensions, ownership and validation must be recorded by the implementation owner.
+
 - Keep the 120 identities and exact objective/army/start matrix. Default a first visit to Regular/Standard; recommended War remains a user-visible suggestion gated by device and checkpoint certification.
 - Implement shared ECS systems and typed assets. Add no per-scenario C# controller and no 120-way gameplay/ARIA switch. Each packet lists the exact shared types it consumes.
 - Both factions use the specified legal resources/roles/costs/caps. BT/CE keep the documented two extra defender watchtowers, and no free waves. ARIA is required to play and win through visible controls for every released entry.

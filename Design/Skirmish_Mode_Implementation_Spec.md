@@ -176,6 +176,8 @@ Locked presets should still be visible as future content if the visual design su
 
 ## Roster And Prefab Usage
 
+2026-09-21 environment handoff: use the [Demo 2 integration guide](Demo2_Asset_Integration_Guide.md) for the selected industrial, utility, perimeter and crossing assets. The active expansion's SK-11 map package owns adaptation and placement; the [map implementation packet](Roadmap/Skirmish_Expansion/MAP_IMPLEMENTATION.md) owns per-map use. These are environment assets with separate acceptance, not new selectable roster entries or a revision of the scoped prototype.
+
 Skirmish must not invent separate public names for units or buildings. It should read display names and descriptions from:
 
 ```text

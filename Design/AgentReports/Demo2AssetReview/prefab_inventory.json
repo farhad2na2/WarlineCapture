@@ -1,0 +1,669 @@
+{
+  "date": "2026-09-21",
+  "scene": "Assets/Game/Scenes/Demo2.unity",
+  "method": "Serialized m_SourcePrefab GUIDs resolved against Assets/**/*.meta; direct instances only, not nested renderer or dependency counts.",
+  "prefab_instance_count": 1533,
+  "unique_prefab_count": 165,
+  "prefabs": [
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_02.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_House_03.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_02.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_SmallBuilding_03.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_Tent_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_Tent_02.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_Warehouse_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Buildings/SM_Bld_WoodenShack_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_01.prefab",
+      "instances": 12
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_Staight_01.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_Staight_02.prefab",
+      "instances": 10
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Bridge_01.prefab",
+      "instances": 11
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Bridge_02.prefab",
+      "instances": 11
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Bridge_Broken_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Bridge_Support_01.prefab",
+      "instances": 14
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Concrete_Base_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_DirtRoad_End_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_DirtRoad_Straight_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Dock_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Dock_Poles_01.prefab",
+      "instances": 8
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Circle_01.prefab",
+      "instances": 13
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Circle_02.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Square_01.prefab",
+      "instances": 18
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Port_Boat_Tie_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Port_Concrete_Slab_01.prefab",
+      "instances": 54
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Port_Wall_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Port_Wall_02.prefab",
+      "instances": 14
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Port_Wall_Corner_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Corner_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_01.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_03.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_Damaged_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_Damaged_02.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_Damaged_03.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_Straight_End_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Road_T_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rock_01.prefab",
+      "instances": 20
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rock_02.prefab",
+      "instances": 52
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pebbles_02.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pebbles_03.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pile_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pile_02.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Plank_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Plank_02.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Plank_03.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_02.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_03.prefab",
+      "instances": 23
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_04.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Cloud_01.prefab",
+      "instances": 12
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Cloud_02.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Cloud_03.prefab",
+      "instances": 14
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Cloud_04.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Grass_Patch_01.prefab",
+      "instances": 67
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Grass_Patch_02.prefab",
+      "instances": 68
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Grass_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Grass_02.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Soft_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Small_Rocks_01.prefab",
+      "instances": 47
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Small_Rocks_02.prefab",
+      "instances": 34
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_TreeDead_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_TreeStump_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_02.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_03.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_04.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_AmmoBox_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Bandage_02.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrel_01.prefab",
+      "instances": 35
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrel_02.prefab",
+      "instances": 22
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barricade_01.prefab",
+      "instances": 34
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+      "instances": 22
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrier_02.prefab",
+      "instances": 23
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrier_04.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Barrier_Dirt_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BaseWall_01.prefab",
+      "instances": 39
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BaseWall_Broken_01.prefab",
+      "instances": 8
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BaseWall_Broken_02.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BaseWall_Post_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Benchpress_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BunkBed_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Cinderblock_01.prefab",
+      "instances": 15
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Cinderblock_Wall_01.prefab",
+      "instances": 21
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Container_01.prefab",
+      "instances": 27
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Container_Small_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Crate_01.prefab",
+      "instances": 8
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Crate_Large_01.prefab",
+      "instances": 24
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Crate_Medical_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Crate_Small_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_Crate_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Gauze_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Generator_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_GuardTower_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Iron_Sheet_01.prefab",
+      "instances": 9
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Iron_Sheet_02.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Iron_Sheet_03.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_MedicalBox_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_MissileStack_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Needle_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_PalletStack_01.prefab",
+      "instances": 18
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Pallet_01.prefab",
+      "instances": 13
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Pallet_Loaded_01.prefab",
+      "instances": 16
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Pallet_Loaded_02.prefab",
+      "instances": 15
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Pills_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Portaloo_01.prefab",
+      "instances": 12
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Propane_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Propane_Tall_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_RadioTower_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Trable_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_01.prefab",
+      "instances": 11
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_02.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_03.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_Door_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_Half_01.prefab",
+      "instances": 8
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_Post_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Range_Wall_Window_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Bottle_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Can_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Can_02.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Paper_02.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Paper_03.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Papers_01.prefab",
+      "instances": 14
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Papers_02.prefab",
+      "instances": 10
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Rubbish_Papers_03.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Slatbox_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Spotlight_01.prefab",
+      "instances": 7
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_TankTrap_01.prefab",
+      "instances": 8
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Target_01.prefab",
+      "instances": 15
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_TireStack_01.prefab",
+      "instances": 14
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Tire_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Transformer_01.prefab",
+      "instances": 6
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_WireFence_01.prefab",
+      "instances": 109
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_WireFence_02.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Wirespool_01.prefab",
+      "instances": 23
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Wirespool_02.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_WoodPlank_01.prefab",
+      "instances": 5
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Armored_Car_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Armored_Car_Destroyed_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Bike_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Bike_Destroyed_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Boat_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Buggy_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Buggy_Destroyed_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Car_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Car_Clean_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Car_Destroyed_01.prefab",
+      "instances": 28
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Light_Armored_Car_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Light_Car_Destroyed_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Plane_Destroyed_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Tank_Russia_Destroyed_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Tank_USA_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Tank_USA_Destroyed_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Truck_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Vehicles/SM_Veh_Truck_Destroyed_01.prefab",
+      "instances": 4
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Grenade_Launcher_01.prefab",
+      "instances": 2
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Pan_01.prefab",
+      "instances": 3
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Pistol_Heavy_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Rifle_Assault_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Rifle_Assault_02.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Rifle_Assault_03.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Rifle_Assault_04.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Sniper_Heavy_01.prefab",
+      "instances": 1
+    },
+    {
+      "path": "Assets/Synty/PolygonGeneric/Prefabs/Environment/SM_Gen_Env_Skydome_01.prefab",
+      "instances": 1
+    }
+  ]
+}

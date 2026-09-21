@@ -21,7 +21,7 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 - `SkirmishExpansionCatalogFactory` authors S003 beside S002. Catalog walk still compiles S002 when the manifest only lists S002 features. S003 compiles when the manifest includes its air features.
 - Regular Standard seeds `104732`, `130366`, `155924` compile against `INITIAL_SETUP_MATRIX.csv`: 8 rifle, 4 rocketeer, 1 car, 1 armored APC, 0 tank, 0 air, 450/120/350, deadline 1080 s, readiness 1.
 - War (`393244`) and Large War (`458882`) also match the matrix. Measured pad binding stays Regular Standard only, same pads as S002.
-- Publication row is **InProgress**. Complete evidence cannot flip S003 to Playable in this slice.
+- Publication row is **InProgress**. The full evidence bundle still cannot flip S003. The guarded Game View flip can write Playable only when `confirmWrite=true` and the Regular Standard files exist. This tip does not run that write.
 
 ### Air Mobile gates (army A / start F)
 - Ground Maneuver still excludes attack helicopters, jets, and the transport plane. Its production test still returns `UnsupportedRole`.
@@ -46,9 +46,15 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 - Living Helipad and Airport structures map to the existing producers and to prefab keys `Building_Helipad` and `Building_Airport`. No new art files were added.
 - When the unit registry already contains those keys, produced AA spawns at Ground Staging and a produced light attack helicopter spawns with the Helipad visual. Editor coverage uses stand-ins named with those existing keys.
 
+### Regular Standard Game View and guarded flip
+- `SkirmishS003GameViewCapture.RunFocusedLaunchRegularStandard` queues catalog **S003** / Regular / Standard / seed `104732`, dumps the Playing frame, and stays in Play Mode. It does not inject an army or force Victory.
+- Playing PNG and sidecar are written under project `_Evidence/` and copied to `Design/AgentReports/SkirmishExpansion/S003/_Evidence/`. Names follow the S002 scaffold pattern: `s003-regular-standard-104732-playing.png` and `s003-regular-standard-104732-gameview.json`.
+- `SkirmishPublicationFlipMenu.RunFocusedFlipS003DryRun` only evaluates. `RunFocusedFlipS003Confirm` writes **S003** to Playable when those files exist and the compiled content/setup hashes match. It does not change the S002 row. The checked-in manifest stays **InProgress** until that confirm runs.
+- Rebuild of expanded definitions still restores S002 when that row is already Playable, and now does the same for S003. An InProgress row is left InProgress.
+
 ## Publication
-- Status: **InProgress**. Compiler, Field roster, AA/pad economy, public air controls, and registry spawn are in. Flight, refuel, Game View, and the ARIA matrix are not.
-- Not Playable. S002 on the checked-in manifest stays Playable.
+- Status: **InProgress**. Compiler, Field roster, AA/pad economy, public air controls, registry spawn, and the Game View / flip entry points are in. The Playing PNG is not captured on this tip. Flight, refuel, and the ARIA matrix are not.
+- Not Playable until Programmer 1 confirms the flip. S002 on the checked-in manifest stays Playable.
 
 ## Remaining gaps
 
@@ -57,8 +63,8 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 | Air motion | No attack pass, return, landing, or refuel. Fuel return is not simulated |
 | Helipad yard | The Helipad/Airport prefab keys attach when the registry already has them. There is still no authored Skirmish pad yard, taxi path, or landing reservation |
 | Field backbone | Matrix reports 7 starting structures. The compiler still spawns the designated Barracks and Ground Staging only |
-| Game View | No Regular Standard Playing capture for seed `104732` |
-| Playable | Row stays InProgress until a human win and the evidence files exist |
+| Game View | Launch entry point is in. The Playing PNG for seed `104732` is not captured yet |
+| Playable | Row stays InProgress until the evidence files exist and Programmer 1 runs the confirm flip |
 | ARIA matrix | Seeds `104732` / `130366` / `155924` × EN/FA are not run. `runs.csv` is not opened for S003. The shell does not yet present the AA or pad controls |
 | Localization | EN/FA keys are merged from Game Design (`c01a4772b`, PR #28). ARIA matrix runs in both locales are still open |
 | Library / HUD | S002 copy projection is unchanged. S003 is not a Quick Custom card |
@@ -139,4 +145,48 @@ Markers:
 - `S003AirMobilePublicControlsDoNotMutateGameplay`
 - `S003RegistrySpawnsAaAndLightHelicopterFromExistingKeys`
 
-S002 Playable tests in the same suites stay in the run. This environment has no Unity Editor, so the new markers were not executed here. Windows Programmer 1 already passed definition, catalog, and objective markers on the previous tip.
+S002 Playable tests in the same suites stay in the run. This environment has no Unity Editor, so the new markers were not executed here. Windows Programmer 1 already passed definition, catalog, objective, economy, aria, and visual on tip `4eb1bbd74`.
+
+### Game View capture and guarded flip
+
+Use the Skirmish shadow project. Keep Unity Hub open and signed in. The launch stays in Play Mode (`stayInPlayMode=1`), same as S002.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "<shadow project>" `
+  -ExecuteMethod Game.Editor.SkirmishS003GameViewCapture.RunFocusedLaunchRegularStandard `
+  -LogFile "$env:TEMP\skirmish-s003-gameview.log" `
+  -RequiredPassMarker "[SkirmishS003GameView] result=Passed"
+```
+
+Required evidence, either directory is enough for the flip:
+
+| File | Directory |
+|---|---|
+| `s003-regular-standard-104732-playing.png` | `_Evidence/` and `Design/AgentReports/SkirmishExpansion/S003/_Evidence/` |
+| `s003-regular-standard-104732-gameview.json` | same two directories (`forcedVictory=0`) |
+
+Dry-run does not write the manifest. Before the files exist it logs `result=Failed catalog=S003 playable=0 confirm=0`, and the Windows wrapper treats that as a failed validation. After the files exist and the hashes match, the same method logs `wouldFlip=1` and still leaves the asset InProgress.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "<shadow project>" `
+  -ExecuteMethod Game.Editor.SkirmishPublicationFlipMenu.RunFocusedFlipS003DryRun `
+  -LogFile "$env:TEMP\skirmish-s003-flip-dry.log" `
+  -RequiredPassMarker "[SkirmishPublicationFlip] result=Passed catalog=S003 wouldFlip=1 playable=0 confirm=0"
+```
+
+Confirm writes only the S003 row. Run it after the dry-run reports `wouldFlip=1`. S002 stays Playable.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "<shadow project>" `
+  -ExecuteMethod Game.Editor.SkirmishPublicationFlipMenu.RunFocusedFlipS003Confirm `
+  -LogFile "$env:TEMP\skirmish-s003-flip-confirm.log" `
+  -RequiredPassMarker "[SkirmishPublicationFlip] result=Passed catalog=S003 playable=1 confirm=1"
+```
+
+Menu names: `Tools/Warline/Skirmish/Launch S003 Regular Standard Game View` and `Tools/Warline/Skirmish/Flip S003 Playable If Evidence Ready`.

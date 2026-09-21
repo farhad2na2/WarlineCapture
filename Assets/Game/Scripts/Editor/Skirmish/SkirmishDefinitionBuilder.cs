@@ -28,7 +28,8 @@ namespace Game.Editor
             Directory.CreateDirectory(ScenarioFolder);
             Directory.CreateDirectory(ScenarioFolderS003);
             SkirmishExpansionAuthoredSet set = SkirmishExpansionCatalogFactory.CreateInMemory();
-            bool preserveS002Playable = TryReadS002Playable(out string preservedS002Notes);
+            bool preserveS002Playable = TryReadPlayable("S002", out string preservedS002Notes);
+            bool preserveS003Playable = TryReadPlayable("S003", out string preservedS003Notes);
             Persist(set.ObjectiveBa, SharedFolder + "/SkirmishObjective_BA.asset");
             Persist(set.ArmyGround, SharedFolder + "/SkirmishArmy_GroundManeuver.asset");
             Persist(set.ArmyAir, SharedFolder + "/SkirmishArmy_AirMobile.asset");
@@ -54,16 +55,18 @@ namespace Game.Editor
             Persist(set.DefinitionS003, ScenarioFolderS003 + "/SkirmishScenario_S003.asset");
             Persist(CopyLayout(set.LayoutDbBa), ScenarioFolderS003 + "/SkirmishLayout_S003.asset");
             if (preserveS002Playable)
-                RestoreS002Playable(preservedS002Notes);
+                RestorePlayable("S002", preservedS002Notes);
+            if (preserveS003Playable)
+                RestorePlayable("S003", preservedS003Notes);
             AssetDatabase.SaveAssets();
             return "[SkirmishDefinitionBuilder] result=Passed definition=skirmish.s002,skirmish.s003";
         }
 
-        private static bool TryReadS002Playable(out string notes)
+        private static bool TryReadPlayable(string catalogId, out string notes)
         {
             notes = null;
             SkirmishPublicationConfig existing = AssetDatabase.LoadAssetAtPath<SkirmishPublicationConfig>(PublicationPath);
-            if (existing == null || !existing.TryGet("S002", out SkirmishPublicationRowConfig row))
+            if (existing == null || !existing.TryGet(catalogId, out SkirmishPublicationRowConfig row))
                 return false;
             if (row.Status != SkirmishPublicationStatus.Playable)
                 return false;
@@ -71,11 +74,11 @@ namespace Game.Editor
             return true;
         }
 
-        private static void RestoreS002Playable(string notes)
+        private static void RestorePlayable(string catalogId, string notes)
         {
             SkirmishPublicationConfig written = AssetDatabase.LoadAssetAtPath<SkirmishPublicationConfig>(PublicationPath);
-            if (written == null || !written.TrySetStatus("S002", SkirmishPublicationStatus.Playable, notes))
-                throw new InvalidOperationException("Could not preserve S002 Playable publication.");
+            if (written == null || !written.TrySetStatus(catalogId, SkirmishPublicationStatus.Playable, notes))
+                throw new InvalidOperationException("Could not preserve " + catalogId + " Playable publication.");
             EditorUtility.SetDirty(written);
         }
 

@@ -136,6 +136,31 @@ namespace Game.Configs
 
             return true;
         }
+
+        public static bool TryCreateFirstVisitS003(
+            int seed,
+            string locale,
+            out SkirmishAriaAcceptancePayload payload,
+            out string error)
+        {
+            if (!SkirmishAcceptanceCensusCapture.IsS003RegularStandardSeed(seed))
+            {
+                payload = default;
+                error = "First-visit ARIA seed must be 104732, 130366 or 155924.";
+                return false;
+            }
+
+            return TryCreate(
+                SkirmishAcceptanceCensusCapture.S003CatalogId,
+                SkirmishAcceptanceCensusCapture.S003DefinitionId,
+                SkirmishAcceptanceCensusCapture.S003DefinitionVersion,
+                SkirmishSizeId.Standard,
+                SkirmishDifficultyId.Regular,
+                seed,
+                locale,
+                out payload,
+                out error);
+        }
     }
 
     public sealed class SkirmishAcceptanceCensus
@@ -203,6 +228,9 @@ namespace Game.Configs
         public const string CatalogId = "S002";
         public const string DefinitionId = "skirmish.s002";
         public const int DefinitionVersion = 1;
+        public const string S003CatalogId = "S003";
+        public const string S003DefinitionId = "skirmish.s003";
+        public const int S003DefinitionVersion = 1;
         public const int CodeHashSchemaVersion = 1;
         public const int FirstVisitSeed = 104731;
         public const string CodeHashIdentity =
@@ -215,6 +243,18 @@ namespace Game.Configs
             for (int i = 0; i < RegularStandardAriaSeeds.Length; i++)
             {
                 if (RegularStandardAriaSeeds[i] == seed)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsS003RegularStandardSeed(int seed)
+        {
+            int[] seeds = SkirmishS003FirstVisit.RegularStandardSeeds;
+            for (int i = 0; i < seeds.Length; i++)
+            {
+                if (seeds[i] == seed)
                     return true;
             }
 
@@ -237,6 +277,24 @@ namespace Game.Configs
                 out reasons);
         }
 
+        public static bool TryCaptureS003RegularStandard(
+            SkirmishExpansionAuthoredSet authored,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix,
+            out SkirmishAcceptanceCensus census,
+            out List<SkirmishCompileReason> reasons)
+        {
+            return TryCaptureDefinition(
+                authored,
+                authored == null ? null : authored.DefinitionS003,
+                S003CatalogId,
+                matrix,
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS003FirstVisit.SeedA,
+                out census,
+                out reasons);
+        }
+
         public static bool TryCapture(
             SkirmishExpansionAuthoredSet authored,
             IReadOnlyList<SkirmishSetupMatrixRow> matrix,
@@ -246,20 +304,43 @@ namespace Game.Configs
             out SkirmishAcceptanceCensus census,
             out List<SkirmishCompileReason> reasons)
         {
+            return TryCaptureDefinition(
+                authored,
+                authored == null ? null : authored.DefinitionS002,
+                CatalogId,
+                matrix,
+                difficulty,
+                size,
+                seed,
+                out census,
+                out reasons);
+        }
+
+        private static bool TryCaptureDefinition(
+            SkirmishExpansionAuthoredSet authored,
+            SkirmishScenarioDefinitionConfig definition,
+            string missingCatalogId,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix,
+            SkirmishDifficultyId difficulty,
+            SkirmishSizeId size,
+            int seed,
+            out SkirmishAcceptanceCensus census,
+            out List<SkirmishCompileReason> reasons)
+        {
             census = null;
             reasons = new List<SkirmishCompileReason>();
-            if (authored == null || authored.DefinitionS002 == null)
+            if (authored == null || definition == null)
             {
-                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "definition", CatalogId));
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "definition", missingCatalogId));
                 return false;
             }
 
             var manifest = new SkirmishContentManifest
             {
-                RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds
+                RequiredFeatureIds = definition.RequiredFeatureIds
             };
             if (!SkirmishSetupCompiler.TryCompile(
-                    authored.DefinitionS002,
+                    definition,
                     difficulty,
                     size,
                     seed,
@@ -375,10 +456,29 @@ namespace Game.Configs
         public const string RunsFileName = "runs.csv";
         public const string AcceptanceFileName = "acceptance.md";
 
+        public static readonly string S003PlayingPngFileName =
+            FormatRegularStandardPlayingPng(
+                SkirmishAcceptanceCensusCapture.S003CatalogId,
+                SkirmishS003FirstVisit.SeedA);
+
+        public static readonly string S003GameViewSidecarFileName =
+            FormatRegularStandardGameViewSidecar(
+                SkirmishAcceptanceCensusCapture.S003CatalogId,
+                SkirmishS003FirstVisit.SeedA);
+
+        public static readonly string S003RelativeReportEvidenceDirectory =
+            RelativeReportEvidenceDirectoryFor(SkirmishAcceptanceCensusCapture.S003CatalogId);
+
         public static readonly string[] RequiredGameViewEvidenceFiles =
         {
             PlayingPngFileName,
             GameViewSidecarFileName
+        };
+
+        public static readonly string[] S003RequiredGameViewEvidenceFiles =
+        {
+            S003PlayingPngFileName,
+            S003GameViewSidecarFileName
         };
 
         public static readonly string[] EvidenceDirectoryCandidates =
@@ -387,15 +487,69 @@ namespace Game.Configs
             RelativeReportEvidenceDirectory
         };
 
+        public static readonly string[] S003EvidenceDirectoryCandidates =
+        {
+            RelativeEvidenceDirectory,
+            S003RelativeReportEvidenceDirectory
+        };
+
+        public static string FormatRegularStandardPlayingPng(string catalogId, int seed)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}-regular-standard-{1}-playing.png",
+                NormalizeCatalogToken(catalogId),
+                seed);
+        }
+
+        public static string FormatRegularStandardGameViewSidecar(string catalogId, int seed)
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture,
+                "{0}-regular-standard-{1}-gameview.json",
+                NormalizeCatalogToken(catalogId),
+                seed);
+        }
+
+        public static string RelativeReportEvidenceDirectoryFor(string catalogId)
+        {
+            return "Design/AgentReports/SkirmishExpansion/" + (catalogId ?? string.Empty) + "/_Evidence";
+        }
+
         public static string ResolveEvidenceDirectory(string projectRoot, Func<string, bool> fileExists)
+        {
+            return ResolveEvidenceDirectory(
+                projectRoot,
+                EvidenceDirectoryCandidates,
+                RequiredGameViewEvidenceFiles,
+                fileExists);
+        }
+
+        public static string ResolveS003EvidenceDirectory(string projectRoot, Func<string, bool> fileExists)
+        {
+            return ResolveEvidenceDirectory(
+                projectRoot,
+                S003EvidenceDirectoryCandidates,
+                S003RequiredGameViewEvidenceFiles,
+                fileExists);
+        }
+
+        public static string ResolveEvidenceDirectory(
+            string projectRoot,
+            string[] directoryCandidates,
+            string[] requiredRelativeFiles,
+            Func<string, bool> fileExists)
         {
             if (string.IsNullOrEmpty(projectRoot))
                 return RelativeEvidenceDirectory;
-            for (int i = 0; i < EvidenceDirectoryCandidates.Length; i++)
+            if (directoryCandidates != null)
             {
-                string directory = Path.Combine(projectRoot, EvidenceDirectoryCandidates[i]);
-                if (HasRequiredGameViewEvidence(directory, fileExists))
-                    return directory;
+                for (int i = 0; i < directoryCandidates.Length; i++)
+                {
+                    string directory = Path.Combine(projectRoot, directoryCandidates[i]);
+                    if (HasRequiredFiles(directory, requiredRelativeFiles, fileExists))
+                        return directory;
+                }
             }
 
             return Path.Combine(projectRoot, RelativeEvidenceDirectory);
@@ -403,15 +557,25 @@ namespace Game.Configs
 
         public static bool HasRequiredGameViewEvidence(string directory, Func<string, bool> fileExists)
         {
-            if (fileExists == null || string.IsNullOrEmpty(directory))
+            return HasRequiredFiles(directory, RequiredGameViewEvidenceFiles, fileExists);
+        }
+
+        public static bool HasRequiredFiles(string directory, string[] requiredRelativeFiles, Func<string, bool> fileExists)
+        {
+            if (fileExists == null || string.IsNullOrEmpty(directory) || requiredRelativeFiles == null)
                 return false;
-            for (int i = 0; i < RequiredGameViewEvidenceFiles.Length; i++)
+            for (int i = 0; i < requiredRelativeFiles.Length; i++)
             {
-                if (!fileExists(Path.Combine(directory, RequiredGameViewEvidenceFiles[i])))
+                if (!fileExists(Path.Combine(directory, requiredRelativeFiles[i])))
                     return false;
             }
 
             return true;
+        }
+
+        private static string NormalizeCatalogToken(string catalogId)
+        {
+            return string.IsNullOrEmpty(catalogId) ? string.Empty : catalogId.ToLowerInvariant();
         }
         public const string RequiredHeader =
             "run_id,catalog_id,definition_version,code_hash,config_hash,size,difficulty,seed,locale,device,executor,normal_speed,started_at,result,end_reason,duration_seconds,input_violations,human_interventions,trace_path,log_path";

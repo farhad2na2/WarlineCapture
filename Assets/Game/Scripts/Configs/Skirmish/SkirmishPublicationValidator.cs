@@ -133,7 +133,7 @@ namespace Game.Configs
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.MissingReadiness,
                     "publication",
-                    "S003 stays InProgress until Game View, air flight/refuel, and the ARIA matrix land."));
+                    "S003 full evidence stays InProgress until air flight/refuel and the ARIA matrix land."));
                 return true;
             }
 
@@ -214,17 +214,6 @@ namespace Game.Configs
                     status = SkirmishPublicationStatus.InProgress;
                     return true;
                 }
-            }
-
-            if (request.CatalogId == S003CatalogId ||
-                (definition != null && definition.CatalogId == S003CatalogId))
-            {
-                reasons.Add(new SkirmishCompileReason(
-                    SkirmishReasonCode.MissingReadiness,
-                    "publication",
-                    "S003 stays InProgress until Game View, air flight/refuel, and the ARIA matrix land."));
-                status = SkirmishPublicationStatus.InProgress;
-                return true;
             }
 
             status = SkirmishPublicationStatus.Playable;

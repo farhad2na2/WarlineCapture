@@ -269,7 +269,8 @@ namespace Game.Runtime
             }
 
             reservation.Phase = SkirmishReservationPhase.Producing;
-            em.GetBuffer<SkirmishProductionReservation>(session)[index] = reservation;
+            DynamicBuffer<SkirmishProductionReservation> started = em.GetBuffer<SkirmishProductionReservation>(session);
+            started[index] = reservation;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             return true;
@@ -309,7 +310,8 @@ namespace Game.Runtime
                 ref snapshot, reservation.Category, reservation.MemberCount, reservation.SupplyCost);
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Live;
-            em.GetBuffer<SkirmishProductionReservation>(session)[index] = reservation;
+            DynamicBuffer<SkirmishProductionReservation> dispatched = em.GetBuffer<SkirmishProductionReservation>(session);
+            dispatched[index] = reservation;
 
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             string roleId = RoleIdOf(reservation.Role);
@@ -389,7 +391,8 @@ namespace Game.Runtime
             materials += refund;
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
-            em.GetBuffer<SkirmishProductionReservation>(session)[index] = reservation;
+            DynamicBuffer<SkirmishProductionReservation> cancelled = em.GetBuffer<SkirmishProductionReservation>(session);
+            cancelled[index] = reservation;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.RefundedMaterials = refund;
@@ -427,7 +430,8 @@ namespace Game.Runtime
             materials += reservation.MaterialsPaid;
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
-            em.GetBuffer<SkirmishProductionReservation>(session)[index] = reservation;
+            DynamicBuffer<SkirmishProductionReservation> failed = em.GetBuffer<SkirmishProductionReservation>(session);
+            failed[index] = reservation;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.ReservationId = reservationId;

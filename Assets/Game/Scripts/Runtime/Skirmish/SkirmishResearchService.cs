@@ -94,7 +94,8 @@ namespace Game.Runtime
             }
 
             item.Phase = SkirmishResearchPhase.Researching;
-            em.GetBuffer<SkirmishResearchQueueItem>(session)[index] = item;
+            DynamicBuffer<SkirmishResearchQueueItem> started = em.GetBuffer<SkirmishResearchQueueItem>(session);
+            started[index] = item;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.Phase = SkirmishResearchPhase.Researching;
@@ -126,7 +127,8 @@ namespace Game.Runtime
 
             item.Phase = SkirmishResearchPhase.Completed;
             item.RemainingSeconds = 0f;
-            em.GetBuffer<SkirmishResearchQueueItem>(session)[index] = item;
+            DynamicBuffer<SkirmishResearchQueueItem> completed = em.GetBuffer<SkirmishResearchQueueItem>(session);
+            completed[index] = item;
             Grant(em, session, item);
             SkirmishResearchEffects.ApplyCompleted(em, session, item.FactionId);
             var state = em.GetComponentData<SkirmishResearchStateComponent>(session);
@@ -164,7 +166,8 @@ namespace Game.Runtime
             int refund = SkirmishResearchCosts.RefundMaterials(item.MaterialsPaid, item.Phase);
             CreditMaterials(em, session, item.FactionId, refund);
             item.Phase = SkirmishResearchPhase.Cancelled;
-            em.GetBuffer<SkirmishResearchQueueItem>(session)[index] = item;
+            DynamicBuffer<SkirmishResearchQueueItem> cancelled = em.GetBuffer<SkirmishResearchQueueItem>(session);
+            cancelled[index] = item;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.Phase = SkirmishResearchPhase.Cancelled;

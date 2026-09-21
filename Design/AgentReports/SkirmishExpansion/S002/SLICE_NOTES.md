@@ -117,6 +117,14 @@ merge commit. That tree was not edited in this slice.
   controls (Recruit / SelectSquad / Attack / Hold / Inspect / Handback).
   Three failed attempts at the same action choose an alternative or
   Handback. The ARIA assembly still has no gameplay mutation API.
+- Shadow tip `bb30f8ce3` failed
+  `ExpandedAriaPlanTargetsPublicControlsWithoutGameplayMutation`:
+  default `AriaPlayPhase.Manual` returned before the planner copied
+  Recruit `Id=41` into `AriaPlayObservationComponent.TargetId` (Intent
+  stayed the default Recruit = 0). Expanded planning now publishes the
+  presented control while idle/Manual; Blocked, Starting, and in-flight
+  Touching still skip. Prototype consent (`Manual` until Observing) is
+  unchanged.
 - Shared eligibility (`SkirmishProductionEligibility` with
   `EnforceStocks=true`) is the affordability boundary for UI, enemy, and
   ARIA. `SkirmishAriaPublicProjection` reads the player wallet only.

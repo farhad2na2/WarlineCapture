@@ -20,7 +20,10 @@ namespace Game.UI.Shell.Ecs
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.ExpandedSession)
             {
-                if (!view.Finished && touch.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
+                // Manual is idle / pre-consent: still publish the presented control so
+                // the cyan hand and DecisionSystem can see TargetId. Blocked/Starting
+                // are takeover or not-ready. Touching is held inside StepExpanded.
+                if (!view.Finished && touch.Phase is AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
                     return;
                 StepExpandedBaseAssault(view, ref plan, ref touch, ref output);
                 return;

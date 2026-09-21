@@ -155,7 +155,14 @@ namespace Game.Tests.Editor
                 Squad0 = new AriaTouchTarget { Id = 11, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
-            var touch = new AriaPlaySessionComponent();
+            var idle = new AriaPlaySessionComponent();
+            var idleOutput = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref idle, ref idleOutput);
+            Assert.AreEqual(AriaSkirmishIntent.Recruit, plan.Intent);
+            Assert.AreEqual(41, idleOutput.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.Control, idleOutput.Kind);
+
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
             var output = new AriaPlayObservationComponent();
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaSkirmishIntent.Recruit, plan.Intent);

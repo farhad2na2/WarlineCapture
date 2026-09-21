@@ -48,8 +48,11 @@ namespace Game.Runtime
                             if(sidewalks!=null&&sidewalks[index])sidewalkCells++;
                             if(water!=null&&water[index])waterCells++;
                         }
-                        if(roadCells+sidewalkCells+waterCells>0)failures++;
-                        report.AppendLine($"Faction {faction.FactionId} {entry.Prefab.name}: origin={info.OriginCell} size={info.FootprintCells} roads={roadCells} sidewalks={sidewalkCells} water={waterCells}");
+                        bool level = BuildingPlacementAdapterCompositionSystemHelper.IsSkirmishFootprintLevel(
+                            surfaces.GetSingleton<MapSurfaceComponent>(),
+                            new RectInt(info.OriginCell.x, info.OriginCell.y, info.FootprintCells.x, info.FootprintCells.y));
+                        if(roadCells+sidewalkCells+waterCells>0 || !level)failures++;
+                        report.AppendLine($"Faction {faction.FactionId} {entry.Prefab.name}: origin={info.OriginCell} size={info.FootprintCells} roads={roadCells} sidewalks={sidewalkCells} water={waterCells} level={level}");
                         break;
                     }
                     if(!matched){failures++;report.AppendLine($"MISSING OR RELOCATED: faction={faction.FactionId} {entry.Prefab.name} expected={expected}");}

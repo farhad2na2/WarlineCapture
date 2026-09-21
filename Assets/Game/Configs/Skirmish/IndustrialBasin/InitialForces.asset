@@ -17,7 +17,7 @@ MonoBehaviour:
   unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   factions:
   - factionId: 1
-    spawnCell: {x: 560, y: 550}
+    spawnCell: {x: 800, y: 600}
     units:
     - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
       count: 4
@@ -46,7 +46,7 @@ MonoBehaviour:
     - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
       originOffset: {x: -15, y: -30}
   - factionId: 2
-    spawnCell: {x: 760, y: 280}
+    spawnCell: {x: 930, y: 470}
     units:
     - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
       count: 4
@@ -65,15 +65,15 @@ MonoBehaviour:
       spawnOffset: {x: -8, y: 8}
     buildings:
     - prefab: {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
-      originOffset: {x: 35, y: -20}
+      originOffset: {x: 4, y: -26}
     - prefab: {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
-      originOffset: {x: -30, y: -5}
+      originOffset: {x: -24, y: 8}
     - prefab: {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
-      originOffset: {x: -10, y: 15}
+      originOffset: {x: -24, y: -22}
     - prefab: {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
-      originOffset: {x: 0, y: -30}
+      originOffset: {x: 8, y: 10}
     - prefab: {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
-      originOffset: {x: -55, y: 0}
+      originOffset: {x: -24, y: 42}
   blockerCount: 0
   spawnRadiusCells: 6
   respawnDelaySeconds: 1

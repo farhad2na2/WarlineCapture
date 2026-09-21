@@ -1,0 +1,1 @@
+Building_GuardTower faction=1 origin=int2(839, 588)

@@ -1,0 +1,2 @@
+[SkirmishScenarioValidation] result=Passed cases=27
+[M05Displacement] result=Passed tests=7

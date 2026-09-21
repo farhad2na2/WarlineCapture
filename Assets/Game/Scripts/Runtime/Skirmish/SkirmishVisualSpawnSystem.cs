@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -18,18 +19,30 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using var query = em.CreateEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
+            NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            try
             {
-                if (session.ValueRO.IsLegacy != 0 || session.ValueRO.SpawnComplete == 0)
-                    continue;
-                if (session.ValueRO.Phase != SkirmishSessionPhase.Playing)
-                    continue;
-                if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
-                    continue;
-                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
-                SkirmishVisualSpawnService.AttachMissing(em, entity, setup);
+                for (int i = 0; i < entities.Length; i++)
+                    TryAttachMissing(em, entities[i]);
             }
+            finally
+            {
+                entities.Dispose();
+            }
+        }
+
+        private static void TryAttachMissing(EntityManager em, Entity entity)
+        {
+            SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+            if (session.IsLegacy != 0 || session.SpawnComplete == 0)
+                return;
+            if (session.Phase != SkirmishSessionPhase.Playing)
+                return;
+            if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
+                return;
+            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
+            SkirmishVisualSpawnService.AttachMissing(em, entity, setup);
         }
     }
 }

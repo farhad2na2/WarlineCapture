@@ -161,6 +161,35 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void VisualSpawnSystemAttachesOutsideLiveQuery()
+        {
+            using var world = new World(nameof(VisualSpawnSystemAttachesOutsideLiveQuery));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            SkirmishVisualPrefabCatalog catalog = SkirmishVisualPrefabCatalog.CreateS002TestRegistry();
+            try
+            {
+                SkirmishVisualSpawnService.BindCatalog(em, session, catalog);
+                SkirmishExpandedSessionComponent sessionComponent =
+                    em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                sessionComponent.SpawnComplete = 1;
+                sessionComponent.Phase = SkirmishSessionPhase.Playing;
+                em.SetComponentData(session, sessionComponent);
+
+                world.GetOrCreateSystem<SkirmishVisualSpawnSystem>().Update(world.Unmanaged);
+
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Tank_USA"));
+                Assert.IsTrue(HasVisibleKey(em, "Building_GroundStaging"));
+            }
+            finally
+            {
+                SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                    em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                catalog.Dispose();
+            }
+        }
+
+        [Test]
         public void CleanupDestroysVisualInstances()
         {
             using var world = new World(nameof(CleanupDestroysVisualInstances));
@@ -187,6 +216,7 @@ namespace Game.Tests.Editor
                 suite.RegistryInstantiateSpawnsVisibleStartingSet();
                 suite.ExpandedLaunchBindsExplicitRegistryInsteadOfStandIns();
                 suite.ProducedTankGetsRegistryVisualWithoutTouchingPlayerOnlyStubs();
+                suite.VisualSpawnSystemAttachesOutsideLiveQuery();
                 suite.CleanupDestroysVisualInstances();
                 Debug.Log("[SkirmishExpandedVisualTests] result=Passed");
             }

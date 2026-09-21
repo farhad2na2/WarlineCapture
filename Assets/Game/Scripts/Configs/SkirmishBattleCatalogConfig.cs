@@ -25,6 +25,9 @@ namespace Game.Configs
         public SkirmishBattleCatalogStatus Status;
         /// <summary>Runtime ScenarioIndex when Status is Playable; otherwise -1.</summary>
         public int PlayableScenarioIndex;
+        public string DefinitionId;
+        public int ContentVersion;
+        public string ReadinessManifestId;
 
         public bool IsPlayable =>
             Status == SkirmishBattleCatalogStatus.Playable && PlayableScenarioIndex >= 0;

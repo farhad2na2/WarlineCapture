@@ -38,6 +38,9 @@ namespace Game.Runtime
         }
         public void OnUpdate(ref SystemState state)
         {
+            if (SystemAPI.HasSingleton<SkirmishExpandedSessionComponent>() &&
+                SystemAPI.GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy == 0)
+                return;
             var entity=SystemAPI.GetSingletonEntity<SkirmishMatchState>();
             var match=SystemAPI.GetSingleton<SkirmishMatchState>();
             var em=state.EntityManager;

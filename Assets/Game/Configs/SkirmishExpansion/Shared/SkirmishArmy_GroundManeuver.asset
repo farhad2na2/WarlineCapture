@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc83c17c302d49d8919c130a17bf986f, type: 3}
+  m_Name: SkirmishArmy_GroundManeuver
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishArmyProfileConfig
+  profileId: G
+  kind: 1
+  allowedRoleIds:
+  - role.rifle
+  - role.gunner
+  - role.marksman
+  - role.breacher
+  - role.rocketeer
+  - role.car
+  - role.apc_fast
+  - role.apc_armored
+  - role.apc_heavy
+  - role.tank
+  - role.radar
+  - role.siege
+  - role.transport_heli
+  - role.drone
+  - role.logistics_truck
+  - role.tanker
+  excludedRoleIds:
+  - role.attack_heli_light
+  - role.attack_heli
+  - role.fighter
+  - role.strike
+  - role.transport_plane
+  - role.aa
+  contentVersion: 1

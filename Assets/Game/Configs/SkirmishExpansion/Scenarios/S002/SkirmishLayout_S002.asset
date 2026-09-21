@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf57a3e5e5b455b8bf4ee0258b3ad9d, type: 3}
+  m_Name: SkirmishLayout_S002
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMapLayoutConfig
+  layoutId: layout.skirmish.db.ba
+  operationMapId: opmap.skirmish.desert_base_01
+  contentVersion: 1
+  contentHash: planned.db.ba.s002.v1
+  anchors:
+  - AnchorId: anchor.skirmish.db.base_player
+    RoleId: base.player
+    NormalizedU: 0.12
+    NormalizedV: 0.5
+  - AnchorId: anchor.skirmish.db.base_enemy
+    RoleId: base.enemy
+    NormalizedU: 0.88
+    NormalizedV: 0.5
+  - AnchorId: anchor.skirmish.db.staging_player
+    RoleId: staging.player
+    NormalizedU: 0.18
+    NormalizedV: 0.5
+  - AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: staging.enemy
+    NormalizedU: 0.82
+    NormalizedV: 0.5
+  routes:
+  - RouteId: route.skirmish.db.main
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.staging_enemy
+  - RouteId: route.skirmish.db.flank_a
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.base_enemy
+  - RouteId: route.skirmish.db.flank_b
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.base_enemy

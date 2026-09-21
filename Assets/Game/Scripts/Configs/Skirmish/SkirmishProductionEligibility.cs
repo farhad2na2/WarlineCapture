@@ -25,7 +25,7 @@ namespace Game.Configs
                 return decision;
             }
 
-            if (SkirmishRoleIds.IsOffensiveAir(request.RoleKind))
+            if (SkirmishRoleIds.IsOffensiveAir(request.RoleKind) && !army.AllowsOffensiveAir)
             {
                 decision.Reason = SkirmishReasonCode.UnsupportedCapability;
                 decision.Field = "offensive_air";
@@ -57,6 +57,27 @@ namespace Game.Configs
             {
                 decision.Reason = SkirmishReasonCode.MissingProducer;
                 decision.Field = "producer.ground_staging";
+                return decision;
+            }
+
+            if (overlay.Producer == SkirmishProducerKind.Helipad && !request.HelipadPresent)
+            {
+                decision.Reason = SkirmishReasonCode.MissingProducer;
+                decision.Field = "producer.helipad";
+                return decision;
+            }
+
+            if (overlay.Producer == SkirmishProducerKind.Airport && !request.AirportPresent)
+            {
+                decision.Reason = SkirmishReasonCode.MissingProducer;
+                decision.Field = "producer.airport";
+                return decision;
+            }
+
+            if (overlay.Producer == SkirmishProducerKind.IntelStation && !request.IntelStationPresent)
+            {
+                decision.Reason = SkirmishReasonCode.MissingProducer;
+                decision.Field = "producer.intel_station";
                 return decision;
             }
 
@@ -137,8 +158,15 @@ namespace Game.Configs
                 case SkirmishRoleKind.ApcHeavy:
                 case SkirmishRoleKind.Tank:
                 case SkirmishRoleKind.Radar:
+                case SkirmishRoleKind.TransportHeli:
+                case SkirmishRoleKind.AttackHeliLight:
+                case SkirmishRoleKind.AttackHeli:
+                case SkirmishRoleKind.Drone:
                     return SkirmishReadinessStage.Established;
                 case SkirmishRoleKind.Siege:
+                case SkirmishRoleKind.Fighter:
+                case SkirmishRoleKind.Strike:
+                case SkirmishRoleKind.TransportPlane:
                     return SkirmishReadinessStage.FullArsenal;
                 default:
                     return SkirmishReadinessStage.Field;

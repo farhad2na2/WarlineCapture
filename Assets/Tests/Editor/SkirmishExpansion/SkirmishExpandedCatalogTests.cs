@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.Configs;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
+using UnityEditor;
 using UnityEngine;
 
 namespace Game.Tests.Editor
@@ -152,6 +153,49 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void S003PublicationStaysInProgressAndS002AssetStaysPlayable()
+        {
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            Assert.IsTrue(authored.Publication.TryGet("S002", out SkirmishPublicationRowConfig memoryS002));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, memoryS002.Status);
+            Assert.IsTrue(authored.Publication.TryGet("S003", out SkirmishPublicationRowConfig memoryS003));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, memoryS003.Status);
+
+            var publication = AssetDatabase.LoadAssetAtPath<SkirmishPublicationConfig>(
+                "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset");
+            Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig assetS002));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS002.Status);
+            Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig assetS003));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS003.Status);
+
+            CompileS003ForPublication(out SkirmishResolvedSetup setup);
+            var complete = new SkirmishPublicationEvidence
+            {
+                CatalogId = "S003",
+                DefinitionId = "skirmish.s003",
+                ContentHash = setup.ContentHash,
+                SetupHash = setup.SetupHash,
+                DifficultyId = SkirmishDifficultyId.Regular,
+                SizeId = SkirmishSizeId.Standard,
+                ManualWin = true,
+                AriaMatrix = true,
+                EdgeFixtures = true,
+                RecoveryEvidence = true,
+                DeviceEvidence = true,
+                AssetExists = true
+            };
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluate(
+                assetS003,
+                authored.DefinitionS003,
+                setup,
+                in complete,
+                out SkirmishPublicationStatus status,
+                out _));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, status);
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS002.Status);
+        }
+
+        [Test]
         public void CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress()
         {
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
@@ -185,6 +229,24 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
         }
 
+        private static void CompileS003ForPublication(out SkirmishResolvedSetup setup)
+        {
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out System.Collections.Generic.List<SkirmishSetupMatrixRow> matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishSetupCompiler.TryCompile(
+                authored.DefinitionS003,
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS003FirstVisit.SeedA,
+                manifest,
+                matrix,
+                out setup,
+                out System.Collections.Generic.List<SkirmishCompileReason> reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -195,6 +257,7 @@ namespace Game.Tests.Editor
                 suite.AssetExistenceDoesNotSetPlayable();
                 suite.HashMismatchAndWrongMatrixRejectPlayable();
                 suite.LegacyPrototypeCompatibilityIsVersionedAndDoesNotPublishS002();
+                suite.S003PublicationStaysInProgressAndS002AssetStaysPlayable();
                 suite.CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress();
                 Debug.Log("[SkirmishExpandedCatalogTests] result=Passed");
             }

@@ -37,6 +37,14 @@ namespace Game.Configs
                     Status = SkirmishPublicationStatus.InProgress,
                     EvidencePath = "Design/AgentReports/SkirmishExpansion/S002/",
                     Notes = "SK-12 library/HUD copy + publication validator scaffolding. Asset existence cannot set Playable. Not Playable/ARIA/War certified."
+                },
+                new SkirmishPublicationRowConfig
+                {
+                    CatalogId = "S003",
+                    DefinitionId = "skirmish.s003",
+                    Status = SkirmishPublicationStatus.InProgress,
+                    EvidencePath = "Design/AgentReports/SkirmishExpansion/S003/",
+                    Notes = "Compiler and Air Mobile Field definition slice. Asset existence cannot set Playable."
                 }
             };
         }

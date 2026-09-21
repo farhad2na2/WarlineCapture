@@ -287,7 +287,9 @@ namespace Game.Configs
             }
 
             setup.Structures = BuildStructures(definition, vector);
-            setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
+            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
+                ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
+                : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";

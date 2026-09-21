@@ -18,6 +18,36 @@ namespace Game.Configs
             overlays = CreateS002GroundSlice();
         }
 
+        public static SkirmishRoleOverlay[] CreateAirMobileSlice()
+        {
+            SkirmishRoleOverlay[] ground = CreateS002GroundSlice();
+            var kept = new System.Collections.Generic.List<SkirmishRoleOverlay>(ground.Length + 8);
+            for (int i = 0; i < ground.Length; i++)
+            {
+                if (ground[i].RoleKind == SkirmishRoleKind.Tank)
+                    continue;
+                kept.Add(ground[i]);
+            }
+
+            kept.Add(Overlay(SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir, 220, 20, 28f, 220,
+                SkirmishProducerKind.GroundStaging, SkirmishTargetDomain.Air, 1));
+            kept.Add(Overlay(SkirmishRoleIds.TransportHeli, SkirmishRoleKind.TransportHeli, 260, 0, 0f, 240,
+                SkirmishProducerKind.Helipad, SkirmishTargetDomain.None, 1));
+            kept.Add(Overlay(SkirmishRoleIds.AttackHeliLight, SkirmishRoleKind.AttackHeliLight, 240, 18, 22f, 300,
+                SkirmishProducerKind.Helipad, SkirmishTargetDomain.Ground | SkirmishTargetDomain.Structure, 1));
+            kept.Add(Overlay(SkirmishRoleIds.AttackHeli, SkirmishRoleKind.AttackHeli, 320, 24, 26f, 420,
+                SkirmishProducerKind.Helipad, SkirmishTargetDomain.Ground | SkirmishTargetDomain.Structure, 1));
+            kept.Add(Overlay(SkirmishRoleIds.Drone, SkirmishRoleKind.Drone, 80, 0, 0f, 140,
+                SkirmishProducerKind.IntelStation, SkirmishTargetDomain.None, 1));
+            kept.Add(Overlay(SkirmishRoleIds.Fighter, SkirmishRoleKind.Fighter, 280, 22, 32f, 480,
+                SkirmishProducerKind.Airport, SkirmishTargetDomain.Air, 1));
+            kept.Add(Overlay(SkirmishRoleIds.Strike, SkirmishRoleKind.Strike, 300, 26, 28f, 520,
+                SkirmishProducerKind.Airport, SkirmishTargetDomain.Ground | SkirmishTargetDomain.Structure, 1));
+            kept.Add(Overlay(SkirmishRoleIds.TransportPlane, SkirmishRoleKind.TransportPlane, 340, 0, 0f, 440,
+                SkirmishProducerKind.Airport, SkirmishTargetDomain.None, 1));
+            return kept.ToArray();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]

@@ -63,3 +63,51 @@ MonoBehaviour:
     RequiredReadiness: 2
     Disposition: 1
     CapabilityCertified: 0
+  - RoleId: role.aa
+    Kind: 11
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset
+    RuntimePrefabKey: Unit_Veh_Missle_Launcher_Air
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.attack_heli_light
+    Kind: 15
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Small_Config.asset
+    RuntimePrefabKey: Unit_Veh_Helicopter_Attack_Small
+    Producer: 3
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.attack_heli
+    Kind: 16
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Config.asset
+    RuntimePrefabKey: Unit_Veh_Helicopter_Attack
+    Producer: 3
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.fighter
+    Kind: 18
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_02_Config.asset
+    RuntimePrefabKey: Unit_Veh_Jet_02
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.strike
+    Kind: 19
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_01_Config.asset
+    RuntimePrefabKey: Unit_Veh_Jet_01
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.transport_plane
+    Kind: 20
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Plane_Transport_Config.asset
+    RuntimePrefabKey: Unit_Veh_Plane_Transport
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0

@@ -81,7 +81,25 @@ namespace Game.Configs
                     "Unit_Veh_Truck_Tray", SkirmishProducerKind.GroundStaging, SkirmishReadinessStage.Field),
                 Bind(SkirmishRoleIds.Tanker, SkirmishRoleKind.Tanker,
                     "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Truck_Tanker.asset",
-                    "Unit_Veh_Truck_Tanker", SkirmishProducerKind.GroundStaging, SkirmishReadinessStage.Field)
+                    "Unit_Veh_Truck_Tanker", SkirmishProducerKind.GroundStaging, SkirmishReadinessStage.Field),
+                Bind(SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset",
+                    "Unit_Veh_Missle_Launcher_Air", SkirmishProducerKind.GroundStaging, SkirmishReadinessStage.Field),
+                Bind(SkirmishRoleIds.AttackHeliLight, SkirmishRoleKind.AttackHeliLight,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Small_Config.asset",
+                    "Unit_Veh_Helicopter_Attack_Small", SkirmishProducerKind.Helipad, SkirmishReadinessStage.Established),
+                Bind(SkirmishRoleIds.AttackHeli, SkirmishRoleKind.AttackHeli,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Config.asset",
+                    "Unit_Veh_Helicopter_Attack", SkirmishProducerKind.Helipad, SkirmishReadinessStage.Established),
+                Bind(SkirmishRoleIds.Fighter, SkirmishRoleKind.Fighter,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_02_Config.asset",
+                    "Unit_Veh_Jet_02", SkirmishProducerKind.Airport, SkirmishReadinessStage.FullArsenal),
+                Bind(SkirmishRoleIds.Strike, SkirmishRoleKind.Strike,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_01_Config.asset",
+                    "Unit_Veh_Jet_01", SkirmishProducerKind.Airport, SkirmishReadinessStage.FullArsenal),
+                Bind(SkirmishRoleIds.TransportPlane, SkirmishRoleKind.TransportPlane,
+                    "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Plane_Transport_Config.asset",
+                    "Unit_Veh_Plane_Transport", SkirmishProducerKind.Airport, SkirmishReadinessStage.FullArsenal)
             };
         }
 

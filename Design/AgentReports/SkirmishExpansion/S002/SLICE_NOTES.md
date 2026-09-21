@@ -507,3 +507,12 @@ merged `skirmish.s002.*` EN/FA rows (plus `SkirmishS002UiStrings.json`) at
 Owner: publication and localization ticket (SK-12) / localization catalog
 builder. The keys now exist in both EN and FA tables via the merged Game
 Design commit; that does **not** mark Skirmish mission 4 Playable.
+
+## Landing status (Programmer 1)
+
+- Publication: **Playable** on tip `2b5f0f6e9` (flip commit `7f0e1def7`).
+- Game View self-gate: Regular Standard seed `104731` Playing PNG + sidecar under `Design/AgentReports/SkirmishExpansion/S002/_Evidence/`.
+- Visual spawn follow-up: `SkirmishVisualSpawnSystem` snapshots session entities before `AttachMissing` (`2b5f0f6e9`) so live Playing no longer throws structural-change during `AddComponentObject`.
+- Still open (do not treat as ARIA/War certified): counted Regular Standard ARIA matrix (seeds 104731 / 130365 / 155923 x en/fa-IR), edge/recovery placeholders, and device review slots in `acceptance.md` / `runs.csv`.
+- Focused Editor suites green on Windows Skirmish shadow after Gridlock merge; visual + catalog re-checked on `2b5f0f6e9`.
+

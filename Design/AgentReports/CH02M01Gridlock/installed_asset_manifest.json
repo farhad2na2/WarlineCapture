@@ -1,0 +1,294 @@
+[
+  {
+    "path": "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+    "sha256": "f6bc5dada8db25afdf224331ef5fe589e0321cb377c99def28a65a3927920807"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Gridlock Narrative.asset",
+    "sha256": "303bb17fade4dce0b2002897771ed904155fb1a7da9a3b512c926c8a8a4aa38e"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Gridlock Narrative.asset.meta",
+    "sha256": "318e543ee2c73026da62a2704972046fe7065da21c797482b8250964760da209"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_BundledAssetGroupSchema.asset",
+    "sha256": "8c24bb61c678028f64d419894113c1f0dad10bca721d91e56cbab386ba13f912"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_BundledAssetGroupSchema.asset.meta",
+    "sha256": "527b0d833066bd8e5c1b229df5d04cdd49dcd8dd7f3a8e177014f9b78b8793f7"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_ContentUpdateGroupSchema.asset",
+    "sha256": "fc83df8602678ad1b50647a29995456154e81006f590ff2bf1f95b7b81504dc1"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_ContentUpdateGroupSchema.asset.meta",
+    "sha256": "e44b6b94b03bcfa728b1a509e59bd553915352df402f9ede055570463aed1b2c"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock.meta",
+    "sha256": "a89b60a65989f64f810ca25ca9dfaa1168955ad9f5809d6dbd3fd663fcb742a0"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final.meta",
+    "sha256": "55819f0efb7380a615cc2218548c26e0f73fdd92753eac97c3f33e9749355eff"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B01.png",
+    "sha256": "9c5bfc91cdcddf6fcace242e04eeb48e2c6e7672eb4f08cdc5ae8effe8228636"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B01.png.meta",
+    "sha256": "0aaf759d2a740164b042566100ecfbaa9687ebf95bfe29001875d4d659075394"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B02.png",
+    "sha256": "214500b6cb0f7926849bc84212f9c619c67db921ba8506dae7bf1f4a4afdae07"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B02.png.meta",
+    "sha256": "c44170d06a63c3cbcfce230c316cc9a61748e1ddf340526abcdf6600bfa4f125"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B03.png",
+    "sha256": "a694fdf81e9eba8542ac0f48272042227f59c45d9dbf77b0d5f90a76536f346b"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B03.png.meta",
+    "sha256": "3e31df5ee5d18aaa8f51bb58288652ae6dd72c460418fcbade8fbea07b8fcb25"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-C01.png",
+    "sha256": "cf6c6b2342bc5d13a4beb27b92ccfcbb324521c2adb09a923cc26fa63322e9a2"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-C01.png.meta",
+    "sha256": "de9c73faa4dac38727254dd885b0bebf207c664a5b1a7e00e742f59d431bdf22"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D01.png",
+    "sha256": "c229abf1a985743b1b2a203bd4d1916a8cd7ad0d5875ffab64ae4f252be7619c"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D01.png.meta",
+    "sha256": "39bfb31e799e018286abd242558eadce09dddca766a6bd0a7355e1a5406301b1"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D02.png",
+    "sha256": "09ce99a99334841bcd7c4d5b6702203a5949d998fa618bea4417c58876baadbf"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D02.png.meta",
+    "sha256": "2871b920454c0bb86a4595b3f35851f4d332e58bb6f8b0ffa23467978f9074bb"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D03.png",
+    "sha256": "30a89169526c2adf640d265b16ad2284d8dcd16ad80e64899bd368603a0c5762"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D03.png.meta",
+    "sha256": "7950d48660916378f9f6e7e448a9f08597ae9f55da519ff6cde4e176342c8935"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O01.png",
+    "sha256": "a6be45e2b8d86389c097e6cafd7d05f0a66a71e1dc01cae2502707336c516c04"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O01.png.meta",
+    "sha256": "d6fa9425c3cc9d636b2d96f1681a837884008b95c6a63d51f20d65fb0ef60d58"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O02.png",
+    "sha256": "6d9d5fc37854bfd87dc4911eb3c26df0737d0a1e1a5c04ccdb076711b7f1387a"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O02.png.meta",
+    "sha256": "bbe49cdd1ab7121e5b8f13f5e20e07de76f2b078d8d22ac472bb36b0a56394fb"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O03.png",
+    "sha256": "cf3fd0fc51f7716853d871300d52e52e7eb42b6d502847de6bfa62600d1b41a5"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O03.png.meta",
+    "sha256": "73900551fdf714efb32ef272ef56935a2221b2f67ce9d7b7b99b94e23ad4e071"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O04.png",
+    "sha256": "db5a2d4a88733409f2a1e5ee921c6db12f15a4f9dc7c70aaf650afc8d3d6950f"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O04.png.meta",
+    "sha256": "cb3948a1802a3d67a7008fa5dd8eb50a1f8965508f1d8d5051321b24c41b05f0"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O05.png",
+    "sha256": "be1bae89ffabf2c59424f9f05469d4d5c2f13c59ac29da36dbf4a7a212dec0e1"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O05.png.meta",
+    "sha256": "649812fba0311edf892dfe132ca3fab7c7e7838a6bbd49a27afb4c4abf37f28f"
+  },
+  {
+    "path": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Fadi_Gridlock.png",
+    "sha256": "a75bc5fc87ac253da93af88afe2cf09ae431a3d91438a7904e87f02ec058a937"
+  },
+  {
+    "path": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Fadi_Gridlock.png.meta",
+    "sha256": "343c7322d69b039c30f31d525fcf7d2964d4ddd4646d654e72e5448d8d72970a"
+  },
+  {
+    "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+    "sha256": "bacc4d5e4da4edf52b77056a3605ccc4e6e4436698d5c354354928dcec996336"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02.meta",
+    "sha256": "8822b7ab611e3e31f0d56060a3af3a6ea292e7a276cc6116d4bea087e62f258e"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/CH02M01_Gridlock_FieldGuide.asset",
+    "sha256": "7cb927cdedcf84b857fa10d9112a393553d8d1a23a372ccb5f1168aba650c0af"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/CH02M01_Gridlock_FieldGuide.asset.meta",
+    "sha256": "f54314b8c2ede00ba8ce4ec30f3d48565c26b893289913b62bbbca53507b17cf"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset",
+    "sha256": "762274173d3abec43d3d40317fe6143dd62aa0270c2080b39d04dff015dcea7d"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset.meta",
+    "sha256": "83baa5c7bf08b2cff564210f63a2068ee405fca6bcfe6fa29b2708a0a928309b"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02.meta",
+    "sha256": "5c09109740bf1ece3f7aeb5903242d86e92362dd45886d6d0e33c231ad2c1b08"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02/CH02M01_Gridlock_Narrative.asset",
+    "sha256": "0d24531fc0d36e1d2cf1883d1fdd64b26282ca8fa578b942ef906923010f07fe"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02/CH02M01_Gridlock_Narrative.asset.meta",
+    "sha256": "61fdc6f3585138d27edfc0b4ea7165bdec9ad1592183195975a9f9169777bffa"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset",
+    "sha256": "3224afc6eea734f4ccd44a2aabca67c3a6ad8ffcbe8d3349bb1d6e7ef29ccb5d"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSpeakers.asset",
+    "sha256": "50a9fef87b090a42574205f58d8c946d172c256f4c6ae10d6072aa15c383fffe"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+    "sha256": "fcac37241ca109814891089120cb3109d2899b9dfe9365165d86bc9436a134b8"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02.meta",
+    "sha256": "8b28542bfbf5b204b3a282d3d31e53e57dafe5dbf4abd7f5facb58b2f73e66c2"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/GridlockPlacements.asset",
+    "sha256": "845804c5f350032bbf950bc293719c7a96411f11ea69ba15f1ec66ec74e7208b"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/GridlockPlacements.asset.meta",
+    "sha256": "998e496881b96b900933ca85a13ab1bd70c616b4d3335adb5d849ffc73cfd66a"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset",
+    "sha256": "d8b9d5a0d886906ad3a89a027484bae6580e31f205d324caaf3fbf9341fe6f45"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset.meta",
+    "sha256": "717f0be01632262cca8945baf45e1c92b73bd99c4494c3988a01e918551dc1c7"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02.meta",
+    "sha256": "fffe5e359ccb2a89e2b805c1633dc31788b88eb1397373238e15cf31eef9d6fb"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M01_Gridlock.asset",
+    "sha256": "d754a9be26b771d4d4ba8334d3a2ee3b9c2e9b032c878a136cc767f618da99a2"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M01_Gridlock.asset.meta",
+    "sha256": "0c5242ed35c498ac85b698cb06faff0a55d5ef1cf50f60d1a59c6ef913af101c"
+  },
+  {
+    "path": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+    "sha256": "5bdb6b05da01b99f3555d1df210a3cd80fa8cbe9c67629bc6f7331e066f00aec"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock.meta",
+    "sha256": "17b04ae9ffd3687e92b5031e6c6b9d8de78aa07025f36c814749b160e486b21e"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/CH02M01_Road_Obstruction.prefab",
+    "sha256": "48c964a02b015ce779360863b2afc1117a563215b311d90cb2c5c793992a47af"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/CH02M01_Road_Obstruction.prefab.meta",
+    "sha256": "456506b9b2bd4630846137e9e2fc7b6a96808f8f05a2ae766735f7f518f5e1f5"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Formal_Route_Collapse.prefab",
+    "sha256": "f9868404a857d2300a40e2847815b82f5af8b2676190776b9f94c105bf842c47"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Formal_Route_Collapse.prefab.meta",
+    "sha256": "7a500cb26a434d75bbd0c97582eeee4d0d4ebfd27daabfbcca9c346d242c293b"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Hospital_Relief_Ward.prefab",
+    "sha256": "d1f474730c93e2fb608f579183584c79a717ceed6f65206d7d2b864c226d5b8a"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Hospital_Relief_Ward.prefab.meta",
+    "sha256": "37953d5319ff01ea2c845c8372d20aefc78bb986b3b517f188b81d918b6aed6a"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Relief_Depot.prefab",
+    "sha256": "5f1953d04bea876d0d728164e16bcb0450c6f68138b378e649decbcbacc420d2"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Relief_Depot.prefab.meta",
+    "sha256": "95afe67107a4d59f33a111d93cb330d437e45d2c2e14030501ac20ed2168bf79"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab",
+    "sha256": "13425b6a8e12e150c103f851dcedf81ba898aaa6c9a1a54b1e8c4189849f6e7e"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab",
+    "sha256": "f03b4c3a939d878067451d722a4a61f7e86a3b16363708508af5bb0420eb21db"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab",
+    "sha256": "1d6d965696aa76bcc415591a42abbe4951fed5ba6dfa86e45bba07a4e5116474"
+  },
+  {
+    "path": "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+    "sha256": "2200697bd83c7dbb486586b8613404887422b0d3ec18b233e44a13c827c0d0f5"
+  },
+  {
+    "path": "Assets/Game/Scenes/Menu.unity",
+    "sha256": "fb749488f6190cc3fbbd03ccbcd8292959c6f6f846319345d5a3043c0dd74e77"
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/CH02M01GridlockArchiveProbe.cs.meta",
+    "sha256": "d947effdef75877a83ef76f4732c063ac5ebf0a0adeb258002d3766e1f41db9f"
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/CH02M01GridlockComicPlaybackProbe.cs.meta",
+    "sha256": "e9cf3466010e7efd8842281631e715e5ed68f39f5aeefb091dc5b8c4f9608287"
+  },
+  {
+    "path": "Assets/Game/Scripts/UI/Contracts/IUiGridlockStoryGateway.cs.meta",
+    "sha256": "0010e821856220538373f7974ab9d65ecb10b778326492cfc9132eecf0ef584c"
+  }
+]

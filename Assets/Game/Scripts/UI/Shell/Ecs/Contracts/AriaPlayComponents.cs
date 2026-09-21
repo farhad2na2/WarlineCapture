@@ -19,6 +19,9 @@ namespace Game.UI.Shell.Contracts.Ecs
         public Vector2 Target, Contact, DragEnd;
         public byte Drag;
         public float DueAt, LastProgressAt;
+        public float LastObjectiveProgressAt;
+        public ulong VisitedGoalMask;
+        public byte ObjectiveWatchdogInitialized;
         public byte GestureRequested, Pressed, StopReason;
     }
 }

@@ -110,7 +110,7 @@ namespace Game.Runtime
             byte? ownerFactionId,
             bool rotateVertical,
             out SpawnRuntimeBuildingResult result,
-            bool requirePreferredOrigin = false)
+            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false)
         {
             result = default;
             if (prefab == null || context.DefinitionSystem == null)
@@ -125,7 +125,7 @@ namespace Game.Runtime
                 context.RunwaySystem);
             Vector2Int placementFootprint = context.GetPlacementFootprint(definition, rotateVertical);
 
-            if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingEntity building, requirePreferredOrigin))
+            if (!TrySpawnInitialBuilding(context, definition, preferredOrigin, rotateVertical, out RuntimeBuildingEntity building, requirePreferredOrigin, allowAuthoredRoadOverlap))
                 return false;
 
             building.IsCityGenerated = isCityGenerated;
@@ -150,7 +150,7 @@ namespace Game.Runtime
             byte? ownerFactionId,
             bool rotateVertical,
             out SpawnRuntimeBuildingResult result,
-            bool requirePreferredOrigin = false)
+            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false)
         {
             return TrySpawnRuntimeBuilding(
                 context,
@@ -163,7 +163,7 @@ namespace Game.Runtime
                 isCityGenerated,
                 ownerFactionId,
                 rotateVertical,
-                out result, requirePreferredOrigin);
+                out result, requirePreferredOrigin, allowAuthoredRoadOverlap);
         }
 
         public int TrySpawnRuntimeWallRun(
@@ -311,7 +311,7 @@ namespace Game.Runtime
             Vector2Int preferredOrigin,
             bool rotateVertical,
             out RuntimeBuildingEntity building,
-            bool requirePreferredOrigin = false)
+            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false)
         {
             building = null;
             if (definition == null || definition.Prefab == null)
@@ -320,7 +320,7 @@ namespace Game.Runtime
             if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerComponent blockerData))
                 return false;
 
-            if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell, requirePreferredOrigin))
+            if (!TryFindValidInitialBuildingOrigin(context, definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell, requirePreferredOrigin, allowAuthoredRoadOverlap))
                 return false;
 
             GameObject instance = context.CreateBuildingVisualInstance?.Invoke(definition, context.BuildingRoot);
@@ -331,7 +331,7 @@ namespace Game.Runtime
             Vector2Int footprint = context.GetPlacementFootprint != null
                 ? context.GetPlacementFootprint(definition, rotateVertical)
                 : definition.FootprintCells;
-            building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, true);
+            building = context.RegisterRuntimeBuilding?.Invoke(CloneDefinitionWithFootprint(definition, footprint), instance, originCell, !allowAuthoredRoadOverlap);
             return building != null;
         }
 

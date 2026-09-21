@@ -1,0 +1,168 @@
+{
+  "mission": "saga.ch02.m01.gridlock",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "cast": {
+    "DALIA": "MK1Zvh93428YrgOQ8Obr",
+    "SAMIRA": "7uxeJ73HfJL9gOH2mttA",
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "FADI": "JBFqnCBsd6RMkjVDRZzb"
+  },
+  "purpose": "Local bilingual story and tutorial clips from canonical authored copy; no runtime network TTS",
+  "entries": [
+    [
+      "narrative",
+      "gridlock-opening-01",
+      "SAMIRA",
+      "The city survived the first attacks. But a quiet street is not a working city. Relief trucks are trapped behind blocked roads and dark intersections.",
+      "شهر از حمله‌های اول جون سالم به در برد. ولی خیابون ساکت یعنی شهر راه افتاده؟ نه. کامیون‌های امداد پشت راه‌های بسته و چهارراه‌های خاموش گیر کردن."
+    ],
+    [
+      "narrative",
+      "gridlock-opening-02",
+      "DALIA",
+      "The clinic's generator is running low. Its Fuel is on the other side of a damaged corridor. Keeping the ward open starts with getting that road back.",
+      "بنزین ژنراتور درمانگاه داره تموم می‌شه. محموله اون طرف مسیر آسیب‌دیده گیر کرده. برای باز موندن بخش درمان، اول باید راه رو باز کنیم."
+    ],
+    [
+      "narrative",
+      "gridlock-opening-03",
+      "SAMIRA",
+      "Roads, Fuel, markets, power, shelters—and the people who keep them working. Lose one link and the others begin to fail. We have to restore them together.",
+      "راه، بنزین، بازار، برق، پناهگاه... و آدم‌هایی که این‌ها رو سر پا نگه می‌دارن. یکی از این‌ها که از کار بیفته، بقیه هم ضربه می‌خورن. باید به هم وصلشون کنیم."
+    ],
+    [
+      "narrative",
+      "gridlock-opening-04",
+      "ARIA",
+      "My map covers the formal road network. Fadi knows service lanes and local connections it does not show. We will need both kinds of knowledge.",
+      "نقشهٔ من شبکهٔ رسمی جاده‌ها رو پوشش می‌ده. فادی مسیرهای فرعی و راه‌های محلی‌ای رو می‌شناسه که توی نقشه نیستن. به هر دو جور اطلاعات نیاز داریم."
+    ],
+    [
+      "narrative",
+      "gridlock-opening-05",
+      "DALIA",
+      "Commander, restore the lifelines. Protect the crews doing the work. And watch which roads the saboteurs leave open—they may be choosing where we go next.",
+      "فرمانده، راه‌های حیاتی رو دوباره راه بنداز. مراقب گروه‌هایی باش که دارن کار می‌کنن. حواست هم به راه‌هایی باش که خرابکارها باز گذاشتن؛ شاید دارن مسیر بعدی ما رو تعیین می‌کنن."
+    ],
+    [
+      "narrative",
+      "gridlock-brief-01",
+      "SAMIRA",
+      "The hospital still has patients, but its supply road is blocked. That truck carries the relief they need. We must get it through.",
+      "بیمارستان هنوز پر از مریضه، ولی راه تدارکاتش بسته‌ست. امدادی که لازم دارن توی اون کامیونه. باید برسونیمش."
+    ],
+    [
+      "narrative",
+      "gridlock-brief-02",
+      "FADI",
+      "Fadi here. The main road is gone, but we kept a service lane open for years. Two obstructions are all that stand between us and the hospital. Protect my crew while we clear them.",
+      "فادی هستم. جادهٔ اصلی از بین رفته، ولی ما سال‌ها از این مسیر فرعی استفاده می‌کردیم. فقط دو تا مانع بین ما و بیمارستانه. تا بازشون می‌کنیم، مراقب گروهم باشین."
+    ],
+    [
+      "narrative",
+      "gridlock-brief-03",
+      "DALIA",
+      "Rifles first; workers behind cover. Keep Fadi and at least one worker at each site for twenty-five seconds of safe work. Then protect the truck and hold the hospital clear for twenty seconds. We have twelve minutes.",
+      "تفنگدارها جلو برن؛ کارگرها پشت پوشش بمونن. فادی و حداقل یک کارگر باید توی هر محل بیست‌وپنج ثانیه امن کار کنن. بعد از کامیون محافظت کنید و بیمارستان رو بیست ثانیه امن نگه دارید. دوازده دقیقه وقت داریم."
+    ],
+    [
+      "narrative",
+      "gridlock-comms-01",
+      "ARIA",
+      "Fadi's service lane is usable. It was missing from my map. I have updated the route; local knowledge matters here.",
+      "مسیر فرعی فادی قابل استفاده‌ست. توی نقشهٔ من نبود. مسیر رو به‌روز کردم؛ اینجا شناخت محلی مهمه."
+    ],
+    [
+      "narrative",
+      "gridlock-debrief-01",
+      "SAMIRA",
+      "The relief truck has reached the hospital. The ward can keep working. We opened a route people can depend on.",
+      "کامیون امداد به بیمارستان رسید. بخش درمان می‌تونه به کارش ادامه بده. راهی باز کردیم که مردم می‌تونن روش حساب کنن."
+    ],
+    [
+      "narrative",
+      "gridlock-debrief-02",
+      "ARIA",
+      "The obstructions form a pattern. They steer traffic toward a dormant substation. I cannot yet tell why that route was preserved.",
+      "مانع‌ها یه الگو دارن. ترافیک رو به سمت یک پست برق خاموش هدایت می‌کنن. هنوز معلوم نیست چرا اون مسیر رو باز نگه داشتن."
+    ],
+    [
+      "narrative",
+      "gridlock-debrief-03",
+      "DALIA",
+      "The road is open. Next we need to keep supplies moving, and Fuel is running short. Return to the campaign map to review the operation.",
+      "راه باز شده. حالا باید جریان تدارکات رو حفظ کنیم، اما بنزین داره کم میاد. برای دیدن نتیجه برگرد به نقشهٔ کارزار."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-01",
+      "ARIA",
+      "Select a rifle squad, press Move, then tap site A. Keep the armed saboteurs away from the crew.",
+      "یک گروه تفنگدار رو انتخاب کن، «حرکت» رو بزن و محل اول رو مشخص کن. خرابکارهای مسلح رو از گروه راه‌سازی دور نگه دار."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-02",
+      "ARIA",
+      "Select Fadi, press Move, then tap the marked work area.",
+      "فادی رو انتخاب کن، «حرکت» رو بزن و محل کار مشخص‌شده رو بزن."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-03",
+      "ARIA",
+      "Select a road worker and move them into the same work area as Fadi.",
+      "یک کارگر رو انتخاب کن و به همون محل کاری ببر که فادی اونجاست."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-04",
+      "ARIA",
+      "Work needs Fadi, a living worker and no nearby hostile. Progress pauses during interruptions and resumes when it is safe.",
+      "برای کار، فادی و یک کارگر زنده باید اینجا باشن و دشمن نزدیک نباشه. اگه کار متوقف بشه، وقتی امن شد از همون‌جا ادامه پیدا می‌کنه."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-05",
+      "ARIA",
+      "Move the rifles to site B before advancing the crew. Keep the cleared section protected too.",
+      "قبل از جلو بردن کارگرها، تفنگدارها رو به محل دوم ببر. از بخش بازشده هم محافظت کن."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-06",
+      "ARIA",
+      "Move Fadi into site B. The first cleared section stays open.",
+      "فادی رو به محل دوم ببر. بخش اول مسیر باز می‌مونه."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-07",
+      "ARIA",
+      "Move a surviving worker to Fadi at site B. Stop or retreat if the approach becomes unsafe.",
+      "یک کارگر باقی‌مونده رو پیش فادی توی محل دوم ببر. اگه مسیر ناامن شد، توقف کن یا عقب بکش."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-08",
+      "ARIA",
+      "Keep the crew safe for the remaining work. Losing one worker is recoverable; Fadi and one worker must survive.",
+      "تا کار تموم بشه گروه رو امن نگه دار. با از دست دادن یک کارگر هنوز می‌شه ادامه داد؛ فادی و یک کارگر باید زنده بمونن."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-09",
+      "ARIA",
+      "The supplied truck travels on the cleared route. Move the escorts near it. If the route is contested, secure the marked section so it can continue.",
+      "کامیون توی مسیر بازشده حرکت می‌کنه. محافظ‌ها رو نزدیکش نگه دار. اگه مسیر ناامن شد، بخش مشخص‌شده رو امن کن تا ادامه بده."
+    ],
+    [
+      "tutorial",
+      "tutorial-gridlock-10",
+      "ARIA",
+      "The relief truck must remain at the hospital for twenty clear seconds. Leaving or a nearby hostile resets the hold.",
+      "کامیون امداد باید بیست ثانیه توی بیمارستان و دور از دشمن بمونه. اگه خارج بشه یا دشمن نزدیک بیاد، شمارش از نو شروع می‌شه."
+    ]
+  ]
+}

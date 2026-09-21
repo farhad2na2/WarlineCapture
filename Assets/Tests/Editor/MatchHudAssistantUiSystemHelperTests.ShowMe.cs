@@ -15,12 +15,86 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(true));
         RunCase(test => test.M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators());
         RunCase(test => test.M4GuidesRealSelectionBeforeBoardingOrMoving());
-        foreach (byte count in new byte[] { 5, 9, 12, 8 })
+        RunCase(test => test.GroupSelectionExposesVisibleDragAndClearsWhenControlChanges());
+        foreach (byte count in new byte[] { 5, 9, 12, 8, 10 })
             RunCase(test => test.CampaignActionsFollowLiveModeAndArrival(count));
-        Debug.Log("[MissionShowMe] result=Passed tests=10 M1-M5=selection,command,destination,waiting");
+        Debug.Log("[MissionShowMe] result=Passed tests=12 M1-M5,Gridlock=normal-selection,drag,command,destination,waiting");
     }
 
-    [TestCase((byte)5)] [TestCase((byte)9)] [TestCase((byte)12)] [TestCase((byte)8)]
+    [Test]
+    public void GroupSelectionExposesVisibleDragAndClearsWhenControlChanges()
+    {
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(1,recommendationKind:2,recommendationTargetKind:1,tutorialStep:1,tutorialStepCount:10);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty) {HasTutorialTarget=true,HasCommandState=true,
+            CommandMode=TacticalCommandMode.Select,TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,true,false,4,
+                dragSelection:true,selectionMin:new Vector3(-3,0,-3),selectionMax:new Vector3(3,2,3))};
+        UiShellRuntimeGateway.Register(gateway);
+        var cameraObject=new GameObject("Selection drag camera",typeof(Camera));var camera=cameraObject.GetComponent<Camera>();
+        camera.pixelRect=new Rect(0,0,Screen.width,Screen.height);
+        camera.orthographic=true;camera.orthographicSize=20;camera.transform.position=Vector3.up*100;camera.transform.LookAt(Vector3.zero);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        GameObject dragBlocker=null,selectionEvents=null;
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());ui.BindMatchHudCommandControls(CreateCommandControls(overlay));
+            var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");helper.BindWorldCamera(camera);
+            var highlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
+            helper.ApplyReadModel(model);helper.TickHighlight(1);
+            Assert.IsTrue(highlight.TryObserveVisibleSelectionDrag(out var start,out var end),$"screen={Screen.width}x{Screen.height} safe={Screen.safeArea} camera={camera.pixelRect} requested={GetPrivateField<bool>(highlight,"_selectionBoxRequested")} mode={GetPrivateField<TacticalCommandMode>(helper,"_activeCommandMode")}");
+            Assert.Greater(end.x,start.x);Assert.Greater(end.y,start.y);
+            Assert.IsTrue(Screen.safeArea.Contains(start)&&Screen.safeArea.Contains(end));
+            Assert.AreEqual(0,gateway.GroupSelectionRequests);
+            if(UnityEngine.EventSystems.EventSystem.current==null)
+            {
+                selectionEvents=new GameObject("Selection test events",typeof(UnityEngine.EventSystems.EventSystem));
+                typeof(UnityEngine.EventSystems.EventSystem).GetMethod("OnEnable",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(selectionEvents.GetComponent<UnityEngine.EventSystems.EventSystem>(),null);
+            }
+            dragBlocker=new GameObject("Selection HUD obstruction",typeof(DragSelectionTestRaycaster));
+            var blocker=dragBlocker.GetComponent<DragSelectionTestRaycaster>();
+            blocker.Bounds=new Rect(start-Vector2.one*8,new Vector2(64,64));
+            if(!UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Contains(blocker))
+                UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Add(blocker);
+            Assert.IsNotNull(UnityEngine.EventSystems.EventSystem.current,"Edit-mode fixture needs an active event system.");
+            helper.TickHighlight(1.5f);
+            Assert.IsFalse(highlight.TryObserveVisibleSelectionDrag(out _,out _),"HUD-covered drag endpoints are not actionable.");
+            Assert.IsFalse(highlight.HasVisibleDirectTutorialTarget,"Show Me must remain available for a covered group.");
+            UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Remove(blocker);
+            UnityEngine.Object.DestroyImmediate(dragBlocker);dragBlocker=null;
+            gateway.CommandMode=TacticalCommandMode.Move;helper.TickHighlight(2);
+            Assert.IsFalse(highlight.TryObserveVisibleSelectionDrag(out _,out _),"Changing controls clears the stale drag.");
+        }
+        finally
+        {
+            ui.Dispose();UnityEngine.Object.DestroyImmediate(cameraObject);
+            if(dragBlocker!=null)
+            {
+                UnityEngine.EventSystems.RaycasterManager.GetRaycasters().Remove(dragBlocker.GetComponent<DragSelectionTestRaycaster>());
+                UnityEngine.Object.DestroyImmediate(dragBlocker);
+            }
+            if(selectionEvents!=null)
+            {
+                typeof(UnityEngine.EventSystems.EventSystem).GetMethod("OnDisable",System.Reflection.BindingFlags.Instance|System.Reflection.BindingFlags.NonPublic)
+                    .Invoke(selectionEvents.GetComponent<UnityEngine.EventSystems.EventSystem>(),null);
+                UnityEngine.Object.DestroyImmediate(selectionEvents);
+            }
+        }
+    }
+
+    public sealed class DragSelectionTestRaycaster : UnityEngine.EventSystems.BaseRaycaster
+    {
+        public Rect Bounds;
+        public override Camera eventCamera => null;
+        public override void Raycast(UnityEngine.EventSystems.PointerEventData eventData,
+            System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult> results)
+        {
+            if(Bounds.Contains(eventData.position)) results.Add(new UnityEngine.EventSystems.RaycastResult
+                {gameObject=gameObject,module=this,screenPosition=eventData.position,index=results.Count});
+        }
+    }
+
+    [TestCase((byte)5)] [TestCase((byte)9)] [TestCase((byte)12)] [TestCase((byte)8)] [TestCase((byte)10)]
     public void CampaignActionsFollowLiveModeAndArrival(byte count)
     {
         CreateHudHarness(true,out var overlay,out var header,out _);
@@ -41,11 +115,10 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view = header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             var highlight = GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
             helper.ApplyReadModel(model); helper.TickHighlight(10);
-            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"), "Selection guidance targets the one-tap group button, never a world tap.");
-            view.SelectionButton.onClick.Invoke();
-            Assert.AreEqual(1,gateway.GroupSelectionRequests);
-            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf,"An accepted group selection consumes the button immediately.");
-            Assert.IsFalse(highlight.HasDirectTutorialTarget,"Consumed selection cannot keep its tap guide active.");
+            Assert.IsNull(view.SelectionButton,"Tutorial must not create a substitute gameplay control.");
+            Assert.IsNull(GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"),"Select mode points to the actual unit in the world.");
+            Assert.IsTrue(highlight.HasDirectTutorialTarget);
+            Assert.AreEqual(0,gateway.GroupSelectionRequests,"Guidance must never issue group-selection commands.");
             gateway.TutorialTarget = new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false);
             helper.TickHighlight(11);
             Assert.AreSame((required == TacticalCommandMode.Move ? controls.MoveButton : controls.AttackButton).transform,
@@ -80,10 +153,13 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");
         var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
         helper.ApplyReadModel(model); helper.TickHighlight(100);
-        Assert.IsTrue(view.SelectionButton.IsInteractable());
-        view.SelectionButton.onClick.Invoke();
-        Assert.AreEqual(1,gateway.GroupSelectionRequests);
-        Assert.AreEqual(Vector3.zero,gateway.LastTutorialFocus,"Group selection does not ask for a world tap.");
+        var selectionHighlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
+        Assert.IsNull(view.SelectionButton);
+        Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(selectionHighlight,"_directTutorialTarget"));
+        Assert.AreEqual(0,gateway.GroupSelectionRequests);
+        helper.ApplyCommandMode(TacticalCommandMode.Select);helper.TickHighlight(100.5f);
+        view.ShowMeButton.onClick.Invoke();
+        Assert.AreEqual(gateway.TutorialTarget.Selection,gateway.LastTutorialFocus,"Show Me frames the real selection target.");
         gateway.TutorialTarget=new UiMissionTutorialTarget(gateway.TutorialTarget.Selection,gateway.TutorialTarget.Destination,false,false);
         helper.TickHighlight(101);
         var popup=overlay.GetComponentInChildren<AriaCommandAssistantPopupView>(true);
@@ -146,15 +222,18 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             var highlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
             helper.ApplyReadModel(model);helper.TickHighlight(1);
-            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
+            Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
             Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf);
             camera.transform.position+=Vector3.right*1000;helper.TickHighlight(2);
-            Assert.AreSame(view.SelectionButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"),"Offscreen soldiers still have an accessible group button.");
-            view.SelectionButton.onClick.Invoke();
-            Assert.AreEqual(1,gateway.GroupSelectionRequests);
+            Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
+            gateway.CommandMode=TacticalCommandMode.Select;helper.TickHighlight(2.1f);
+            Assert.IsTrue(view.ShowMeButton.gameObject.activeSelf,"Offscreen world targets offer camera guidance.");
+            view.ShowMeButton.onClick.Invoke();helper.TickHighlight(2.2f);
+            Assert.AreEqual(Vector3.zero,gateway.LastTutorialFocus);
+            Assert.AreEqual(0,gateway.GroupSelectionRequests);
             gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,Vector3.right*10,false,false,4);helper.TickHighlight(3);
             Assert.IsFalse(highlight.HasDirectTutorialTarget,"Completed selection clears the guide while the next lesson is projected.");
-            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf);
+            Assert.IsNull(view.SelectionButton);
 
         }
         finally {ui.Dispose();UnityEngine.Object.DestroyImmediate(cameraObject);}
@@ -180,10 +259,12 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
             var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
             helper.ApplyReadModel(model);helper.TickHighlight(1);
             Assert.IsFalse(view.DoItButton.gameObject.activeInHierarchy);
-            view.SelectionButton.onClick.Invoke();
-            Assert.AreEqual(1,gateway.GroupSelectionRequests,"One tap selects specialists without changing command mode or boarding.");
-            Assert.AreEqual(0,selections);Assert.AreEqual(0,moves);
-            Assert.IsFalse(view.SelectionButton.gameObject.activeSelf);
+            var highlight=GetPrivateField<AssistantHighlightPresentationSystemHelper>(helper,"_highlightPresentationSystem");
+            Assert.AreSame(controls.SelectButton.transform,GetPrivateField<RectTransform>(highlight,"_directTutorialTarget"));
+            controls.SelectButton.onClick.Invoke();
+            Assert.AreEqual(0,gateway.GroupSelectionRequests,"Tutorial cannot bypass the normal world selection gesture.");
+            Assert.AreEqual(1,selections);Assert.AreEqual(0,moves);
+            Assert.IsNull(view.SelectionButton);
             Assert.IsFalse(view.DoItButton.gameObject.activeSelf);
 
         }

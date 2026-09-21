@@ -1,0 +1,119 @@
+{
+  "provider": "built-in image_gen",
+  "date": "2026-09-21",
+  "review": "Source artwork inspected; Unity crop/layout review pending",
+  "rejected": [
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-870cbe79-5941-4f0b-84ff-77abd9ca53e6.png",
+      "reason": "Fadi depicted with military armor"
+    }
+  ],
+  "panels": [
+    {
+      "id": "CH02-O01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-4cd5be72-51bf-487a-bfc5-70ebc6460216.png",
+      "prompt": "Elevated surviving desert city; hospital, depot and two blocked road segments. Low-poly faceted cinematic style, no text, central crop-safe geography.",
+      "refs": [
+        "Narrative/M05BreachAssault/Final/M05-B01.png"
+      ]
+    },
+    {
+      "id": "CH02-O02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-f6242be3-b004-40cf-9de9-998145e608d4.png",
+      "prompt": "Dalia, same woman as portrait, tan tactical shirt and vest, tied-back dark hair, sunglasses and radio headset, stands beside the hospital's nearly empty fuel tank and generator, looking toward a canvas relief truck stranded beyond distant rubble. Hospital ward window behind her, a nurse checking a patient silhouette, no medical gore. Foreground gauge needle low, no lettering. Medium-wide scene establishing urgent fuel shortage.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-O03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-47246bb0-b0e0-47d9-9e99-3bab055318ff.png",
+      "prompt": "Samira, same woman and mustard headscarf, dark coat teal blouse, stands at a market crossroads surveying the connected daily life of the city. Behind her a modest market stall, unlit street lamp, water delivery cart, a shelter courtyard and workers awaiting supplies. Broken roadway interrupts distribution. She holds an unlabeled city map. Human reconstruction, thoughtful determination.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-O04",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-711900d0-31d6-4893-a846-887cd107f462.png",
+      "prompt": "Fadi matches first reference exactly: middle aged brown-skinned civilian man, dark short hair and thick dark beard, long gray-brown tunic and loose matching trousers, dark navy sleeveless vest, sandals. He points to an unmarked narrow service lane branching around a collapsed formal boulevard. Beside him a portable cyan tactical map projection shows simple unlabeled road lines with the small service lane absent. Two civilian laborers listen. Medium-wide environmental storytelling, no military armor on Fadi.",
+      "refs": [
+        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-O05",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-e465e0a0-9d61-4260-842e-4e1217ed6882.png",
+      "prompt": "Dalia same woman in tan tactical vest sunglasses headset and tied dark hair, in foreground gives a measured open-hand direction to a rifle escort protecting two road workers at a rubble barrier. Across the road in background, an oddly pristine empty side road leads toward a dark electrical substation; a subtle mystery, no villain present. Hospital skyline visible. Civilian protection and rebuilding rather than battle spectacle.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-B01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-e70abdaf-3d92-4509-999e-0fc2a512a5f6.png",
+      "prompt": "Samira same woman mustard headscarf dark coat teal blouse beside the stationary olive canvas-covered relief truck at supply depot, one hand resting on a sealed medical crate, looking along the rubble-blocked road toward the cream-colored hospital in background. A clear visual reason to escort this specific truck. Warm morning light, calm urgency.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-B02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-3be50eaf-5085-4add-9324-a79cf4138dac.png",
+      "prompt": "Fadi, matching civilian first reference dark short hair full beard gray-brown long tunic trousers navy vest sandals, confidently points down the usable service lane while two civilian workers carry hand tools. Two distinct localized rubble piles block this lane in depth, an impassable collapsed boulevard visible to left. Hospital in distance. Medium full body composition with expressive face and local knowledge.",
+      "refs": [
+        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-B03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-17234539-bba7-4aaf-a36e-7d20396210eb.png",
+      "prompt": "Dalia matching woman tan vest sunglasses headset tied hair briefing a small rifle escort beside concrete cover. Behind the riflemen Fadi in navy vest long gray tunic and two workers wait safely with tools. Rubble work site ahead and relief truck behind. Visually readable layered tactical plan, infantry forward, protected workers behind cover, no active shooting or explosions.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-C01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ebb9c652-09fa-4766-a785-0dc797a8db1a.png",
+      "prompt": "A just-cleared service lane between stacked rubble edges. Fadi matching bearded civilian navy vest and gray tunic stands at lane edge with two workers, proud but restrained. Portable cyan map projection at foreground now includes a brightly connected service lane. Canvas relief truck begins moving through in background. No humanoid robot for ARIA: represent her only through cyan map light.",
+      "refs": [
+        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-D01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ec4f2e08-f9fc-48f4-ba1f-22c5ebea5c18.png",
+      "prompt": "Successful relief arrival: canvas truck parked at hospital entrance, civilians unload plain medical crates and fuel cans. Samira matching mustard headscarf dark coat teal blouse speaks with a grateful nurse. Generator running indicated by soft exhaust and warm ward lights. Cleared road remains visible. Hopeful practical relief, no celebratory fireworks.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-218971b8-f38f-4de4-8ec9-e76524c31b6f.png",
+      "prompt": "Mystery evidence scene: cyan tactical road map projected above a tabletop, simple unlabeled geographic lines indicating several blocked intersections and one preserved route toward a dormant electrical substation. Beyond window actual dark substation silhouette with transformers and disconnected pylons. No text or symbols that read as writing, no faces required, no glowing humanoid. Sober analytical atmosphere, teal shadows amber city dusk.",
+      "refs": [
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-cd5a7a16-9ab9-4227-94f0-12b25c0b21c5.png",
+      "prompt": "Dalia matching woman tan tactical vest sunglasses headset tied-back dark hair at cleared hospital road in late warm daylight. Behind her relief truck is unloading, two road workers rest safely, and nearly empty fuel cans by the depot suggest the next supply challenge. She looks toward the distant supply route with quiet determination. No battle, no victory text.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    }
+  ]
+}

@@ -64,7 +64,7 @@ namespace Game.Editor
             OperationMapCatalogConfig operationMapCatalog =
                 AssetDatabase.LoadAssetAtPath<OperationMapCatalogConfig>(OperationMapCatalogPath);
             if (missionCatalog == null || operationMapCatalog == null)
-                throw new InvalidOperationException("Chapter 1 mission or operation-map catalog is missing.");
+                throw new InvalidOperationException("Campaign mission or operation-map catalog is missing.");
 
             PopulateCatalog(missionCatalog);
             PopulateOperationMapCatalog(operationMapCatalog);
@@ -233,7 +233,7 @@ namespace Game.Editor
                 ScenarioSetupConfig scenario = ResolveScenario(scenarios, mission.ScenarioId);
                 if (scenario == null)
                     throw new InvalidOperationException(
-                        $"Mission '{mission.MissionId}' has no canonical Chapter 1 scenario '{mission.ScenarioId}'.");
+                        $"Mission '{mission.MissionId}' has no canonical campaign scenario '{mission.ScenarioId}'.");
                 Set(entry, "missionId", mission.MissionId);
                 entry.FindPropertyRelative("definition").objectReferenceValue = mission;
                 entry.FindPropertyRelative("scenario").objectReferenceValue = scenario;
@@ -265,7 +265,7 @@ namespace Game.Editor
             List<MissionDefinitionConfig> missions = new();
             foreach (string guid in AssetDatabase.FindAssets(
                          "t:MissionDefinitionConfig",
-                         new[] { "Assets/Game/Configs/Missions/Chapter01" }))
+                         RegisteredChapterFolders("Missions")))
             {
                 MissionDefinitionConfig mission = AssetDatabase.LoadAssetAtPath<MissionDefinitionConfig>(
                     AssetDatabase.GUIDToAssetPath(guid));
@@ -274,6 +274,9 @@ namespace Game.Editor
             }
 
             missions.Sort((left, right) => string.CompareOrdinal(left.MissionId, right.MissionId));
+            for (int i = 1; i < missions.Count; i++)
+                if (missions[i - 1].MissionId == missions[i].MissionId)
+                    throw new InvalidOperationException($"Duplicate campaign mission: {missions[i].MissionId}");
             return missions.ToArray();
         }
 
@@ -282,7 +285,7 @@ namespace Game.Editor
             List<ScenarioSetupConfig> scenarios = new();
             foreach (string guid in AssetDatabase.FindAssets(
                          "t:ScenarioSetupConfig",
-                         new[] { "Assets/Game/Configs/Scenarios/Chapter01" }))
+                         RegisteredChapterFolders("Scenarios")))
             {
                 ScenarioSetupConfig scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(
                     AssetDatabase.GUIDToAssetPath(guid));
@@ -291,6 +294,9 @@ namespace Game.Editor
             }
 
             scenarios.Sort((left, right) => string.CompareOrdinal(left.ScenarioId, right.ScenarioId));
+            for (int i = 1; i < scenarios.Count; i++)
+                if (scenarios[i - 1].ScenarioId == scenarios[i].ScenarioId)
+                    throw new InvalidOperationException($"Duplicate campaign scenario: {scenarios[i].ScenarioId}");
             return scenarios.ToArray();
         }
 
@@ -304,7 +310,7 @@ namespace Game.Editor
                 {
                     if (resolved != null)
                         throw new InvalidOperationException(
-                            $"Chapter 1 has duplicate canonical scenarios for '{scenarioId}'.");
+                            $"Campaign has duplicate canonical scenarios for '{scenarioId}'.");
                     resolved = scenarios[index];
                 }
             return resolved;
@@ -315,7 +321,7 @@ namespace Game.Editor
             List<OperationMapDefinition> maps = new();
             foreach (string guid in AssetDatabase.FindAssets(
                          "t:OperationMapDefinition",
-                         new[] { "Assets/Game/Configs/OperationMaps/Chapter01" }))
+                         RegisteredChapterFolders("OperationMaps")))
             {
                 OperationMapDefinition map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
                     AssetDatabase.GUIDToAssetPath(guid));
@@ -324,7 +330,24 @@ namespace Game.Editor
             }
 
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
+            for (int i = 1; i < maps.Count; i++)
+                if (maps[i - 1].OperationMapId == maps[i].OperationMapId)
+                    throw new InvalidOperationException($"Duplicate campaign operation map: {maps[i].OperationMapId}");
             return maps.ToArray();
+        }
+
+        // Explicit registration excludes compatibility and Skirmish assets from campaign catalogs.
+        private static string[] RegisteredChapterFolders(string category)
+        {
+            var folders = new List<string>();
+            foreach (string chapter in new[] { "Chapter01", "Chapter02" })
+            {
+                string path = "Assets/Game/Configs/" + category + "/" + chapter;
+                if (AssetDatabase.IsValidFolder(path)) folders.Add(path);
+            }
+            if (folders.Count == 0)
+                throw new InvalidOperationException("No registered campaign folders for " + category);
+            return folders.ToArray();
         }
 
         private static T LoadOrCreate<T>(string path) where T : ScriptableObject

@@ -157,6 +157,7 @@ namespace Game.UI.Runtime
                     ? UiShellRuntimeGateway.Localization.Get("ui.campaign.start_briefing", "START BRIEFING")
                     : UiShellRuntimeGateway.Localization.GetBySource(mission.PrimaryActionLabel));
             launchMissionButton.interactable = mission.Available;
+            ApplyGridlockChapter(in model);
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission); ApplyBreach(mission);
@@ -187,17 +188,19 @@ namespace Game.UI.Runtime
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
-                bool available = index == 0 || index == 1 && m02Revealed ||
-                                 index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02;
-                if (availableMask != 0) available = (availableMask & (1 << index)) != 0;
+                int contentIndex=IsChapterTwo?index+5:index;
+                bool available = !IsChapterTwo && (index == 0 || index == 1 && m02Revealed ||
+                                 index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02);
+                if (availableMask != 0) available = contentIndex < Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount && (availableMask & (1 << contentIndex)) != 0;
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&
                     missionNodeButtons[index] != null)
                     missionNodeButtons[index].interactable = available;
                 GameObject lockIcon = missionLockIcons != null && index < missionLockIcons.Length ? missionLockIcons[index] : null;
                 if (lockIcon != null)
                     lockIcon.SetActive(!available);
-                bool selected = selectedMissionId == (index == 0 ? UiCampaignMissionProjectionIds.M01 : index == 1 ? UiCampaignMissionProjectionIds.M02 : index == 2 ? UiCampaignMissionProjectionIds.M03 : index==3 ? "saga.ch01.m04.airlift" : "saga.ch01.m05.breach_assault") && index < 5;
-                ApplyNodeAppearance(index, available, (completedMask & (1 << index)) != 0, selected);
+                bool selected = selectedMissionId == Game.Missions.Contracts.CampaignMissionSequence.IdAt(contentIndex);
+                if(nodeIdLabels!=null && index<nodeIdLabels.Length) Set(nodeIdLabels[index],"M"+(index+1).ToString("00"));
+                ApplyNodeAppearance(index, available, (completedMask & (1 << contentIndex)) != 0, selected);
             }
         }
 

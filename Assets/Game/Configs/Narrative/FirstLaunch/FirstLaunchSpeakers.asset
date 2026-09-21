@@ -73,3 +73,13 @@ MonoBehaviour:
     treatment: 1
     identitySprite: {fileID: -2164157679620122319, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
     accentColor: {r: 0.91, g: 0.66, b: 0.27, a: 1}
+  - speakerId: 6
+    nameKey: narrative.speaker.fadi.name
+    nameFallback: Fadi
+    roleKey: narrative.speaker.fadi.role
+    roleFallback: Road crew leader
+    accessibleLabelKey: narrative.speaker.fadi.accessibleLabel
+    accessibleLabelFallback: Fadi, road crew leader
+    treatment: 1
+    identitySprite: {fileID: 21300000, guid: 4b609ca988666424da9b5fef3a115b72, type: 3}
+    accentColor: {r: 0.76, g: 0.65, b: 0.43, a: 1}

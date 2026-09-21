@@ -23,6 +23,10 @@ namespace Game.UI.Shell.Ecs
             UiTutorialNarrationPhase phase,
             string text)
         {
+            bool gridlockStep = tutorialStepCount==10 && tutorialStep is >=1 and <=10 &&
+                TryGetMissionRoot(out var missionManager,out var missionRoot) &&
+                missionManager.GetComponentData<CampaignMissionRuntimeComponent>(missionRoot).MissionId.Equals("saga.ch02.m01.gridlock");
+            if(gridlockStep) text=GameText.Get("mission.gridlock.tutorial."+tutorialStep+".body");
             bool m05Step = tutorialStepCount==8 && tutorialStep is >=1 and <=8 && IsBreachGuideContext();
             if(m05Step) text=GameText.Get("mission.m05.tutorial."+tutorialStep+".body");
             bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
@@ -30,7 +34,7 @@ namespace Game.UI.Shell.Ecs
             bool extraction=IsExtractionGuideContext();
             bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;
             if(m03Step && extraction) text=GameText.Get("mission.m04.tutorial."+tutorialStep+".body");
-            if ((!m01Step && !m02Step && !m03Step && !m05Step) || string.IsNullOrWhiteSpace(text) ||
+            if ((!m01Step && !m02Step && !m03Step && !m05Step && !gridlockStep) || string.IsNullOrWhiteSpace(text) ||
                 !TryGetBoundary(out EntityManager entityManager, out Entity boundary) ||
                 !UiShellActionAdapter.IsAssistantRuntimeActive(entityManager, boundary) ||
                 !entityManager.HasBuffer<AssistantMessageElement>(boundary))
@@ -52,7 +56,7 @@ namespace Game.UI.Shell.Ecs
 
             int sequence = NextTutorialNarrationSequence();
             int messageId = TutorialMessageBaseId + sequence;
-            FixedString64Bytes suppressionKey = m05Step ? new FixedString64Bytes("assistant.tutorial.m05.") : extraction ? new FixedString64Bytes("assistant.tutorial.m04.") : m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
+            FixedString64Bytes suppressionKey = gridlockStep ? new FixedString64Bytes("assistant.tutorial.gridlock.") : m05Step ? new FixedString64Bytes("assistant.tutorial.m05.") : extraction ? new FixedString64Bytes("assistant.tutorial.m04.") : m03Step ? new FixedString64Bytes("assistant.tutorial.m03.") : tutorialStepCount == 9
                 ? new FixedString64Bytes("assistant.tutorial.m02.")
                 : new FixedString64Bytes("assistant.tutorial.m01.");
             suppressionKey.Append(sequence);
@@ -107,6 +111,8 @@ namespace Game.UI.Shell.Ecs
             FirstLaunchNarrativeLanguage language)
         {
             bool persian = language == FirstLaunchNarrativeLanguage.Persian;
+            if(tutorialStepCount==10 && tutorialStep is >=1 and <=10)
+                return new FixedString64Bytes("vo.aria.tutorial.gridlock."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             if(tutorialStepCount==8 && tutorialStep is >=1 and <=8)
                 return new FixedString64Bytes("vo.aria.tutorial.m05."+tutorialStep.ToString("00")+(persian ? ".fa" : ".en"));
             // Slot 7 is the retired Stop lesson. Keep its historical recording out of

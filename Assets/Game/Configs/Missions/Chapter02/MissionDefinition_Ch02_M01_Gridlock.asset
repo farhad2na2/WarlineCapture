@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch02_M01_Gridlock
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch02.m01.gridlock
+  schemaVersion: 1
+  displayNameKey: mission.gridlock.name
+  displaySummaryKey: mission.gridlock.summary
+  locationNameKey: mission.gridlock.location
+  scenarioId: scenario.ch02.m01.gridlock
+  operationMapId: opmap.ch02.hospital_corridor_01
+  briefingSequenceId: seq.ch02.m01.brief
+  commsSequenceId: seq.ch02.m01.comms
+  debriefSequenceId: seq.ch02.m01.debrief
+  objectives:
+  - objectiveId: obj.ch02.m01.site_a
+    displayTextKey: mission.gridlock.objective.site_a
+    rule: 13
+    missionRoleId: role.gridlock.worker
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch02.m01.site_b
+    displayTextKey: mission.gridlock.objective.site_b
+    rule: 14
+    missionRoleId: role.gridlock.worker
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  - objectiveId: obj.ch02.m01.delivery
+    displayTextKey: mission.gridlock.objective.delivery
+    rule: 15
+    missionRoleId: role.gridlock.relief
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.gridlock.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 4
+    displayTextKey: mission.gridlock.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.gridlock.star.3
+    threshold: 420000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 800
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 4000
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

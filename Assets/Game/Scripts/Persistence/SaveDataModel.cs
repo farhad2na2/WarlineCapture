@@ -74,6 +74,7 @@ namespace Game.Runtime
         public string missionId = string.Empty;
         public bool available;
         public bool firstClearCompleted;
+        public bool chapterOpeningSeen;
         public int bestStars;
         public int bestCompletionMilliseconds;
         public bool firstClearRewardSettled;

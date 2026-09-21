@@ -146,6 +146,10 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.Gridlock.Enabled != 0)
+                return facts.GridlockFailure != GridlockFailure.Integrity && (outcome == MissionOutcomeKind.Victory
+                    ? facts.GridlockFailure == GridlockFailure.None && facts.GridlockDelivered != 0 && facts.GridlockSiteAComplete != 0 && facts.GridlockSiteBComplete != 0
+                    : facts.GridlockFailure != GridlockFailure.None);
             if (definition.Breach.Enabled != 0)
                 return outcome == MissionOutcomeKind.Victory ? CampaignMissionBreachRuleUtility.IsVictory(in facts) : CampaignMissionBreachRuleUtility.IsFailure(in facts);
             if (definition.Extraction.Enabled != 0)

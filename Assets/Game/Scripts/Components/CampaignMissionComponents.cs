@@ -231,7 +231,10 @@ namespace Game.Components
         AirliftBoardCarrier = 29, AirliftEscort = 30, AirliftUnload = 31, AirliftSelectAircraft = 32,
         AirliftBoardAircraft = 33, AirliftSecure = 34, AirliftDepart = 35, AirliftResult = 36,
         BreachPlan = 37, BreachSelect = 38, BreachGate = 39, BreachAdvance = 40,
-        BreachCore = 41, BreachCounterattack = 42, BreachArchive = 43, BreachHold = 44
+        BreachCore = 41, BreachCounterattack = 42, BreachArchive = 43, BreachHold = 44,
+        GridlockEscortA = 45, GridlockFadiA = 46, GridlockWorkerA = 47, GridlockWorkA = 48,
+        GridlockEscortB = 49, GridlockFadiB = 50, GridlockWorkerB = 51, GridlockWorkB = 52,
+        GridlockProtectRoute = 53, GridlockHospitalHold = 54
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData
@@ -295,6 +298,7 @@ namespace Game.Components
         public CampaignMissionDefenseDefinitionBlob Defense;
         public CampaignMissionExtractionDefinitionBlob Extraction;
         public CampaignMissionBreachDefinitionBlob Breach;
+        public CampaignMissionGridlockDefinitionBlob Gridlock;
         public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;

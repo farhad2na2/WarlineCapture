@@ -240,11 +240,14 @@ namespace Game.Composition
         internal static bool IsPresentationReady(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage stage,
             in UiShellStateComponent shellState) =>
+            stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterReplay
+                ? shellState.ActiveRoute == UIRoute.Campaign && shellState.IsTransitionRunning == 0
+                :
             stage != CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None &&
             shellState.CurrentMode == UiShellMode.MatchHud &&
             shellState.ActiveRoute == UIRoute.Match &&
             // The opening comic claims the opaque match-intro curtain before any HUD frame is exposed.
-            (stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief ||
+            (stage is CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief or CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterOpening ||
              shellState.IsTransitionRunning == 0);
 
         internal static FirstLaunchNarrativeLanguage ReadLanguage()

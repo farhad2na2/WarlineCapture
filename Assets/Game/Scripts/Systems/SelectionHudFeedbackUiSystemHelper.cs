@@ -705,6 +705,7 @@ namespace Game.Runtime
             int unitCount = 0;
             int soldierCount = 0;
             int specialistCount = 0;
+            int crewCount = 0;
             int vehicleCount = 0;
             int aircraftCount = 0;
             int transportCount = 0;
@@ -727,6 +728,7 @@ namespace Game.Runtime
 
                     unitCount++;
                     if (SelectionUiReadModelLookup.IsRescueSpecialist(em, entity)) specialistCount++;
+                    if (SelectionUiReadModelLookup.IsGridlockCrew(em, entity)) crewCount++;
                     UnitCategory category = ResolveCategory(em, entity);
                     soldierCount += category == UnitCategory.Soldier ? 1 : 0;
                     vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
@@ -758,6 +760,7 @@ namespace Game.Runtime
             float health01 = maxTotal > 0 ? math.saturate((float)currentTotal / maxTotal) : 0f;
             string orderText = mixedOrders ? Text("selection.order.mixed_orders", "Mixed orders") : ToOrderText(firstOrder);
             SelectionSummaryPortraitKind portraitKind = ResolvePortraitKind(soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount);
+            if (crewCount > 0) portraitKind = SelectionSummaryPortraitKind.None;
 
             return new SelectedSummary(
                 unitCount,
@@ -766,8 +769,8 @@ namespace Game.Runtime
                 aircraftCount,
                 transportCount,
                 buildingCount,
-                SelectionUiReadModelLookup.ResolveGroupTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount),
-                SelectionUiReadModelLookup.ResolveGroupSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount),
+                SelectionUiReadModelLookup.ResolveGroupTitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount, crewCount),
+                SelectionUiReadModelLookup.ResolveGroupSubtitle(unitCount, soldierCount, vehicleCount, aircraftCount, transportCount, buildingCount, specialistCount, crewCount),
                 orderText,
                 healthText,
                 health01,

@@ -19,6 +19,7 @@ namespace Game.Runtime
             if (runtime.Outcome != MissionOutcomeKind.None || runtime.Phase != MissionPhaseKind.Engage) return;
             NativeList<Entity> targets = new(16, Allocator.Temp);
             NativeList<int2> cells = new(16, Allocator.Temp);
+            NativeList<Entity> gridlockStops = new(1, Allocator.Temp);
             foreach ((RefRW<CampaignMissionUnitRoleComponent> role, RefRW<CampaignMissionConvoyRouteProgress> progressRef, RefRO<UnitHealth> health,
                       RefRO<LocalTransform> transform, Entity entity) in
                      SystemAPI.Query<RefRW<CampaignMissionUnitRoleComponent>, RefRW<CampaignMissionConvoyRouteProgress>, RefRO<UnitHealth>, RefRO<LocalTransform>>()
@@ -29,9 +30,26 @@ namespace Game.Runtime
                     !TryFindRoute(ref definition, current.RouteId, out int routeIndex)) continue;
                 // Pursuers retain autonomous combat along the route. A manual move suppresses
                 // acquisition and would make them walk past the stranded specialists.
-                if ((definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
+                if ((definition.Gridlock.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) && state.EntityManager.HasComponent<EngageTarget>(entity)) continue;
                 ref CampaignMissionPatrolRouteBlob route = ref definition.PatrolRoutes[routeIndex];
                 int releaseAt=route.StartDelayMilliseconds;
+                if(definition.Gridlock.Enabled!=0)
+                {
+                    if(!SystemAPI.TryGetSingleton(out CampaignMissionGridlockState gridlock) || gridlock.Ready==0 || gridlock.Failure!=GridlockFailure.None) continue;
+                    if(current.MissionRoleId.Equals(definition.Gridlock.CounterattackRoleId))
+                    {
+                        if(gridlock.CounterattackWarned==0) continue;
+                        releaseAt=gridlock.CounterattackReleaseAtMilliseconds;
+                    }
+                    if(current.MissionRoleId.Equals(definition.Gridlock.VehicleRoleId) && (gridlock.RouteConnected==0 || gridlock.RouteContested!=0))
+                    {
+                        if(current.PatrolOrderVersion!=0)
+                        {
+                            gridlockStops.Add(entity);current.PatrolOrderVersion=0;role.ValueRW=current;
+                        }
+                        continue;
+                    }
+                }
                 if(definition.Breach.Enabled!=0 && current.MissionRoleId.Equals(definition.Breach.CounterattackRoleId))
                 {
                     if(!SystemAPI.TryGetSingleton(out CampaignMissionBreachState breach) || breach.CounterattackReleaseAtMilliseconds==0) continue;
@@ -70,8 +88,12 @@ namespace Game.Runtime
             }
             for (int i = 0; i < targets.Length; i++)
                 UnitMoveOrderRequestSystem.EnqueueMoveOrder(state.EntityManager, targets[i], cells[i],
-                    (definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) ? UnitMoveOrderRequestKind.TargetPathOnly : UnitMoveOrderRequestKind.Immediate,
+                    (definition.Gridlock.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0) ? UnitMoveOrderRequestKind.TargetPathOnly : UnitMoveOrderRequestKind.Immediate,
                     true, false, 0, 0, _convoyMoveOrderQueueQuery);
+            for(int i=0;i<gridlockStops.Length;i++)
+                UnitMoveOrderRequestSystem.EnqueueMoveOrder(state.EntityManager,gridlockStops[i],default,
+                    UnitMoveOrderRequestKind.ClearMovement,false,false,0,0,_convoyMoveOrderQueueQuery);
+            gridlockStops.Dispose();
             targets.Dispose();
             cells.Dispose();
         }

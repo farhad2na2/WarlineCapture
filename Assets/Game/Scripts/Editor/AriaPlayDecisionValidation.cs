@@ -55,7 +55,27 @@ namespace Game.Editor
             o.Time = 2; o.Position = new Vector2(340, 300);
             AriaPlayDecisionSystem.Step(o, ref s);
             Check(s.GestureRequested == 1 && s.Target == o.Position, "moving hostile receives tap at current visible position");
-            return "[AriaPlayDecisionValidation] result=Passed cases=14";
+            s=new AriaPlaySessionComponent {Phase=AriaPlayPhase.Observing};
+            o=new AriaPlayObservationComponent {Kind=AriaPlayObservationKind.WorldTarget,TargetId=-30001,GoalId=1001,
+                Position=new Vector2(100,200),DragEnd=new Vector2(350,450),Drag=1,Time=1};
+            AriaPlayDecisionSystem.Step(o,ref s);o.Time=2;AriaPlayDecisionSystem.Step(o,ref s);
+            Check(s.GestureRequested==1 && s.Drag==1 && s.Target==o.Position && s.DragEnd==o.DragEnd,"visible selection box becomes a normal drag gesture");
+            s=new AriaPlaySessionComponent {Phase=AriaPlayPhase.Observing};
+            o=new AriaPlayObservationComponent {Kind=AriaPlayObservationKind.Control,TargetId=1,GoalId=1001,Time=1};
+            AriaPlayDecisionSystem.Step(o,ref s);
+            for(int i=1;i<=9;i++)
+            {
+                s.Phase=AriaPlayPhase.Observing;
+                o.TargetId=i%2+1;o.GoalId=1000+i%2;o.Time=1+i*30;
+                AriaPlayDecisionSystem.Step(o,ref s);
+            }
+            Check(s.Phase==AriaPlayPhase.Blocked && s.GestureRequested==0,"changing targets and revisiting goals cannot reset the objective watchdog");
+            s=new AriaPlaySessionComponent {Phase=AriaPlayPhase.Observing};
+            o.GoalId=1001;o.Time=1;AriaPlayDecisionSystem.Step(o,ref s);
+            o.GoalId=1002;o.Time=170;AriaPlayDecisionSystem.Step(o,ref s);
+            s.Phase=AriaPlayPhase.Observing;o.Time=200;AriaPlayDecisionSystem.Step(o,ref s);
+            Check(s.Phase!=AriaPlayPhase.Blocked,"advancing the public objective renews the watchdog");
+            return "[AriaPlayDecisionValidation] result=Passed cases=17";
         }
         private static void Check(bool condition, string reason)
         { if (!condition) throw new InvalidOperationException(reason); }

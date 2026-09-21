@@ -473,6 +473,7 @@ namespace Game.Components
         public const byte KindBuilding = 0;
         public const byte KindWallRun = 1;
         public const byte KindWallSegment = 2;
+        public const byte KindMissionRoadObstruction = 3;
 
         public int RequestId;
         public byte RequestKind;

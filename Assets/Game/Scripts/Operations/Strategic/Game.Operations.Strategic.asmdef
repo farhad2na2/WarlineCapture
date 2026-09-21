@@ -1,0 +1,16 @@
+{
+    "name": "Game.Operations.Strategic",
+    "rootNamespace": "Game.Operations.Strategic",
+    "references": [
+        "Game.Operations.Contracts"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

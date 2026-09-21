@@ -65,7 +65,8 @@ namespace Game.Operations.Contracts
         Withdraw = 5,
         Practice = 6,
         Resume = 7,
-        NewRun = 8
+        NewRun = 8,
+        TechnicalFailure = 9
     }
 
     public enum OperationsDifficultyKind : byte

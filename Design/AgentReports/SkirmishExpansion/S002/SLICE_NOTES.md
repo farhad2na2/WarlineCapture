@@ -3,6 +3,9 @@
 Catalog identity **S002** is named once here: Desert Base · Base Assault · Ground Maneuver · Established Base.
 Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 
+Operations package 0 landed on `main` as `54b64e906` and is merged here with a
+merge commit. That tree was not edited in this slice.
+
 ## What landed
 
 ### Shared contracts ticket (SK-00)

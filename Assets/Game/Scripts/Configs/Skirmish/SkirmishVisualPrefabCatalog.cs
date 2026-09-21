@@ -10,6 +10,7 @@ namespace Game.Configs
         private readonly List<GameObject> owned = new List<GameObject>();
 
         public int Count => prefabs.Count;
+        public bool BoundFromRegistry { get; private set; }
 
         public void Bind(string key, GameObject prefab, bool takeOwnership = false)
         {
@@ -24,12 +25,17 @@ namespace Game.Configs
         {
             if (registry?.UnitSpawnPrefabs == null)
                 return;
+            int bound = 0;
             for (int i = 0; i < registry.UnitSpawnPrefabs.Count; i++)
             {
                 GameObject prefab = registry.UnitSpawnPrefabs[i];
-                if (prefab != null)
-                    Bind(prefab.name, prefab);
+                if (prefab == null)
+                    continue;
+                Bind(prefab.name, prefab);
+                bound++;
             }
+
+            BoundFromRegistry = bound > 0;
         }
 
         public bool TryGet(string key, out GameObject prefab)

@@ -10,7 +10,11 @@ namespace Game.Composition
 {
     public static class SkirmishExpandedLaunchProjection
     {
-        public static bool TryQueue(EntityManager em, SkirmishLaunchPayload payload, SkirmishResolvedSetup setup)
+        public static bool TryQueue(
+            EntityManager em,
+            SkirmishLaunchPayload payload,
+            SkirmishResolvedSetup setup,
+            UnitPrefabRegistryAuthoringConfig registry = null)
         {
             if (em == default || payload == null || setup == null || payload.IsLegacy)
                 return false;
@@ -78,6 +82,9 @@ namespace Game.Composition
                 em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup = setup;
             else
                 em.AddComponentObject(entity, new SkirmishResolvedSetupRecord { Setup = setup });
+
+            if (registry != null)
+                SkirmishVisualSpawnService.BindSceneRegistry(em, entity, registry);
             return true;
         }
 

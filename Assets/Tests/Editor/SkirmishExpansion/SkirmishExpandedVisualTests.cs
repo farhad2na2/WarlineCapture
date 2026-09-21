@@ -1,7 +1,9 @@
 using System;
+using System.IO;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
+using Game.Editor;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
@@ -92,6 +94,73 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void AuthoredGroundStagingPrefabIsPersistedForLiveMatch()
+        {
+            Assert.AreEqual(
+                SkirmishGroundStagingPrefabBuilder.PrefabPath,
+                SkirmishGroundStagingPrefabAccess.PrefabPath);
+            string projectRoot = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(File.Exists(Path.Combine(projectRoot, SkirmishGroundStagingPrefabAccess.PrefabPath)));
+            Assert.IsTrue(File.Exists(Path.Combine(projectRoot, SkirmishGroundStagingPrefabAccess.AuthoredConfigPath)));
+            Assert.IsTrue(SkirmishGroundStagingPrefabAccess.TryLoadAuthored(out GameObject staging, out bool owned));
+            try
+            {
+                Assert.IsTrue(SkirmishGroundStagingPrefabAccess.IsUsable(staging));
+                Assert.AreNotEqual("Expert Tent", staging.name);
+            }
+            finally
+            {
+                if (owned)
+                    SkirmishVisualLifecycle.DestroyOwned(staging);
+            }
+        }
+
+        [Test]
+        public void ExpandedLaunchBindsExplicitRegistryInsteadOfStandIns()
+        {
+            using var world = new World(nameof(ExpandedLaunchBindsExplicitRegistryInsteadOfStandIns));
+            EntityManager em = world.EntityManager;
+            UnitPrefabRegistryAuthoringConfig registry = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            SkirmishVisualPrefabCatalog standIn = SkirmishVisualPrefabCatalog.CreateS002TestRegistry();
+            try
+            {
+                registry.UnitSpawnPrefabs.Add(standIn.TryGet("Unit_Veh_Tank_USA", out GameObject tank) ? tank : null);
+                registry.UnitSpawnPrefabs.Add(standIn.TryGet("Unit_Veh_APC_Slow", out GameObject apc) ? apc : null);
+                registry.UnitSpawnPrefabs.Add(
+                    standIn.TryGet("Unit_Chr_Soldier_Male_02_Alt_04", out GameObject rifle) ? rifle : null);
+                registry.UnitSpawnPrefabs.Add(
+                    standIn.TryGet("Building_GroundStaging", out GameObject staging) ? staging : null);
+                CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup, registry);
+                Assert.IsTrue(em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session));
+                SkirmishVisualPrefabCatalog bound =
+                    em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog;
+                Assert.IsNotNull(bound);
+                Assert.IsTrue(bound.BoundFromRegistry);
+                int spawned = SkirmishVisualSpawnService.AttachMissing(em, session, setup);
+                Assert.Greater(spawned, 0);
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Tank_USA"));
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_APC_Slow"));
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Chr_Soldier_Male_02_Alt_04"));
+                Assert.IsTrue(HasVisibleKey(em, "Building_GroundStaging"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Tank_USA"));
+            }
+            finally
+            {
+                if (em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).CalculateEntityCount() == 1)
+                {
+                    Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                        em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                    if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+                        em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog?.Dispose();
+                }
+
+                standIn.Dispose();
+                Object.DestroyImmediate(registry);
+            }
+        }
+
+        [Test]
         public void CleanupDestroysVisualInstances()
         {
             using var world = new World(nameof(CleanupDestroysVisualInstances));
@@ -114,7 +183,9 @@ namespace Game.Tests.Editor
             {
                 var suite = new SkirmishExpandedVisualTests();
                 suite.GroundStagingBuilderExposesQueuesPadsAndIdentity();
+                suite.AuthoredGroundStagingPrefabIsPersistedForLiveMatch();
                 suite.RegistryInstantiateSpawnsVisibleStartingSet();
+                suite.ExpandedLaunchBindsExplicitRegistryInsteadOfStandIns();
                 suite.ProducedTankGetsRegistryVisualWithoutTouchingPlayerOnlyStubs();
                 suite.CleanupDestroysVisualInstances();
                 Debug.Log("[SkirmishExpandedVisualTests] result=Passed");
@@ -127,6 +198,15 @@ namespace Game.Tests.Editor
         }
 
         private static void CompileAndSpawn(EntityManager em, out Entity session, out SkirmishResolvedSetup setup)
+        {
+            CompileAndSpawn(em, out session, out setup, null);
+        }
+
+        private static void CompileAndSpawn(
+            EntityManager em,
+            out Entity session,
+            out SkirmishResolvedSetup setup,
+            UnitPrefabRegistryAuthoringConfig registry)
         {
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
@@ -143,7 +223,8 @@ namespace Game.Tests.Editor
                 manifest,
                 out setup,
                 out _,
-                out var reasons),
+                out var reasons,
+                registry),
                 reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
             session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
             Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
@@ -180,6 +261,21 @@ namespace Game.Tests.Editor
                 var state = em.GetComponentData<SkirmishGroundStagingStateComponent>(entities[i]);
                 if (state.VehicleQueues == 1 && state.LogisticsQueues == 1)
                     return true;
+            }
+
+            return false;
+        }
+
+        private static bool FirstSpawnedFromRegistry(EntityManager em, string key)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishVisualInstanceRecord), typeof(SkirmishVisualSpawnedComponent));
+            using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var record = em.GetComponentObject<SkirmishVisualInstanceRecord>(entities[i]);
+                if (record.PrefabKey != key)
+                    continue;
+                return em.GetComponentData<SkirmishVisualSpawnedComponent>(entities[i]).FromRegistry != 0;
             }
 
             return false;

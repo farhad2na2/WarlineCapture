@@ -18,7 +18,8 @@ namespace Game.Composition
             SkirmishContentManifest manifest,
             out SkirmishResolvedSetup setup,
             out SkirmishLaunchPayload payload,
-            out List<SkirmishCompileReason> reasons)
+            out List<SkirmishCompileReason> reasons,
+            UnitPrefabRegistryAuthoringConfig registry = null)
         {
             setup = null;
             payload = null;
@@ -55,7 +56,7 @@ namespace Game.Composition
                 IsCustom = false,
                 IsLegacy = false
             };
-            return SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup);
+            return SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup, registry);
         }
     }
 }

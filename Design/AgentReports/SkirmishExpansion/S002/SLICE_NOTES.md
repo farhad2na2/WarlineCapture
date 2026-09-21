@@ -50,6 +50,16 @@ merge commit. That tree was not edited in this slice.
   `SkirmishVisualPrefabCatalog` (live unit registry when loaded, otherwise
   named presentation stand-ins). Starting tank / APC / infantry and Ground
   Staging become visible objects; they are no longer ECS stubs only.
+- Expanded S002 launch (`TryCompileAndQueue` / `TryQueue`) binds an explicit
+  scene `UnitPrefabRegistryAuthoringConfig` when the caller supplies it, so a
+  live match prefers real unit prefabs over presentation stand-ins. Ledger-only
+  tests still omit the registry so they do not leak GameObjects.
+- Ground Staging is persisted at
+  `Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab` with authored
+  config `Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishGroundStaging.asset`.
+  `SkirmishGroundStagingPrefabAccess` loads that prefab in the Editor, then a
+  Resources key, then the builder. The optional menu
+  `Tools/Warline/Skirmish/Rebuild Ground Staging` still rewrites the same path.
 - `SkirmishGroundStagingBuilder` builds a modular yard: separate
   **VehicleQueue** and **LogisticsQueue** surfaces, **SpawnPad** / **RallyPad**,
   Health / Selection / BuildControls sockets, and EN/FA identity
@@ -143,22 +153,41 @@ merge commit. That tree was not edited in this slice.
   four difficulty behaviour profiles, structures/research/transport/scout
   camera skills, EN/FA teaching copy, or a counted normal-speed ARIA win.
 
+### Checkpoint, result and replay scaffolding (SK-10)
+- Expanded Base Assault session facts use Skirmish-owned DTOs
+  (`SkirmishCheckpointDocument`, result receipt, replay request). Stable object
+  IDs and setup hashes are stored; ECS handles are not.
+- `SkirmishCheckpointCodec` JSON-encodes a checksummed wire document and writes
+  temporary-then-replace files. Incompatible schema or content versions are
+  rejected (`IncompatibleSave`).
+- `SkirmishCheckpointService` captures/applies pause, stocks, designated Base
+  Assault flags, living actors and reservations, then checks conservation
+  before the session is treated as restored.
+- `SkirmishCheckpointSystem` / `SkirmishResultSettlementSystem` are the live
+  hooks. Settlement is once per session/definition/version/difficulty/size.
+  Custom and legacy receipts cannot satisfy expanded completion. Replay queues
+  a **new** session with the same selected Regular Standard start.
+- This is pause/result scaffolding only. It does not claim device, OS
+  interruption, War/Large War, or full recovery certification.
+
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
   legal enemy/ARIA BA skills + registry GameObject visuals / Ground Staging
-  yard) but **not Playable**, not ARIA/War certified, not Accepted.
+  yard + checkpoint/result/replay scaffolding) but **not Playable**, not
+  ARIA/War certified, not Accepted. Programmer 1 validated tip `bf96ba4d5`
+  (definitions, objectives, economy, army, aria, visual).
 
 ## Remaining ticket gaps
 
 | Ticket | Gap |
 |---|---|
-| Ground roster and production visual ticket (SK-02) | Persist authored Ground Staging prefab via `Tools/Warline/Skirmish/Rebuild Ground Staging`; bind live `UnitPrefabRegistry` in the match scene; air roles; combat certification |
+| Ground roster and production visual ticket (SK-02) | Air roles; combat certification; live match still uses stand-ins when the scene registry is not supplied to launch |
 | Ground capacity reservation ticket (SK-03) | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
 | Army control, fog, and movement ticket (SK-04) | Live path/world movement, transport boarding, formation/columns, Army drawer HUD, terrain-blocked sight |
 | Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
 | Base Assault objective depth (SK-06) | Hidden-health HUD, world-damage fixtures, pause/result replay through live match |
-| Checkpoint ticket (SK-10) | Checkpoint/result/replay DTOs and atomic restore |
+| Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery; this slice is codec/round-trip scaffolding only |
 | Measured layout ticket (SK-11) | Measured Desert Base layout, legal pads, route times |
 | Publication and localization ticket (SK-12) | Quick Custom briefing/HUD, EN/FA catalog wiring, publication validator |
 | Acceptance evidence ticket (SK-13) | Manual + ARIA win matrix, device/recovery evidence |
@@ -231,6 +260,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedVisualTests] result=Passed"
 ```
 
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedCheckpointTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-checkpoint.log" `
+  -RequiredPassMarker "[SkirmishExpandedCheckpointTests] result=Passed"
+```
+
 Required markers:
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
@@ -239,6 +277,7 @@ Required markers:
 - `[SkirmishExpandedArmyTests] result=Passed`
 - `[SkirmishExpandedAriaTests] result=Passed`
 - `[SkirmishExpandedVisualTests] result=Passed`
+- `[SkirmishExpandedCheckpointTests] result=Passed`
 
 Optional compiler / Ground Staging rebuild:
 
@@ -249,8 +288,9 @@ Tools/Warline/Skirmish/Rebuild Ground Staging
 
 A live Editor match on Desert Base Regular Standard should show starting
 tank / APC / infantry GameObjects and a Ground Staging yard (registry prefabs
-when the unit registry is loaded; otherwise named presentation stand-ins).
-Entities must not stay invisible.
+when the unit registry is supplied to expanded launch or already loaded;
+otherwise named presentation stand-ins, including the authored Ground Staging
+prefab when that asset imports). Entities must not stay invisible.
 
 4. Legacy smoke: Quick Custom still offers Skirmish 1 Desert Base prototype
    (index 0), Skirmish 2 City Crossroads (index 1), and Farhad’s Skirmish 3

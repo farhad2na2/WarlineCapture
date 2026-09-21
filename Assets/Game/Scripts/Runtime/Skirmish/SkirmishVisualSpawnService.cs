@@ -22,19 +22,62 @@ namespace Game.Runtime
                     return existing.Catalog;
             }
 
-            SkirmishVisualPrefabCatalog catalog = BindLoadedRegistry() ??
-                                                 SkirmishVisualPrefabCatalog.CreatePresentationStandIns();
+            SkirmishVisualPrefabCatalog catalog = BindSceneRegistry(em, session, null, false);
+            if (catalog != null)
+                return catalog;
+
+            catalog = SkirmishVisualPrefabCatalog.CreatePresentationStandIns();
+            BindCatalog(em, session, catalog);
+            return catalog;
+        }
+
+        public static SkirmishVisualPrefabCatalog BindSceneRegistry(
+            EntityManager em,
+            Entity session,
+            UnitPrefabRegistryAuthoringConfig explicitRegistry,
+            bool createStandInsIfMissing = false)
+        {
+            if (em == default || session == Entity.Null)
+                return null;
+
+            if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+            {
+                var existing = em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session);
+                if (existing.Catalog != null &&
+                    (explicitRegistry == null || existing.Catalog.BoundFromRegistry))
+                    return existing.Catalog;
+            }
+
+            UnitPrefabRegistryAuthoringConfig registry = explicitRegistry ?? FindSceneRegistry();
+            var catalog = new SkirmishVisualPrefabCatalog();
+            if (registry != null)
+                catalog.BindRegistry(registry);
+            EnsureAuthoredGroundStaging(catalog);
+
+            if (catalog.Count == 0)
+            {
+                catalog.Dispose();
+                if (!createStandInsIfMissing)
+                    return null;
+                catalog = SkirmishVisualPrefabCatalog.CreatePresentationStandIns();
+            }
+
             BindCatalog(em, session, catalog);
             return catalog;
         }
 
         public static void BindCatalog(EntityManager em, Entity session, SkirmishVisualPrefabCatalog catalog)
         {
-            var record = new SkirmishVisualPrefabCatalogRecord { Catalog = catalog };
             if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
-                em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog = catalog;
-            else
-                em.AddComponentObject(session, record);
+            {
+                var existing = em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session);
+                if (existing.Catalog != null && existing.Catalog != catalog)
+                    existing.Catalog.Dispose();
+                existing.Catalog = catalog;
+                return;
+            }
+
+            em.AddComponentObject(session, new SkirmishVisualPrefabCatalogRecord { Catalog = catalog });
         }
 
         public static int AttachMissing(EntityManager em, Entity session, SkirmishResolvedSetup setup)
@@ -189,21 +232,37 @@ namespace Game.Runtime
             return pad + new Vector3(column * 2.2f * side, 0f, -row * 2.2f);
         }
 
-        private static SkirmishVisualPrefabCatalog BindLoadedRegistry()
+        public static UnitPrefabRegistryAuthoringConfig FindSceneRegistry()
         {
+            BuildingPlacementSystemConfig[] placements =
+                Resources.FindObjectsOfTypeAll<BuildingPlacementSystemConfig>();
+            if (placements != null)
+            {
+                for (int i = 0; i < placements.Length; i++)
+                {
+                    UnitPrefabRegistryAuthoringConfig placed = placements[i] != null
+                        ? placements[i].UnitPrefabRegistryConfig
+                        : null;
+                    if (placed != null && placed.UnitSpawnPrefabs != null && placed.UnitSpawnPrefabs.Count > 0)
+                        return placed;
+                }
+            }
+
             UnitPrefabRegistryAuthoringConfig[] loaded =
                 Resources.FindObjectsOfTypeAll<UnitPrefabRegistryAuthoringConfig>();
-            if (loaded == null || loaded.Length == 0)
-                return null;
-            var catalog = new SkirmishVisualPrefabCatalog();
-            catalog.BindRegistry(loaded[0]);
-            if (!catalog.Contains(SkirmishStructureIds.VisualKey(SkirmishStructureIds.GroundStaging)))
-            {
-                GameObject staging = SkirmishGroundStagingBuilder.BuildHierarchy();
-                staging.SetActive(false);
-                catalog.Bind(SkirmishStructureIds.VisualKey(SkirmishStructureIds.GroundStaging), staging, true);
-            }
-            return catalog.Count == 0 ? null : catalog;
+            return loaded != null && loaded.Length > 0 ? loaded[0] : null;
+        }
+
+        private static void EnsureAuthoredGroundStaging(SkirmishVisualPrefabCatalog catalog)
+        {
+            string key = SkirmishStructureIds.VisualKey(SkirmishStructureIds.GroundStaging);
+            if (catalog.Contains(key))
+                return;
+            if (!SkirmishGroundStagingPrefabAccess.TryLoadAuthored(out GameObject staging, out bool owned) ||
+                staging == null)
+                return;
+            staging.SetActive(false);
+            catalog.Bind(key, staging, owned);
         }
     }
 }

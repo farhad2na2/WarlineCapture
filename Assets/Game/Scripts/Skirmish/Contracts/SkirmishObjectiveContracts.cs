@@ -58,6 +58,19 @@ namespace Game.Skirmish.Contracts
         ConvoyTruck = 5
     }
 
+    public struct SkirmishBaseAssaultFacts
+    {
+        public bool PlayerDesignatedAlive;
+        public bool EnemyDesignatedAlive;
+        public bool ReplacementBarracksPresent;
+        public bool FieldArmyWiped;
+        public bool Playing;
+        public bool Paused;
+        public bool Surrender;
+        public float ElapsedSeconds;
+        public int DeadlineSeconds;
+    }
+
     public static class SkirmishObjectiveIds
     {
         public const string BasePlayer = "base.player";

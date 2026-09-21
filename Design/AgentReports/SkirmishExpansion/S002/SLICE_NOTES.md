@@ -7,7 +7,7 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 
 ### SK-00
 - New `Game.Skirmish.Contracts` assembly (`noEngineReferences`, auto-referenced).
-  Consumer assemblies now also list it explicitly (see asmdef note below).
+  Consumer assemblies also list it explicitly (see `ASMDEF_REFERENCES.md`).
 - Typed IDs/enums for catalog/definition/setup, size, difficulty, army, start,
   objective, roles, outcomes, checkpoint header, and reason codes.
 - Legacy prototype map helper (0/1/3 + reserved stress 2).
@@ -20,28 +20,58 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 - `SkirmishSetupCompiler.TryCompile` compares army/start/logic/size vectors to
   `INITIAL_SETUP_MATRIX.csv` with field-specific reasons.
 - `SkirmishDefinitionBuilder` + `SkirmishSetupCompilerValidation`.
-- Session init / spawn / cleanup systems. Spawn fails cleanly when the shared
-  prefab registry is not ready and removes attempt-owned ledger entities.
+- Session init / spawn / cleanup systems. Ledger spawn completes Playing even
+  when the prefab registry is absent (`SpawnVisualPending=1`); visual delivery
+  remains SK-02 certification work.
 - Catalog entry gained optional `DefinitionId` / `ContentVersion` /
   `ReadinessManifestId` fields. Original `SCENARIO_CATALOG.csv` column order is
   unchanged. Publication lives in `SkirmishPublicationManifest.asset`.
 
-### S002
-- Definition / setup / layout at
-  `Assets/Game/Configs/SkirmishExpansion/Scenarios/S002`.
-- BA reducer + outcome freeze for expanded sessions only.
-- Publication status: **InProgress** (definition/compiler). Not Playable, not
-  certified, not ARIA/War accepted.
+### SK-02 (S002 army G ground slice)
+- Typed `SkirmishRoleOverlay` + `SkirmishRoleOverlayCatalog` for infantry and
+  S002 ground vehicles (rifle/gunner/rocketeer/car/APC/tank plus G-legal
+  support). Overlays bake into the compiled snapshot. `CapabilityCertified=false`.
+- `SkirmishRosterProjectionSystem` applies overlays once (health/damage/range/
+  producer/target domains). Blanket prototype rifle tuning is not used on
+  expanded sessions.
+- Infantry production gate accepts **4 members per squad** through
+  `SkirmishProductionEligibility` (shared request boundary; does not bypass
+  `BuildingProductionRequest` ownership). Army G still rejects offensive air.
+- Ground Staging is a **typed producer config + compiled structure**, not a
+  new art prefab. Starting S002 structures now include designated Barracks and
+  non-designated Ground Staging on both sides. Vehicle roles require that
+  producer to be present.
+- Spawn expands force `Quantity` into individual attempt-owned members.
+
+### SK-06 (BA depth)
+- `SkirmishBaseAssaultFacts` + `SkirmishObjectiveFactProjectionSystem`.
+  Terminal evaluation uses **original designated** `base.player` / `base.enemy`
+  identities only. Replacement Barracks do not count as extra lives.
+- Field-army wipe is non-terminal. Pause freezes the deadline clock.
+  Surrender is accepted only while Playing. Same-tick both-designated-dead is
+  Draw / BothBasesDestroyed.
+- `SkirmishOutcomeSystem` remains the only terminal writer.
+
+### Launch path
+- `SkirmishExpandedLaunchResolver.TryCompileAndQueue` compiles catalog S002
+  (size/difficulty/seed) and queues the immutable snapshot. No new
+  `MatchSceneView` S-ID switch. Map hint remains Desert Base (index 0) for
+  scene load only.
+
+### S002 publication
+- Status: **InProgress**. Closer to a playable ground slice (compiler +
+  overlays + designated BA facts + launch resolver) but **not Playable**, not
+  ARIA/War certified, not Accepted.
 
 ## Remaining ticket gaps
 
 | Ticket | Gap |
 |---|---|
-| SK-02 | Real role overlays, Ground Staging prefab, production-to-death certification |
+| SK-02 | Prefab/registry visual spawn, production-to-death certification, Ground Staging prefab/pads, air roles |
 | SK-03 | Capacity reservation/lifecycle, research, fabrication/refinery profiles |
 | SK-04 | Army groups, fog/intel, movement/transport |
 | SK-05 | Enemy strategy + ARIA visible-control skills |
-| SK-06 | Full BA fixtures (replacement barracks, pause, hidden health, world damage) |
+| SK-06 | Hidden-health HUD, world-damage fixtures, pause/result replay through live match |
 | SK-10 | Checkpoint/result/replay DTOs and atomic restore |
 | SK-11 | Measured DB layout, legal pads, route times |
 | SK-12 | Quick Custom briefing/HUD, EN/FA catalog wiring, publication validator |
@@ -56,25 +86,33 @@ shared `D:\Projects\WarlineCapture` checkout.
 
 1. Keep Unity Hub open and signed in.
 2. Compile/check the new assemblies. `Game.Skirmish.Contracts` stays its own
-   assembly. Consumers that `using Game.Skirmish.Contracts` now reference it
-   explicitly (auto-reference alone did not compile on Programmer 1):
-   `Game.Components`, `Game.Configs`, `Game.Runtime` (hosts Systems),
+   assembly. Consumers that `using Game.Skirmish.Contracts` reference it
+   explicitly: `Game.Components`, `Game.Configs`, `Game.Runtime`,
    `Game.Composition`, `Game.Editor`, and `Game.Tests.Editor`.
 3. From the shadow worktree, run the Windows wrapper (preferred on Programmer 1):
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
-  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>' `
-  -ProjectPath 'D:\Projects\WarlineCapture-Skirmish' `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
   -ExecuteMethod Game.Tests.Editor.SkirmishExpandedDefinitionTests.RunFocusedValidation `
   -LogFile "$env:TEMP\skirmish-s002-definitions.log" `
-  -RequiredPassMarker '[SkirmishExpandedDefinitionTests] result=Passed'
+  -RequiredPassMarker "[SkirmishExpandedDefinitionTests] result=Passed"
 ```
 
-macOS wrapper is only for a machine that already owns a separate project copy;
-it is not permission to open the shared checkout.
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedObjectiveTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-objectives.log" `
+  -RequiredPassMarker "[SkirmishExpandedObjectiveTests] result=Passed"
+```
 
-Required marker: `[SkirmishExpandedDefinitionTests] result=Passed`.
+Required markers:
+
+- `[SkirmishExpandedDefinitionTests] result=Passed`
+- `[SkirmishExpandedObjectiveTests] result=Passed`
 
 Optional compiler rebuild:
 
@@ -82,11 +120,10 @@ Optional compiler rebuild:
 Tools/Warline/Skirmish/Rebuild Expanded Definitions
 ```
 
-4. Legacy smoke: Quick Custom still offers S001 (index 0) and S025 (index 1).
-   Editor stress remains index 2. Do not expect S002 on the old playable catalog
-   override.
-5. Expanded seed path (compiler only until SK-02 spawn is certified):
-   Regular Standard `104731` (also `130365`, `155923`).
+4. Legacy smoke: Quick Custom still offers S001 (index 0), S025 (index 1), and
+   Farhad’s S073 Industrial Basin (index 3). Editor stress remains index 2.
+   Do not expect S002 on the old playable catalog override.
+5. Expanded seed path: Regular Standard `104731` (also `130365`, `155923`).
 
 ## Localization follow-up
 

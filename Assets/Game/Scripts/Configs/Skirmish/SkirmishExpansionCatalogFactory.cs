@@ -19,6 +19,8 @@ namespace Game.Configs
         public SkirmishUpgradeConfig Upgrades;
         public SkirmishIntelConfig Intel;
         public SkirmishRoleCatalogConfig Roles;
+        public SkirmishRoleOverlayCatalog Overlays;
+        public SkirmishGroundStagingConfig GroundStaging;
         public SkirmishMapLayoutConfig LayoutDbBa;
         public SkirmishPublicationConfig Publication;
         public SkirmishScenarioDefinitionConfig DefinitionS002;
@@ -45,6 +47,8 @@ namespace Game.Configs
                 Upgrades = Create<SkirmishUpgradeConfig>(),
                 Intel = Create<SkirmishIntelConfig>(),
                 Roles = Create<SkirmishRoleCatalogConfig>(),
+                Overlays = Create<SkirmishRoleOverlayCatalog>(),
+                GroundStaging = Create<SkirmishGroundStagingConfig>(),
                 LayoutDbBa = Create<SkirmishMapLayoutConfig>(),
                 Publication = Create<SkirmishPublicationConfig>(),
                 DefinitionS002 = Create<SkirmishScenarioDefinitionConfig>()
@@ -64,6 +68,8 @@ namespace Game.Configs
             set.Upgrades.ConfigureDefault();
             set.Intel.ConfigureSharedFog();
             set.Roles.ConfigureCanonicalGroundSlice();
+            set.Overlays.ConfigureS002GroundSlice();
+            set.GroundStaging.ConfigureEstablished();
             set.LayoutDbBa.ConfigureDesertBaseAssault();
             set.Publication.ConfigureGroundSlice();
             set.DefinitionS002.Configure(

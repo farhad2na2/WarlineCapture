@@ -27,6 +27,7 @@ namespace Game.Skirmish.Contracts
         DuplicateInitialization = 22,
         MissingResolvedSetup = 23,
         SpawnBoundaryUnavailable = 24,
-        CleanupRequired = 25
+        CleanupRequired = 25,
+        ProductionRejected = 26
     }
 }

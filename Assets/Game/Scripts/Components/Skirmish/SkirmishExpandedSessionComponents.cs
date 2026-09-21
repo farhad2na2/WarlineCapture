@@ -20,6 +20,7 @@ namespace Game.Components
         public byte IsCustom;
         public byte InitializationComplete;
         public byte SpawnComplete;
+        public byte SpawnVisualPending;
         public SkirmishReasonCode FailureCode;
         public int TickClock;
     }
@@ -63,6 +64,40 @@ namespace Game.Components
         public SkirmishRoleKind Role;
         public SkirmishPopulationCategory Category;
         public int SupplyCost;
+    }
+
+    public struct SkirmishRoleOverlayComponent : IComponentData
+    {
+        public SkirmishRoleKind Role;
+        public int MaxHealth;
+        public int Damage;
+        public float RangeWorld;
+        public SkirmishProducerKind Producer;
+        public SkirmishTargetDomain TargetDomains;
+        public byte Applied;
+    }
+
+    public struct SkirmishStructureIdentityComponent : IComponentData
+    {
+        public FixedString64Bytes StructureId;
+        public SkirmishProducerKind Producer;
+        public byte DesignatedBase;
+    }
+
+    public struct SkirmishObjectiveClockComponent : IComponentData
+    {
+        public float ElapsedSeconds;
+        public int DeadlineSeconds;
+        public byte Paused;
+        public byte Playing;
+    }
+
+    public struct SkirmishBaseAssaultFactComponent : IComponentData
+    {
+        public byte PlayerDesignatedAlive;
+        public byte EnemyDesignatedAlive;
+        public byte ReplacementBarracksPresent;
+        public byte FieldArmyWiped;
     }
 
     public struct SkirmishCapacityComponent : IComponentData

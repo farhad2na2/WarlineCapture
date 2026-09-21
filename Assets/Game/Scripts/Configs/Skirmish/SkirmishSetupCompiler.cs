@@ -274,6 +274,7 @@ namespace Game.Configs
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientCapacity, "supply_cap_each", setup.PlayerSupply.ToString(CultureInfo.InvariantCulture)));
 
             setup.Structures = BuildStructures(definition, vector);
+            setup.RoleOverlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
@@ -381,10 +382,18 @@ namespace Game.Configs
             string enemyAnchor = definition.MapLayout.TryGetAnchor("base.enemy", out SkirmishLayoutAnchorConfig enemy)
                 ? enemy.AnchorId
                 : "anchor.skirmish.db.base_enemy";
+            string playerStaging = definition.MapLayout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig playerYard)
+                ? playerYard.AnchorId
+                : "anchor.skirmish.db.staging_player";
+            string enemyStaging = definition.MapLayout.TryGetAnchor("staging.enemy", out SkirmishLayoutAnchorConfig enemyYard)
+                ? enemyYard.AnchorId
+                : "anchor.skirmish.db.staging_enemy";
             var structures = new List<SkirmishResolvedStructureEntry>
             {
-                Structure(1, "building.barracks", playerAnchor, SkirmishObjectiveIds.BasePlayer, true),
-                Structure(2, "building.barracks", enemyAnchor, SkirmishObjectiveIds.BaseEnemy, true)
+                Structure(1, SkirmishStructureIds.Barracks, playerAnchor, SkirmishObjectiveIds.BasePlayer, true),
+                Structure(2, SkirmishStructureIds.Barracks, enemyAnchor, SkirmishObjectiveIds.BaseEnemy, true),
+                Structure(1, SkirmishStructureIds.GroundStaging, playerStaging, string.Empty, false),
+                Structure(2, SkirmishStructureIds.GroundStaging, enemyStaging, string.Empty, false)
             };
             _ = vector;
             return structures.ToArray();

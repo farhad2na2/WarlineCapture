@@ -4,6 +4,7 @@ using System.IO;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
+using Game.Runtime;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Entities;
@@ -144,6 +145,122 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(2, unknown.NormalizeForBaseAssault().ScenarioIndex);
     }
 
+    [Test]
+    public void S002GroundOverlaysAndProductionGate()
+    {
+        SkirmishRoleOverlay[] overlays = SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
+        Assert.IsTrue(SkirmishRoleOverlayCatalog.TryGet(overlays, SkirmishRoleKind.Rifle, out SkirmishRoleOverlay rifle));
+        Assert.AreEqual(100, rifle.MaxHealth);
+        Assert.AreEqual(SkirmishProducerKind.Barracks, rifle.Producer);
+        Assert.IsTrue(SkirmishRoleOverlayCatalog.TryGet(overlays, SkirmishRoleKind.Tank, out SkirmishRoleOverlay tank));
+        Assert.AreEqual(420, tank.MaxHealth);
+        Assert.AreEqual(SkirmishProducerKind.GroundStaging, tank.Producer);
+        Assert.AreNotEqual(rifle.MaxHealth, tank.MaxHealth);
+
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        SkirmishProductionDecision infantry = SkirmishProductionEligibility.Evaluate(
+            new SkirmishProductionRequest
+            {
+                RoleId = SkirmishRoleIds.Rifle,
+                RoleKind = SkirmishRoleKind.Rifle,
+                SquadCount = 1,
+                BarracksPresent = true,
+                GroundStagingPresent = true
+            },
+            authored.ArmyGround,
+            SkirmishReadinessStage.Established,
+            overlays);
+        Assert.IsTrue(infantry.Accepted);
+        Assert.AreEqual(SkirmishRoleIds.InfantrySquadMembers, infantry.MemberCount);
+
+        SkirmishProductionDecision missingYard = SkirmishProductionEligibility.Evaluate(
+            new SkirmishProductionRequest
+            {
+                RoleId = SkirmishRoleIds.Tank,
+                RoleKind = SkirmishRoleKind.Tank,
+                SquadCount = 1,
+                BarracksPresent = true,
+                GroundStagingPresent = false
+            },
+            authored.ArmyGround,
+            SkirmishReadinessStage.Established,
+            overlays);
+        Assert.IsFalse(missingYard.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.MissingProducer, missingYard.Reason);
+
+        SkirmishProductionDecision air = SkirmishProductionEligibility.Evaluate(
+            new SkirmishProductionRequest
+            {
+                RoleId = SkirmishRoleIds.AttackHeli,
+                RoleKind = SkirmishRoleKind.AttackHeli,
+                SquadCount = 1,
+                BarracksPresent = true,
+                GroundStagingPresent = true
+            },
+            authored.ArmyGround,
+            SkirmishReadinessStage.Established,
+            overlays);
+        Assert.IsFalse(air.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, air.Reason);
+    }
+
+    [Test]
+    public void S002SpawnProjectsRoleOverlaysAndGroundStaging()
+    {
+        using var world = new World(nameof(S002SpawnProjectsRoleOverlaysAndGroundStaging));
+        EntityManager em = world.EntityManager;
+        CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup setup, out SkirmishLaunchPayload payload);
+        Assert.IsTrue(SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup));
+        Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        Assert.GreaterOrEqual(setup.Structures.Length, 4);
+        Assert.IsTrue(HasStructure(setup, SkirmishStructureIds.GroundStaging, false));
+        Assert.IsTrue(HasStructure(setup, SkirmishStructureIds.Barracks, true));
+        Assert.IsTrue(Game.Runtime.SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+            em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+        Assert.AreEqual(SkirmishReasonCode.None, reason);
+        Assert.AreEqual(1, visualPending);
+
+        using var units = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent));
+        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround,
+            units.CalculateEntityCount());
+        Assert.AreEqual(12, CountOwnedRole(em, 1, SkirmishRoleKind.Rifle));
+
+        using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+        int applied = Game.Runtime.SkirmishRosterProjectionSystem.Apply(
+            em, owned, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId, setup);
+        Assert.Greater(applied, 0);
+        Assert.AreEqual(100, FirstOverlayHealth(em, SkirmishRoleKind.Rifle));
+        Assert.AreEqual(420, FirstOverlayHealth(em, SkirmishRoleKind.Tank));
+        Assert.AreEqual(800, FirstDesignatedBaseHealth(em));
+    }
+
+    [Test]
+    public void ExpandedLaunchResolverCompilesS002()
+    {
+        using var world = new World(nameof(ExpandedLaunchResolverCompilesS002));
+        EntityManager em = world.EntityManager;
+        LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
+        Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+            em,
+            "S002",
+            SkirmishDifficultyId.Regular,
+            SkirmishSizeId.Standard,
+            104731,
+            authored,
+            matrix,
+            manifest,
+            out SkirmishResolvedSetup setup,
+            out SkirmishLaunchPayload payload,
+            out List<SkirmishCompileReason> reasons),
+            reasons.Count == 0 ? "resolver failed" : reasons[0].ToString());
+        Assert.AreEqual("S002", setup.CatalogId);
+        Assert.AreEqual(104731, payload.Seed);
+        Assert.IsFalse(payload.IsLegacy);
+        Assert.AreEqual(0, em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy);
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -157,6 +274,9 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.BaseAssaultReducerKeepsReplacementAndWipeNonTerminal();
             suite.ExpandedLaunchDoesNotNormalizeLegacyQuickGame();
             suite.LegacyPrototypeIndicesRemainReserved();
+            suite.S002GroundOverlaysAndProductionGate();
+            suite.S002SpawnProjectsRoleOverlaysAndGroundStaging();
+            suite.ExpandedLaunchResolverCompilesS002();
             Debug.Log("[SkirmishExpandedDefinitionTests] result=Passed");
         }
         catch (Exception exception)
@@ -218,6 +338,52 @@ public sealed class SkirmishExpandedDefinitionTests
         }
 
         return total;
+    }
+
+    private static bool HasStructure(SkirmishResolvedSetup setup, string structureId, bool designated)
+    {
+        for (int i = 0; i < setup.Structures.Length; i++)
+        {
+            if (setup.Structures[i].StructureId == structureId && setup.Structures[i].DesignatedBase == designated)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static int CountOwnedRole(EntityManager em, byte faction, SkirmishRoleKind role)
+    {
+        using var query = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent), typeof(SkirmishAttemptOwnedComponent));
+        using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+        int total = 0;
+        for (int i = 0; i < entities.Length; i++)
+        {
+            if (em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).FactionId == faction &&
+                em.GetComponentData<SkirmishUnitRoleComponent>(entities[i]).Role == role)
+                total++;
+        }
+
+        return total;
+    }
+
+    private static int FirstOverlayHealth(EntityManager em, SkirmishRoleKind role)
+    {
+        using var query = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent), typeof(UnitHealth));
+        using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            if (em.GetComponentData<SkirmishUnitRoleComponent>(entities[i]).Role == role)
+                return em.GetComponentData<UnitHealth>(entities[i]).Current;
+        }
+
+        return -1;
+    }
+
+    private static int FirstDesignatedBaseHealth(EntityManager em)
+    {
+        using var query = em.CreateEntityQuery(typeof(SkirmishObjectiveRoleComponent), typeof(UnitHealth));
+        using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+        return entities.Length == 0 ? -1 : em.GetComponentData<UnitHealth>(entities[0]).Current;
     }
 }
 }

@@ -87,6 +87,7 @@ namespace Game.Configs
         public int EnemyDesignatedRifles;
         public SkirmishResolvedForceEntry[] Forces = Array.Empty<SkirmishResolvedForceEntry>();
         public SkirmishResolvedStructureEntry[] Structures = Array.Empty<SkirmishResolvedStructureEntry>();
+        public SkirmishRoleOverlay[] RoleOverlays = Array.Empty<SkirmishRoleOverlay>();
         public string PlayerBaseObjectId = "obj.base.player";
         public string EnemyBaseObjectId = "obj.base.enemy";
         public string CheckpointVersion = "skirmish.checkpoint.v1";

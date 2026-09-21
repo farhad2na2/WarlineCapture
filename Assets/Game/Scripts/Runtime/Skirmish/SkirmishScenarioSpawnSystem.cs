@@ -35,7 +35,7 @@ namespace Game.Runtime
                 }
 
                 SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
-                if (!TrySubmitStartingForce(em, entity, setup, out SkirmishReasonCode reason))
+                if (!TrySpawnLedgers(em, entity, setup, out SkirmishReasonCode reason, out byte visualPending))
                 {
                     DestroyAttemptOwned(em, session.SessionId);
                     session.FailureCode = reason;
@@ -45,6 +45,7 @@ namespace Game.Runtime
                 }
 
                 session.SpawnComplete = 1;
+                session.SpawnVisualPending = visualPending;
                 session.Phase = SkirmishSessionPhase.Playing;
                 if (em.HasComponent<SkirmishObjectiveStateComponent>(entity))
                 {
@@ -53,17 +54,30 @@ namespace Game.Runtime
                     em.SetComponentData(entity, objective);
                 }
 
+                if (!em.HasComponent<SkirmishObjectiveClockComponent>(entity))
+                {
+                    em.AddComponentData(entity, new SkirmishObjectiveClockComponent
+                    {
+                        ElapsedSeconds = 0f,
+                        DeadlineSeconds = setup.DeadlineSeconds,
+                        Paused = 0,
+                        Playing = 1
+                    });
+                }
+
                 em.SetComponentData(entity, session);
             }
         }
 
-        private static bool TrySubmitStartingForce(
+        public static bool TrySpawnLedgers(
             EntityManager em,
             Entity session,
             SkirmishResolvedSetup setup,
-            out SkirmishReasonCode reason)
+            out SkirmishReasonCode reason,
+            out byte visualPending)
         {
             reason = SkirmishReasonCode.None;
+            visualPending = 0;
             if (setup?.Forces == null)
             {
                 reason = SkirmishReasonCode.MissingResolvedSetup;
@@ -74,56 +88,78 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
                 ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
             bool registryReady = !registryQuery.IsEmptyIgnoreFilter;
+            visualPending = (byte)(registryReady ? 0 : 1);
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+
             for (int i = 0; i < setup.Forces.Length; i++)
             {
                 SkirmishResolvedForceEntry force = setup.Forces[i];
-                var owned = em.CreateEntity();
-                em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+                int quantity = force.Quantity < 1 ? 1 : force.Quantity;
+                int perMemberSupply = quantity == 0 ? 0 : force.SupplyCost / quantity;
+                for (int member = 0; member < quantity; member++)
                 {
-                    SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
-                    StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + i),
-                    FactionId = force.FactionId,
-                    IsStructure = 0
-                });
-                em.AddComponentData(owned, new SkirmishUnitRoleComponent
-                {
-                    Role = force.RoleKind,
-                    Category = SkirmishRoleIds.Category(force.RoleKind),
-                    SupplyCost = force.SupplyCost
-                });
-            }
-
-            for (int i = 0; i < setup.Structures.Length; i++)
-            {
-                SkirmishResolvedStructureEntry structure = setup.Structures[i];
-                var owned = em.CreateEntity();
-                em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
-                {
-                    SessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
-                    StableObjectId = new FixedString64Bytes(structure.StructureId + "." + structure.FactionId),
-                    FactionId = structure.FactionId,
-                    IsStructure = 1
-                });
-                if (structure.DesignatedBase)
-                {
-                    em.AddComponentData(owned, new SkirmishObjectiveRoleComponent
+                    var owned = em.CreateEntity();
+                    em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
                     {
-                        Role = structure.FactionId == 1
-                            ? SkirmishObjectiveRoleKind.PlayerBase
-                            : SkirmishObjectiveRoleKind.EnemyBase,
-                        StableObjectId = new FixedString64Bytes(structure.ObjectiveRoleId),
-                        FactionId = structure.FactionId
+                        SessionId = sessionId,
+                        StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + i + "." + member),
+                        FactionId = force.FactionId,
+                        IsStructure = 0
+                    });
+                    em.AddComponentData(owned, new SkirmishUnitRoleComponent
+                    {
+                        Role = force.RoleKind,
+                        Category = SkirmishRoleIds.Category(force.RoleKind),
+                        SupplyCost = perMemberSupply
                     });
                 }
             }
 
-            if (!registryReady)
+            if (setup.Structures != null)
             {
-                reason = SkirmishReasonCode.SpawnBoundaryUnavailable;
-                return false;
+                for (int i = 0; i < setup.Structures.Length; i++)
+                    CreateStructure(em, sessionId, setup.Structures[i]);
             }
 
             return true;
+        }
+
+        public static Entity CreateStructure(
+            EntityManager em,
+            FixedString64Bytes sessionId,
+            SkirmishResolvedStructureEntry structure)
+        {
+            var owned = em.CreateEntity();
+            em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+            {
+                SessionId = sessionId,
+                StableObjectId = new FixedString64Bytes(structure.StructureId + "." + structure.FactionId),
+                FactionId = structure.FactionId,
+                IsStructure = 1
+            });
+            em.AddComponentData(owned, new SkirmishStructureIdentityComponent
+            {
+                StructureId = new FixedString64Bytes(structure.StructureId ?? string.Empty),
+                Producer = structure.StructureId == SkirmishStructureIds.GroundStaging
+                    ? SkirmishProducerKind.GroundStaging
+                    : structure.StructureId != null && structure.StructureId.StartsWith(SkirmishStructureIds.Barracks)
+                        ? SkirmishProducerKind.Barracks
+                        : SkirmishProducerKind.None,
+                DesignatedBase = (byte)(structure.DesignatedBase ? 1 : 0)
+            });
+            if (structure.DesignatedBase)
+            {
+                em.AddComponentData(owned, new SkirmishObjectiveRoleComponent
+                {
+                    Role = structure.FactionId == 1
+                        ? SkirmishObjectiveRoleKind.PlayerBase
+                        : SkirmishObjectiveRoleKind.EnemyBase,
+                    StableObjectId = new FixedString64Bytes(structure.ObjectiveRoleId),
+                    FactionId = structure.FactionId
+                });
+            }
+
+            return owned;
         }
 
         internal static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)

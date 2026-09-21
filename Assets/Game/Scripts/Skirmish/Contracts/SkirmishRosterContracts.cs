@@ -1,3 +1,5 @@
+using System;
+
 namespace Game.Skirmish.Contracts
 {
     public enum SkirmishRoleKind : byte
@@ -232,5 +234,39 @@ namespace Game.Skirmish.Contracts
             kind == SkirmishRoleKind.AttackHeli ||
             kind == SkirmishRoleKind.Fighter ||
             kind == SkirmishRoleKind.Strike;
+
+        public const int InfantrySquadMembers = 4;
+    }
+
+    [Flags]
+    public enum SkirmishTargetDomain : byte
+    {
+        None = 0,
+        Infantry = 1,
+        Ground = 2,
+        Structure = 4,
+        Air = 8
+    }
+
+    [Serializable]
+    public struct SkirmishRoleOverlay
+    {
+        public string RoleId;
+        public SkirmishRoleKind RoleKind;
+        public int MaxHealth;
+        public int Damage;
+        public float RangeWorld;
+        public int SupplyCost;
+        public SkirmishProducerKind Producer;
+        public SkirmishTargetDomain TargetDomains;
+        public int SquadMembers;
+        public bool CapabilityCertified;
+    }
+
+    public static class SkirmishStructureIds
+    {
+        public const string Barracks = "building.barracks";
+        public const string GroundStaging = "building.ground_staging";
+        public const string BarracksReplacement = "building.barracks.replacement";
     }
 }

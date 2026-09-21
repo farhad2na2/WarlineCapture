@@ -39,6 +39,8 @@ namespace Game.Editor
             Persist(set.Upgrades, SharedFolder + "/SkirmishUpgrade_V1.asset");
             Persist(set.Intel, SharedFolder + "/SkirmishIntel_SharedFog.asset");
             Persist(set.Roles, SharedFolder + "/SkirmishRoleCatalog_V1.asset");
+            Persist(set.Overlays, SharedFolder + "/SkirmishRoleOverlay_S002Ground.asset");
+            Persist(set.GroundStaging, SharedFolder + "/SkirmishGroundStaging_V1.asset");
             Persist(set.LayoutDbBa, SharedFolder + "/SkirmishLayout_DB_BA.asset");
             Persist(set.Publication, SharedFolder + "/SkirmishPublicationManifest.asset");
             Persist(set.DefinitionS002, ScenarioFolder + "/SkirmishScenario_S002.asset");

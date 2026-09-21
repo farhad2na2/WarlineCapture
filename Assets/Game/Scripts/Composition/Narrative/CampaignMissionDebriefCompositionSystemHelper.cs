@@ -20,7 +20,9 @@ namespace Game.Composition
             None = 0,
             Brief = 1,
             Comms = 2,
-            Debrief = 3
+            Debrief = 3,
+            ChapterOpening = 4,
+            ChapterReplay = 5
         }
 
         private static readonly FixedString64Bytes EstablishBaseMissionId =
@@ -69,6 +71,16 @@ namespace Game.Composition
         {
             if (queryWorld != entityManager.World)
                 BindWorld(entityManager);
+            if(shellState.ActiveRoute!=UIRoute.Campaign)
+            {
+                ClearChapterReplayRequest(entityManager);
+                if(running && activeStage==SequenceStage.ChapterReplay)
+                {
+                    playback.Unbind();presentation.Cancel();view?.SetVisible(false);
+                    running=handoffPending=false;activeStage=SequenceStage.None;
+                    activeSession=default;activeAttemptOrdinal=-1;
+                }
+            }
             RefreshActivePresentation();
             if (running)
                 presentation.Tick(unscaledDeltaTime);
@@ -197,6 +209,13 @@ namespace Game.Composition
 
             Entity root = missionRootQuery.GetSingletonEntity();
             runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(entityManager.HasComponent<GridlockChapterReplayRequest>(root) &&
+                entityManager.GetComponentData<GridlockChapterReplayRequest>(root).Pending!=0)
+            {
+                stage=SequenceStage.ChapterReplay;
+                sequenceId="seq.ch02.open.broken_grid";
+                return true;
+            }
             if (!CampaignMissionNarrativePolicy.UsesMissionSequences(runtime.MissionId) &&
                 !CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime))
                 return false;
@@ -211,6 +230,18 @@ namespace Game.Composition
             bool commsConsumed = IsSameAttempt(
                 in runtime, in completedCommsSession, completedCommsAttemptOrdinal);
             stage = ResolveStage(in runtime, in facts, briefConsumed, commsConsumed);
+            if (stage == SequenceStage.Brief && runtime.MissionId.Equals(new FixedString64Bytes("saga.ch02.m01.gridlock")))
+            {
+                if (!entityManager.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root)) return false;
+                var progress = entityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store;
+                if (progress == null) return false;
+                if (!progress.HasSeenChapterOpening(runtime.MissionId.ToString()))
+                {
+                    stage = SequenceStage.ChapterOpening;
+                    sequenceId = "seq.ch02.open.broken_grid";
+                    return true;
+                }
+            }
             if (CampaignMissionNarrativePolicy.UsesFirstContactOpening(runtime))
             {
                 sequenceId = stage == SequenceStage.Brief && firstContactOpening != null
@@ -252,7 +283,7 @@ namespace Game.Composition
         }
 
         internal static bool RequiresSimulationPause(SequenceStage stage) =>
-            stage is SequenceStage.Brief or SequenceStage.Comms;
+            stage is SequenceStage.Brief or SequenceStage.Comms or SequenceStage.ChapterOpening;
 
         internal static bool RequiresFinalResult(SequenceStage stage) =>
             stage == SequenceStage.Debrief;
@@ -319,7 +350,28 @@ namespace Game.Composition
                 return;
             }
 
-            if (activeStage == SequenceStage.Brief)
+            if (activeStage == SequenceStage.ChapterReplay)
+            {
+                ClearChapterReplayRequest(entityManager);
+            }
+            else if (activeStage == SequenceStage.ChapterOpening)
+            {
+                if (missionRootQuery.CalculateEntityCount() != 1) { ReleasePause(entityManager); activeStage=SequenceStage.None; return; }
+                var root = missionRootQuery.GetSingletonEntity();
+                var runtime = entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
+                if (!IsSameAttempt(runtime, activeSession, activeAttemptOrdinal)) { ReleasePause(entityManager); activeStage=SequenceStage.None; return; }
+                try
+                {
+                    entityManager.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root)
+                        .Store.MarkChapterOpeningSeen(runtime.MissionId.ToString());
+                }
+                catch (Exception error)
+                {
+                    // Do not advance the briefing or silently consume an unsaved opening.
+                    Debug.LogException(error);
+                }
+            }
+            else if (activeStage == SequenceStage.Brief)
             {
                 if (!CampaignMissionRuntimeProgressUtility.TryCompleteBrief(
                     entityManager, missionRootQuery, activeSession, activeAttemptOrdinal))
@@ -346,6 +398,15 @@ namespace Game.Composition
                 ReleasePause(queryWorld.EntityManager);
             else
                 pauseOwned = false;
+        }
+
+        private void ClearChapterReplayRequest(EntityManager entityManager)
+        {
+            if(!hasMissionRootQuery || missionRootQuery.CalculateEntityCount()!=1)return;
+            var root=missionRootQuery.GetSingletonEntity();
+            if(entityManager.HasComponent<GridlockChapterReplayRequest>(root) &&
+                entityManager.GetComponentData<GridlockChapterReplayRequest>(root).Pending!=0)
+                entityManager.SetComponentData(root,default(GridlockChapterReplayRequest));
         }
 
         private void ReleasePause(EntityManager entityManager)

@@ -67,7 +67,7 @@ namespace Game.Runtime
                 return;
             ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[definitionIndex];
             int routeElapsedMilliseconds = facts.ElapsedMilliseconds;
-            if (definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0)
+            if (definition.Gridlock.Enabled == 0 && definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0)
             foreach (RefRO<CampaignMissionOpeningPresentationComponent> opening in
                      SystemAPI.Query<RefRO<CampaignMissionOpeningPresentationComponent>>())
             {
@@ -121,6 +121,8 @@ namespace Game.Runtime
                         if (!role.ValueRO.SessionToken.Equals(runtime.SessionToken))
                             continue;
                         UnitCombat current = combat.ValueRO;
+                        if(definition.Gridlock.Enabled!=0 && (role.ValueRO.MissionRoleId.Equals(definition.Gridlock.FadiRoleId) ||
+                            role.ValueRO.MissionRoleId.Equals(definition.Gridlock.WorkerRoleId) || role.ValueRO.MissionRoleId.Equals(definition.Gridlock.VehicleRoleId))) current.CanAttack=0;
                         bool releaseUnit=releaseCombat && CanReleaseBreachCombat(ref state,ref definition,role.ValueRO.MissionRoleId);
                         ApplyTutorialCombatPolicy(ref current, releaseUnit);
                         combat.ValueRW = current;
@@ -177,7 +179,7 @@ namespace Game.Runtime
 
                     bool useEstablishBaseOpening = ShouldUseEstablishBaseOpening(runtime.MissionId);
                     bool openingCanAdvance = (!useEstablishBaseOpening || CanAdvanceEstablishBaseOpening(runtime.Phase)) &&
-                        ((definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
+                        ((definition.Gridlock.Enabled == 0 && definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
                     if (current.Stage <= 5 && focus.Requested == 0 && openingCanAdvance &&
                         IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
@@ -400,7 +402,7 @@ namespace Game.Runtime
                     (float)SystemAPI.Time.ElapsedTime,
                     cooldownSeconds: 20f);
             }
-            if (definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0)
+            if (definition.Gridlock.Enabled != 0 || definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0)
             {
                 AdvanceConvoyRoutes(ref state, in runtime, in facts, ref definition, ref metadata.Blob.Value);
                 return;

@@ -150,10 +150,11 @@ namespace Game.UI.Shell.Ecs
                                   Time.time - narrationState.LastPresentedAt <= 0.8f;
 
             var breachStatusStamp=ReadBreachStatusStamp();
+            var gridlockStamp=ReadGridlockStamp();
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
-                cachedBreachStatusStamp==breachStatusStamp &&
+                cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -184,11 +185,12 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount is 8 or 12)
+            if (topRecommendation.TutorialStepCount is 8 or 10 or 12)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
                 if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
+                if(topRecommendation.TutorialStepCount==10) recommendationBody=AppendGridlockStatus(recommendationBody);
                 if(extractionSelectionCount>=0 && extractionSelectionCount<4)
                     recommendationBody=GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
                 if(extractionHoldStatus!=int.MinValue) recommendationBody=ExtractionHoldCopy(extractionHoldStatus);
@@ -220,6 +222,15 @@ namespace Game.UI.Shell.Ecs
                     out recommendationTitle,
                     out recommendationBody,
                     out tutorialRightToLeft);
+            }
+            bool gridlockDiagnostic=HasGridlockIntegrityDiagnostic();
+            if(gridlockDiagnostic)
+            {
+                recommendationTitle=GameText.Get("mission.gridlock.name");
+                recommendationBody=GameText.Get("mission.gridlock.failure.integrity");
+                tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
+                // Diagnostic stays visible even though unsafe guidance was cleared.
+                topRecommendation=default;
             }
             BuildAssistantGoalRows(
                 goals,
@@ -256,7 +267,7 @@ namespace Game.UI.Shell.Ecs
                 report1,
                 targetLock,
                 narration,
-                topRecommendation.RecommendationId != 0,
+                topRecommendation.RecommendationId != 0 || gridlockDiagnostic,
                 recommendationTitle,
                 recommendationBody,
                 topRecommendation.RecommendationId != 0 ? PriorityText(topRecommendation.Priority) : string.Empty,
@@ -291,7 +302,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageCount = messages.Length;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
-            cachedBreachStatusStamp=breachStatusStamp;
+            cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

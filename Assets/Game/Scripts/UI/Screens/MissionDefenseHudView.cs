@@ -70,7 +70,7 @@ namespace Game.UI.Runtime
         {
             using var marker = RefreshMarker.Auto();
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
-            bool breach=UiShellRuntimeGateway.IsBreachGuideContext() && !UiShellRuntimeGateway.TryReadMissionCameraTour();
+            bool breach=(UiShellRuntimeGateway.IsBreachGuideContext() || UiShellRuntimeGateway.IsGridlockGuideContext()) && !UiShellRuntimeGateway.TryReadMissionCameraTour();
             if(actions!=null) actions.SetActive(active || breach);
             if(warningButton!=null) warningButton.gameObject.SetActive(active);
             if(skipButton!=null && !active) skipButton.gameObject.SetActive(false);

@@ -134,6 +134,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.GridlockEscortA and <= CampaignMissionGuidancePromptKind.GridlockHospitalHold => (byte)((int)prompt-44),
             >= CampaignMissionGuidancePromptKind.BreachPlan and <= CampaignMissionGuidancePromptKind.BreachHold => (byte)((int)prompt-36),
             >= CampaignMissionGuidancePromptKind.AirliftPlan and <= CampaignMissionGuidancePromptKind.AirliftResult => (byte)((int)prompt-24),
             >= CampaignMissionGuidancePromptKind.RadarReadWarning and <= CampaignMissionGuidancePromptKind.RadarResult => (byte)((int)prompt-12),
@@ -148,6 +149,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.GridlockEscortA and <= CampaignMissionGuidancePromptKind.GridlockHospitalHold ? (byte)10 :
             prompt is >= CampaignMissionGuidancePromptKind.BreachPlan and <= CampaignMissionGuidancePromptKind.BreachHold ? (byte)8 :
             prompt is >= CampaignMissionGuidancePromptKind.RadarReadWarning and <= CampaignMissionGuidancePromptKind.AirliftResult ? (byte)12 :
             prompt is CampaignMissionGuidancePromptKind.EstablishBaseOpenBuild or

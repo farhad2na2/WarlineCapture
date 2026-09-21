@@ -127,6 +127,7 @@ namespace Game.UI.Shell.Ecs
                         continue;
 
                     summary.SelectedCount++;
+                    if (SelectionUiReadModelLookup.IsGridlockCrew(entityManager, entity)) summary.CrewCount++;
                     if (SelectionUiReadModelLookup.IsRescueSpecialist(entityManager, entity))
                         summary.SpecialistCount++;
                     bool vehicle = IsVehicleUnit(entityManager, entity);
@@ -168,7 +169,16 @@ namespace Game.UI.Shell.Ecs
                 summary.HealthText = GameText.Get("selection.health.summary_empty", "HEALTH -");
             }
 
-            if (summary.SelectedCount == summary.SpecialistCount)
+            if (summary.CrewCount > 0)
+            {
+                summary.Title = summary.CrewCount == summary.SelectedCount
+                    ? GameText.Format("mission.gridlock.crew.group", "{0} CREW", summary.SelectedCount)
+                    : GameText.Format("selection.shell.title.selected", "{0} SELECTED", summary.SelectedCount);
+                summary.Subtitle = summary.CrewCount == summary.SelectedCount
+                    ? GameText.Get("mission.gridlock.crew.role", "Road crew")
+                    : GameText.Get("selection.shell.subtitle.mixed_group", "MIXED GROUP");
+            }
+            else if (summary.SelectedCount == summary.SpecialistCount)
             {
                 summary.Title = GameText.Format("mission.m04.specialist.group", "{0} SPECIALISTS", summary.SelectedCount);
                 summary.Subtitle = GameText.Get("mission.m04.specialist.role", "Rescue passenger");
@@ -317,6 +327,7 @@ namespace Game.UI.Shell.Ecs
             public int SelectedCount;
             public int SoldierCount;
             public int SpecialistCount;
+            public int CrewCount;
             public int VehicleCount;
             public int AircraftCount;
             public int HealthCurrent;

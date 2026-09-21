@@ -23,6 +23,7 @@ namespace Game.Runtime
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            CreateGridlockQueries(ref state);
             state.RequireForUpdate<CampaignMissionRootComponent>();
             state.RequireForUpdate<CampaignMissionRuntimeComponent>();
             state.RequireForUpdate<CampaignMissionAttemptFactsComponent>();
@@ -42,6 +43,7 @@ namespace Game.Runtime
             if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))
                 return;
+            if (TryAdvanceGridlock(ref state, root, in activeRuntime)) return;
             if (TryAdvanceBreach(ref state, root, in activeRuntime)) return;
             if (TryAdvanceExtraction(ref state, root, in activeRuntime)) return;
             if (TryAdvanceDefense(ref state, root, in activeRuntime)) return;

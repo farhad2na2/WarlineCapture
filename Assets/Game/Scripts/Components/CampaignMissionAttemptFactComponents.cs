@@ -5,6 +5,8 @@ namespace Game.Components
 {
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
+        public byte GridlockSiteAComplete, GridlockSiteBComplete, GridlockDelivered;
+        public GridlockFailure GridlockFailure;
         public int ElapsedMilliseconds;
         public byte BreachGateDestroyed, BreachCoreDestroyed, BreachArchiveSecured, BreachSupportLost, BreachTimedOut;
         public int BreachSecureMilliseconds;

@@ -10,7 +10,10 @@ namespace Game.UI.Runtime
         [SerializeField] private Texture m03MissionPreview;
         private bool radarGuideAvailable;
         private void OpenRadarGuideArchive()
-        {if(radarGuideAvailable) UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);}
+        {
+            if(IsChapterTwo){UiShellRuntimeGateway.TryReplayGridlockChapter();return;}
+            if(radarGuideAvailable) UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);
+        }
         private void ApplyRadarWarning(UiCampaignMissionModel mission)
         {
             radarGuideAvailable=mission.MissionId==UiCampaignMissionProjectionIds.M03 && mission.Available;

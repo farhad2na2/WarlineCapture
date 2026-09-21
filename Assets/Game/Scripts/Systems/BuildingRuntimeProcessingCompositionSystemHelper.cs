@@ -350,6 +350,14 @@ namespace Game.Runtime
                 }
 
                 processedRequests++;
+                bool missionObstruction=request.RequestKind==BuildingRuntimeSpawnRequest.KindMissionRoadObstruction;
+                if(missionObstruction && !IsRegisteredMissionRoadObstruction(em,in request,definition,runtimeSpawnContext))
+                {
+                    request.Status=BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode=BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em,boundaryEntity,i,request);
+                    continue;
+                }
                 if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
                     spawnable = BuildingDefinitionPrefabSystemHelper.BuildConfiguredSpawnableEntry(definition);
                 bool authoredEnemy = request.AllowNonBuildableEnemy != 0 && request.HasOwnerFaction != 0 &&
@@ -438,7 +446,7 @@ namespace Game.Runtime
                         false,
                         ResolveOwnerFaction(request),
                         request.RotateVertical != 0,
-                        out result, request.RequirePreferredOrigin != 0);
+                        out result, request.RequirePreferredOrigin != 0, missionObstruction);
                     request.SpawnedCount = placed ? 1 : 0;
                 }
 

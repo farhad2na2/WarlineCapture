@@ -22,13 +22,20 @@ namespace Game.UI.Runtime
             var kind = AriaPlayObservationKind.Unavailable;
             int target = 0;
             Vector2 position = default;
+            Vector2 dragEnd=default;bool drag=false;
             bool skirmish = UiShellRuntimeGateway.TryReadSkirmish(out var skirmishModel);
             bool supported = UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None;
             bool available = supported && (skirmish ? !skirmishModel.Finished && !skirmishModel.StartupFailed : UsesNextTutorialAction && _lastPanelModel.HasRecommendation);
             if (available && !skirmish)
             {
                 kind = _tutorialCinematicSuspended ? AriaPlayObservationKind.Cinematic : AriaPlayObservationKind.Waiting;
-                if (!_tutorialCinematicSuspended && _highlightPresentationSystem.TryObserveVisibleGuide(out position, out target, out bool world))
+                if(!_tutorialCinematicSuspended && _highlightPresentationSystem.TryObserveVisibleSelectionDrag(out position,out dragEnd))
+                {
+                    target=-30001;
+                    if(WatchTargetIsReachable(position,target,true) && WatchTargetIsReachable(dragEnd,target,true) && WatchTargetIsReachable((position+dragEnd)*.5f,target,true))
+                    {kind=AriaPlayObservationKind.WorldTarget;drag=true;}
+                }
+                else if (!_tutorialCinematicSuspended && _highlightPresentationSystem.TryObserveVisibleGuide(out position, out target, out bool world))
                 {
                     if (WatchTargetIsReachable(position, target, world))
                         kind = world ? AriaPlayObservationKind.WorldTarget : AriaPlayObservationKind.Control;
@@ -46,7 +53,7 @@ namespace Game.UI.Runtime
             else UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
             if (!skirmish && _finalTutorialSuppressed) kind = AriaPlayObservationKind.Finished;
             UiShellRuntimeGateway.PublishAriaObservation(new AriaPlayObservation(kind, target,
-                _lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep, position, Time.frameCount, Time.unscaledTime));
+                _lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep, position, Time.frameCount, Time.unscaledTime,drag,dragEnd));
             var state = UiShellRuntimeGateway.ReadAriaPlay();
             _embeddedTutorialView.PresentWatch(state, available);
             _embeddedTutorialView.RefreshContentLayout();

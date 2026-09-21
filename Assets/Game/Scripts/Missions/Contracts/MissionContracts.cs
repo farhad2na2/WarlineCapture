@@ -72,7 +72,10 @@ namespace Game.Missions.Contracts
         SecureLandingZone = 9,
         BreachGate = 10,
         DestroyBreachCore = 11,
-        SecureBreachArchive = 12
+        SecureBreachArchive = 12,
+        RestoreGridlockSiteA = 13,
+        RestoreGridlockSiteB = 14,
+        DeliverGridlockRelief = 15
     }
 
     public enum MissionStarRuleKind : byte

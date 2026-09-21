@@ -203,6 +203,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.BreachGate:
                 case MissionObjectiveRuleKind.DestroyBreachCore:
                 case MissionObjectiveRuleKind.SecureBreachArchive:
+                case MissionObjectiveRuleKind.RestoreGridlockSiteA:
+                case MissionObjectiveRuleKind.RestoreGridlockSiteB:
+                case MissionObjectiveRuleKind.DeliverGridlockRelief:
                 case MissionObjectiveRuleKind.ExtractPassengers:
                 case MissionObjectiveRuleKind.ProtectExtractionTransport:
                 case MissionObjectiveRuleKind.SecureLandingZone:

@@ -16,6 +16,17 @@ namespace Game.Runtime
         public static bool IsRescueSpecialist(EntityManager em,Entity entity) =>
             em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
             em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(RescueSpecialistRole);
+        private static readonly FixedString64Bytes GridlockFadiRole = "role.gridlock.fadi";
+        private static readonly FixedString64Bytes GridlockWorkerRole = "role.gridlock.worker";
+        public static bool IsGridlockFadi(EntityManager em, Entity entity) =>
+            em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+            em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(GridlockFadiRole);
+        public static bool IsGridlockCrew(EntityManager em, Entity entity)
+        {
+            if (!em.HasComponent<CampaignMissionUnitRoleComponent>(entity)) return false;
+            var role = em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId;
+            return role.Equals(GridlockFadiRole) || role.Equals(GridlockWorkerRole);
+        }
         public int CollectRectangle(EntityManager em,Camera camera,VisibleUnitSelectionCameraSystemHelper visible,
             Rect rectangle,VisibleUnitSelectionCameraSystemHelper.Filter filter,List<Entity> selected)
         {
@@ -44,11 +55,15 @@ namespace Game.Runtime
             int vehicleCount,
             int aircraftCount,
             int transportCount,
-            int buildingCount, int specialistCount)
+            int buildingCount, int specialistCount, int crewCount = 0)
         {
             if (unitCount <= 0)
                 return buildingCount == 1 ? GameText.Get("selection.title.one_structure", "1 STRUCTURE") : GameText.Get("selection.title.no_selection", "NO SELECTION");
             if (buildingCount > 0)
+                return GameText.Get("selection.title.mixed_selection", "MIXED SELECTION");
+            if (crewCount == unitCount)
+                return GameText.Format("mission.gridlock.crew.group", "{0} CREW", unitCount);
+            if (crewCount > 0)
                 return GameText.Get("selection.title.mixed_selection", "MIXED SELECTION");
             if (specialistCount == unitCount)
                 return GameText.Format("mission.m04.specialist.group", "{0} SPECIALISTS", unitCount);
@@ -80,12 +95,16 @@ namespace Game.Runtime
             int vehicleCount,
             int aircraftCount,
             int transportCount,
-            int buildingCount, int specialistCount)
+            int buildingCount, int specialistCount, int crewCount = 0)
         {
             if (unitCount <= 0)
                 return buildingCount > 0 ? GameText.Get("selection.subtitle.building_group", "Building Group") : string.Empty;
             if (buildingCount > 0)
                 return GameText.Format("selection.subtitle.units_structures", "{0} Units / {1} Structure", unitCount, buildingCount);
+            if (crewCount == unitCount)
+                return GameText.Get("mission.gridlock.crew.role", "Road crew");
+            if (crewCount > 0)
+                return GameText.Format("selection.subtitle.selected_units", "{0} Selected Units", unitCount);
             if (specialistCount == unitCount)
                 return GameText.Get("mission.m04.specialist.role", "Rescue passenger");
             if (soldierCount == unitCount)
@@ -108,6 +127,8 @@ namespace Game.Runtime
 
         public string ResolveFocusedUnitName(EntityManager entityManager, Entity entity)
         {
+            if (IsGridlockFadi(entityManager, entity)) return GameText.Get("mission.gridlock.fadi.name", "Fadi");
+            if (IsGridlockCrew(entityManager, entity)) return GameText.Get("mission.gridlock.worker.name", "Road worker");
             if (IsRescueSpecialist(entityManager,entity)) return Game.Configs.GameText.Get("mission.m04.specialist.name","Specialist");
             if (entityManager.HasComponent<UnitDisplayInfo>(entity))
             {
@@ -139,6 +160,7 @@ namespace Game.Runtime
 
         public string ResolveFocusedUnitDescription(EntityManager entityManager, Entity entity)
         {
+            if (IsGridlockCrew(entityManager, entity)) return GameText.Get("mission.gridlock.crew.description", "Civilian road crew. Keep Fadi and a worker close to the work site to clear it.");
             if (IsRescueSpecialist(entityManager,entity)) return Game.Configs.GameText.Get("mission.m04.specialist.description","Rescue passenger. Keep all four specialists safe.");
             if (entityManager.HasComponent<UnitDisplayInfo>(entity))
             {

@@ -1,0 +1,750 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7052981795323811718
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M01_Gridlock_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m01.debrief
+  entryStateId: Gridlock-debrief-0
+  defaultSkipDestinationId: Gridlock-debrief-complete
+  states:
+  - stateId: Gridlock-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 458437079b2d64bf69d59d944d748b13
+      m_SubObjectName: CH02-D01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 458437079b2d64bf69d59d944d748b13
+      m_SubObjectName: CH02-D01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-debrief-01
+      textKey: narrative.gridlock.debrief.01
+      englishFallback: The relief truck has reached the hospital. The ward can keep
+        working. We opened a route people can depend on.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: fba3bd8cee82b4d679e1db95a7812692, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.04
+      essentialCaption: 1
+    continueStateId: Gridlock-debrief-1
+    skipStateId: Gridlock-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.04
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 0e5a28365b79648e9b0ed7a770890c90
+      m_SubObjectName: CH02-D02-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 0e5a28365b79648e9b0ed7a770890c90
+      m_SubObjectName: CH02-D02-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-debrief-02
+      textKey: narrative.gridlock.debrief.02
+      englishFallback: The obstructions form a pattern. They steer traffic toward
+        a dormant substation. I cannot yet tell why that route was preserved.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: a3a832accdeca49cbb50543011b92898, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.36
+      essentialCaption: 1
+    continueStateId: Gridlock-debrief-2
+    skipStateId: Gridlock-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.36
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 811bc036b79bd47a8acc4be755a356bd
+      m_SubObjectName: CH02-D03-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 811bc036b79bd47a8acc4be755a356bd
+      m_SubObjectName: CH02-D03-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-debrief-03
+      textKey: narrative.gridlock.debrief.03
+      englishFallback: The road is open. Next we need to keep supplies moving, and
+        Fuel is running short. Return to the campaign map to review the operation.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 0d7eab11d918f4bbf9b391af109cc0b3, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.68
+      essentialCaption: 1
+    continueStateId: Gridlock-debrief-complete
+    skipStateId: Gridlock-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.68
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.gridlock.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-4460425554806696753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M01_Gridlock_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m01.comms
+  entryStateId: Gridlock-comms-0
+  defaultSkipDestinationId: Gridlock-comms-complete
+  states:
+  - stateId: Gridlock-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 9225120a1652f452aa773b59b8d79de4
+      m_SubObjectName: CH02-C01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 9225120a1652f452aa773b59b8d79de4
+      m_SubObjectName: CH02-C01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-comms-01
+      textKey: narrative.gridlock.comms.01
+      englishFallback: Fadi's service lane is usable. It was missing from my map.
+        I have updated the route; local knowledge matters here.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: f2742422316524f0cb7459e40b50b4cd, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.64
+      essentialCaption: 1
+    continueStateId: Gridlock-comms-complete
+    skipStateId: Gridlock-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.64
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.gridlock.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M01_Gridlock_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m01.brief
+  entryStateId: Gridlock-brief-0
+  defaultSkipDestinationId: Gridlock-brief-complete
+  states:
+  - stateId: Gridlock-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ae7730a65d54f44d79a4c9e1e1596f74
+      m_SubObjectName: CH02-B01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ae7730a65d54f44d79a4c9e1e1596f74
+      m_SubObjectName: CH02-B01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-brief-01
+      textKey: narrative.gridlock.brief.01
+      englishFallback: The hospital still has patients, but its supply road is blocked.
+        That truck carries the relief they need. We must get it through.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: a60de91f1a5b746bfa525720231b1b97, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.28
+      essentialCaption: 1
+    continueStateId: Gridlock-brief-1
+    skipStateId: Gridlock-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.28
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 496abf8de1b614539b128c6a6ddb34e0
+      m_SubObjectName: CH02-B02-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 496abf8de1b614539b128c6a6ddb34e0
+      m_SubObjectName: CH02-B02-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-brief-02
+      textKey: narrative.gridlock.brief.02
+      englishFallback: Fadi here. The main road is gone, but we kept a service lane
+        open for years. Two obstructions are all that stand between us and the hospital.
+        Protect my crew while we clear them.
+      speaker: 6
+      voiceClip: {fileID: 8300000, guid: 718a572633f1745138d7e5d7c79a0a7a, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.72
+      essentialCaption: 1
+    continueStateId: Gridlock-brief-2
+    skipStateId: Gridlock-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.72
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: a7c15f52e3a0746da9b1045de6102939
+      m_SubObjectName: CH02-B03-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: a7c15f52e3a0746da9b1045de6102939
+      m_SubObjectName: CH02-B03-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-brief-03
+      textKey: narrative.gridlock.brief.03
+      englishFallback: Rifles first; workers behind cover. Keep Fadi and at least
+        one worker at each site for twenty-five seconds of safe work. Then protect
+        the truck and hold the hospital clear for twenty seconds. We have twelve
+        minutes.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 9d9c3e68a32b0411ebc5557c65d33ece, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 18.68
+      essentialCaption: 1
+    continueStateId: Gridlock-brief-complete
+    skipStateId: Gridlock-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 18.68
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.gridlock.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &9000988702341979916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M01_Gridlock_opening
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.open.broken_grid
+  entryStateId: Gridlock-opening-0
+  defaultSkipDestinationId: Gridlock-opening-complete
+  states:
+  - stateId: Gridlock-opening-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 04673fd3ce8c5411fa4626ed3f876de9
+      m_SubObjectName: CH02-O01-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 04673fd3ce8c5411fa4626ed3f876de9
+      m_SubObjectName: CH02-O01-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-opening-01
+      textKey: narrative.gridlock.opening.01
+      englishFallback: The city survived the first attacks. But a quiet street is
+        not a working city. Relief trucks are trapped behind blocked roads and dark
+        intersections.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: d15c87d96d44942898078eb6d5cb4e6a, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.6
+      essentialCaption: 1
+    continueStateId: Gridlock-opening-1
+    skipStateId: Gridlock-opening-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.6
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-opening-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: fa6fe936b7a6a410fa46cf8569228ae3
+      m_SubObjectName: CH02-O02-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: fa6fe936b7a6a410fa46cf8569228ae3
+      m_SubObjectName: CH02-O02-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-opening-02
+      textKey: narrative.gridlock.opening.02
+      englishFallback: The clinic's generator is running low. Its Fuel is on the
+        other side of a damaged corridor. Keeping the ward open starts with getting
+        that road back.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 45a85633f1651443785be2be6bd7abec, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.72
+      essentialCaption: 1
+    continueStateId: Gridlock-opening-2
+    skipStateId: Gridlock-opening-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.72
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-opening-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: dfeaa3d9a35374a91a7e60be7f78ab93
+      m_SubObjectName: CH02-O03-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: dfeaa3d9a35374a91a7e60be7f78ab93
+      m_SubObjectName: CH02-O03-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-opening-03
+      textKey: narrative.gridlock.opening.03
+      englishFallback: "Roads, Fuel, markets, power, shelters\u2014and the people
+        who keep them working. Lose one link and the others begin to fail. We have
+        to restore them together."
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 02714bfcc850f4cbaa5ec2e473c99a34, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.16
+      essentialCaption: 1
+    continueStateId: Gridlock-opening-3
+    skipStateId: Gridlock-opening-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.16
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-opening-3
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 8d85c2366747c4ab592fe5d4847fcbf1
+      m_SubObjectName: CH02-O04-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 8d85c2366747c4ab592fe5d4847fcbf1
+      m_SubObjectName: CH02-O04-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-opening-04
+      textKey: narrative.gridlock.opening.04
+      englishFallback: My map covers the formal road network. Fadi knows service
+        lanes and local connections it does not show. We will need both kinds of
+        knowledge.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 49b831cd962c944bdb032ea9415a427f, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.8
+      essentialCaption: 1
+    continueStateId: Gridlock-opening-4
+    skipStateId: Gridlock-opening-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.8
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-opening-4
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 95537a9e0381c48d88ec90b2c191bad6
+      m_SubObjectName: CH02-O05-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 95537a9e0381c48d88ec90b2c191bad6
+      m_SubObjectName: CH02-O05-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: gridlock-opening-05
+      textKey: narrative.gridlock.opening.05
+      englishFallback: "Commander, restore the lifelines. Protect the crews doing
+        the work. And watch which roads the saboteurs leave open\u2014they may be
+        choosing where we go next."
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 372a942fe935741acb40037c724e7ccf, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.88
+      essentialCaption: 1
+    continueStateId: Gridlock-opening-complete
+    skipStateId: Gridlock-opening-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.88
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: Gridlock-opening-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.gridlock.opening.complete
+    evidenceIds: []
+    missionContextFlags: []

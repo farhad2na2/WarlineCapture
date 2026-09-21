@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
             if(_lastPanelModel.TutorialStepCount==5) { ShowFirstContactNextAction(step); return; }
+            if(_lastPanelModel.TutorialStepCount==10) {ShowGridlockNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)
             {
@@ -119,8 +120,16 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target) || !target.NeedsSelection) return;
             _selectionActionRequested=true;
-            _embeddedTutorialView.SetSelectionActionAvailable(true,target.SelectionLabelKey);
-            Cue(_embeddedTutorialView.SelectionButton,target.SelectionLabelKey ?? "ui.aria.select_group");
+            _embeddedTutorialView.SetNormalSelectionInstruction(_activeCommandMode==TacticalCommandMode.Select,target.DragSelection);
+            if(_activeCommandMode!=TacticalCommandMode.Select)
+            {Cue(_commandControlsView?.SelectButton,"ui.aria.press_select");return;}
+            if(target.DragSelection)
+            {
+                _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
+                if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
+                {_tutorialFocusPendingUntil=Time.unscaledTime+2f;_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+            }
+            else ShowTutorialWorld(target.Selection,true);
         }
 
         private void ShowSelectionOrControl(Button button,string key)

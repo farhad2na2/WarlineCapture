@@ -17,6 +17,13 @@ namespace Game.Runtime
 
         private bool CanReleaseBreachCombat(ref SystemState state,ref CampaignMissionDefinitionBlob definition,FixedString64Bytes role)
         {
+            if(definition.Gridlock.Enabled!=0)
+            {
+                if(role.Equals(definition.Gridlock.FadiRoleId) || role.Equals(definition.Gridlock.WorkerRoleId) || role.Equals(definition.Gridlock.VehicleRoleId)) return false;
+                if(!SystemAPI.TryGetSingleton(out CampaignMissionGridlockState gridlock) || gridlock.Ready==0) return false;
+                return !role.Equals(definition.Gridlock.CounterattackRoleId) ||
+                    gridlock.CounterattackWarned!=0 && gridlock.ElapsedMilliseconds>=gridlock.CounterattackReleaseAtMilliseconds;
+            }
             if(definition.Breach.Enabled==0) return true;
             if(!SystemAPI.TryGetSingleton(out CampaignMissionBreachState breach) || (breach.GuidanceCompletedMask&1)==0) return false;
             return !role.Equals(definition.Breach.CounterattackRoleId) || breach.CounterattackReleased!=0;

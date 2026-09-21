@@ -10,9 +10,11 @@ namespace Game.UI.Contracts
         public readonly AriaPlayObservationKind Kind;
         public readonly int TargetId, GoalId, Frame;
         public readonly Vector2 Position;
+        public readonly Vector2 DragEnd;
+        public readonly bool Drag;
         public readonly float Time;
-        public AriaPlayObservation(AriaPlayObservationKind kind, int targetId, int goalId, Vector2 position, int frame, float time)
-        { Kind = kind; TargetId = targetId; GoalId = goalId; Position = position; Frame = frame; Time = time; }
+        public AriaPlayObservation(AriaPlayObservationKind kind, int targetId, int goalId, Vector2 position, int frame, float time,bool drag=false,Vector2 dragEnd=default)
+        { Kind = kind; TargetId = targetId; GoalId = goalId; Position = position; Frame = frame; Time = time; Drag=drag; DragEnd=dragEnd; }
     }
     public readonly struct AriaPlayModel
     {

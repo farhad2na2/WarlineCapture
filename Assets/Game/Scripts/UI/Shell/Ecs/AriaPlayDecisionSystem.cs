@@ -23,6 +23,21 @@ namespace Game.UI.Shell.Ecs
             if (session.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked or AriaPlayPhase.Starting) return;
             if (observation.Kind == AriaPlayObservationKind.Finished) { session.Phase = AriaPlayPhase.Manual; return; }
             float now = observation.Time;
+            // A changing control is not objective progress. Bound cycles such as
+            // Select -> Move -> Select even when each control gets fresh retries.
+            ulong goalBit=1UL << (observation.GoalId & 63);
+            if (session.ObjectiveWatchdogInitialized == 0 || (session.VisitedGoalMask & goalBit) == 0)
+            {
+                session.ObjectiveWatchdogInitialized = 1;
+                session.VisitedGoalMask |= goalBit;
+                session.LastObjectiveProgressAt = now;
+            }
+            if (session.Phase != AriaPlayPhase.Touching && now - session.LastObjectiveProgressAt > 180f)
+            {
+                session.Phase = AriaPlayPhase.Blocked;
+                session.GestureRequested = 0;
+                return;
+            }
             if (observation.GoalId != session.GoalId)
             {
                 session.GoalId = observation.GoalId; session.Attempts = 0;

@@ -342,6 +342,49 @@ namespace Game.Tests.Editor
             Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
         }
 
+        [Test]
+        public void S004EstablishedPadReadyDoesNotMutatePlayerStocks()
+        {
+            SkirmishAriaSkillDecision ready = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = 1,
+                CanAffordAntiAir = false,
+                PadReady = true,
+                AirPadControlAvailable = true,
+                OwnInfantry = 20,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                AttackControlAvailable = true,
+                GroupControlAvailable = true
+            });
+            Assert.AreNotEqual("pad.not_ready", ready.Field);
+
+            using var world = new World(nameof(S004EstablishedPadReadyDoesNotMutatePlayerStocks));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawnS004(em, out Entity session, out _);
+            int playerMaterials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
+            Assert.AreEqual(900, playerMaterials);
+            Assert.AreEqual(900, enemyMaterials);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishStrategyScore executed = SkirmishEnemyStrategySystem.Evaluate(
+                em, session, owned, authored.ArmyAir);
+            Assert.AreEqual(SkirmishStrategyPriority.RecruitCounter, executed.Priority);
+            Assert.AreEqual(SkirmishRoleKind.AntiAir, executed.RecruitRole);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+
+            SkirmishAriaPublicView projected = SkirmishAriaPublicProjection.FromSession(
+                em, session, authored.ArmyAir);
+            Assert.AreEqual(900, projected.OwnMaterials);
+            Assert.IsTrue(projected.PadReady);
+            Assert.IsTrue(projected.CanAffordAntiAir);
+            Assert.IsFalse(projected.CanAffordTank);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -354,6 +397,7 @@ namespace Game.Tests.Editor
                 suite.ExpandedAriaPlanTargetsPublicControlsWithoutGameplayMutation();
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
                 suite.S003AirMobilePublicControlsDoNotMutateGameplay();
+                suite.S004EstablishedPadReadyDoesNotMutatePlayerStocks();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }
             catch (Exception exception)
@@ -411,6 +455,42 @@ namespace Game.Tests.Editor
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 SkirmishS003FirstVisit.SeedA,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+            SkirmishArmyGroupSystem.RefreshAlive(
+                em,
+                session,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+        }
+
+        private static void CompileAndSpawnS004(EntityManager em, out Entity session, out SkirmishResolvedSetup setup)
+        {
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S004",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS004FirstVisit.SeedA,
                 authored,
                 matrix,
                 manifest,

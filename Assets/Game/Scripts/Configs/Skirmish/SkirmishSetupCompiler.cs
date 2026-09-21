@@ -411,8 +411,28 @@ namespace Game.Configs
                 Structure(1, SkirmishStructureIds.GroundStaging, playerStaging, string.Empty, false),
                 Structure(2, SkirmishStructureIds.GroundStaging, enemyStaging, string.Empty, false)
             };
+            if (GrantsEstablishedHelipad(definition))
+            {
+                string playerAir = definition.MapLayout.TryGetAnchor("air.player", out SkirmishLayoutAnchorConfig playerPad)
+                    ? playerPad.AnchorId
+                    : "anchor.skirmish.db.air_player";
+                string enemyAir = definition.MapLayout.TryGetAnchor("air.enemy", out SkirmishLayoutAnchorConfig enemyPad)
+                    ? enemyPad.AnchorId
+                    : "anchor.skirmish.db.air_enemy";
+                structures.Add(Structure(1, SkirmishStructureIds.Helipad, playerAir, string.Empty, false));
+                structures.Add(Structure(2, SkirmishStructureIds.Helipad, enemyAir, string.Empty, false));
+            }
+
             _ = vector;
             return structures.ToArray();
+        }
+
+        private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition)
+        {
+            return definition.StartPackageConfig != null &&
+                   definition.StartPackageConfig.Kind == SkirmishStartPackageId.EstablishedBase &&
+                   definition.ArmyProfileConfig != null &&
+                   definition.ArmyProfileConfig.AllowsOffensiveAir;
         }
 
         private static SkirmishResolvedStructureEntry Structure(

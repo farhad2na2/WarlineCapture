@@ -38,6 +38,7 @@ namespace Game.Configs
         public const int LegacyPrototypeCompatibilityVersion = 1;
         public const string S002CatalogId = "S002";
         public const string S003CatalogId = "S003";
+        public const string S004CatalogId = "S004";
 
         public static bool IsFirstVisitAllowed(SkirmishDifficultyId difficulty, SkirmishSizeId size) =>
             difficulty == SkirmishDifficultyId.Regular && size == SkirmishSizeId.Standard;
@@ -60,7 +61,7 @@ namespace Game.Configs
 
             string catalogId = FirstNonEmpty(row.CatalogId, definition?.CatalogId, setup?.CatalogId);
             string definitionId = FirstNonEmpty(row.DefinitionId, definition?.DefinitionId, setup?.DefinitionId);
-            if (catalogId != S002CatalogId && catalogId != S003CatalogId)
+            if (catalogId != S002CatalogId && catalogId != S003CatalogId && catalogId != S004CatalogId)
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InvalidIdentity, "catalogId", catalogId));
                 return false;
@@ -127,13 +128,15 @@ namespace Game.Configs
                 return true;
             }
 
-            if (catalogId == S003CatalogId)
+            if (catalogId == S003CatalogId || catalogId == S004CatalogId)
             {
                 status = SkirmishPublicationStatus.InProgress;
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.MissingReadiness,
                     "publication",
-                    "S003 full evidence stays InProgress until air flight/refuel and the ARIA matrix land."));
+                    catalogId == S004CatalogId
+                        ? "S004 full evidence stays InProgress until Established air flight/refuel and the ARIA matrix land."
+                        : "S003 full evidence stays InProgress until air flight/refuel and the ARIA matrix land."));
                 return true;
             }
 

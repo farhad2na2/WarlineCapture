@@ -383,7 +383,7 @@ namespace Game.Tests.Editor
             Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig assetS002));
             Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS002.Status);
             Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig assetS003));
-            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS003.Status);
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS003.Status);
         }
 
         public static void RunFocusedValidation()

@@ -94,6 +94,21 @@ namespace Game.Configs
                 CapabilityCertified = false
             };
 
+        public static SkirmishRoleOverlay HelipadStructure() =>
+            new SkirmishRoleOverlay
+            {
+                RoleId = SkirmishStructureIds.Helipad,
+                RoleKind = SkirmishRoleKind.None,
+                MaxHealth = 500,
+                Damage = 0,
+                RangeWorld = 0f,
+                SupplyCost = 0,
+                Producer = SkirmishProducerKind.Helipad,
+                TargetDomains = SkirmishTargetDomain.None,
+                SquadMembers = 1,
+                CapabilityCertified = false
+            };
+
         public static SkirmishRoleOverlay GroundStagingStructure() =>
             new SkirmishRoleOverlay
             {

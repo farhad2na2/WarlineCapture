@@ -154,7 +154,7 @@ namespace Game.Configs
         public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup)
         {
             return setup != null &&
-                   (setup.CatalogId == "S002" || setup.CatalogId == "S003") &&
+                   (setup.CatalogId == "S002" || setup.CatalogId == "S003" || setup.CatalogId == "S004") &&
                    setup.DifficultyId == SkirmishDifficultyId.Regular &&
                    setup.SizeId == SkirmishSizeId.Standard;
         }
@@ -300,7 +300,9 @@ namespace Game.Configs
                 return false;
             SkirmishLegalPadKind kind = structure.StructureId == SkirmishStructureIds.GroundStaging
                 ? SkirmishLegalPadKind.GroundStaging
-                : SkirmishLegalPadKind.BaseBarracks;
+                : structure.StructureId == SkirmishStructureIds.Helipad
+                    ? SkirmishLegalPadKind.AirReturn
+                    : SkirmishLegalPadKind.BaseBarracks;
             return layout.TryGetPad(structure.FactionId, kind, out pad);
         }
 

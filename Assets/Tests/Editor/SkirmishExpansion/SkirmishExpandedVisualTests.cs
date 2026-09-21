@@ -281,6 +281,59 @@ namespace Game.Tests.Editor
             }
         }
 
+        [Test]
+        public void S004RegistrySpawnsGrantedTransportAaAndHelipad()
+        {
+            using var world = new World(nameof(S004RegistrySpawnsGrantedTransportAaAndHelipad));
+            EntityManager em = world.EntityManager;
+            SkirmishVisualPrefabCatalog standIn = SkirmishVisualPrefabCatalog.CreateS003AirRegistry();
+            UnitPrefabRegistryAuthoringConfig registry = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            try
+            {
+                AddPrefab(registry, standIn, "Unit_Veh_Missle_Launcher_Air");
+                AddPrefab(registry, standIn, "Unit_Veh_Helicopter_Transport");
+                AddPrefab(registry, standIn, "Unit_Veh_Helicopter_Attack");
+                AddPrefab(registry, standIn, "Building_GroundStaging");
+                AddPrefab(registry, standIn, "Building_Helipad");
+                AddPrefab(registry, standIn, "Building_Barrack");
+                AddPrefab(registry, standIn, "Unit_Chr_Soldier_Male_02_Alt_04");
+                AddPrefab(registry, standIn, "Unit_Chr_Soldier_Male_01");
+                AddPrefab(registry, standIn, "Unit_Chr_Ghillie_Male_01");
+                AddPrefab(registry, standIn, "Unit_Veh_Light_Armored_Car");
+                AddPrefab(registry, standIn, "Unit_Veh_APC_Slow");
+                CompileAndSpawnS004(em, out Entity session, out SkirmishResolvedSetup setup, registry);
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                SkirmishVisualSpawnService.AttachMissing(em, session, setup);
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Missle_Launcher_Air"));
+                Assert.IsTrue(HasVisibleKey(em, "Building_Helipad"));
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+                SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out _));
+                Assert.AreEqual(480, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Building_Helipad"));
+            }
+            finally
+            {
+                if (em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).CalculateEntityCount() == 1)
+                {
+                    Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                        em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                    if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+                        em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog?.Dispose();
+                }
+
+                standIn.Dispose();
+                UnityEngine.Object.DestroyImmediate(registry);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -294,6 +347,7 @@ namespace Game.Tests.Editor
                 suite.VisualSpawnSystemAttachesOutsideLiveQuery();
                 suite.CleanupDestroysVisualInstances();
                 suite.S003RegistrySpawnsAaAndLightHelicopterFromExistingKeys();
+                suite.S004RegistrySpawnsGrantedTransportAaAndHelipad();
                 Debug.Log("[SkirmishExpandedVisualTests] result=Passed");
             }
             catch (Exception exception)
@@ -360,6 +414,42 @@ namespace Game.Tests.Editor
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 SkirmishS003FirstVisit.SeedA,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons,
+                registry),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+        }
+
+        private static void CompileAndSpawnS004(
+            EntityManager em,
+            out Entity session,
+            out SkirmishResolvedSetup setup,
+            UnitPrefabRegistryAuthoringConfig registry)
+        {
+            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S004",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS004FirstVisit.SeedA,
                 authored,
                 matrix,
                 manifest,

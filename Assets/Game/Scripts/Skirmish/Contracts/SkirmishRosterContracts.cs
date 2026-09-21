@@ -257,6 +257,8 @@ namespace Game.Skirmish.Contracts
         public int Damage;
         public float RangeWorld;
         public int SupplyCost;
+        public int MaterialsCost;
+        public int FuelCost;
         public SkirmishProducerKind Producer;
         public SkirmishTargetDomain TargetDomains;
         public int SquadMembers;
@@ -268,5 +270,14 @@ namespace Game.Skirmish.Contracts
         public const string Barracks = "building.barracks";
         public const string GroundStaging = "building.ground_staging";
         public const string BarracksReplacement = "building.barracks.replacement";
+
+        public static string VisualKey(string structureId)
+        {
+            if (structureId == GroundStaging)
+                return "Building_GroundStaging";
+            if (!string.IsNullOrEmpty(structureId) && structureId.StartsWith(Barracks, System.StringComparison.Ordinal))
+                return "Building_Barrack";
+            return string.Empty;
+        }
     }
 }

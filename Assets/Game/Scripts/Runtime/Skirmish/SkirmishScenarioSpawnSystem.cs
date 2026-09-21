@@ -84,44 +84,126 @@ namespace Game.Runtime
                 return false;
             }
 
-            using EntityQuery registryQuery = em.CreateEntityQuery(
-                ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
-                ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
-            bool registryReady = !registryQuery.IsEmptyIgnoreFilter;
-            visualPending = (byte)(registryReady ? 0 : 1);
+            if (!em.HasComponent<SkirmishCapacityComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishCapacityComponent
+                {
+                    FactionId = 1,
+                    InfantryCap = setup.InfantryCapEach,
+                    GroundCap = setup.GroundCapEach,
+                    AirCap = setup.TacticalAirCapEach,
+                    SupplyCap = setup.SupplyCapEach
+                });
+            }
+
+            if (!em.HasComponent<SkirmishEconomyStockComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishEconomyStockComponent
+                {
+                    FactionId = 1,
+                    Materials = setup.MaterialsEach,
+                    Oil = setup.OilEach,
+                    Fuel = setup.UsableFuelEach,
+                    MaterialsCapacity = setup.MaterialsCapacityEach,
+                    OilCapacity = setup.OilCapacityEach,
+                    FuelCapacity = setup.FuelCapacityEach
+                });
+            }
+
+            if (!em.HasBuffer<SkirmishProductionReservation>(session))
+                em.AddBuffer<SkirmishProductionReservation>(session);
+
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            bool startingSetBound = true;
+            int infantryLive = 0;
+            int groundLive = 0;
+            int airLive = 0;
+            int supplyLive = 0;
 
             for (int i = 0; i < setup.Forces.Length; i++)
             {
                 SkirmishResolvedForceEntry force = setup.Forces[i];
                 int quantity = force.Quantity < 1 ? 1 : force.Quantity;
                 int perMemberSupply = quantity == 0 ? 0 : force.SupplyCost / quantity;
+                string prefabKey = force.RuntimePrefabKey ?? string.Empty;
+                if (string.IsNullOrEmpty(prefabKey))
+                    startingSetBound = false;
                 for (int member = 0; member < quantity; member++)
                 {
-                    var owned = em.CreateEntity();
-                    em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+                    CreateForceMember(
+                        em,
+                        sessionId,
+                        force,
+                        i,
+                        member,
+                        perMemberSupply,
+                        prefabKey);
+                    if (force.FactionId == 1)
                     {
-                        SessionId = sessionId,
-                        StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + i + "." + member),
-                        FactionId = force.FactionId,
-                        IsStructure = 0
-                    });
-                    em.AddComponentData(owned, new SkirmishUnitRoleComponent
-                    {
-                        Role = force.RoleKind,
-                        Category = SkirmishRoleIds.Category(force.RoleKind),
-                        SupplyCost = perMemberSupply
-                    });
+                        SkirmishPopulationCategory category = SkirmishRoleIds.Category(force.RoleKind);
+                        if (category == SkirmishPopulationCategory.Infantry)
+                            infantryLive++;
+                        else if (category == SkirmishPopulationCategory.Ground)
+                            groundLive++;
+                        else if (category == SkirmishPopulationCategory.Air)
+                            airLive++;
+                        if (category == SkirmishPopulationCategory.Infantry ||
+                            category == SkirmishPopulationCategory.Ground ||
+                            category == SkirmishPopulationCategory.Air)
+                            supplyLive += perMemberSupply;
+                    }
                 }
             }
 
             if (setup.Structures != null)
             {
                 for (int i = 0; i < setup.Structures.Length; i++)
+                {
+                    if (string.IsNullOrEmpty(SkirmishStructureIds.VisualKey(setup.Structures[i].StructureId)))
+                        startingSetBound = false;
                     CreateStructure(em, sessionId, setup.Structures[i]);
+                }
+            }
+
+            visualPending = (byte)(startingSetBound ? 0 : 1);
+            if (em.HasComponent<SkirmishCapacityComponent>(session))
+            {
+                SkirmishCapacityComponent capacity = em.GetComponentData<SkirmishCapacityComponent>(session);
+                var snapshot = SkirmishCapacityLedger.ToSnapshot(capacity);
+                SkirmishCapacityLedger.SeedLive(ref snapshot, infantryLive, groundLive, airLive, supplyLive);
+                em.SetComponentData(session, SkirmishCapacityLedger.FromSnapshot(capacity, snapshot));
             }
 
             return true;
+        }
+
+        public static Entity CreateForceMember(
+            EntityManager em,
+            FixedString64Bytes sessionId,
+            SkirmishResolvedForceEntry force,
+            int forceIndex,
+            int member,
+            int perMemberSupply,
+            string prefabKey)
+        {
+            var owned = em.CreateEntity();
+            em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+            {
+                SessionId = sessionId,
+                StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member),
+                FactionId = force.FactionId,
+                IsStructure = 0
+            });
+            em.AddComponentData(owned, new SkirmishUnitRoleComponent
+            {
+                Role = force.RoleKind,
+                Category = SkirmishRoleIds.Category(force.RoleKind),
+                SupplyCost = perMemberSupply
+            });
+            em.AddComponentData(owned, new Faction { Id = force.FactionId });
+            if (!string.IsNullOrEmpty(prefabKey))
+                em.AddComponentData(owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(prefabKey) });
+            return owned;
         }
 
         public static Entity CreateStructure(
@@ -158,6 +240,11 @@ namespace Game.Runtime
                     FactionId = structure.FactionId
                 });
             }
+
+            em.AddComponentData(owned, new Faction { Id = structure.FactionId });
+            string visual = SkirmishStructureIds.VisualKey(structure.StructureId);
+            if (!string.IsNullOrEmpty(visual))
+                em.AddComponentData(owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(visual) });
 
             return owned;
         }

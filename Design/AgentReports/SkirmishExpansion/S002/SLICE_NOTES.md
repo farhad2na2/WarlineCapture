@@ -20,9 +20,10 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 - `SkirmishSetupCompiler.TryCompile` compares army/start/logic/size vectors to
   `INITIAL_SETUP_MATRIX.csv` with field-specific reasons.
 - `SkirmishDefinitionBuilder` + `SkirmishSetupCompilerValidation`.
-- Session init / spawn / cleanup systems. Ledger spawn completes Playing even
-  when the prefab registry is absent (`SpawnVisualPending=1`); visual delivery
-  remains SK-02 certification work.
+- Session init / spawn / cleanup systems. S002 Standard Regular starting
+  forces/structures bind `UnitSourcePrefabKey` from the role catalog, so
+  `SpawnVisualPending=0` without a live ECS prefab registry. Instantiating
+  GameObjects from that registry remains later SK-02 certification.
 - Catalog entry gained optional `DefinitionId` / `ContentVersion` /
   `ReadinessManifestId` fields. Original `SCENARIO_CATALOG.csv` column order is
   unchanged. Publication lives in `SkirmishPublicationManifest.asset`.
@@ -30,18 +31,28 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 ### SK-02 (S002 army G ground slice)
 - Typed `SkirmishRoleOverlay` + `SkirmishRoleOverlayCatalog` for infantry and
   S002 ground vehicles (rifle/gunner/rocketeer/car/APC/tank plus G-legal
-  support). Overlays bake into the compiled snapshot. `CapabilityCertified=false`.
+  support). Overlays bake into the compiled snapshot with MATCH_SETUP Materials
+  costs. `CapabilityCertified=false`.
 - `SkirmishRosterProjectionSystem` applies overlays once (health/damage/range/
   producer/target domains). Blanket prototype rifle tuning is not used on
   expanded sessions.
-- Infantry production gate accepts **4 members per squad** through
-  `SkirmishProductionEligibility` (shared request boundary; does not bypass
-  `BuildingProductionRequest` ownership). Army G still rejects offensive air.
-- Ground Staging is a **typed producer config + compiled structure**, not a
-  new art prefab. Starting S002 structures now include designated Barracks and
-  non-designated Ground Staging on both sides. Vehicle roles require that
-  producer to be present.
-- Spawn expands force `Quantity` into individual attempt-owned members.
+- Infantry production accepts **4 members per squad**. Vehicles require Ground
+  Staging. Army G still rejects offensive air.
+- Ground Staging is a typed producer + compiled starting structure (visual key
+  `Building_GroundStaging`). Not a new art prefab.
+- Spawn expands force quantity, binds `Faction` + `UnitSourcePrefabKey` for
+  every S002 starting member. `SpawnVisualPending=0` for Standard Regular.
+- `SkirmishProductionService.TryProduce` / `TryReleaseDeath` is the
+  production-to-death path for the S002 ground set (ledger + overlay + cap).
+
+### SK-03 (S002 capacity / stocks)
+- `SkirmishEconomyStockComponent` seeds Materials/Oil/Fuel from the compiled
+  snapshot (Standard E: 900/240/700).
+- `SkirmishCapacityLedger` + reservation buffer: Reserved → Live → Released.
+  Instant S002 produce visits Reserved then Live in the same call. Starting
+  grants count as Live. Death releases once.
+- Shared eligibility now also checks Materials/Fuel/caps when
+  `EnforceStocks=true`. No research tree in this slice.
 
 ### SK-06 (BA depth)
 - `SkirmishBaseAssaultFacts` + `SkirmishObjectiveFactProjectionSystem`.
@@ -67,8 +78,8 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 
 | Ticket | Gap |
 |---|---|
-| SK-02 | Prefab/registry visual spawn, production-to-death certification, Ground Staging prefab/pads, air roles |
-| SK-03 | Capacity reservation/lifecycle, research, fabrication/refinery profiles |
+| SK-02 | Registry GameObject instantiate, Ground Staging prefab/pads, air roles, combat certification |
+| SK-03 | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
 | SK-04 | Army groups, fog/intel, movement/transport |
 | SK-05 | Enemy strategy + ARIA visible-control skills |
 | SK-06 | Hidden-health HUD, world-damage fixtures, pause/result replay through live match |
@@ -109,10 +120,20 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedObjectiveTests] result=Passed"
 ```
 
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedEconomyTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-economy.log" `
+  -RequiredPassMarker "[SkirmishExpandedEconomyTests] result=Passed"
+```
+
 Required markers:
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
 - `[SkirmishExpandedObjectiveTests] result=Passed`
+- `[SkirmishExpandedEconomyTests] result=Passed`
 
 Optional compiler rebuild:
 

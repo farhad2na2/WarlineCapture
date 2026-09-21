@@ -41,6 +41,8 @@ namespace Game.Components
         public FixedString64Bytes StableObjectId;
         public byte FactionId;
         public byte IsStructure;
+        public byte CapacityReleased;
+        public uint ReservationId;
     }
 
     public struct SkirmishObjectiveStateComponent : IComponentData
@@ -110,7 +112,36 @@ namespace Game.Components
         public int InfantryLive;
         public int GroundLive;
         public int AirLive;
+        public int SupplyLive;
+        public int InfantryReserved;
+        public int GroundReserved;
+        public int AirReserved;
         public int SupplyReserved;
+        public uint NextReservationId;
+    }
+
+    public struct SkirmishEconomyStockComponent : IComponentData
+    {
+        public byte FactionId;
+        public int Materials;
+        public int Oil;
+        public int Fuel;
+        public int MaterialsCapacity;
+        public int OilCapacity;
+        public int FuelCapacity;
+    }
+
+    public struct SkirmishProductionReservation : IBufferElementData
+    {
+        public uint ReservationId;
+        public SkirmishRoleKind Role;
+        public SkirmishPopulationCategory Category;
+        public int MemberCount;
+        public int RemainingMembers;
+        public int MaterialsPaid;
+        public int SupplyCost;
+        public SkirmishReservationPhase Phase;
+        public byte FactionId;
     }
 
     public struct SkirmishResultComponent : IComponentData

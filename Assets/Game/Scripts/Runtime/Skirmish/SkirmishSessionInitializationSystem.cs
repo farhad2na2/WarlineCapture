@@ -66,6 +66,23 @@ namespace Game.Runtime
                     SupplyCap = setup.SupplyCapEach
                 });
             }
+
+            if (!em.HasComponent<SkirmishEconomyStockComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishEconomyStockComponent
+                {
+                    FactionId = 1,
+                    Materials = setup.MaterialsEach,
+                    Oil = setup.OilEach,
+                    Fuel = setup.UsableFuelEach,
+                    MaterialsCapacity = setup.MaterialsCapacityEach,
+                    OilCapacity = setup.OilCapacityEach,
+                    FuelCapacity = setup.FuelCapacityEach
+                });
+            }
+
+            if (!em.HasBuffer<SkirmishProductionReservation>(session))
+                em.AddBuffer<SkirmishProductionReservation>(session);
         }
 
         private static void Fail(ref SkirmishExpandedSessionComponent session, SkirmishReasonCode code)

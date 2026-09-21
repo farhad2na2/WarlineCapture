@@ -36,7 +36,7 @@ namespace Game.Configs
                     DefinitionId = "skirmish.s002",
                     Status = SkirmishPublicationStatus.InProgress,
                     EvidencePath = "Design/AgentReports/SkirmishExpansion/S002/",
-                    Notes = "Compiler + S002 ground overlays + BA designated-base facts. Not Playable/ARIA/War certified."
+                    Notes = "Compiler + S002 overlays + BA facts + capacity/production gate. Starting set prefab-keyed (SpawnVisualPending=0). Not Playable/ARIA/War certified."
                 }
             };
         }

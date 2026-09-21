@@ -155,6 +155,8 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.IsTrue(SkirmishRoleOverlayCatalog.TryGet(overlays, SkirmishRoleKind.Tank, out SkirmishRoleOverlay tank));
         Assert.AreEqual(420, tank.MaxHealth);
         Assert.AreEqual(SkirmishProducerKind.GroundStaging, tank.Producer);
+        Assert.AreEqual(80, rifle.MaterialsCost);
+        Assert.AreEqual(360, tank.MaterialsCost);
         Assert.AreNotEqual(rifle.MaxHealth, tank.MaxHealth);
 
         SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
@@ -218,7 +220,15 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.IsTrue(Game.Runtime.SkirmishScenarioSpawnSystem.TrySpawnLedgers(
             em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
         Assert.AreEqual(SkirmishReasonCode.None, reason);
-        Assert.AreEqual(1, visualPending);
+        Assert.AreEqual(0, visualPending);
+        Assert.IsTrue(AllStartingForcesHavePrefabKeys(setup));
+        using var keyed = em.CreateEntityQuery(typeof(UnitSourcePrefabKey), typeof(SkirmishUnitRoleComponent));
+        Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround,
+            keyed.CalculateEntityCount());
+        var capacity = em.GetComponentData<SkirmishCapacityComponent>(session);
+        Assert.AreEqual(setup.PlayerInfantry, capacity.InfantryLive);
+        Assert.AreEqual(setup.PlayerGround, capacity.GroundLive);
+        Assert.AreEqual(setup.PlayerSupply, capacity.SupplyLive);
 
         using var units = em.CreateEntityQuery(typeof(SkirmishUnitRoleComponent));
         Assert.AreEqual(setup.PlayerInfantry + setup.PlayerGround + setup.EnemyInfantry + setup.EnemyGround,
@@ -338,6 +348,17 @@ public sealed class SkirmishExpandedDefinitionTests
         }
 
         return total;
+    }
+
+    private static bool AllStartingForcesHavePrefabKeys(SkirmishResolvedSetup setup)
+    {
+        for (int i = 0; i < setup.Forces.Length; i++)
+        {
+            if (string.IsNullOrEmpty(setup.Forces[i].RuntimePrefabKey))
+                return false;
+        }
+
+        return true;
     }
 
     private static bool HasStructure(SkirmishResolvedSetup setup, string structureId, bool designated)

@@ -18,4 +18,4 @@ MonoBehaviour:
     DefinitionId: skirmish.s002
     Status: 1
     EvidencePath: Design/AgentReports/SkirmishExpansion/S002/
-    Notes: Definition/compiler ground slice only. Not ARIA/War certified.
+    Notes: Compiler + S002 overlays + BA facts + capacity/production gate. Starting set prefab-keyed (SpawnVisualPending=0). Not Playable/ARIA/War certified.

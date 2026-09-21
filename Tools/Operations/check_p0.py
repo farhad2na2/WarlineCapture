@@ -188,6 +188,66 @@ def check_shadow_project() -> None:
         fail("validation_script_missing_shadow")
     if '-ProjectPath $shared' in shared_mentions:
         fail("validation_script_uses_shared_project")
+    checks = (ROOT / "Assets/Tests/Editor/Operations/OperationsP0Checks.cs").read_text()
+    if "ProveFindRepositoryRootAcceptsShadowFolderName" not in checks:
+        fail("root_finder_missing_shadow_folder_proof")
+    if "CombineProjectPath" not in checks:
+        fail("root_finder_missing_combine")
+    if "ShadowWindowsCheckout" not in checks:
+        fail("root_finder_missing_shadow_candidate")
+    if "candidates.Add(OperationsShadowProject.SharedWindowsCheckout)" in checks:
+        fail("root_finder_searches_shared")
+    if 'GetFileName(directory) == "WarlineCapture"' in checks:
+        fail("root_finder_locks_shared_folder_name")
+    check_shadow_folder_name_root_discovery()
+
+
+def check_shadow_folder_name_root_discovery() -> None:
+    import tempfile
+
+    with tempfile.TemporaryDirectory(prefix="ops-p0-root-") as workspace:
+        shadow = Path(workspace) / "WarlineCapture-Operations"
+        marker = (
+            shadow
+            / "Assets"
+            / "Game"
+            / "Scripts"
+            / "Operations"
+            / "Contracts"
+            / "Game.Operations.Contracts.asmdef"
+        )
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text("{}\n", encoding="utf-8")
+        catalog = shadow / "Design" / "Roadmap" / "Operations" / "MISSION_CATALOG.csv"
+        catalog.parent.mkdir(parents=True, exist_ok=True)
+        catalog.write_text("mission_id\n", encoding="utf-8")
+        if shadow.name != "WarlineCapture-Operations":
+            fail("shadow_temp_folder_name")
+        if not marker.is_file() or not catalog.is_file():
+            fail("shadow_temp_markers")
+        current = marker.parent
+        found = None
+        for _ in range(16):
+            has_asmdef = (
+                current
+                / "Assets"
+                / "Game"
+                / "Scripts"
+                / "Operations"
+                / "Contracts"
+                / "Game.Operations.Contracts.asmdef"
+            ).is_file()
+            has_catalog = (
+                current / "Design" / "Roadmap" / "Operations" / "MISSION_CATALOG.csv"
+            ).is_file()
+            if has_asmdef or has_catalog:
+                found = current
+                break
+            if current.parent == current:
+                break
+            current = current.parent
+        if found is None or found.resolve() != shadow.resolve():
+            fail(f"shadow_folder_root={found}")
 
 
 def check_identity_source() -> None:

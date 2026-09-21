@@ -214,12 +214,12 @@ namespace Game.Tests.Editor.Operations
         {
             string root = FindRepositoryRoot();
             foreach (string relative in OperationsAssemblyManifest.ForbiddenExistingAsmdefEdits)
-                Require(File.Exists(Path.Combine(root, relative)), relative);
+                Require(File.Exists(CombineProjectPath(root, relative)), relative);
             foreach (string relative in OperationsAssemblyManifest.ForbiddenSharedSeams)
-                Require(File.Exists(Path.Combine(root, relative)), relative);
+                Require(File.Exists(CombineProjectPath(root, relative)), relative);
 
             string contractsAsmdef = File.ReadAllText(
-                Path.Combine(root, "Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef"));
+                CombineProjectPath(root, "Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef"));
             Require(contractsAsmdef.Contains("\"noEngineReferences\": true"));
             Require(contractsAsmdef.Contains("\"references\": []"));
             Require(!contractsAsmdef.Contains("Game.Configs"));
@@ -236,7 +236,7 @@ namespace Game.Tests.Editor.Operations
                 "Design/Roadmap/Operations/P0_SHADOW_PROJECT.md"
             };
             for (int index = 0; index < fixtures.Length; index++)
-                Require(File.Exists(Path.Combine(root, fixtures[index])), fixtures[index]);
+                Require(File.Exists(CombineProjectPath(root, fixtures[index])), fixtures[index]);
         }
 
         public static void ShadowProjectIsIsolatedFromSharedCheckout()
@@ -252,10 +252,13 @@ namespace Game.Tests.Editor.Operations
             Require(!OperationsShadowProject.IsApprovedWindowsValidationPath(@"D:\Projects\WarlineCapture"));
             Require(OperationsShadowProject.TryRejectSharedWindowsCheckout(@"D:\Projects\WarlineCapture", out string error));
             Require(error.IndexOf("WarlineCapture-Operations", StringComparison.Ordinal) >= 0);
+            ProveFindRepositoryRootAcceptsShadowFolderName();
 
 #if UNITY_EDITOR
-            string unityRoot = Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, ".."));
-            if (OperationsShadowProject.TryRejectSharedWindowsCheckout(unityRoot, out string unityError))
+            string unityAssets = Path.GetFullPath(UnityEngine.Application.dataPath);
+            string unityRoot = Path.GetDirectoryName(unityAssets);
+            if (!string.IsNullOrEmpty(unityRoot) &&
+                OperationsShadowProject.TryRejectSharedWindowsCheckout(unityRoot, out string unityError))
                 throw new InvalidOperationException(unityError);
 #endif
         }
@@ -326,29 +329,142 @@ namespace Game.Tests.Editor.Operations
             throw new InvalidOperationException("Expected " + typeof(TException).Name + ".");
         }
 
-        private static string FindRepositoryRoot()
+        public static string CombineProjectPath(string root, string relativeUnixPath)
         {
-            var candidates = new List<string>
-            {
-#if UNITY_EDITOR
-                Path.GetFullPath(Path.Combine(UnityEngine.Application.dataPath, "..")),
-#endif
-                Directory.GetCurrentDirectory(),
-                AppContext.BaseDirectory
-            };
+            if (string.IsNullOrEmpty(root))
+                throw new ArgumentException("A project root is required.", nameof(root));
 
-            for (int index = 0; index < candidates.Count; index++)
+            string path = root;
+            if (string.IsNullOrEmpty(relativeUnixPath))
+                return path;
+
+            string[] parts = relativeUnixPath.Split(new[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+            for (int index = 0; index < parts.Length; index++)
             {
-                string directory = candidates[index];
-                for (int depth = 0; depth < 12 && !string.IsNullOrEmpty(directory); depth++)
+                if (parts[index] == "." || parts[index] == "..")
+                    throw new ArgumentException("Relative project paths must not contain '.' or '..'.", nameof(relativeUnixPath));
+                path = Path.Combine(path, parts[index]);
+            }
+
+            return path;
+        }
+
+        public static bool IsOperationsProjectRoot(string directory)
+        {
+            if (string.IsNullOrEmpty(directory))
+                return false;
+
+            return File.Exists(CombineProjectPath(directory, "Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef"))
+                || File.Exists(CombineProjectPath(directory, "Design/Roadmap/Operations/MISSION_CATALOG.csv"));
+        }
+
+        public static bool TryFindRepositoryRoot(IEnumerable<string> startPaths, out string root)
+        {
+            if (startPaths != null)
+            {
+                foreach (string startPath in startPaths)
                 {
-                    if (File.Exists(Path.Combine(directory, "Design/Roadmap/Operations/MISSION_CATALOG.csv")))
-                        return directory;
-                    directory = Directory.GetParent(directory)?.FullName;
+                    if (string.IsNullOrEmpty(startPath))
+                        continue;
+
+                    string directory;
+                    try
+                    {
+                        directory = Path.GetFullPath(startPath);
+                    }
+                    catch (ArgumentException)
+                    {
+                        continue;
+                    }
+                    catch (NotSupportedException)
+                    {
+                        continue;
+                    }
+
+                    for (int depth = 0; depth < 16 && !string.IsNullOrEmpty(directory); depth++)
+                    {
+                        if (IsOperationsProjectRoot(directory))
+                        {
+                            root = directory;
+                            return true;
+                        }
+
+                        DirectoryInfo parent = Directory.GetParent(directory);
+                        directory = parent == null ? null : parent.FullName;
+                    }
                 }
             }
 
-            throw new InvalidOperationException("Could not locate the WarlineCapture repository root.");
+            root = null;
+            return false;
+        }
+
+        private static string FindRepositoryRoot()
+        {
+            var candidates = new List<string>();
+#if UNITY_EDITOR
+            string dataPath = UnityEngine.Application.dataPath;
+            if (!string.IsNullOrEmpty(dataPath))
+            {
+                string assets = Path.GetFullPath(dataPath);
+                string project = Path.GetDirectoryName(assets);
+                if (!string.IsNullOrEmpty(project))
+                    candidates.Add(project);
+                candidates.Add(assets);
+            }
+#endif
+            if (Directory.Exists(OperationsShadowProject.ShadowWindowsCheckout))
+                candidates.Add(OperationsShadowProject.ShadowWindowsCheckout);
+            candidates.Add(Directory.GetCurrentDirectory());
+            if (!string.IsNullOrEmpty(AppContext.BaseDirectory))
+                candidates.Add(AppContext.BaseDirectory);
+
+            if (TryFindRepositoryRoot(candidates, out string root))
+                return root;
+
+            throw new InvalidOperationException(
+                "Could not locate the Operations repository root. Open the shadow project " +
+                OperationsShadowProject.ShadowWindowsCheckout +
+                ". A folder named WarlineCapture-Operations is a valid project root.");
+        }
+
+        private static void ProveFindRepositoryRootAcceptsShadowFolderName()
+        {
+            string workspace = Path.Combine(Path.GetTempPath(), "ops-p0-root-" + Guid.NewGuid().ToString("N"));
+            string shadow = Path.Combine(workspace, "WarlineCapture-Operations");
+            string shared = Path.Combine(workspace, "WarlineCapture");
+            try
+            {
+                WriteMinimalProjectMarkers(shadow);
+                WriteMinimalProjectMarkers(shared);
+                Require(Path.GetFileName(shadow) == "WarlineCapture-Operations");
+                Require(Path.GetFileName(shadow) != "WarlineCapture");
+                Require(IsOperationsProjectRoot(shadow));
+                Require(IsOperationsProjectRoot(shared));
+
+                string startInsideShadow = CombineProjectPath(shadow, "Assets/Game/Scripts/Operations/Contracts");
+                Require(TryFindRepositoryRoot(new[] { startInsideShadow }, out string foundShadow));
+                Require(string.Equals(Path.GetFullPath(foundShadow), Path.GetFullPath(shadow), StringComparison.OrdinalIgnoreCase));
+
+                string startInsideShared = CombineProjectPath(shared, "Assets");
+                Require(TryFindRepositoryRoot(new[] { startInsideShared }, out string foundShared));
+                Require(string.Equals(Path.GetFullPath(foundShared), Path.GetFullPath(shared), StringComparison.OrdinalIgnoreCase));
+            }
+            finally
+            {
+                if (Directory.Exists(workspace))
+                    Directory.Delete(workspace, true);
+            }
+        }
+
+        private static void WriteMinimalProjectMarkers(string root)
+        {
+            string asmdef = CombineProjectPath(root, "Assets/Game/Scripts/Operations/Contracts/Game.Operations.Contracts.asmdef");
+            Directory.CreateDirectory(Path.GetDirectoryName(asmdef));
+            File.WriteAllText(asmdef, "{}");
+            string catalog = CombineProjectPath(root, "Design/Roadmap/Operations/MISSION_CATALOG.csv");
+            Directory.CreateDirectory(Path.GetDirectoryName(catalog));
+            File.WriteAllText(catalog, "mission_id\n");
         }
     }
 }

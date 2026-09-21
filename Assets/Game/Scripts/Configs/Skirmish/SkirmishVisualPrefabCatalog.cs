@@ -90,6 +90,18 @@ namespace Game.Configs
             return catalog;
         }
 
+        public static SkirmishVisualPrefabCatalog CreateS003AirRegistry()
+        {
+            SkirmishVisualPrefabCatalog catalog = CreateS002TestRegistry();
+            BindStandIn(catalog, "Unit_Veh_Missle_Launcher_Air", PrimitiveType.Cube, new Color(0.45f, 0.32f, 0.18f), new Vector3(2.4f, 1.1f, 1.4f));
+            BindStandIn(catalog, "Unit_Veh_Helicopter_Attack_Small", PrimitiveType.Capsule, new Color(0.25f, 0.45f, 0.62f), new Vector3(1.4f, 0.8f, 1.4f));
+            BindStandIn(catalog, "Unit_Veh_Helicopter_Attack", PrimitiveType.Capsule, new Color(0.2f, 0.35f, 0.55f), new Vector3(1.8f, 0.9f, 1.6f));
+            BindStandIn(catalog, "Unit_Veh_Helicopter_Transport", PrimitiveType.Capsule, new Color(0.35f, 0.5f, 0.55f), new Vector3(1.8f, 0.9f, 1.8f));
+            BindStandIn(catalog, "Unit_Veh_Jet_02", PrimitiveType.Cube, new Color(0.55f, 0.58f, 0.62f), new Vector3(3.2f, 0.6f, 2.2f));
+            BindStandIn(catalog, "Building_Helipad", PrimitiveType.Cube, new Color(0.32f, 0.34f, 0.3f), new Vector3(6f, 0.4f, 6f));
+            return catalog;
+        }
+
         private static void BindStandIn(
             SkirmishVisualPrefabCatalog catalog,
             string key,

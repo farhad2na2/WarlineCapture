@@ -81,7 +81,9 @@ namespace Game.Configs
             SkirmishUpgradeConfig upgrades,
             SkirmishIntelConfig intel,
             SkirmishRoleCatalogConfig roles,
-            SkirmishMapLayoutConfig layout)
+            SkirmishMapLayoutConfig layout,
+            SkirmishSizeId recommended = SkirmishSizeId.Standard,
+            string[] featureIds = null)
         {
             catalogId = configuredCatalogId;
             definitionId = SkirmishDefinitionId.FromCatalog(new SkirmishCatalogId(configuredCatalogId)).Value;
@@ -95,7 +97,7 @@ namespace Game.Configs
             startPackageConfig = start;
             defaultDifficulty = SkirmishDifficultyId.Regular;
             firstVisitSize = SkirmishSizeId.Standard;
-            recommendedSize = SkirmishSizeId.Standard;
+            recommendedSize = recommended == SkirmishSizeId.None ? SkirmishSizeId.Standard : recommended;
             economyConfig = economy;
             upgradeCatalog = upgrades;
             intelConfig = intel;
@@ -105,7 +107,7 @@ namespace Game.Configs
             enemyFaction = 2;
             sideRule = "symmetric.ba";
             allowedCertifiedSizeIds = new[] { SkirmishSizeId.Standard };
-            requiredFeatureIds = new[] { "ground", "intel", "transport", "advanced_ground", "objective_ba" };
+            requiredFeatureIds = featureIds ?? new[] { "ground", "intel", "transport", "advanced_ground", "objective_ba" };
             ariaCapabilityIds = Array.Empty<string>();
             string prefix = "skirmish.s" + configuredCatalogId.Substring(1);
             briefingKey = prefix + ".brief";

@@ -44,9 +44,14 @@ namespace Game.Skirmish.Contracts
         public int OwnSupplyCap;
         public int OwnMaterials;
         public int OwnFuel;
+        public int OwnAirLive;
+        public int AirCap;
         public int VisibleHostileInfantry;
         public int VisibleHostileGround;
         public int VisibleHostileTanks;
+        public int VisibleHostileAir;
+        public bool HelipadPresent;
+        public bool AirportPresent;
         public bool PlayerDesignatedAlive;
         public bool EnemyDesignatedAlive;
         public bool KnowsHostileMaterials;
@@ -81,7 +86,11 @@ namespace Game.Skirmish.Contracts
         public bool CanAffordRifle;
         public bool CanAffordRocketeer;
         public bool CanAffordTank;
+        public bool CanAffordAntiAir;
+        public bool PadReady;
+        public bool AirPadControlAvailable;
         public int VisibleHostileCombat;
+        public int VisibleHostileAir;
         public int OwnInfantry;
         public int OwnMaterials;
         public int FailedAttempts;

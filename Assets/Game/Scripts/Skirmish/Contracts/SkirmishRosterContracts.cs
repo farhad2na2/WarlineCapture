@@ -270,14 +270,33 @@ namespace Game.Skirmish.Contracts
         public const string Barracks = "building.barracks";
         public const string GroundStaging = "building.ground_staging";
         public const string BarracksReplacement = "building.barracks.replacement";
+        public const string Helipad = "building.helipad";
+        public const string Airport = "building.airport";
 
         public static string VisualKey(string structureId)
         {
             if (structureId == GroundStaging)
                 return "Building_GroundStaging";
+            if (structureId == Helipad)
+                return "Building_Helipad";
+            if (structureId == Airport)
+                return "Building_Airport";
             if (!string.IsNullOrEmpty(structureId) && structureId.StartsWith(Barracks, System.StringComparison.Ordinal))
                 return "Building_Barrack";
             return string.Empty;
+        }
+
+        public static SkirmishProducerKind ProducerFor(string structureId)
+        {
+            if (structureId == GroundStaging)
+                return SkirmishProducerKind.GroundStaging;
+            if (structureId == Helipad)
+                return SkirmishProducerKind.Helipad;
+            if (structureId == Airport)
+                return SkirmishProducerKind.Airport;
+            if (!string.IsNullOrEmpty(structureId) && structureId.StartsWith(Barracks, System.StringComparison.Ordinal))
+                return SkirmishProducerKind.Barracks;
+            return SkirmishProducerKind.None;
         }
     }
 }

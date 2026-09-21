@@ -8,6 +8,7 @@ using Game.Runtime;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Entities;
+using UnityEditor;
 using UnityEngine;
 
 namespace Game.Tests.Editor
@@ -363,6 +364,182 @@ public sealed class SkirmishExpandedDefinitionTests
     }
 
     [Test]
+    public void S003RegularStandardCompilesFirstVisitSeeds()
+    {
+        uint previous = 0;
+        for (int i = 0; i < SkirmishS003FirstVisit.RegularStandardSeeds.Length; i++)
+        {
+            int seed = SkirmishS003FirstVisit.RegularStandardSeeds[i];
+            CompileS003(SkirmishSizeId.Standard, seed, out SkirmishResolvedSetup setup, out SkirmishLaunchPayload payload);
+            Assert.AreEqual("S003", setup.CatalogId);
+            Assert.AreEqual("skirmish.s003", setup.DefinitionId);
+            Assert.AreEqual("scenario.skirmish.s003", setup.ScenarioSetupId);
+            Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
+            Assert.AreEqual("layout.skirmish.db.ba", setup.LayoutId);
+            Assert.AreEqual(SkirmishArmyProfileId.AirMobile, setup.ArmyProfileId);
+            Assert.AreEqual(SkirmishStartPackageId.FieldBase, setup.StartPackageId);
+            Assert.AreEqual(SkirmishObjectiveKind.BaseAssault, setup.ObjectiveKind);
+            Assert.AreEqual(1, (int)setup.Readiness);
+            Assert.AreEqual(8, Count(setup, 1, SkirmishRoleKind.Rifle));
+            Assert.AreEqual(0, Count(setup, 1, SkirmishRoleKind.Gunner));
+            Assert.AreEqual(4, Count(setup, 1, SkirmishRoleKind.Rocketeer));
+            Assert.AreEqual(1, Count(setup, 1, SkirmishRoleKind.Car));
+            Assert.AreEqual(1, Count(setup, 1, SkirmishRoleKind.ApcArmored));
+            Assert.AreEqual(0, Count(setup, 1, SkirmishRoleKind.Tank));
+            Assert.AreEqual(0, Count(setup, 1, SkirmishRoleKind.AttackHeli));
+            Assert.AreEqual(12, setup.PlayerInfantry);
+            Assert.AreEqual(2, setup.PlayerGround);
+            Assert.AreEqual(0, setup.PlayerAir);
+            Assert.AreEqual(14, setup.PlayerCombat);
+            Assert.AreEqual(20, setup.PlayerSupply);
+            Assert.AreEqual(450, setup.MaterialsEach);
+            Assert.AreEqual(120, setup.OilEach);
+            Assert.AreEqual(350, setup.UsableFuelEach);
+            Assert.AreEqual(1080, setup.DeadlineSeconds);
+            Assert.AreEqual(7, setup.PlayerStartingStructures);
+            Assert.AreEqual(seed, payload.Seed);
+            Assert.IsTrue(setup.MeasuredLayoutBound);
+            Assert.AreEqual(-228f, setup.PlayerBaseWorldX, 0.05f);
+            Assert.AreEqual(-192f, setup.PlayerStagingWorldX, 0.05f);
+            Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Rifle, out SkirmishResolvedForceEntry rifle));
+            Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Car, out SkirmishResolvedForceEntry car));
+            Assert.AreNotEqual(rifle.SpawnWorldX, car.SpawnWorldX);
+            Assert.AreNotEqual(previous, setup.SetupHash);
+            previous = setup.SetupHash;
+        }
+
+        CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup again, out _);
+        CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup twin, out _);
+        Assert.AreEqual(again.SetupHash, twin.SetupHash);
+    }
+
+    [Test]
+    public void S003FieldSizesMatchMatrixWithoutStartingAir()
+    {
+        CompileS003(SkirmishSizeId.War, 393244, out SkirmishResolvedSetup war, out _);
+        CompileS003(SkirmishSizeId.LargeWar, 458882, out SkirmishResolvedSetup large, out _);
+        Assert.AreEqual(1500, war.DeadlineSeconds);
+        Assert.AreEqual(675, war.MaterialsEach);
+        Assert.AreEqual(2, Count(war, 1, SkirmishRoleKind.ApcArmored));
+        Assert.AreEqual(0, Count(war, 1, SkirmishRoleKind.Tank));
+        Assert.AreEqual(1800, large.DeadlineSeconds);
+        Assert.AreEqual(900, large.MaterialsEach);
+        Assert.AreEqual(0, large.PlayerAir);
+        Assert.IsFalse(war.MeasuredLayoutBound);
+        Assert.IsFalse(large.MeasuredLayoutBound);
+    }
+
+    [Test]
+    public void S003AirMobileRejectsArmorAndGatesOffensiveAir()
+    {
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        Assert.IsTrue(authored.ArmyAir.AllowsOffensiveAir);
+        Assert.IsTrue(authored.ArmyAir.AllowsAdvancedAir);
+        Assert.IsFalse(authored.ArmyGround.AllowsOffensiveAir);
+        Assert.IsFalse(authored.ArmyAir.Allows(SkirmishRoleIds.Tank));
+        Assert.IsFalse(authored.ArmyAir.Allows(SkirmishRoleIds.ApcHeavy));
+        Assert.IsFalse(authored.ArmyAir.Allows(SkirmishRoleIds.Siege));
+        Assert.IsTrue(authored.ArmyAir.Allows(SkirmishRoleIds.AntiAir));
+        SkirmishRoleOverlay[] overlays = SkirmishRoleOverlayCatalog.CreateAirMobileSlice();
+
+        SkirmishProductionDecision aa = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir, SkirmishReadinessStage.Field, false, false);
+        Assert.IsTrue(aa.Accepted);
+        Assert.AreEqual(220, aa.MaterialsCost);
+        Assert.AreEqual(SkirmishProducerKind.GroundStaging, aa.Producer);
+
+        SkirmishProductionDecision tank = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.Tank, SkirmishRoleKind.Tank, SkirmishReadinessStage.Established, false, false);
+        Assert.IsFalse(tank.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, tank.Reason);
+
+        SkirmishProductionDecision heavy = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.ApcHeavy, SkirmishRoleKind.ApcHeavy, SkirmishReadinessStage.Established, false, false);
+        Assert.IsFalse(heavy.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, heavy.Reason);
+
+        SkirmishProductionDecision siege = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.Siege, SkirmishRoleKind.Siege, SkirmishReadinessStage.FullArsenal, false, false);
+        Assert.IsFalse(siege.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, siege.Reason);
+
+        SkirmishProductionDecision earlyAir = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.AttackHeli, SkirmishRoleKind.AttackHeli, SkirmishReadinessStage.Field, false, false);
+        Assert.IsFalse(earlyAir.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.MissingReadiness, earlyAir.Reason);
+
+        SkirmishProductionDecision missingPad = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.AttackHeli, SkirmishRoleKind.AttackHeli, SkirmishReadinessStage.Established, false, false);
+        Assert.IsFalse(missingPad.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.MissingProducer, missingPad.Reason);
+        Assert.AreEqual("producer.helipad", missingPad.Field);
+
+        SkirmishProductionDecision heli = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.AttackHeli, SkirmishRoleKind.AttackHeli, SkirmishReadinessStage.Established, true, false);
+        Assert.IsTrue(heli.Accepted);
+        Assert.AreEqual(420, heli.MaterialsCost);
+
+        SkirmishProductionDecision jet = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.Fighter, SkirmishRoleKind.Fighter, SkirmishReadinessStage.FullArsenal, false, false);
+        Assert.IsFalse(jet.Accepted);
+        Assert.AreEqual("producer.airport", jet.Field);
+
+        SkirmishProductionDecision advanced = EvaluateS003(
+            authored, overlays, SkirmishRoleIds.Fighter, SkirmishRoleKind.Fighter, SkirmishReadinessStage.FullArsenal, false, true);
+        Assert.IsTrue(advanced.Accepted);
+        Assert.AreEqual(480, advanced.MaterialsCost);
+
+        SkirmishProductionDecision groundAir = SkirmishProductionEligibility.Evaluate(
+            new SkirmishProductionRequest
+            {
+                RoleId = SkirmishRoleIds.AttackHeli,
+                RoleKind = SkirmishRoleKind.AttackHeli,
+                SquadCount = 1,
+                BarracksPresent = true,
+                GroundStagingPresent = true,
+                HelipadPresent = true
+            },
+            authored.ArmyGround,
+            SkirmishReadinessStage.Established,
+            overlays);
+        Assert.IsFalse(groundAir.Accepted);
+        Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, groundAir.Reason);
+    }
+
+    [Test]
+    public void S003AssetsReuseDesertBaseLayoutAndStayInProgress()
+    {
+        var definition = AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(
+            "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishScenario_S003.asset");
+        var scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(
+            "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/ScenarioSetup_S003.asset");
+        var layout = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(
+            "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003/SkirmishLayout_S003.asset");
+        var shared = AssetDatabase.LoadAssetAtPath<SkirmishMapLayoutConfig>(
+            "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishLayout_DB_BA.asset");
+        var publication = AssetDatabase.LoadAssetAtPath<SkirmishPublicationConfig>(
+            "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset");
+        Assert.IsNotNull(definition);
+        Assert.AreEqual("S003", definition.CatalogId);
+        Assert.AreEqual(SkirmishArmyProfileId.AirMobile, definition.ArmyProfileConfig.Kind);
+        Assert.AreEqual(SkirmishStartPackageId.FieldBase, definition.StartPackageConfig.Kind);
+        Assert.AreEqual(SkirmishSizeId.Standard, definition.FirstVisitSize);
+        Assert.AreEqual(SkirmishSizeId.War, definition.RecommendedSize);
+        Assert.AreEqual("layout.skirmish.db.ba", definition.MapLayoutId);
+        Assert.AreEqual(shared.LayoutId, layout.LayoutId);
+        Assert.AreEqual(shared.WorldWidthMetres, layout.WorldWidthMetres);
+        Assert.AreEqual(shared.WorldDepthMetres, layout.WorldDepthMetres);
+        Assert.IsTrue(layout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig staging));
+        Assert.AreEqual(-192f, staging.WorldX, 0.05f);
+        Assert.AreEqual("scenario.skirmish.s003", scenario.ScenarioId);
+        Assert.AreEqual(SkirmishS003FirstVisit.SeedA, scenario.DeterministicSeed);
+        Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig s002));
+        Assert.AreEqual(SkirmishPublicationStatus.Playable, s002.Status);
+        Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig s003));
+        Assert.AreEqual(SkirmishPublicationStatus.InProgress, s003.Status);
+    }
+
+    [Test]
     public void SessionInitializationProjectsRolesOutsideLiveQuery()
     {
         using var world = new World(nameof(SessionInitializationProjectsRolesOutsideLiveQuery));
@@ -410,6 +587,10 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.RegularStandardBindsMeasuredPadsAndRoutes();
             suite.CustomAndLegacyDoNotBindMeasuredLayout();
             suite.ExpandedLaunchResolverCompilesS002();
+            suite.S003RegularStandardCompilesFirstVisitSeeds();
+            suite.S003FieldSizesMatchMatrixWithoutStartingAir();
+            suite.S003AirMobileRejectsArmorAndGatesOffensiveAir();
+            suite.S003AssetsReuseDesertBaseLayoutAndStayInProgress();
             suite.SessionInitializationProjectsRolesOutsideLiveQuery();
             Debug.Log("[SkirmishExpandedDefinitionTests] result=Passed");
         }
@@ -454,6 +635,67 @@ public sealed class SkirmishExpandedDefinitionTests
             IsCustom = false,
             IsLegacy = false
         };
+    }
+
+    private static void CompileS003(
+        SkirmishSizeId size,
+        int seed,
+        out SkirmishResolvedSetup setup,
+        out SkirmishLaunchPayload payload)
+    {
+        LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
+        Assert.IsTrue(SkirmishSetupCompiler.TryCompile(
+            authored.DefinitionS003,
+            SkirmishDifficultyId.Regular,
+            size,
+            seed,
+            manifest,
+            matrix,
+            out setup,
+            out List<SkirmishCompileReason> reasons),
+            reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+        payload = new SkirmishLaunchPayload
+        {
+            SessionId = "test-s003",
+            CatalogId = setup.CatalogId,
+            DefinitionId = setup.DefinitionId,
+            ContentVersion = setup.ContentVersion,
+            AllConfigHashes = setup.SetupHash.ToString("X8"),
+            MapId = setup.OperationMapId,
+            LayoutId = setup.LayoutId,
+            DifficultyId = SkirmishDifficultyId.Regular,
+            SizeId = size,
+            Seed = seed,
+            IsCustom = false,
+            IsLegacy = false
+        };
+    }
+
+    private static SkirmishProductionDecision EvaluateS003(
+        SkirmishExpansionAuthoredSet authored,
+        SkirmishRoleOverlay[] overlays,
+        string roleId,
+        SkirmishRoleKind kind,
+        SkirmishReadinessStage readiness,
+        bool helipad,
+        bool airport)
+    {
+        return SkirmishProductionEligibility.Evaluate(
+            new SkirmishProductionRequest
+            {
+                RoleId = roleId,
+                RoleKind = kind,
+                SquadCount = 1,
+                BarracksPresent = true,
+                GroundStagingPresent = true,
+                HelipadPresent = helipad,
+                AirportPresent = airport
+            },
+            authored.ArmyAir,
+            readiness,
+            overlays);
     }
 
     private static void LoadMatrix(out List<SkirmishSetupMatrixRow> matrix)

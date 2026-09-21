@@ -20,3 +20,9 @@ MonoBehaviour:
     EvidencePath: Design/AgentReports/SkirmishExpansion/S002/
     Notes: SK-13 Programmer 1 Game View evidence + matching hashes. Counted ARIA/device
       matrix still open.
+  - CatalogId: S003
+    DefinitionId: skirmish.s003
+    Status: 2
+    EvidencePath: Design/AgentReports/SkirmishExpansion/S003/
+    Notes: S003 Game View evidence + matching Regular Standard hashes. Air flight/refuel
+      and counted ARIA matrix still open.

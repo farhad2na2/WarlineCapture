@@ -317,11 +317,7 @@ namespace Game.Runtime
             em.AddComponentData(owned, new SkirmishStructureIdentityComponent
             {
                 StructureId = new FixedString64Bytes(structure.StructureId ?? string.Empty),
-                Producer = structure.StructureId == SkirmishStructureIds.GroundStaging
-                    ? SkirmishProducerKind.GroundStaging
-                    : structure.StructureId != null && structure.StructureId.StartsWith(SkirmishStructureIds.Barracks)
-                        ? SkirmishProducerKind.Barracks
-                        : SkirmishProducerKind.None,
+                Producer = SkirmishStructureIds.ProducerFor(structure.StructureId),
                 DesignatedBase = (byte)(structure.DesignatedBase ? 1 : 0)
             });
             if (structure.DesignatedBase)

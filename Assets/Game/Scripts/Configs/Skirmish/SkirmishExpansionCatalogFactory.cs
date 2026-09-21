@@ -6,6 +6,7 @@ namespace Game.Configs
     {
         public SkirmishObjectiveConfig ObjectiveBa;
         public SkirmishArmyProfileConfig ArmyGround;
+        public SkirmishArmyProfileConfig ArmyAir;
         public SkirmishStartPackageConfig StartField;
         public SkirmishStartPackageConfig StartEstablished;
         public SkirmishSizeConfig SizeStandard;
@@ -24,6 +25,20 @@ namespace Game.Configs
         public SkirmishMapLayoutConfig LayoutDbBa;
         public SkirmishPublicationConfig Publication;
         public SkirmishScenarioDefinitionConfig DefinitionS002;
+        public SkirmishScenarioDefinitionConfig DefinitionS003;
+    }
+
+    public static class SkirmishS003FirstVisit
+    {
+        public const int SeedA = 104732;
+        public const int SeedB = 130366;
+        public const int SeedC = 155924;
+        public static readonly int[] RegularStandardSeeds = { SeedA, SeedB, SeedC };
+
+        public static readonly string[] RequiredFeatureIds =
+        {
+            "ground", "intel", "transport", "offensive_air", "advanced_air", "objective_ba"
+        };
     }
 
     public static class SkirmishExpansionCatalogFactory
@@ -34,6 +49,7 @@ namespace Game.Configs
             {
                 ObjectiveBa = Create<SkirmishObjectiveConfig>(),
                 ArmyGround = Create<SkirmishArmyProfileConfig>(),
+                ArmyAir = Create<SkirmishArmyProfileConfig>(),
                 StartField = Create<SkirmishStartPackageConfig>(),
                 StartEstablished = Create<SkirmishStartPackageConfig>(),
                 SizeStandard = Create<SkirmishSizeConfig>(),
@@ -51,10 +67,12 @@ namespace Game.Configs
                 GroundStaging = Create<SkirmishGroundStagingConfig>(),
                 LayoutDbBa = Create<SkirmishMapLayoutConfig>(),
                 Publication = Create<SkirmishPublicationConfig>(),
-                DefinitionS002 = Create<SkirmishScenarioDefinitionConfig>()
+                DefinitionS002 = Create<SkirmishScenarioDefinitionConfig>(),
+                DefinitionS003 = Create<SkirmishScenarioDefinitionConfig>()
             };
             set.ObjectiveBa.ConfigureBaseAssault();
             set.ArmyGround.ConfigureGroundManeuver();
+            set.ArmyAir.ConfigureAirMobile();
             set.StartField.ConfigureField();
             set.StartEstablished.ConfigureEstablished();
             set.SizeStandard.Configure(SkirmishSizeId.Standard);
@@ -82,6 +100,18 @@ namespace Game.Configs
                 set.Intel,
                 set.Roles,
                 set.LayoutDbBa);
+            set.DefinitionS003.Configure(
+                "S003",
+                set.ObjectiveBa,
+                set.ArmyAir,
+                set.StartField,
+                set.Economy,
+                set.Upgrades,
+                set.Intel,
+                set.Roles,
+                set.LayoutDbBa,
+                SkirmishSizeId.War,
+                SkirmishS003FirstVisit.RequiredFeatureIds);
             return set;
         }
 
@@ -90,6 +120,12 @@ namespace Game.Configs
             string catalogId,
             out SkirmishScenarioDefinitionConfig definition)
         {
+            if (set != null && set.DefinitionS003 != null && set.DefinitionS003.CatalogId == catalogId)
+            {
+                definition = set.DefinitionS003;
+                return true;
+            }
+
             if (set != null && set.DefinitionS002 != null && set.DefinitionS002.CatalogId == catalogId)
             {
                 definition = set.DefinitionS002;

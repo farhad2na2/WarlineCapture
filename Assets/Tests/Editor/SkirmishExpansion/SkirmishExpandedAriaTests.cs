@@ -8,6 +8,7 @@ using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -208,6 +209,139 @@ namespace Game.Tests.Editor
             Assert.AreNotEqual(SkirmishAriaSkillKind.None, decision.Skill);
         }
 
+        [Test]
+        public void S003AirMobilePublicControlsDoNotMutateGameplay()
+        {
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var perception = new SkirmishPublicPerception
+            {
+                Playing = true,
+                PlayerDesignatedAlive = true,
+                EnemyDesignatedAlive = true,
+                OwnMaterials = 450,
+                OwnFuel = 350,
+                OwnInfantryLive = 12,
+                OwnGroundLive = 2,
+                OwnSupplyLive = 20,
+                OwnSupplyCap = 128,
+                VisibleHostileAir = 1
+            };
+            SkirmishRoleOverlay[] overlays = SkirmishRoleOverlayCatalog.CreateAirMobileSlice();
+            SkirmishStrategyScore air = SkirmishStrategyScoring.ScoreBaseAssault(
+                perception, authored.ArmyAir, SkirmishReadinessStage.Field, overlays, SkirmishStrategyPriority.None);
+            Assert.AreEqual(SkirmishStrategyPriority.RecruitCounter, air.Priority);
+            Assert.AreEqual(SkirmishRoleKind.AntiAir, air.RecruitRole);
+            Assert.AreEqual("counter.aa", air.Field);
+
+            perception.VisibleHostileAir = 0;
+            SkirmishStrategyScore ground = SkirmishStrategyScoring.ScoreBaseAssault(
+                perception, authored.ArmyGround, SkirmishReadinessStage.Established,
+                SkirmishRoleOverlayCatalog.CreateS002GroundSlice(), SkirmishStrategyPriority.None);
+            Assert.AreNotEqual(SkirmishRoleKind.AntiAir, ground.RecruitRole);
+
+            var aaSkill = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = 1,
+                CanAffordAntiAir = true,
+                RecruitControlAvailable = true,
+                OwnInfantry = 8,
+                CanAffordRifle = true
+            });
+            Assert.AreEqual(SkirmishAriaSkillKind.Recruit, aaSkill.Skill);
+            Assert.AreEqual("recruit.aa", aaSkill.Field);
+
+            var padSkill = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = 1,
+                CanAffordAntiAir = false,
+                PadReady = false,
+                AirPadControlAvailable = true,
+                OwnInfantry = 20,
+                RecruitControlAvailable = true
+            });
+            Assert.AreEqual(SkirmishAriaSkillKind.Inspect, padSkill.Skill);
+            Assert.AreEqual("pad.not_ready", padSkill.Field);
+
+            using var world = new World(nameof(S003AirMobilePublicControlsDoNotMutateGameplay));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawnS003(em, out Entity session, out SkirmishResolvedSetup setup);
+            int playerMaterials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            SkirmishScenarioSpawnSystem.CreateForceMember(
+                em,
+                sessionId,
+                new SkirmishResolvedForceEntry
+                {
+                    FactionId = 1,
+                    RoleId = SkirmishRoleIds.AttackHeliLight,
+                    RoleKind = SkirmishRoleKind.AttackHeliLight,
+                    Quantity = 1,
+                    SupplyCost = 8,
+                    RuntimePrefabKey = SkirmishRoleCatalogConfig.RuntimePrefabKey(SkirmishRoleKind.AttackHeliLight)
+                },
+                90,
+                0,
+                8,
+                SkirmishRoleCatalogConfig.RuntimePrefabKey(SkirmishRoleKind.AttackHeliLight));
+            using (var spawned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent)))
+            {
+                SkirmishRosterProjectionSystem.Apply(em, spawned, sessionId, setup);
+            }
+
+            SkirmishFogService.Project(em, session);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishStrategyScore executed = SkirmishEnemyStrategySystem.Evaluate(
+                em, session, owned, authored.ArmyAir);
+            Assert.AreEqual(SkirmishStrategyPriority.RecruitCounter, executed.Priority);
+            Assert.AreEqual(SkirmishRoleKind.AntiAir, executed.RecruitRole);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+
+            SkirmishAriaPublicView projected = SkirmishAriaPublicProjection.FromSession(
+                em, session, authored.ArmyAir);
+            Assert.AreEqual(playerMaterials, projected.OwnMaterials);
+            Assert.IsTrue(projected.CanAffordAntiAir);
+            Assert.IsFalse(projected.PadReady);
+            Assert.IsFalse(projected.CanAffordTank);
+
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                Infantry = 8,
+                CanAffordRifle = true,
+                CanAffordAntiAir = true,
+                VisibleHostileAir = 1,
+                PadReady = false,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                Recruit = new AriaTouchTarget { Id = 41, Available = true },
+                RecruitAntiAir = new AriaTouchTarget { Id = 51, Available = true },
+                AirPad = new AriaTouchTarget { Id = 52, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Recruit, plan.Intent);
+            Assert.AreEqual(51, output.TargetId);
+            Assert.AreEqual(AriaPlayObservationKind.Control, output.Kind);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+            view.CanAffordAntiAir = false;
+            view.RecruitAntiAir = new AriaTouchTarget { Id = 51, Available = false };
+            view.AirQueueOffered = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
+            Assert.AreEqual(52, output.TargetId);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -219,6 +353,7 @@ namespace Game.Tests.Editor
                 suite.AriaSkillsStayOnVisibleControlsAndHandBackAfterRetries();
                 suite.ExpandedAriaPlanTargetsPublicControlsWithoutGameplayMutation();
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
+                suite.S003AirMobilePublicControlsDoNotMutateGameplay();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }
             catch (Exception exception)
@@ -240,6 +375,42 @@ namespace Game.Tests.Editor
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 104731,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+            SkirmishArmyGroupSystem.RefreshAlive(
+                em,
+                session,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+        }
+
+        private static void CompileAndSpawnS003(EntityManager em, out Entity session, out SkirmishResolvedSetup setup)
+        {
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S003",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS003FirstVisit.SeedA,
                 authored,
                 matrix,
                 manifest,

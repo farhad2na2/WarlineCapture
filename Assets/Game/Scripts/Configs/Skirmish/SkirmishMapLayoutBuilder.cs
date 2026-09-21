@@ -154,7 +154,7 @@ namespace Game.Configs
         public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup)
         {
             return setup != null &&
-                   setup.CatalogId == "S002" &&
+                   (setup.CatalogId == "S002" || setup.CatalogId == "S003") &&
                    setup.DifficultyId == SkirmishDifficultyId.Regular &&
                    setup.SizeId == SkirmishSizeId.Standard;
         }

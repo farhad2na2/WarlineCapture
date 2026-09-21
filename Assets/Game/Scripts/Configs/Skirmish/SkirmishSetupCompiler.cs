@@ -291,6 +291,7 @@ namespace Game.Configs
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
+            SkirmishMapLayoutBuilder.BindRegularStandard(setup, definition.MapLayout, reasons);
             setup.SetupHash = ComputeHash(setup, seed);
             setup.Report = BuildReport(setup);
             return setup;

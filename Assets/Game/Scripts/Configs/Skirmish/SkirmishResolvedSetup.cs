@@ -15,6 +15,8 @@ namespace Game.Configs
         public int SupplyCost;
         public string SpawnAnchorId;
         public string ObjectiveRoleId;
+        public float SpawnWorldX;
+        public float SpawnWorldZ;
     }
 
     [Serializable]
@@ -25,6 +27,8 @@ namespace Game.Configs
         public string SpawnAnchorId;
         public string ObjectiveRoleId;
         public bool DesignatedBase;
+        public float SpawnWorldX;
+        public float SpawnWorldZ;
     }
 
     [Serializable]
@@ -95,5 +99,28 @@ namespace Game.Configs
         public int LastSeenExpireSeconds = 20;
         public string CheckpointVersion = "skirmish.checkpoint.v1";
         public string Report = string.Empty;
+        public bool MeasuredLayoutBound;
+        public float WorldWidthMetres;
+        public float WorldDepthMetres;
+        public float GridOriginX;
+        public float GridOriginZ;
+        public float CellSize;
+        public float PlayerBaseWorldX;
+        public float PlayerBaseWorldZ;
+        public float EnemyBaseWorldX;
+        public float EnemyBaseWorldZ;
+        public float PlayerStagingWorldX;
+        public float PlayerStagingWorldZ;
+        public float EnemyStagingWorldX;
+        public float EnemyStagingWorldZ;
+        public float PlayerSpawnPadX;
+        public float PlayerSpawnPadZ;
+        public float PlayerRallyPadX;
+        public float PlayerRallyPadZ;
+        public float EnemySpawnPadX;
+        public float EnemySpawnPadZ;
+        public float EnemyRallyPadX;
+        public float EnemyRallyPadZ;
+        public string DefaultRouteId = string.Empty;
     }
 }

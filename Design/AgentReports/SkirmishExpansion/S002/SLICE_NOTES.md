@@ -207,16 +207,45 @@ merge commit. That tree was not edited in this slice.
 - This is live Base Assault pause/result/replay wiring, not device, OS
   interruption, War/Large War, or full recovery certification.
 
+### Measured Desert Base layout (SK-11)
+- `SkirmishMapLayoutBuilder` / `SkirmishMapLayoutValidation` author the
+  Desert Base Base Assault envelope the compiler already consumes:
+  600 × 420 m, origin (−300, −210), cell size 2 m, west→east. Normalised
+  MAP_IMPLEMENTATION candidates are projected to stored world transforms.
+  Legal pads (Barracks, Ground Staging, infantry/vehicle spawn, rally,
+  service, air return, supply, expansions) sit on those anchors and do not
+  share a cell. Three independent routes keep distinct interiors:
+  highway (`route.skirmish.db.main`), north ruins (`flank_a`), south sweep
+  (`flank_b`).
+- Regular Standard Skirmish mission 4 binds spawn and Ground Staging to
+  those pads. Infantry open on the infantry pad, tanks / APC / car on the
+  vehicle pad, designated Barracks on the base pad, Ground Staging on the
+  staging pad with vehicle spawn / rally sockets. War / Large War and
+  Custom / legacy snapshots do not take this bind.
+- Transit times are **provisional** (authoring speeds: infantry 4 m/s,
+  ground 8 m/s, air 16 m/s) until a device walk of the shared Desert Base
+  scene. First-contact assumes both sides advance and meet at mid-route.
+
+| Route | Length | Infantry first contact | Infantry one-way | Ground first contact | Width |
+|---|---|---|---|---|---|
+| Highway (main) | 384 m | 48 s (target 45–75) | 96 s | 24 s | 12 m |
+| North ruins (`flank_a`) | 666 m | 83 s (target 75–105) | 167 s | 42 s | 6 m (infantry / APC) |
+| South sweep (`flank_b`) | 608 m | 76 s (target 75–105) | 152 s | 38 s | 12 m |
+
+- Not yet: baked navigation probes, wreck blockage, War/Large War staging
+  growth, or the other four map packets. No scene geometry was edited.
+
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
   live Standard ground movement + legal enemy/ARIA BA skills + registry
   GameObject visuals / Ground Staging yard + hidden-health HUD + live
   pause/result/replay through the SK-10 codec + HQ/Ground Staging research
-  scaffolding and 75% mid-produce refunds) but **not Playable**, not
-  ARIA/War certified, not Accepted. Programmer 1 validated tip `cc3c5471e`
-  (definitions, objectives, economy, army, aria, visual, checkpoint). This
-  slice extends the economy suite inside the same seven markers.
+  scaffolding and 75% mid-produce refunds + measured Desert Base pads and
+  routes) but **not Playable**, not ARIA/War certified, not Accepted.
+  Programmer 1 validated tip `d39dd7cb2` (definitions, objectives, economy,
+  army, aria, visual, checkpoint). This slice extends the definition suite
+  inside the same seven markers.
 
 ## Remaining ticket gaps
 
@@ -228,7 +257,7 @@ merge commit. That tree was not edited in this slice.
 | Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
 | Base Assault objective depth (SK-06) | World-damage fixtures; EN/FA last-seen copy; device-facing pause chrome |
 | Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery |
-| Measured layout ticket (SK-11) | Measured Desert Base layout, legal pads, route times |
+| Measured layout ticket (SK-11) | Device-measured navigation on the shared Desert Base scene; War/Large War staging reservations; City Crossroads / Mountain Pass / Industrial Basin / Airfield Plains packets |
 | Publication and localization ticket (SK-12) | Quick Custom briefing/HUD, EN/FA catalog wiring, publication validator |
 | Acceptance evidence ticket (SK-13) | Manual + ARIA win matrix, device/recovery evidence |
 
@@ -309,10 +338,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedCheckpointTests] result=Passed"
 ```
 
-Required markers (same seven suites; new cases live inside army, objective, and
-checkpoint):
+Required markers (same seven suites; new cases live inside definitions):
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
+  (adds `CompilerAcceptsTypedDesertBaseLayout`,
+  `RegularStandardBindsMeasuredPadsAndRoutes`,
+  `CustomAndLegacyDoNotBindMeasuredLayout`)
 - `[SkirmishExpandedObjectiveTests] result=Passed`
   (adds `HiddenHealthProjectsVisibleLastSeenAndUnknown`)
 - `[SkirmishExpandedEconomyTests] result=Passed`
@@ -335,13 +366,17 @@ Optional compiler / Ground Staging rebuild:
 ```
 Tools/Warline/Skirmish/Rebuild Expanded Definitions
 Tools/Warline/Skirmish/Rebuild Ground Staging
+Tools/Warline/Skirmish/Rebuild Desert Base Layout
 ```
 
 A live Editor match on Desert Base Regular Standard should show starting
 tank / APC / infantry GameObjects and a Ground Staging yard (registry prefabs
 when the unit registry is supplied to expanded launch or already loaded;
 otherwise named presentation stand-ins, including the authored Ground Staging
-prefab when that asset imports). Entities must not stay invisible.
+prefab when that asset imports). Entities must not stay invisible. Regular
+Standard spawn and Ground Staging sit on the measured legal pads
+(player staging −192, 0; Barracks −228, 0), not the old 40 m placeholder
+extent.
 
 4. Legacy smoke: Quick Custom still offers Skirmish 1 Desert Base prototype
    (index 0), Skirmish 2 City Crossroads (index 1), and Farhad’s Skirmish 3

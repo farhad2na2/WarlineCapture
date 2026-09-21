@@ -247,6 +247,95 @@ public sealed class SkirmishExpandedDefinitionTests
     }
 
     [Test]
+    public void CompilerAcceptsTypedDesertBaseLayout()
+    {
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        SkirmishMapLayoutConfig layout = authored.LayoutDbBa;
+        var reasons = new List<SkirmishCompileReason>();
+        Assert.IsTrue(SkirmishMapLayoutValidation.TryValidateDesertBaseAssault(layout, reasons),
+            reasons.Count == 0 ? "layout validation failed" : reasons[0].ToString());
+        Assert.AreEqual("layout.skirmish.db.ba", layout.LayoutId);
+        Assert.AreEqual("opmap.skirmish.desert_base_01", layout.OperationMapId);
+        Assert.AreEqual(600f, layout.WorldWidthMetres);
+        Assert.AreEqual(420f, layout.WorldDepthMetres);
+        Assert.IsTrue(layout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig staging));
+        Assert.AreEqual(-192f, staging.WorldX, 0.05f);
+        Assert.AreEqual(0f, staging.WorldZ, 0.05f);
+        Assert.IsTrue(layout.TryGetPad(1, SkirmishLegalPadKind.GroundStaging, out _));
+        Assert.IsTrue(layout.TryGetPad(1, SkirmishLegalPadKind.InfantrySpawn, out _));
+        Assert.IsTrue(layout.TryGetRoute(SkirmishMeasuredRouteKind.MainHighway, out SkirmishLayoutRouteConfig highway));
+        Assert.IsTrue(layout.TryGetRoute(SkirmishMeasuredRouteKind.FlankNorthRuins, out SkirmishLayoutRouteConfig north));
+        Assert.IsTrue(layout.TryGetRoute(SkirmishMeasuredRouteKind.FlankSouthSweep, out SkirmishLayoutRouteConfig south));
+        Assert.IsTrue(highway.ProvisionalTimes);
+        Assert.GreaterOrEqual(highway.InfantryFirstContactSeconds, 45f);
+        Assert.LessOrEqual(highway.InfantryFirstContactSeconds, 75f);
+        Assert.GreaterOrEqual(north.InfantryFirstContactSeconds, 75f);
+        Assert.LessOrEqual(north.InfantryFirstContactSeconds, 105f);
+        Assert.GreaterOrEqual(south.InfantryFirstContactSeconds, 75f);
+        Assert.AreEqual("route.skirmish.db.main", highway.RouteId);
+    }
+
+    [Test]
+    public void RegularStandardBindsMeasuredPadsAndRoutes()
+    {
+        CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup setup, out SkirmishLaunchPayload payload);
+        Assert.IsTrue(setup.MeasuredLayoutBound);
+        Assert.IsFalse(payload.IsCustom);
+        Assert.IsFalse(payload.IsLegacy);
+        Assert.AreEqual("layout.skirmish.db.ba", setup.LayoutId);
+        Assert.AreEqual("route.skirmish.db.main", setup.DefaultRouteId);
+        Assert.AreEqual(-228f, setup.PlayerBaseWorldX, 0.05f);
+        Assert.AreEqual(0f, setup.PlayerBaseWorldZ, 0.05f);
+        Assert.AreEqual(-192f, setup.PlayerStagingWorldX, 0.05f);
+        Assert.AreEqual(0f, setup.PlayerStagingWorldZ, 0.05f);
+        Assert.AreEqual(192f, setup.EnemyStagingWorldX, 0.05f);
+        Assert.AreNotEqual(setup.PlayerStagingWorldX, setup.PlayerSpawnPadX);
+        Assert.AreNotEqual(setup.PlayerSpawnPadX, setup.PlayerRallyPadX);
+
+        Assert.IsTrue(TryFindStructure(setup, 1, SkirmishStructureIds.GroundStaging, out SkirmishResolvedStructureEntry staging));
+        Assert.AreEqual(setup.PlayerStagingWorldX, staging.SpawnWorldX, 0.05f);
+        Assert.AreEqual(setup.PlayerStagingWorldZ, staging.SpawnWorldZ, 0.05f);
+        Assert.IsTrue(TryFindStructure(setup, 1, SkirmishStructureIds.Barracks, out SkirmishResolvedStructureEntry barracks));
+        Assert.AreEqual(setup.PlayerBaseWorldX, barracks.SpawnWorldX, 0.05f);
+
+        Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Rifle, out SkirmishResolvedForceEntry rifle));
+        Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Tank, out SkirmishResolvedForceEntry tank));
+        Assert.AreNotEqual(rifle.SpawnWorldX, tank.SpawnWorldX);
+        Assert.AreEqual("anchor.skirmish.db.staging_player", rifle.SpawnAnchorId);
+
+        Assert.IsTrue(SkirmishVisualSpawnService.TryResolveMeasuredWorld(
+            setup, 1, true, SkirmishStructureIds.GroundStaging, SkirmishRoleKind.None, 0, out Vector3 stagingWorld));
+        Assert.AreEqual(setup.PlayerStagingWorldX, stagingWorld.x, 0.05f);
+        Assert.IsTrue(SkirmishVisualSpawnService.TryResolveMeasuredWorld(
+            setup, 1, false, string.Empty, SkirmishRoleKind.Tank, 0, out Vector3 tankWorld));
+        Assert.AreEqual(tank.SpawnWorldX, tankWorld.x, 0.05f);
+    }
+
+    [Test]
+    public void CustomAndLegacyDoNotBindMeasuredLayout()
+    {
+        CompileS002(SkirmishSizeId.War, 393243, out SkirmishResolvedSetup war, out _);
+        Assert.IsFalse(war.MeasuredLayoutBound);
+        Assert.AreEqual(0f, war.PlayerStagingWorldX);
+        Assert.AreEqual(0f, war.Forces[0].SpawnWorldX);
+
+        var custom = new SkirmishResolvedSetup
+        {
+            CatalogId = "S002",
+            DifficultyId = SkirmishDifficultyId.Regular,
+            SizeId = SkirmishSizeId.Standard
+        };
+        Assert.IsFalse(custom.MeasuredLayoutBound);
+        Assert.IsFalse(SkirmishVisualSpawnService.TryResolveMeasuredWorld(
+            custom, 1, true, SkirmishStructureIds.GroundStaging, SkirmishRoleKind.None, 0, out _));
+
+        var legacyPayload = SkirmishLaunchPayload.CreateLegacy(0, 0);
+        Assert.IsTrue(legacyPayload.IsLegacy);
+        Assert.IsFalse(legacyPayload.IsCustom);
+        Assert.AreNotEqual("layout.skirmish.db.ba", legacyPayload.LayoutId);
+    }
+
+    [Test]
     public void ExpandedLaunchResolverCompilesS002()
     {
         using var world = new World(nameof(ExpandedLaunchResolverCompilesS002));
@@ -288,6 +377,9 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.LegacyPrototypeIndicesRemainReserved();
             suite.S002GroundOverlaysAndProductionGate();
             suite.S002SpawnProjectsRoleOverlaysAndGroundStaging();
+            suite.CompilerAcceptsTypedDesertBaseLayout();
+            suite.RegularStandardBindsMeasuredPadsAndRoutes();
+            suite.CustomAndLegacyDoNotBindMeasuredLayout();
             suite.ExpandedLaunchResolverCompilesS002();
             Debug.Log("[SkirmishExpandedDefinitionTests] result=Passed");
         }
@@ -361,6 +453,42 @@ public sealed class SkirmishExpandedDefinitionTests
         }
 
         return true;
+    }
+
+    private static bool TryFindStructure(
+        SkirmishResolvedSetup setup,
+        byte faction,
+        string structureId,
+        out SkirmishResolvedStructureEntry structure)
+    {
+        structure = default;
+        for (int i = 0; i < setup.Structures.Length; i++)
+        {
+            if (setup.Structures[i].FactionId != faction || setup.Structures[i].StructureId != structureId)
+                continue;
+            structure = setup.Structures[i];
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryFindForce(
+        SkirmishResolvedSetup setup,
+        byte faction,
+        SkirmishRoleKind role,
+        out SkirmishResolvedForceEntry force)
+    {
+        force = default;
+        for (int i = 0; i < setup.Forces.Length; i++)
+        {
+            if (setup.Forces[i].FactionId != faction || setup.Forces[i].RoleKind != role)
+                continue;
+            force = setup.Forces[i];
+            return true;
+        }
+
+        return false;
     }
 
     private static bool HasStructure(SkirmishResolvedSetup setup, string structureId, bool designated)

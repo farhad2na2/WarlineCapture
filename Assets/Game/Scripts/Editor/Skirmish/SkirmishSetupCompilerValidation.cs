@@ -43,6 +43,8 @@ namespace Game.Editor
                     throw new InvalidOperationException("S002 " + sizes[i] + " failed: " + Format(reasons));
                 if (setup.CatalogId != "S002")
                     throw new InvalidOperationException("Compiled catalog id drifted.");
+                if (sizes[i] == SkirmishSizeId.Standard && !setup.MeasuredLayoutBound)
+                    throw new InvalidOperationException("Regular Standard must bind the measured Desert Base layout.");
                 compiled++;
             }
 

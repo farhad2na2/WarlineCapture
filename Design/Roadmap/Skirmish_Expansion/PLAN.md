@@ -1,11 +1,13 @@
 # Skirmish expansion: combined arms and large battles
 
-Updated: 2026-09-20. Status: documented expansion target; large-roster/120-scenario implementation has not started. The separate two-scenario small baseline has EN/FA Editor victories; that does not certify this expansion.
-Source reviewed: `c69865400` on `codex/m03-radar-warning`.
+Updated: 2026-09-21. Status: expanded scenarios remain **Planned**, not runtime-accepted. The [implementation handoff for battles 4–120](IMPLEMENTATION_HANDOFF.md) adds a fresh source audit, exact class/asset contracts, fourteen programming packages, and individual briefs for all 120 stable catalog IDs. Three prototype mappings now exist in source; their evidence does not certify expanded scenarios.
+Historical source review: `c69865400` on `codex/m03-radar-warning`; September 21 inspection includes current uncommitted Industrial Basin/library work and is explicitly source-only.
 
 This plan answers the request to use the wider roster and fight battles involving hundreds of units. It follows the small [Base Assault prototype](../Skirmish_Prototype/COMPLETION.md) and changes the [roadmap](../README.md) priority: prove a richer, scalable Skirmish before investing in progression or more game modes. Historical prototype acceptance is not acceptance of this expansion.
 
-Detailed catalog: [120 battles and path to 200](BATTLE_CATALOG.md), [five map briefs](MAPS.md), [difficulty/starting packages/economy](MATCH_SETUP.md), [enemy AI and ARIA](AI_AND_ARIA.md), [all 120 candidate IDs](SCENARIO_CATALOG.csv). These supplements refine this plan; their explicit catalog/setup decisions supersede earlier conflicting proposals. Numerical costs/timings remain balance-test inputs. Operations planning is next and outside this task.
+Detailed catalog: [120 battles and path to 200](BATTLE_CATALOG.md), [five map briefs](MAPS.md), [difficulty/starting packages/economy](MATCH_SETUP.md), [enemy AI and ARIA](AI_AND_ARIA.md), [all 120 candidate IDs](SCENARIO_CATALOG.csv). These supplements refine this plan; explicit September 21 implementation corrections supersede conflicting older proposals. Numerical costs/timings remain balance-test inputs. [Operations](../Operations/PLAN.md) has a separate plan and scope.
+
+For programming, start with [TECHNICAL_ARCHITECTURE](TECHNICAL_ARCHITECTURE.md), [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md), [all battle packets](Scenarios/README.md) and the [117 remaining work items](WORK_QUEUE_004_120.csv). Existing prototypes are S001/S025/S073; work ordinals 4–120 are not runtime indices or a renumbering of S-IDs. Every released entry requires ARIA to play and win through normal visible controls.
 
 Companions: [source audit](BASELINE.md), [delivery packages](DELIVERY.md), [acceptance and performance gates](ACCEPTANCE.md), [unit unlocks and upgrades](UNLOCKS_AND_UPGRADES.md).
 
@@ -64,7 +66,7 @@ All validated standard roster entries are available in Skirmish without campaign
 
 Every existing unit/building receives a disposition: standard roster, role variant, alternate-faction roster, scenario/Sandbox-only, or blocked by a named missing behavior. “All units” means a route to using the suitable roster, not dozens of interchangeable buttons or unsupported abilities presented as working.
 
-Ground production should use existing request/delivery systems. Package E1 must resolve the real producer mapping: Barracks for infantry, an explicitly identified ground staging/producer location for vehicles, Helipad for helicopters, Airport for jets/heavy transport. Reuse appropriate existing assets before adding a new factory model. Never publish a vehicle card until its producer and delivery route are implemented and explained.
+Ground production uses existing request/delivery systems. The producer decision is now specified in [ROSTER_AND_ECONOMY_IMPLEMENTATION](ROSTER_AND_ECONOMY_IMPLEMENTATION.md): Barracks for infantry, a new modular Ground Staging prefab for vehicles and a separate logistics queue, Helipad for helicopters, Airport for jets/heavy transport, and an expanded intel-station drone pad. Never publish a vehicle card until its producer and delivery route are implemented and explained.
 
 ## 4. A battle with decisions throughout
 

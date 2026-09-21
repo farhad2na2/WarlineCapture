@@ -1,6 +1,8 @@
 # Five Skirmish battlefield briefs
 
-Planning specification, 2026-09-20. Each battlefield hosts 24 candidate scenarios from [BATTLE_CATALOG.md](BATTLE_CATALOG.md). Dimensions and travel times below are authoring targets requiring real navigation measurements. These are not claims about current baked geometry. DB and CC reuse/rework the existing environment; MP, IB and AP are proposed layouts, not completed assets. A logical battlefield may reuse a shared scene region only if its complete playable geometry meets this brief.
+Planning specification, updated 2026-09-21. Each battlefield hosts 24 candidate scenarios from [BATTLE_CATALOG.md](BATTLE_CATALOG.md). Dimensions and travel times below are authoring targets requiring real navigation measurements. These are not claims about current baked geometry. DB/CC reuse the existing environment, and IB prototype map assets/wiring are now present in the working tree; none certifies the expanded layouts. MP/AP remain new authoring work. A logical battlefield may reuse a shared scene region only if its complete playable geometry meets this brief.
+
+Use [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md) for exact proposed builders, typed anchors/routes, normalized placement candidates, five map IDs, twenty objective layouts, defender allocation and geometry tests. The [battle packets](Scenarios/README.md) bind every S-ID to those layouts. Geometry adjustments must be measured in the real map; planning coordinates are not baked-navigation evidence.
 
 ## Shared map contract
 

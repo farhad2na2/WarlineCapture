@@ -1,6 +1,6 @@
 # Unit unlocks and upgrades
 
-Recorded: 2026-09-18. Status: accepted design direction, documented at the owner's request. **Implementation has not started; wait for the owner's next instruction.** Updated 2026-09-20: [MATCH_SETUP.md](MATCH_SETUP.md) supplies explicit initial costs, starting packages, upgrade/refund rules and producer dependencies. These are tuning specifications, not implemented or measured balance.
+Recorded: 2026-09-18. Status: accepted design direction; implementation remains pending. Updated 2026-09-21: [MATCH_SETUP.md](MATCH_SETUP.md) supplies initial costs and packages; [ROSTER_AND_ECONOMY_IMPLEMENTATION](ROSTER_AND_ECONOMY_IMPLEMENTATION.md) resolves actual role sources, Ground Staging and other producers; [TECHNICAL_ARCHITECTURE](TECHNICAL_ARCHITECTURE.md) specifies `SkirmishResearchSystem`, receipts, prerequisites and persistence. These are implementation/tuning specifications, not measured balance. SK-02/03 in [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md) are ready for a programming assignment; this documentation update does not start that implementation.
 
 This document defines the unlock and upgrade direction for the [Skirmish expansion](PLAN.md). It separates match progression from future permanent Campaign/Operations progression.
 

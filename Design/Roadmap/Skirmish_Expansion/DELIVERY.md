@@ -1,12 +1,12 @@
 # Delivery packages
 
-Updated 2026-09-20: expansion packages remain **planned**, not implemented or acceptance-tested. Two small Base Assaults have separate EN/FA Editor evidence; they are not the expansion. The planning/source-review work is complete. The owner accepted the [unlock and upgrade direction](UNLOCKS_AND_UPGRADES.md) for documentation and will provide the next instruction. Follow [PLAN.md](PLAN.md) and close each package against [ACCEPTANCE.md](ACCEPTANCE.md).
+Updated 2026-09-21: expansion packages remain **planned**, not implemented or acceptance-tested. The three source prototype mappings are not expanded-content acceptance. [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md) decomposes E0–E8 into fourteen concrete programming tickets with classes, dependencies, evidence and a copy-ready assignment. Use the [117 remaining work list](WORK_QUEUE_004_120.csv) and [twenty packets covering all 120 entries](Scenarios/README.md); no further mission-design choices are required from the owner. Follow [PLAN.md](PLAN.md) and close each package against [ACCEPTANCE.md](ACCEPTANCE.md).
 
 Maintain one issue ledger: `ID | reproduction/seed | expected | actual | severity | owner | narrow fix | impacted modes | evidence | status`. A screenshot, successful method call, or green unit test cannot alone close a player interaction bug.
 
 ## Catalog and scope ownership
 
-Deliver the [120-scenario catalog](BATTLE_CATALOG.md), [five maps](MAPS.md), [setup packages](MATCH_SETUP.md) and [AI/ARIA behavior](AI_AND_ARIA.md). The catalog CSV is the planned inventory; add runtime content hashes and evidence when implementing. Operations is the next separate design task. Do not expand its gameplay or progression during this package.
+Deliver the [120-scenario catalog](BATTLE_CATALOG.md), [five maps](MAPS.md), [setup packages](MATCH_SETUP.md) and [AI/ARIA behavior](AI_AND_ARIA.md). The catalog CSV is the planned inventory; add runtime content hashes and evidence when implementing. Operations has its own planning package; its gameplay/progression is outside this delivery scope. The source-level contracts, resolved Ground Staging producer and corrected economy are in the September 21 handoff supplements.
 
 ## Sequence and review gates
 

@@ -2,6 +2,10 @@
 
 Reviewed 2026-09-18 at `c69865400`. This is source/config inspection and review of existing reports, not a new gameplay or device run.
 
+## September 21 implementation audit
+
+Read [IMPLEMENTATION_HANDOFF](IMPLEMENTATION_HANDOFF.md) for the current loader, population, rules, ARIA and save seams, including the third prototype mapping. The original findings below remain historical. The [74-configuration source inventory](ROSTER_SOURCE_AUDIT.csv) records actual filenames, hashes, proposed roles and explicit pending runtime certification. [TECHNICAL_ARCHITECTURE](TECHNICAL_ARCHITECTURE.md) and [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md) assign each gap to concrete classes and deliverables. No fresh Unity, ARIA or device result is claimed by this audit.
+
 ## September 20 planning update
 
 The source findings below remain the dated September 18 audit, not a fresh inventory. Since then two small Base Assault scenarios and four default EN/FA ARIA victories have been documented in [current evidence](../../AgentReports/AriaWatchPlay/skirmish-two-scenario-delivery.md). They do not implement the larger roster or certify other seeds/device sizes. The CC floating-ground defect remains open.

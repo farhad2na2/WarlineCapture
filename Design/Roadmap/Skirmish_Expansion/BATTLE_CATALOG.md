@@ -1,6 +1,8 @@
 # Skirmish battle catalog: 120, expandable to 200
 
-Recorded 2026-09-20 at the owner's request. This is the product planning target, not implemented content. Numerical balance values are initial test specifications. This supplement supersedes the conversational suggestions of six maps or twelve battles as the complete experience. Operations design is a separate next planning task.
+Recorded 2026-09-20; technical handoff added 2026-09-21. This is the product planning target, not implemented content. Numerical balance values are initial test specifications. This supplement supersedes the conversational suggestions of six maps or twelve battles as the complete experience. Operations has its own separate planning package.
+
+Programming entry points: [implementation handoff](IMPLEMENTATION_HANDOFF.md), [twenty packets containing all 120 individual briefs](Scenarios/README.md), [implementation manifest](IMPLEMENTATION_MANIFEST.csv), [117 remaining work items](WORK_QUEUE_004_120.csv). Each brief names its asset identities, required classes/capabilities, starting forces, tactical alternatives, implementation sequence, edge cases and mandatory ARIA wins.
 
 ## Count and terminology
 
@@ -8,7 +10,7 @@ The first complete catalog targets **120 individually selectable, validated batt
 
 **5 battlefields × 4 objective types × 3 army configurations × 2 starting setups = 120 candidate scenarios.** There are 24 candidates per battlefield. The [catalog CSV](SCENARIO_CATALOG.csv) enumerates every stable ID and its configuration references; all entries begin Planned. The formula is an authoring inventory, not evidence that all combinations are fun or valid. A rejected combination must be redesigned or replaced with a materially different authored setup before counting it toward the release target. Never publish filler to reach a number.
 
-The two current small Base Assault scenarios are introductory prototypes. Evolve their expanded equivalents into S001 and S025; preserve the old configurations as regression/practice presets, without advertising them as extra battles. Existing play results must not migrate into victories for materially changed scenarios. Existing saves keep their old content version or return safely to setup.
+The three current prototype mappings are S001 (Desert Base, runtime index 0), S025 (City Crossroads, index 1) and S073 (Industrial Basin, index 3). Source wiring is not proof of runtime acceptance. Preserve these old configurations as regression/practice presets without advertising extra battles or transferring their wins to expanded definitions. Runtime index 2 is an Editor stress probe. Work ordinals 4–120 enumerate all other stable S-IDs; S002/S003 therefore remain new work. All 120 expanded definitions, including the prototype equivalents, require their own acceptance. Existing saves keep their old content version or return safely to setup.
 
 Companions: [map briefs](MAPS.md), [complete setup and economy](MATCH_SETUP.md), [enemy AI and ARIA](AI_AND_ARIA.md), [implementation order](DELIVERY.md), [acceptance](ACCEPTANCE.md).
 

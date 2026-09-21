@@ -4,6 +4,7 @@ using System.IO;
 using Game.Components;
 using Game.Configs;
 using Game.Runtime;
+using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
@@ -104,6 +105,36 @@ namespace Game.Editor
             string[] ids = { "saga.ch01.m01.first_contact", "saga.ch01.m02.establish_base", "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift", "saga.ch01.m05.breach_assault" };
             return UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy, ids[mission - 1]).ToString();
         }
+        public static string AcceptExpandedPayload(in SkirmishAriaAcceptancePayload payload)
+        {
+            if (!payload.TryValidate(out string error))
+                throw new ArgumentException(error, nameof(payload));
+            string line = "[AriaPlayEditorValidation] selected " + payload.FormatSelectedConfiguration();
+            Debug.Log(line);
+            return line;
+        }
+
+        public static string AcceptExpandedPayload(
+            string definitionId,
+            SkirmishSizeId size,
+            SkirmishDifficultyId difficulty,
+            int seed,
+            string locale)
+        {
+            if (!SkirmishAriaAcceptancePayload.TryCreate(
+                    SkirmishAcceptanceCensusCapture.CatalogId,
+                    definitionId,
+                    SkirmishAcceptanceCensusCapture.DefinitionVersion,
+                    size,
+                    difficulty,
+                    seed,
+                    locale,
+                    out SkirmishAriaAcceptancePayload payload,
+                    out string error))
+                throw new ArgumentException(error);
+            return AcceptExpandedPayload(in payload);
+        }
+
         public static string Status()
         {
             var em = World.DefaultGameObjectInjectionWorld.EntityManager;

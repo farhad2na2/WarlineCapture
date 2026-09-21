@@ -259,6 +259,23 @@ This slice did not edit `V3UiLocalizationCatalog`.
   version 1. A different version does not stamp those overrides.
 - `V3UiLocalizationCatalog` was not edited in this slice.
 
+### Acceptance evidence scaffolding (SK-13)
+- `acceptance.md` lists the first-visit matrix: one manual Regular Standard
+  victory (`104731` EN), the eighteen Regular Standard ARIA sample slots
+  (seeds `104731` / `130365` / `155923` × EN/FA × three attempts), and
+  edge / recovery / device placeholders. It also explains how to fill
+  `runs.csv`. Recruit / Veteran / Commander and War / Large War stay later.
+- `runs.csv` is header-only with the mandated fields. No Victory rows are
+  pre-written. Pure Editor reducers do not replace a normal-speed match.
+- `SkirmishAcceptanceCensusCapture` compiles Regular Standard and records
+  the starting-force census plus stable `code_hash` / `config_hash`. The
+  Editor probe `Tools/Warline/Skirmish/Capture S002 Regular Standard Census`
+  logs those hashes and does **not** mark Playable.
+- `AriaPlayEditorValidation`, `SkirmishExpandedAriaWatchValidation`, and the
+  existing Industrial Basin watch probe now accept the immutable
+  definition / size / difficulty / seed / locale payload and log the
+  selected configuration. They do not inject an army or award Victory.
+
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
@@ -266,9 +283,11 @@ This slice did not edit `V3UiLocalizationCatalog`.
   GameObject visuals / Ground Staging yard + hidden-health HUD + live
   pause/result/replay through the SK-10 codec + HQ/Ground Staging research
   scaffolding and 75% mid-produce refunds + measured Desert Base pads and
-  routes + library/HUD copy wiring) but **not Playable**, not ARIA/War
-  certified, not Accepted. Programmer 1 validated tip `3445eb97f` (seven
-  suites). This slice adds an eighth catalog/publication marker.
+  routes + library/HUD copy wiring + acceptance scaffold / hash census)
+  but **not Playable**, not ARIA/War certified, not Accepted. Programmer 1
+  validated tip `f73637f59` (eight suites). This slice adds a ninth
+  acceptance-scaffold marker. Game PM decides whether Editor evidence
+  alone can flip the publication row.
 
 ## Remaining ticket gaps
 
@@ -282,7 +301,7 @@ This slice did not edit `V3UiLocalizationCatalog`.
 | Checkpoint ticket (SK-10) | Device/OS interruption evidence, airborne passengers, in-flight queues, War/Large War recovery |
 | Measured layout ticket (SK-11) | Device-measured navigation on the shared Desert Base scene; War/Large War staging reservations; City Crossroads / Mountain Pass / Industrial Basin / Airfield Plains packets |
 | Publication and localization ticket (SK-12) | RTL/long-copy/device HUD review; expose certified extra sizes only after SK-13 evidence |
-| Acceptance evidence ticket (SK-13) | Manual + ARIA win matrix, device/recovery evidence |
+| Acceptance evidence ticket (SK-13) | Counted normal-speed manual and ARIA wins, filled `runs.csv` rows, device/recovery evidence. Scaffold and hashes are in place; Game PM owns the Playable flip |
 
 ## How to validate in Editor
 
@@ -370,7 +389,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedCatalogTests] result=Passed"
 ```
 
-Required markers (same seven suites plus catalog/publication):
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedAcceptanceTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-acceptance.log" `
+  -RequiredPassMarker "[SkirmishExpandedAcceptanceTests] result=Passed"
+```
+
+Required markers (same eight suites plus acceptance scaffold/hash plumbing):
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
   (adds `CompilerAcceptsTypedDesertBaseLayout`,
@@ -399,6 +427,13 @@ Required markers (same seven suites plus catalog/publication):
   `HashMismatchAndWrongMatrixRejectPlayable`,
   `LegacyPrototypeCompatibilityIsVersionedAndDoesNotPublishS002`,
   `CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress`)
+- `[SkirmishExpandedAcceptanceTests] result=Passed`
+  (`CheckedInRunsCsvUsesMandatedHeader`,
+  `AcceptanceMarkdownListsRequiredMatrix`,
+  `RegularStandardCensusCapturesStableHashesWithoutPlayable`,
+  `FirstVisitPayloadRejectsWarAndUnknownLocale`,
+  `AriaPlayAndWatchFacilitiesLogSelectedConfiguration`,
+  `PendingRunRowKeepsEmptyResultAndCensusProbeDoesNotPublish`)
 
 Optional compiler / Ground Staging rebuild:
 
@@ -407,6 +442,8 @@ Tools/Warline/Skirmish/Rebuild Expanded Definitions
 Tools/Warline/Skirmish/Rebuild Ground Staging
 Tools/Warline/Skirmish/Rebuild Desert Base Layout
 Tools/Warline/Skirmish/Validate S002 Publication
+Tools/Warline/Skirmish/Capture S002 Regular Standard Census
+Tools/Warline/Skirmish/Log S002 Regular Standard ARIA Watch Payload
 ```
 
 A live Editor match on Desert Base Regular Standard should show starting

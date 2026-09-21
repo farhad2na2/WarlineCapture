@@ -6,6 +6,12 @@ Planned map: `opmap.operations.old_quarter`. Reuse an existing published map ID 
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
+## Planned environment implementation — Demo 2
+
+Assigned kit: **Logistics; restrained Perimeter**. Retain established desert houses/lanes. Add only sparse medical crates or checkpoint props after readability review; preserve clinic/courtyard routes and civilian boundaries.
+
+Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+
 ## O001 — Street Signals
 
 **Intent and decision:** Locate the active relay by checking three known search courtyards. Split scouts for speed or keep the squad together for protection; courtyard visibility differs from street visibility.

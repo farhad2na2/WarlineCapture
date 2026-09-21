@@ -119,6 +119,8 @@ Within a tactical tick: commands → shared movement/combat/transport → death/
 
 ## Shared integration boundaries
 
+Environment reuse follows the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and existing map ownership chain. Adapted prefab/material references belong to map source/presentation or the owning gameplay definition, not city-state components or mission-ID code. Mission roles bind to typed anchors/objects; objective facts and saved identities remain independent of the selected model. Shared source edits require affected Campaign/Skirmish regression evidence. The planning asset manifest is never loaded as a runtime registry.
+
 Add mode-tagged launch dispatch in the shared match transition, with Campaign/Skirmish/Operations exclusivity assertions. Reuse `OperationMapReadinessComponent` / `ActiveOperationMapComponent`, `OperationMapSceneLoadingSceneSystemHelper` and the existing scene-load pipeline. Composition passes immutable payloads; an Operations launch system owns policy. Loader failures return to the original district selection and release reservations only after an acknowledged rollback.
 
 Extract mode-neutral scenario spawning, route following, objective interactions, extraction facts and breach facts only as each family needs them. Keep existing Campaign adapters and tests. A general `ScenarioRoleSpawnSystem` can own reusable projection if the first integration audit demonstrates that boundary; do not rename every Campaign class before the first Operations loop works. Shared transports, scan, building damage/placement, navigation, fog, selection and combat stay in their current owning systems.

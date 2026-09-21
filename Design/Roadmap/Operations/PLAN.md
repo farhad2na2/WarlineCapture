@@ -1,8 +1,10 @@
 # Operations: mode and mission production plan
 
-Recorded 2026-09-21. **Design proposal and implementation handoff; no Operations gameplay implementation or acceptance is claimed.** This package interprets the request as the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review.
+Recorded 2026-09-21. **Design proposal and implementation handoff.** P0 added Operations-owned contracts/schemas only; no Operations gameplay, launch loop, or acceptance is claimed. This package interprets the request as the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review. See [P0_BASELINE_RECHECK.md](P0_BASELINE_RECHECK.md), [P0_SHARED_SEAMS.md](P0_SHARED_SEAMS.md), and [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). Operations Unity work stays on `D:\Projects\WarlineCapture-Operations`.
 
 ## Recommended scope
+
+Environment sourcing amendment (2026-09-21): the [Demo 2 asset reuse plan](../../Demo2_Asset_Reuse_Plan.md) selects warehouse/logistics/utility art for D03 Industrial Belt and bridge/quay pieces for D04 River Crossing, with restrained service/perimeter accents in D02/D05/D06. D01 keeps the established desert architecture. Reuse is planned, not accepted gameplay; preserve O001–O060, both independent land crossings, existing feature limits and all mission gates. No naval or structural bridge-collapse mechanic follows from available art.
 
 Plan **60 individually authored tactical missions: six district arcs of ten missions**. Build them with **12 reusable mission families**, six district map layouts, and a persistent city simulation. Add six abstract command actions, which are **not counted as missions**. Difficulty settings, seeds, repeat appearances, failed-attempt retries, practice replays, and alternate outcome branches do not increase 60.
 
@@ -11,6 +13,8 @@ Skirmish's [120 planned scenarios](../Skirmish_Expansion/BATTLE_CATALOG.md) comb
 Treat 60 as a **full-mode planning target**, not the first playable delivery or a promise of release readiness. First prove a three-mission loop, then 12, 30, and finally 60. Additional districts can follow measured player demand; no expansion is counted in this package. A rejected mission must be redesigned or replaced under an explicit content revision, not padded with a trivial variant.
 
 ## Read this handoff in order
+
+For environment work, also read the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [source/output manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P2/P6 and the district briefs now include the adaptation assignments; use the guide's D2-A01–A04 work items and D2-V1–V6 gates alongside the mission handoff.
 
 | Document | Responsibility |
 |---|---|

@@ -6,6 +6,12 @@ Planned map: `opmap.operations.civic_center`. Reuse an existing published map ID
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
+## Planned environment implementation — Demo 2
+
+Assigned kit: **Utilities; restrained Perimeter**. Use generator/transformer/service enclosures near typed service or relay sites. Keep civic landmarks, both plaza approaches and the O018 pad/ground-ramp/flight clearance intact.
+
+Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+
 ## O011 — Signals Across the Plaza
 
 **Intent and decision:** Identify which public-service antenna is being used by the hostile network. Cross the exposed plaza quickly or use the longer covered colonnade.

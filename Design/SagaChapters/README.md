@@ -38,6 +38,10 @@ This folder owns Campaign chapter-specific design. `../Campaign_Narrative_Bible.
 
 ## Update Rules
 
+Mission implementation plans must include an `EnvironmentAssetManifest` with source/adapted GUIDs, material overrides, typed ownership, target map revision and evidence. Follow the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md); chapter files below now assign the relevant kits. Apply accepted art through the mission/map's existing builder and preserve all gameplay contracts. Imported sources and planned variants do not establish production readiness.
+
+Environment sourcing (2026-09-21): use the [Demo 2 asset reuse plan](../Demo2_Asset_Reuse_Plan.md) for future chapter art manifests. Priority assignments are CH02 supply/exchange/power/logistics sites, CH03 relay compounds and CH04 air-support/perimeter infrastructure; Chapter 5 reuses accepted modules. Preserve Chapter 1's desert baseline and concurrent Gridlock implementation. All mission IDs, story beats, feature-readiness fallbacks and gameplay contracts remain authoritative.
+
 - Keep the root level-and-mission plan high-level.
 - Preserve the chapter question, Protocol Fragment, character arc, and mission story beat from `../Campaign_Narrative_Bible.md`.
 - Check every required mechanic against `../Gameplay_Feature_Maturity_And_Campaign_Exposure_Matrix.md` before detailed design.

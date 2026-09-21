@@ -100,6 +100,8 @@ Repair is a shared ground-vehicle command with the exact range/cost/duration/thr
 
 ## SK-11 — maps and objective layouts
 
+- Include D2-A01/A02 from the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md): resolve the verified shortlist, create project-owned variants/materials and qualify one isolated IB logistics/utility yard. Record source/output GUIDs, scope, ownership and same-load desert comparison. This art pilot does not replace expanded DB as the first gameplay slice.
+- Apply accepted kits with D2-A03/A04 to the five maps as specified in MAP_IMPLEMENTATION. Treat crossing geometry, interactive objects and any future playable vehicle as separate capability work; retain vendor assets, shared Campaign anchors, current production bindings and frozen rollback output. Require D2-V1–V6 alongside SK-11/SK-13 evidence for changed content.
 - Implement `SkirmishMapLayoutBuilder`/validator and typed anchors/routes in [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md). Produce five map definitions and twenty objective layout definitions; each packet consumes the matching map/objective variant.
 - Reuse DB/CC/IB identities; MP/AP are new authored layouts. Start from the documented normalized candidates, fit actual ground geometry and measure routes. Store final world transforms in assets, not policy code. Preserve Campaign anchors in shared regions.
 - Author deployment grids, all producer exits, both base/expansion/air pads, FC polygons, BT corridors/muster/exit, CE three start bays/destination/holding pockets and service pads. Defender BT/CE groups follow the 40/40/20 allocation rule, with exactly two disclosed extra towers.

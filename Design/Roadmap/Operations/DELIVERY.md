@@ -1,6 +1,6 @@
 # Coding packages and agent handoff
 
-All packages **Planned**. This documentation task does not launch implementation agents, change game assets, or claim validation passes. The owner can assign these packets to coding agents. The implementation lead owns integration, scope and evidence; content agents must not independently modify shared contracts.
+P0 contracts are **Implemented on a bookmark branch** (schema/ID/assembly/ledger only). Remaining packages stay **Planned**. This does not claim Unity Editor, device, or ARIA validation. The implementation lead owns integration, scope and evidence; content agents must not independently modify shared contracts.
 
 ## Dependency sequence
 
@@ -23,7 +23,7 @@ Map greyboxes for D01 and one second district begin during P2 so the rules are n
 
 | Package | Concrete implementation | Exit evidence / responsibility |
 |---|---|---|
-| P0 — source and schema | Recheck BASELINE on assigned branch; inventory dirty/shared files; add Operations contracts, ID grammar, config schemas, typed enums and assembly references | Schema/assembly checks; migration fixtures; roster/feature availability ledger; no false existing-type assumptions |
+| P0 — source and schema | Recheck BASELINE on assigned branch; inventory dirty/shared files; add Operations contracts, ID grammar, config schemas, typed enums and assembly references | **Bookmark implemented:** `Game.Operations.Contracts` + `Game.Operations.Tests.Editor`; host marker `[OperationsP0Validation] result=Passed checks=13`; fixtures under `Assets/Tests/Editor/Operations/Fixtures/`; ledger in `P0_ROSTER_FEATURE_LEDGER.md`. Shared `SaveDataModel` / `OperationMapIdentityRules` / existing asmdefs were not edited. Windows Editor validation is Programmer 2 later, and only against the shadow worktree `D:\Projects\WarlineCapture-Operations` — never `D:\Projects\WarlineCapture`. See [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). |
 | P1 — strategic core | ECS run/district state, commands, AP, six actions, offers/incidents, metric tick, milestones, rewards, serialized profile commit, save migration | Deterministic day traces; floor recovery; duplicate/conflict/crash transaction tests; no account-wallet leakage |
 | P2 — tactical foundation | Role binding, spawn ownership, Scan/Hold/Interact/Repair/Escort/Extract rules, objective graph, facts, finite wave schedules and outcome precedence | Two-map fixtures, valid manual interactions, no mission-ID branching, compiler rejects bad graph/anchors/budgets |
 | P3 — real mode loop | Mode-tagged scene launch, reserve/refund, true mission result, atomic settlement, Operations HUD/briefing/result, root/header/history behavior, checkpoint adapters | Dashboard → deploy → real mission → correct district result → return; app interruption at every commit boundary |
@@ -37,6 +37,12 @@ Map greyboxes for D01 and one second district begin during P2 so the rules are n
 
 B12 is **O001/O002/O003, O011/O012, O021/O022, O031/O032, O041/O042, O051**. This intentionally includes the vertical-slice repair mission and defers O052 to B30. B30 is O001–O005, O011–O015, O021–O025, O031–O035, O041–O045, O051–O055. B60 adds every remaining catalog row. These are cumulative **published** counts; isolated engineering fixtures/prototypes are not released missions. All six district finales and city completion are unavailable until their dependencies are certified; early builds clearly label themselves a development slice.
 
+## Demo 2 environment tasks within P2/P6
+
+Use [D2-A01–A04](../../Demo2_Asset_Integration_Guide.md#7-delivery-packages-and-handoff). During P2 greyboxing, identify module needs and resolve source/GUID/ownership without waiting for all 120 Skirmish battles. P6 authors project-owned variants or reuses already qualified shared ones, then places district-specific Logistics/Utilities in D03 and Crossing in D04, with smaller D02/D05/D06 accents. A shared IB art pilot may supply qualified assets; an entire Skirmish gameplay package is not an art prerequisite. Existing desert assets remain the fallback while qualification is pending.
+
+The map owner records typed roles, material overrides, surface/clearance and scoped bake/hash changes. Integration/QA closes D2-V1–V6 with each affected B12/B30/B60 mission's own gameplay/ARIA evidence. Perimeter meshes cannot increase enemy budgets; utility art cannot create new production/electrical mechanics. This work leaves P0–P7 order, O001–O060 and the first D01 three-mission slice intact.
+
 ## Work ownership for multiple assigned agents
 
 | Lane | Files owned | Depends on | Must not independently change |
@@ -47,7 +53,7 @@ B12 is **O001/O002/O003, O011/O012, O021/O022, O031/O032, O041/O042, O051**. Thi
 | District content | Assigned district's configs, role/anchor mapping, localization entries and data-driven fixtures | Accepted required systems and map packet | Shared enums/asmdefs/systems or generated master catalog without integration-owner review |
 | QA | Isolated profiles, wrapper scripts/test fixtures, normal-play/ARIA recordings, evidence matrix | Exact pinned candidate build | Production saves, mission state during a claimed normal win, thresholds to manufacture success |
 
-This is a handoff model for future assignments, not permission to concurrently edit the same shared files. One owner merges `SaveDataModel`, `SaveService`, map identity rules, shared launch files, asmdefs, localization catalog builders and the master mission catalog. Existing Skirmish work is coordinated before touching its in-progress files. Worktrees, if used, require separate Unity project/library ownership under the repository's execution rules.
+This is a handoff model for future assignments, not permission to concurrently edit the same shared files. One owner merges `SaveDataModel`, `SaveService`, map identity rules, shared launch files, asmdefs, localization catalog builders and the master mission catalog. Existing Skirmish work is coordinated before touching its in-progress files. Operations uses the dedicated shadow worktree `D:\Projects\WarlineCapture-Operations` with its own Library. Do not open or lock `D:\Projects\WarlineCapture`.
 
 ## Copy-ready programming assignment
 

@@ -80,7 +80,7 @@ namespace Game.Operations.Contracts
 
     public readonly struct OperationsCampaignSchema
     {
-        public const int StartingActionPoints = 3;
+        public const int DefaultStartingActionPoints = 3;
         public const int StartingDay = 1;
 
         public OperationsCampaignSchema(
@@ -119,7 +119,7 @@ namespace Game.Operations.Contracts
                 new OperationsAdjacencyPair(4, 5),
                 new OperationsAdjacencyPair(5, 6)
             },
-            StartingActionPoints);
+            DefaultStartingActionPoints);
 
         public bool TryValidate(out string error)
         {
@@ -463,7 +463,7 @@ namespace Game.Operations.Contracts
 
     public readonly struct OperationsBalanceSchema
     {
-        public const int RaidMinimumIntel = 40;
+        public const int DefaultRaidMinimumIntel = 40;
         public const int LowSupplyThreshold = 30;
         public const int HighConfidenceThreshold = 70;
         public const int HighHeatThreshold = 70;
@@ -500,8 +500,8 @@ namespace Game.Operations.Contracts
 
         public static OperationsBalanceSchema CreateBaseline() => new(
             OperationsIdentityRules.CurrentSchemaVersion,
-            RaidMinimumIntel,
-            OperationsCampaignSchema.StartingActionPoints,
+            DefaultRaidMinimumIntel,
+            OperationsCampaignSchema.DefaultStartingActionPoints,
             2,
             2);
     }

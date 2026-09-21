@@ -29,7 +29,7 @@ namespace Game.Operations.Contracts
         public string runId = string.Empty;
         public int revision;
         public int day = OperationsCampaignSchema.StartingDay;
-        public int actionPoints = OperationsCampaignSchema.StartingActionPoints;
+        public int actionPoints = OperationsCampaignSchema.DefaultStartingActionPoints;
         public OperationsDifficultyKind difficulty = OperationsDifficultyKind.Regular;
         public int seed;
         public OperationsRunPhaseKind phase = OperationsRunPhaseKind.None;

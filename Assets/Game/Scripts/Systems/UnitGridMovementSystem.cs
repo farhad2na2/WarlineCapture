@@ -65,6 +65,17 @@ namespace Game.Runtime
             if ((uint)follow.PathIndex >= (uint)range.Length)
                 return;
 
+            // A resumed unit can retain a range after the shared pool changes.
+            // Checking only the current waypoint leaves the final waypoint read
+            // below out of bounds. Rebuild the path to the original destination.
+            if (range.Start < 0 || range.Start > Pool.Length || range.Length > Pool.Length - range.Start)
+            {
+                vehicleKinematics.CurrentSpeed = 0f;
+                vehicleKinematics.StallSeconds = 0f;
+                RequestRepath(sortKey, entity);
+                return;
+            }
+
             int poolIndex = range.Start + follow.PathIndex;
             if ((uint)poolIndex >= (uint)Pool.Length)
                 return;

@@ -13,7 +13,7 @@ namespace Game.Editor
 {
     /// <summary>
     /// Authors Skirmish mission 3 — Industrial Basin Base Assault (catalog S073).
-    /// Carves a western industrial window from the dense-city physical map with NW/SE bases.
+    /// Carves a western industrial window from the dense-city physical map with bases on the clear eastern approach.
     /// </summary>
     public static class SkirmishIndustrialBasinAssetsBuilder
     {
@@ -25,8 +25,8 @@ namespace Game.Editor
         public const string ScenarioSetupId = SkirmishPresetConfig.IndustrialBasinScenarioSetupId;
 
         /// <summary>Playable window in grid/world XZ cells; west of City Crossroads and Desert Base lots.</summary>
-        public static readonly Vector2Int PlayableMin = new(480, 220);
-        public static readonly Vector2Int PlayableMax = new(860, 640);
+        public static readonly Vector2Int PlayableMin = new(740, 420);
+        public static readonly Vector2Int PlayableMax = new(990, 660);
 
         [MenuItem("Tools/Warline/Skirmish/Rebuild Industrial Basin Scenario")]
         public static void RebuildMenu() => Debug.Log(Build());
@@ -46,21 +46,21 @@ namespace Game.Editor
             for (int i = 0; i < 2; i++)
             {
                 var faction = factions.GetArrayElementAtIndex(i);
-                // Player northwest industrial yard; opponent southeast approach.
+                // Player northern clearing; opponent eastern industrial approach.
+                // The former (560,550) site is inside render-only mountains.
                 faction.FindPropertyRelative("spawnCell").vector2IntValue =
-                    new Vector2Int(i == 0 ? 560 : 760, i == 0 ? 550 : 280);
+                    new Vector2Int(i == 0 ? 800 : 930, i == 0 ? 600 : 470);
                 Vector2Int[] sites = i == 0
                     ? new[]
                     {
-                        new Vector2Int(560, 530), new Vector2Int(540, 560), new Vector2Int(575, 570),
-                        new Vector2Int(530, 540), new Vector2Int(545, 520)
+                        new Vector2Int(800, 580), new Vector2Int(780, 610), new Vector2Int(815, 620),
+                        new Vector2Int(770, 590), new Vector2Int(785, 570)
                     }
                     : new[]
                     {
-                        // Live spawn evidence retained Barrack@795,260, Refinery@760,250 and
-                        // Fuel@705,280; pack the remaining pads into that clear SE lot.
-                        new Vector2Int(795, 260), new Vector2Int(730, 275), new Vector2Int(750, 295),
-                        new Vector2Int(760, 250), new Vector2Int(705, 280)
+                        // Level foundations surveyed against every surface cell and road mask.
+                        new Vector2Int(934, 444), new Vector2Int(906, 478), new Vector2Int(906, 448),
+                        new Vector2Int(938, 480), new Vector2Int(906, 512)
                     };
                 var buildings = faction.FindPropertyRelative("buildings");
                 Vector2Int spawn = faction.FindPropertyRelative("spawnCell").vector2IntValue;
@@ -71,7 +71,7 @@ namespace Game.Editor
                 var units = faction.FindPropertyRelative("units");
                 for (int j = 0; j < units.arraySize; j++)
                 {
-                    // Face toward the opposing yard along the NW→SE diagonal.
+                    // Stage in front of the base toward the southern approach.
                     Vector2Int offset = i == 0
                         ? (j < 2
                             ? new Vector2Int(j == 0 ? 12 : 28, j == 0 ? -28 : -20)
@@ -105,7 +105,7 @@ namespace Game.Editor
                 "Assets/Game/Resources/SkirmishIndustrialBasin.asset");
             preset.buildingPlacement = construction;
             preset.operationMap = map;
-            // Keep reinforcements with the opening infantry on the NW pad.
+            // Keep reinforcements with the opening infantry on the northeast clearing.
             preset.playerReinforcementRallyOffset = new Vector3(18, 0, -22);
             EditorUtility.SetDirty(preset);
 
@@ -119,11 +119,11 @@ namespace Game.Editor
         {
             var so = new SerializedObject(map);
             so.FindProperty("operationMapId").stringValue = MapId;
-            so.FindProperty("contentVersion").intValue = 1;
+            so.FindProperty("contentVersion").intValue = 2;
             so.FindProperty("contentHash").stringValue = Hash(
-                "industrial-basin-v3|560,550|760,280|" +
+                "industrial-basin-v4|800,600|930,470|" +
                 $"{PlayableMin.x},{PlayableMin.y},{PlayableMax.x},{PlayableMax.y}|" + source.ContentHash);
-            so.FindProperty("generatedMetadataHash").stringValue = Hash("industrial-basin-v1|northwest-southeast");
+            so.FindProperty("generatedMetadataHash").stringValue = Hash("industrial-basin-v4|eastern-approach");
 
             var binding = so.FindProperty("sourceBinding");
             binding.FindPropertyRelative("sourceOperationMapId").stringValue = source.OperationMapId;
@@ -135,18 +135,20 @@ namespace Game.Editor
                 new Vector3(PlayableMin.x, source.Bounds.PlayableMin.y, PlayableMin.y);
             bounds.FindPropertyRelative("playableMax").vector3Value =
                 new Vector3(PlayableMax.x, source.Bounds.PlayableMax.y, PlayableMax.y);
+            // Camera bounds constrain the entire ground frustum, not its focus point.
+            // Leave room to center either base at normal and wide aspect ratios.
             bounds.FindPropertyRelative("cameraMin").vector3Value =
-                new Vector3(PlayableMin.x, 4, PlayableMin.y);
+                new Vector3(PlayableMin.x - 120, 4, PlayableMin.y - 120);
             bounds.FindPropertyRelative("cameraMax").vector3Value =
-                new Vector3(PlayableMax.x, 100, PlayableMax.y);
+                new Vector3(PlayableMax.x + 120, 100, PlayableMax.y + 120);
 
             var cameras = so.FindProperty("cameras");
             cameras.arraySize = 1;
             var camera = cameras.GetArrayElementAtIndex(0);
             const string cameraId = "camera.skirmish.industrial_basin.start";
             camera.FindPropertyRelative("cameraId").stringValue = cameraId;
-            Vector3 position = new(560, 70, 480);
-            Vector3 target = new(560, 0, 545);
+            Vector3 position = new(800, 70, 530);
+            Vector3 target = new(800, 0, 595);
             camera.FindPropertyRelative("position").vector3Value = position;
             camera.FindPropertyRelative("eulerAngles").vector3Value =
                 Quaternion.LookRotation(target - position).eulerAngles;
@@ -170,7 +172,7 @@ namespace Game.Editor
                     "anchor.skirmish.industrial_basin.deployment.faction_" + (i + 1);
                 anchor.FindPropertyRelative("kind").intValue = (int)OperationMapAnchorKind.Deployment;
                 anchor.FindPropertyRelative("position").vector3Value =
-                    new Vector3(i == 0 ? 560 : 760, 0, i == 0 ? 550 : 280);
+                    new Vector3(i == 0 ? 800 : 930, 0, i == 0 ? 600 : 470);
                 anchor.FindPropertyRelative("eulerAngles").vector3Value = Vector3.zero;
                 anchor.FindPropertyRelative("radius").floatValue = 8;
                 anchor.FindPropertyRelative("factionId").intValue = i + 1;

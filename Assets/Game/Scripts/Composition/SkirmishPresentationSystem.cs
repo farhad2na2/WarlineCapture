@@ -97,12 +97,15 @@ namespace Game.Composition
             if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return;
             using var query=EntityManager.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if(query.CalculateEntityCount()!=1)return;
+            using var matches = EntityManager.CreateEntityQuery(typeof(SkirmishMatchState));
+            bool basinOpening = opening && matches.CalculateEntityCount() == 1 &&
+                matches.GetSingleton<SkirmishMatchState>().ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // Start close to the troops. An explicit base lookup frames the
                 // whole Barracks and its defenses below the objective strip.
-                Perspective=new Unity.Mathematics.float4(opening?40:55,58,0,60),
+                Perspective=new Unity.Mathematics.float4(basinOpening ? 60 : opening ? 40 : 55,58,0,60),
                 World=EntityManager.GetComponentData<LocalTransform>(entity).Position+
                     (opening?new Unity.Mathematics.float3(20,0,6):new Unity.Mathematics.float3(0,0,12))
             });

@@ -1,6 +1,6 @@
 # Coding packages and agent handoff
 
-All packages **Planned**. This documentation task does not launch implementation agents, change game assets, or claim validation passes. The owner can assign these packets to coding agents. The implementation lead owns integration, scope and evidence; content agents must not independently modify shared contracts.
+P0 contracts are **Implemented on a bookmark branch** (schema/ID/assembly/ledger only). Remaining packages stay **Planned**. This does not claim Unity Editor, device, or ARIA validation. The implementation lead owns integration, scope and evidence; content agents must not independently modify shared contracts.
 
 ## Dependency sequence
 
@@ -23,7 +23,7 @@ Map greyboxes for D01 and one second district begin during P2 so the rules are n
 
 | Package | Concrete implementation | Exit evidence / responsibility |
 |---|---|---|
-| P0 — source and schema | Recheck BASELINE on assigned branch; inventory dirty/shared files; add Operations contracts, ID grammar, config schemas, typed enums and assembly references | Schema/assembly checks; migration fixtures; roster/feature availability ledger; no false existing-type assumptions |
+| P0 — source and schema | Recheck BASELINE on assigned branch; inventory dirty/shared files; add Operations contracts, ID grammar, config schemas, typed enums and assembly references | **Bookmark implemented:** `Game.Operations.Contracts` + `Game.Operations.Tests.Editor`; host marker `[OperationsP0Validation] result=Passed checks=12`; fixtures under `Assets/Tests/Editor/Operations/Fixtures/`; ledger in `P0_ROSTER_FEATURE_LEDGER.md`. Shared `SaveDataModel` / `OperationMapIdentityRules` / existing asmdefs were not edited. Unity Editor executeMethod remains a Windows bookmark gate. |
 | P1 — strategic core | ECS run/district state, commands, AP, six actions, offers/incidents, metric tick, milestones, rewards, serialized profile commit, save migration | Deterministic day traces; floor recovery; duplicate/conflict/crash transaction tests; no account-wallet leakage |
 | P2 — tactical foundation | Role binding, spawn ownership, Scan/Hold/Interact/Repair/Escort/Extract rules, objective graph, facts, finite wave schedules and outcome precedence | Two-map fixtures, valid manual interactions, no mission-ID branching, compiler rejects bad graph/anchors/budgets |
 | P3 — real mode loop | Mode-tagged scene launch, reserve/refund, true mission result, atomic settlement, Operations HUD/briefing/result, root/header/history behavior, checkpoint adapters | Dashboard → deploy → real mission → correct district result → return; app interruption at every commit boundary |

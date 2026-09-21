@@ -6,6 +6,8 @@ Use [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md) for exact proposed builders, typ
 
 ## Shared map contract
 
+Art sourcing: the [Demo 2 reuse plan](../../Demo2_Asset_Reuse_Plan.md) selects logistics/utility modules for IB, service-yard accents for CC, perimeter/comms dressing for AP, small checkpoints for MP and sparse props for DB. Retain desert identity and all route/clearance contracts below. Source models are candidates until adapted and validated; do not copy the demo scene or use a new art skin to claim another map. IB is the first candidate pilot, with no alteration required to existing prototypes.
+
 Every map provides two expandable base pads, connected deployment pockets, independent production/delivery exits, three combat approaches, two legal convoy routes, two breakthrough corridors, three capture zones, two contested supply expansion sites and safe air-return/landing spaces. Base and objective anchors have named variants for each objective, not absolute coordinates in AI/ARIA code. A map owns a semantic route graph with usable width, surface type, travel cost, cover, danger exposure and vehicle/air compatibility; only public/observed attributes reach player perception.
 
 Road carriageways stay clear of ordinary buildings. Buildable pads exclude sidewalks, slopes, mountains, water, impassable decoration and reserved exits/objectives. Gates use allowed carriageways or actual wall openings and retain their preview transform. Airfield runways and clearance corridors use measured bounds of the largest allowed aircraft plus a validated safety margin. No plane option ships on a map without its required infrastructure; redesign the pad or block that scenario until it is supported.

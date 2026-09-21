@@ -73,6 +73,10 @@ E3 is the first user review build. It should already feel materially richer than
 
 ## Change discipline
 
+### Environment kit delivery
+
+The [Demo 2 implementation guide](../../Demo2_Asset_Integration_Guide.md) adds D2-A01–A04 inside the existing map work. A01 (variants/materials) and A02 (IB candidate pilot) belong to SK-11/E3 map qualification; A03 (map rollout) follows proven module ownership/geometry/cost; A04 (publication evidence) belongs to SK-13/E8. Preserve DB's first ground-battle delivery and the five-map/120-scenario scope. The environment manifest records separate Planned/Authored/AcceptedForReuse status; no kit automatically certifies any scenario, roster role or device tier.
+
 - Change source and mode data in reviewable packages; use Unity builders/Editor APIs for assets.
 - Preserve the accepted small preset and independent M1–M5 configs. Shared selection, pathing, transport, economy and rendering changes trigger affected campaign checks.
 - Run focused checks, real UI/world outcomes, and representative full matches. Record whether a run used injected armies, skipped setup, or accelerated time.

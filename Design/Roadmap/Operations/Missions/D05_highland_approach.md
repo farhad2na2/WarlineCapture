@@ -6,6 +6,12 @@ Planned map: `opmap.operations.highland_approach`. Reuse an existing published m
 
 The graph supplies the mandatory win predicate. `AND` means both required parallel branches; `OR` in a route argument is a player choice locked at its branch waypoint. Evidence named by INTERACT is carried and required at EXTRACT unless the brief explicitly says otherwise. Global PROTECT conditions apply from launch; their loss is Defeat. Partial predicates apply only when no mandatory protection failure has occurred. All extraction predicates require the named live destination.
 
+## Planned environment implementation — Demo 2
+
+Assigned kit: **Utilities and Perimeter**. Use compact radio/generator compounds and small perimeter pieces. Keep switchback, longer safe route, service-site access and both ground extraction points reachable; do not replace arid terrain with the demo island biome.
+
+Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [verified source manifest](../../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). P6/map ownership records adapted GUIDs, materials, typed role bindings and map/content hashes; D2-V1–V6 join every affected mission’s existing acceptance. Reuse qualified project-owned assets without copying gameplay state or treating a model as a certified mechanic. All mission IDs, finite force budgets, objective graphs and status claims below remain unchanged.
+
 ## O041 — Ridge Signals
 
 **Intent and decision:** Survey three observation points overlooking the supply road. Take the exposed short ridge path or approach through covered switchbacks; heights use real line-of-sight checks.

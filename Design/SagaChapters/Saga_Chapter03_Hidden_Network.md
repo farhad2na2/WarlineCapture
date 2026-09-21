@@ -69,6 +69,12 @@ This chapter cannot rely on visual profiling as a mechanic.
 | Salma Idris | Authorized security lead whose knowledge of access control helps distinguish legitimate guards from Ash Line infiltration. |
 | Nadir Qassem | Manipulates feeds and frames ARIA's missing memory as proof she cannot be trusted. |
 
+## Planned environment implementation — Demo 2
+
+Use the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md) when detailing mission production plans. Signal Trace uses Utilities radio/service equipment; Network Break uses Utilities and Perimeter around the existing bunker/relay site. Safehouse Sweep retains established desert homes; optional crates/perimeter dressing must not obscure occupied-home boundaries or identify hostility by architectural style.
+
+Record source/adapted GUIDs, role/anchor bindings, material overrides and evidence in each EnvironmentAssetManifest. Scan/Intel, evidence, breach and extraction remain gameplay-owned systems. Require D2-V1–V6, including civilian/target readability and affected manual/ARIA paths; the radio-tower mesh is not a new radar ability.
+
 ## Mission Arc
 
 | Mission | Story and objective | Dominant learning/mastery | Character beat | Evidence beat |

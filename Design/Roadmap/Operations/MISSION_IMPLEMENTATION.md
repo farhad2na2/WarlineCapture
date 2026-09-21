@@ -95,6 +95,8 @@ World fact capture is always active: a civilian delivered, evidence carried to a
 
 ## Six map authoring packets
 
+Environment authors must read the [Demo 2 integration guide](../../Demo2_Asset_Integration_Guide.md) and [prefab manifest](../../VisualConfigs/Demo2_Environment_Asset_Manifest.json). Use adapted Logistics/Utilities kits for D03 and separately certified Crossing pieces for D04; D02/D05/D06 use service/perimeter accents and D01 retains the desert baseline. Bind a generator/transformer/tower through the mission's existing role-to-anchor map when interactive. Repair/Scan/Interact/protection state comes from the shared rule systems, never the vendor mesh or an animation. The current 60 briefs do not gain production, naval or physical bridge-collapse mechanics from these assets.
+
 | District / planned map ID suffix | Required layout and route choices | Reuse candidate to audit; not a ready asset claim |
 |---|---|---|
 | D01 `old_quarter` | Two connected pedestrian loops; protected clinic, courtyard, archive, rescue court, main/safe exit | M01 urban modules; City Crossroads navigation/selection lessons |
@@ -111,6 +113,7 @@ Per-map deliverables: overview diagram with all routes/anchors, navigation clear
 ## Agent's recipe for any one mission
 
 1. Read the entry, shared family rules, district map contract, and prerequisite packages. Confirm needed rule systems and role capabilities are Accepted, not just present in source.
+   Record the environment manifest entries, adapted prefab GUIDs, resolved owners and content hash. Use the guide's Editor authoring and scoped rebuild procedure; D2-V1–V6 join this mission's evidence when the kit is used.
 2. Create the three per-mission assets through `OperationsMissionAssetBuilder` with stable IDs and version; author roles, routes, finite groups, graph node IDs, timers, protected objects, partial predicate, consequences and localization keys.
 3. Resolve the semantic force/enemy packages to certified keys and record actual roster/resource/transport totals. Pin seed 1101 + numeric mission index for the first canonical fixture (O001 uses 1102), plus perturbation seeds defined in acceptance.
 4. Bind shared HUD/markers/interaction controls and public ARIA affordances. Add briefing, warnings, outcome reasons, local report copy and EN/FA localization. Required dialogue can use text until audio is separately produced; no mission silently depends on missing paid voice generation.

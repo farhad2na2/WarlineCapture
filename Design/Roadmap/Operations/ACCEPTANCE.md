@@ -76,4 +76,8 @@ Check wrapper exit status, actual suite result, full retained log, and exact pas
 
 ## Final mode decision
 
+### Demo 2 environment evidence
+
+For every adapted kit used by a published mission, close [D2-V1–V6](../../Demo2_Asset_Integration_Guide.md#6-validate-and-record-acceptance) and attach the source/output manifest revision to its content evidence. D03 must retain separate freight/service routes, truck turns and repair-site access. D04 must prove two traversable land crossings, correct deck/ramp/water surfaces, independent alternatives and normal convoy/evacuation travel; neither a visible boat nor a broken bridge grants an unsupported mechanic. Interactive utility props must follow real Repair/Scan/Interact/protection facts and checkpoint restoration. Recheck manual/ARIA and persistent settlement behavior after relevant art/geometry changes. Art acceptance never substitutes for mission acceptance.
+
 Full-mode acceptance requires 60 complete mission rows, six reviewed district maps, all 12 family implementations, the free recovery path, versioned interrupted-session support, EN/FA manual and ARIA evidence, full city-run wins, account-economy integrity, supported-device performance and affected Campaign/Skirmish regression protection. A partial development slice must state its actual playable count and pending gates. **ARIA being unable to play and win any released mission keeps that mission out of Accepted.**

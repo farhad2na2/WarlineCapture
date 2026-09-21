@@ -25,6 +25,12 @@ Use the CSV columns `approval_status` and `completion_status` for production tra
 
 ## Current Findings
 
+### 2026-09-21 Demo 2 environment supplement
+
+Track the new environment shortlist in [Demo2_Environment_Asset_Manifest.json](VisualConfigs/Demo2_Environment_Asset_Manifest.json), following the [integration guide](Demo2_Asset_Integration_Guide.md). Its 23 vendor sources exist; all proposed project-owned outputs remain **Planned**, with art and runtime acceptance **Pending**. Record adapted GUIDs, material overrides, consuming maps and evidence there as D2-A01–A04 is implemented. The historical companion CSV and summary counts below do not yet include these environment entries; do not treat existing vendor prefabs as completed production art. When consolidating the register, preserve the manifest's stable IDs and evidence rather than counting the same source once per mode.
+
+### Historical register findings
+
 - There is no single complete production art checklist before this file. Existing docs are useful source catalogs, not an approval register.
 - `Design/VisualConfigs/Combat_Visual_Config_v0_1.json` lists 154 combat visual entries. It defines planned UI icon/portrait paths, but none of the `Assets/Game/Art/UI/Generated/CombatCatalog/...` paths currently exist.
 - Existing 3D prefabs, mid-LOD generated prefabs, golden spike images, UI mockups, and validation sprites should be treated as references/prototypes unless specifically approved in this register.

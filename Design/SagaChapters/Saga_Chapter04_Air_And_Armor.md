@@ -72,6 +72,12 @@ Vanguard Brigade establishes that WarlineCapture can support military-versus-mil
 | Chief Yusuf Darzi | Confirms and disables hazardous Relay hardware during the insertion mission. |
 | Nadir Qassem | Attempts to recruit the Commander by offering a fully restored ARIA and absolute control. |
 
+## Planned environment implementation — Demo 2
+
+Use the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md) to add Perimeter/Utilities/Logistics to Air Corridor and Grounded Signal: barriers, fence/wall sections, service radio towers, containers and warehouses in newer military compounds. Steel Push and Armor Break may reuse qualified yard/fortification pieces where they preserve armor routes and counters.
+
+Each mission production plan records an EnvironmentAssetManifest and D2-V1–V6 evidence. Keep existing aircraft, runway/landing, G2A/G2G, Fuel and boarding contracts; a crashed plane or warehouse is not functional air infrastructure. Playable Battle Royale tanks/vehicles remain a separate roster task with rig, ECS, balance and performance acceptance. No naval content is added.
+
 ## Mission Arc
 
 | Mission | Story and objective | Dominant learning/mastery | Character beat | Evidence beat |

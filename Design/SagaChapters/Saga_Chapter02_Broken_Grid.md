@@ -72,6 +72,12 @@ In Chapter 2, the player learns how the district stays alive.
 | Fadi Mansour | Transit foreman who anchors the road and repair stories in actual city labor. |
 | Nadir Qassem | Frames shortages as proof that distributed government cannot protect anyone. |
 
+## Planned environment implementation — Demo 2
+
+Use the [Demo 2 integration guide](../Demo2_Asset_Integration_Guide.md) for project-owned variants and an EnvironmentAssetManifest in each production plan. Supply Line and Route Reopened take Logistics (warehouse, containers, loaded pallets); Market Lifeline takes restrained freight/medical crates while retaining market architecture; Power Relay takes Utilities (transformer, generator, wire spool and service enclosure). Gridlock has only the optional later presentation pass described in its [production plan](../CH02_M01_Gridlock_Production_Plan.md).
+
+Bind utility/repair/obstruction visuals to existing mission roles and real objective facts. Art availability adds no refinery, construction or electrical-network behavior. Require D2-V1–V6 for affected content and preserve the Chapter 2 story, IDs and readiness fallbacks.
+
 ## Mission Arc
 
 | Mission | Story and objective | Dominant learning/mastery | Character beat | Evidence beat |

@@ -18,55 +18,66 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRW<SkirmishExpandedSessionComponent> sessionRef, Entity entity) in
-                     SystemAPI.Query<RefRW<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using var query = em.CreateEntityQuery(ComponentType.ReadWrite<SkirmishExpandedSessionComponent>());
+            NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            try
             {
-                ref SkirmishExpandedSessionComponent session = ref sessionRef.ValueRW;
-                if (session.IsLegacy != 0 || session.InitializationComplete == 0 || session.SpawnComplete != 0)
-                    continue;
-                if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
-                    continue;
-                if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
-                {
-                    session.FailureCode = SkirmishReasonCode.MissingResolvedSetup;
-                    session.Phase = SkirmishSessionPhase.Failed;
-                    em.SetComponentData(entity, session);
-                    continue;
-                }
-
-                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
-                if (!TrySpawnLedgers(em, entity, setup, out SkirmishReasonCode reason, out byte visualPending))
-                {
-                    DestroyAttemptOwned(em, session.SessionId);
-                    session.FailureCode = reason;
-                    session.Phase = SkirmishSessionPhase.Failed;
-                    em.SetComponentData(entity, session);
-                    continue;
-                }
-
-                session.SpawnComplete = 1;
-                session.SpawnVisualPending = visualPending;
-                session.Phase = SkirmishSessionPhase.Playing;
-                if (em.HasComponent<SkirmishObjectiveStateComponent>(entity))
-                {
-                    var objective = em.GetComponentData<SkirmishObjectiveStateComponent>(entity);
-                    objective.State = SkirmishObjectiveStateKind.Active;
-                    em.SetComponentData(entity, objective);
-                }
-
-                if (!em.HasComponent<SkirmishObjectiveClockComponent>(entity))
-                {
-                    em.AddComponentData(entity, new SkirmishObjectiveClockComponent
-                    {
-                        ElapsedSeconds = 0f,
-                        DeadlineSeconds = setup.DeadlineSeconds,
-                        Paused = 0,
-                        Playing = 1
-                    });
-                }
-
-                em.SetComponentData(entity, session);
+                for (int i = 0; i < entities.Length; i++)
+                    TrySpawn(em, entities[i]);
             }
+            finally
+            {
+                entities.Dispose();
+            }
+        }
+
+        private static void TrySpawn(EntityManager em, Entity entity)
+        {
+            SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+            if (session.IsLegacy != 0 || session.InitializationComplete == 0 || session.SpawnComplete != 0)
+                return;
+            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
+                return;
+            if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
+            {
+                session.FailureCode = SkirmishReasonCode.MissingResolvedSetup;
+                session.Phase = SkirmishSessionPhase.Failed;
+                em.SetComponentData(entity, session);
+                return;
+            }
+
+            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
+            if (!TrySpawnLedgers(em, entity, setup, out SkirmishReasonCode reason, out byte visualPending))
+            {
+                DestroyAttemptOwned(em, session.SessionId);
+                session.FailureCode = reason;
+                session.Phase = SkirmishSessionPhase.Failed;
+                em.SetComponentData(entity, session);
+                return;
+            }
+
+            session.SpawnComplete = 1;
+            session.SpawnVisualPending = visualPending;
+            session.Phase = SkirmishSessionPhase.Playing;
+            if (em.HasComponent<SkirmishObjectiveStateComponent>(entity))
+            {
+                var objective = em.GetComponentData<SkirmishObjectiveStateComponent>(entity);
+                objective.State = SkirmishObjectiveStateKind.Active;
+                em.SetComponentData(entity, objective);
+            }
+
+            if (!em.HasComponent<SkirmishObjectiveClockComponent>(entity))
+            {
+                em.AddComponentData(entity, new SkirmishObjectiveClockComponent
+                {
+                    ElapsedSeconds = 0f,
+                    DeadlineSeconds = setup.DeadlineSeconds,
+                    Paused = 0,
+                    Playing = 1
+                });
+            }
+
+            em.SetComponentData(entity, session);
         }
 
         public static bool TrySpawnLedgers(

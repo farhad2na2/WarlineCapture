@@ -281,6 +281,11 @@ This slice did not edit `V3UiLocalizationCatalog`.
   in Play Mode. `Flip S002 Playable If Evidence Ready` writes Playable
   only when hashes match and those evidence files exist. Focused tests
   call the dry-run path only.
+- Tip `45109b2bf` Game View failed with `startupFailure=Timeout` because
+  `SkirmishSessionInitializationSystem` added session components while
+  still iterating the live query. Init (and spawn, which had the same
+  pattern) now snapshot entities first, then apply structural changes.
+  Publication is still **InProgress**.
 
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
@@ -410,7 +415,8 @@ Required markers (same eight suites plus acceptance scaffold/hash plumbing):
 - `[SkirmishExpandedDefinitionTests] result=Passed`
   (adds `CompilerAcceptsTypedDesertBaseLayout`,
   `RegularStandardBindsMeasuredPadsAndRoutes`,
-  `CustomAndLegacyDoNotBindMeasuredLayout`)
+  `CustomAndLegacyDoNotBindMeasuredLayout`,
+  `SessionInitializationProjectsRolesOutsideLiveQuery`)
 - `[SkirmishExpandedObjectiveTests] result=Passed`
   (adds `HiddenHealthProjectsVisibleLastSeenAndUnknown`)
 - `[SkirmishExpandedEconomyTests] result=Passed`

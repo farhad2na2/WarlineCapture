@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -16,30 +17,41 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRW<SkirmishExpandedSessionComponent> sessionRef, Entity entity) in
-                     SystemAPI.Query<RefRW<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using var query = em.CreateEntityQuery(ComponentType.ReadWrite<SkirmishExpandedSessionComponent>());
+            NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            try
             {
-                ref SkirmishExpandedSessionComponent session = ref sessionRef.ValueRW;
-                if (session.IsLegacy != 0)
-                    continue;
-                if (session.InitializationComplete != 0)
-                    continue;
-                if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
-                    continue;
-                if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity) ||
-                    em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup == null)
-                {
-                    Fail(ref session, SkirmishReasonCode.MissingResolvedSetup);
-                    em.SetComponentData(entity, session);
-                    continue;
-                }
-
-                SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
-                ProjectRoles(em, entity, em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup);
-                session.InitializationComplete = 1;
-                session.Phase = SkirmishSessionPhase.Spawning;
-                em.SetComponentData(entity, session);
+                for (int i = 0; i < entities.Length; i++)
+                    TryInitialize(em, entities[i]);
             }
+            finally
+            {
+                entities.Dispose();
+            }
+        }
+
+        private static void TryInitialize(EntityManager em, Entity entity)
+        {
+            SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+            if (session.IsLegacy != 0)
+                return;
+            if (session.InitializationComplete != 0)
+                return;
+            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
+                return;
+            if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity) ||
+                em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup == null)
+            {
+                Fail(ref session, SkirmishReasonCode.MissingResolvedSetup);
+                em.SetComponentData(entity, session);
+                return;
+            }
+
+            SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
+            ProjectRoles(em, entity, em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup);
+            session.InitializationComplete = 1;
+            session.Phase = SkirmishSessionPhase.Spawning;
+            em.SetComponentData(entity, session);
         }
 
         private static void ProjectRoles(EntityManager em, Entity session, SkirmishResolvedSetup setup)

@@ -362,6 +362,35 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(0, em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy);
     }
 
+    [Test]
+    public void SessionInitializationProjectsRolesOutsideLiveQuery()
+    {
+        using var world = new World(nameof(SessionInitializationProjectsRolesOutsideLiveQuery));
+        EntityManager em = world.EntityManager;
+        CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup setup, out SkirmishLaunchPayload payload);
+        Assert.IsTrue(SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup));
+        Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        Assert.AreEqual(0, em.GetComponentData<SkirmishExpandedSessionComponent>(session).InitializationComplete);
+
+        world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
+        SkirmishExpandedSessionComponent afterInit = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+        Assert.AreEqual(0, afterInit.IsLegacy);
+        Assert.AreEqual(1, afterInit.InitializationComplete);
+        Assert.AreEqual(SkirmishSessionPhase.Spawning, afterInit.Phase);
+        Assert.IsTrue(em.HasComponent<SkirmishObjectiveStateComponent>(session));
+        Assert.IsTrue(em.HasComponent<SkirmishCapacityComponent>(session));
+        Assert.IsTrue(em.HasComponent<SkirmishEconomyStockComponent>(session));
+        Assert.IsTrue(em.HasBuffer<SkirmishProductionReservation>(session));
+        Assert.AreEqual(setup.MaterialsEach, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+        world.GetOrCreateSystem<SkirmishScenarioSpawnSystem>().Update(world.Unmanaged);
+        SkirmishExpandedSessionComponent afterSpawn = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+        Assert.AreEqual(1, afterSpawn.SpawnComplete);
+        Assert.AreEqual(SkirmishSessionPhase.Playing, afterSpawn.Phase);
+        Assert.IsTrue(em.HasComponent<SkirmishObjectiveClockComponent>(session));
+        Assert.AreEqual(setup.DeadlineSeconds, em.GetComponentData<SkirmishObjectiveClockComponent>(session).DeadlineSeconds);
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -381,6 +410,7 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.RegularStandardBindsMeasuredPadsAndRoutes();
             suite.CustomAndLegacyDoNotBindMeasuredLayout();
             suite.ExpandedLaunchResolverCompilesS002();
+            suite.SessionInitializationProjectsRolesOutsideLiveQuery();
             Debug.Log("[SkirmishExpandedDefinitionTests] result=Passed");
         }
         catch (Exception exception)

@@ -41,7 +41,8 @@ namespace Game.Editor
         private const string ContentHash = "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c";
         private const string BaseGeneratedMetadataHash = "574afec991fbc1a684531c9f727c20eb296271260e7a4e1c4a8c300a2b642e79";
         private const string GridContentHash = "8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb";
-        private const string SurfaceContentHash = "aa08cb9115e8727bfdbc671a4a2cfd9334ef48134c00d58d7d29e350c45b752c";
+        // Re-pinned after the E0.1 scoped surface rebake lowered the stranded City Crossroads shelf cells.
+        private const string SurfaceContentHash = "cf25bb0edf3375531b4a0e3fab1659f5a9e20008b13381be54ba0d17c6e10b5b";
         private const string BuildingPlacementContentHash = "26973214f433c44ebca01f302ecbe05789c84e573dc48eb8b2c21f241823464d";
         private const string MatchSceneFileHash = "182f3b4cb50f48e1a573e1e90ee0c13baf9d62fce46e35b1850ef72097db5d75";
         private const string SubSceneFileHash = "eff3ce6992d234c7438a321f0f9f552c2abebcc0a4738445014bc8f86579965d";

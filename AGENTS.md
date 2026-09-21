@@ -1,3 +1,10 @@
+# Command output and token savings
+
+- Use RTK (`rtk`) for shell command output by default. Prefer supported filters such as `rtk git`, `rtk rg`, `rtk read`, and `rtk dotnet`.
+- For commands without a suitable filter, or when exact output is required, use `rtk proxy <command> ...` (unfiltered passthrough). Do not suppress required validation pass markers or evidence with lossy filters.
+- Keep all Unity execution rules below: RTK must wrap the required repository wrapper, never replace it. Preserve full validation logs and check required pass markers against those logs.
+- Use `rtk gain` to inspect measured token savings.
+
 # Unity Execution Contract
 
 - Keep Unity Hub open and signed in while any Unity Editor or validation runs.

@@ -18,6 +18,10 @@ MonoBehaviour:
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
   contentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
   generatedMetadataHash: 2089955094bb8a72f2f5e7ca1e05e67c78df049da9185a7d44eabce25d82dc69
+  sourceBinding:
+    sourceOperationMapId: 
+    sourceIdentityHash: 
+    sourceContentHash: 
   bounds:
     worldMin: {x: 0, y: -6.9545445, z: 0}
     worldMax: {x: 2048, y: 100, z: 1024}
@@ -34,8 +38,8 @@ MonoBehaviour:
     authoredBlockedCellCount: 0
   surfaceMetadata:
     assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
-    contentHash: 1402d769704008e254563ff7ecda835294db83afc2cee6d5bb456987f0392b4d
-    runtimeBlobHash: 60a44d9bef6cfd87859429865716a462
+    contentHash: cf25bb0edf3375531b4a0e3fab1659f5a9e20008b13381be54ba0d17c6e10b5b
+    runtimeBlobHash: bbe23826402ec39b275c405cc946484f
     surfaceCount: 2097152
     payloadVersion: 3
     payloadEncoding: 1
@@ -120,6 +124,8 @@ MonoBehaviour:
     radius: 7.200793
     factionId: 1
     laneIndex: 2
+  presentationKind: 0
+  renderResidencyMode: 0
   sourceSceneReference:
     m_AssetGUID: ca1f2d7f265d8495f8c815441d68fda0
     m_SubObjectName: 
@@ -162,3 +168,4 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
+  additionalBuildingPlacements: {fileID: 0}

@@ -19,6 +19,9 @@ namespace Game.Editor
         private const string RevisionKey="Warline.Gridlock.ComicRevisions";
         private static bool Revisions=>SessionState.GetBool(RevisionKey,false);
         public static void RunRevisions(){SessionState.SetBool(RevisionKey,true);Run();}
+        private const string VoiceKey="Warline.Gridlock.ComicVoices";
+        private static bool Voices=>SessionState.GetBool(VoiceKey,false);
+        public static void RunVoiced(){SessionState.SetBool(VoiceKey,true);SessionState.SetBool(RevisionKey,false);Run();}
         private const string Active="Warline.Gridlock.ComicProbe";
         private static readonly Dictionary<string,float> Progress=new();
         private static readonly HashSet<string> Started=new();
@@ -34,7 +37,9 @@ namespace Game.Editor
         static CH02M01GridlockComicPlaybackProbe(){if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}}
         public static void Run()
         {
-            CH02M01GridlockNarrativeBuilder.BuildCaptionedArtAndInstall();SessionState.SetBool(Active,true);
+            if(Voices)CH02M01GridlockNarrativeBuilder.BuildAndInstall();
+            else CH02M01GridlockNarrativeBuilder.BuildCaptionedArtAndInstall();
+            SessionState.SetBool(Active,true);
             EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Single);
             AssetDatabase.DisallowAutoRefresh();EditorApplication.update-=Tick;EditorApplication.update+=Tick;
             Application.logMessageReceived-=Observe;Application.logMessageReceived+=Observe;
@@ -65,7 +70,16 @@ namespace Game.Editor
                 playback.Unbind();player.Cancel();UnityEngine.Object.Destroy(view.gameObject);sequenceIndex++;
                 if(sequenceIndex<(Revisions?4:8)){StartSequence();return;}
                 if(Started.Count!=(Revisions?4:24))throw new InvalidOperationException("Expected 24 localized panel captures, got "+Started.Count);
-                Finish(true,(Revisions?"4 revised panel captures":"24 localized panel captures")+"; EN 16:9 FA 20:9; voice acceptance pending");
+                if(Voices)
+                {
+                    if(Progress.Count!=24)throw new InvalidOperationException("Expected 24 played narrative clips, got "+Progress.Count);
+                    foreach(var entry in Progress)
+                    {
+                        var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(entry.Key);
+                        if(entry.Value<clip.length-.5f)throw new InvalidOperationException("Voice cut short: "+entry.Key+" at "+entry.Value+" / "+clip.length);
+                    }
+                }
+                Finish(true,(Revisions?"4 revised panel captures":"24 localized panel captures")+"; EN 16:9 FA 20:9; "+(Voices?"narrativeVoices=24 completed=24":"voice acceptance pending"));
             }
             catch(Exception exception){Debug.LogException(exception);Finish(false,exception.Message);}
         }
@@ -92,15 +106,33 @@ namespace Game.Editor
         private static double stateSince;
         private static void SampleVoice()
         {
+            if(Voices)SampleVoiceProgress();
             string id=player.CurrentStateId;
             if(previousState!=id){previousState=id;stateSince=EditorApplication.timeSinceStartup;}
             if(string.IsNullOrEmpty(id) || id.EndsWith("complete",StringComparison.Ordinal) || EditorApplication.timeSinceStartup-stateSince<1.5)return;
             string key=(sequenceIndex<(Revisions?2:4)?"fa":"en")+"-"+id;
             if(Started.Contains(key)) {if(Revisions && EditorApplication.timeSinceStartup-stateSince>3)completeSequence=true;return;}
             Started.Add(key);
-            System.IO.Directory.CreateDirectory("/private/tmp/warline-gridlock/comic-review-03");
-            ScreenCapture.CaptureScreenshot("/private/tmp/warline-gridlock/comic-review-03/"+key+".png");
+            string output=Voices?"/private/tmp/warline-gridlock/comic-voiced-01":"/private/tmp/warline-gridlock/comic-review-03";
+            System.IO.Directory.CreateDirectory(output);
+            ScreenCapture.CaptureScreenshot(output+"/"+key+".png");
             Debug.Log("[GridlockComicPlayback] captured="+key+" aspect="+Screen.width+"x"+Screen.height);
+        }
+        private static void SampleVoiceProgress()
+        {
+            var source=view.VoiceSource;
+            if(source.clip==null || !source.isPlaying || source.timeSamples<=0)return;
+            string path=AssetDatabase.GetAssetPath(source.clip),language=sequenceIndex<4?"fa":"en";
+            if(!path.StartsWith(CH02M01GridlockMediaImporter.VoiceRoot+"/"+language+"/",StringComparison.Ordinal) || source.loop || source.mute || source.volume<=0)
+                throw new InvalidOperationException("Wrong locale or inaudible/looping voice: "+path);
+            float progress=(float)source.timeSamples/source.clip.frequency;
+            if(previousClip!=source.clip)
+            {
+                if(Progress.ContainsKey(path))throw new InvalidOperationException("Comic line repeated: "+path);
+                previousClip=source.clip;Debug.Log("[GridlockComicPlayback] playing="+path);
+            }
+            if(Progress.TryGetValue(path,out float old) && progress+.1f<old)throw new InvalidOperationException("Comic voice restarted: "+path);
+            Progress[path]=progress;
         }
         private static void Observe(string message,string stack,LogType type)
         {
@@ -109,7 +141,7 @@ namespace Game.Editor
         }
         private static void Finish(bool pass,string detail)
         {
-            if(finished)return;finished=true;playback.Unbind();player?.Cancel();SessionState.SetBool(Active,false);SessionState.SetBool(RevisionKey,false);
+            if(finished)return;finished=true;playback.Unbind();player?.Cancel();SessionState.SetBool(Active,false);SessionState.SetBool(RevisionKey,false);SessionState.SetBool(VoiceKey,false);
             EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;
             Debug.Log("[GridlockComicPlayback] result="+(pass?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(pass);
         }

@@ -1,0 +1,375 @@
+{
+  "result": "Passed",
+  "clips": 44,
+  "locales": [
+    "en-US",
+    "fa-IR"
+  ],
+  "audioEvents": 22,
+  "checks": "PCM mono 44100Hz, non-silent, no full-scale samples, referenced files present",
+  "listeningReview": "Not performed by automated PCM validation",
+  "files": [
+    {
+      "id": "gridlock-opening-01",
+      "locale": "en-US",
+      "durationSeconds": 9.28,
+      "sha256": "1f81259db5ca44200f0f1ee59dfe97136526be185f9086e3c831cabcdec8d135",
+      "peak": 0.749939,
+      "rms": 0.118799
+    },
+    {
+      "id": "gridlock-opening-01",
+      "locale": "fa-IR",
+      "durationSeconds": 13.6,
+      "sha256": "63aa0b75afd441503e2b049c25d317d02a2cc6a61eacae2a78353a6bbea464c1",
+      "peak": 0.653351,
+      "rms": 0.111933
+    },
+    {
+      "id": "gridlock-opening-02",
+      "locale": "en-US",
+      "durationSeconds": 9.44,
+      "sha256": "ed689c809926c1f415aae2ac515a6fded74b76299f89a92c74f4c4fd6650f514",
+      "peak": 0.794342,
+      "rms": 0.126207
+    },
+    {
+      "id": "gridlock-opening-02",
+      "locale": "fa-IR",
+      "durationSeconds": 10.72,
+      "sha256": "f0d371bc6234a56f0c3d2d058e19f7e022de197b8f09aec802109098f059ee03",
+      "peak": 0.794281,
+      "rms": 0.121805
+    },
+    {
+      "id": "gridlock-opening-03",
+      "locale": "en-US",
+      "durationSeconds": 11.12,
+      "sha256": "aa5339ffcd2a632307472ea2757445ee7c160a0fc5c0ac5b8a4559ed50af3ba1",
+      "peak": 0.683929,
+      "rms": 0.11778
+    },
+    {
+      "id": "gridlock-opening-03",
+      "locale": "fa-IR",
+      "durationSeconds": 14.16,
+      "sha256": "b8d6294e7ee562d066035211b4c49af542106f83867195785d4e49aad2f68f48",
+      "peak": 0.619385,
+      "rms": 0.114676
+    },
+    {
+      "id": "gridlock-opening-04",
+      "locale": "en-US",
+      "durationSeconds": 9.6,
+      "sha256": "97d18e75de6b48d933bf6f760084510514e6d354c1abc1912f7dac96004b46a6",
+      "peak": 0.785217,
+      "rms": 0.124214
+    },
+    {
+      "id": "gridlock-opening-04",
+      "locale": "fa-IR",
+      "durationSeconds": 10.8,
+      "sha256": "112e142ac7e5ab55f2ce1c1e7d1903dcfa39ea5611e50fed9619017713c0ccdb",
+      "peak": 0.790863,
+      "rms": 0.116858
+    },
+    {
+      "id": "gridlock-opening-05",
+      "locale": "en-US",
+      "durationSeconds": 11.68,
+      "sha256": "f395f2b4a741b8b6a32e79899b5104995de19f05ceded770b9275d0605e77d97",
+      "peak": 0.794312,
+      "rms": 0.10916
+    },
+    {
+      "id": "gridlock-opening-05",
+      "locale": "fa-IR",
+      "durationSeconds": 12.88,
+      "sha256": "f31bac98d7b5d714d8a8996f3e36f3997252bdabd25a185d559b288e359d5e02",
+      "peak": 0.79422,
+      "rms": 0.112224
+    },
+    {
+      "id": "gridlock-brief-01",
+      "locale": "en-US",
+      "durationSeconds": 7.76,
+      "sha256": "c066da629bf97df479a1edf3053272353258ffdc0c1a92e237b036a5eb51f630",
+      "peak": 0.724792,
+      "rms": 0.120123
+    },
+    {
+      "id": "gridlock-brief-01",
+      "locale": "fa-IR",
+      "durationSeconds": 11.28,
+      "sha256": "de57a598a036ed32ffbc306a68a3263d9f9be80cdf3abc490d74a7ef8e548692",
+      "peak": 0.63623,
+      "rms": 0.101314
+    },
+    {
+      "id": "gridlock-brief-02",
+      "locale": "en-US",
+      "durationSeconds": 11.76,
+      "sha256": "8cc9f3b4494cab2de47327a108f12577fce77757c9cb37a965475ce27343e7bd",
+      "peak": 0.794373,
+      "rms": 0.114907
+    },
+    {
+      "id": "gridlock-brief-02",
+      "locale": "fa-IR",
+      "durationSeconds": 12.72,
+      "sha256": "1958011b3cafb680e11c3eca2778ce55b1d007d4ea378cdfb5a5d2c925a06ad8",
+      "peak": 0.794373,
+      "rms": 0.108562
+    },
+    {
+      "id": "gridlock-brief-03",
+      "locale": "en-US",
+      "durationSeconds": 16.48,
+      "sha256": "0d16b4e5598d7b09c7a13e94b78ba0f1a73c38f6c9fce68e81bc3971631c1a68",
+      "peak": 0.794403,
+      "rms": 0.111886
+    },
+    {
+      "id": "gridlock-brief-03",
+      "locale": "fa-IR",
+      "durationSeconds": 17.68,
+      "sha256": "dd2154db252d8521441a8d44404dc6e6d52c81f9b09bdf921e3f28a33cd46854",
+      "peak": 0.794403,
+      "rms": 0.113194
+    },
+    {
+      "id": "gridlock-comms-01",
+      "locale": "en-US",
+      "durationSeconds": 7.2,
+      "sha256": "8bc7967f94077994c5470a642c3794a97cfaf1cf6ffe9677588cc50e93f5aa79",
+      "peak": 0.791626,
+      "rms": 0.132793
+    },
+    {
+      "id": "gridlock-comms-01",
+      "locale": "fa-IR",
+      "durationSeconds": 8.64,
+      "sha256": "91a5164f9e4c20c0da6019eb252420dd9ea979f41b9e69ccd54cbdea261a1635",
+      "peak": 0.626495,
+      "rms": 0.122506
+    },
+    {
+      "id": "gridlock-debrief-01",
+      "locale": "en-US",
+      "durationSeconds": 6.4,
+      "sha256": "4041c9e725305b9b21274cea5f5730023b2ab72edf605c02634fc9121db9965e",
+      "peak": 0.681976,
+      "rms": 0.120769
+    },
+    {
+      "id": "gridlock-debrief-01",
+      "locale": "fa-IR",
+      "durationSeconds": 9.04,
+      "sha256": "d58bd96ed06ec42df9681b73c26425a1c26582586fbeb74f559f52527ac574e7",
+      "peak": 0.733856,
+      "rms": 0.1179
+    },
+    {
+      "id": "gridlock-debrief-02",
+      "locale": "en-US",
+      "durationSeconds": 7.84,
+      "sha256": "607bcb3d0b71db2736513fc1ed1bb2c52b777c4ee511b390852a28ef35fb7981",
+      "peak": 0.676605,
+      "rms": 0.130074
+    },
+    {
+      "id": "gridlock-debrief-02",
+      "locale": "fa-IR",
+      "durationSeconds": 9.36,
+      "sha256": "0802b6b4a78c94c5be51d057e3b898b010d57af6bf7a702b00352622e4b6b3b8",
+      "peak": 0.690613,
+      "rms": 0.115907
+    },
+    {
+      "id": "gridlock-debrief-03",
+      "locale": "en-US",
+      "durationSeconds": 9.68,
+      "sha256": "ad332fba1bcede1925f50977fcb734d1b21fc47106c345b9caeea5f84f65228e",
+      "peak": 0.794434,
+      "rms": 0.114464
+    },
+    {
+      "id": "gridlock-debrief-03",
+      "locale": "fa-IR",
+      "durationSeconds": 9.68,
+      "sha256": "ff4cacc61372a2c30b27e75f66193abf8e4c1a7843bc22c59df90912cf986a16",
+      "peak": 0.794342,
+      "rms": 0.117291
+    },
+    {
+      "id": "tutorial-gridlock-01",
+      "locale": "en-US",
+      "durationSeconds": 7.92,
+      "sha256": "fe9f5e3c67727b73a91270ad05e5f179c91144c00f61ec6d599bc4c18b2e6438",
+      "peak": 0.790192,
+      "rms": 0.122492
+    },
+    {
+      "id": "tutorial-gridlock-01",
+      "locale": "fa-IR",
+      "durationSeconds": 9.6,
+      "sha256": "554ccbe4504545b40f0ac157aa816d624dfff2ee2e015852d80954f206df9e30",
+      "peak": 0.744934,
+      "rms": 0.12594
+    },
+    {
+      "id": "tutorial-gridlock-02",
+      "locale": "en-US",
+      "durationSeconds": 4.32,
+      "sha256": "e2bc0ccbc6aba10f1f8881711a4339211c778c277c208e18c43449e381e1c4b9",
+      "peak": 0.753265,
+      "rms": 0.126231
+    },
+    {
+      "id": "tutorial-gridlock-02",
+      "locale": "fa-IR",
+      "durationSeconds": 4.72,
+      "sha256": "371bd0df91dc88d96630597ce1fb564fa3e8dfd1c6a691f96d56a08c3b6defc6",
+      "peak": 0.660645,
+      "rms": 0.12519
+    },
+    {
+      "id": "tutorial-gridlock-03",
+      "locale": "en-US",
+      "durationSeconds": 4.64,
+      "sha256": "ebe544c28c0c691a260b72d79b3857d3fa49dfad518f901aba1f9acfe18a47c4",
+      "peak": 0.615784,
+      "rms": 0.12242
+    },
+    {
+      "id": "tutorial-gridlock-03",
+      "locale": "fa-IR",
+      "durationSeconds": 6.8,
+      "sha256": "b24d8e977e7c4ee243d0c7bc9616ff6946ea9887d46d9029170fd67269ea1b8d",
+      "peak": 0.596588,
+      "rms": 0.101683
+    },
+    {
+      "id": "tutorial-gridlock-04",
+      "locale": "en-US",
+      "durationSeconds": 8.48,
+      "sha256": "e855061d5b2c5df66309795f26b6734551f7076d030d243ecc4c22009ab66641",
+      "peak": 0.597168,
+      "rms": 0.119969
+    },
+    {
+      "id": "tutorial-gridlock-04",
+      "locale": "fa-IR",
+      "durationSeconds": 12.96,
+      "sha256": "8887d4eca8f33ff7f21405f6a179969129065d6f5ea945fb08181f4ea1ce3fa3",
+      "peak": 0.667358,
+      "rms": 0.108619
+    },
+    {
+      "id": "tutorial-gridlock-05",
+      "locale": "en-US",
+      "durationSeconds": 6.48,
+      "sha256": "51c39154accea5fe0f8b2f3ce3fd1b0ad33ce8fa72c297f91778816b2a0cc2b5",
+      "peak": 0.669769,
+      "rms": 0.120047
+    },
+    {
+      "id": "tutorial-gridlock-05",
+      "locale": "fa-IR",
+      "durationSeconds": 9.28,
+      "sha256": "04e99a6d617fe8291a2b75a4b0bab77f9a52d04f9a53b6f37d02a1b92bc9db5f",
+      "peak": 0.619141,
+      "rms": 0.105497
+    },
+    {
+      "id": "tutorial-gridlock-06",
+      "locale": "en-US",
+      "durationSeconds": 4.96,
+      "sha256": "dc95c8b88ad947d426f09be58f290e8524331c864b7357e487baab2fe400b63e",
+      "peak": 0.608612,
+      "rms": 0.118899
+    },
+    {
+      "id": "tutorial-gridlock-06",
+      "locale": "fa-IR",
+      "durationSeconds": 4.16,
+      "sha256": "bffb4677841c6ce3895ed1fc4c39023658d05881911f8ca7553e513e3b0ece98",
+      "peak": 0.625916,
+      "rms": 0.121668
+    },
+    {
+      "id": "tutorial-gridlock-07",
+      "locale": "en-US",
+      "durationSeconds": 7.68,
+      "sha256": "485b061028d62812b8c8bb2fbf01c284139e74c1d232eb11b48dc10add850c66",
+      "peak": 0.67157,
+      "rms": 0.113203
+    },
+    {
+      "id": "tutorial-gridlock-07",
+      "locale": "fa-IR",
+      "durationSeconds": 8.96,
+      "sha256": "c2b5a2bbe93caa68de5f0e4c44e36b8b2c82943799618921e7496e155a9a940b",
+      "peak": 0.656769,
+      "rms": 0.114299
+    },
+    {
+      "id": "tutorial-gridlock-08",
+      "locale": "en-US",
+      "durationSeconds": 7.52,
+      "sha256": "f107aa4b72a9eeb4b0226cec9c0ec9cdc87be731a42a0d4c624973d5ca595c49",
+      "peak": 0.677399,
+      "rms": 0.12977
+    },
+    {
+      "id": "tutorial-gridlock-08",
+      "locale": "fa-IR",
+      "durationSeconds": 9.12,
+      "sha256": "15c826a8f9ba7e0631a502a1e5e1264161d6b9776c0350cd8b88ac16256db712",
+      "peak": 0.645874,
+      "rms": 0.120697
+    },
+    {
+      "id": "tutorial-gridlock-09",
+      "locale": "en-US",
+      "durationSeconds": 9.84,
+      "sha256": "3554af8bbbd7ce0325b819d52916429b788a9ae69857f7ce8a981ece96f85df8",
+      "peak": 0.715088,
+      "rms": 0.116772
+    },
+    {
+      "id": "tutorial-gridlock-09",
+      "locale": "fa-IR",
+      "durationSeconds": 9.76,
+      "sha256": "037173fcc05e9fdb386442a1654b48cba2494a7766ed96e6e1d9c6907812ac78",
+      "peak": 0.591614,
+      "rms": 0.124543
+    },
+    {
+      "id": "tutorial-gridlock-10",
+      "locale": "en-US",
+      "durationSeconds": 8.16,
+      "sha256": "eb28fa65a88b7621917b0a040eb33be31da6f860ae2a6a3c6718d970f2ada868",
+      "peak": 0.62793,
+      "rms": 0.12228
+    },
+    {
+      "id": "tutorial-gridlock-10",
+      "locale": "fa-IR",
+      "durationSeconds": 9.44,
+      "sha256": "46e2da583b33dabe45daf4b4963746fd805b1333c3dd2632fe3aea75b26acad4",
+      "peak": 0.64682,
+      "rms": 0.119962
+    }
+  ],
+  "approvedCaptionHashes": 44,
+  "installedGuidReferences": 44,
+  "unityPlayback": {
+    "wrapperExit": 0,
+    "log": "/private/tmp/warline-gridlock/voiced-comic-01.log",
+    "logSha256": "5bf26011325a5fa0ed322be6bb2e63afff76f46d8fbe74fcb5ea713f4e9ea8cb",
+    "narrativeClipsCompleted": 24,
+    "localizedPanelCaptures": 24,
+    "tutorialPlayback": "File and event binding checks only"
+  }
+}

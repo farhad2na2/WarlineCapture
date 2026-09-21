@@ -875,50 +875,50 @@ MonoBehaviour:
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-opening-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: bd044930f7b2f4a02ab48eabdc0e05ea, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-opening-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: beacb19d910444efbbda2839e2df2159, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-opening-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 74004fa76e1e449fc9c98dd8ee82abfd, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-opening-04
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 3783fdf7719e14317b654386aeb0de6f, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-opening-05
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 86c1b237c5ae34ccc8a72198047c7bad, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-brief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 962f8b324bfa245fc81b10fde5ceda2a, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-brief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 0c25b97839db44a68a1ce406ea080a6b, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-brief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 5287be2ebb70c4647a389cdbef9d025a, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-comms-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 765d733ef509848879bf18c85b99e5eb, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-debrief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: f3fa192ab28ba41c89f93243c926c567, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-debrief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: dcd50fda8e9e84ad280e343a33fdbb47, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: gridlock-debrief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 3cf4375e93d8b42aabc15ebe1497c745, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

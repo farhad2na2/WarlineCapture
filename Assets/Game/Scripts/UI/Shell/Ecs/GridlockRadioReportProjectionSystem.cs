@@ -52,7 +52,7 @@ namespace Game.UI.Shell.Ecs
                 for(int i=0;i<messages.Length;i++) if(messages[i].MessageId==MessageId)
                 {
                     var message=messages[i]; message.Text=new FixedString512Bytes(GameText.Get(line.Key,line.English));
-                    message.AudioEventId=default; messages[i]=message;
+                    message.AudioEventId=VoiceEvent(currentLocale); messages[i]=message;
                 }
                 locale=new FixedString32Bytes(currentLocale); return;
             }
@@ -62,10 +62,12 @@ namespace Game.UI.Shell.Ecs
                 MessageId=MessageId,SourceVersion=System.Math.Max(1,unchecked((int)runtime.SourceVersion)),Priority=AssistantMessagePriority.Normal,
                 RelatedKind=AssistantRecommendationKind.Explain,SuppressionKey="mission.gridlock.local_route",
                 Text=new FixedString512Bytes(GameText.Get(line.Key,line.English)),
-                AudioEventId=default,
-                CreatedAt=now,ExpiresAt=now+30,RequiresNarration=0
+                AudioEventId=VoiceEvent(currentLocale),
+                CreatedAt=now,ExpiresAt=now+30,RequiresNarration=1
             });
             issued=true; locale=new FixedString32Bytes(currentLocale);
         }
+        private static FixedString64Bytes VoiceEvent(string language) => new(
+            "vo.aria.gridlock.comms.01."+(language.StartsWith("fa",System.StringComparison.OrdinalIgnoreCase)?"fa":"en"));
     }
 }

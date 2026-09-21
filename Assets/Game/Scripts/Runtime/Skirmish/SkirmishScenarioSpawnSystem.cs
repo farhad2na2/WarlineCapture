@@ -114,6 +114,7 @@ namespace Game.Runtime
                 em.AddBuffer<SkirmishProductionReservation>(session);
 
             SkirmishArmyGroupSystem.EnsureSession(em, session, setup);
+            SkirmishResearchService.EnsureSession(em, session, setup);
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             bool startingSetBound = true;
             int infantryLive = 0;

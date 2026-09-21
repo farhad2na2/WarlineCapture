@@ -7,7 +7,8 @@ namespace Game.Skirmish.Contracts
         Producing = 2,
         Live = 3,
         Released = 4,
-        Cancelled = 5
+        Cancelled = 5,
+        Lost = 6
     }
 
     public struct SkirmishProductionRequest
@@ -45,6 +46,7 @@ namespace Game.Skirmish.Contracts
         public int SupplyCost;
         public int MaterialsCost;
         public int FuelCost;
+        public int RefundedMaterials;
         public uint ReservationId;
     }
 }

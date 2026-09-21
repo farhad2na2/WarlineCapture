@@ -40,6 +40,28 @@ namespace Game.Configs
             AddLive(ref capacity, category, members);
         }
 
+        public static bool TryReleaseReserved(
+            ref SkirmishCapacitySnapshot capacity,
+            SkirmishPopulationCategory category,
+            int members,
+            int supply)
+        {
+            if (members < 0 || supply < 0)
+                return false;
+            if (category == SkirmishPopulationCategory.Infantry && capacity.InfantryReserved < members)
+                return false;
+            if (category == SkirmishPopulationCategory.Ground && capacity.GroundReserved < members)
+                return false;
+            if (category == SkirmishPopulationCategory.Air && capacity.AirReserved < members)
+                return false;
+            if (capacity.SupplyReserved < supply)
+                return false;
+
+            AddReserved(ref capacity, category, -members);
+            capacity.SupplyReserved -= supply;
+            return true;
+        }
+
         public static bool TryReleaseDeath(
             ref SkirmishCapacitySnapshot capacity,
             SkirmishPopulationCategory category,

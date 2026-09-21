@@ -214,6 +214,9 @@ namespace Game.Composition
             RemoveIfPresent<SkirmishExpandedPauseRequest>(em, session);
             RemoveIfPresent<SkirmishExpandedReplayRequest>(em, session);
             RemoveIfPresent<SkirmishResolvedSetupComponent>(em, session);
+            RemoveIfPresent<SkirmishResearchStateComponent>(em, session);
+            if (em.HasBuffer<SkirmishResearchQueueItem>(session))
+                em.GetBuffer<SkirmishResearchQueueItem>(session).Clear();
             if (em.HasBuffer<SkirmishProductionReservation>(session))
                 em.GetBuffer<SkirmishProductionReservation>(session).Clear();
             if (em.HasBuffer<SkirmishArmyGroupRecord>(session))

@@ -142,6 +142,35 @@ namespace Game.Components
         public int SupplyCost;
         public SkirmishReservationPhase Phase;
         public byte FactionId;
+        public SkirmishProducerKind Producer;
+    }
+
+    public struct SkirmishUpgradeStampComponent : IComponentData
+    {
+        public byte InfantryWeapons;
+        public byte VehicleProtection;
+        public byte AircraftEfficiency;
+    }
+
+    public struct SkirmishResearchStateComponent : IComponentData
+    {
+        public byte FactionId;
+        public SkirmishReadinessStage Readiness;
+        public byte InfantryWeapons;
+        public byte VehicleProtection;
+        public byte AircraftEfficiency;
+        public uint NextResearchId;
+    }
+
+    public struct SkirmishResearchQueueItem : IBufferElementData
+    {
+        public uint ResearchId;
+        public SkirmishResearchKind Kind;
+        public SkirmishResearchPhase Phase;
+        public int MaterialsPaid;
+        public float RemainingSeconds;
+        public byte FactionId;
+        public SkirmishProducerKind Producer;
     }
 
     public struct SkirmishResultComponent : IComponentData

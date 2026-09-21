@@ -78,7 +78,23 @@ merge commit. That tree was not edited in this slice.
   Instant Skirmish mission 4 produce visits Reserved then Live in the same call.
   Starting grants count as Live. Death releases once.
 - Shared eligibility now also checks Materials/Fuel/caps when
-  `EnforceStocks=true`. No research tree in this slice.
+  `EnforceStocks=true`. Recruitment `FuelCost` stays 0 on the Skirmish
+  mission 4 ground overlays (fuel is an operation cost, not a buy currency).
+- Research scaffolding: designated HQ researches readiness and infantry
+  weapons; Ground Staging researches vehicle protection; aircraft
+  efficiency is present but needs a living Helipad/Airport (`MissingProducer`
+  on this Ground Maneuver slice). Category upgrades are one level, 200 M /
+  45 s, +10% infantry damage, +10% vehicle max health (percentage preserved),
+  −10% air fuel. Replacement Barracks can research without becoming the
+  victory base. Completed grants persist after the building is lost.
+- Mid-produce cancel: Reserved refunds 100% Materials and releases the
+  cap; Producing refunds 75% and unlocks the producer queue; Live/launched
+  deliveries are `NotCancellable`. A failed dispatch before spawn refunds
+  100%. Destroying the only living producer loses in-progress research and
+  Producing reservations (no refund) and refunds still-Reserved queues.
+- Fabrication / refinery profiles and physical Oil/Fuel/Materials haul stay
+  open. They would need separate facility recipes and truck delivery and
+  would block this research/cancel slice.
 
 ### Army control, fog, and movement ticket (SK-04)
 - Starting Skirmish mission 4 Standard Regular forces form persistent tactical
@@ -196,17 +212,18 @@ merge commit. That tree was not edited in this slice.
   overlays + designated Base Assault facts + capacity + legal army groups +
   live Standard ground movement + legal enemy/ARIA BA skills + registry
   GameObject visuals / Ground Staging yard + hidden-health HUD + live
-  pause/result/replay through the SK-10 codec) but **not Playable**, not
-  ARIA/War certified, not Accepted. Programmer 1 validated tip `69f72c638`
+  pause/result/replay through the SK-10 codec + HQ/Ground Staging research
+  scaffolding and 75% mid-produce refunds) but **not Playable**, not
+  ARIA/War certified, not Accepted. Programmer 1 validated tip `cc3c5471e`
   (definitions, objectives, economy, army, aria, visual, checkpoint). This
-  slice extends those seven suites; it does not add an eighth marker.
+  slice extends the economy suite inside the same seven markers.
 
 ## Remaining ticket gaps
 
 | Ticket | Gap |
 |---|---|
 | Ground roster and production visual ticket (SK-02) | Air roles; combat certification; live match still uses stand-ins when the scene registry is not supplied to launch |
-| Ground capacity reservation ticket (SK-03) | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
+| Ground capacity reservation ticket (SK-03) | Fabrication/refinery profiles and physical haul; enemy-side research receipts; checkpoint serialisation of research timers |
 | Army control, fog, and movement ticket (SK-04) | Transport boarding, formation/columns, full Army drawer HUD, terrain-blocked sight; path reuse still needs a live `GridConfig` + `UnitMove` |
 | Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
 | Base Assault objective depth (SK-06) | World-damage fixtures; EN/FA last-seen copy; device-facing pause chrome |
@@ -299,6 +316,11 @@ checkpoint):
 - `[SkirmishExpandedObjectiveTests] result=Passed`
   (adds `HiddenHealthProjectsVisibleLastSeenAndUnknown`)
 - `[SkirmishExpandedEconomyTests] result=Passed`
+  (adds `RecruitmentFuelCostStaysZeroOnS002Overlays`,
+  `MidProduceCancelRefundsReservedThenSeventyFivePercent`,
+  `FailedDispatchAndProducerDestructionUseSpecifiedRefunds`,
+  `CategoryResearchFromStagingAndHqAppliesOnce`,
+  `ReplacementHqCanResearchWithoutBecomingVictoryBase`)
 - `[SkirmishExpandedArmyTests] result=Passed`
   (adds `StandardGroundUnitsAdvanceWorldTransformOnMove` and
   `ArmyDrawerProjectsCurrentPlayerPage`)

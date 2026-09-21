@@ -31,6 +31,9 @@ namespace Game.Skirmish.Contracts
         ProductionRejected = 26,
         HiddenContact = 27,
         IncompatibleOrder = 28,
-        InvalidSelection = 29
+        InvalidSelection = 29,
+        AlreadyCompleted = 30,
+        QueueLocked = 31,
+        NotCancellable = 32
     }
 }

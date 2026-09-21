@@ -21,6 +21,7 @@ namespace Game.UI.Shell.Ecs
                 if (hasFactionEconomyQuery) factionEconomyQuery.Dispose();
                 if (hasAssistantMatchStartQuery) assistantMatchStartQuery.Dispose();
                 if (hasMissionRootQuery) missionRootQuery.Dispose();
+                if (hasTutorialSelectionBoundsQuery) tutorialSelectionBoundsQuery.Dispose();
             }
 
             cachedWorld = nextWorld;
@@ -36,6 +37,7 @@ namespace Game.UI.Shell.Ecs
             factionEconomyQuery = default;
             assistantMatchStartQuery = default;
             missionRootQuery = default;
+            tutorialSelectionBoundsQuery = default;
             hasBoundaryQuery = false;
             hasMissionBriefingQuery = false;
             hasFocusedSelectionQuery = false;
@@ -47,6 +49,7 @@ namespace Game.UI.Shell.Ecs
             hasFactionEconomyQuery = false;
             hasAssistantMatchStartQuery = false;
             hasMissionRootQuery = false;
+            hasTutorialSelectionBoundsQuery = false;
         }
     }
 }

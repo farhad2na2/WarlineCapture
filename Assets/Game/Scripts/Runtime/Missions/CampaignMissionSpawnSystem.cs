@@ -100,6 +100,12 @@ namespace Game.Runtime
                 if (TryFindAnchor(ref metadata.Blob.Value, definition.Breach.CoreAnchorId, out var core)) openingEndFocus = core.Position;
                 openingStartFocus = playerFocus;
             }
+            if (definition.Gridlock.Enabled != 0)
+            {
+                if(TryFindAnchor(ref metadata.Blob.Value,definition.Gridlock.SiteAAnchorId,out var site)) establishingFocus=site.Position;
+                if(TryFindAnchor(ref metadata.Blob.Value,definition.Gridlock.HospitalAnchorId,out var hospital)) openingEndFocus=hospital.Position;
+                openingStartFocus=playerFocus;
+            }
             CampaignMissionOpeningPresentationComponent opening = new()
             {
                 SessionToken = rootRuntime.SessionToken,
@@ -165,7 +171,7 @@ namespace Game.Runtime
                 }
             }
             int hostileCount = CountHostiles(ref definition);
-            return definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0
+            return definition.Gridlock.Enabled != 0 || definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0
                 ? total <= 64 && total > hostileCount && hostileCount > 0
                 : total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
         }
@@ -180,6 +186,7 @@ namespace Game.Runtime
             InitializeDefenseAttempt(em, root, ref definition, ref map, in runtime);
             InitializeExtractionAttempt(em, root, ref definition, ref map, in runtime);
             InitializeBreachAttempt(em, root, ref definition, ref map, in runtime);
+            InitializeGridlockAttempt(em, root, ref definition, ref map, in runtime);
             int ordinal = 0;
             float3 playerPositionSum = float3.zero;
             float3 hostilePositionSum = float3.zero;
@@ -216,6 +223,7 @@ namespace Game.Runtime
                         RegisterDefenseMember(em, root, instance, ref definition, ref group, in unit);
                         RegisterExtractionMember(em, root, instance, ref definition, ref group, in unit);
                         RegisterBreachMember(em, root, instance, ref definition, ref group, in unit);
+                        RegisterGridlockMember(em, root, instance, ref definition, ref group, in unit);
                         if (runtime.MissionId.Equals(FirstContactMissionId))
                             ApplyFirstContactHostileCombatPolicy(em, instance, group.FactionId);
                         SetOrAdd(em, instance,

@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Gridlock Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Gridlock Narrative
+  m_GUID: a518a87bafefe43e59832bd9b1bf0dd1
+  m_SerializeEntries:
+  - m_GUID: 04673fd3ce8c5411fa4626ed3f876de9
+    m_Address: narrative.gridlock.O01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0e5a28365b79648e9b0ed7a770890c90
+    m_Address: narrative.gridlock.D02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 458437079b2d64bf69d59d944d748b13
+    m_Address: narrative.gridlock.D01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 496abf8de1b614539b128c6a6ddb34e0
+    m_Address: narrative.gridlock.B02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 811bc036b79bd47a8acc4be755a356bd
+    m_Address: narrative.gridlock.D03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d85c2366747c4ab592fe5d4847fcbf1
+    m_Address: narrative.gridlock.O04
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9225120a1652f452aa773b59b8d79de4
+    m_Address: narrative.gridlock.C01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 95537a9e0381c48d88ec90b2c191bad6
+    m_Address: narrative.gridlock.O05
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a7c15f52e3a0746da9b1045de6102939
+    m_Address: narrative.gridlock.B03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae7730a65d54f44d79a4c9e1e1596f74
+    m_Address: narrative.gridlock.B01
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dfeaa3d9a35374a91a7e60be7f78ab93
+    m_Address: narrative.gridlock.O03
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa6fe936b7a6a410fa46cf8569228ae3
+    m_Address: narrative.gridlock.O02
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: cae875dda661847b48d963edc55e5830, type: 2}
+    - {fileID: 11400000, guid: 44c6095746e3442c5b98dc3fe73de7c9, type: 2}

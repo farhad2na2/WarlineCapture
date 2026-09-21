@@ -1,0 +1,139 @@
+{
+  "provider": "built-in image_gen",
+  "date": "2026-09-21",
+  "review": "Fadi revisions inspected at source resolution; current voiced UI playback check recorded separately.",
+  "rejected": [
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-870cbe79-5941-4f0b-84ff-77abd9ca53e6.png",
+      "reason": "Fadi depicted with military armor"
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-711900d0-31d6-4893-a846-887cd107f462.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-3be50eaf-5085-4add-9324-a79cf4138dac.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-17234539-bba7-4aaf-a36e-7d20396210eb.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ebb9c652-09fa-4766-a785-0dc797a8db1a.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    }
+  ],
+  "panels": [
+    {
+      "id": "CH02-O01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-4cd5be72-51bf-487a-bfc5-70ebc6460216.png",
+      "prompt": "Elevated surviving desert city; hospital, depot and two blocked road segments. Low-poly faceted cinematic style, no text, central crop-safe geography.",
+      "refs": [
+        "Narrative/M05BreachAssault/Final/M05-B01.png"
+      ]
+    },
+    {
+      "id": "CH02-O02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-f6242be3-b004-40cf-9de9-998145e608d4.png",
+      "prompt": "Dalia, same woman as portrait, tan tactical shirt and vest, tied-back dark hair, sunglasses and radio headset, stands beside the hospital's nearly empty fuel tank and generator, looking toward a canvas relief truck stranded beyond distant rubble. Hospital ward window behind her, a nurse checking a patient silhouette, no medical gore. Foreground gauge needle low, no lettering. Medium-wide scene establishing urgent fuel shortage.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-O03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-47246bb0-b0e0-47d9-9e99-3bab055318ff.png",
+      "prompt": "Samira, same woman and mustard headscarf, dark coat teal blouse, stands at a market crossroads surveying the connected daily life of the city. Behind her a modest market stall, unlit street lamp, water delivery cart, a shelter courtyard and workers awaiting supplies. Broken roadway interrupts distribution. She holds an unlabeled city map. Human reconstruction, thoughtful determination.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-O04",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-4735b32c-a2fb-4a86-8c71-aae34b501e6f.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the middle-left civilian pointing left beside the cyan map; keep that pointing pose and both foreground orange-shirt workers. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
+      "refs": [
+        "Previous CH02-O04 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
+      ]
+    },
+    {
+      "id": "CH02-O05",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-e465e0a0-9d61-4260-842e-4e1217ed6882.png",
+      "prompt": "Dalia same woman in tan tactical vest sunglasses headset and tied dark hair, in foreground gives a measured open-hand direction to a rifle escort protecting two road workers at a rubble barrier. Across the road in background, an oddly pristine empty side road leads toward a dark electrical substation; a subtle mystery, no villain present. Hospital skyline visible. Civilian protection and rebuilding rather than battle spectacle.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-B01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-e70abdaf-3d92-4509-999e-0fc2a512a5f6.png",
+      "prompt": "Samira same woman mustard headscarf dark coat teal blouse beside the stationary olive canvas-covered relief truck at supply depot, one hand resting on a sealed medical crate, looking along the rubble-blocked road toward the cream-colored hospital in background. A clear visual reason to escort this specific truck. Warm morning light, calm urgency.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-B02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-13c0c4c5-cba2-441b-b3fc-d8e8b5664954.png",
+      "prompt": "Edit image 1, the Gridlock comic panel. Replace ONLY Fadi, the bearded foreground civilian in gray tunic and navy vest pointing right, with an illustrated version of the SAME man in image 2 (identity reference portrait). Image 3 is the comic character rendering/style reference. His current face/body looks like an angular low-resolution game mesh pasted into a comic: remove the slab eyebrows, blocky polygon nose, cuboid beard, rigid toy-like body and hands. Redraw his face with expressive realistic human eyes, individually shaped brows, natural beard contour, subtle hair detail and natural anatomy, in the refined cinematic faceted illustrated comic style of Samira in image 3 and the portrait in image 2. Retain stylized painted planes, but never crude flat mesh geometry. Same middle-aged brown-skinned man, same dark hair/full beard, long gray-brown tunic, navy civilian cloth vest, sandals, pointing pose, location and scale. Preserve the full original wide composition, hospital, rubble, mountains, two workers, golden light, color palette, road geometry, all other subjects. No lettering or speech bubbles, no armor. Output one landscape panel at the original 16:9 aspect ratio.",
+      "refs": [
+        "Previous CH02-B02 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "CH02-O03.png style reference"
+      ]
+    },
+    {
+      "id": "CH02-B03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-2290c767-9cbe-4558-92da-6807cce92f42.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the civilian in the background at right behind the riflemen, beside the two orange-vest workers; keep that position and size. Leave Dalia and all riflemen exactly as they are. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
+      "refs": [
+        "Previous CH02-B03 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
+      ]
+    },
+    {
+      "id": "CH02-C01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-af3b749a-9a0f-49e7-b08c-b2f4ab4a2480.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the central-left civilian between two workers behind the cyan map; keep his hand on his hip, position and scale. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
+      "refs": [
+        "Previous CH02-C01 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
+      ]
+    },
+    {
+      "id": "CH02-D01",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ec4f2e08-f9fc-48f4-ba1f-22c5ebea5c18.png",
+      "prompt": "Successful relief arrival: canvas truck parked at hospital entrance, civilians unload plain medical crates and fuel cans. Samira matching mustard headscarf dark coat teal blouse speaks with a grateful nurse. Generator running indicated by soft exhaust and warm ward lights. Cleared road remains visible. Hopeful practical relief, no celebratory fireworks.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_samira.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-D02",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-218971b8-f38f-4de4-8ec9-e76524c31b6f.png",
+      "prompt": "Mystery evidence scene: cyan tactical road map projected above a tabletop, simple unlabeled geographic lines indicating several blocked intersections and one preserved route toward a dormant electrical substation. Beyond window actual dark substation silhouette with transformers and disconnected pylons. No text or symbols that read as writing, no faces required, no glowing humanoid. Sober analytical atmosphere, teal shadows amber city dusk.",
+      "refs": [
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    },
+    {
+      "id": "CH02-D03",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-cd5a7a16-9ab9-4227-94f0-12b25c0b21c5.png",
+      "prompt": "Dalia matching woman tan tactical vest sunglasses headset tied-back dark hair at cleared hospital road in late warm daylight. Behind her relief truck is unloading, two road workers rest safely, and nearly empty fuel cans by the depot suggest the next supply challenge. She looks toward the distant supply route with quiet determination. No battle, no victory text.",
+      "refs": [
+        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
+        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+      ]
+    }
+  ]
+}

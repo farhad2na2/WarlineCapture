@@ -41,6 +41,9 @@ namespace Game.UI.Runtime
                 BindMissionNode(2, SelectM03);
                 BindMissionNode(3, SelectM04);
                 BindMissionNode(4, SelectM05);
+                campaignOperationsView.ChapterOneButton?.onClick.AddListener(SelectChapterOne);
+                campaignOperationsView.ChapterTwoButton?.onClick.AddListener(SelectChapterTwo);
+                campaignOperationsView.ChapterTwoOverviewButton?.onClick.AddListener(SelectChapterTwo);
             }
             if (missionBriefingView != null)
             {
@@ -63,6 +66,9 @@ namespace Game.UI.Runtime
                 UnbindMissionNode(2, SelectM03);
                 UnbindMissionNode(3, SelectM04);
                 UnbindMissionNode(4, SelectM05);
+                campaignOperationsView.ChapterOneButton?.onClick.RemoveListener(SelectChapterOne);
+                campaignOperationsView.ChapterTwoButton?.onClick.RemoveListener(SelectChapterTwo);
+                campaignOperationsView.ChapterTwoOverviewButton?.onClick.RemoveListener(SelectChapterTwo);
             }
             if (missionBriefingView != null)
             {
@@ -119,11 +125,13 @@ namespace Game.UI.Runtime
                 UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);
         }
 
-        private void SelectM01() => SelectMission(UiCampaignMissionProjectionIds.M01);
-        private void SelectM02() => SelectMission(UiCampaignMissionProjectionIds.M02);
-        private void SelectM03() => SelectMission(UiCampaignMissionProjectionIds.M03);
-        private void SelectM05() => SelectMission("saga.ch01.m05.breach_assault");
-        private void SelectM04() => SelectMission("saga.ch01.m04.airlift");
+        private void SelectM01() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.Gridlock : UiCampaignMissionProjectionIds.M01);
+        private void SelectChapterOne(){SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterTwo(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
+        private void SelectM02() {if(!campaignOperationsView.IsChapterTwo) SelectMission(UiCampaignMissionProjectionIds.M02);}
+        private void SelectM03() {if(!campaignOperationsView.IsChapterTwo) SelectMission(UiCampaignMissionProjectionIds.M03);}
+        private void SelectM05() {if(!campaignOperationsView.IsChapterTwo) SelectMission("saga.ch01.m05.breach_assault");}
+        private void SelectM04() {if(!campaignOperationsView.IsChapterTwo) SelectMission("saga.ch01.m04.airlift");}
 
         private void SelectMission(string selectedMissionId)
         {

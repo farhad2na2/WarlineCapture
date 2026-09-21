@@ -16,7 +16,7 @@ namespace Game.Runtime
             DynamicBuffer<GridRoad> roads,
             DynamicBlockerComponent blockerData,
             out Vector2Int originCell,
-            bool requirePreferredOrigin = false)
+            bool requirePreferredOrigin = false, bool allowAuthoredRoadOverlap = false)
         {
             originCell = default;
             if (definition == null || context.GetPlacementFootprint == null || context.GetEffectivePlacementRect == null || context.IsPlacementValid == null)
@@ -28,6 +28,26 @@ namespace Game.Runtime
                 Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - placementFootprint.y)));
 
             RectInt preferredPlacementRect = context.GetEffectivePlacementRect(definition, clampedPreferred, grid, rotateVertical);
+            if (allowAuthoredRoadOverlap)
+            {
+                // Authored mission obstruction requests are identity-checked at the
+                // owning spawn boundary. They may occupy roads, never existing owners.
+                if (!requirePreferredOrigin || clampedPreferred != preferredOrigin ||
+                    !BuildingPlacementValidationUtilitySystemHelper.IsFootprintInsideGrid(preferredPlacementRect.position, preferredPlacementRect.size, grid) ||
+                    !blockerData.Blocked.IsCreated) return false;
+                for (int y=preferredPlacementRect.yMin;y<preferredPlacementRect.yMax;y++)
+                    for (int x=preferredPlacementRect.xMin;x<preferredPlacementRect.xMax;x++)
+                        if(blockerData.Blocked.IsSet(y*grid.Width+x)) return false;
+                var buildings=context.WallValidationContext.RuntimeBuildings;
+                if(buildings!=null)
+                    foreach(var pair in buildings)
+                    {
+                        var existing=pair.Value;
+                        if(existing!=null && existing.Definition!=null &&
+                            preferredPlacementRect.Overlaps(new RectInt(existing.OriginCell,existing.Definition.FootprintCells))) return false;
+                    }
+                originCell=preferredOrigin;return true;
+            }
             int footprintSearchRadius = Mathf.Max(placementFootprint.x, placementFootprint.y) * 4;
             // Spawn relocation must not lose its reach when an oversized model reservation is corrected.
             int maxSearchRadius = Mathf.Max(

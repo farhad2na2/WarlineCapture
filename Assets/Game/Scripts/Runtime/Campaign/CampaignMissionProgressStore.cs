@@ -30,6 +30,23 @@ namespace Game.Runtime
             return Clone(normalized);
         }
 
+        public bool HasSeenChapterOpening(string missionId)
+        {
+            RequireMissionId(missionId);
+            return Find(ToList(_saveService.LoadProfile().campaignMissionProgress), missionId)?.chapterOpeningSeen == true;
+        }
+
+        public void MarkChapterOpeningSeen(string missionId)
+        {
+            RequireMissionId(missionId);
+            var profile = _saveService.LoadProfile();
+            var entries = ToList(profile.campaignMissionProgress);
+            var entry = FindOrAdd(entries, missionId);
+            if (entry.chapterOpeningSeen) return;
+            entry.chapterOpeningSeen = true;
+            Save(profile, entries);
+        }
+
         public bool EnsureAvailable(string missionId)
         {
             RequireMissionId(missionId);
@@ -251,6 +268,7 @@ namespace Game.Runtime
                 {
                     schemaVersion = value.schemaVersion, missionId = value.missionId, available = value.available,
                     firstClearCompleted = value.firstClearCompleted, bestStars = value.bestStars,
+                    chapterOpeningSeen = value.chapterOpeningSeen,
                     bestCompletionMilliseconds = value.bestCompletionMilliseconds,
                     firstClearRewardSettled = value.firstClearRewardSettled,
                     successfulReplayCount = value.successfulReplayCount, lastSettledToken = value.lastSettledToken,

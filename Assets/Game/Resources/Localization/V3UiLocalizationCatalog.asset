@@ -180,6 +180,34 @@ MonoBehaviour:
       value: Guard Tower
     - key: catalog.building.road_barrier
       value: Road Barrier
+    - key: chapter.broken_grid.available
+      value: Gridlock available
+    - key: chapter.broken_grid.locked
+      value: Complete Breach Assault
+    - key: chapter.broken_grid.mission.1
+      value: GRIDLOCK
+    - key: chapter.broken_grid.mission.2
+      value: SUPPLY LINE
+    - key: chapter.broken_grid.mission.3
+      value: MARKET LIFELINE
+    - key: chapter.broken_grid.mission.4
+      value: POWER RELAY
+    - key: chapter.broken_grid.mission.5
+      value: ROUTE REOPENED
+    - key: chapter.broken_grid.name
+      value: "Chapter 2 \xB7 Broken Grid"
+    - key: chapter.first_response.mission.1
+      value: FIRST CONTACT
+    - key: chapter.first_response.mission.2
+      value: ESTABLISH THE BASE
+    - key: chapter.first_response.mission.3
+      value: RADAR WARNING
+    - key: chapter.first_response.mission.4
+      value: AIRLIFT RESCUE
+    - key: chapter.first_response.mission.5
+      value: BREACH ASSAULT
+    - key: chapter.first_response.name
+      value: "Chapter 1 \xB7 First Response"
     - key: confirm_destroy
       value: Are you sure you want to destroy {0}?
     - key: create_first
@@ -190,6 +218,232 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.gridlock.clue
+      value: The sabotage steers traffic toward a dormant substation.
+    - key: mission.gridlock.crew.description
+      value: Civilian road crew. Keep Fadi and a worker close to the work site to
+        clear it.
+    - key: mission.gridlock.crew.group
+      value: '{0} CREW'
+    - key: mission.gridlock.crew.role
+      value: Road crew
+    - key: mission.gridlock.crew.select
+      value: Select the road crew
+    - key: mission.gridlock.deadline
+      value: 12 active minutes
+    - key: mission.gridlock.enemy_intel
+      value: Two armed sabotage teams. A warned counterattack may contest the reopened
+        lane.
+    - key: mission.gridlock.fadi.name
+      value: Fadi
+    - key: mission.gridlock.failure.deadline
+      value: The hospital relief deadline expired.
+    - key: mission.gridlock.failure.fadi
+      value: Fadi was lost. Retry the operation.
+    - key: mission.gridlock.failure.integrity
+      value: Mission state could not be verified. Return and retry; no rewards were
+        settled.
+    - key: mission.gridlock.failure.rifles
+      value: The escort squads were lost.
+    - key: mission.gridlock.failure.vehicle
+      value: The relief truck was destroyed.
+    - key: mission.gridlock.failure.workers
+      value: Both road workers were lost.
+    - key: mission.gridlock.forces
+      value: "8 rifles \xB7 Fadi \xB7 2 workers \xB7 1 relief truck"
+    - key: mission.gridlock.guide.title
+      value: "GRIDLOCK \xB7 FIELD GUIDE"
+    - key: mission.gridlock.hud.hold
+      value: 'Hospital secure: {0}/20'
+    - key: mission.gridlock.hud.work
+      value: "A: {0}/25 \u2014 {1}\nB: {2}/25 \u2014 {3}"
+    - key: mission.gridlock.location
+      value: Hospital relief corridor
+    - key: mission.gridlock.name
+      value: GRIDLOCK
+    - key: mission.gridlock.next
+      value: "Supply Line \u2014 awaiting mission content"
+    - key: mission.gridlock.objective.delivery
+      value: Deliver relief and secure the hospital
+    - key: mission.gridlock.objective.delivery.body
+      value: Keep the route clear. The relief truck must arrive, then the hospital
+        must stay clear for 20 seconds.
+    - key: mission.gridlock.objective.site_a
+      value: Clear work site A
+    - key: mission.gridlock.objective.site_a.body
+      value: Move Fadi and a worker into site A. Keep hostiles away for 25 seconds
+        of work.
+    - key: mission.gridlock.objective.site_b
+      value: Clear work site B
+    - key: mission.gridlock.objective.site_b.body
+      value: Protect the crew at site B. Interrupted work resumes where it stopped.
+    - key: mission.gridlock.relief.moving
+      value: Relief truck en route
+    - key: mission.gridlock.relief.waiting
+      value: Relief truck waiting for a clear route
+    - key: mission.gridlock.resources
+      value: Relief vehicle and its fuel are supplied.
+    - key: mission.gridlock.result.defeat
+      value: RELIEF INTERRUPTED
+    - key: mission.gridlock.result.success
+      value: The service lane is open and the hospital has its supplies. The sabotage
+        points toward a dormant substation.
+    - key: mission.gridlock.result.victory
+      value: HOSPITAL REACHED
+    - key: mission.gridlock.reward.card
+      value: "800 XP \xB7 4,000 Credits"
+    - key: mission.gridlock.star.1
+      value: Restore hospital access
+    - key: mission.gridlock.star.2
+      value: Fadi and both workers survive
+    - key: mission.gridlock.star.3
+      value: Finish in under 7 minutes
+    - key: mission.gridlock.summary
+      value: Protect Fadi and his road crew. Clear the service lane and escort relief
+        supplies to the hospital.
+    - key: mission.gridlock.time_limit
+      value: TIME LIMIT
+    - key: mission.gridlock.tutorial.1.body
+      value: Select a rifle squad, press Move, then tap site A. Keep the armed saboteurs
+        away from the crew.
+    - key: mission.gridlock.tutorial.1.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.1.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.1.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.1.title
+      value: Secure the first work area
+    - key: mission.gridlock.tutorial.10.body
+      value: The relief truck must remain at the hospital for twenty clear seconds.
+        Leaving or a nearby hostile resets the hold.
+    - key: mission.gridlock.tutorial.10.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.10.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.10.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.10.title
+      value: Hold the hospital clear
+    - key: mission.gridlock.tutorial.2.body
+      value: Select Fadi, press Move, then tap the marked work area.
+    - key: mission.gridlock.tutorial.2.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.2.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.2.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.2.title
+      value: Bring Fadi to site A
+    - key: mission.gridlock.tutorial.3.body
+      value: Select a road worker and move them into the same work area as Fadi.
+    - key: mission.gridlock.tutorial.3.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.3.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.3.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.3.title
+      value: Bring a road worker
+    - key: mission.gridlock.tutorial.4.body
+      value: Work needs Fadi, a living worker and no nearby hostile. Progress pauses
+        during interruptions and resumes when it is safe.
+    - key: mission.gridlock.tutorial.4.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.4.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.4.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.4.title
+      value: Protect the work
+    - key: mission.gridlock.tutorial.5.body
+      value: Move the rifles to site B before advancing the crew. Keep the cleared
+        section protected too.
+    - key: mission.gridlock.tutorial.5.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.5.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.5.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.5.title
+      value: Secure the second work area
+    - key: mission.gridlock.tutorial.6.body
+      value: Move Fadi into site B. The first cleared section stays open.
+    - key: mission.gridlock.tutorial.6.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.6.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.6.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.6.title
+      value: Move Fadi forward
+    - key: mission.gridlock.tutorial.7.body
+      value: Move a surviving worker to Fadi at site B. Stop or retreat if the approach
+        becomes unsafe.
+    - key: mission.gridlock.tutorial.7.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.7.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.7.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.7.title
+      value: Regroup the road crew
+    - key: mission.gridlock.tutorial.8.body
+      value: Keep the crew safe for the remaining work. Losing one worker is recoverable;
+        Fadi and one worker must survive.
+    - key: mission.gridlock.tutorial.8.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.8.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.8.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.8.title
+      value: Finish the hospital approach
+    - key: mission.gridlock.tutorial.9.body
+      value: The supplied truck travels on the cleared route. Move the escorts near
+        it. If the route is contested, secure the marked section so it can continue.
+    - key: mission.gridlock.tutorial.9.diagram
+      value: "SITE A \u2192 SITE B \u2192 RELIEF TRUCK \u2192 HOSPITAL"
+    - key: mission.gridlock.tutorial.9.example
+      value: After a mistaken order, press Stop, reselect the intended unit, then
+        press Move.
+    - key: mission.gridlock.tutorial.9.mistake
+      value: Fadi and the workers are unarmed. Secure their approach with the rifles
+        first.
+    - key: mission.gridlock.tutorial.9.title
+      value: Protect relief transit
+    - key: mission.gridlock.warning
+      value: Saboteurs approaching the cleared section. Protect the crew and route!
+    - key: mission.gridlock.work.clearing
+      value: Removing obstruction
+    - key: mission.gridlock.work.complete
+      value: Route section cleared
+    - key: mission.gridlock.work.crew_missing
+      value: Fadi and a worker must be here
+    - key: mission.gridlock.work.threat_nearby
+      value: "Threat nearby \u2014 work paused"
+    - key: mission.gridlock.work.working
+      value: Working
+    - key: mission.gridlock.worker.name
+      value: Road worker
     - key: mission.guide.lesson_count
       value: '{0} lessons'
     - key: mission.m01.goal.civilians
@@ -1539,6 +1793,9 @@ MonoBehaviour:
       value: SAMIRA HADDAD
     - key: narrative.first_launch.speaker.samira.role
       value: CIVIL INFRASTRUCTURE
+    - key: narrative.gridlock.comms.01
+      value: Fadi's service lane is usable. It was missing from my map. I have updated
+        the route; local knowledge matters here.
     - key: narrative.m01.brief.aria
       value: 'Threat profiles: Courier carries orders, Warden controls the crossing,
         and Broker coordinates supplies.'
@@ -1677,6 +1934,12 @@ MonoBehaviour:
       value: First Response is complete. The reconnaissance team and armor parts
         are assigned to your roster. Review your results, then return to the campaign
         map. We will follow the evidence.
+    - key: narrative.speaker.fadi.accessibleLabel
+      value: Fadi, road crew leader
+    - key: narrative.speaker.fadi.name
+      value: Fadi
+    - key: narrative.speaker.fadi.role
+      value: Road crew leader
     - key: narrative.speaker.laila.name
       value: Captain Laila Nasser
     - key: narrative.speaker.laila.role
@@ -2088,6 +2351,9 @@ MonoBehaviour:
       value: ARIA CONTROLLING
     - key: ui.aria.do_it
       value: DO IT
+    - key: ui.aria.drag_select.body
+      value: Drag from one corner of the marked box to the opposite corner, enclosing
+        the units, then release.
     - key: ui.aria.elapsed_hms
       value: 'ELAPSED: {0}:{1:00}:{2:00}'
     - key: ui.aria.elapsed_ms
@@ -2104,6 +2370,8 @@ MonoBehaviour:
       value: MOVING TO COVER
     - key: ui.aria.name
       value: ARIA
+    - key: ui.aria.normal_selection.title
+      value: Select units
     - key: ui.aria.placement.body
       value: Move the preview onto a green footprint; rotate if needed, then tap
         Place Building. Cancel returns to the lesson.
@@ -2117,6 +2385,10 @@ MonoBehaviour:
       value: PRESS ATTACK
     - key: ui.aria.press_move
       value: PRESS MOVE
+    - key: ui.aria.press_select
+      value: Press Select
+    - key: ui.aria.press_select.body
+      value: Press Select on the command bar.
     - key: ui.aria.preview
       value: PREVIEW
     - key: ui.aria.primary_state
@@ -2187,6 +2459,8 @@ MonoBehaviour:
       value: STEP {0}/{1}
     - key: ui.aria.stop_aria
       value: STOP ARIA
+    - key: ui.aria.tap_select.body
+      value: Tap the marked unit in the world.
     - key: ui.briefing.barracks_count
       value: BARRACKS x{0}
     - key: ui.briefing.destroy_patrol_count
@@ -2920,6 +3194,38 @@ MonoBehaviour:
       value: 05D 08H
     - key: ui.v3.07d.ccdbe96e50
       value: 07D
+    - key: ui.v3.100_fuel.41f50b3a86
+      value: 100 FUEL
+    - key: ui.v3.100_materials.794efffac8
+      value: 100 MATERIALS
+    - key: ui.v3.100_oil.631a4f1d2f
+      value: 100 OIL
+    - key: ui.v3.120_command.943c192343
+      value: 120 COMMAND
+    - key: ui.v3.120_fps.e3f90dba7a
+      value: 120 FPS
+    - key: ui.v3.120_kb.c4a2c403be
+      value: 120 KB
+    - key: ui.v3.120_oil.0cfb20dec6
+      value: 120 OIL
+    - key: ui.v3.12_000_credits.3d6adb00ee
+      value: 12,000 CREDITS
+    - key: ui.v3.12_450_18_000_xp.948176b250
+      value: 12,450 / 18,000 XP
+    - key: ui.v3.12d_08h.36612ca9b2
+      value: 12D 08H
+    - key: ui.v3.12k.eca723cb12
+      value: 12K
+    - key: ui.v3.140m.02337792ae
+      value: 140m
+    - key: ui.v3.15_680_24_000_xp.6d13e2b710
+      value: 15,680 / 24,000 XP
+    - key: ui.v3.15_oil.4d43218552
+      value: 15 OIL
+    - key: ui.v3.180_materials.b42b11fe20
+      value: 180 MATERIALS
+    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
+      value: 18,560 / 24,000 XP
     - key: ui.v3.1_1_mb.74472ccf96
       value: 1.1 MB
     - key: ui.v3.1_4_mb.e253fd925c
@@ -2944,40 +3250,14 @@ MonoBehaviour:
       value: 1 RUSH TICKET
     - key: ui.v3.1_slot_required.da134e76cb
       value: 1 SLOT REQUIRED
-    - key: ui.v3.100_fuel.41f50b3a86
-      value: 100 FUEL
-    - key: ui.v3.100_materials.794efffac8
-      value: 100 MATERIALS
-    - key: ui.v3.100_oil.631a4f1d2f
-      value: 100 OIL
-    - key: ui.v3.12_000_credits.3d6adb00ee
-      value: 12,000 CREDITS
-    - key: ui.v3.12_450_18_000_xp.948176b250
-      value: 12,450 / 18,000 XP
-    - key: ui.v3.120_command.943c192343
-      value: 120 COMMAND
-    - key: ui.v3.120_fps.e3f90dba7a
-      value: 120 FPS
-    - key: ui.v3.120_kb.c4a2c403be
-      value: 120 KB
-    - key: ui.v3.120_oil.0cfb20dec6
-      value: 120 OIL
-    - key: ui.v3.12d_08h.36612ca9b2
-      value: 12D 08H
-    - key: ui.v3.12k.eca723cb12
-      value: 12K
-    - key: ui.v3.140m.02337792ae
-      value: 140m
-    - key: ui.v3.15_680_24_000_xp.6d13e2b710
-      value: 15,680 / 24,000 XP
-    - key: ui.v3.15_oil.4d43218552
-      value: 15 OIL
-    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
-      value: 18,560 / 24,000 XP
-    - key: ui.v3.180_materials.b42b11fe20
-      value: 180 MATERIALS
     - key: ui.v3.1h_ago.e87791916d
       value: 1h ago
+    - key: ui.v3.200_command.0b2871a190
+      value: 200 COMMAND
+    - key: ui.v3.21m_ago.5106bdae68
+      value: 21m ago
+    - key: ui.v3.28d_12h_remaining.aecded76a7
+      value: 28D 12H REMAINING
     - key: ui.v3.2_1_mb.afc38615e7
       value: 2.1 MB
     - key: ui.v3.2_500_credits.c73607a755
@@ -2992,14 +3272,24 @@ MonoBehaviour:
       value: 2 OPERATION SUPPLIES
     - key: ui.v3.2_rush_tickets.61e998e7e3
       value: 2 RUSH TICKETS
-    - key: ui.v3.200_command.0b2871a190
-      value: 200 COMMAND
-    - key: ui.v3.21m_ago.5106bdae68
-      value: 21m ago
-    - key: ui.v3.28d_12h_remaining.aecded76a7
-      value: 28D 12H REMAINING
     - key: ui.v3.2m_ago.35abf1daad
       value: 2m ago
+    - key: ui.v3.300_command.51589ca8d9
+      value: 300 COMMAND
+    - key: ui.v3.300_command_support_parts.d92a338ea3
+      value: 300 COMMAND + SUPPORT PARTS
+    - key: ui.v3.300_materials.e8187c76ae
+      value: 300 MATERIALS
+    - key: ui.v3.30_fps.39f81d2101
+      value: 30 FPS
+    - key: ui.v3.330_command.99f1655563
+      value: 330 COMMAND
+    - key: ui.v3.33_fuel.fc5e545c22
+      value: 33 FUEL
+    - key: ui.v3.34m_ago.3bd84c4c0c
+      value: 34m ago
+    - key: ui.v3.350_command.256201b16b
+      value: 350 COMMAND
     - key: ui.v3.3_3_slots_used.04e0af3bec
       value: 3 / 3 SLOTS USED
     - key: ui.v3.3_3_stars.d909a26811
@@ -3008,32 +3298,16 @@ MonoBehaviour:
       value: 3 REPAIR CONVOYS
     - key: ui.v3.3_rush_tickets.2ca4c7176e
       value: 3 RUSH TICKETS
-    - key: ui.v3.30_fps.39f81d2101
-      value: 30 FPS
-    - key: ui.v3.300_command.51589ca8d9
-      value: 300 COMMAND
-    - key: ui.v3.300_command_support_parts.d92a338ea3
-      value: 300 COMMAND + SUPPORT PARTS
-    - key: ui.v3.300_materials.e8187c76ae
-      value: 300 MATERIALS
-    - key: ui.v3.33_fuel.fc5e545c22
-      value: 33 FUEL
-    - key: ui.v3.330_command.99f1655563
-      value: 330 COMMAND
-    - key: ui.v3.34m_ago.3bd84c4c0c
-      value: 34m ago
-    - key: ui.v3.350_command.256201b16b
-      value: 350 COMMAND
     - key: ui.v3.3h_ago.6868cc1381
       value: 3h ago
     - key: ui.v3.3x3.97a611ef57
       value: 3x3
-    - key: ui.v3.4_rush_tickets.653ef6a6cc
-      value: 4 RUSH TICKETS
     - key: ui.v3.420_kb.8a1b888916
       value: 420 KB
     - key: ui.v3.45m_ago.83ae378f24
       value: 45m ago
+    - key: ui.v3.4_rush_tickets.653ef6a6cc
+      value: 4 RUSH TICKETS
     - key: ui.v3.5_000_credits.8aa25223b1
       value: 5,000 CREDITS
     - key: ui.v3.5_rush_tickets.cbcbb87747
@@ -3044,18 +3318,18 @@ MonoBehaviour:
       value: 60 FPS
     - key: ui.v3.680_kb.91b32ba212
       value: 680 KB
-    - key: ui.v3.7_500_credits.9369404454
-      value: 7,500 CREDITS
-    - key: ui.v3.7_500_credits_200_command.5b07872dcc
-      value: 7,500 CREDITS + 200 COMMAND
     - key: ui.v3.72h_remaining.f5e571f89a
       value: 72H REMAINING
     - key: ui.v3.750_command.75c3e8ddaa
       value: 750 COMMAND
-    - key: ui.v3.8_000_credits.b7abe8f3a5
-      value: 8,000 CREDITS
+    - key: ui.v3.7_500_credits.9369404454
+      value: 7,500 CREDITS
+    - key: ui.v3.7_500_credits_200_command.5b07872dcc
+      value: 7,500 CREDITS + 200 COMMAND
     - key: ui.v3.820_kb.82984f307a
       value: 820 KB
+    - key: ui.v3.8_000_credits.b7abe8f3a5
+      value: 8,000 CREDITS
     - key: ui.v3.8m_ago.e09bde6930
       value: 8m ago
     - key: ui.v3.940_kb.d317067525
@@ -5423,6 +5697,37 @@ MonoBehaviour:
       value: "\u0628\u0631\u062C \u0646\u06AF\u0647\u0628\u0627\u0646\u06CC"
     - key: catalog.building.road_barrier
       value: "\u0645\u0627\u0646\u0639 \u062C\u0627\u062F\u0647"
+    - key: chapter.broken_grid.available
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646 \u0628\u0627\u0632
+        \u0634\u062F\u0647"
+    - key: chapter.broken_grid.locked
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A \u0634\u06A9\u0633\u062A\u0646
+        \u0645\u062D\u0627\u0635\u0631\u0647 \u0631\u0648 \u062A\u0645\u0648\u0645
+        \u06A9\u0646"
+    - key: chapter.broken_grid.mission.1
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646"
+    - key: chapter.broken_grid.mission.2
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: chapter.broken_grid.mission.3
+      value: "\u0634\u0631\u06CC\u0627\u0646 \u0628\u0627\u0632\u0627\u0631"
+    - key: chapter.broken_grid.mission.4
+      value: "\u0631\u0644\u0647\u0654 \u0628\u0631\u0642"
+    - key: chapter.broken_grid.mission.5
+      value: "\u0628\u0627\u0632\u06AF\u0634\u0627\u06CC\u06CC \u0645\u0633\u06CC\u0631"
+    - key: chapter.broken_grid.name
+      value: "\u0641\u0635\u0644 \u06F2 \xB7 \u0634\u0628\u06A9\u0647\u0654 \u06AF\u0633\u0633\u062A\u0647"
+    - key: chapter.first_response.mission.1
+      value: "\u0627\u0648\u0644\u06CC\u0646 \u0628\u0631\u062E\u0648\u0631\u062F"
+    - key: chapter.first_response.mission.2
+      value: "\u0633\u0627\u062E\u062A \u067E\u0627\u06CC\u06AF\u0627\u0647"
+    - key: chapter.first_response.mission.3
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0631\u0627\u062F\u0627\u0631"
+    - key: chapter.first_response.mission.4
+      value: "\u0646\u062C\u0627\u062A \u0647\u0648\u0627\u06CC\u06CC"
+    - key: chapter.first_response.mission.5
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u0645\u062D\u0627\u0635\u0631\u0647"
+    - key: chapter.first_response.name
+      value: "\u0641\u0635\u0644 \u06F1 \xB7 \u0627\u0648\u0644\u06CC\u0646 \u0648\u0627\u06A9\u0646\u0634"
     - key: confirm_destroy
       value: "\u0645\u0637\u0645\u0626\u0646\u06CC \u0645\u06CC\u200C\u062E\u0648\u0627\u06CC
         {0} \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646\u06CC\u061F"
@@ -5437,6 +5742,428 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647\u0654 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0647\u0646\u0648\u0632 \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.gridlock.clue
+      value: "\u0627\u06CC\u0646 \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u06CC
+        \u062A\u0631\u0627\u0641\u06CC\u06A9 \u0631\u0648 \u0628\u0647 \u0633\u0645\u062A
+        \u06CC\u06A9 \u067E\u0633\u062A \u0628\u0631\u0642 \u062E\u0627\u0645\u0648\u0634
+        \u0647\u062F\u0627\u06CC\u062A \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.gridlock.crew.description
+      value: "\u06AF\u0631\u0648\u0647 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC. \u0641\u0627\u062F\u06CC
+        \u0648 \u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0628\u0627\u06CC\u062F
+        \u0646\u0632\u062F\u06CC\u06A9 \u0645\u062D\u0644 \u06A9\u0627\u0631 \u0628\u0627\u0634\u0646
+        \u062A\u0627 \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646\u0646."
+    - key: mission.gridlock.crew.group
+      value: "{0} \u0646\u0641\u0631 \u0627\u0632 \u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.gridlock.crew.role
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.gridlock.crew.select
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: mission.gridlock.deadline
+      value: "\u06F1\u06F2 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
+        \u0641\u0639\u0627\u0644"
+    - key: mission.gridlock.enemy_intel
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u0645\u0633\u0644\u062D \u062E\u0631\u0627\u0628\u06A9\u0627\u0631
+        \u062A\u0648\u06CC \u0645\u0633\u06CC\u0631\u0646. \u0642\u0628\u0644 \u0627\u0632
+        \u0636\u062F\u062D\u0645\u0644\u0647 \u0628\u0647 \u0645\u0633\u06CC\u0631
+        \u0628\u0627\u0632\u0634\u062F\u0647\u060C \u0647\u0634\u062F\u0627\u0631
+        \u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC."
+    - key: mission.gridlock.fadi.name
+      value: "\u0641\u0627\u062F\u06CC"
+    - key: mission.gridlock.failure.deadline
+      value: "\u0645\u0647\u0644\u062A \u0631\u0633\u0648\u0646\u062F\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0628\u0647 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646 \u062A\u0645\u0648\u0645
+        \u0634\u062F."
+    - key: mission.gridlock.failure.fadi
+      value: "\u0641\u0627\u062F\u06CC \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A
+        \u062F\u0627\u062F\u06CC\u0645. \u0639\u0645\u0644\u06CC\u0627\u062A \u0631\u0648
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u0634\u0631\u0648\u0639 \u06A9\u0646."
+    - key: mission.gridlock.failure.integrity
+      value: "\u0648\u0636\u0639\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u06CC\u0633\u062A.
+        \u0628\u0631\u06AF\u0631\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u067E\u0627\u062F\u0627\u0634\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: mission.gridlock.failure.rifles
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u0645\u062D\u0627\u0641\u0638
+        \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u06CC\u0645."
+    - key: mission.gridlock.failure.vehicle
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: mission.gridlock.failure.workers
+      value: "\u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u06AF\u0631 \u0631\u0648
+        \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u06CC\u0645."
+    - key: mission.gridlock.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0641\u0627\u062F\u06CC
+        \xB7 \u06F2 \u06A9\u0627\u0631\u06AF\u0631 \xB7 \u06F1 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u0627\u0645\u062F\u0627\u062F"
+    - key: mission.gridlock.guide.title
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646 \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC
+        \u0639\u0645\u0644\u06CC\u0627\u062A"
+    - key: mission.gridlock.hud.hold
+      value: "\u0627\u0645\u0646\u06CC\u062A \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646:
+        {0}/\u06F2\u06F0"
+    - key: mission.gridlock.hud.work
+      value: "\u0627\u0648\u0644: {0}/\u06F2\u06F5 \u2014 {1}\n\u062F\u0648\u0645:
+        {2}/\u06F2\u06F5 \u2014 {3}"
+    - key: mission.gridlock.location
+      value: "\u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F\u0631\u0633\u0627\u0646\u06CC
+        \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.name
+      value: "\u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0627\u0646"
+    - key: mission.gridlock.next
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u2014 \u0647\u0646\u0648\u0632
+        \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A"
+    - key: mission.gridlock.objective.delivery
+      value: "\u0627\u0645\u062F\u0627\u062F \u0631\u0648 \u0628\u0631\u0633\u0648\u0646
+        \u0648 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646 \u0631\u0648
+        \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.gridlock.objective.delivery.body
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0648 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0628\u0627\u06CC\u062F \u0628\u0631\u0633\u0647\u061B \u0628\u0639\u062F
+        \u0627\u0637\u0631\u0627\u0641 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0628\u0627\u06CC\u062F \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646
+        \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.gridlock.objective.site_a
+      value: "\u0645\u062D\u0644 \u06A9\u0627\u0631 \u0627\u0648\u0644 \u0631\u0648
+        \u0628\u0627\u0632 \u06A9\u0646"
+    - key: mission.gridlock.objective.site_a.body
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06CC\u06A9\u06CC \u0627\u0632 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644 \u0627\u0648\u0644 \u0628\u0628\u0631.
+        \u0628\u0631\u0627\u06CC \u06F2\u06F5 \u062B\u0627\u0646\u06CC\u0647 \u06A9\u0627\u0631\u060C
+        \u062F\u0634\u0645\u0646\u200C\u0647\u0627 \u0631\u0648 \u062F\u0648\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.gridlock.objective.site_b
+      value: "\u0645\u062D\u0644 \u06A9\u0627\u0631 \u062F\u0648\u0645 \u0631\u0648
+        \u0628\u0627\u0632 \u06A9\u0646"
+    - key: mission.gridlock.objective.site_b.body
+      value: "\u062A\u0648 \u0645\u062D\u0644 \u062F\u0648\u0645 \u0627\u0632 \u06AF\u0631\u0648\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646. \u0627\u06AF\u0647 \u06A9\u0627\u0631
+        \u0645\u062A\u0648\u0642\u0641 \u0628\u0634\u0647\u060C \u0628\u0639\u062F\u0627\u064B
+        \u0627\u0632 \u0647\u0645\u0648\u0646\u200C\u062C\u0627 \u0627\u062F\u0627\u0645\u0647
+        \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.gridlock.relief.moving
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u062A\u0648\u06CC \u0631\u0627\u0647\u0647"
+    - key: mission.gridlock.relief.waiting
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0645\u0646\u062A\u0638\u0631 \u0627\u0645\u0646 \u0634\u062F\u0646 \u0645\u0633\u06CC\u0631\u0647"
+    - key: mission.gridlock.resources
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0648 \u0628\u0646\u0632\u06CC\u0646\u0634 \u0627\u0632 \u0642\u0628\u0644
+        \u062A\u0623\u0645\u06CC\u0646 \u0634\u062F\u0647."
+    - key: mission.gridlock.result.defeat
+      value: "\u0627\u0645\u062F\u0627\u062F\u0631\u0633\u0627\u0646\u06CC \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F"
+    - key: mission.gridlock.result.success
+      value: "\u0645\u0633\u06CC\u0631 \u0641\u0631\u0639\u06CC \u0628\u0627\u0632
+        \u0634\u062F\u0647 \u0648 \u0645\u062D\u0645\u0648\u0644\u0647 \u0628\u0647
+        \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646 \u0631\u0633\u06CC\u062F\u0647.
+        \u0631\u062F \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u06CC \u0628\u0647
+        \u06CC\u06A9 \u067E\u0633\u062A \u0628\u0631\u0642 \u062E\u0627\u0645\u0648\u0634
+        \u0645\u06CC\u200C\u0631\u0633\u0647."
+    - key: mission.gridlock.result.victory
+      value: "\u0627\u0645\u062F\u0627\u062F \u0628\u0647 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0631\u0633\u06CC\u062F"
+    - key: mission.gridlock.reward.card
+      value: "\u06F8\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647 \xB7 \u06F4\u066C\u06F0\u06F0\u06F0
+        \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.gridlock.star.1
+      value: "\u0645\u0633\u06CC\u0631 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646"
+    - key: mission.gridlock.star.2
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u0647\u0631 \u062F\u0648 \u06A9\u0627\u0631\u06AF\u0631
+        \u0632\u0646\u062F\u0647 \u0628\u0645\u0648\u0646\u0646"
+    - key: mission.gridlock.star.3
+      value: "\u0632\u06CC\u0631 \u06F7 \u062F\u0642\u06CC\u0642\u0647 \u062A\u0645\u0648\u0645
+        \u06A9\u0646"
+    - key: mission.gridlock.summary
+      value: "\u0627\u0632 \u0641\u0627\u062F\u06CC \u0648 \u06AF\u0631\u0648\u0647
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646. \u0645\u0633\u06CC\u0631 \u0641\u0631\u0639\u06CC \u0631\u0648
+        \u0628\u0627\u0632 \u06A9\u0646 \u0648 \u0645\u062D\u0645\u0648\u0644\u0647\u0654
+        \u0627\u0645\u062F\u0627\u062F \u0631\u0648 \u0628\u0647 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0628\u0631\u0633\u0648\u0646."
+    - key: mission.gridlock.time_limit
+      value: "\u0645\u0647\u0644\u062A"
+    - key: mission.gridlock.tutorial.1.body
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0645\u062D\u0644 \u0627\u0648\u0644
+        \u0631\u0648 \u0645\u0634\u062E\u0635 \u06A9\u0646. \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627\u06CC
+        \u0645\u0633\u0644\u062D \u0631\u0648 \u0627\u0632 \u06AF\u0631\u0648\u0647
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC \u062F\u0648\u0631 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.gridlock.tutorial.1.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.1.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.1.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.1.title
+      value: "\u0645\u062D\u0644 \u06A9\u0627\u0631 \u0627\u0648\u0644 \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.gridlock.tutorial.10.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0628\u0627\u06CC\u062F \u0628\u06CC\u0633\u062A \u062B\u0627\u0646\u06CC\u0647
+        \u062A\u0648\u06CC \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0648 \u062F\u0648\u0631 \u0627\u0632 \u062F\u0634\u0645\u0646 \u0628\u0645\u0648\u0646\u0647.
+        \u0627\u06AF\u0647 \u062E\u0627\u0631\u062C \u0628\u0634\u0647 \u06CC\u0627
+        \u062F\u0634\u0645\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0628\u06CC\u0627\u062F\u060C
+        \u0634\u0645\u0627\u0631\u0634 \u0627\u0632 \u0646\u0648 \u0634\u0631\u0648\u0639
+        \u0645\u06CC\u200C\u0634\u0647."
+    - key: mission.gridlock.tutorial.10.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.10.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.10.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.10.title
+      value: "\u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646 \u0631\u0648
+        \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.gridlock.tutorial.2.body
+      value: "\u0641\u0627\u062F\u06CC \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \xAB\u062D\u0631\u06A9\u062A\xBB \u0631\u0648 \u0628\u0632\u0646
+        \u0648 \u0645\u062D\u0644 \u06A9\u0627\u0631 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.2.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.2.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.2.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.2.title
+      value: "\u0641\u0627\u062F\u06CC \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644
+        \u0627\u0648\u0644 \u0628\u0628\u0631"
+    - key: mission.gridlock.tutorial.3.body
+      value: "\u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0628\u0647 \u0647\u0645\u0648\u0646 \u0645\u062D\u0644
+        \u06A9\u0627\u0631\u06CC \u0628\u0628\u0631 \u06A9\u0647 \u0641\u0627\u062F\u06CC
+        \u0627\u0648\u0646\u062C\u0627\u0633\u062A."
+    - key: mission.gridlock.tutorial.3.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.3.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.3.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.3.title
+      value: "\u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.gridlock.tutorial.4.body
+      value: "\u0628\u0631\u0627\u06CC \u06A9\u0627\u0631\u060C \u0641\u0627\u062F\u06CC
+        \u0648 \u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0632\u0646\u062F\u0647
+        \u0628\u0627\u06CC\u062F \u0627\u06CC\u0646\u062C\u0627 \u0628\u0627\u0634\u0646
+        \u0648 \u062F\u0634\u0645\u0646 \u0646\u0632\u062F\u06CC\u06A9 \u0646\u0628\u0627\u0634\u0647.
+        \u0627\u06AF\u0647 \u06A9\u0627\u0631 \u0645\u062A\u0648\u0642\u0641 \u0628\u0634\u0647\u060C
+        \u0648\u0642\u062A\u06CC \u0627\u0645\u0646 \u0634\u062F \u0627\u0632 \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.gridlock.tutorial.4.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.4.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.4.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.4.title
+      value: "\u0627\u0632 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646"
+    - key: mission.gridlock.tutorial.5.body
+      value: "\u0642\u0628\u0644 \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646
+        \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627\u060C \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644 \u062F\u0648\u0645 \u0628\u0628\u0631.
+        \u0627\u0632 \u0628\u062E\u0634 \u0628\u0627\u0632\u0634\u062F\u0647 \u0647\u0645
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.gridlock.tutorial.5.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.5.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.5.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.5.title
+      value: "\u0645\u062D\u0644 \u06A9\u0627\u0631 \u062F\u0648\u0645 \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.gridlock.tutorial.6.body
+      value: "\u0641\u0627\u062F\u06CC \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644
+        \u062F\u0648\u0645 \u0628\u0628\u0631. \u0628\u062E\u0634 \u0627\u0648\u0644
+        \u0645\u0633\u06CC\u0631 \u0628\u0627\u0632 \u0645\u06CC\u200C\u0645\u0648\u0646\u0647."
+    - key: mission.gridlock.tutorial.6.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.6.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.6.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.6.title
+      value: "\u0641\u0627\u062F\u06CC \u0631\u0648 \u062C\u0644\u0648 \u0628\u0628\u0631"
+    - key: mission.gridlock.tutorial.7.body
+      value: "\u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0628\u0627\u0642\u06CC\u200C\u0645\u0648\u0646\u062F\u0647
+        \u0631\u0648 \u067E\u06CC\u0634 \u0641\u0627\u062F\u06CC \u062A\u0648\u06CC
+        \u0645\u062D\u0644 \u062F\u0648\u0645 \u0628\u0628\u0631. \u0627\u06AF\u0647
+        \u0645\u0633\u06CC\u0631 \u0646\u0627\u0627\u0645\u0646 \u0634\u062F\u060C
+        \u062A\u0648\u0642\u0641 \u06A9\u0646 \u06CC\u0627 \u0639\u0642\u0628 \u0628\u06A9\u0634."
+    - key: mission.gridlock.tutorial.7.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.7.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.7.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.7.title
+      value: "\u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u062C\u0645\u0639 \u06A9\u0646"
+    - key: mission.gridlock.tutorial.8.body
+      value: "\u062A\u0627 \u06A9\u0627\u0631 \u062A\u0645\u0648\u0645 \u0628\u0634\u0647
+        \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u0628\u0627 \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u0646
+        \u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0647\u0646\u0648\u0632 \u0645\u06CC\u200C\u0634\u0647
+        \u0627\u062F\u0627\u0645\u0647 \u062F\u0627\u062F\u061B \u0641\u0627\u062F\u06CC
+        \u0648 \u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631 \u0628\u0627\u06CC\u062F
+        \u0632\u0646\u062F\u0647 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.gridlock.tutorial.8.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.8.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.8.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.8.title
+      value: "\u0648\u0631\u0648\u062F\u06CC \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646"
+    - key: mission.gridlock.tutorial.9.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u062A\u0648\u06CC \u0645\u0633\u06CC\u0631
+        \u0628\u0627\u0632\u0634\u062F\u0647 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627 \u0631\u0648 \u0646\u0632\u062F\u06CC\u06A9\u0634
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0627\u06AF\u0647 \u0645\u0633\u06CC\u0631
+        \u0646\u0627\u0627\u0645\u0646 \u0634\u062F\u060C \u0628\u062E\u0634 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646 \u062A\u0627 \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u0647."
+    - key: mission.gridlock.tutorial.9.diagram
+      value: "\u0645\u062D\u0644 \u0627\u0648\u0644 \u2190 \u0645\u062D\u0644 \u062F\u0648\u0645
+        \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u2190 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646"
+    - key: mission.gridlock.tutorial.9.example
+      value: "\u0627\u06AF\u0647 \u062F\u0633\u062A\u0648\u0631 \u0627\u0634\u062A\u0628\u0627\u0647
+        \u062F\u0627\u062F\u06CC\u060C \u062A\u0648\u0642\u0641 \u06A9\u0646\u060C
+        \u0648\u0627\u062D\u062F \u062F\u0631\u0633\u062A \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646."
+    - key: mission.gridlock.tutorial.9.mistake
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627
+        \u0645\u0633\u0644\u062D \u0646\u06CC\u0633\u062A\u0646. \u0642\u0628\u0644
+        \u0627\u0632 \u062C\u0644\u0648 \u0628\u0631\u062F\u0646 \u0627\u0648\u0646\u200C\u0647\u0627\u060C
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0627\u0645\u0646 \u06A9\u0646."
+    - key: mission.gridlock.tutorial.9.title
+      value: "\u0627\u0632 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.gridlock.warning
+      value: "\u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627 \u062F\u0627\u0631\u0646
+        \u0628\u0647 \u0628\u062E\u0634 \u0628\u0627\u0632\u0634\u062F\u0647 \u0646\u0632\u062F\u06CC\u06A9
+        \u0645\u06CC\u200C\u0634\u0646. \u0627\u0632 \u06AF\u0631\u0648\u0647 \u0648
+        \u0645\u0633\u06CC\u0631 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646!"
+    - key: mission.gridlock.work.clearing
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0628\u0631\u062F\u0627\u0634\u062A\u0646
+        \u0645\u0627\u0646\u0639"
+    - key: mission.gridlock.work.complete
+      value: "\u0627\u06CC\u0646 \u0628\u062E\u0634 \u0645\u0633\u06CC\u0631 \u0628\u0627\u0632
+        \u0634\u062F"
+    - key: mission.gridlock.work.crew_missing
+      value: "\u0641\u0627\u062F\u06CC \u0648 \u06CC\u06A9 \u06A9\u0627\u0631\u06AF\u0631
+        \u0628\u0627\u06CC\u062F \u0627\u06CC\u0646\u062C\u0627 \u0628\u0627\u0634\u0646"
+    - key: mission.gridlock.work.threat_nearby
+      value: "\u062F\u0634\u0645\u0646 \u0646\u0632\u062F\u06CC\u06A9\u0647 \u2014
+        \u06A9\u0627\u0631 \u0645\u062A\u0648\u0642\u0641 \u0634\u062F\u0647"
+    - key: mission.gridlock.work.working
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u06A9\u0627\u0631"
+    - key: mission.gridlock.worker.name
+      value: "\u06A9\u0627\u0631\u06AF\u0631 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
     - key: mission.guide.lesson_count
       value: "{0} \u062F\u0631\u0633"
     - key: mission.m01.goal.civilians
@@ -7779,6 +8506,13 @@ MonoBehaviour:
       value: "\u0633\u0645\u06CC\u0631\u0627 \u062D\u062F\u0627\u062F"
     - key: narrative.first_launch.speaker.samira.role
       value: "\u0632\u06CC\u0631\u0633\u0627\u062E\u062A \u0634\u0647\u0631\u06CC"
+    - key: narrative.gridlock.comms.01
+      value: "\u0645\u0633\u06CC\u0631 \u0641\u0631\u0639\u06CC \u0641\u0627\u062F\u06CC
+        \u0642\u0627\u0628\u0644 \u0627\u0633\u062A\u0641\u0627\u062F\u0647\u200C\u0633\u062A.
+        \u062A\u0648\u06CC \u0646\u0642\u0634\u0647\u0654 \u0645\u0646 \u0646\u0628\u0648\u062F.
+        \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0647\u200C\u0631\u0648\u0632
+        \u06A9\u0631\u062F\u0645\u061B \u0627\u06CC\u0646\u062C\u0627 \u0634\u0646\u0627\u062E\u062A
+        \u0645\u062D\u0644\u06CC \u0645\u0647\u0645\u0647."
     - key: narrative.m01.brief.aria
       value: "\u067E\u06CC\u06A9 \u062F\u0633\u062A\u0648\u0631\u0647\u0627 \u0631\u0648
         \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647\u060C \u0646\u06AF\u0647\u0628\u0627\u0646
@@ -8109,6 +8843,13 @@ MonoBehaviour:
         \u0628\u0647 \u0646\u0642\u0634\u0647\u0654 \u06A9\u0627\u0631\u0632\u0627\u0631.
         \u0631\u062F \u0627\u06CC\u0646 \u0645\u062F\u0627\u0631\u06A9 \u0631\u0648
         \u062F\u0646\u0628\u0627\u0644 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645."
+    - key: narrative.speaker.fadi.accessibleLabel
+      value: "\u0641\u0627\u062F\u06CC\u060C \u0633\u0631\u06AF\u0631\u0648\u0647
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: narrative.speaker.fadi.name
+      value: "\u0641\u0627\u062F\u06CC"
+    - key: narrative.speaker.fadi.role
+      value: "\u0633\u0631\u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
     - key: narrative.speaker.laila.name
       value: "\u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627 \u0646\u0627\u0635\u0631"
     - key: narrative.speaker.laila.role
@@ -8661,6 +9402,12 @@ MonoBehaviour:
       value: "\u06A9\u0646\u062A\u0631\u0644 \u0628\u0627 \u0622\u0631\u06CC\u0627"
     - key: ui.aria.do_it
       value: "\u0627\u0646\u062C\u0627\u0645\u0634 \u0628\u062F\u0647"
+    - key: ui.aria.drag_select.body
+      value: "\u0627\u0632 \u06AF\u0648\u0634\u0647\u0654 \u06A9\u0627\u062F\u0631
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u06A9\u0634 \u062A\u0627
+        \u062F\u0648\u0631 \u0647\u0645\u0647\u0654 \u0646\u06CC\u0631\u0648\u0647\u0627
+        \u06A9\u0627\u062F\u0631 \u0628\u06CC\u0641\u062A\u0647\u060C \u0628\u0639\u062F
+        \u0631\u0647\u0627 \u06A9\u0646."
     - key: ui.aria.elapsed_hms
       value: "\u0633\u067E\u0631\u06CC\u200C\u0634\u062F\u0647: {0}:{1:00}:{2:00}"
     - key: ui.aria.elapsed_ms
@@ -8684,6 +9431,9 @@ MonoBehaviour:
         \u067E\u0648\u0634\u0634"
     - key: ui.aria.name
       value: "\u0622\u0631\u06CC\u0627"
+    - key: ui.aria.normal_selection.title
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646"
     - key: ui.aria.placement.body
       value: "\u067E\u06CC\u0634\u200C\u0646\u0645\u0627\u06CC\u0634 \u0631\u0648
         \u0628\u0647 \u0645\u062D\u0644 \u0633\u0628\u0632 \u0628\u06A9\u0634. \u0627\u06AF\u0647
@@ -8702,6 +9452,12 @@ MonoBehaviour:
       value: "\u062D\u0645\u0644\u0647 \u0631\u0648 \u0628\u0632\u0646"
     - key: ui.aria.press_move
       value: "\u062D\u0631\u06A9\u062A \u0631\u0648 \u0628\u0632\u0646"
+    - key: ui.aria.press_select
+      value: "\xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB \u0631\u0648 \u0628\u0632\u0646"
+    - key: ui.aria.press_select.body
+      value: "\u062F\u06A9\u0645\u0647\u0654 \xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB
+        \u0631\u0648 \u062A\u0648\u06CC \u0646\u0648\u0627\u0631 \u0641\u0631\u0645\u0627\u0646
+        \u0628\u0632\u0646."
     - key: ui.aria.preview
       value: "\u067E\u06CC\u0634\u200C\u0646\u0645\u0627\u06CC\u0634"
     - key: ui.aria.primary_state
@@ -8787,6 +9543,9 @@ MonoBehaviour:
       value: "\u0645\u0631\u062D\u0644\u0647 {0}/{1}"
     - key: ui.aria.stop_aria
       value: "\u062A\u0648\u0642\u0641 \u0622\u0631\u06CC\u0627"
+    - key: ui.aria.tap_select.body
+      value: "\u0631\u0648\u06CC \u0646\u06CC\u0631\u0648\u06CC \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u062A\u0648\u06CC \u0645\u06CC\u062F\u0627\u0646 \u0628\u0632\u0646."
     - key: ui.briefing.barracks_count
       value: "\u0633\u0631\u0628\u0627\u0632\u062E\u0627\u0646\u0647 \xD7{0}"
     - key: ui.briefing.destroy_patrol_count
@@ -9785,6 +10544,38 @@ MonoBehaviour:
       value: "05 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
     - key: ui.v3.07d.ccdbe96e50
       value: "07 \u0631\u0648\u0632"
+    - key: ui.v3.100_fuel.41f50b3a86
+      value: "100 \u0633\u0648\u062E\u062A"
+    - key: ui.v3.100_materials.794efffac8
+      value: "100 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.v3.100_oil.631a4f1d2f
+      value: "100 \u0646\u0641\u062A"
+    - key: ui.v3.120_command.943c192343
+      value: "120 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.120_fps.e3f90dba7a
+      value: 120 FPS
+    - key: ui.v3.120_kb.c4a2c403be
+      value: 120 KB
+    - key: ui.v3.120_oil.0cfb20dec6
+      value: "120 \u0646\u0641\u062A"
+    - key: ui.v3.12_000_credits.3d6adb00ee
+      value: "12,000 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.v3.12_450_18_000_xp.948176b250
+      value: 12,450 / 18,000 XP
+    - key: ui.v3.12d_08h.36612ca9b2
+      value: "12 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
+    - key: ui.v3.12k.eca723cb12
+      value: 12K
+    - key: ui.v3.140m.02337792ae
+      value: 140m
+    - key: ui.v3.15_680_24_000_xp.6d13e2b710
+      value: 15,680 / 24,000 XP
+    - key: ui.v3.15_oil.4d43218552
+      value: "15 \u0646\u0641\u062A"
+    - key: ui.v3.180_materials.b42b11fe20
+      value: "180 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
+      value: 18,560 / 24,000 XP
     - key: ui.v3.1_1_mb.74472ccf96
       value: 1.1 MB
     - key: ui.v3.1_4_mb.e253fd925c
@@ -9809,40 +10600,14 @@ MonoBehaviour:
       value: "1 \u0628\u0644\u06CC\u062A \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.1_slot_required.da134e76cb
       value: "1 \u062C\u0627\u06CC\u06AF\u0627\u0647 \u0644\u0627\u0632\u0645"
-    - key: ui.v3.100_fuel.41f50b3a86
-      value: "100 \u0633\u0648\u062E\u062A"
-    - key: ui.v3.100_materials.794efffac8
-      value: "100 \u0645\u0635\u0627\u0644\u062D"
-    - key: ui.v3.100_oil.631a4f1d2f
-      value: "100 \u0646\u0641\u062A"
-    - key: ui.v3.12_000_credits.3d6adb00ee
-      value: "12,000 \u0627\u0639\u062A\u0628\u0627\u0631"
-    - key: ui.v3.12_450_18_000_xp.948176b250
-      value: 12,450 / 18,000 XP
-    - key: ui.v3.120_command.943c192343
-      value: "120 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.120_fps.e3f90dba7a
-      value: 120 FPS
-    - key: ui.v3.120_kb.c4a2c403be
-      value: 120 KB
-    - key: ui.v3.120_oil.0cfb20dec6
-      value: "120 \u0646\u0641\u062A"
-    - key: ui.v3.12d_08h.36612ca9b2
-      value: "12 \u0631\u0648\u0632 \u0648 08 \u0633\u0627\u0639\u062A"
-    - key: ui.v3.12k.eca723cb12
-      value: 12K
-    - key: ui.v3.140m.02337792ae
-      value: 140m
-    - key: ui.v3.15_680_24_000_xp.6d13e2b710
-      value: 15,680 / 24,000 XP
-    - key: ui.v3.15_oil.4d43218552
-      value: "15 \u0646\u0641\u062A"
-    - key: ui.v3.18_560_24_000_xp.c7aae0e6de
-      value: 18,560 / 24,000 XP
-    - key: ui.v3.180_materials.b42b11fe20
-      value: "180 \u0645\u0635\u0627\u0644\u062D"
     - key: ui.v3.1h_ago.e87791916d
       value: "1 \u0633\u0627\u0639\u062A \u067E\u06CC\u0634"
+    - key: ui.v3.200_command.0b2871a190
+      value: "200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.21m_ago.5106bdae68
+      value: "21 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.28d_12h_remaining.aecded76a7
+      value: "28 \u0631\u0648\u0632 \u0648 12 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.2_1_mb.afc38615e7
       value: 2.1 MB
     - key: ui.v3.2_500_credits.c73607a755
@@ -9857,14 +10622,25 @@ MonoBehaviour:
       value: "2 \u0639\u0645\u0644\u06CC\u0627\u062A \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
     - key: ui.v3.2_rush_tickets.61e998e7e3
       value: "2 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
-    - key: ui.v3.200_command.0b2871a190
-      value: "200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.21m_ago.5106bdae68
-      value: "21 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.28d_12h_remaining.aecded76a7
-      value: "28 \u0631\u0648\u0632 \u0648 12 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.2m_ago.35abf1daad
       value: "2 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.300_command.51589ca8d9
+      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.300_command_support_parts.d92a338ea3
+      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC + \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0642\u0637\u0639\u0627\u062A"
+    - key: ui.v3.300_materials.e8187c76ae
+      value: "300 \u0645\u0635\u0627\u0644\u062D"
+    - key: ui.v3.30_fps.39f81d2101
+      value: 30 FPS
+    - key: ui.v3.330_command.99f1655563
+      value: "330 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
+    - key: ui.v3.33_fuel.fc5e545c22
+      value: "33 \u0633\u0648\u062E\u062A"
+    - key: ui.v3.34m_ago.3bd84c4c0c
+      value: "34 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.350_command.256201b16b
+      value: "350 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.3_3_slots_used.04e0af3bec
       value: "3 / 3 \u062C\u0627\u06CC\u06AF\u0627\u0647 \u0627\u0633\u062A\u0641\u0627\u062F\u0647\u200C\u0634\u062F\u0647"
     - key: ui.v3.3_3_stars.d909a26811
@@ -9873,33 +10649,16 @@ MonoBehaviour:
       value: "3 \u06A9\u0627\u0631\u0648\u0627\u0646\u200C\u0647\u0627\u06CC \u062A\u0639\u0645\u06CC\u0631"
     - key: ui.v3.3_rush_tickets.2ca4c7176e
       value: "3 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
-    - key: ui.v3.30_fps.39f81d2101
-      value: 30 FPS
-    - key: ui.v3.300_command.51589ca8d9
-      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.300_command_support_parts.d92a338ea3
-      value: "300 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC + \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
-        \u0642\u0637\u0639\u0627\u062A"
-    - key: ui.v3.300_materials.e8187c76ae
-      value: "300 \u0645\u0635\u0627\u0644\u062D"
-    - key: ui.v3.33_fuel.fc5e545c22
-      value: "33 \u0633\u0648\u062E\u062A"
-    - key: ui.v3.330_command.99f1655563
-      value: "330 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.34m_ago.3bd84c4c0c
-      value: "34 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
-    - key: ui.v3.350_command.256201b16b
-      value: "350 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.3h_ago.6868cc1381
       value: "3 \u0633\u0627\u0639\u062A \u067E\u06CC\u0634"
     - key: ui.v3.3x3.97a611ef57
       value: 3x3
-    - key: ui.v3.4_rush_tickets.653ef6a6cc
-      value: "4 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.420_kb.8a1b888916
       value: 420 KB
     - key: ui.v3.45m_ago.83ae378f24
       value: "45 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
+    - key: ui.v3.4_rush_tickets.653ef6a6cc
+      value: "4 \u0628\u0644\u06CC\u062A\u200C\u0647\u0627\u06CC \u062A\u0633\u0631\u06CC\u0639"
     - key: ui.v3.5_000_credits.8aa25223b1
       value: "5,000 \u0627\u0639\u062A\u0628\u0627\u0631"
     - key: ui.v3.5_rush_tickets.cbcbb87747
@@ -9910,18 +10669,18 @@ MonoBehaviour:
       value: 60 FPS
     - key: ui.v3.680_kb.91b32ba212
       value: 680 KB
-    - key: ui.v3.7_500_credits.9369404454
-      value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631"
-    - key: ui.v3.7_500_credits_200_command.5b07872dcc
-      value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631 + 200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.72h_remaining.f5e571f89a
       value: "\u06F7\u06F2 \u0633\u0627\u0639\u062A \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.750_command.75c3e8ddaa
       value: "750 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
-    - key: ui.v3.8_000_credits.b7abe8f3a5
-      value: "8,000 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.v3.7_500_credits.9369404454
+      value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: ui.v3.7_500_credits_200_command.5b07872dcc
+      value: "7,500 \u0627\u0639\u062A\u0628\u0627\u0631 + 200 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC"
     - key: ui.v3.820_kb.82984f307a
       value: 820 KB
+    - key: ui.v3.8_000_credits.b7abe8f3a5
+      value: "8,000 \u0627\u0639\u062A\u0628\u0627\u0631"
     - key: ui.v3.8m_ago.e09bde6930
       value: "8 \u062F\u0642\u06CC\u0642\u0647 \u067E\u06CC\u0634"
     - key: ui.v3.940_kb.d317067525

@@ -11,6 +11,12 @@ namespace Game.UI.Shell.Ecs
     {
         public bool TryReadMissionTutorialTarget(out UiMissionTutorialTarget target)
         {
+            if(!TryReadMissionTutorialTargetCore(out target))return false;
+            if(target.NeedsSelection)target=WithTutorialSelectionBounds(target);
+            return true;
+        }
+        private bool TryReadMissionTutorialTargetCore(out UiMissionTutorialTarget target)
+        {
             target=default;
             if (!TryGetMissionRoot(out var em,out var root)) return false;
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
@@ -20,6 +26,14 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
+            if(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock)) &&
+                guidance.GuidanceId>=75001 && guidance.GuidanceId<=75010 && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            {
+                target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
+                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity),
+                    battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:UiTutorialBattleAction.Move,areaRadius:5);
+                return true;
+            }
             if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
             if(runtime.MissionId.Equals(BreachId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))

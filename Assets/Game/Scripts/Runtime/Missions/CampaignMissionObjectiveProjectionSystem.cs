@@ -135,6 +135,11 @@ namespace Game.Runtime
                             !objective.MissionRoleId.Equals(definition.BaseMissionRoleId))
                             return false;
                         break;
+                    case MissionObjectiveRuleKind.RestoreGridlockSiteA:
+                    case MissionObjectiveRuleKind.RestoreGridlockSiteB:
+                    case MissionObjectiveRuleKind.DeliverGridlockRelief:
+                        if (definition.Gridlock.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
+                        break;
                     case MissionObjectiveRuleKind.BreachGate:
                     case MissionObjectiveRuleKind.DestroyBreachCore:
                     case MissionObjectiveRuleKind.SecureBreachArchive:
@@ -224,7 +229,7 @@ namespace Game.Runtime
                 State = objectiveState,
                 Priority = (byte)math.min(byte.MaxValue, index + 2),
                 IsPrimary = index == 0 ? (byte)1 : (byte)0,
-                Title = definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
+                Title = definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
                     MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
@@ -260,6 +265,9 @@ namespace Game.Runtime
                     : facts.ForwardPostDestroyed != 0
                     ? MatchObjectiveState.Failed
                     : facts.ForwardPostDamaged != 0 ? MatchObjectiveState.Warning : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.RestoreGridlockSiteA => facts.GridlockSiteAComplete != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.RestoreGridlockSiteB => facts.GridlockSiteBComplete != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteAComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.DeliverGridlockRelief => facts.GridlockDelivered != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteBComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.BreachGate => facts.BreachGateDestroyed != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DestroyBreachCore => facts.BreachCoreDestroyed != 0 ? MatchObjectiveState.Complete : facts.BreachGateDestroyed == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.SecureBreachArchive => facts.BreachArchiveSecured != 0 ? MatchObjectiveState.Complete : facts.BreachCoreDestroyed == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
@@ -280,6 +288,9 @@ namespace Game.Runtime
         {
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.RestoreGridlockSiteA => definition.Gridlock.SiteAAnchorId,
+                MissionObjectiveRuleKind.RestoreGridlockSiteB => definition.Gridlock.SiteBAnchorId,
+                MissionObjectiveRuleKind.DeliverGridlockRelief => definition.Gridlock.HospitalAnchorId,
                 MissionObjectiveRuleKind.BreachGate => definition.Breach.GateAnchorId,
                 MissionObjectiveRuleKind.DestroyBreachCore => definition.Breach.CoreAnchorId,
                 MissionObjectiveRuleKind.SecureBreachArchive => definition.Breach.ArchiveAnchorId,
@@ -316,6 +327,9 @@ namespace Game.Runtime
         {
             switch (objective.Rule)
             {
+                case MissionObjectiveRuleKind.RestoreGridlockSiteA: return new FixedString128Bytes("mission.gridlock.objective.site_a.body");
+                case MissionObjectiveRuleKind.RestoreGridlockSiteB: return new FixedString128Bytes("mission.gridlock.objective.site_b.body");
+                case MissionObjectiveRuleKind.DeliverGridlockRelief: return new FixedString128Bytes("mission.gridlock.objective.delivery.body");
                 case MissionObjectiveRuleKind.BreachGate: return new FixedString128Bytes("mission.m05.objective.gate.body");
                 case MissionObjectiveRuleKind.DestroyBreachCore: return new FixedString128Bytes("mission.m05.objective.core.body");
                 case MissionObjectiveRuleKind.SecureBreachArchive: return new FixedString128Bytes("mission.m05.objective.archive.body");

@@ -7,7 +7,7 @@ namespace Game.UI.Runtime
     internal sealed partial class AssistantHighlightPresentationSystemHelper
     {
         internal bool HasDirectTutorialTarget => _directTutorialCue &&
-            (_directTutorialTarget != null && _commandCueActive && _directTutorialTarget.gameObject.activeInHierarchy ||
+            (_selectionBoxRequested || _directTutorialTarget != null && _commandCueActive && _directTutorialTarget.gameObject.activeInHierarchy ||
              _directTutorialTarget == null && _worldRingRoot != null && _worldRingRoot.activeSelf);
         internal bool HasDirectTutorialControlTarget => HasDirectTutorialTarget && _directTutorialTarget!=null;
         internal bool HasVisibleDirectTutorialTarget
@@ -15,6 +15,7 @@ namespace Game.UI.Runtime
             get
             {
                 if(!HasDirectTutorialTarget) return false;
+                if(_selectionBoxRequested)return TryObserveVisibleSelectionDrag(out _, out _);
                 if(_directTutorialTarget!=null) return _screenTargetIndicator!=null && _screenTargetIndicator.gameObject.activeInHierarchy;
                 if(_worldCamera==null || _worldRingRenderer==null) return false;
                 var point=_worldCamera.WorldToViewportPoint(_worldRingRenderer.bounds.center);
@@ -67,6 +68,7 @@ namespace Game.UI.Runtime
 
         internal void ShowTutorialControl(Button button, string captionKey)
         {
+            HideSelectionDrag();
             _directTutorialCue = true;
             if (_worldRingRoot != null && _worldRingRoot.activeSelf) _worldRingRoot.SetActive(false);
             if (button == null || !button.IsActive() || !button.IsInteractable())
@@ -126,6 +128,7 @@ namespace Game.UI.Runtime
 
         internal void ShowTutorialWorld(Vector3 target)
         {
+            HideSelectionDrag();
             _directTutorialCue = true;
             _directTutorialTarget = null;
             _commandCueActive = false;
@@ -160,6 +163,7 @@ namespace Game.UI.Runtime
 
         internal void ClearDirectTutorialCue()
         {
+            HideSelectionDrag();
             if (!_directTutorialCue) return;
             _directTutorialCue = false;
             if(_worldRingMaterial!=null) _worldRingMaterial.SetInt("_ZTest",(int)UnityEngine.Rendering.CompareFunction.LessEqual);

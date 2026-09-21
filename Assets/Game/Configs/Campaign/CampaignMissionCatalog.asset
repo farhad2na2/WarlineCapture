@@ -28,3 +28,6 @@ MonoBehaviour:
   - missionId: saga.ch01.m05.breach_assault
     definition: {fileID: 11400000, guid: 47f1daa5377c64b9bb4b74c64f8cce1d, type: 2}
     scenario: {fileID: 11400000, guid: dd5f9a0127b984e29a0ce44bbfd52af9, type: 2}
+  - missionId: saga.ch02.m01.gridlock
+    definition: {fileID: 11400000, guid: 2fecdefd1294d4d2eae500bd7878eaf6, type: 2}
+    scenario: {fileID: 11400000, guid: 773a4622693914147a2200f7cf030a93, type: 2}

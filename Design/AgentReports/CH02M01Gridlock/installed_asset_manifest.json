@@ -1,0 +1,678 @@
+[
+  {
+    "path": "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+    "sha256": "f6bc5dada8db25afdf224331ef5fe589e0321cb377c99def28a65a3927920807"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Gridlock Narrative.asset",
+    "sha256": "303bb17fade4dce0b2002897771ed904155fb1a7da9a3b512c926c8a8a4aa38e"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Gridlock Narrative.asset.meta",
+    "sha256": "318e543ee2c73026da62a2704972046fe7065da21c797482b8250964760da209"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_BundledAssetGroupSchema.asset",
+    "sha256": "8c24bb61c678028f64d419894113c1f0dad10bca721d91e56cbab386ba13f912"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_BundledAssetGroupSchema.asset.meta",
+    "sha256": "527b0d833066bd8e5c1b229df5d04cdd49dcd8dd7f3a8e177014f9b78b8793f7"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_ContentUpdateGroupSchema.asset",
+    "sha256": "fc83df8602678ad1b50647a29995456154e81006f590ff2bf1f95b7b81504dc1"
+  },
+  {
+    "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Gridlock Narrative_ContentUpdateGroupSchema.asset.meta",
+    "sha256": "e44b6b94b03bcfa728b1a509e59bd553915352df402f9ede055570463aed1b2c"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock.meta",
+    "sha256": "a89b60a65989f64f810ca25ca9dfaa1168955ad9f5809d6dbd3fd663fcb742a0"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final.meta",
+    "sha256": "55819f0efb7380a615cc2218548c26e0f73fdd92753eac97c3f33e9749355eff"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B01.png",
+    "sha256": "9c5bfc91cdcddf6fcace242e04eeb48e2c6e7672eb4f08cdc5ae8effe8228636"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B01.png.meta",
+    "sha256": "0aaf759d2a740164b042566100ecfbaa9687ebf95bfe29001875d4d659075394"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B02.png",
+    "sha256": "14419800125f7c8da0372cbf11b3e476070f8ef2903fc6cabe76a3558fa1d39c"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B02.png.meta",
+    "sha256": "c44170d06a63c3cbcfce230c316cc9a61748e1ddf340526abcdf6600bfa4f125"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B03.png",
+    "sha256": "1acc68728bf59fc0cf9496a123f3749b06088427237c67c7132b918dd75d9d81"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B03.png.meta",
+    "sha256": "3e31df5ee5d18aaa8f51bb58288652ae6dd72c460418fcbade8fbea07b8fcb25"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-C01.png",
+    "sha256": "bd3dbff9b12324b899e2b975ea75fadd72fecdc4f907331c01e0d0841b9f6585"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-C01.png.meta",
+    "sha256": "de9c73faa4dac38727254dd885b0bebf207c664a5b1a7e00e742f59d431bdf22"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D01.png",
+    "sha256": "c229abf1a985743b1b2a203bd4d1916a8cd7ad0d5875ffab64ae4f252be7619c"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D01.png.meta",
+    "sha256": "39bfb31e799e018286abd242558eadce09dddca766a6bd0a7355e1a5406301b1"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D02.png",
+    "sha256": "09ce99a99334841bcd7c4d5b6702203a5949d998fa618bea4417c58876baadbf"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D02.png.meta",
+    "sha256": "2871b920454c0bb86a4595b3f35851f4d332e58bb6f8b0ffa23467978f9074bb"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D03.png",
+    "sha256": "30a89169526c2adf640d265b16ad2284d8dcd16ad80e64899bd368603a0c5762"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-D03.png.meta",
+    "sha256": "7950d48660916378f9f6e7e448a9f08597ae9f55da519ff6cde4e176342c8935"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O01.png",
+    "sha256": "a6be45e2b8d86389c097e6cafd7d05f0a66a71e1dc01cae2502707336c516c04"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O01.png.meta",
+    "sha256": "d6fa9425c3cc9d636b2d96f1681a837884008b95c6a63d51f20d65fb0ef60d58"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O02.png",
+    "sha256": "6d9d5fc37854bfd87dc4911eb3c26df0737d0a1e1a5c04ccdb076711b7f1387a"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O02.png.meta",
+    "sha256": "bbe49cdd1ab7121e5b8f13f5e20e07de76f2b078d8d22ac472bb36b0a56394fb"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O03.png",
+    "sha256": "cf3fd0fc51f7716853d871300d52e52e7eb42b6d502847de6bfa62600d1b41a5"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O03.png.meta",
+    "sha256": "73900551fdf714efb32ef272ef56935a2221b2f67ce9d7b7b99b94e23ad4e071"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O04.png",
+    "sha256": "e2044de45bf40fadc2564425899f74106c2d1b59ffc39522c2ebb67f33b14720"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O04.png.meta",
+    "sha256": "cb3948a1802a3d67a7008fa5dd8eb50a1f8965508f1d8d5051321b24c41b05f0"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O05.png",
+    "sha256": "be1bae89ffabf2c59424f9f05469d4d5c2f13c59ac29da36dbf4a7a212dec0e1"
+  },
+  {
+    "path": "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-O05.png.meta",
+    "sha256": "649812fba0311edf892dfe132ca3fab7c7e7838a6bbd49a27afb4c4abf37f28f"
+  },
+  {
+    "path": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Fadi_Gridlock.png",
+    "sha256": "a75bc5fc87ac253da93af88afe2cf09ae431a3d91438a7904e87f02ec058a937"
+  },
+  {
+    "path": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Fadi_Gridlock.png.meta",
+    "sha256": "343c7322d69b039c30f31d525fcf7d2964d4ddd4646d654e72e5448d8d72970a"
+  },
+  {
+    "path": "Assets/Game/Audio/Config/audio_event_catalog_v0_1.json",
+    "sha256": "0024dd53deae8507e44f308988568a2d9d823f26e47395139db6e60c7b47c925"
+  },
+  {
+    "path": "Assets/Game/Audio/Events/AudioEventCatalogConfig.asset",
+    "sha256": "860691844212d91acafcccd1a22a29c5f9318ee7133e9d4d1b2f97603c4ea51b"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock.meta",
+    "sha256": "879c04f3f2d13270a50919f8b40e12b8716f09ba42d177a7b9af9b8a3ad6355d"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice.meta",
+    "sha256": "a405a43518f979f58f4775f38047545de2593745ca670a079c20697f798a3353"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en.meta",
+    "sha256": "2ca03ea152afc4bba0fb08ccf2228817ce3ce527f18042107512b8124c261997"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-01.wav",
+    "sha256": "c066da629bf97df479a1edf3053272353258ffdc0c1a92e237b036a5eb51f630"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-01.wav.meta",
+    "sha256": "3eb19b9981d7760207455b4d90f535153c49092000c0f473746f852aafa23e2c"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-02.wav",
+    "sha256": "8cc9f3b4494cab2de47327a108f12577fce77757c9cb37a965475ce27343e7bd"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-02.wav.meta",
+    "sha256": "22afc324486882b23b257c7672ca774aa4ed64e1644676c6b4c709c502798b77"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-03.wav",
+    "sha256": "0d16b4e5598d7b09c7a13e94b78ba0f1a73c38f6c9fce68e81bc3971631c1a68"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-brief-03.wav.meta",
+    "sha256": "c0aef84ea5fbe7cfd42ab24fe769474844111cb6080e93310b4a4d4c9217f6a3"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-comms-01.wav",
+    "sha256": "8bc7967f94077994c5470a642c3794a97cfaf1cf6ffe9677588cc50e93f5aa79"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-comms-01.wav.meta",
+    "sha256": "15759384a61ac740baa451685ef7d90e66c82f2750f2024722a163601dec5320"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-01.wav",
+    "sha256": "4041c9e725305b9b21274cea5f5730023b2ab72edf605c02634fc9121db9965e"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-01.wav.meta",
+    "sha256": "88a0814254038f4a4bcd2f819f170cad42544dc1f172d1e75d08dbba4d3ce09c"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-02.wav",
+    "sha256": "607bcb3d0b71db2736513fc1ed1bb2c52b777c4ee511b390852a28ef35fb7981"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-02.wav.meta",
+    "sha256": "c53d7ca1094469bddd0213dd9afdbfbd20a7f60604dfe11f52d2091eda168c63"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-03.wav",
+    "sha256": "ad332fba1bcede1925f50977fcb734d1b21fc47106c345b9caeea5f84f65228e"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-debrief-03.wav.meta",
+    "sha256": "076f9831cc0690ecd74df5eea62e8555cf8b14eab1ee8fe5373d519616b245d6"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-01.wav",
+    "sha256": "1f81259db5ca44200f0f1ee59dfe97136526be185f9086e3c831cabcdec8d135"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-01.wav.meta",
+    "sha256": "21d0fb36616bf0526f816954c2d310e970097ac232b1103520d79a785b6b45c0"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-02.wav",
+    "sha256": "ed689c809926c1f415aae2ac515a6fded74b76299f89a92c74f4c4fd6650f514"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-02.wav.meta",
+    "sha256": "299d7200734b32c035fd2672f72d2b35548f4c9eb1056cd87cd41d0de9da027f"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-03.wav",
+    "sha256": "aa5339ffcd2a632307472ea2757445ee7c160a0fc5c0ac5b8a4559ed50af3ba1"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-03.wav.meta",
+    "sha256": "c1f1e2677b4e7167faf9e4a485525e726359600e2165176c5a05369052900b4d"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-04.wav",
+    "sha256": "97d18e75de6b48d933bf6f760084510514e6d354c1abc1912f7dac96004b46a6"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-04.wav.meta",
+    "sha256": "5b98f69bae4f2cf59f3e3de3d2c328742a9a745ec9786465ae2967b0ca616787"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-05.wav",
+    "sha256": "f395f2b4a741b8b6a32e79899b5104995de19f05ceded770b9275d0605e77d97"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-opening-05.wav.meta",
+    "sha256": "9abec5e7e9d365e542ebe7dff3ec8c9bf37afbd118a025e47e99ace4c2271a8e"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-01.wav",
+    "sha256": "fe9f5e3c67727b73a91270ad05e5f179c91144c00f61ec6d599bc4c18b2e6438"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-01.wav.meta",
+    "sha256": "1b9b1396554cb151297ab0c4ee84e2483b23352a4161a360bf5db87dbe1b6cc4"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-02.wav",
+    "sha256": "e2bc0ccbc6aba10f1f8881711a4339211c778c277c208e18c43449e381e1c4b9"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-02.wav.meta",
+    "sha256": "ec8926a3c9ade68a7c15a05af0e71f8fad3c2e87a260d350dbaf1c7bfa894c79"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-03.wav",
+    "sha256": "ebe544c28c0c691a260b72d79b3857d3fa49dfad518f901aba1f9acfe18a47c4"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-03.wav.meta",
+    "sha256": "766ff438a0a35ca5b1216ca4bdfed754278daf52548b1737edc6aa0f2ac3e6a4"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-04.wav",
+    "sha256": "e855061d5b2c5df66309795f26b6734551f7076d030d243ecc4c22009ab66641"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-04.wav.meta",
+    "sha256": "9ea0bdd3094f37d9e3e336591a718a23eb0e2aed6a0734df5d35b4ef4dc3cb69"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-05.wav",
+    "sha256": "51c39154accea5fe0f8b2f3ce3fd1b0ad33ce8fa72c297f91778816b2a0cc2b5"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-05.wav.meta",
+    "sha256": "684f64bed007562f982a0ffe0b371eefd06e8e70bc0f1c5c0254537dc1a96edd"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-06.wav",
+    "sha256": "dc95c8b88ad947d426f09be58f290e8524331c864b7357e487baab2fe400b63e"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-06.wav.meta",
+    "sha256": "8788c0da4d0bebf50f71f991c7aa5a9a8c16c4292ff516d9aa2b84819b752a85"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-07.wav",
+    "sha256": "485b061028d62812b8c8bb2fbf01c284139e74c1d232eb11b48dc10add850c66"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-07.wav.meta",
+    "sha256": "7326988679e118845ff3ca7242918bf352d6747ab6f73abc3b8ef5bd619a7a3b"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-08.wav",
+    "sha256": "f107aa4b72a9eeb4b0226cec9c0ec9cdc87be731a42a0d4c624973d5ca595c49"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-08.wav.meta",
+    "sha256": "85ba66a71798f98eb4f8add4c18ccfe17c8511a9b778460ad32176517204ed87"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-09.wav",
+    "sha256": "3554af8bbbd7ce0325b819d52916429b788a9ae69857f7ce8a981ece96f85df8"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-09.wav.meta",
+    "sha256": "fe0ac5f4fa1cdc233846cf5dcec8f95e7aef37c0e1a1a6508001ef30de7a4f75"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-10.wav",
+    "sha256": "eb28fa65a88b7621917b0a040eb33be31da6f860ae2a6a3c6718d970f2ada868"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-10.wav.meta",
+    "sha256": "7080e43df8213c447fa693a0178b1525a2cde9efaa6760e84c4455e97e18b803"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa.meta",
+    "sha256": "bc13bba40c9b93d6e8c8f4c1a6b705affa13c29347b6af423bd7c454cc757032"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-01.wav",
+    "sha256": "de57a598a036ed32ffbc306a68a3263d9f9be80cdf3abc490d74a7ef8e548692"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-01.wav.meta",
+    "sha256": "f7f8b0fcd4eac9f49a815b3f642527f53ebe8c67e4dee59891d5c32fe60f495d"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-02.wav",
+    "sha256": "1958011b3cafb680e11c3eca2778ce55b1d007d4ea378cdfb5a5d2c925a06ad8"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-02.wav.meta",
+    "sha256": "3102fda74a611de99374b6bdc5e6e78be3ae9cec838653adb320a7920b70c6ea"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-03.wav",
+    "sha256": "dd2154db252d8521441a8d44404dc6e6d52c81f9b09bdf921e3f28a33cd46854"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-brief-03.wav.meta",
+    "sha256": "0c1a27b3f956d7b9672536737b61bc96c547c5f2fe5fe4cbe4549e64b73b43dd"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-comms-01.wav",
+    "sha256": "91a5164f9e4c20c0da6019eb252420dd9ea979f41b9e69ccd54cbdea261a1635"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-comms-01.wav.meta",
+    "sha256": "89dad3b1a1309acb1cd93f8aad1ed6e1da7499bda34e00d1dd45932e2fb21d99"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-01.wav",
+    "sha256": "d58bd96ed06ec42df9681b73c26425a1c26582586fbeb74f559f52527ac574e7"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-01.wav.meta",
+    "sha256": "bff997dbc27c5d48463b343c25c8e9a575ae5454ee836de2986f1e16c3ba474b"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-02.wav",
+    "sha256": "0802b6b4a78c94c5be51d057e3b898b010d57af6bf7a702b00352622e4b6b3b8"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-02.wav.meta",
+    "sha256": "0ed9f9972071d6bbb80111fe1032aa5b150e3bf84cca2913a15bca34066fb0fc"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-03.wav",
+    "sha256": "ff4cacc61372a2c30b27e75f66193abf8e4c1a7843bc22c59df90912cf986a16"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-debrief-03.wav.meta",
+    "sha256": "5ffe6c78c72d0721cf953b8f45f7b1586c154d5e71d4191af7a76c092f1f320f"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-01.wav",
+    "sha256": "63aa0b75afd441503e2b049c25d317d02a2cc6a61eacae2a78353a6bbea464c1"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-01.wav.meta",
+    "sha256": "7e82e4f71492f327dc82f30b9abf47b0f555db47edaa26a904c2a815038fea48"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-02.wav",
+    "sha256": "f0d371bc6234a56f0c3d2d058e19f7e022de197b8f09aec802109098f059ee03"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-02.wav.meta",
+    "sha256": "b1a583c034ef3ea6cda133d25e0b5380587c0a3b51a4fed0d47a89c815e388d9"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-03.wav",
+    "sha256": "b8d6294e7ee562d066035211b4c49af542106f83867195785d4e49aad2f68f48"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-03.wav.meta",
+    "sha256": "922c9d54ef433e32caf6fc26f4d00d5913b21ec9072f608dbe78c0d2595b8157"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-04.wav",
+    "sha256": "112e142ac7e5ab55f2ce1c1e7d1903dcfa39ea5611e50fed9619017713c0ccdb"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-04.wav.meta",
+    "sha256": "ccf18fe7c75d592427f393f1cfd0586f3affe75b9413fc4f4918625c4925b7af"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-05.wav",
+    "sha256": "f31bac98d7b5d714d8a8996f3e36f3997252bdabd25a185d559b288e359d5e02"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-opening-05.wav.meta",
+    "sha256": "fa1f8255b8461fdf331879c5bef492b14bd8941ba79ab85023b4955b4871aa2b"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-01.wav",
+    "sha256": "554ccbe4504545b40f0ac157aa816d624dfff2ee2e015852d80954f206df9e30"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-01.wav.meta",
+    "sha256": "37e24de4d4b6b6042039eddc8238dd2e1be28878d6da5327425ed51c5e0cf232"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-02.wav",
+    "sha256": "371bd0df91dc88d96630597ce1fb564fa3e8dfd1c6a691f96d56a08c3b6defc6"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-02.wav.meta",
+    "sha256": "fadac9b79960039f347db0c782759b0adfe144867cf967281223a0ef266e0d49"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-03.wav",
+    "sha256": "b24d8e977e7c4ee243d0c7bc9616ff6946ea9887d46d9029170fd67269ea1b8d"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-03.wav.meta",
+    "sha256": "a6409da1092383cffad787148ec399e259ccb3142dea4e8493655d0abfd0fc27"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-04.wav",
+    "sha256": "8887d4eca8f33ff7f21405f6a179969129065d6f5ea945fb08181f4ea1ce3fa3"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-04.wav.meta",
+    "sha256": "23a8c1574e8b7d7b8bd9df18be587eb8c03a79a7dfebe4141e130555059974fd"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-05.wav",
+    "sha256": "04e99a6d617fe8291a2b75a4b0bab77f9a52d04f9a53b6f37d02a1b92bc9db5f"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-05.wav.meta",
+    "sha256": "db738c4cf33891d0c760bc5b8e9c23d09848d07c0ac17a7bb942bb141f052a56"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-06.wav",
+    "sha256": "bffb4677841c6ce3895ed1fc4c39023658d05881911f8ca7553e513e3b0ece98"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-06.wav.meta",
+    "sha256": "c6dbbb07fa4b067253212ecabf96f46de5bc44ae58534b3d6f950578189096cd"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-07.wav",
+    "sha256": "c2b5a2bbe93caa68de5f0e4c44e36b8b2c82943799618921e7496e155a9a940b"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-07.wav.meta",
+    "sha256": "82997e81aff49ce7c18c92aa97e985b86f3b4707a359aea47df2db668a1e6d65"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-08.wav",
+    "sha256": "15c826a8f9ba7e0631a502a1e5e1264161d6b9776c0350cd8b88ac16256db712"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-08.wav.meta",
+    "sha256": "06c6542a17de7a8d8b9a9a64c7fc588ad03893cefde95abd32737f1c800e3667"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-09.wav",
+    "sha256": "037173fcc05e9fdb386442a1654b48cba2494a7766ed96e6e1d9c6907812ac78"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-09.wav.meta",
+    "sha256": "046e8217c3787fb94dc01b3a21ae53887c8df21f6ddba0ca4d0c909edec5c090"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-10.wav",
+    "sha256": "46e2da583b33dabe45daf4b4963746fd805b1333c3dd2632fe3aea75b26acad4"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-10.wav.meta",
+    "sha256": "6f3c52397fd62cdfd00dcbed44b31f594ee10be1f5fdc8a408c50c3774b44b76"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/gridlock_voice_manifest.json",
+    "sha256": "b47cddc119e42f984b101b67a9e23bc0d42c080ca69c6ccadaadec392f4ed2d0"
+  },
+  {
+    "path": "Assets/Game/Audio/Narrative/CH02M01Gridlock/gridlock_voice_manifest.json.meta",
+    "sha256": "082587afe278a3da8571428509c2de2a923e868cf42851f85970cf3ddecee787"
+  },
+  {
+    "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+    "sha256": "bacc4d5e4da4edf52b77056a3605ccc4e6e4436698d5c354354928dcec996336"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02.meta",
+    "sha256": "8822b7ab611e3e31f0d56060a3af3a6ea292e7a276cc6116d4bea087e62f258e"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/CH02M01_Gridlock_FieldGuide.asset",
+    "sha256": "7cb927cdedcf84b857fa10d9112a393553d8d1a23a372ccb5f1168aba650c0af"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/CH02M01_Gridlock_FieldGuide.asset.meta",
+    "sha256": "f54314b8c2ede00ba8ce4ec30f3d48565c26b893289913b62bbbca53507b17cf"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset",
+    "sha256": "762274173d3abec43d3d40317fe6143dd62aa0270c2080b39d04dff015dcea7d"
+  },
+  {
+    "path": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset.meta",
+    "sha256": "83baa5c7bf08b2cff564210f63a2068ee405fca6bcfe6fa29b2708a0a928309b"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02.meta",
+    "sha256": "5c09109740bf1ece3f7aeb5903242d86e92362dd45886d6d0e33c231ad2c1b08"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02/CH02M01_Gridlock_Narrative.asset",
+    "sha256": "01a48618f6780a88b4f1b4352ffa8cf50726cf928142a9cf501a26abee5a04fc"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/Chapter02/CH02M01_Gridlock_Narrative.asset.meta",
+    "sha256": "61fdc6f3585138d27edfc0b4ea7165bdec9ad1592183195975a9f9169777bffa"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset",
+    "sha256": "b09f18c200df89baa3e999076de7f04983e58dce33a1f8b67ad2ae7bb281a441"
+  },
+  {
+    "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSpeakers.asset",
+    "sha256": "50a9fef87b090a42574205f58d8c946d172c256f4c6ae10d6072aa15c383fffe"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+    "sha256": "fcac37241ca109814891089120cb3109d2899b9dfe9365165d86bc9436a134b8"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02.meta",
+    "sha256": "8b28542bfbf5b204b3a282d3d31e53e57dafe5dbf4abd7f5facb58b2f73e66c2"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/GridlockPlacements.asset",
+    "sha256": "845804c5f350032bbf950bc293719c7a96411f11ea69ba15f1ec66ec74e7208b"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/GridlockPlacements.asset.meta",
+    "sha256": "998e496881b96b900933ca85a13ab1bd70c616b4d3335adb5d849ffc73cfd66a"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset",
+    "sha256": "d8b9d5a0d886906ad3a89a027484bae6580e31f205d324caaf3fbf9341fe6f45"
+  },
+  {
+    "path": "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset.meta",
+    "sha256": "717f0be01632262cca8945baf45e1c92b73bd99c4494c3988a01e918551dc1c7"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02.meta",
+    "sha256": "fffe5e359ccb2a89e2b805c1633dc31788b88eb1397373238e15cf31eef9d6fb"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M01_Gridlock.asset",
+    "sha256": "d754a9be26b771d4d4ba8334d3a2ee3b9c2e9b032c878a136cc767f618da99a2"
+  },
+  {
+    "path": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M01_Gridlock.asset.meta",
+    "sha256": "0c5242ed35c498ac85b698cb06faff0a55d5ef1cf50f60d1a59c6ef913af101c"
+  },
+  {
+    "path": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+    "sha256": "5bdb6b05da01b99f3555d1df210a3cd80fa8cbe9c67629bc6f7331e066f00aec"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock.meta",
+    "sha256": "17b04ae9ffd3687e92b5031e6c6b9d8de78aa07025f36c814749b160e486b21e"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/CH02M01_Road_Obstruction.prefab",
+    "sha256": "48c964a02b015ce779360863b2afc1117a563215b311d90cb2c5c793992a47af"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/CH02M01_Road_Obstruction.prefab.meta",
+    "sha256": "456506b9b2bd4630846137e9e2fc7b6a96808f8f05a2ae766735f7f518f5e1f5"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Formal_Route_Collapse.prefab",
+    "sha256": "f9868404a857d2300a40e2847815b82f5af8b2676190776b9f94c105bf842c47"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Formal_Route_Collapse.prefab.meta",
+    "sha256": "7a500cb26a434d75bbd0c97582eeee4d0d4ebfd27daabfbcca9c346d242c293b"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Hospital_Relief_Ward.prefab",
+    "sha256": "d1f474730c93e2fb608f579183584c79a717ceed6f65206d7d2b864c226d5b8a"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Hospital_Relief_Ward.prefab.meta",
+    "sha256": "37953d5319ff01ea2c845c8372d20aefc78bb986b3b517f188b81d918b6aed6a"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Relief_Depot.prefab",
+    "sha256": "5f1953d04bea876d0d728164e16bcb0450c6f68138b378e649decbcbacc420d2"
+  },
+  {
+    "path": "Assets/Game/Prefabs/Buildings/CH02M01Gridlock/Gridlock_Relief_Depot.prefab.meta",
+    "sha256": "95afe67107a4d59f33a111d93cb330d437e45d2c2e14030501ac20ed2168bf79"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab",
+    "sha256": "13425b6a8e12e150c103f851dcedf81ba898aaa6c9a1a54b1e8c4189849f6e7e"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab",
+    "sha256": "f03b4c3a939d878067451d722a4a61f7e86a3b16363708508af5bb0420eb21db"
+  },
+  {
+    "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab",
+    "sha256": "1d6d965696aa76bcc415591a42abbe4951fed5ba6dfa86e45bba07a4e5116474"
+  },
+  {
+    "path": "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+    "sha256": "2200697bd83c7dbb486586b8613404887422b0d3ec18b233e44a13c827c0d0f5"
+  },
+  {
+    "path": "Assets/Game/Scenes/Menu.unity",
+    "sha256": "fb749488f6190cc3fbbd03ccbcd8292959c6f6f846319345d5a3043c0dd74e77"
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/CH02M01GridlockArchiveProbe.cs.meta",
+    "sha256": "d947effdef75877a83ef76f4732c063ac5ebf0a0adeb258002d3766e1f41db9f"
+  },
+  {
+    "path": "Assets/Game/Scripts/Editor/CH02M01GridlockComicPlaybackProbe.cs.meta",
+    "sha256": "e9cf3466010e7efd8842281631e715e5ed68f39f5aeefb091dc5b8c4f9608287"
+  },
+  {
+    "path": "Assets/Game/Scripts/UI/Contracts/IUiGridlockStoryGateway.cs.meta",
+    "sha256": "0010e821856220538373f7974ab9d65ecb10b778326492cfc9132eecf0ef584c"
+  }
+]

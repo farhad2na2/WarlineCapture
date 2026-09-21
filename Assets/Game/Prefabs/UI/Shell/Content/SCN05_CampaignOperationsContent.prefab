@@ -1803,6 +1803,7 @@ GameObject:
   - component: {fileID: 8361022013276535157}
   - component: {fileID: 8209046683890396494}
   - component: {fileID: 564563881854689349}
+  - component: {fileID: 5197904346019701462}
   m_Layer: 0
   m_Name: ChapterCard_2
   m_TagString: Untagged
@@ -1867,6 +1868,50 @@ MonoBehaviour:
   bottomRightColor: {r: 0.019607844, g: 0.047058824, b: 0.05882353, a: 0.9882353}
   borderColor: {r: 0.27058825, g: 0.31764707, b: 0.33333334, a: 1}
   borderWidth: 3
+--- !u!114 &5197904346019701462
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 748128791091933469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 564563881854689349}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &749436246605005539
 GameObject:
   m_ObjectHideFlags: 0
@@ -11456,6 +11501,20 @@ MonoBehaviour:
   - {fileID: 1550221251572263203}
   - {fileID: 4389724958684123785}
   - {fileID: 8741425216004189057}
+  chapterOneButton: {fileID: 9014098897845949422}
+  chapterTwoButton: {fileID: 5197904346019701462}
+  chapterTwoOverviewButton: {fileID: 4081679403371564321}
+  chapterTwoLock: {fileID: 8144261003802796231}
+  selectedChapterLabel: {fileID: 0}
+  chapterTwoStatus: {fileID: 4670068613246991818}
+  gridlockMissionPreview: {fileID: 2800000, guid: ae7730a65d54f44d79a4c9e1e1596f74, type: 3}
+  chapterMissionNames:
+  - {fileID: 5398507682592313230}
+  - {fileID: 6763007829192705080}
+  - {fileID: 4643669347635815529}
+  - {fileID: 7462592443114038738}
+  - {fileID: 4280646035127485313}
+  chapterTwoRailLock: {fileID: 0}
   availableNodeSprite: {fileID: 21300000, guid: e9c25ede5be974d90b97a9c4d9606cf8, type: 3}
   completedNodeSprite: {fileID: 21300000, guid: ede43d494412c4eccb6c91de0a63a1d1, type: 3}
   lockedNodeSprite: {fileID: 21300000, guid: edbdbb389c1a145b28713199d55bf5eb, type: 3}
@@ -12540,6 +12599,7 @@ GameObject:
   - component: {fileID: 3298333325112399992}
   - component: {fileID: 6488486865172397827}
   - component: {fileID: 3854388386400234655}
+  - component: {fileID: 4081679403371564321}
   m_Layer: 0
   m_Name: ChapterII
   m_TagString: Untagged
@@ -12605,6 +12665,50 @@ MonoBehaviour:
   bottomRightColor: {r: 0.019607844, g: 0.047058824, b: 0.05882353, a: 0.9882353}
   borderColor: {r: 0, g: 0.7372549, b: 0.8784314, a: 1}
   borderWidth: 3
+--- !u!114 &4081679403371564321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5170666037943282285}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 3854388386400234655}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &5227351270835316682
 GameObject:
   m_ObjectHideFlags: 0
@@ -16697,6 +16801,7 @@ GameObject:
   - component: {fileID: 2030767211056706274}
   - component: {fileID: 2936940098157555514}
   - component: {fileID: 355626090371403478}
+  - component: {fileID: 9014098897845949422}
   m_Layer: 0
   m_Name: ChapterCard_1
   m_TagString: Untagged
@@ -16761,6 +16866,50 @@ MonoBehaviour:
   bottomRightColor: {r: 0.22745098, g: 0.13725491, b: 0.007843138, a: 1}
   borderColor: {r: 0.9529412, g: 0.68235296, b: 0, a: 1}
   borderWidth: 3
+--- !u!114 &9014098897845949422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6810928117871982249}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 355626090371403478}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &6821142829824373437
 GameObject:
   m_ObjectHideFlags: 0

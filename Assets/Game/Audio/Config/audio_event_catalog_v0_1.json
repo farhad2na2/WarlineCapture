@@ -9607,6 +9607,534 @@
           "weight": 1
         }
       ]
+    },
+    {
+      "eventId": "vo.aria.gridlock.comms.01.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/gridlock-comms-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.gridlock.comms.01.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/gridlock-comms-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.01.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.01.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-01.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.02.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-02.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.02.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-02.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.03.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-03.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.03.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-03.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.04.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-04.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.04.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-04.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.05.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-05.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.05.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-05.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.06.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-06.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.06.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-06.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.07.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-07.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.07.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-07.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.08.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.08.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-08.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.09.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-09.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.09.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-09.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.10.en",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/en/tutorial-gridlock-10.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "eventId": "vo.aria.tutorial.gridlock.10.fa",
+      "busId": "Voice",
+      "priority": "High",
+      "cooldownMs": 600,
+      "volumeDb": -6,
+      "pitchVariance": {
+        "min": 0,
+        "max": 0
+      },
+      "playback": {
+        "loop": false,
+        "spatial": false,
+        "maxInstances": 1,
+        "allowRuntimeLoad": false
+      },
+      "clips": [
+        {
+          "assetPath": "Assets/Game/Audio/Narrative/CH02M01Gridlock/Voice/fa/tutorial-gridlock-10.wav",
+          "status": "generated-elevenlabs",
+          "weight": 1
+        }
+      ]
     }
   ]
 }

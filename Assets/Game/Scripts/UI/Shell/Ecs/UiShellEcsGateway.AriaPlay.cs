@@ -33,7 +33,8 @@ namespace Game.UI.Shell.Ecs
             if (mission.Outcome != Game.Missions.Contracts.MissionOutcomeKind.None) return AriaPlayCapability.None;
             string id = mission.MissionId.ToString();
             return id is "saga.ch01.m01.first_contact" or "saga.ch01.m02.establish_base" or
-                "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault"
+                "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault" or
+                "saga.ch02.m01.gridlock"
                 ? AriaPlayCapability.GuidedCampaign : AriaPlayCapability.None;
         }
         void IUiAriaPlayGateway.PublishAriaObservation(AriaPlayObservation value)
@@ -43,7 +44,7 @@ namespace Game.UI.Shell.Ecs
             em.SetComponentData(boundary, new AriaPlayObservationComponent
             {
                 Kind = value.Kind, TargetId = value.TargetId, GoalId = value.GoalId,
-                Position = value.Position, Frame = value.Frame, Time = value.Time
+                Position = value.Position, Frame = value.Frame, Time = value.Time,Drag=value.Drag?(byte)1:(byte)0,DragEnd=value.DragEnd
             });
         }
         void IUiAriaPlayGateway.PublishAriaSkirmishObservation(AriaSkirmishObservation value)

@@ -7,6 +7,7 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 
 ### SK-00
 - New `Game.Skirmish.Contracts` assembly (`noEngineReferences`, auto-referenced).
+  Consumer assemblies now also list it explicitly (see asmdef note below).
 - Typed IDs/enums for catalog/definition/setup, size, difficulty, army, start,
   objective, roles, outcomes, checkpoint header, and reason codes.
 - Legacy prototype map helper (0/1/3 + reserved stress 2).
@@ -54,9 +55,11 @@ short-lived `cursor/skirmish-s002-…` branch there. Do **not** open or lock the
 shared `D:\Projects\WarlineCapture` checkout.
 
 1. Keep Unity Hub open and signed in.
-2. Compile/check the new assemblies. `Game.Skirmish.Contracts` is auto-referenced;
-   if a consumer assembly fails to see it, add an explicit reference (existing
-   asmdefs were not edited in this PR).
+2. Compile/check the new assemblies. `Game.Skirmish.Contracts` stays its own
+   assembly. Consumers that `using Game.Skirmish.Contracts` now reference it
+   explicitly (auto-reference alone did not compile on Programmer 1):
+   `Game.Components`, `Game.Configs`, `Game.Runtime` (hosts Systems),
+   `Game.Composition`, `Game.Editor`, and `Game.Tests.Editor`.
 3. From the shadow worktree, run the Windows wrapper (preferred on Programmer 1):
 
 ```powershell

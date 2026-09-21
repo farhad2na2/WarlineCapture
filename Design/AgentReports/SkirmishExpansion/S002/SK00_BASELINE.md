@@ -5,8 +5,9 @@ Recorded 2026-09-21 from `main` tip `1e0eb9da2120d31e620d1022c6cf2b9eda80c651`
 
 Working tree ownership for this slice: new `Game.Skirmish.Contracts` plus
 `Assets/Game/Configs/SkirmishExpansion/` and the new SK-01 compiler/session
-types. Existing Operations trees, `SaveDataModel`, `MatchSceneView`, existing
-asmdefs, and the shared localization catalog were not edited.
+types. Existing Operations trees, `SaveDataModel`, `MatchSceneView`, and the
+shared localization catalog were not edited. Consumer asmdefs later gained an
+explicit `Game.Skirmish.Contracts` reference — see `ASMDEF_REFERENCES.md`.
 
 ## Prototype mapping (preserved)
 

@@ -1,6 +1,6 @@
 # Gridlock implementation evidence
 
-Source baseline: `950297fcc`. Work in progress. **Playable captioned checkpoint; final production acceptance remains incomplete.**
+Source baseline: `950297fcc`. Work in progress. **Playable voiced checkpoint with revised Fadi comic art; final production acceptance remains incomplete.**
 
 The implementation uses the authored route-clearing variant. Shared city surface assets are unchanged. The candidate corridor runs from (680, 426) to (814, 426); it passed a five-cell-wide wheeled-surface survey. Live city blocker sampling was exploratory, not a traversal result. Proposed actor configs are canonical civilian Male 01 (Fadi), civilian Male 02 / Female 01 (workers), and the canopy truck (3×3 cells, speed 8, 220 HP). Crew health is the canonical 55 HP. Crew combat is disabled only for this mission.
 
@@ -63,7 +63,7 @@ The earlier captioned scaffold has been replaced by the chapter-opening and 12-p
 - `archive-01.log`: wrapper exit 0; nine Gridlock rule checks, twelve M1–M5/Gridlock Show Me checks, seventeen ARIA decision checks, content rebuild and stable crops passed. The actual Campaign Story Archive button replayed the chapter opening and returned without changing the mission session, phase, profile, progression or rewards.
 - The exact 22 bilingual script pairs (44 clips, 5,277 characters) are prepared in `voice_payload_review.json`. The existing paid provider account was checked read-only. Automatic approval review rejected sending this internal text to ElevenLabs without explicit destination/payload authorization. No Gridlock voice generation ran; an explicit approval question is pending. Local importer/playback preparation does not constitute voice acceptance.
 
-Remaining: final voice approval/generation and listening/playback review; guidance-disabled observation/Watch flow; six final uninterrupted A05 cases including public menu entry, alternate layouts/locales and recovery; full manual A04 journey; retry/settlement and affected mission regressions; device and unfamiliar-player release checks. Do not mark A01–A12 complete from the focused checkpoints above.
+Remaining: human voice listening review; guidance-disabled observation/Watch flow; six final uninterrupted A05 cases including public menu entry, alternate layouts/locales and recovery; full manual A04 journey; retry/settlement and affected mission regressions; device and unfamiliar-player release checks. Do not mark A01–A12 complete from the focused checkpoints above.
 
 ## Installed presentation checkpoint — 2026-09-21
 
@@ -72,3 +72,12 @@ Remaining: final voice approval/generation and listening/playback review; guidan
 - Installed the validated Unity-authored narrative, portrait, campaign/briefing previews, localization and Addressables references into the working project. Seventy-three installed files are recorded with SHA-256 hashes in `installed_asset_manifest.json`; overwritten presentation assets were backed up under `/private/tmp/warline-gridlock/pre-final-art-install/`.
 - Main and isolated validation C# sources match. Source `git diff --check` passed for `Assets/Game/Scripts`, `Assets/Tests`, and `Tools/Audio`. The already-running main Editor was not stopped or restarted.
 - No final A05 win or full mission acceptance is claimed. The pending voice approval and remaining acceptance matrix above are unchanged.
+
+## Fadi comic revision and approved voice generation
+
+- User explicitly approved sending the prepared dialogue to ElevenLabs. Generated all 44 clips (24 story, 20 tutorial) using the existing subscription; the prior egress-approval blocker is resolved. `gridlock_voice_manifest.json` records provider, voices, text hashes, file identities and duration.
+- Replaced Fadi's game-mesh appearance in CH02-O04, B02, B03 and C01 with a consistent illustrated comic treatment. Retained the portrait, civilian clothing, scene composition and other characters. Exact edit prompts and source outputs are recorded in `fadi_comic_style_revision.json`.
+- `voice_file_validation.json`: 44 non-silent mono 44.1-kHz PCM files and 22 unique tutorial/radio event references passed file validation. This does not assert a human listening review.
+- Connected the route-open report to the locale-specific recorded ARIA event through the existing narration arbiter. Runtime generation/network TTS remains disabled.
+- `voiced-comic-01.log`: repository wrapper exit 0; all 24 localized story clips played to completion through the shipping player, without restarts or locale mismatches. All 24 EN 16:9 / FA 20:9 captures completed. The eight revised Fadi panel/locale captures were visually reviewed.
+- Imported and installed all 44 clips, their Unity metadata, the rebuilt audio event catalog, and EN/FA story bindings. All 44 installed GUID references and approved caption hashes were checked. Source diff whitespace checks passed. These changes do not close the remaining gameplay acceptance matrix or assert a human listening review.

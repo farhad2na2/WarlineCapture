@@ -1,11 +1,27 @@
 {
   "provider": "built-in image_gen",
   "date": "2026-09-21",
-  "review": "Source artwork inspected; Unity crop/layout review pending",
+  "review": "Fadi revisions inspected at source resolution; current voiced UI playback check recorded separately.",
   "rejected": [
     {
       "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-870cbe79-5941-4f0b-84ff-77abd9ca53e6.png",
       "reason": "Fadi depicted with military armor"
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-711900d0-31d6-4893-a846-887cd107f462.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-3be50eaf-5085-4add-9324-a79cf4138dac.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-17234539-bba7-4aaf-a36e-7d20396210eb.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
+    },
+    {
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ebb9c652-09fa-4766-a785-0dc797a8db1a.png",
+      "reason": "User rejected literal game-mesh appearance of Fadi inside comic; replaced with illustrated character."
     }
   ],
   "panels": [
@@ -37,11 +53,12 @@
     },
     {
       "id": "CH02-O04",
-      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-711900d0-31d6-4893-a846-887cd107f462.png",
-      "prompt": "Fadi matches first reference exactly: middle aged brown-skinned civilian man, dark short hair and thick dark beard, long gray-brown tunic and loose matching trousers, dark navy sleeveless vest, sandals. He points to an unmarked narrow service lane branching around a collapsed formal boulevard. Beside him a portable cyan tactical map projection shows simple unlabeled road lines with the small service lane absent. Two civilian laborers listen. Medium-wide environmental storytelling, no military armor on Fadi.",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-4735b32c-a2fb-4a86-8c71-aae34b501e6f.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the middle-left civilian pointing left beside the cyan map; keep that pointing pose and both foreground orange-shirt workers. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
       "refs": [
-        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
-        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+        "Previous CH02-O04 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
       ]
     },
     {
@@ -64,29 +81,32 @@
     },
     {
       "id": "CH02-B02",
-      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-3be50eaf-5085-4add-9324-a79cf4138dac.png",
-      "prompt": "Fadi, matching civilian first reference dark short hair full beard gray-brown long tunic trousers navy vest sandals, confidently points down the usable service lane while two civilian workers carry hand tools. Two distinct localized rubble piles block this lane in depth, an impassable collapsed boulevard visible to left. Hospital in distance. Medium full body composition with expressive face and local knowledge.",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-13c0c4c5-cba2-441b-b3fc-d8e8b5664954.png",
+      "prompt": "Edit image 1, the Gridlock comic panel. Replace ONLY Fadi, the bearded foreground civilian in gray tunic and navy vest pointing right, with an illustrated version of the SAME man in image 2 (identity reference portrait). Image 3 is the comic character rendering/style reference. His current face/body looks like an angular low-resolution game mesh pasted into a comic: remove the slab eyebrows, blocky polygon nose, cuboid beard, rigid toy-like body and hands. Redraw his face with expressive realistic human eyes, individually shaped brows, natural beard contour, subtle hair detail and natural anatomy, in the refined cinematic faceted illustrated comic style of Samira in image 3 and the portrait in image 2. Retain stylized painted planes, but never crude flat mesh geometry. Same middle-aged brown-skinned man, same dark hair/full beard, long gray-brown tunic, navy civilian cloth vest, sandals, pointing pose, location and scale. Preserve the full original wide composition, hospital, rubble, mountains, two workers, golden light, color palette, road geometry, all other subjects. No lettering or speech bubbles, no armor. Output one landscape panel at the original 16:9 aspect ratio.",
       "refs": [
-        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
-        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+        "Previous CH02-B02 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "CH02-O03.png style reference"
       ]
     },
     {
       "id": "CH02-B03",
-      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-17234539-bba7-4aaf-a36e-7d20396210eb.png",
-      "prompt": "Dalia matching woman tan vest sunglasses headset tied hair briefing a small rifle escort beside concrete cover. Behind the riflemen Fadi in navy vest long gray tunic and two workers wait safely with tools. Rubble work site ahead and relief truck behind. Visually readable layered tactical plan, infantry forward, protected workers behind cover, no active shooting or explosions.",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-2290c767-9cbe-4558-92da-6807cce92f42.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the civilian in the background at right behind the riflemen, beside the two orange-vest workers; keep that position and size. Leave Dalia and all riflemen exactly as they are. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
       "refs": [
-        "Narrative/FirstLaunch/Dialogue/Portraits/portrait_dalia.png",
-        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+        "Previous CH02-B03 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
       ]
     },
     {
       "id": "CH02-C01",
-      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-ebb9c652-09fa-4766-a785-0dc797a8db1a.png",
-      "prompt": "A just-cleared service lane between stacked rubble edges. Fadi matching bearded civilian navy vest and gray tunic stands at lane edge with two workers, proud but restrained. Portable cyan map projection at foreground now includes a brightly connected service lane. Canvas relief truck begins moving through in background. No humanoid robot for ARIA: represent her only through cyan map light.",
+      "source": "/Users/farhad/.codex/generated_images/01a0c4c5-d5a3-76b0-a906-60c99399098b/exec-af3b749a-9a0f-49e7-b08c-b2f4ab4a2480.png",
+      "prompt": "Edit image 1, a Gridlock comic panel. Replace ONLY the bearded civilian Fadi with the refined illustrated version in image 2 (approved new comic design), maintaining the same identity as portrait image 3. Fadi is the central-left civilian between two workers behind the cyan map; keep his hand on his hip, position and scale. His original version is a crude angular game mesh: replace slab eyebrows, block nose, cuboid beard, rigid toy-like anatomy with expressive natural human facial proportions, individually shaped brows, subtle dark hair and beard detail, natural hands and cloth folds. Match image 2's cinematic painted faceted comic rendering. Same middle-aged brown-skinned man, dark hair and full beard, gray-brown long tunic/trousers, navy civilian cloth vest, sandals. Preserve original scene geometry, all other characters, objects, lighting, palette, camera and wide composition. No military armor on Fadi, no text, speech balloons or watermark. Output one landscape 16:9 panel.",
       "refs": [
-        "UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png",
-        "Narrative/CH02M01Gridlock/Final/CH02-O01.png"
+        "Previous CH02-C01 panel as edit target",
+        "Portrait_Fadi_Gridlock.png as identity reference",
+        "Revised CH02-B02.png comic identity reference"
       ]
     },
     {

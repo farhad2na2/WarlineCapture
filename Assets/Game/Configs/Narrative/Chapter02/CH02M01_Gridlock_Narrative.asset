@@ -38,16 +38,16 @@ MonoBehaviour:
       englishFallback: The relief truck has reached the hospital. The ward can keep
         working. We opened a route people can depend on.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: fba3bd8cee82b4d679e1db95a7812692, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.071428
+      deadlineSeconds: 10.04
       essentialCaption: 1
     continueStateId: Gridlock-debrief-1
     skipStateId: Gridlock-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.071428
+    durationSeconds: 10.04
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -83,16 +83,16 @@ MonoBehaviour:
       englishFallback: The obstructions form a pattern. They steer traffic toward
         a dormant substation. I cannot yet tell why that route was preserved.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a3a832accdeca49cbb50543011b92898, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.142858
+      deadlineSeconds: 10.36
       essentialCaption: 1
     continueStateId: Gridlock-debrief-2
     skipStateId: Gridlock-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.142858
+    durationSeconds: 10.36
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -128,16 +128,16 @@ MonoBehaviour:
       englishFallback: The road is open. Next we need to keep supplies moving, and
         Fuel is running short. Return to the campaign map to review the operation.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 0d7eab11d918f4bbf9b391af109cc0b3, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.571428
+      deadlineSeconds: 10.68
       essentialCaption: 1
     continueStateId: Gridlock-debrief-complete
     skipStateId: Gridlock-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.571428
+    durationSeconds: 10.68
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -223,16 +223,16 @@ MonoBehaviour:
       englishFallback: Fadi's service lane is usable. It was missing from my map.
         I have updated the route; local knowledge matters here.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: f2742422316524f0cb7459e40b50b4cd, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.142858
+      deadlineSeconds: 9.64
       essentialCaption: 1
     continueStateId: Gridlock-comms-complete
     skipStateId: Gridlock-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.142858
+    durationSeconds: 9.64
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -318,16 +318,16 @@ MonoBehaviour:
       englishFallback: The hospital still has patients, but its supply road is blocked.
         That truck carries the relief they need. We must get it through.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a60de91f1a5b746bfa525720231b1b97, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.214286
+      deadlineSeconds: 12.28
       essentialCaption: 1
     continueStateId: Gridlock-brief-1
     skipStateId: Gridlock-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.214286
+    durationSeconds: 12.28
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -364,16 +364,16 @@ MonoBehaviour:
         open for years. Two obstructions are all that stand between us and the hospital.
         Protect my crew while we clear them.
       speaker: 6
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 718a572633f1745138d7e5d7c79a0a7a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.714286
+      deadlineSeconds: 13.72
       essentialCaption: 1
     continueStateId: Gridlock-brief-2
     skipStateId: Gridlock-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.714286
+    durationSeconds: 13.72
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -411,16 +411,16 @@ MonoBehaviour:
         the truck and hold the hospital clear for twenty seconds. We have twelve
         minutes.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 9d9c3e68a32b0411ebc5557c65d33ece, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 15.357142
+      deadlineSeconds: 18.68
       essentialCaption: 1
     continueStateId: Gridlock-brief-complete
     skipStateId: Gridlock-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 15.357142
+    durationSeconds: 18.68
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -507,16 +507,16 @@ MonoBehaviour:
         not a working city. Relief trucks are trapped behind blocked roads and dark
         intersections.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d15c87d96d44942898078eb6d5cb4e6a, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.642858
+      deadlineSeconds: 14.6
       essentialCaption: 1
     continueStateId: Gridlock-opening-1
     skipStateId: Gridlock-opening-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.642858
+    durationSeconds: 14.6
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -553,16 +553,16 @@ MonoBehaviour:
         other side of a damaged corridor. Keeping the ward open starts with getting
         that road back.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 45a85633f1651443785be2be6bd7abec, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.642858
+      deadlineSeconds: 11.72
       essentialCaption: 1
     continueStateId: Gridlock-opening-2
     skipStateId: Gridlock-opening-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.642858
+    durationSeconds: 11.72
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -599,16 +599,16 @@ MonoBehaviour:
         who keep them working. Lose one link and the others begin to fail. We have
         to restore them together."
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 02714bfcc850f4cbaa5ec2e473c99a34, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11
+      deadlineSeconds: 15.16
       essentialCaption: 1
     continueStateId: Gridlock-opening-3
     skipStateId: Gridlock-opening-complete
     reducedMotionSupported: 1
-    durationSeconds: 11
+    durationSeconds: 15.16
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -645,16 +645,16 @@ MonoBehaviour:
         lanes and local connections it does not show. We will need both kinds of
         knowledge.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 49b831cd962c944bdb032ea9415a427f, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.142858
+      deadlineSeconds: 11.8
       essentialCaption: 1
     continueStateId: Gridlock-opening-4
     skipStateId: Gridlock-opening-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.142858
+    durationSeconds: 11.8
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -691,16 +691,16 @@ MonoBehaviour:
         the work. And watch which roads the saboteurs leave open\u2014they may be
         choosing where we go next."
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 372a942fe935741acb40037c724e7ccf, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.357142
+      deadlineSeconds: 13.88
       essentialCaption: 1
     continueStateId: Gridlock-opening-complete
     skipStateId: Gridlock-opening-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.357142
+    durationSeconds: 13.88
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

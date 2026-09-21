@@ -5420,3 +5420,333 @@ MonoBehaviour:
     - clip: {fileID: 8300000, guid: a774eac5594dc43a5be94c54b8b430ca, type: 3}
       weight: 1
     localizedClips: []
+  - eventId: vo.aria.gridlock.comms.01.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: f2742422316524f0cb7459e40b50b4cd, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.gridlock.comms.01.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 765d733ef509848879bf18c85b99e5eb, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.01.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: ae2b885011c274da9a1de62a667d871d, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.01.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: ba901ebb543274275958dc197f8d1165, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.02.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 5aa8976c4c3b54b28ba7c94c778b0728, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.02.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 00dca58355e9344bca58b2719aa5551a, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.03.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: a71ca82f7458d401aa77b94ca616e76f, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.03.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 333011bb4266c4cdebaac604ccca132e, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.04.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 5263205ee06274e89bf43a2bb2759e15, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.04.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 8bc8574c51423459ca86f6444d14dfff, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.05.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 28a12a88f2c5041b2be48db6d1f9fd62, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.05.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: c0557f21cd535434da9492d9095abcd7, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.06.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 35a21793cf0d14246bdf7bc8b60e60ad, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.06.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 940a4c8ae0fb34a75aa1377465818f0a, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.07.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: c47eccdb973364c30a7b42fa70ed6c61, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.07.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 935ab9aa401bd4f2f962359dd8eb2198, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.08.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 24df6f9e040f94edda49fa272d7ad832, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.08.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 4095356f092c244bdb9b8408e3e2bdb2, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.09.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 83ed7fdb4c9fe4666ba4098fffae08f5, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.09.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: 38fcc18320a8e4dce9e1c1b0d44b411a, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.10.en
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: d0b9f84e305404d9696eed7b55524c14, type: 3}
+      weight: 1
+    localizedClips: []
+  - eventId: vo.aria.tutorial.gridlock.10.fa
+    busId: Voice
+    priority: 2
+    cooldownMilliseconds: 600
+    volumeDecibels: -6
+    pitchVariance: {x: 0, y: 0}
+    playback:
+      loop: 0
+      spatial: 0
+      maxInstances: 1
+      allowRuntimeLoad: 0
+    clips:
+    - clip: {fileID: 8300000, guid: ba535bd5ec2b24307beef1ead3b52aa4, type: 3}
+      weight: 1
+    localizedClips: []

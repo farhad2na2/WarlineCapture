@@ -1,6 +1,6 @@
 # Operations: mode and mission production plan
 
-Recorded 2026-09-21. **Design proposal and implementation handoff; no Operations gameplay implementation or acceptance is claimed.** This package interprets the request as the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review.
+Recorded 2026-09-21. **Design proposal and implementation handoff.** P0 added Operations-owned contracts/schemas only; no Operations gameplay, launch loop, or acceptance is claimed. This package interprets the request as the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review. See [P0_BASELINE_RECHECK.md](P0_BASELINE_RECHECK.md), [P0_SHARED_SEAMS.md](P0_SHARED_SEAMS.md), and [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). Operations Unity work stays on `D:\Projects\WarlineCapture-Operations`.
 
 ## Recommended scope
 

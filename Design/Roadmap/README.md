@@ -37,6 +37,8 @@ The accepted [unlock and upgrade direction](Skirmish_Expansion/UNLOCKS_AND_UPGRA
 
 Retain the [small prototype completion report](Skirmish_Prototype/COMPLETION.md) and [two-scenario evidence](../AgentReports/AriaWatchPlay/skirmish-two-scenario-delivery.md) as historical scoped results. No large-battle or 120-scenario readiness is claimed from them. Acceptance is defined in [the expanded matrix](Skirmish_Expansion/ACCEPTANCE.md).
 
+**The next Campaign mission is planned as [Chapter 2, Mission 1: Gridlock](../CH02_M01_Gridlock_Production_Plan.md).** Restore the hospital relief route while defending Fadi's road crews, using the catalog's authored route-clearing variant. The plan includes the M5 → Chapter 2 transition, real vehicle traversal, EN/FA story and guidance, and six mandatory normal-speed ARIA wins covering guided play, guidance-disabled play and recovery. It is planned content; no Gridlock implementation or gameplay acceptance is claimed.
+
 The closed internal campaign milestone is documented in [M1–M5 completion](M01_M05_Readiness/COMPLETION.md), [verification](M01_M05_Readiness/VERIFICATION.md), [findings](M01_M05_Readiness/FINDINGS.md) and the [M1 story replay follow-up](../AgentReports/M01StoryReplay/README.md). Reopen it for concrete defects or player feedback. Fix shared problems in their owning system and rerun affected missions; preserve the accepted experience while building skirmish.
 
 ## Definition of a readiness decision

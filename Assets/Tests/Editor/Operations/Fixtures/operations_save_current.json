@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "profileRevision": 4,
+  "activeRun": {
+    "runId": "run.operations.abcd1234",
+    "revision": 1,
+    "day": 1,
+    "actionPoints": 3,
+    "difficulty": 1,
+    "seed": 1102,
+    "phase": 1,
+    "consecutiveStableDays": 0,
+    "districts": []
+  },
+  "runSummaries": [],
+  "firstClearRewardIds": [],
+  "practiceMissionIds": [],
+  "receipts": [],
+  "committedReports": [],
+  "pendingDeployment": null,
+  "checkpointReference": ""
+}

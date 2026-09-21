@@ -25,8 +25,8 @@ merge commit. That tree was not edited in this slice.
 - `SkirmishDefinitionBuilder` + `SkirmishSetupCompilerValidation`.
 - Session init / spawn / cleanup systems. Skirmish mission 4 Standard Regular
   starting forces/structures bind `UnitSourcePrefabKey` from the role catalog, so
-  `SpawnVisualPending=0` without a live ECS prefab registry. Instantiating
-  GameObjects from that registry remains later ground-roster certification.
+  `SpawnVisualPending=0` when keys bind. GameObject instantiate is now in the
+  SK-02 visual spawn service.
 - Catalog entry gained optional `DefinitionId` / `ContentVersion` /
   `ReadinessManifestId` fields. Original `SCENARIO_CATALOG.csv` column order is
   unchanged. Publication lives in `SkirmishPublicationManifest.asset`.
@@ -45,7 +45,18 @@ merge commit. That tree was not edited in this slice.
   `Building_GroundStaging`). Not a new art prefab.
 - Spawn expands force quantity, binds `Faction` + `UnitSourcePrefabKey` for
   every Skirmish mission 4 starting member. `SpawnVisualPending=0` for Standard
-  Regular.
+  Regular when keys bind.
+- `SkirmishVisualSpawnService` instantiates GameObjects from
+  `SkirmishVisualPrefabCatalog` (live unit registry when loaded, otherwise
+  named presentation stand-ins). Starting tank / APC / infantry and Ground
+  Staging become visible objects; they are no longer ECS stubs only.
+- `SkirmishGroundStagingBuilder` builds a modular yard: separate
+  **VehicleQueue** and **LogisticsQueue** surfaces, **SpawnPad** / **RallyPad**,
+  Health / Selection / BuildControls sockets, and EN/FA identity
+  (“Ground Staging” / «سکوی زمینی»). It is not an Expert Tent rename.
+- `SkirmishVisualSpawnSystem` attaches missing visuals after ledger spawn.
+  Paid produce also instantiates when a catalog is bound. Cleanup destroys
+  the GameObjects.
 - `SkirmishProductionService.TryProduce` / `TryReleaseDeath` is the
   production-to-death path for the Skirmish mission 4 ground set (ledger +
   overlay + cap).
@@ -135,14 +146,14 @@ merge commit. That tree was not edited in this slice.
 ### Publication
 - Status: **InProgress**. Closer to a playable ground slice (compiler +
   overlays + designated Base Assault facts + capacity + legal army groups +
-  legal enemy/ARIA BA skills) but **not Playable**, not ARIA/War certified,
-  not Accepted.
+  legal enemy/ARIA BA skills + registry GameObject visuals / Ground Staging
+  yard) but **not Playable**, not ARIA/War certified, not Accepted.
 
 ## Remaining ticket gaps
 
 | Ticket | Gap |
 |---|---|
-| Ground roster and production visual ticket (SK-02) | Registry GameObject instantiate, Ground Staging prefab/pads, air roles, combat certification |
+| Ground roster and production visual ticket (SK-02) | Persist authored Ground Staging prefab via `Tools/Warline/Skirmish/Rebuild Ground Staging`; bind live `UnitPrefabRegistry` in the match scene; air roles; combat certification |
 | Ground capacity reservation ticket (SK-03) | Research tree, fabrication/refinery profiles, physical haul, cancel/refund 75% mid-produce. Recruitment FuelCost stays 0 (MATCH_SETUP treats fuel as operation, not a second buy currency) |
 | Army control, fog, and movement ticket (SK-04) | Live path/world movement, transport boarding, formation/columns, Army drawer HUD, terrain-blocked sight |
 | Enemy strategy ticket (SK-05) | Frontline Control / Breakthrough / Convoy Escort policies; four difficulty profiles; structures/research/transport/camera skills; EN/FA teaching; counted full-speed ARIA wins |
@@ -211,6 +222,15 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -RequiredPassMarker "[SkirmishExpandedAriaTests] result=Passed"
 ```
 
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedVisualTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-visual.log" `
+  -RequiredPassMarker "[SkirmishExpandedVisualTests] result=Passed"
+```
+
 Required markers:
 
 - `[SkirmishExpandedDefinitionTests] result=Passed`
@@ -218,12 +238,19 @@ Required markers:
 - `[SkirmishExpandedEconomyTests] result=Passed`
 - `[SkirmishExpandedArmyTests] result=Passed`
 - `[SkirmishExpandedAriaTests] result=Passed`
+- `[SkirmishExpandedVisualTests] result=Passed`
 
-Optional compiler rebuild:
+Optional compiler / Ground Staging rebuild:
 
 ```
 Tools/Warline/Skirmish/Rebuild Expanded Definitions
+Tools/Warline/Skirmish/Rebuild Ground Staging
 ```
+
+A live Editor match on Desert Base Regular Standard should show starting
+tank / APC / infantry GameObjects and a Ground Staging yard (registry prefabs
+when the unit registry is loaded; otherwise named presentation stand-ins).
+Entities must not stay invisible.
 
 4. Legacy smoke: Quick Custom still offers Skirmish 1 Desert Base prototype
    (index 0), Skirmish 2 City Crossroads (index 1), and Farhad’s Skirmish 3

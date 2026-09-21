@@ -127,6 +127,8 @@ namespace Game.Runtime
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
             SkirmishArmyGroupSystem.AssignProduced(em, session, reservationId);
             SkirmishFogService.Project(em, session);
+            if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+                SkirmishVisualSpawnService.AttachMissing(em, session, setup);
             return true;
         }
 

@@ -65,12 +65,20 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (em.HasComponent<SkirmishStructureIdentityComponent>(entity) &&
-                    em.GetComponentData<SkirmishStructureIdentityComponent>(entity).StructureId.ToString()
-                        .StartsWith(SkirmishStructureIds.Barracks))
+                if (em.HasComponent<SkirmishStructureIdentityComponent>(entity))
                 {
-                    WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.BarracksStructure());
-                    applied++;
+                    string structureId = em.GetComponentData<SkirmishStructureIdentityComponent>(entity)
+                        .StructureId.ToString();
+                    if (structureId.StartsWith(SkirmishStructureIds.Barracks))
+                    {
+                        WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.BarracksStructure());
+                        applied++;
+                    }
+                    else if (structureId == SkirmishStructureIds.GroundStaging)
+                    {
+                        WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.GroundStagingStructure());
+                        applied++;
+                    }
                 }
             }
 

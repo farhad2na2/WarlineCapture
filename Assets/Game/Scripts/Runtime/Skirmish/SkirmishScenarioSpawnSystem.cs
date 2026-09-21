@@ -328,18 +328,28 @@ namespace Game.Runtime
             string visual = SkirmishStructureIds.VisualKey(structure.StructureId);
             if (!string.IsNullOrEmpty(visual))
                 em.AddComponentData(owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(visual) });
+            if (structure.StructureId == SkirmishStructureIds.GroundStaging)
+            {
+                em.AddComponentData(owned, new SkirmishGroundStagingStateComponent
+                {
+                    VehicleQueues = 1,
+                    LogisticsQueues = 1
+                });
+            }
 
             return owned;
         }
 
-        internal static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)
+        public static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)
         {
             using EntityQuery query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < entities.Length; i++)
             {
-                if (em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).SessionId.Equals(sessionId))
-                    em.DestroyEntity(entities[i]);
+                if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).SessionId.Equals(sessionId))
+                    continue;
+                SkirmishVisualSpawnService.DestroyVisual(em, entities[i]);
+                em.DestroyEntity(entities[i]);
             }
         }
     }

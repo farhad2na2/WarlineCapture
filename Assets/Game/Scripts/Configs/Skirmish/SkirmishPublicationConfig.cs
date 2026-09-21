@@ -36,7 +36,7 @@ namespace Game.Configs
                     DefinitionId = "skirmish.s002",
                     Status = SkirmishPublicationStatus.InProgress,
                     EvidencePath = "Design/AgentReports/SkirmishExpansion/S002/",
-                    Notes = "Compiler + overlays + Base Assault facts + capacity + legal army groups/paging/shared-fog attack gate + legal enemy/ARIA BA skills. Starting set prefab-keyed (SpawnVisualPending=0). Not Playable/ARIA/War certified."
+                    Notes = "Compiler + overlays + Base Assault facts + capacity + legal army groups + legal enemy/ARIA BA skills + registry GameObject visuals / Ground Staging yard. Not Playable/ARIA/War certified."
                 }
             };
         }

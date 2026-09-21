@@ -64,6 +64,21 @@ namespace Game.Configs
                 CapabilityCertified = false
             };
 
+        public static SkirmishRoleOverlay GroundStagingStructure() =>
+            new SkirmishRoleOverlay
+            {
+                RoleId = SkirmishStructureIds.GroundStaging,
+                RoleKind = SkirmishRoleKind.None,
+                MaxHealth = 600,
+                Damage = 0,
+                RangeWorld = 0f,
+                SupplyCost = 0,
+                Producer = SkirmishProducerKind.GroundStaging,
+                TargetDomains = SkirmishTargetDomain.None,
+                SquadMembers = 1,
+                CapabilityCertified = false
+            };
+
         public static bool TryGet(SkirmishRoleOverlay[] overlays, SkirmishRoleKind kind, out SkirmishRoleOverlay overlay)
         {
             if (overlays != null)

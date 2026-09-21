@@ -234,4 +234,20 @@ namespace Game.Components
         public int FailedAttempts;
         public uint LastGroupId;
     }
+
+    public struct SkirmishGroundStagingStateComponent : IComponentData
+    {
+        public int VehicleQueues;
+        public int LogisticsQueues;
+        public float SpawnPadX;
+        public float SpawnPadZ;
+        public float RallyPadX;
+        public float RallyPadZ;
+    }
+
+    public struct SkirmishVisualSpawnedComponent : IComponentData
+    {
+        public byte Spawned;
+        public byte FromRegistry;
+    }
 }

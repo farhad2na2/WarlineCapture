@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Configs;
 using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
@@ -28,6 +29,11 @@ namespace Game.Runtime
                     continue;
 
                 SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, session.SessionId);
+                if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(entity))
+                {
+                    em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(entity).Catalog?.Dispose();
+                    em.RemoveComponent<SkirmishVisualPrefabCatalogRecord>(entity);
+                }
                 if (em.HasComponent<SkirmishResolvedSetupRecord>(entity))
                     em.RemoveComponent<SkirmishResolvedSetupRecord>(entity);
                 if (em.HasComponent<SkirmishExpandedCleanupRequest>(entity))

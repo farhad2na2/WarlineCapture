@@ -427,6 +427,18 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
+            if (view.VisibleHostileAir > 0 && view.CanAffordAntiAir && view.RecruitAntiAir.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.RecruitAntiAir, false, ref output);
+                return;
+            }
+            if (view.AirQueueOffered && !view.PadReady && view.AirPad.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                Target(view.AirPad, false, ref output);
+                return;
+            }
             if (view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;

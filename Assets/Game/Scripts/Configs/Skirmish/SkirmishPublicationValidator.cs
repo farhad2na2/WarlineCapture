@@ -133,7 +133,7 @@ namespace Game.Configs
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.MissingReadiness,
                     "publication",
-                    "S003 stays InProgress until air visuals, Game View, and the ARIA matrix land."));
+                    "S003 stays InProgress until Game View, air flight/refuel, and the ARIA matrix land."));
                 return true;
             }
 
@@ -222,7 +222,7 @@ namespace Game.Configs
                 reasons.Add(new SkirmishCompileReason(
                     SkirmishReasonCode.MissingReadiness,
                     "publication",
-                    "S003 stays InProgress until air visuals, Game View, and the ARIA matrix land."));
+                    "S003 stays InProgress until Game View, air flight/refuel, and the ARIA matrix land."));
                 status = SkirmishPublicationStatus.InProgress;
                 return true;
             }

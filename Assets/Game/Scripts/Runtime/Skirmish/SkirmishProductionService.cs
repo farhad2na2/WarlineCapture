@@ -267,6 +267,9 @@ namespace Game.Runtime
                 return false;
             }
 
+            if (TryRejectMissingAirPad(em, session, reservation, ref decision))
+                return false;
+
             if (IsProducerLocked(em, session, reservation.Producer, reservation.FactionId))
             {
                 decision.Reason = SkirmishReasonCode.QueueLocked;
@@ -302,6 +305,9 @@ namespace Game.Runtime
                 decision.ReservationId = reservationId;
                 return false;
             }
+
+            if (TryRejectMissingAirPad(em, session, reservation, ref decision))
+                return false;
 
             _ = army;
             if (!em.HasComponent<SkirmishResolvedSetupRecord>(session) ||
@@ -726,38 +732,87 @@ namespace Game.Runtime
             return false;
         }
 
-        private static string RoleIdOf(SkirmishRoleKind kind)
+        private static bool TryRejectMissingAirPad(
+            EntityManager em,
+            Entity session,
+            SkirmishProductionReservation reservation,
+            ref SkirmishProductionDecision decision)
         {
-            switch (kind)
-            {
-                case SkirmishRoleKind.Rifle: return SkirmishRoleIds.Rifle;
-                case SkirmishRoleKind.Gunner: return SkirmishRoleIds.Gunner;
-                case SkirmishRoleKind.Marksman: return SkirmishRoleIds.Marksman;
-                case SkirmishRoleKind.Breacher: return SkirmishRoleIds.Breacher;
-                case SkirmishRoleKind.Rocketeer: return SkirmishRoleIds.Rocketeer;
-                case SkirmishRoleKind.Car: return SkirmishRoleIds.Car;
-                case SkirmishRoleKind.ApcFast: return SkirmishRoleIds.ApcFast;
-                case SkirmishRoleKind.ApcArmored: return SkirmishRoleIds.ApcArmored;
-                case SkirmishRoleKind.ApcHeavy: return SkirmishRoleIds.ApcHeavy;
-                case SkirmishRoleKind.Tank: return SkirmishRoleIds.Tank;
-                case SkirmishRoleKind.Radar: return SkirmishRoleIds.Radar;
-                case SkirmishRoleKind.LogisticsTruck: return SkirmishRoleIds.LogisticsTruck;
-                case SkirmishRoleKind.Tanker: return SkirmishRoleIds.Tanker;
-                default: return string.Empty;
-            }
+            if (AirPadReady(em, session, reservation, out SkirmishReasonCode reason, out string field))
+                return false;
+
+            int paid = reservation.MaterialsPaid;
+            if (reservation.Phase == SkirmishReservationPhase.Reserved ||
+                reservation.Phase == SkirmishReservationPhase.Producing)
+                TryRefundFailedDispatch(em, session, reservation.ReservationId, out decision);
+
+            decision.Accepted = false;
+            decision.Reason = reason;
+            decision.Field = field;
+            decision.ReservationId = reservation.ReservationId;
+            decision.MaterialsCost = paid;
+            decision.RefundedMaterials = paid;
+            decision.Producer = reservation.Producer;
+            return true;
         }
+
+        private static bool AirPadReady(
+            EntityManager em,
+            Entity session,
+            SkirmishProductionReservation reservation,
+            out SkirmishReasonCode reason,
+            out string field)
+        {
+            reason = SkirmishReasonCode.None;
+            field = string.Empty;
+            if (reservation.Producer != SkirmishProducerKind.Helipad &&
+                reservation.Producer != SkirmishProducerKind.Airport)
+                return true;
+
+            SkirmishReadinessStage required = reservation.Producer == SkirmishProducerKind.Airport
+                ? SkirmishReadinessStage.FullArsenal
+                : SkirmishReadinessStage.Established;
+            SkirmishReadinessStage compiled = SkirmishReadinessStage.Field;
+            if (em.HasComponent<SkirmishResolvedSetupRecord>(session))
+            {
+                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                if (setup != null)
+                    compiled = setup.Readiness;
+            }
+
+            if ((int)LiveReadiness(em, session, compiled) < (int)required)
+            {
+                reason = SkirmishReasonCode.MissingReadiness;
+                field = "readiness";
+                return false;
+            }
+
+            if (!HasLivingProducer(em, session, reservation.Producer, reservation.FactionId))
+            {
+                reason = SkirmishReasonCode.MissingProducer;
+                field = reservation.Producer == SkirmishProducerKind.Airport
+                    ? "producer.airport"
+                    : "producer.helipad";
+                return false;
+            }
+
+            return true;
+        }
+
+        private static string RoleIdOf(SkirmishRoleKind kind) => SkirmishRoleIds.ToId(kind);
 
         private static string PrefabKey(SkirmishResolvedSetup setup, SkirmishRoleKind role)
         {
-            if (setup?.Forces == null)
-                return string.Empty;
-            for (int i = 0; i < setup.Forces.Length; i++)
+            if (setup?.Forces != null)
             {
-                if (setup.Forces[i].RoleKind == role && !string.IsNullOrEmpty(setup.Forces[i].RuntimePrefabKey))
-                    return setup.Forces[i].RuntimePrefabKey;
+                for (int i = 0; i < setup.Forces.Length; i++)
+                {
+                    if (setup.Forces[i].RoleKind == role && !string.IsNullOrEmpty(setup.Forces[i].RuntimePrefabKey))
+                        return setup.Forces[i].RuntimePrefabKey;
+                }
             }
 
-            return string.Empty;
+            return SkirmishRoleCatalogConfig.RuntimePrefabKey(role);
         }
 
         private static void MarkReservation(

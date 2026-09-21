@@ -60,6 +60,20 @@ namespace Game.Configs
                 return Prefer(current, score);
             }
 
+            if (perception.VisibleHostileAir > 0 &&
+                army != null &&
+                army.Allows(SkirmishRoleIds.AntiAir) &&
+                TryAfford(army, readiness, overlays, perception, SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir))
+            {
+                score.Priority = SkirmishStrategyPriority.RecruitCounter;
+                score.CounterAdvantage = CounterAdvantageWeight;
+                score.ObjectiveGain = ObjectiveGainWeight / 2;
+                score.Total = score.CounterAdvantage + score.ObjectiveGain;
+                score.RecruitRole = SkirmishRoleKind.AntiAir;
+                score.Field = "counter.aa";
+                return Prefer(current, score);
+            }
+
             if (perception.VisibleHostileTanks > 0 &&
                 TryAfford(army, readiness, overlays, perception, SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer))
             {
@@ -107,10 +121,13 @@ namespace Game.Configs
                 FuelAvailable = perception.OwnFuel,
                 InfantryLive = perception.OwnInfantryLive,
                 GroundLive = perception.OwnGroundLive,
+                AirLive = perception.OwnAirLive,
                 SupplyLive = perception.OwnSupplyLive,
+                HelipadPresent = perception.HelipadPresent,
+                AirportPresent = perception.AirportPresent,
                 InfantryCap = 48,
                 GroundCap = 8,
-                AirCap = 2,
+                AirCap = perception.AirCap < 1 ? 2 : perception.AirCap,
                 SupplyCap = perception.OwnSupplyCap < 1 ? 128 : perception.OwnSupplyCap
             };
             SkirmishProductionDecision decision = SkirmishProductionEligibility.Evaluate(

@@ -54,10 +54,14 @@ namespace Game.Configs
 
         private static SkirmishAriaSkillDecision Choose(in SkirmishAriaPublicView view)
         {
+            if (view.VisibleHostileAir > 0 && view.CanAffordAntiAir && view.RecruitControlAvailable)
+                return Act(SkirmishAriaSkillKind.Recruit, "recruit.aa");
             if (view.OwnInfantry < 16 && view.CanAffordRifle && view.RecruitControlAvailable)
                 return Act(SkirmishAriaSkillKind.Recruit, "recruit.rifle");
             if (view.VisibleHostileCombat > 0 && view.CanAffordRocketeer && view.RecruitControlAvailable)
                 return Act(SkirmishAriaSkillKind.Recruit, "recruit.counter");
+            if (view.VisibleHostileAir > 0 && !view.PadReady && view.AirPadControlAvailable)
+                return Act(SkirmishAriaSkillKind.Inspect, "pad.not_ready");
             if (!view.GroupControlAvailable && view.HoldControlAvailable)
                 return Act(SkirmishAriaSkillKind.SelectGroup, "select.group");
             if (view.EnemyDesignatedAlive && view.AttackControlAvailable && view.GroupControlAvailable)

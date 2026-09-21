@@ -77,9 +77,16 @@ namespace Game.Runtime
                 var cap = em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
                 perception.OwnInfantryLive = cap.InfantryLive;
                 perception.OwnGroundLive = cap.GroundLive;
+                perception.OwnAirLive = cap.AirLive;
+                perception.AirCap = cap.AirCap;
                 perception.OwnSupplyLive = cap.SupplyLive;
                 perception.OwnSupplyCap = cap.SupplyCap;
             }
+
+            perception.HelipadPresent = SkirmishProductionService.HasLivingProducer(
+                em, session, SkirmishProducerKind.Helipad, 2);
+            perception.AirportPresent = SkirmishProductionService.HasLivingProducer(
+                em, session, SkirmishProducerKind.Airport, 2);
 
             if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
             {
@@ -115,6 +122,8 @@ namespace Game.Runtime
                     if (role.Role == SkirmishRoleKind.Tank)
                         perception.VisibleHostileTanks++;
                 }
+                else if (role.Category == SkirmishPopulationCategory.Air)
+                    perception.VisibleHostileAir++;
             }
 
             return perception;
@@ -135,11 +144,12 @@ namespace Game.Runtime
             state.RecruitRole = score.RecruitRole;
 
             if (score.Priority == SkirmishStrategyPriority.RecruitCounter &&
-                score.RecruitRole == SkirmishRoleKind.Rocketeer &&
-                army != null)
+                army != null &&
+                (score.RecruitRole == SkirmishRoleKind.Rocketeer ||
+                 score.RecruitRole == SkirmishRoleKind.AntiAir))
             {
-                if (!SkirmishProductionService.TryProduce(
-                    em, session, SkirmishRoleIds.Rocketeer, 1, army, 2, out _))
+                string roleId = SkirmishRoleIds.ToId(score.RecruitRole);
+                if (!SkirmishProductionService.TryProduce(em, session, roleId, 1, army, 2, out _))
                     state.FailedAttempts++;
                 else
                     state.FailedAttempts = 0;

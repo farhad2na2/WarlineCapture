@@ -103,6 +103,36 @@ namespace Game.Configs
             };
         }
 
+        public static string RuntimePrefabKey(SkirmishRoleKind kind)
+        {
+            switch (kind)
+            {
+                case SkirmishRoleKind.Rifle: return "Unit_Chr_Soldier_Male_02_Alt_04";
+                case SkirmishRoleKind.Gunner: return "Unit_Chr_Soldier_Male_01";
+                case SkirmishRoleKind.Marksman: return "Unit_Chr_Soldier_Female_01";
+                case SkirmishRoleKind.Breacher: return "Unit_Chr_Soldier_Female_02_Alt_02";
+                case SkirmishRoleKind.Rocketeer: return "Unit_Chr_Ghillie_Male_01";
+                case SkirmishRoleKind.Car: return "Unit_Veh_Light_Armored_Car";
+                case SkirmishRoleKind.ApcFast: return "Unit_Veh_APC_Fast";
+                case SkirmishRoleKind.ApcArmored: return "Unit_Veh_APC_Slow";
+                case SkirmishRoleKind.ApcHeavy: return "Unit_Veh_APC_Heavy";
+                case SkirmishRoleKind.Tank: return "Unit_Veh_Tank_USA";
+                case SkirmishRoleKind.Radar: return "Unit_Veh_Radar_Tank";
+                case SkirmishRoleKind.Siege: return "Unit_Veh_Missle_Launcher_Ground";
+                case SkirmishRoleKind.TransportHeli: return "Unit_Veh_Helicopter_Transport";
+                case SkirmishRoleKind.Drone: return "Unit_Veh_Drone";
+                case SkirmishRoleKind.LogisticsTruck: return "Unit_Veh_Truck_Tray";
+                case SkirmishRoleKind.Tanker: return "Unit_Veh_Truck_Tanker";
+                case SkirmishRoleKind.AntiAir: return "Unit_Veh_Missle_Launcher_Air";
+                case SkirmishRoleKind.AttackHeliLight: return "Unit_Veh_Helicopter_Attack_Small";
+                case SkirmishRoleKind.AttackHeli: return "Unit_Veh_Helicopter_Attack";
+                case SkirmishRoleKind.Fighter: return "Unit_Veh_Jet_02";
+                case SkirmishRoleKind.Strike: return "Unit_Veh_Jet_01";
+                case SkirmishRoleKind.TransportPlane: return "Unit_Veh_Plane_Transport";
+                default: return string.Empty;
+            }
+        }
+
         public bool TryGet(string roleId, out SkirmishRoleBindingConfig binding)
         {
             for (int i = 0; i < roles.Length; i++)

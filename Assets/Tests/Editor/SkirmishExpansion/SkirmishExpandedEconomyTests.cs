@@ -374,6 +374,103 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0, em.GetComponentData<SkirmishResearchStateComponent>(session).InfantryWeapons);
         }
 
+        [Test]
+        public void S003AirMobileAaGatePadReadinessAndMissingPadRefund()
+        {
+            using var world = new World(nameof(S003AirMobileAaGatePadReadinessAndMissingPadRefund));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawnS003(em, out Entity session, out _);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(350, em.GetComponentData<SkirmishEconomyStockComponent>(session).Fuel);
+            Assert.AreEqual(SkirmishReadinessStage.Field, em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+            Assert.AreEqual(2, em.GetComponentData<SkirmishCapacityComponent>(session).AirCap);
+
+            Assert.IsFalse(SkirmishProductionService.TryProduce(
+                em, session, SkirmishRoleIds.Tank, 1, authored.ArmyAir, out SkirmishProductionDecision tank));
+            Assert.AreEqual(SkirmishReasonCode.UnsupportedRole, tank.Reason);
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+            Assert.IsFalse(SkirmishProductionService.TryQueue(
+                em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out SkirmishProductionDecision early));
+            Assert.AreEqual(SkirmishReasonCode.MissingReadiness, early.Reason);
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirReserved);
+
+            var research = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            research.Readiness = SkirmishReadinessStage.Established;
+            em.SetComponentData(session, research);
+            Assert.IsFalse(SkirmishProductionService.TryQueue(
+                em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out SkirmishProductionDecision missingPad));
+            Assert.AreEqual(SkirmishReasonCode.MissingProducer, missingPad.Reason);
+            Assert.AreEqual("producer.helipad", missingPad.Field);
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            Entity pad = SkirmishScenarioSpawnSystem.CreateStructure(
+                em,
+                sessionId,
+                new SkirmishResolvedStructureEntry
+                {
+                    FactionId = 1,
+                    StructureId = SkirmishStructureIds.Helipad
+                });
+            em.AddComponentData(pad, new UnitHealth { Current = 400, Max = 400 });
+
+            var capped = em.GetComponentData<SkirmishCapacityComponent>(session);
+            int airLive = capped.AirLive;
+            capped.AirLive = capped.AirCap;
+            em.SetComponentData(session, capped);
+            Assert.IsFalse(SkirmishProductionService.TryQueue(
+                em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out SkirmishProductionDecision full));
+            Assert.AreEqual(SkirmishReasonCode.InsufficientCapacity, full.Reason);
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            capped = em.GetComponentData<SkirmishCapacityComponent>(session);
+            capped.AirLive = airLive;
+            em.SetComponentData(session, capped);
+
+            Assert.IsTrue(SkirmishProductionService.TryQueue(
+                em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out SkirmishProductionDecision queued));
+            Assert.AreEqual(420, queued.MaterialsCost);
+            Assert.AreEqual(8, queued.SupplyCost);
+            Assert.AreEqual(SkirmishProducerKind.Helipad, queued.Producer);
+            Assert.AreEqual(30, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirReserved);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+            Assert.IsTrue(SkirmishProductionService.TryStartQueued(em, session, queued.ReservationId, out _));
+            Assert.AreEqual(SkirmishReservationPhase.Producing, ReservationPhase(em, session, queued.ReservationId));
+
+            em.SetComponentData(pad, new UnitHealth { Current = 0, Max = 400 });
+            Assert.IsFalse(SkirmishProductionService.TryDispatchQueued(
+                em, session, queued.ReservationId, authored.ArmyAir, out SkirmishProductionDecision refunded));
+            Assert.AreEqual(SkirmishReasonCode.MissingProducer, refunded.Reason);
+            Assert.AreEqual("producer.helipad", refunded.Field);
+            Assert.AreEqual(420, refunded.RefundedMaterials);
+            Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(350, em.GetComponentData<SkirmishEconomyStockComponent>(session).Fuel);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirReserved);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).SupplyReserved);
+            Assert.AreEqual(SkirmishReservationPhase.Cancelled, ReservationPhase(em, session, queued.ReservationId));
+            Assert.AreEqual(Entity.Null, FindReservedUnit(em, queued.ReservationId));
+
+            var before = em.GetComponentData<SkirmishCapacityComponent>(session);
+            Assert.IsTrue(SkirmishProductionService.TryProduce(
+                em, session, SkirmishRoleIds.AntiAir, 1, authored.ArmyAir, out SkirmishProductionDecision aa));
+            Assert.AreEqual(220, aa.MaterialsCost);
+            Assert.AreEqual(6, aa.SupplyCost);
+            Assert.AreEqual(SkirmishProducerKind.GroundStaging, aa.Producer);
+            Assert.AreEqual(230, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            var after = em.GetComponentData<SkirmishCapacityComponent>(session);
+            Assert.AreEqual(before.GroundLive + 1, after.GroundLive);
+            Assert.AreEqual(before.AirLive, after.AirLive);
+            Assert.AreEqual(0, after.GroundReserved);
+            Entity produced = FindReservedUnit(em, aa.ReservationId);
+            Assert.AreEqual(
+                "Unit_Veh_Missle_Launcher_Air",
+                em.GetComponentData<UnitSourcePrefabKey>(produced).Value.ToString());
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -391,6 +488,7 @@ namespace Game.Tests.Editor
                 suite.FailedDispatchAndProducerDestructionUseSpecifiedRefunds();
                 suite.CategoryResearchFromStagingAndHqAppliesOnce();
                 suite.ReplacementHqCanResearchWithoutBecomingVictoryBase();
+                suite.S003AirMobileAaGatePadReadinessAndMissingPadRefund();
                 Debug.Log("[SkirmishExpandedEconomyTests] result=Passed");
             }
             catch (Exception exception)
@@ -415,6 +513,40 @@ namespace Game.Tests.Editor
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 104731,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+        }
+
+        private static void CompileAndSpawnS003(
+            EntityManager em,
+            out Entity session,
+            out SkirmishResolvedSetup setup)
+        {
+            string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS003.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S003",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS003FirstVisit.SeedA,
                 authored,
                 matrix,
                 manifest,

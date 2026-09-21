@@ -48,16 +48,28 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 
 ## How to validate in Editor
 
+Use Programmer 1’s **shadow project only**: `D:\Projects\WarlineCapture-Skirmish`
+(git worktree, own `Library`). Check out `cursor/skirmish-shadow` or this
+short-lived `cursor/skirmish-s002-…` branch there. Do **not** open or lock the
+shared `D:\Projects\WarlineCapture` checkout.
+
 1. Keep Unity Hub open and signed in.
 2. Compile/check the new assemblies. `Game.Skirmish.Contracts` is auto-referenced;
    if a consumer assembly fails to see it, add an explicit reference (existing
    asmdefs were not edited in this PR).
-3. Run:
+3. From the shadow worktree, run the Windows wrapper (preferred on Programmer 1):
 
-```sh
-Tools/CI/invoke_unity_macos.sh --timeout 600 --log /private/tmp/skirmish-s002-definitions.log -- \
-  -quit -executeMethod Game.Tests.Editor.SkirmishExpandedDefinitionTests.RunFocusedValidation
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>' `
+  -ProjectPath 'D:\Projects\WarlineCapture-Skirmish' `
+  -ExecuteMethod Game.Tests.Editor.SkirmishExpandedDefinitionTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-definitions.log" `
+  -RequiredPassMarker '[SkirmishExpandedDefinitionTests] result=Passed'
 ```
+
+macOS wrapper is only for a machine that already owns a separate project copy;
+it is not permission to open the shared checkout.
 
 Required marker: `[SkirmishExpandedDefinitionTests] result=Passed`.
 

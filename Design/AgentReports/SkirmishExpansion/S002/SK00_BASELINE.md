@@ -32,8 +32,11 @@ Capability certification is still Pending (SK-02).
 ## Compiler / architecture status
 
 This cloud environment does not run Unity Editor. Contracts, configs, compiler,
-session systems, and Editor validation suites are source-complete. Focused
-validation entry points:
+session systems, and Editor validation suites are source-complete. Any later
+Unity validation must use Programmer 1’s shadow project
+`D:\Projects\WarlineCapture-Skirmish` (own Library; branch
+`cursor/skirmish-shadow` or `cursor/skirmish-s002-…`). Do not open or lock
+`D:\Projects\WarlineCapture`. Focused validation entry points:
 
 - `Game.Tests.Editor.SkirmishExpandedDefinitionTests.RunFocusedValidation`
   marker `[SkirmishExpandedDefinitionTests] result=Passed`

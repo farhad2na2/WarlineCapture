@@ -158,12 +158,25 @@ namespace Game.Tests.Editor.Operations
             Require(OperationsRosterLedger.TryGetRole(OperationsRosterRoleKind.RifleInfantry, out OperationsRosterRoleRecord rifle));
             Require(rifle.Availability == OperationsAvailabilityKind.CampaignBound);
             Require(OperationsRosterLedger.CountResolvedRoles() >= 4);
+            for (int roleIndex = 0; roleIndex < OperationsRosterLedger.Roles.Length; roleIndex++)
+            {
+                OperationsRosterRoleRecord roleRecord = OperationsRosterLedger.Roles[roleIndex];
+                Require(!string.IsNullOrWhiteSpace(roleRecord.VerifiedTypeOrPath));
+                Require(roleRecord.VerifiedTypeOrPath.Length <= OperationsIdentityRules.MaximumEvidenceLength);
+                Require(!string.IsNullOrWhiteSpace(roleRecord.Notes));
+                Require(roleRecord.Notes.Length <= OperationsIdentityRules.MaximumEvidenceLength);
+            }
             bool sawMissingIdNamespace = false;
             for (int index = 0; index < OperationsRosterLedger.Features.Length; index++)
             {
-                if (OperationsRosterLedger.Features[index].FeatureId == "feature.operations.id_namespace")
+                OperationsFeatureRecord feature = OperationsRosterLedger.Features[index];
+                Require(!string.IsNullOrWhiteSpace(feature.VerifiedTypeOrPath));
+                Require(feature.VerifiedTypeOrPath.Length <= OperationsIdentityRules.MaximumEvidenceLength);
+                Require(!string.IsNullOrWhiteSpace(feature.Notes));
+                Require(feature.Notes.Length <= OperationsIdentityRules.MaximumEvidenceLength);
+                if (feature.FeatureId == "feature.operations.id_namespace")
                 {
-                    Require(OperationsRosterLedger.Features[index].Availability == OperationsAvailabilityKind.Missing);
+                    Require(feature.Availability == OperationsAvailabilityKind.Missing);
                     sawMissingIdNamespace = true;
                 }
             }

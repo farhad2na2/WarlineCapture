@@ -39,8 +39,8 @@ namespace Game.Operations.Contracts
             if (role == OperationsRosterRoleKind.None)
                 throw new ArgumentOutOfRangeException(nameof(role));
             OperationsContractText.RequireToken(semanticId, nameof(semanticId));
-            OperationsContractText.RequireToken(verifiedTypeOrPath, nameof(verifiedTypeOrPath));
-            OperationsContractText.RequireToken(notes, nameof(notes));
+            OperationsContractText.RequireEvidence(verifiedTypeOrPath, nameof(verifiedTypeOrPath));
+            OperationsContractText.RequireEvidence(notes, nameof(notes));
             Role = role;
             SemanticId = semanticId;
             Availability = availability;
@@ -67,8 +67,8 @@ namespace Game.Operations.Contracts
             string notes)
         {
             OperationsContractText.RequireId(featureId, nameof(featureId), OperationsIdentityRules.IsValidFeatureId);
-            OperationsContractText.RequireToken(verifiedTypeOrPath, nameof(verifiedTypeOrPath));
-            OperationsContractText.RequireToken(notes, nameof(notes));
+            OperationsContractText.RequireEvidence(verifiedTypeOrPath, nameof(verifiedTypeOrPath));
+            OperationsContractText.RequireEvidence(notes, nameof(notes));
             FeatureId = featureId;
             Availability = availability;
             VerifiedTypeOrPath = verifiedTypeOrPath;

@@ -152,6 +152,11 @@ def check_types_exist() -> None:
     for token in required:
         if token not in text:
             fail(f"missing_type={token}")
+    ledger = (contracts_dir / "OperationsRosterLedger.cs").read_text()
+    if "RequireToken(verifiedTypeOrPath" in ledger or "RequireToken(notes" in ledger:
+        fail("roster_token_cap_on_evidence")
+    if "RequireEvidence(verifiedTypeOrPath" not in ledger or "RequireEvidence(notes" not in ledger:
+        fail("roster_missing_evidence_validation")
 
 
 def check_fixtures() -> None:

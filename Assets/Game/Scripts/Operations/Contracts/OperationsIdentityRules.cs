@@ -10,6 +10,7 @@ namespace Game.Operations.Contracts
     public static class OperationsIdentityRules
     {
         public const int MaximumIdLength = 60;
+        public const int MaximumEvidenceLength = 240;
         public const int CurrentSchemaVersion = 1;
         public const int MissionCount = 60;
         public const int DistrictCount = 6;
@@ -318,6 +319,12 @@ namespace Game.Operations.Contracts
         {
             if (string.IsNullOrWhiteSpace(value) || value.Length > OperationsIdentityRules.MaximumIdLength)
                 throw new ArgumentException("A non-blank token of at most 60 ASCII bytes is required.", parameterName);
+        }
+
+        public static void RequireEvidence(string value, string parameterName)
+        {
+            if (string.IsNullOrWhiteSpace(value) || value.Length > OperationsIdentityRules.MaximumEvidenceLength)
+                throw new ArgumentException("A non-blank evidence string of at most 240 ASCII bytes is required.", parameterName);
         }
 
         public static void RequireNonNegative(int value, string parameterName)

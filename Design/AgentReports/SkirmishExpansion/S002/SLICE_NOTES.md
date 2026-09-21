@@ -6,6 +6,14 @@ Handoff ordinal 4. First visit: Regular / Standard. Seed sample: `104731`.
 Operations package 0 landed on `main` as `54b64e906` and is merged here with a
 merge commit. That tree was not edited in this slice.
 
+`origin/main` later moved to `b4161fb4` (Demo 2 asset-adoption docs only) and
+is merged here. Demo 2 Industrial Basin logistics yard is **not** imported
+into Skirmish mission 4 and does not replace this Desert Base milestone.
+
+Game Design’s S002 EN/FA catalog keys landed on
+`cursor/skirmish-s002-localization-35c1` at `87fffc598` and are merged here.
+This slice did not edit `V3UiLocalizationCatalog`.
+
 ## What landed
 
 ### Shared contracts ticket (SK-00)
@@ -386,7 +394,9 @@ extent.
 
 ## Localization follow-up
 
-Shared `V3UiLocalizationCatalog` was not edited. Required keys:
+Shared `V3UiLocalizationCatalog` was not edited in this slice. Game Design
+merged `skirmish.s002.*` EN/FA rows (plus `SkirmishS002UiStrings.json`) at
+`87fffc598`. Required keys:
 
 | Key | EN | FA |
 |---|---|---|
@@ -402,5 +412,5 @@ Shared `V3UiLocalizationCatalog` was not edited. Required keys:
 | `skirmish.s002.result.surrender` | Surrender accepted. | تسلیم پذیرفته شد. |
 
 Owner: publication and localization ticket (SK-12) / localization catalog
-builder. Do not mark Skirmish mission 4 Playable until those keys exist in
-both EN and FA tables.
+builder. The keys now exist in both EN and FA tables via the merged Game
+Design commit; that does **not** mark Skirmish mission 4 Playable.

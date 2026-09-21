@@ -42,7 +42,7 @@ namespace Game.Editor
                         out List<SkirmishCompileReason> reasons))
                     throw new InvalidOperationException("S002 " + sizes[i] + " failed: " + Format(reasons));
                 if (setup.CatalogId != "S002")
-                    throw new InvalidOperationException("Compiled catalog id drifteded.");
+                    throw new InvalidOperationException("Compiled catalog id drifted.");
                 compiled++;
             }
 

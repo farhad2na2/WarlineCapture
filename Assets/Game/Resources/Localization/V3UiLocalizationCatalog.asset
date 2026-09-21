@@ -2092,6 +2092,26 @@ MonoBehaviour:
       value: Ground Maneuver cannot queue attack helicopters or jets.
     - key: skirmish.s002.warning.replacement_base
       value: A replacement Barracks is not the designated victory base.
+    - key: skirmish.s003.brief
+      value: Hold a light ground screen and contest the highway. Build Helipad before you commit attack helicopters. Escort an APC push or transition to air while you guard supply.
+    - key: skirmish.s003.objective
+      value: Destroy the original enemy Barracks while your original Barracks survives.
+    - key: skirmish.s003.result.defeat
+      value: Your main base was destroyed.
+    - key: skirmish.s003.result.draw_bases
+      value: Both original bases were destroyed.
+    - key: skirmish.s003.result.draw_deadline
+      value: Time expired with both original bases standing.
+    - key: skirmish.s003.result.surrender
+      value: Surrender accepted.
+    - key: skirmish.s003.result.victory
+      value: Enemy main base destroyed.
+    - key: skirmish.s003.title
+      value: Desert Base · Base Assault · Air Mobile · Field
+    - key: skirmish.s003.warning.offensive_air
+      value: Field Base cannot queue attack helicopters or jets until Helipad or Airport and matching readiness are ready.
+    - key: skirmish.s003.warning.replacement_base
+      value: A replacement Barracks is not the designated victory base.
     - key: tactical.airdrop.cargo_drop_blocked
       value: Cargo drop blocked.
     - key: tactical.airdrop.emergency_drop_visual_missing
@@ -9013,6 +9033,26 @@ MonoBehaviour:
     - key: skirmish.s002.warning.offensive_air
       value: پروفایل زمینی حمله هوایی تهاجمی را صف نمی‌کند.
     - key: skirmish.s002.warning.replacement_base
+      value: سربازخانه جایگزین پایگاه پیروزی تعیین‌شده نیست.
+    - key: skirmish.s003.brief
+      value: یک پوشش زمینی سبک نگه دار و بزرگراه را بگیر. قبل از هلی‌کوپترهای تهاجمی پد بالگرد بساز. یا با نفربر فشار بده یا به هوا برو و تدارکات را نگه دار.
+    - key: skirmish.s003.objective
+      value: سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است.
+    - key: skirmish.s003.result.defeat
+      value: پایگاه اصلی تو نابود شد.
+    - key: skirmish.s003.result.draw_bases
+      value: هر دو پایگاه اصلی نابود شدند.
+    - key: skirmish.s003.result.draw_deadline
+      value: زمان تمام شد و هر دو پایگاه اصلی سالم ماندند.
+    - key: skirmish.s003.result.surrender
+      value: تسلیم پذیرفته شد.
+    - key: skirmish.s003.result.victory
+      value: پایگاه اصلی دشمن نابود شد.
+    - key: skirmish.s003.title
+      value: پایگاه صحرا · حمله به پایگاه · هوابرد · پایگاه صحرایی
+    - key: skirmish.s003.warning.offensive_air
+      value: پایگاه صحرایی تا وقتی پد بالگرد یا فرودگاه و آمادگی متناظر آماده نباشد هلی‌کوپتر تهاجمی یا جت صف نمی‌کند.
+    - key: skirmish.s003.warning.replacement_base
       value: سربازخانه جایگزین پایگاه پیروزی تعیین‌شده نیست.
     - key: tactical.airdrop.cargo_drop_blocked
       value: "\u0627\u06CC\u0646\u062C\u0627 \u0646\u0645\u06CC\u200C\u0634\u0647

@@ -126,6 +126,16 @@ namespace Game.Operations.Strategic
                     DistrictId = OperationsIdentityRules.DistrictId(number),
                     State = OperationsRouteStateKind.Open
                 });
+                string crossingId = OperationsCityWorld.CrossingRouteId(number);
+                if (!string.IsNullOrEmpty(crossingId))
+                {
+                    world.Routes.Add(new OperationsRouteStateComponent
+                    {
+                        RouteId = crossingId,
+                        DistrictId = OperationsIdentityRules.DistrictId(number),
+                        State = OperationsRouteStateKind.Open
+                    });
+                }
             }
 
             OperationsOfferDirectorSystem.PublishOffers(world);
@@ -510,6 +520,8 @@ namespace Game.Operations.Strategic
             }
 
             if (replaceIndex < 0)
+                replaceIndex = HighestSlotOffer(world, mission.DistrictId);
+            if (replaceIndex < 0 || districtOffers < 2)
             {
                 offerId = string.Empty;
                 return false;
@@ -518,6 +530,36 @@ namespace Game.Operations.Strategic
             world.Offers[replaceIndex] = created;
             offerId = created.OfferId;
             return true;
+        }
+
+        private static int HighestSlotOffer(OperationsCityWorld world, string districtId)
+        {
+            int replaceIndex = -1;
+            int slot = -1;
+            for (int index = 0; index < world.Offers.Count; index++)
+            {
+                if (world.Offers[index].DistrictId != districtId)
+                    continue;
+                int candidate = SlotOf(world.Offers[index].MissionId);
+                if (candidate > slot)
+                {
+                    slot = candidate;
+                    replaceIndex = index;
+                }
+            }
+
+            return replaceIndex;
+        }
+
+        private static int SlotOf(string missionId)
+        {
+            for (int index = 0; index < OperationsCatalogIndex.Entries.Length; index++)
+            {
+                if (OperationsCatalogIndex.Entries[index].MissionId == missionId)
+                    return OperationsCatalogIndex.Entries[index].LocalSlot;
+            }
+
+            return 0;
         }
 
         private static bool IsStarter(string missionId)

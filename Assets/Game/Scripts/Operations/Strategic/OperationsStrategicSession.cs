@@ -203,6 +203,22 @@ namespace Game.Operations.Strategic
             return Finish(command, working, world, true, OperationsReasonCode.None, string.Empty, string.Empty, string.Empty, "fixture-metrics", false);
         }
 
+        public OperationsCommandResult CommitFixtureSite(
+            string commandId,
+            int expectedRevision,
+            string siteId,
+            OperationsSiteStateKind state)
+        {
+            OperationsCommand command = new(commandId, expectedRevision, OperationsCommandKind.Resume, string.Empty, string.Empty, string.Empty);
+            if (!TryPrepare(command, out OperationsSaveData working, out OperationsCommandResult blocked))
+                return blocked;
+            OperationsCityWorld world = OperationsCityWorld.FromSave(working);
+            if (!world.HasActiveRun || !HasSite(world, siteId))
+                return Finish(command, working, world, false, OperationsReasonCode.PreconditionFailed, string.Empty, string.Empty, string.Empty, "fixture-site", false);
+            world.SetSite(siteId, state);
+            return Finish(command, working, world, true, OperationsReasonCode.None, string.Empty, string.Empty, string.Empty, "fixture-site", false);
+        }
+
         public OperationsCommandResult CommitFixtureMilestone(
             string commandId,
             int expectedRevision,
@@ -605,6 +621,17 @@ namespace Game.Operations.Strategic
             }
 
             receipt = null;
+            return false;
+        }
+
+        private static bool HasSite(OperationsCityWorld world, string siteId)
+        {
+            for (int index = 0; index < world.Sites.Count; index++)
+            {
+                if (world.Sites[index].SiteId == siteId)
+                    return true;
+            }
+
             return false;
         }
 

@@ -71,7 +71,7 @@ if ($PSBoundParameters.ContainsKey("GuiLicensing")) {
     -ProjectPath $shadow `
     -ExecuteMethod "Game.Tests.Editor.Operations.OperationsP1Validation.RunFocusedValidation" `
     -LogFile $LogFile `
-    -RequiredPassMarker "[OperationsP1Validation] result=Passed checks=16" `
+    -RequiredPassMarker "[OperationsP1Validation] result=Passed checks=18" `
     -GuiLicensing:$gui `
     -TimeoutSeconds $TimeoutSeconds
 

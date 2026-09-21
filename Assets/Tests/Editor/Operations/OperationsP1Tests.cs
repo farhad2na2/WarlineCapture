@@ -21,6 +21,8 @@ namespace Game.Tests.Editor.Operations
         [Test] public void MigrationRoundTripPreservesCity() => OperationsP1Checks.MigrationRoundTripPreservesCity();
         [Test] public void CityWinWithoutPurchases() => OperationsP1Checks.CityWinWithoutPurchases();
         [Test] public void WithdrawAppliesConsequencesWithoutRefund() => OperationsP1Checks.WithdrawAppliesConsequencesWithoutRefund();
+        [Test] public void NewRunArchivesCityAndKeepsProfileRewards() => OperationsP1Checks.NewRunArchivesCityAndKeepsProfileRewards();
+        [Test] public void DistrictIncidentsSpareTheAlternateCrossing() => OperationsP1Checks.DistrictIncidentsSpareTheAlternateCrossing();
     }
 }
 #endif

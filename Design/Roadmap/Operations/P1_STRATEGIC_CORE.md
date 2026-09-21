@@ -8,7 +8,7 @@ Assembly `Game.Operations.Strategic` (no engine references, references only `Gam
 
 | System | Behavior |
 |---|---|
-| `OperationsRunInitializationSystem` | One run, six districts, starting tuples, damaged service sites, intact backup sites, open main routes, day-1 offers |
+| `OperationsRunInitializationSystem` | One run, six districts, starting tuples, damaged service sites, intact backup sites, one open main route per district, a second open abstract crossing on D04 only, day-1 offers |
 | `OperationsActionSystem` | Analyze, Community, Service, Patrol, Allocate, Deescalate. One AP each. Per-district or citywide limits. Service requires enemy influence ≤ 70 and does not set a mission milestone |
 | `OperationsOfferDirectorSystem` | Up to two offers per district, three citywide priorities, slot gates, raid/breach intel gate, stable offer ids for the day |
 | `OperationsDayAdvanceSystem` | Incident expiry, simultaneous pressure and adjacency, finale recovery, clamp after the summed delta, AP refill to 3, next offers and at most one new incident |
@@ -19,10 +19,10 @@ Assembly `Game.Operations.Strategic` (no engine references, references only `Gam
 
 State records use the ARCHITECTURE component names (`OperationsRunComponent`, district, site, route, milestone, offer, incident, attempt). They are plain structs. Burst `ISystem` wrappers are not in this package.
 
-Host marker, 16 checks:
+Host marker, 18 checks:
 
 ```text
-[OperationsP1Validation] result=Passed checks=16
+[OperationsP1Validation] result=Passed checks=18
 ```
 
 `Tools/Operations/check_p1.py` compiles the contracts, strategic systems, and `OperationsP1Checks` with the .NET SDK and requires that marker. The same checks are the Unity `executeMethod` `Game.Tests.Editor.Operations.OperationsP1Validation.RunFocusedValidation`.
@@ -53,3 +53,9 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-
 The wrapper hard-codes `-ProjectPath D:\Projects\WarlineCapture-Operations`, resolves the Editor from that project's `ProjectVersion.txt`, and calls `InvokeUnityExecuteMethodValidation.ps1` with `-GuiLicensing` and the marker above. Refresh the shadow worktree onto this branch first; the P0 ensure script still defaults to the P0 branch.
 
 Package 2 (tactical rules) and package 3 (launch, return, checkpoint adapters, HUD) are not implemented here.
+
+## Demo 2 art stays out of this package
+
+The [Demo 2 reuse plan](../../Demo2_Asset_Reuse_Plan.md) assigns later environment work: D03 Industrial Belt takes the logistics and utility kit, D04 River Crossing is the bridge and quay candidate, and D01 Old Quarter stays on the established desert streets. That work belongs to P2 greybox review and P6 district content. This package does not import `Demo2.unity`, load the planning manifest, or store prefab paths on city components.
+
+City state records the D04 fact those later maps must keep: two independent open land routes, `route.operations.d04.main` and `route.operations.d04.south`. A road blockade contests only the nominated route. Old Quarter keeps a single main route. Neither id references a Demo 2 mesh.

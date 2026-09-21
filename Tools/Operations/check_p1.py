@@ -11,7 +11,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-PASS_MARKER = "[OperationsP1Validation] result=Passed checks=16"
+PASS_MARKER = "[OperationsP1Validation] result=Passed checks=18"
 STRATEGIC_ASMDEF = ROOT / "Assets/Game/Scripts/Operations/Strategic/Game.Operations.Strategic.asmdef"
 TESTS_ASMDEF = ROOT / "Assets/Tests/Editor/Operations/Game.Operations.Tests.Editor.asmdef"
 FORBIDDEN = [

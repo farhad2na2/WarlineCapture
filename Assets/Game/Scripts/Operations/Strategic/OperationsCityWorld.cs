@@ -320,6 +320,13 @@ namespace Game.Operations.Strategic
         public static string MainRouteId(int districtNumber) =>
             "route.operations.d" + districtNumber.ToString("00") + ".main";
 
+        /// <summary>
+        /// D04's second independent land crossing. This is an abstract route id.
+        /// Demo 2 bridge meshes are not bound here.
+        /// </summary>
+        public static string CrossingRouteId(int districtNumber) =>
+            districtNumber == 4 ? "route.operations.d04.south" : string.Empty;
+
         private static OperationsDistrictComponent ReadDistrict(OperationsDistrictSaveData source, int number)
         {
             return new OperationsDistrictComponent

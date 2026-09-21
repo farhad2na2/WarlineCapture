@@ -6,8 +6,8 @@ namespace Game.Tests.Editor.Operations
 {
     public static class OperationsP1Checks
     {
-        public const int ExpectedCheckCount = 16;
-        public const string PassMarker = "[OperationsP1Validation] result=Passed checks=16";
+        public const int ExpectedCheckCount = 18;
+        public const string PassMarker = "[OperationsP1Validation] result=Passed checks=18";
 
         public static void RunAll()
         {
@@ -27,6 +27,8 @@ namespace Game.Tests.Editor.Operations
             MigrationRoundTripPreservesCity();
             CityWinWithoutPurchases();
             WithdrawAppliesConsequencesWithoutRefund();
+            NewRunArchivesCityAndKeepsProfileRewards();
+            DistrictIncidentsSpareTheAlternateCrossing();
         }
 
         public static void DeterministicDayTraceMatchesRules()
@@ -537,6 +539,86 @@ namespace Game.Tests.Editor.Operations
             Require(!conclude.Accepted && conclude.ReasonCode == OperationsReasonCode.PreconditionFailed);
         }
 
+        public static void NewRunArchivesCityAndKeepsProfileRewards()
+        {
+            byte[] campaign = { 9, 1 };
+            byte[] quick = { 8 };
+            OperationsStrategicSession session = NewRun(1220, campaign, quick);
+            OperationsCommandResult victory = WinMission(session, "operation.o001", session.Revision);
+            Require(victory.Accepted, victory.ReasonCode.ToString());
+            string oldRun = session.Save.activeRun.runId;
+            int credits = session.RewardCredits;
+            Require(credits == 120, "credits=" + credits);
+            OperationsCommandResult refused = session.Submit(Cmd(victory.NewRevision, OperationsCommandKind.NewRun));
+            Require(!refused.Accepted && refused.ReasonCode == OperationsReasonCode.PreconditionFailed);
+            Require(session.Save.activeRun.runId == oldRun);
+            Require(session.Save.runSummaries.Length == 0);
+            OperationsCommandResult created = session.SubmitNewRun(
+                Cmd(refused.NewRevision, OperationsCommandKind.NewRun),
+                1221,
+                OperationsDifficultyKind.Regular);
+            Require(created.Accepted, created.ReasonCode.ToString());
+            Require(session.Save.activeRun.runId != oldRun);
+            Require(session.Day == 1);
+            Require(session.Save.runSummaries.Length == 1);
+            Require(session.Save.runSummaries[0].runId == oldRun);
+            Require(session.RewardCredits == credits);
+            Require(session.RewardCommanderXp == 50);
+            Require(Contains(session.Save.firstClearRewardIds, "operation.o001"));
+            Require(Contains(session.Save.practiceMissionIds, "operation.o001"));
+            Require(SameBytes(campaign, session.Store.CampaignEnvelope));
+            Require(SameBytes(quick, session.Store.QuickGameEnvelope));
+            RequireNoDemoArt(session.CommittedJson);
+            Require(CountRoutes(session, "district.operations.d01") == 1, "Old Quarter gained a second route");
+            Require(CountRoutes(session, "district.operations.d04") == 2);
+        }
+
+        public static void DistrictIncidentsSpareTheAlternateCrossing()
+        {
+            OperationsStrategicSession blockade = NewRun(1222);
+            Require(CountRoutes(blockade, "district.operations.d01") == 1);
+            Require(RouteState(blockade, OperationsCityWorld.MainRouteId(1)) == OperationsRouteStateKind.Open);
+            Require(CountRoutes(blockade, "district.operations.d04") == 2);
+            Require(RouteState(blockade, OperationsCityWorld.MainRouteId(4)) == OperationsRouteStateKind.Open);
+            Require(RouteState(blockade, OperationsCityWorld.CrossingRouteId(4)) == OperationsRouteStateKind.Open);
+            int revision = Attempt(blockade, "operation.o031");
+            revision = CalmDistricts(blockade, revision);
+            revision = WriteMetrics(blockade, revision, 4, 40, 50, 55, 80, 40, 20, 20);
+            OperationsCommandResult opened = blockade.Submit(End(revision));
+            Require(opened.Accepted, opened.ReasonCode.ToString());
+            OperationsIncidentSaveData incident = IncidentOn(blockade, "district.operations.d04");
+            Require(incident.kind == (byte)OperationsIncidentKind.RoadBlockade, "kind=" + incident.kind);
+            Require(incident.missionId == "operation.o034", incident.missionId);
+            Require(incident.routeId == OperationsCityWorld.MainRouteId(4));
+            Require(RouteState(blockade, OperationsCityWorld.MainRouteId(4)) == OperationsRouteStateKind.Open);
+            EndUntilIncidentGone(blockade, incident.incidentId);
+            Require(RouteState(blockade, OperationsCityWorld.MainRouteId(4)) == OperationsRouteStateKind.Contested);
+            Require(RouteState(blockade, OperationsCityWorld.CrossingRouteId(4)) == OperationsRouteStateKind.Open);
+            Require(RouteState(blockade, OperationsCityWorld.MainRouteId(1)) == OperationsRouteStateKind.Open);
+            RequireNoDemoArt(blockade.CommittedJson);
+
+            OperationsStrategicSession disruption = NewRun(1223);
+            revision = Attempt(disruption, "operation.o021");
+            string serviceId = OperationsCityWorld.ServiceSiteId(3);
+            OperationsCommandResult restored = disruption.CommitFixtureSite(Id(), revision, serviceId, OperationsSiteStateKind.Restored);
+            Require(restored.Accepted, restored.ReasonCode.ToString());
+            Require(SiteState(disruption, serviceId) == OperationsSiteStateKind.Restored);
+            revision = CalmDistricts(disruption, restored.NewRevision);
+            revision = WriteMetrics(disruption, revision, 3, 40, 50, 20, 75, 40, 15, 60);
+            OperationsCommandResult pressured = disruption.Submit(End(revision));
+            Require(pressured.Accepted, pressured.ReasonCode.ToString());
+            OperationsIncidentSaveData serviceIncident = IncidentOn(disruption, "district.operations.d03");
+            Require(serviceIncident.kind == (byte)OperationsIncidentKind.ServiceDisruption, "kind=" + serviceIncident.kind);
+            Require(serviceIncident.siteId == serviceId);
+            Require(SiteState(disruption, serviceId) == OperationsSiteStateKind.Restored);
+            EndUntilIncidentGone(disruption, serviceIncident.incidentId);
+            Require(SiteState(disruption, serviceId) == OperationsSiteStateKind.Damaged);
+            Require(RouteState(disruption, OperationsCityWorld.MainRouteId(3)) == OperationsRouteStateKind.Open);
+            Require(RouteState(disruption, OperationsCityWorld.CrossingRouteId(4)) == OperationsRouteStateKind.Open);
+            Require(CountRoutes(disruption, "district.operations.d01") == 1);
+            RequireNoDemoArt(disruption.CommittedJson);
+        }
+
         private static int _nextId = 1;
 
         private static string Id() => "cmd.operations." + (_nextId++).ToString("x8");
@@ -832,6 +914,111 @@ namespace Game.Tests.Editor.Operations
         {
             OperationsDayReportSaveData[] reports = session.Save.committedReports;
             return reports[reports.Length - 1];
+        }
+
+        private static int Attempt(OperationsStrategicSession session, string missionId)
+        {
+            OperationsCommandResult deploy = session.Submit(Deploy(session.Revision, FindMission(session, missionId)));
+            Require(deploy.Accepted, deploy.ReasonCode.ToString());
+            OperationsCommandResult refund = session.Submit(Cmd(deploy.NewRevision, OperationsCommandKind.TechnicalFailure));
+            Require(refund.Accepted, refund.ReasonCode.ToString());
+            return refund.NewRevision;
+        }
+
+        private static int CalmDistricts(OperationsStrategicSession session, int revision)
+        {
+            for (int number = 1; number <= 6; number++)
+                revision = WriteMetrics(session, revision, number, 50, 50, 50, 20, 40, 10, 50);
+            return revision;
+        }
+
+        private static int WriteMetrics(
+            OperationsStrategicSession session,
+            int revision,
+            int number,
+            int security,
+            int trust,
+            int infrastructure,
+            int enemy,
+            int intel,
+            int heat,
+            int supply)
+        {
+            OperationsCommandResult wrote = session.CommitFixtureMetrics(
+                Id(),
+                revision,
+                number,
+                security,
+                trust,
+                infrastructure,
+                enemy,
+                intel,
+                heat,
+                supply);
+            Require(wrote.Accepted, wrote.ReasonCode.ToString());
+            return wrote.NewRevision;
+        }
+
+        private static void EndUntilIncidentGone(OperationsStrategicSession session, string incidentId)
+        {
+            for (int step = 0; step < 6 && ContainsIncident(session, incidentId); step++)
+            {
+                OperationsCommandResult end = session.Submit(End(session.Revision));
+                Require(end.Accepted, end.ReasonCode.ToString());
+            }
+
+            Require(!ContainsIncident(session, incidentId), "incident stayed active");
+        }
+
+        private static OperationsIncidentSaveData IncidentOn(OperationsStrategicSession session, string districtId)
+        {
+            for (int index = 0; index < session.Incidents.Length; index++)
+            {
+                if (session.Incidents[index].districtId == districtId)
+                    return session.Incidents[index];
+            }
+
+            throw new InvalidOperationException("Missing incident on " + districtId + " " + Dump(session));
+        }
+
+        private static int CountRoutes(OperationsStrategicSession session, string districtId)
+        {
+            int count = 0;
+            OperationsRouteSaveData[] routes = session.Save.activeRun.routes ?? Array.Empty<OperationsRouteSaveData>();
+            for (int index = 0; index < routes.Length; index++)
+            {
+                if (routes[index].districtId == districtId)
+                    count++;
+            }
+
+            return count;
+        }
+
+        private static OperationsRouteStateKind RouteState(OperationsStrategicSession session, string routeId)
+        {
+            OperationsRouteSaveData[] routes = session.Save.activeRun.routes;
+            for (int index = 0; index < routes.Length; index++)
+            {
+                if (routes[index].routeId == routeId)
+                    return (OperationsRouteStateKind)routes[index].state;
+            }
+
+            throw new InvalidOperationException("Missing route " + routeId);
+        }
+
+        private static void RequireNoDemoArt(string json)
+        {
+            string[] banned =
+            {
+                "Demo2",
+                "PolygonBattleRoyale",
+                "SM_Bld_",
+                "SM_Env_Bridge",
+                "Demo2_Environment_Asset_Manifest",
+                ".unity"
+            };
+            for (int index = 0; index < banned.Length; index++)
+                Require(json.IndexOf(banned[index], StringComparison.Ordinal) < 0, banned[index]);
         }
 
         private static OperationsSiteStateKind SiteState(OperationsStrategicSession session, string siteId)

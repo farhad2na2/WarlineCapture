@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "key": "skirmish.s002.title",
+      "source": "Desert Base · Base Assault · Established",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرا · حمله به پایگاه · پایگاه برقرار"
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.brief",
+      "source": "Use the starting tank and APC to contest the highway. Keep one infantry squad at home. Press now or scout the south sweep before siege.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با تانک و نفربر شروع‌شده بزرگراه را بگیر. یک دسته پیاده در خانه بماند. یا سریع فشار بده یا جنوب را شناسایی کن."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.objective",
+      "source": "Destroy the original enemy Barracks while your original Barracks survives.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.warning.offensive_air",
+      "source": "Ground Maneuver cannot queue attack helicopters or jets.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پروفایل زمینی حمله هوایی تهاجمی را صف نمی‌کند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.warning.replacement_base",
+      "source": "A replacement Barracks is not the designated victory base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه جایگزین پایگاه پیروزی تعیین‌شده نیست."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.result.victory",
+      "source": "Enemy main base destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی دشمن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.result.defeat",
+      "source": "Your main base was destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی تو نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.result.draw_bases",
+      "source": "Both original bases were destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو پایگاه اصلی نابود شدند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.result.draw_deadline",
+      "source": "Time expired with both original bases standing.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زمان تمام شد و هر دو پایگاه اصلی سالم ماندند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s002.result.surrender",
+      "source": "Surrender accepted.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تسلیم پذیرفته شد."
+        }
+      ]
+    }
+  ]
+}

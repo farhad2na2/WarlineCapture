@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PASS_MARKER = "[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7"
 TESTS_ROOT = ROOT / "Assets/Tests/Editor/Operations"
+CAPTURE_ROOT = ROOT / "Assets/Game/Scripts/Operations/Capture"
 TOOLS_ROOT = ROOT / "Tools/Operations"
 EVIDENCE_ROOT = ROOT / "Design/AgentReports/Operations/host-aria-evidence"
 BANNED = ("MatchSceneView", "SaveDataModel", "SkirmishExpansion", "AriaPlayCapability")
@@ -25,7 +26,8 @@ def fail(message: str) -> None:
 def check_sources() -> None:
     required = [
         TESTS_ROOT / "OperationsAriaPlayModeCapture.cs",
-        TESTS_ROOT / "OperationsAriaPlayModePresentation.cs",
+        CAPTURE_ROOT / "OperationsAriaPlayModePresentation.cs",
+        CAPTURE_ROOT / "Game.Operations.Capture.asmdef",
         TESTS_ROOT / "OperationsAriaPlayModeCaptureChecks.cs",
         TESTS_ROOT / "OperationsAriaPlayModeCaptureValidation.cs",
         TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCapture.ps1",
@@ -36,12 +38,23 @@ def check_sources() -> None:
             fail(f"missing={path.relative_to(ROOT)}")
 
     capture = (TESTS_ROOT / "OperationsAriaPlayModeCapture.cs").read_text(encoding="utf-8")
-    presentation = (TESTS_ROOT / "OperationsAriaPlayModePresentation.cs").read_text(encoding="utf-8")
+    presentation = (CAPTURE_ROOT / "OperationsAriaPlayModePresentation.cs").read_text(encoding="utf-8")
+    asmdef = (CAPTURE_ROOT / "Game.Operations.Capture.asmdef").read_text(encoding="utf-8")
+    tests_asmdef = (TESTS_ROOT / "Game.Operations.Tests.Editor.asmdef").read_text(encoding="utf-8")
     for banned in BANNED:
         if banned in capture:
             fail(f"banned_capture={banned}")
         if banned in presentation:
             fail(f"banned_presentation={banned}")
+
+    if "Game.Operations.Capture" not in asmdef:
+        fail("capture_asmdef")
+    if '"noEngineReferences": false' not in asmdef and '"noEngineReferences":false' not in asmdef:
+        # default false when omitted is ok for Unity, but we set it explicitly
+        if "noEngineReferences" in asmdef and "true" in asmdef.split("noEngineReferences")[1][:40]:
+            fail("capture_asmdef_must_reference_engine")
+    if "Game.Operations.Capture" not in tests_asmdef:
+        fail("tests_missing_capture_ref")
 
     for needle in (
         "EnterPlaymode",
@@ -54,12 +67,18 @@ def check_sources() -> None:
         "NotOpened",
         "EditorApplication.Exit",
         "owns_editor_exit=1",
+        "presenter_ensure_failed",
+        "Game.Operations.Capture",
     ):
         if needle not in capture:
             fail(f"capture_missing={needle}")
 
     if "ShowVictory" not in presentation or "OnGUI" not in presentation:
         fail("presentation_incomplete")
+    if "namespace Game.Operations.Capture" not in presentation:
+        fail("presentation_runtime_namespace")
+    if "AddComponent returned null" not in presentation:
+        fail("presentation_null_guard")
 
     invoke = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCapture.ps1").read_text(encoding="utf-8")
     wiring = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCaptureValidation.ps1").read_text(encoding="utf-8")
@@ -86,7 +105,8 @@ def check_sources() -> None:
 def check_meta_guids() -> None:
     guid_line = re.compile(r"^guid: ([0-9a-f]{32})\n", re.M)
     metas = list(TESTS_ROOT.glob("OperationsAriaPlayMode*.meta"))
-    if len(metas) < 4:
+    metas.extend(CAPTURE_ROOT.glob("*.meta"))
+    if len(metas) < 5:
         fail("meta_missing")
     seen = set()
     for path in metas:

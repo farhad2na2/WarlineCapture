@@ -37,11 +37,12 @@ namespace Game.Tests.Editor.Operations
 
         public static void PresentationIsOpsOwned()
         {
-            string source = ReadTestSource("OperationsAriaPlayModePresentation.cs");
+            string source = ReadCapturePresentationSource();
             Require(source.Contains("OperationsAriaPlayModePresentation"), "presenter");
             Require(source.Contains("ShowVictory"), "victory");
             Require(source.Contains("OnGUI"), "ongui");
             Require(source.Contains("result.victory"), "localized_victory");
+            Require(source.Contains("namespace Game.Operations.Capture"), "runtime_namespace");
             Require(!source.Contains("MatchSceneView"), "no_match_scene");
             Require(!source.Contains("AriaPlayCapability"), "no_watch_capability");
         }
@@ -70,7 +71,7 @@ namespace Game.Tests.Editor.Operations
         public static void BannedSeamsStayClosed()
         {
             string capture = ReadTestSource("OperationsAriaPlayModeCapture.cs");
-            string presentation = ReadTestSource("OperationsAriaPlayModePresentation.cs");
+            string presentation = ReadCapturePresentationSource();
             Require(!capture.Contains("MatchSceneView"), "capture_no_match");
             Require(!capture.Contains("SaveDataModel"), "capture_no_save");
             Require(!capture.Contains("SkirmishExpansion"), "capture_no_skirmish");
@@ -78,6 +79,7 @@ namespace Game.Tests.Editor.Operations
             Require(!presentation.Contains("MatchSceneView"), "presenter_no_match");
             Require(!presentation.Contains("AriaPlayCapability"), "presenter_no_watch");
             Require(capture.Contains("watch_seam=not_opened") || capture.Contains("NotOpened"), "watch_not_opened");
+            Require(capture.Contains("presenter_ensure_failed"), "null_safe_ensure");
         }
 
         public static void ScaffoldsRemainPendingUntilLiveCapture()
@@ -110,6 +112,9 @@ namespace Game.Tests.Editor.Operations
             Require(source.Contains("CapturePassMarkerPrefix"), "live_marker_const");
             Require(source.Contains("EditorApplication.Exit"), "owns_editor_exit");
             Require(source.Contains("owns_editor_exit=1") || source.Contains("ExitPendingKey"), "async_lifecycle");
+            Require(source.Contains("presenter_ensure_failed"), "null_safe_presenter");
+            Require(source.Contains("Game.Operations.Capture"), "uses_runtime_capture_asm");
+            Require(source.Contains("TryWriteFallbackWinScreen") || source.Contains("TryEncodeFallbackPng"), "fallback_png");
         }
 
         public static void WiringMarkerDistinctFromLiveCapture()
@@ -124,6 +129,19 @@ namespace Game.Tests.Editor.Operations
         static string ReadTestSource(string fileName)
         {
             string path = Path.Combine(FindRepoRoot(), "Assets", "Tests", "Editor", "Operations", fileName);
+            return File.ReadAllText(path);
+        }
+
+        static string ReadCapturePresentationSource()
+        {
+            string path = Path.Combine(
+                FindRepoRoot(),
+                "Assets",
+                "Game",
+                "Scripts",
+                "Operations",
+                "Capture",
+                "OperationsAriaPlayModePresentation.cs");
             return File.ReadAllText(path);
         }
 

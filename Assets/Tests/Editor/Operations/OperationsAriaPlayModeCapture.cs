@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Game.Operations.Capture;
 using Game.Operations.Content;
 using Game.Operations.Contracts;
 using Game.Operations.Loop;
@@ -106,6 +107,7 @@ namespace Game.Tests.Editor.Operations
             SessionState.EraseFloat(StartedAtKey);
             SessionState.EraseInt(FrameKey);
             SessionState.EraseInt(CaptureIndexKey);
+            OperationsAriaPlayModePresentation.ClearCache();
             ResetRuntimeState();
 
             if (passed)
@@ -240,8 +242,17 @@ namespace Game.Tests.Editor.Operations
                         return;
                     if (!WinScreenFileExists())
                     {
+                        // ScreenCapture is async; also try durable Ops-owned Texture2D encode.
+                        if (frame == 30 || frame == 60 || frame == 90)
+                            TryWriteFallbackWinScreen();
                         if (frame > 120)
                         {
+                            if (TryWriteFallbackWinScreen() && WinScreenFileExists())
+                            {
+                                SessionState.SetInt(PhaseKey, (int)Phase.WriteEvidence);
+                                return;
+                            }
+
                             Finish(false, "win_screen_missing");
                             return;
                         }
@@ -279,7 +290,14 @@ namespace Game.Tests.Editor.Operations
                     return;
                 }
 
-                OperationsAriaPlayModePresentation.Ensure().ShowPlayHud(_loop, missionId, language, seed);
+                OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
+                if (presenter == null)
+                {
+                    Finish(false, "presenter_ensure_failed");
+                    return;
+                }
+
+                presenter.ShowPlayHud(_loop, missionId, language, seed);
                 CaptureNamed("play-01-start");
                 return;
             }
@@ -287,7 +305,14 @@ namespace Game.Tests.Editor.Operations
             if (!_loop.MissionTerminal)
             {
                 StepUnassistedOnce();
-                OperationsAriaPlayModePresentation.Ensure().ShowPlayHud(_loop, missionId, language, seed);
+                OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
+                if (presenter == null)
+                {
+                    Finish(false, "presenter_ensure_failed");
+                    return;
+                }
+
+                presenter.ShowPlayHud(_loop, missionId, language, seed);
                 if (_playStep == 40)
                     CaptureNamed("play-02-mid");
                 if (_playStep >= 1200 && !_loop.MissionTerminal)
@@ -506,10 +531,38 @@ namespace Game.Tests.Editor.Operations
 
         static void PresentVictoryScreen()
         {
-            OperationsAriaPlayModePresentation.Ensure().ShowVictory(_loop, _record);
+            OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
+            if (presenter == null)
+                throw new InvalidOperationException("presenter_ensure_failed");
+            presenter.ShowVictory(_loop, _record);
             UnityEngine.Debug.Log(
                 "[OperationsAriaPlayModeCapture] victory_screen mission=" + _record.MissionId +
                 " seed=" + _record.Seed.ToString(CultureInfo.InvariantCulture));
+        }
+
+        static bool TryWriteFallbackWinScreen()
+        {
+            string language = SessionState.GetString(LanguageKey, "en");
+            string absolutePath = Path.Combine(CurrentEvidenceAbsoluteDir(), "win-screen." + language + ".png");
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath) ?? CurrentEvidenceAbsoluteDir());
+            OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
+            if (presenter == null)
+                return false;
+            if (_record != null)
+                presenter.ShowVictory(_loop, _record);
+            bool wrote = presenter.TryEncodeFallbackPng(absolutePath, 1920, 1080);
+            if (wrote)
+            {
+                string missionId = SessionState.GetString(MissionKey, "operation.o001");
+                int seed = SessionState.GetInt(SeedKey, 1102);
+                string relativeDir = OperationsAriaEvidenceHarness.EvidenceRelativePath(missionId, "Regular", seed);
+                string relativePath = relativeDir.Replace('\\', '/') + "/win-screen." + language + ".png";
+                if (!CaptureRelativePaths.Contains(relativePath))
+                    CaptureRelativePaths.Add(relativePath);
+                UnityEngine.Debug.Log("[OperationsAriaPlayModeCapture] fallback_png=" + relativePath);
+            }
+
+            return wrote;
         }
 
         static string CurrentEvidenceAbsoluteDir()

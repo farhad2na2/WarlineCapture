@@ -6,11 +6,11 @@ Recorded with the Operations ARIA evidence harness gate after P4 coding (`28b955
 
 P4 host marker `[OperationsP4Validation] result=Passed checks=14` proves coding wiring only. Host evidence marker `[OperationsAriaEvidenceValidation] result=Passed checks=8` proves planner-driven loop wins and schema scaffolding only — **not** Farhad’s Play Mode win-screen bar.
 
-Shipping Watch virtual-touch (`AriaPlayCapability`) has **no** Operations row this sprint; do not open MatchSceneView / Watch shared-UI seams. The Operations-owned capture path is:
+Shipping Watch virtual-touch has **no** Operations row this sprint; do not open Match scene / Watch shared-UI seams. The Operations-owned capture path is:
 
 1. Public loop observation (`TryReadHud`, node TargetIds, `CopyPublicActors` / facts)
 2. Generic `OperationsAriaObjectivePlanner` (no mission-ID switch)
-3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned victory OnGUI screen** → `ScreenCapture` PNG + `result.en.json`
+3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned victory OnGUI** (`Game.Operations.Capture`, runtime assembly so Play Mode `AddComponent` works) → `ScreenCapture` PNG + `result.en.json`
 
 ## Folder layout (ACCEPTANCE)
 

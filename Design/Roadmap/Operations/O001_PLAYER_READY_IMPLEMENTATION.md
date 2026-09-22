@@ -1,6 +1,29 @@
 # O001 player-ready implementation plan
 
-Date: 2026-09-22. Status: **Planned implementation; no shipping integration completed by this document.**
+Date: 2026-09-22. Status: **P0 Operations shell wired; not a shipping player-ready certification. R1–R6 remain open. Historical AriaWon captures are harness evidence, not this gate.**
+
+## P0 Operations shell (wired, not shipping-certified)
+
+The O001 player shell is an Operations-owned path a person and Regular EN Aria can both use. It is not the capture harness, and it is not yet the shipping Match scene.
+
+1. The hub library opens the D01 briefing for `operation.o001`. Deploy then runs the Package 3 launch into the authored D01 tactical session. The launch request keeps `InvokesSharedSceneView` false. The Watch / Match scene seam stays out of scope.
+2. Play uses that authored mission through visible controls: select, move, scan, interact, extract, and wait. Aria presses those same control ids. The capture script `TryPlayVisibleControlWin` is not the player path.
+3. Victory writes the Package 3 result and settlement into a durable Operations profile directory.
+4. Continue returns to the Operations hub. Opening that directory again restores the settled victory, credits, commander XP, and revision. The O001 library row stays closed once the victory is recorded.
+
+Host marker, three checks. This is the Operations shell, not a player-ready or AriaWon certification. `MatchSceneView` remains closed because Operations map ids are still rejected by the shared identity rules, and there is no shipping map definition for D01:
+
+```text
+[OperationsO001PlayerShellValidation] result=Passed checks=3
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsO001PlayerReadyValidation.ps1
+```
+
+Manual play on the Windows Ops shadow, after the branch is checked out at `D:\Projects\WarlineCapture-Operations`: Editor menu `Operations/P4R/Play O001 Player Shell`. The profile lives under the Editor persistent data path `OperationsO001Player`, so the settled hub survives leaving Play Mode. `Operations/P4R/Play O001 New Profile` starts again.
+
+Programmer 2 records Regular EN AriaWon through those same visible controls. This P0 slice does not close that evidence gate, and it does not author O002, O003, or O004.
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 

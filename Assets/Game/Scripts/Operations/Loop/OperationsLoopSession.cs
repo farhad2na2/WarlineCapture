@@ -122,6 +122,33 @@ namespace Game.Operations.Loop
             return new OperationsLoopSession(strategic, new OperationsLoopStore());
         }
 
+        public static OperationsLoopSession Open(
+            string strategicJson,
+            byte[] campaignEnvelope,
+            byte[] quickGameEnvelope,
+            OperationsLoopDocument document,
+            IDictionary<string, string> blobs)
+        {
+            if (string.IsNullOrEmpty(strategicJson))
+                throw new ArgumentException("Strategic json is required.", nameof(strategicJson));
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+            OperationsStrategicSession strategic = OperationsStrategicSession.FromCommittedJson(
+                strategicJson,
+                campaignEnvelope,
+                quickGameEnvelope);
+            var store = new OperationsLoopStore();
+            store.LoadCommitted(document, blobs);
+            var session = new OperationsLoopSession(strategic, store);
+            session.LoadShell();
+            session.TryRestore();
+            return session;
+        }
+
+        public OperationsLoopDocument CopyDocument() => _store.Committed.Copy();
+
+        public void CopyCheckpointBlobs(Dictionary<string, string> destination) => _store.CopyBlobs(destination);
+
         public void Interrupt()
         {
             _strategic.SimulateProcessCrash();

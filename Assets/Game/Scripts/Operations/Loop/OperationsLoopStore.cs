@@ -87,5 +87,34 @@ namespace Game.Operations.Loop
                 throw new InvalidOperationException("checkpoint_missing");
             _blobs[id] = text ?? string.Empty;
         }
+
+        public void CopyBlobs(Dictionary<string, string> destination)
+        {
+            if (destination == null)
+                throw new ArgumentNullException(nameof(destination));
+            foreach (KeyValuePair<string, string> pair in _blobs)
+                destination[pair.Key] = pair.Value;
+        }
+
+        public void LoadCommitted(OperationsLoopDocument document, IDictionary<string, string> blobs)
+        {
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+            _pending = null;
+            _pendingBlobId = string.Empty;
+            _pendingBlobText = string.Empty;
+            _stagedId = string.Empty;
+            _stagedText = string.Empty;
+            _committed = document.Copy();
+            _blobs.Clear();
+            if (blobs == null)
+                return;
+            foreach (KeyValuePair<string, string> pair in blobs)
+            {
+                if (string.IsNullOrEmpty(pair.Key) || pair.Key.IndexOf('/') >= 0 || pair.Key.IndexOf('\\') >= 0)
+                    throw new InvalidOperationException("checkpoint_id");
+                _blobs[pair.Key] = pair.Value ?? string.Empty;
+            }
+        }
     }
 }

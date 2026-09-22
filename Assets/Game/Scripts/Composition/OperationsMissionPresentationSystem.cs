@@ -66,7 +66,7 @@ namespace Game.Composition
                     mission.Phase = OperationsReconPhase.Playing;
                     EntityManager.SetComponentData(root, mission);
                     Focus(definition.exitPosition);
-                    notice = Copy("scan_help", "Select infantry, choose MOVE, then click near a signal. Within 8 m, choose SCAN SELECTED and stay for 15 seconds.");
+                    notice = Copy("scan_help", "RIFLE SQUAD selects your force. Use ATTACK on open ground to advance and fight. Within 8 m of a signal, SCAN SELECTED for 15 seconds.");
                 }
                 else if (!string.IsNullOrEmpty(error))
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;

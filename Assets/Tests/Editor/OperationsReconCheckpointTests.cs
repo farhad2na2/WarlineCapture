@@ -23,7 +23,8 @@ public sealed class OperationsReconCheckpointTests
         em.AddComponentData(carrier, new UnitAttackCooldownComponent { CooldownRemaining = .75f });
         em.SetComponentData(root, new OperationsReconEvidenceComponent { Carrier = carrier, Recovered = 1, Position = new float3(3,0,4) });
         var site = em.GetBuffer<OperationsReconSiteElement>(root)[0]; site.Actor = carrier; site.ChannelSeconds = 7.5f;
-        em.GetBuffer<OperationsReconSiteElement>(root)[0] = site;
+        var sourceSites = em.GetBuffer<OperationsReconSiteElement>(root);
+        sourceSites[0] = site;
         em.DestroyEntity(casualty);
         string json = OperationsReconCheckpointCodec.Encode(OperationsReconCheckpointCodec.Capture(em, root, "content-v1"));
         Assert.That(OperationsReconCheckpointCodec.TryDecode(json, "session.operations.checkpoint", "content-v1", out var image), Is.True);
@@ -44,6 +45,37 @@ public sealed class OperationsReconCheckpointTests
         Assert.That(target.GetComponentData<UnitAttackCooldownComponent>(restoredCarrier).CooldownRemaining, Is.EqualTo(.75f));
         Assert.That(target.GetComponentData<UnitPathRequest>(restoredCarrier).Goal, Is.EqualTo(new int2(45,68)));
         Assert.That(target.GetComponentData<OperationsReconMissionComponent>(restoredRoot).ElapsedSeconds, Is.EqualTo(18));
+    }
+
+    [Test]
+    public void MissingLastDestinationActorRejectsBeforeChangingEarlierActors()
+    {
+        using var source = new World("checkpoint source");
+        var sourceRoot = Create(source.EntityManager, false);
+        var first = source.EntityManager.GetBuffer<OperationsReconSpawnRecord>(sourceRoot)[0].Unit;
+        source.EntityManager.SetComponentData(first, new UnitHealth { Current = 7, Max = 100 });
+        var image = OperationsReconCheckpointCodec.Capture(source.EntityManager, sourceRoot, "content-v1");
+        using var destination = new World("checkpoint destination");
+        var em = destination.EntityManager;
+        var root = Create(em, true);
+        var records = em.GetBuffer<OperationsReconSpawnRecord>(root);
+        var untouched = records[0].Unit;
+        em.DestroyEntity(records[35].Unit);
+        Assert.Throws<System.InvalidOperationException>(() => OperationsReconCheckpointCodec.Apply(em, root, image));
+        Assert.That(em.GetComponentData<UnitHealth>(untouched).Current, Is.EqualTo(100));
+    }
+
+    [Test]
+    public void ValidEnvelopeWithInvalidReferenceOrNonFiniteClockIsRejected()
+    {
+        using var world = new World("checkpoint invalid state");
+        var root = Create(world.EntityManager, false);
+        var image = OperationsReconCheckpointCodec.Capture(world.EntityManager, root, "content-v1");
+        image.carrier = 37;
+        Assert.That(OperationsReconCheckpointCodec.TryDecode(OperationsReconCheckpointCodec.Encode(image), image.session, image.content, out _), Is.False);
+        image.carrier = 0;
+        image.worldTime = double.NaN;
+        Assert.That(OperationsReconCheckpointCodec.TryDecode(OperationsReconCheckpointCodec.Encode(image), image.session, image.content, out _), Is.False);
     }
 
     [Test]

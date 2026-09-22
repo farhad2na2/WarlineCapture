@@ -12,11 +12,11 @@
     },
     {
       "key": "operations.o001.scan_help",
-      "source": "Select infantry, choose MOVE, then click near a signal. Within 8 m, choose SCAN SELECTED and stay for 15 seconds.",
+      "source": "RIFLE SQUAD selects your force. Use ATTACK on open ground to advance and fight. Within 8 m of a signal, SCAN SELECTED for 15 seconds.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پیاده‌نظام را انتخاب کنید، «حرکت» را بزنید و نزدیک سیگنال کلیک کنید. در فاصلهٔ ۸ متری، «اسکن با نیروی منتخب» را بزنید و ۱۵ ثانیه بمانید."
+          "value": "«گروه پیاده‌نظام» همهٔ نیروها را انتخاب می‌کند. برای پیشروی همراه با درگیری، «حمله» را روی زمین باز بزنید. در فاصلهٔ ۸ متری سیگنال، ۱۵ ثانیه «اسکن با نیروی منتخب» انجام دهید."
         }
       ]
     },

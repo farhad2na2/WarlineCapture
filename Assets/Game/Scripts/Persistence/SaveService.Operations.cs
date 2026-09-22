@@ -41,7 +41,9 @@ namespace Game.Runtime
             OperationsCheckpointArchive old = null;
             if (!string.IsNullOrEmpty(profile.operationsAttemptJson))
                 try { old = JsonUtility.FromJson<OperationsCheckpointArchive>(profile.operationsAttemptJson); }
-                catch (ArgumentException) { }
+                catch (ArgumentException) { reason = "checkpoint_unreadable"; return false; }
+            if (old != null && old.schema != 1)
+            { reason = "checkpoint_schema_incompatible"; return false; }
             if (old?.schema == 1 && old.sessionId == sessionId && old.current == image) return true;
             var archive = new OperationsCheckpointArchive { sessionId = sessionId, current = image,
                 previous = old?.schema == 1 && old.sessionId == sessionId ? old.current : string.Empty };

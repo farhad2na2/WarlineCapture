@@ -82,6 +82,23 @@ namespace Game.Runtime
             context.EnsureSelectionDependencies?.Invoke(em);
             EnsureEntityQueries(em);
 
+            using (var operations = em.CreateEntityQuery(typeof(OperationsReconMissionComponent), typeof(OperationsReconRosterElement)))
+            {
+                if (operations.CalculateEntityCount() == 1)
+                {
+                    _selected.Clear();
+                    if (slot == MatchHudSquadTraySlot.Soldiers &&
+                        operations.GetSingleton<OperationsReconMissionComponent>().Phase == OperationsReconPhase.Playing)
+                        foreach (var member in em.GetBuffer<OperationsReconRosterElement>(operations.GetSingletonEntity(), true))
+                            if (em.Exists(member.Unit) && em.HasComponent<Faction>(member.Unit) &&
+                                em.HasComponent<UnitHealth>(member.Unit) && IsSelectablePlayerUnit(em, member.Unit)) _selected.Add(member.Unit);
+                    if (_selected.Count == 0) { view.FlashDisabled(slot); return; }
+                    ApplySelection(context, em, _selected);
+                    _activeSlot = slot;
+                    view.SetSelectedSlot(slot);
+                    return;
+                }
+            }
             using(var skirmish=em.CreateEntityQuery(typeof(SkirmishMatchState)))
             {
                 if(!skirmish.IsEmptyIgnoreFilter)

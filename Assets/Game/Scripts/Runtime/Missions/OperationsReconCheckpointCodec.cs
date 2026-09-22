@@ -6,6 +6,7 @@ using Game.Components;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 
@@ -69,7 +70,9 @@ namespace Game.Runtime
             var mission = em.GetComponentData<OperationsReconMissionComponent>(root);
             var records = em.GetBuffer<OperationsReconSpawnRecord>(root);
             var ids = new Dictionary<Entity, int>();
-            foreach (var record in records) if (em.Exists(record.Unit)) ids[record.Unit] = record.StableIndex;
+            foreach (var record in records)
+                if (em.Exists(record.Unit) && em.HasComponent<UnitHealth>(record.Unit) && em.HasComponent<LocalTransform>(record.Unit))
+                    ids[record.Unit] = record.StableIndex;
             int Id(Entity entity) => entity != Entity.Null && ids.TryGetValue(entity, out int id) ? id : 0;
             var evidence = em.GetComponentData<OperationsReconEvidenceComponent>(root);
             var image = new Image { session = mission.SessionId.ToString(), content = content, unityVersion = Application.unityVersion,
@@ -110,9 +113,23 @@ namespace Game.Runtime
             if (em.GetComponentData<OperationsReconMissionComponent>(root).SessionId.ToString() != image.session)
                 throw new InvalidOperationException("Checkpoint belongs to another attempt.");
             em.CompleteAllTrackedJobs();
+            if (!em.HasComponent<OperationsReconEvidenceComponent>(root) || !em.HasComponent<OperationsReconWaveComponent>(root) ||
+                !em.HasBuffer<OperationsReconSpawnRecord>(root) || !em.HasBuffer<OperationsReconSiteElement>(root) ||
+                !em.HasBuffer<OperationsReconActionElement>(root) || em.GetBuffer<OperationsReconSiteElement>(root).Length != image.sites.Length)
+                throw new InvalidOperationException("Checkpoint destination is incomplete.");
             var records = em.GetBuffer<OperationsReconSpawnRecord>(root);
             var entities = new Dictionary<int, Entity>();
-            foreach (var record in records) entities.Add(record.StableIndex, record.Unit);
+            var handles = new HashSet<Entity>();
+            foreach (var record in records)
+            {
+                if (record.StableIndex < 1 || record.StableIndex > 36 || entities.ContainsKey(record.StableIndex) ||
+                    !handles.Add(record.Unit) || !em.Exists(record.Unit) || !em.HasComponent<OperationsReconMemberComponent>(record.Unit))
+                    throw new InvalidOperationException("Checkpoint actor was not instantiated.");
+                var member = em.GetComponentData<OperationsReconMemberComponent>(record.Unit);
+                if (member.Session != root || member.StableIndex != record.StableIndex)
+                    throw new InvalidOperationException("Checkpoint actor belongs to another roster.");
+                entities.Add(record.StableIndex, record.Unit);
+            }
             if (entities.Count != image.actors.Length) throw new InvalidOperationException("Checkpoint roster does not match content.");
             Entity Resolve(int id) => id != 0 && entities.TryGetValue(id, out var e) && em.Exists(e) ? e : Entity.Null;
             foreach (var actor in image.actors)
@@ -152,27 +169,51 @@ namespace Game.Runtime
         }
         private static void Validate(Image image)
         {
-            if (image == null || image.actors == null || image.actors.Length != 36 || image.sites == null || image.sites.Length != 3)
+            if (image == null || image.schema != SchemaVersion || image.unityVersion != Application.unityVersion ||
+                string.IsNullOrEmpty(image.session) || string.IsNullOrEmpty(image.content) ||
+                !double.IsFinite(image.worldTime) || image.worldTime < 0 || image.frame < 0 ||
+                image.actors == null || image.actors.Length != 36 || image.sites == null || image.sites.Length != 3)
                 throw new InvalidOperationException("Incomplete checkpoint.");
             var mission = Unpack<OperationsReconMissionComponent>(image.mission);
-            if (mission.SessionId.ToString() != image.session || mission.Phase == OperationsReconPhase.Preparing ||
+            if (mission.SessionId.ToString() != image.session ||
+                mission.Phase is not (OperationsReconPhase.Playing or OperationsReconPhase.Terminal) ||
+                !float.IsFinite(mission.DeadlineSeconds) || mission.DeadlineSeconds <= 0 ||
+                !float.IsFinite(mission.ScanSeconds) || mission.ScanSeconds <= 0 ||
+                !float.IsFinite(mission.EvidenceSeconds) || mission.EvidenceSeconds <= 0 ||
+                mission.CompletedScans < 0 || mission.CompletedScans > 3 ||
                 !float.IsFinite(mission.ElapsedSeconds) || mission.ElapsedSeconds < 0 || mission.ElapsedSeconds > mission.DeadlineSeconds)
                 throw new InvalidOperationException("Invalid checkpoint mission.");
-            Unpack<OperationsReconEvidenceComponent>(image.evidence); Unpack<OperationsReconWaveComponent>(image.waves);
+            var evidence = Unpack<OperationsReconEvidenceComponent>(image.evidence);
+            if (evidence.Actor != Entity.Null || evidence.Carrier != Entity.Null || !math.all(math.isfinite(evidence.Position)) ||
+                !float.IsFinite(evidence.ChannelSeconds) || evidence.ChannelSeconds < 0 || evidence.ChannelSeconds > mission.EvidenceSeconds)
+                throw new InvalidOperationException("Invalid checkpoint evidence.");
+            Unpack<OperationsReconWaveComponent>(image.waves);
             var ids = new HashSet<int>();
             foreach (var actor in image.actors)
             {
                 if (actor == null || actor.index < 1 || actor.index > 36 || !ids.Add(actor.index) || actor.parts == null)
                     throw new InvalidOperationException("Invalid checkpoint roster.");
-                if (!string.IsNullOrEmpty(actor.engage)) Unpack<EngageTarget>(actor.engage);
-                if (!string.IsNullOrEmpty(actor.reserve)) Unpack<OperationsReconReserveComponent>(actor.reserve);
-                if (!string.IsNullOrEmpty(actor.patrol)) Unpack<OperationsReconPatrolComponent>(actor.patrol);
+                if (!string.IsNullOrEmpty(actor.engage) && Unpack<EngageTarget>(actor.engage).Target != Entity.Null ||
+                    !string.IsNullOrEmpty(actor.reserve) && Unpack<OperationsReconReserveComponent>(actor.reserve).Session != Entity.Null ||
+                    !string.IsNullOrEmpty(actor.patrol) && Unpack<OperationsReconPatrolComponent>(actor.patrol).Session != Entity.Null)
+                    throw new InvalidOperationException("Checkpoint contains an unsaved entity reference.");
                 ValidateParts(actor.parts);
                 if (actor.exists && (!Array.Exists(actor.parts, p => p.key == nameof(LocalTransform)) ||
                     !Array.Exists(actor.parts, p => p.key == nameof(UnitHealth))))
                     throw new InvalidOperationException("Checkpoint actor is missing required state.");
             }
-            foreach (var site in image.sites) { if (site == null) throw new InvalidOperationException("Invalid checkpoint site."); Unpack<OperationsReconSiteElement>(site.state); }
+            bool ValidReference(int id) => id == 0 || id >= 1 && id <= 36 && Array.Exists(image.actors, actor => actor.index == id && actor.exists);
+            if (!ValidReference(image.evidenceActor) || !ValidReference(image.carrier)) throw new InvalidOperationException("Invalid evidence actor.");
+            foreach (var actor in image.actors)
+                if (!ValidReference(actor.target)) throw new InvalidOperationException("Invalid combat target.");
+            foreach (var site in image.sites)
+            {
+                if (site == null || !ValidReference(site.actor)) throw new InvalidOperationException("Invalid checkpoint site.");
+                var state = Unpack<OperationsReconSiteElement>(site.state);
+                if (state.Actor != Entity.Null || !math.all(math.isfinite(state.Position)) || !float.IsFinite(state.ChannelSeconds) ||
+                    state.ChannelSeconds < 0 || state.ChannelSeconds > mission.ScanSeconds)
+                    throw new InvalidOperationException("Invalid checkpoint scan.");
+            }
         }
         private static string Hash(string value) { using var sha = SHA256.Create(); return Convert.ToBase64String(sha.ComputeHash(Encoding.UTF8.GetBytes(value))); }
         private static string Pack<T>(T value) where T : unmanaged
@@ -224,8 +265,16 @@ namespace Game.Runtime
                 {
                     case nameof(AttackMoveOrder): Unpack<AttackMoveOrder>(part.data); break;
                     case nameof(UnitPathRetryCooldown): Unpack<UnitPathRetryCooldown>(part.data); break;
-                    case nameof(LocalTransform): Unpack<LocalTransform>(part.data); break;
-                    case nameof(UnitHealth): Unpack<UnitHealth>(part.data); break;
+                    case nameof(LocalTransform):
+                        var transform = Unpack<LocalTransform>(part.data);
+                        if (!math.all(math.isfinite(transform.Position)) || !math.all(math.isfinite(transform.Rotation.value)) ||
+                            !float.IsFinite(transform.Scale) || transform.Scale <= 0)
+                            throw new InvalidOperationException("Invalid checkpoint transform.");
+                        break;
+                    case nameof(UnitHealth):
+                        var health = Unpack<UnitHealth>(part.data);
+                        if (health.Max <= 0 || health.Current > health.Max) throw new InvalidOperationException("Invalid checkpoint health.");
+                        break;
                     case nameof(UnitGrid): Unpack<UnitGrid>(part.data); break;
                     case nameof(UnitPrevWorldPos): Unpack<UnitPrevWorldPos>(part.data); break;
                     case nameof(UnitMoveVisualComponent): Unpack<UnitMoveVisualComponent>(part.data); break;

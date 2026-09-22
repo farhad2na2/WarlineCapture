@@ -99,6 +99,33 @@ public sealed class MatchHudSquadTraySelectionUiSystemHelperTests
     }
 
     [Test]
+    public void OperationsRifleCardSelectsSurvivingOriginalForceWithoutCyclingOrUnrelatedUnits()
+    {
+        var root = _entityManager.CreateEntity(typeof(OperationsReconMissionComponent));
+        _entityManager.SetComponentData(root, new OperationsReconMissionComponent { Phase = OperationsReconPhase.Playing });
+        _entityManager.AddBuffer<OperationsReconRosterElement>(root);
+        var expected = new List<Entity>();
+        for (int i = 0; i < 16; i++)
+        {
+            var unit = CreatePlayerUnit("Unit_Chr_Soldier_Operations_" + i, new float3(i * 10, 0, 0));
+            _entityManager.GetBuffer<OperationsReconRosterElement>(root).Add(new OperationsReconRosterElement { Unit = unit });
+            if (i == 0) _entityManager.DestroyEntity(unit);
+            else if (i == 1) _entityManager.SetComponentData(unit, new UnitHealth { Current = 0, Max = 100 });
+            else expected.Add(unit);
+        }
+        CreatePlayerUnit("Unit_Chr_Soldier_Unrelated", new float3(1, 0, 1));
+        for (int click = 0; click < 2; click++)
+        {
+            _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+            CollectionAssert.AreEquivalent(expected, SelectedEntities());
+            Assert.That(_lastHudSquadCount, Is.EqualTo(14));
+        }
+        _entityManager.DestroyEntity(root);
+        _system.SelectSlot(CreateContext(), _view, MatchHudSquadTraySlot.Soldiers);
+        Assert.That(SelectedEntities().Length, Is.EqualTo(4), "Leaving Operations must restore shared four-soldier quick selection.");
+    }
+
+    [Test]
     public void SelectCombatVehiclesSlot_SelectsTwoGroundCombatVehiclesOnly()
     {
         Entity tank = CreatePlayerUnit("Unit_Veh_Tank_Heavy", new float3(1f, 0f, 0f), usesVehicleMotion: true);

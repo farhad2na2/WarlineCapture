@@ -45,15 +45,15 @@ namespace Game.UI.Runtime
             hud = isHud;
             var card = Panel("MissionCard", transform);
             if (hud)
-            { card.anchorMin = new Vector2(.28f, .80f); card.anchorMax = new Vector2(.75f, .90f); card.offsetMin = card.offsetMax = Vector2.zero; }
+            { card.anchorMin = new Vector2(.28f, .76f); card.anchorMax = new Vector2(.75f, .90f); card.offsetMin = card.offsetMax = Vector2.zero; }
             else
             { card.anchorMin = new Vector2(.15f, .13f); card.anchorMax = new Vector2(.85f, .86f); card.offsetMin = card.offsetMax = Vector2.zero; }
             Vertical(card, hud ? 1 : 14);
             if (hud) card.GetComponent<VerticalLayoutGroup>().padding = new RectOffset(6,6,4,4);
-            title = Label(card, "STREET SIGNALS", hud ? 20 : 42, hud ? 24 : 60);
-            description = Label(card, "", hud ? 20 : 28, hud ? 24 : 160);
-            status = Label(card, "", hud ? 18 : 22, hud ? 22 : 100);
-            clock = Label(card, "", hud ? 20 : 24, hud ? 22 : 30);
+            title = Label(card, "STREET SIGNALS", hud ? 22 : 42, hud ? 26 : 60);
+            description = Label(card, "", hud ? 22 : 28, hud ? 26 : 160);
+            status = Label(card, "", hud ? 20 : 22, hud ? 48 : 100);
+            clock = Label(card, "", hud ? 22 : 24, hud ? 26 : 30);
             briefing = card.gameObject;
             if (!hud)
             {
@@ -62,7 +62,7 @@ namespace Game.UI.Runtime
                 return;
             }
             var actionPanel = Panel("MissionActions", transform); controls = actionPanel.gameObject;
-            actionPanel.anchorMin = new Vector2(.28f, .60f); actionPanel.anchorMax = new Vector2(.75f, .80f);
+            actionPanel.anchorMin = new Vector2(.28f, .56f); actionPanel.anchorMax = new Vector2(.75f, .76f);
             actionPanel.offsetMin = actionPanel.offsetMax = Vector2.zero;
             Vertical(actionPanel, 4);
             var row = Row(actionPanel); row.GetComponent<LayoutElement>().preferredHeight = 124; siteLabels = new TMP_Text[3];

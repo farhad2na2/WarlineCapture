@@ -218,6 +218,15 @@ public sealed class OperationsProfilePersistenceTests
         Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
         Assert.That(service.TrySaveOperationsCheckpoint("wrong-attempt", "bad-image", out _), Is.False);
         Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+
+        var futureProfile = service.LoadProfile();
+        futureProfile.operationsAttemptJson = UnityEngine.JsonUtility.ToJson(new SaveService.OperationsCheckpointArchive
+        { schema = 99, sessionId = session, current = "future-image", previous = "retained-image" });
+        repository.SaveAtomic(SaveService.ProfileFileName, futureProfile);
+        bytes = repository.ReadRaw(SaveService.ProfileFileName);
+        Assert.That(service.TrySaveOperationsCheckpoint(session, "replacement-image", out string reason), Is.False);
+        Assert.That(reason, Is.EqualTo("checkpoint_schema_incompatible"));
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes), "Do not overwrite recovery evidence from a newer writer.");
     }
 
     [Test]

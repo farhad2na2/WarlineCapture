@@ -18,7 +18,8 @@ namespace Game.UI.Shell.Ecs
                 {
                     var mission = operations.GetSingleton<OperationsReconMissionComponent>();
                     restrictions = new UiMissionHudRestrictionsModel("operation.o001", true, true, true, true, true,
-                        mission.Phase != OperationsReconPhase.Playing);
+                        mission.Phase != OperationsReconPhase.Playing, hideLogisticsResources: true,
+                        hideUnrelatedControls: true, availableSquadMask: 1);
                     return true;
                 }
             }

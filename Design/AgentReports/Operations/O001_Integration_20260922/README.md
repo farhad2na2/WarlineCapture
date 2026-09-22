@@ -9,3 +9,10 @@ This is button-event integration smoke, not a manual or ARIA win. The test start
 Published logs redact authentication and machine metadata. Original full logs remain at `/private/tmp/o001-lifecycle-smoke-4.log` and `/private/tmp/o001-integration-editmode-5.log` on the validation host. Known HUD-prefab-save warnings during Editor teardown are retained. The actual prefab passes a pre-Play missing-script check; the teardown cause remains unresolved.
 
 Mission content, English/Farsi layout, full outcomes, active-world checkpoints, normal-input ARIA, device and unfamiliar-player gates are not certified by these files. See the parent progress report and P4R plan.
+
+## Additional Editor evidence
+
+- `checkpoint-foundation-editmode.xml`: 29 passed, wrapper exit 0; checkpoint validation and transform-writer synchronization regression.
+- `editor-readiness-regressions.xml`: 35 passed, wrapper exit 0; adds full original-force quick selection and verifies shared four-soldier behavior after leaving Operations, plus future checkpoint archive preservation.
+
+These reports remove machine/environment properties. Full originals remain in `/private/tmp/o001-editor-recovery-tests-4.log` / `.xml` and `-5.log` / `.xml`. Normal mouse-input Withdrawal and Defeat journeys are documented in the parent progress report. No Victory, Partial Success, or full recovery certification is implied. Android/device acceptance is deferred under the user's Editor-only scope.

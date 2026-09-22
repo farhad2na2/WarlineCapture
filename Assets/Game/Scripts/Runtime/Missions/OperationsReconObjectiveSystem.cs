@@ -125,7 +125,7 @@ namespace Game.Runtime
                     { site.Actor = Entity.Null; site.ChannelSeconds = 0f; }
                     else
                     {
-                        site.ChannelSeconds += missionDelta;
+                        site.ChannelSeconds = math.min(mission.ScanSeconds, site.ChannelSeconds + missionDelta);
                         if (site.ChannelSeconds >= mission.ScanSeconds)
                         {
                             site.Completed = 1;
@@ -146,7 +146,7 @@ namespace Game.Runtime
                     { evidence.Actor = Entity.Null; evidence.ChannelSeconds = 0f; }
                     else
                     {
-                        evidence.ChannelSeconds += missionDelta;
+                        evidence.ChannelSeconds = math.min(mission.EvidenceSeconds, evidence.ChannelSeconds + missionDelta);
                         if (evidence.ChannelSeconds >= mission.EvidenceSeconds)
                         {
                             evidence.Carrier = evidence.Actor;

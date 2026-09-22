@@ -13,6 +13,7 @@ namespace Game.Editor
         public const string SharedFolder = "Assets/Game/Configs/SkirmishExpansion/Shared";
         public const string ScenarioFolder = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002";
         public const string ScenarioFolderS003 = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003";
+        public const string ScenarioFolderS004 = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004";
         public const string PublicationPath = SharedFolder + "/SkirmishPublicationManifest.asset";
         public const string CatalogCsvPath = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
 
@@ -27,9 +28,11 @@ namespace Game.Editor
             Directory.CreateDirectory(SharedFolder);
             Directory.CreateDirectory(ScenarioFolder);
             Directory.CreateDirectory(ScenarioFolderS003);
+            Directory.CreateDirectory(ScenarioFolderS004);
             SkirmishExpansionAuthoredSet set = SkirmishExpansionCatalogFactory.CreateInMemory();
             bool preserveS002Playable = TryReadPlayable("S002", out string preservedS002Notes);
             bool preserveS003Playable = TryReadPlayable("S003", out string preservedS003Notes);
+            bool preserveS004Playable = TryReadPlayable("S004", out string preservedS004Notes);
             Persist(set.ObjectiveBa, SharedFolder + "/SkirmishObjective_BA.asset");
             Persist(set.ArmyGround, SharedFolder + "/SkirmishArmy_GroundManeuver.asset");
             Persist(set.ArmyAir, SharedFolder + "/SkirmishArmy_AirMobile.asset");
@@ -54,12 +57,16 @@ namespace Game.Editor
             Persist(CopyLayout(set.LayoutDbBa), ScenarioFolder + "/SkirmishLayout_S002.asset");
             Persist(set.DefinitionS003, ScenarioFolderS003 + "/SkirmishScenario_S003.asset");
             Persist(CopyLayout(set.LayoutDbBa), ScenarioFolderS003 + "/SkirmishLayout_S003.asset");
+            Persist(set.DefinitionS004, ScenarioFolderS004 + "/SkirmishScenario_S004.asset");
+            Persist(CopyLayout(set.LayoutDbBa), ScenarioFolderS004 + "/SkirmishLayout_S004.asset");
             if (preserveS002Playable)
                 RestorePlayable("S002", preservedS002Notes);
             if (preserveS003Playable)
                 RestorePlayable("S003", preservedS003Notes);
+            if (preserveS004Playable)
+                RestorePlayable("S004", preservedS004Notes);
             AssetDatabase.SaveAssets();
-            return "[SkirmishDefinitionBuilder] result=Passed definition=skirmish.s002,skirmish.s003";
+            return "[SkirmishDefinitionBuilder] result=Passed definition=skirmish.s002,skirmish.s003,skirmish.s004";
         }
 
         private static bool TryReadPlayable(string catalogId, out string notes)

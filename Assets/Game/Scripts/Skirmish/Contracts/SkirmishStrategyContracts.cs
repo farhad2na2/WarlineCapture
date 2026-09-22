@@ -88,6 +88,7 @@ namespace Game.Skirmish.Contracts
         public bool CanAffordTank;
         public bool CanAffordAntiAir;
         public bool PadReady;
+        public bool AirQueueOffered;
         public bool AirPadControlAvailable;
         public int VisibleHostileCombat;
         public int VisibleHostileAir;

@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3ec0d2f30504814a49d4919f244c32e, type: 3}
+  m_Name: SkirmishScenario_S004
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishScenarioDefinitionConfig
+  catalogId: S004
+  definitionId: skirmish.s004
+  scenarioSetupId: scenario.skirmish.s004
+  operationMapId: opmap.skirmish.desert_base_01
+  mapLayoutId: layout.skirmish.db.ba
+  contentVersion: 1
+  contentHash: skirmish.s004.v1
+  objectiveConfig: {fileID: 11400000, guid: c68e97d46042477882a82718ce98061a, type: 2}
+  armyProfileConfig: {fileID: 11400000, guid: c4e8a1b27d9f4e6a9c0d5f3b8a217604, type: 2}
+  startPackageConfig: {fileID: 11400000, guid: 8032585b22bd4dbfb4d0c58ead392aaf, type: 2}
+  defaultDifficulty: 2
+  firstVisitSize: 1
+  recommendedSize: 2
+  economyConfig: {fileID: 11400000, guid: a80273e4faab4a8699e8ec8cc63e6d9e, type: 2}
+  upgradeCatalog: {fileID: 11400000, guid: 4cc33e81f1714b1990c22147ede7d678, type: 2}
+  intelConfig: {fileID: 11400000, guid: 04b7de727d214decb18d44a0a1156838, type: 2}
+  roleCatalog: {fileID: 11400000, guid: 576ea8bf79b7478480428278cdb00745, type: 2}
+  mapLayout: {fileID: 11400000, guid: e30ba39ba711469090738221819567dc, type: 2}
+  playerFaction: 1
+  enemyFaction: 2
+  sideRule: symmetric.ba
+  allowedCertifiedSizeIds:
+  - 1
+  requiredFeatureIds:
+  - ground
+  - intel
+  - transport
+  - offensive_air
+  - advanced_air
+  - objective_ba
+  ariaCapabilityIds: []
+  briefingKey: skirmish.s004.brief
+  titleKey: skirmish.s004.title
+  objectiveKey: skirmish.s004.objective
+  resultVictoryKey: skirmish.s004.result.victory
+  resultDefeatKey: skirmish.s004.result.defeat
+  readinessManifestId: publication.skirmish.s004

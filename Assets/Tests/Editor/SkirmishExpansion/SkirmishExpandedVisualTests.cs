@@ -281,6 +281,74 @@ namespace Game.Tests.Editor
             }
         }
 
+        [Test]
+        public void S004RegistrySpawnsGrantedTransportAaAndHelipad()
+        {
+            using var world = new World(nameof(S004RegistrySpawnsGrantedTransportAaAndHelipad));
+            EntityManager em = world.EntityManager;
+            SkirmishVisualPrefabCatalog standIn = SkirmishVisualPrefabCatalog.CreateS003AirRegistry();
+            UnitPrefabRegistryAuthoringConfig registry = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            try
+            {
+                AddPrefab(registry, standIn, "Unit_Veh_Missle_Launcher_Air");
+                AddPrefab(registry, standIn, "Unit_Veh_Helicopter_Transport");
+                AddPrefab(registry, standIn, "Unit_Veh_Helicopter_Attack");
+                AddPrefab(registry, standIn, "Building_GroundStaging");
+                AddPrefab(registry, standIn, "Building_Helipad");
+                AddPrefab(registry, standIn, "Building_Barrack");
+                AddPrefab(registry, standIn, "Unit_Chr_Soldier_Male_02_Alt_04");
+                AddPrefab(registry, standIn, "Unit_Chr_Soldier_Male_01");
+                AddPrefab(registry, standIn, "Unit_Chr_Ghillie_Male_01");
+                AddPrefab(registry, standIn, "Unit_Veh_Light_Armored_Car");
+                AddPrefab(registry, standIn, "Unit_Veh_APC_Slow");
+                CompileAndSpawnS004(em, out Entity session, out SkirmishResolvedSetup setup, registry);
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                SkirmishVisualSpawnService.AttachMissing(em, session, setup);
+                Assert.AreEqual(2, CountVisibleKey(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.AreEqual(2, CountVisibleKey(em, "Unit_Veh_Missle_Launcher_Air"));
+                Assert.AreEqual(2, CountVisibleKey(em, "Building_Helipad"));
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Missle_Launcher_Air"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Building_Helipad"));
+                Assert.IsTrue(HasGroundStagingState(em));
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+
+                SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyAir, out _));
+                Assert.AreEqual(480, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(2, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.AreEqual(2, CountVisibleKey(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.TransportHeli, 1, authored.ArmyAir, out SkirmishProductionDecision blocked));
+                Assert.AreEqual(SkirmishReasonCode.InsufficientCapacity, blocked.Reason);
+                Assert.AreEqual(480, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(2, CountVisibleKey(em, "Unit_Veh_Helicopter_Transport"));
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.AreEqual(900, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+            }
+            finally
+            {
+                if (em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).CalculateEntityCount() == 1)
+                {
+                    Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                        em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                    if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+                        em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog?.Dispose();
+                }
+
+                standIn.Dispose();
+                UnityEngine.Object.DestroyImmediate(registry);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -294,6 +362,7 @@ namespace Game.Tests.Editor
                 suite.VisualSpawnSystemAttachesOutsideLiveQuery();
                 suite.CleanupDestroysVisualInstances();
                 suite.S003RegistrySpawnsAaAndLightHelicopterFromExistingKeys();
+                suite.S004RegistrySpawnsGrantedTransportAaAndHelipad();
                 Debug.Log("[SkirmishExpandedVisualTests] result=Passed");
             }
             catch (Exception exception)
@@ -380,12 +449,63 @@ namespace Game.Tests.Editor
                 setup);
         }
 
+        private static void CompileAndSpawnS004(
+            EntityManager em,
+            out Entity session,
+            out SkirmishResolvedSetup setup,
+            UnitPrefabRegistryAuthoringConfig registry)
+        {
+            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS004.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S004",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS004FirstVisit.SeedA,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons,
+                registry),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+        }
+
         private static void AddPrefab(
             UnitPrefabRegistryAuthoringConfig registry,
             SkirmishVisualPrefabCatalog catalog,
             string key)
         {
             registry.UnitSpawnPrefabs.Add(catalog.TryGet(key, out GameObject prefab) ? prefab : null);
+        }
+
+        private static int CountVisibleKey(EntityManager em, string key)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishVisualInstanceRecord), typeof(SkirmishVisualSpawnedComponent));
+            using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+            int count = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var record = em.GetComponentObject<SkirmishVisualInstanceRecord>(entities[i]);
+                if (record.PrefabKey == key && record.Instance != null && record.Instance.activeInHierarchy)
+                    count++;
+            }
+
+            return count;
         }
 
         private static bool HasVisibleKey(EntityManager em, string key)

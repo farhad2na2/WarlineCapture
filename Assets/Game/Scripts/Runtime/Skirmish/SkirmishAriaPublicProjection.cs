@@ -81,6 +81,14 @@ namespace Game.Runtime
                     SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir);
                 view.PadReady = perception.HelipadPresent &&
                     (int)LiveReadiness(em, session, setup.Readiness) >= (int)SkirmishReadinessStage.Established;
+                view.AirQueueOffered = view.PadReady &&
+                    SkirmishStrategyScoring.TryAfford(
+                        army,
+                        LiveReadiness(em, session, setup.Readiness),
+                        setup.RoleOverlays,
+                        perception,
+                        SkirmishRoleIds.AttackHeli,
+                        SkirmishRoleKind.AttackHeli);
             }
 
             view.VisibleHostileCombat = CountVisibleHostileCombat(em, session);

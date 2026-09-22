@@ -60,6 +60,8 @@ namespace Game.Configs
                 return Act(SkirmishAriaSkillKind.Recruit, "recruit.rifle");
             if (view.VisibleHostileCombat > 0 && view.CanAffordRocketeer && view.RecruitControlAvailable)
                 return Act(SkirmishAriaSkillKind.Recruit, "recruit.counter");
+            if (view.PadReady && view.AirQueueOffered && view.RecruitControlAvailable)
+                return Act(SkirmishAriaSkillKind.Recruit, "recruit.attack_heli");
             if (view.VisibleHostileAir > 0 && !view.PadReady && view.AirPadControlAvailable)
                 return Act(SkirmishAriaSkillKind.Inspect, "pad.not_ready");
             if (!view.GroupControlAvailable && view.HoldControlAvailable)

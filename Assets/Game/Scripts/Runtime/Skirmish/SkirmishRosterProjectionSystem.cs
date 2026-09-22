@@ -79,6 +79,11 @@ namespace Game.Runtime
                         WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.GroundStagingStructure());
                         applied++;
                     }
+                    else if (structureId == SkirmishStructureIds.Helipad)
+                    {
+                        WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.HelipadStructure());
+                        applied++;
+                    }
                 }
             }
 

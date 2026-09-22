@@ -30,6 +30,8 @@ namespace Game.UI.Contracts
         public AriaTouchTarget RecruitAntiAir, AirPad;
         public int ExpandedAssaultMask;
         public int ExpandedSelectedMask;
+        public int ExpandedStructureMask;
+        public int ExpandedAttackOrderMask;
         public bool ExpandedNextPage;
         public int ExpandedPageIndex;
         public AriaTouchTarget Squad(int index) => index switch

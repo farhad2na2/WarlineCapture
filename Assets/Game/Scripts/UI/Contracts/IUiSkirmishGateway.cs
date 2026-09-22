@@ -17,6 +17,8 @@ namespace Game.UI.Contracts
         public int PageIndex;
         public int AssaultMask;
         public int SelectedMask;
+        public int StructureMask;
+        public int AttackOrderMask;
         public bool NextPage;
     }
 

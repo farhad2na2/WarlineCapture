@@ -29,6 +29,22 @@ namespace Game.Configs
     }
 
     /// <summary>
+    /// A single timeScale sample must not fail a counted run.
+    /// Normal stays true until off-speed samples are sustained, and Finish
+    /// accepts a match whose elapsed time tracked the wall clock at 1x.
+    /// </summary>
+    public struct SkirmishS002NormalSpeedLatch
+    {
+        public bool Normal;
+        public int ConsecutiveOffSpeed;
+
+        public static SkirmishS002NormalSpeedLatch Start()
+        {
+            return new SkirmishS002NormalSpeedLatch { Normal = true };
+        }
+    }
+
+    /// <summary>
     /// Accepts a runs.csv row only from a finished match outcome or an explicit abort.
     /// A caller-supplied Victory is ignored unless the finished match outcome is Victory.
     /// </summary>
@@ -40,6 +56,45 @@ namespace Game.Configs
         public const string ResultAbort = "Abort";
         public const string AbortReasonSimulationNotAdvancing = "simulationNotAdvancing";
         public const double SimulationStallGraceSeconds = 45d;
+        public const int SustainedOffSpeedSamples = 45;
+
+        public static SkirmishS002NormalSpeedLatch ObserveTimeScale(SkirmishS002NormalSpeedLatch latch, float timeScale)
+        {
+            if (timeScale > 0.999f && timeScale < 1.001f)
+            {
+                latch.ConsecutiveOffSpeed = 0;
+                return latch;
+            }
+
+            latch.ConsecutiveOffSpeed++;
+            if (latch.ConsecutiveOffSpeed >= SustainedOffSpeedSamples)
+                latch.Normal = false;
+            return latch;
+        }
+
+        /// <summary>
+        /// Counted runs keep normal speed when the match clock tracked wall time.
+        /// A short run uses the sustained latch. A clock that is still off 1x,
+        /// much faster than the wall, or mostly paused, does not count.
+        /// </summary>
+        public static bool FinishNormalSpeed(
+            SkirmishS002NormalSpeedLatch latch,
+            float timeScale,
+            float matchElapsed,
+            double wallSeconds)
+        {
+            if (timeScale <= 0.999f || timeScale >= 1.001f)
+                return false;
+            if (wallSeconds >= 90d && matchElapsed > 0f)
+            {
+                double ratio = matchElapsed / wallSeconds;
+                if (ratio > 1.12d || ratio < 0.35d)
+                    return false;
+                return true;
+            }
+
+            return latch.Normal;
+        }
 
         /// <summary>
         /// After Playing, match elapsed must leave 0 once simulation is armed.

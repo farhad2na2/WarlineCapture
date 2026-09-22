@@ -11,20 +11,26 @@ namespace Game.Runtime
     public partial struct SkirmishEnemyStrategySystem : ISystem
     {
         private EntityQuery ownedQuery;
+        private EntityQuery sessions;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
             ownedQuery = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>());
+            sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            // TryProduce creates entities. A foreach query makes that structural
+            // change illegal, so the counter recruit threw before AttackBase.
+            using NativeArray<Entity> entities = sessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (session.ValueRO.IsLegacy != 0 || session.ValueRO.Phase != SkirmishSessionPhase.Playing)
+                Entity entity = entities[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0 || session.Phase != SkirmishSessionPhase.Playing)
                     continue;
                 Evaluate(em, entity, ownedQuery, ResolveArmy(em, entity));
             }

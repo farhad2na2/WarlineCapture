@@ -474,6 +474,241 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void StructureColumnWaitsForAttackOrderBeforeLatchingAssault()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                EnemyDesignatedAlive = true,
+                ExpandedNextPage = true,
+                ExpandedPageIndex = 0,
+                Squad4 = new AriaTouchTarget { Id = 200, Available = true },
+                Attack = new AriaTouchTarget { Id = 42, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
+            Assert.AreEqual(200, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultIssued);
+
+            view.ExpandedPageIndex = 1;
+            view.ExpandedStructureMask = (1 << 0) | (1 << 3);
+            view.ExpandedAssaultMask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+            view.Squad0 = new AriaTouchTarget { Id = 100, Available = true };
+            view.Squad1 = new AriaTouchTarget { Id = 101, Available = true };
+            view.Squad2 = new AriaTouchTarget { Id = 102, Available = true };
+            view.Squad3 = new AriaTouchTarget { Id = 103, Available = true };
+            for (int slot = 0; slot < 4; slot++)
+            {
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                Assert.AreEqual(0, plan.AssaultIssued);
+                Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
+                Assert.AreEqual(100 + slot, output.TargetId);
+                view.ExpandedSelectedMask |= 1 << slot;
+            }
+
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Attack, plan.Intent);
+            Assert.AreEqual(42, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultIssued, "Attack is requested only; the latch waits for the order.");
+
+            view.Attack = new AriaTouchTarget { Id = 42, Available = false };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+
+            view.Attack = new AriaTouchTarget { Id = 42, Available = true };
+            view.ExpandedAttackOrderMask = view.ExpandedAssaultMask;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            Assert.AreEqual(1, plan.StructureOrdered);
+            Assert.AreEqual(200, output.TargetId);
+
+            view.ExpandedPageIndex = 0;
+            view.ExpandedAssaultMask = 0;
+            view.ExpandedStructureMask = 0;
+            view.ExpandedSelectedMask = 0;
+            view.ExpandedAttackOrderMask = 0;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(1, plan.AssaultIssued);
+            Assert.AreEqual(1, plan.StructureOrdered);
+        }
+
+        [Test]
+        public void PresentedColumnDestroysEnemyBaseBeforeDeadlineOnLiveSeeds()
+        {
+            PresentedColumnDestroysEnemyBaseBeforeDeadline(130365);
+            PresentedColumnDestroysEnemyBaseBeforeDeadline(155923);
+            CheckedInRunsCsvStaysHeaderOnly();
+        }
+
+        [Test]
+        public void SingleTimeScaleBlipKeepsNormalSpeedUntilFinish()
+        {
+            SkirmishS002NormalSpeedLatch latch = SkirmishS002NormalSpeedLatch.Start();
+            latch = SkirmishS002AriaRunLog.ObserveTimeScale(latch, 0f);
+            Assert.IsTrue(latch.Normal);
+            Assert.AreEqual(1, latch.ConsecutiveOffSpeed);
+            latch = SkirmishS002AriaRunLog.ObserveTimeScale(latch, 1f);
+            Assert.IsTrue(latch.Normal);
+            Assert.AreEqual(0, latch.ConsecutiveOffSpeed);
+
+            latch = SkirmishS002NormalSpeedLatch.Start();
+            for (int i = 0; i < SkirmishS002AriaRunLog.SustainedOffSpeedSamples - 1; i++)
+                latch = SkirmishS002AriaRunLog.ObserveTimeScale(latch, 2f);
+            Assert.IsTrue(latch.Normal);
+            latch = SkirmishS002AriaRunLog.ObserveTimeScale(latch, 2f);
+            Assert.IsFalse(latch.Normal);
+            Assert.AreEqual(SkirmishS002AriaRunLog.SustainedOffSpeedSamples, latch.ConsecutiveOffSpeed);
+
+            Assert.IsTrue(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 1080f, 1080d));
+            Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 1080f, 400d));
+            Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 0f, 1080f, 1080d));
+            Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 20f, 40d));
+            var stillNormal = SkirmishS002NormalSpeedLatch.Start();
+            stillNormal = SkirmishS002AriaRunLog.ObserveTimeScale(stillNormal, 0f);
+            Assert.IsTrue(SkirmishS002AriaRunLog.FinishNormalSpeed(stillNormal, 1f, 20f, 40d));
+        }
+
+        private static void PresentedColumnDestroysEnemyBaseBeforeDeadline(int seed)
+        {
+            using var world = new World("PresentedColumn-" + seed);
+            BootPlayingSession(world, out Entity session, seed);
+            EntityManager em = world.EntityManager;
+            PlaceOnAuthoredPads(em, session);
+            RevealAll(em);
+            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            Entity playerBase = DesignatedBase(em, 1);
+            Entity enemyBase = DesignatedBase(em, 2);
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Assert.AreNotEqual(Entity.Null, tank, "seed " + seed);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            int steps = 0;
+            while (steps < 1080 && em.GetComponentData<UnitHealth>(enemyBase).Current > 0)
+            {
+                var output = new AriaPlayObservationComponent();
+                AriaSkirmishObservation view = PresentedObservation(em, session, playerBase, enemyBase);
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                ApplyPresentedControl(em, session, output);
+                SkirmishFogService.Project(em, session);
+                SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
+                SkirmishExpandedEngagementService.Step(em, session, 1f, false);
+                SkirmishWorldMovementService.Step(em, session, 1f, false);
+                steps++;
+            }
+
+            int enemyHp = em.GetComponentData<UnitHealth>(enemyBase).Current;
+            int playerHp = em.GetComponentData<UnitHealth>(playerBase).Current;
+            Assert.Less(steps, 1080, "seed " + seed + " enemyHp=" + enemyHp + " playerHp=" + playerHp);
+            Assert.AreEqual(0, enemyHp, "seed " + seed);
+            Assert.Greater(playerHp, 0, "seed " + seed);
+            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials, "seed " + seed);
+            Assert.AreEqual(1, plan.AssaultIssued, "seed " + seed);
+            Assert.AreEqual(
+                SkirmishGroupOrderKind.Attack,
+                FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder,
+                "seed " + seed);
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+            {
+                SkirmishObjectiveClockComponent clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                clock.ElapsedSeconds = steps;
+                clock.Playing = 1;
+                clock.Paused = 0;
+                em.SetComponentData(session, clock);
+            }
+
+            PublishProjectedMatch(world, session);
+            SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            Assert.AreEqual(SkirmishOutcomeKind.Victory, objective.Outcome, "seed " + seed);
+            Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, objective.Reason, "seed " + seed);
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, match.Phase, "seed " + seed);
+            Assert.AreEqual(SkirmishOutcome.Victory, match.Outcome, "seed " + seed);
+            Assert.AreEqual(SkirmishEndReason.MainBaseDestroyed, match.Reason, "seed " + seed);
+            Assert.AreNotEqual(SkirmishOutcome.Draw, match.Outcome, "seed " + seed);
+        }
+
+        private static AriaSkirmishObservation PresentedObservation(
+            EntityManager em,
+            Entity session,
+            Entity playerBase,
+            Entity enemyBase)
+        {
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(
+                em,
+                session,
+                out int pageIndex,
+                out bool nextPage,
+                out SkirmishPresentedSlot slot0,
+                out SkirmishPresentedSlot slot1,
+                out SkirmishPresentedSlot slot2,
+                out SkirmishPresentedSlot slot3));
+            var slots = new[] { slot0, slot1, slot2, slot3 };
+            int assault = 0;
+            int selected = 0;
+            int structure = 0;
+            int ordered = 0;
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (!slots[i].Occupied)
+                    continue;
+                if (slots[i].Assault)
+                    assault |= 1 << i;
+                if (slots[i].Selected)
+                    selected |= 1 << i;
+                if (slots[i].Structure)
+                    structure |= 1 << i;
+                if (slots[i].AttackOrdered)
+                    ordered |= 1 << i;
+            }
+
+            return new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                EnemyDesignatedAlive = em.GetComponentData<UnitHealth>(enemyBase).Current > 0,
+                PlayerDesignatedAlive = em.GetComponentData<UnitHealth>(playerBase).Current > 0,
+                Infantry = 20,
+                ExpandedPageIndex = pageIndex,
+                ExpandedNextPage = nextPage,
+                ExpandedAssaultMask = assault,
+                ExpandedSelectedMask = selected,
+                ExpandedStructureMask = structure,
+                ExpandedAttackOrderMask = ordered,
+                Squad0 = PresentedCard(slot0, 100),
+                Squad1 = PresentedCard(slot1, 101),
+                Squad2 = PresentedCard(slot2, 102),
+                Squad3 = PresentedCard(slot3, 103),
+                Squad4 = new AriaTouchTarget { Id = 200, Available = nextPage },
+                Attack = new AriaTouchTarget { Id = 42, Available = true }
+            };
+        }
+
+        private static AriaTouchTarget PresentedCard(SkirmishPresentedSlot slot, int id)
+        {
+            return new AriaTouchTarget { Id = id, Available = slot.Occupied };
+        }
+
+        private static void ApplyPresentedControl(EntityManager em, Entity session, AriaPlayObservationComponent output)
+        {
+            if (output.Kind != AriaPlayObservationKind.Control)
+                return;
+            if (output.TargetId == 200)
+                SkirmishExpandedPresentedOrders.TryAdvancePage(em, session);
+            else if (output.TargetId >= 100 && output.TargetId <= 103)
+                SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, output.TargetId - 100);
+            else if (output.TargetId == 42)
+                SkirmishExpandedPresentedOrders.TryAttackEnemyBase(em, session);
+        }
+
+        [Test]
         public void PayloadLoggersDoNotStampVictory()
         {
             Assert.IsTrue(SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(
@@ -580,6 +815,9 @@ namespace Game.Tests.Editor
                 suite.DeadlineDrawPublishesFinishedMatchWithoutStampingVictory();
                 suite.DeadEnemyBarracksFinishesVictoryWithoutRulesSystem();
                 suite.AssaultColumnDestroysEnemyBarracksAndPublishesVictory();
+                suite.StructureColumnWaitsForAttackOrderBeforeLatchingAssault();
+                suite.PresentedColumnDestroysEnemyBaseBeforeDeadlineOnLiveSeeds();
+                suite.SingleTimeScaleBlipKeepsNormalSpeedUntilFinish();
                 suite.PayloadLoggersDoNotStampVictory();
                 suite.SimulationStallFailsFastAfterGrace();
                 suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
@@ -651,7 +889,7 @@ namespace Game.Tests.Editor
             return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         }
 
-        private static void BootPlayingSession(World world, out Entity session)
+        private static void BootPlayingSession(World world, out Entity session, int seed = 104731)
         {
             EntityManager em = world.EntityManager;
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
@@ -662,7 +900,7 @@ namespace Game.Tests.Editor
                 "S002",
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
-                104731,
+                seed,
                 authored,
                 matrix,
                 manifest,

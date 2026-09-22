@@ -37,6 +37,7 @@ namespace Game.Editor
         private static double deadline;
         private static double playingSince;
         private static bool normalSpeed = true;
+        private static SkirmishS002NormalSpeedLatch speedLatch = SkirmishS002NormalSpeedLatch.Start();
         private static int seed = SkirmishAcceptanceCensusCapture.FirstVisitSeed;
         private static string locale = GameLocalization.EnglishLocaleCode;
 
@@ -46,7 +47,9 @@ namespace Game.Editor
             {
                 seed = SessionState.GetInt(SeedKey, SkirmishAcceptanceCensusCapture.FirstVisitSeed);
                 locale = SessionState.GetString(LocaleKey, GameLocalization.EnglishLocaleCode);
-                normalSpeed = SessionState.GetBool(NormalKey, true);
+                speedLatch = SkirmishS002NormalSpeedLatch.Start();
+                speedLatch.Normal = SessionState.GetBool(NormalKey, true);
+                normalSpeed = speedLatch.Normal;
                 playingSince = SessionState.GetFloat(PlayingSinceKey, 0f);
                 EditorApplication.update += Tick;
             }
@@ -94,6 +97,7 @@ namespace Game.Editor
             next = 0d;
             deadline = 0d;
             playingSince = 0d;
+            speedLatch = SkirmishS002NormalSpeedLatch.Start();
             normalSpeed = true;
             SessionState.SetBool(Key, true);
             SessionState.SetBool(NormalKey, true);
@@ -135,12 +139,12 @@ namespace Game.Editor
         {
             if (!EditorApplication.isPlaying)
                 return;
+            speedLatch = SkirmishS002AriaRunLog.ObserveTimeScale(speedLatch, Time.timeScale);
             if (Time.timeScale != 1f)
-            {
-                normalSpeed = false;
-                SessionState.SetBool(NormalKey, false);
                 Time.timeScale = 1f;
-            }
+            if (!speedLatch.Normal)
+                SessionState.SetBool(NormalKey, false);
+            normalSpeed = speedLatch.Normal;
 
             double now = EditorApplication.timeSinceStartup;
             if (deadline == 0d)
@@ -399,6 +403,10 @@ namespace Game.Editor
             else
                 File.WriteAllText(traceAbsolute, string.Empty);
 
+            double wall = playingSince > 0d ? EditorApplication.timeSinceStartup - playingSince : 0d;
+            normalSpeed = SkirmishS002AriaRunLog.FinishNormalSpeed(speedLatch, Time.timeScale, duration, wall);
+            if (!normalSpeed)
+                SessionState.SetBool(NormalKey, false);
             string outcome = haveMatch ? match.Outcome.ToString() : string.Empty;
             if (haveMatch && match.Outcome == SkirmishOutcome.None)
                 outcome = string.Empty;

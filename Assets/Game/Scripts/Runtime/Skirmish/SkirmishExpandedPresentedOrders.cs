@@ -12,6 +12,8 @@ namespace Game.Runtime
         public int Alive;
         public bool Selected;
         public bool Assault;
+        public bool Structure;
+        public bool AttackOrdered;
         public bool Rifle;
     }
 
@@ -29,6 +31,15 @@ namespace Game.Runtime
                    role == SkirmishRoleKind.ApcFast ||
                    role == SkirmishRoleKind.ApcArmored ||
                    role == SkirmishRoleKind.ApcHeavy ||
+                   role == SkirmishRoleKind.Rocketeer ||
+                   role == SkirmishRoleKind.Breacher ||
+                   role == SkirmishRoleKind.Siege;
+        }
+
+        /// <summary>Roles whose public overlay can damage a Barracks. Cars and APCs cannot.</summary>
+        public static bool IsStructureAssaultRole(SkirmishRoleKind role)
+        {
+            return role == SkirmishRoleKind.Tank ||
                    role == SkirmishRoleKind.Rocketeer ||
                    role == SkirmishRoleKind.Breacher ||
                    role == SkirmishRoleKind.Siege;
@@ -132,6 +143,8 @@ namespace Game.Runtime
                 Alive = slot.AliveCount,
                 Selected = slot.Selected != 0,
                 Assault = slot.AliveCount > 0 && IsAssaultRole(slot.Role),
+                Structure = slot.AliveCount > 0 && IsStructureAssaultRole(slot.Role),
+                AttackOrdered = slot.AliveCount > 0 && slot.LastOrder == SkirmishGroupOrderKind.Attack,
                 Rifle = slot.AliveCount > 0 && slot.Role == SkirmishRoleKind.Rifle
             };
         }

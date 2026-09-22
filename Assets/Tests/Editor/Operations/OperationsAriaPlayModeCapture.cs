@@ -57,6 +57,7 @@ namespace Game.Tests.Editor.Operations
         static string _offerId = string.Empty;
         static string _districtId = string.Empty;
         static string _settleId = string.Empty;
+        static int _settledRevision = -1;
         static int _completionTick = -1;
         static bool _won;
 
@@ -355,6 +356,14 @@ namespace Game.Tests.Editor.Operations
                 return;
             }
 
+            OperationsAriaPlayModePresentation settledPresenter = OperationsAriaPlayModePresentation.Ensure();
+            if (settledPresenter == null)
+            {
+                Finish(false, "presenter_ensure_failed");
+                return;
+            }
+
+            settledPresenter.ShowMissionResult(_loop);
             CaptureNamed("play-03-terminal");
             _record = BuildRecord(missionId, seed, language);
             if (!_record.Victory)
@@ -535,11 +544,16 @@ namespace Game.Tests.Editor.Operations
             }
 
             _settleId = NextId();
-            if (!_loop.BeginSettlement(_settleId).Accepted || !_loop.CompleteSettlement(_settleId).Accepted)
+            OperationsCommandResult begun = _loop.BeginSettlement(_settleId);
+            OperationsCommandResult settled = begun.Accepted ? _loop.CompleteSettlement(_settleId) : begun;
+            if (!begun.Accepted || !settled.Accepted)
             {
                 failure = "settlement";
                 return false;
             }
+
+            // 0 is a valid starting profile revision. -1 stays the unset sentinel.
+            _settledRevision = settled.NewRevision;
 
             if (!_loop.BeginReturn().Accepted || !_loop.CompleteReturn().Accepted)
             {
@@ -706,7 +720,7 @@ namespace Game.Tests.Editor.Operations
                 ReceivedXp = _loop.CommanderXp,
                 SettlementTransactionId = _settleId,
                 ResultHash = resultHash,
-                SettledRevision = -1,
+                SettledRevision = _settledRevision,
                 BeforeDistrict = _beforeDistrict,
                 AfterDistrict = after,
                 IntentTrace = IntentTrace.ToArray(),
@@ -725,6 +739,7 @@ namespace Game.Tests.Editor.Operations
             _offerId = string.Empty;
             _districtId = string.Empty;
             _settleId = string.Empty;
+            _settledRevision = -1;
             _completionTick = -1;
             _won = false;
         }

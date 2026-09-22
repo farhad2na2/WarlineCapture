@@ -44,6 +44,10 @@ namespace Game.Operations.Content
         public int ReceivedXp;
         public string SettlementTransactionId = string.Empty;
         public string ResultHash = string.Empty;
+        /// <summary>
+        /// City-profile revision written by a successful settlement.
+        /// The profile starts at 0, so 0 is a real revision. -1 means unset.
+        /// </summary>
         public int SettledRevision = -1;
         public int[] BeforeDistrict = Array.Empty<int>();
         public int[] AfterDistrict = Array.Empty<int>();
@@ -276,7 +280,11 @@ namespace Game.Operations.Content
             }
 
             string settleId = NextId();
-            if (!loop.BeginSettlement(settleId).Accepted || !loop.CompleteSettlement(settleId).Accepted)
+            OperationsCommandResult begun = loop.BeginSettlement(settleId);
+            OperationsCommandResult settled = begun.Accepted
+                ? loop.CompleteSettlement(settleId)
+                : begun;
+            if (!begun.Accepted || !settled.Accepted)
             {
                 failure = "settlement";
                 return false;
@@ -333,7 +341,7 @@ namespace Game.Operations.Content
                 ReceivedXp = loop.CommanderXp,
                 SettlementTransactionId = settleId,
                 ResultHash = resultHash,
-                SettledRevision = -1,
+                SettledRevision = settled.NewRevision,
                 BeforeDistrict = before,
                 AfterDistrict = after,
                 IntentTrace = trace.ToArray(),

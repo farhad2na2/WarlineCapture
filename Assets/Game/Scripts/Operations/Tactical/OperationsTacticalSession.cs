@@ -641,6 +641,106 @@ namespace Game.Operations.Tactical
                         break;
                 }
             }
+
+            LatchIntactProtects();
+        }
+
+        /// <summary>
+        /// True when a Protect node and a Hold node cover the same authored site.
+        /// </summary>
+        public static bool ProtectSharesHoldSite(
+            OperationsCompiledTactical definition,
+            OperationsCompiledNode protect,
+            OperationsCompiledNode hold)
+        {
+            if (definition == null || protect == null || hold == null)
+                return false;
+            if (protect.Rule != OperationsObjectiveRuleKind.Protect ||
+                hold.Rule != OperationsObjectiveRuleKind.Hold)
+                return false;
+            if (string.IsNullOrEmpty(hold.ZoneAnchorId))
+                return false;
+            string[] targets = protect.TargetIds ?? Array.Empty<string>();
+            OperationsCompiledSpawn[] spawns = definition.Spawns ?? Array.Empty<OperationsCompiledSpawn>();
+            for (int target = 0; target < targets.Length; target++)
+            {
+                for (int spawn = 0; spawn < spawns.Length; spawn++)
+                {
+                    if (!string.Equals(spawns[spawn].ObjectId, targets[target], StringComparison.Ordinal))
+                        continue;
+                    if (string.Equals(spawns[spawn].AnchorId, hold.ZoneAnchorId, StringComparison.Ordinal))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Protect stays a live failure condition until the paired hold is complete
+        /// (or, with no paired hold, until the other required nodes are complete)
+        /// and every protected site is still intact.
+        /// </summary>
+        private void LatchIntactProtects()
+        {
+            for (int index = 0; index < _nodes.Count; index++)
+            {
+                Node node = _nodes[index];
+                if (node.Spec.Rule != OperationsObjectiveRuleKind.Protect ||
+                    node.Phase != OperationsTacticalNodePhase.Active)
+                    continue;
+                if (!ProtectedSitesIntact(node))
+                    continue;
+                if (ProtectWindowClosed(node))
+                    CompleteNode(node);
+            }
+        }
+
+        private bool ProtectedSitesIntact(Node node)
+        {
+            string[] targets = node.Spec.TargetIds ?? Array.Empty<string>();
+            if (targets.Length == 0)
+                return false;
+            for (int index = 0; index < targets.Length; index++)
+            {
+                Actor site = FindActor(targets[index]);
+                if (site == null || !site.Alive)
+                    return false;
+            }
+
+            return true;
+        }
+
+        private bool ProtectWindowClosed(Node protect)
+        {
+            bool pairedHold = false;
+            for (int index = 0; index < _nodes.Count; index++)
+            {
+                Node other = _nodes[index];
+                if (!ProtectSharesHoldSite(_definition, protect.Spec, other.Spec))
+                    continue;
+                pairedHold = true;
+                if (other.Phase != OperationsTacticalNodePhase.Complete)
+                    return false;
+            }
+
+            if (pairedHold)
+                return true;
+
+            bool otherRequired = false;
+            for (int index = 0; index < _nodes.Count; index++)
+            {
+                Node other = _nodes[index];
+                if (ReferenceEquals(other, protect) || !other.Spec.Required)
+                    continue;
+                if (other.Spec.Rule == OperationsObjectiveRuleKind.Protect)
+                    continue;
+                otherRequired = true;
+                if (other.Phase != OperationsTacticalNodePhase.Complete)
+                    return false;
+            }
+
+            return otherRequired;
         }
 
         private void ProgressClear(Node node)
@@ -875,7 +975,10 @@ namespace Game.Operations.Tactical
                 AddFact(OperationsTacticalFactKind.CargoDelivered, cargo.ObjectId);
             }
 
-            node.ProgressCount = delivered;
+            int shown = delivered;
+            if (node.Spec.TargetCount > 0 && shown > node.Spec.TargetCount)
+                shown = node.Spec.TargetCount;
+            node.ProgressCount = shown;
             if (delivered >= node.Spec.TargetCount)
                 CompleteNode(node);
         }

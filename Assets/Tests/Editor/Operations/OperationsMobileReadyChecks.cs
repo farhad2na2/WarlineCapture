@@ -152,6 +152,18 @@ namespace Game.Tests.Editor.Operations
             Require(OperationsLocalizedCopy.Require(ui.ContinueKey, "en") == "Continue");
             // Victory path: Practice CTA not required (fail/result surface is separate).
             Require(!ui.PracticeAvailable);
+            Require(loop.ProfileRevision != -1, "profile_revision");
+
+            int trust = ui.Deltas[0].Delta;
+            int intel = ui.Deltas[1].Delta;
+            int heat = ui.Deltas[2].Delta;
+            Require(loop.BeginReturn().Accepted);
+            Require(loop.CompleteReturn().Accepted);
+            Require(loop.RequestEndDay(Id()).Accepted);
+            Require(OperationsMissionResultProjection.TryRead(loop, out OperationsMissionResultUiFrame afterDay));
+            Require(afterDay.MissionId == "operation.o001", afterDay.MissionId);
+            Require(afterDay.Outcome == OperationsOutcomeKind.Victory);
+            Require(afterDay.Deltas[0].Delta == trust && afterDay.Deltas[1].Delta == intel && afterDay.Deltas[2].Delta == heat, "result_lag");
         }
 
         public static void PartialTeachConcludeSeparateFromWithdraw()
@@ -345,6 +357,75 @@ namespace Game.Tests.Editor.Operations
         }
 
 
+        public static void EscortChromeNeverExceedsRequired()
+        {
+            Require(OperationsObjectiveChrome.FormatProgress(3, 2) == "2/2", "cap_3_of_2");
+            Require(OperationsObjectiveChrome.FormatProgress(0, 2) == "0/2", "cap_0_of_2");
+            Require(OperationsObjectiveChrome.ClampProgress(3, 2) == 2, "clamp");
+            string title = OperationsLocalizedCopy.Require("operations.objective.escort_trucks", "en");
+            string primary = OperationsLocalizedCopy.Require("operations.o002.objective.primary", "en");
+            Require(title.IndexOf("two", StringComparison.Ordinal) >= 0, "escort_title_two");
+            Require(primary.IndexOf("two", StringComparison.Ordinal) >= 0, "escort_primary_two");
+            Require(title.IndexOf("ten", StringComparison.OrdinalIgnoreCase) < 0, "escort_title_ten");
+            string presentation = ReadPresentationSource();
+            Require(presentation.Contains("FormatProgress"), "presenter_caps_progress");
+        }
+
+        public static void ClinicProtectAndHoldAreNotBothActive()
+        {
+            OperationsLoopSession loop = Reach("operation.o002", 2110);
+            OperationsMapGreybox map = OperationsMapGreyboxCatalog.OldQuarter;
+            Require(map.TryGetByAlias("site.junction", out OperationsGreyboxAnchor junction));
+            Require(loop.Move("unit.d01.recon.01", junction.AnchorId).Accepted);
+            for (int step = 0; step < 8; step++)
+                loop.Advance(1);
+            Require(loop.Observe("unit.d01.recon.01", "site.d01.junction").Accepted);
+            Require(loop.Scan("unit.d01.recon.01", "site.d01.junction").Accepted);
+            for (int step = 0; step < 20; step++)
+                loop.Advance(1);
+            Require(NodeComplete(loop, "scan_junction"));
+            loop.Advance(1);
+
+            Require(loop.TryReadHud(out OperationsHudFrame hud));
+            Require(HudContains(hud, "hold_clinic"), "hold_listed");
+            Require(!HudContains(hud, "protect_clinic"), "protect_not_duplicated");
+            Require(!HudActive(hud, "hold_clinic"), "hold_not_active_yet");
+            Require(loop.TryNode("protect_clinic", out OperationsTacticalNodeState protect));
+            Require(protect.Phase == OperationsTacticalNodePhase.Active, "protect_still_watching");
+            Require(loop.TryNode("escort_trucks", out OperationsTacticalNodeState escort));
+            Require(escort.ProgressCount <= escort.TargetCount, "escort_count");
+
+            OperationsLoopSession doomed = Reach("operation.o002", 2111);
+            Require(doomed.DestroySite("site.d01.clinic").Accepted);
+            for (int step = 0; step < 5 && !doomed.MissionTerminal; step++)
+                doomed.Advance(1);
+            Require(doomed.MissionOutcome == OperationsOutcomeKind.Defeat, "protect_fail");
+            Require(doomed.TryNode("protect_clinic", out OperationsTacticalNodeState failed));
+            Require(failed.Phase == OperationsTacticalNodePhase.Failed, "protect_failed_phase");
+        }
+
+        static bool HudContains(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        static bool HudActive(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Active;
+            }
+
+            return false;
+        }
+
         public static void ContentFramesBoundIntoLandedShell()
         {
             string presentation = ReadPresentationSource();
@@ -406,6 +487,8 @@ namespace Game.Tests.Editor.Operations
             OwnershipStaysOperations();
             ContentFramesBoundIntoLandedShell();
             MobileReadyEvidenceCaptureWired();
+            EscortChromeNeverExceedsRequired();
+            ClinicProtectAndHoldAreNotBothActive();
         }
 
         public static void DeadlinesAndPartialsPreserved()

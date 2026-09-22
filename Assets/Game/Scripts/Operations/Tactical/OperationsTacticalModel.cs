@@ -203,7 +203,11 @@ namespace Game.Operations.Tactical
             int progressTicks,
             int progressCount,
             int completionTick,
-            bool materialsCharged)
+            bool materialsCharged,
+            string[] targetIds = null,
+            string zoneAnchorId = null,
+            int targetCount = 0,
+            string[] legalRouteIds = null)
         {
             NodeId = nodeId;
             Rule = rule;
@@ -213,6 +217,10 @@ namespace Game.Operations.Tactical
             ProgressCount = progressCount;
             CompletionTick = completionTick;
             MaterialsCharged = materialsCharged;
+            TargetIds = targetIds ?? Array.Empty<string>();
+            ZoneAnchorId = zoneAnchorId ?? string.Empty;
+            TargetCount = targetCount;
+            LegalRouteIds = legalRouteIds ?? Array.Empty<string>();
         }
 
         public string NodeId { get; }
@@ -223,6 +231,11 @@ namespace Game.Operations.Tactical
         public int ProgressCount { get; }
         public int CompletionTick { get; }
         public bool MaterialsCharged { get; }
+        /// <summary>Public authored objective targets (sites/units/routes), not hidden fog facts.</summary>
+        public string[] TargetIds { get; }
+        public string ZoneAnchorId { get; }
+        public int TargetCount { get; }
+        public string[] LegalRouteIds { get; }
     }
 
     public readonly struct OperationsTacticalActorState

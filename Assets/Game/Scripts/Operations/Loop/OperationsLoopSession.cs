@@ -81,6 +81,17 @@ namespace Game.Operations.Loop
         public string ContentHash => _store.Committed.ContentHash;
         public string ResultHash => _store.Committed.ResultHash;
         public string PublishedCheckpointId => _store.Committed.PublishedCheckpointId;
+        public string MissionId => _store.Committed.MissionId;
+        public string MapId => _store.Committed.MapId;
+        public string OfferId => _store.Committed.OfferId;
+        public string RunId => _store.Committed.RunId;
+        public string DistrictId => _store.Committed.DistrictId;
+        public string ScenarioId => _store.Committed.ScenarioId;
+        public string TransactionId => _store.Committed.TransactionId;
+        public int Seed => _store.Committed.Seed;
+        public int AttemptOrdinal => _store.Committed.AttemptOrdinal;
+        public OperationsDifficultyKind Difficulty =>
+            _strategic.HasActiveRun ? _strategic.Save.activeRun.difficulty : OperationsDifficultyKind.Regular;
         public bool HasMission => _mission != null;
         public bool HasStagedCheckpoint => _store.HasStaged;
         public bool HasPending => _strategic.HasPendingSave || _store.HasPending;
@@ -738,6 +749,63 @@ namespace Game.Operations.Loop
             return _mission.TryGetActor(objectId, out state);
         }
 
+        /// <summary>
+        /// Public spawned actor mirror for ARIA observation. Same roster the HUD/protection counters use.
+        /// </summary>
+        public OperationsTacticalActorState[] CopyPublicActors()
+        {
+            if (!HasMission)
+                return Array.Empty<OperationsTacticalActorState>();
+            return _mission.CopyActors();
+        }
+
+        /// <summary>
+        /// Public tactical facts emitted by legal observe/scan/interact channels.
+        /// </summary>
+        public OperationsTacticalFact[] CopyPublicFacts()
+        {
+            if (!HasMission)
+                return Array.Empty<OperationsTacticalFact>();
+            return _mission.CopyFacts();
+        }
+
+        /// <summary>
+        /// Resolves a Move destination for a public site/unit focus to the nearest greybox anchor.
+        /// </summary>
+        public bool TryResolveMoveAnchor(string focusId, out string anchorId)
+        {
+            anchorId = string.Empty;
+            if (string.IsNullOrEmpty(focusId) || !OperationsMapGreyboxCatalog.TryGet(MapId, out OperationsMapGreybox map))
+                return false;
+            if (map.TryGetById(focusId, out _))
+            {
+                anchorId = focusId;
+                return true;
+            }
+
+            if (!TryActor(focusId, out OperationsTacticalActorState actor) || !actor.Spawned)
+                return false;
+
+            float best = float.MaxValue;
+            string bestId = string.Empty;
+            for (int index = 0; index < map.Anchors.Length; index++)
+            {
+                OperationsGreyboxAnchor anchor = map.Anchors[index];
+                float dx = anchor.X - actor.X;
+                float dz = anchor.Z - actor.Z;
+                float distance = (dx * dx) + (dz * dz);
+                if (distance >= best)
+                    continue;
+                best = distance;
+                bestId = anchor.AnchorId;
+            }
+
+            if (bestId.Length == 0)
+                return false;
+            anchorId = bestId;
+            return true;
+        }
+
         public bool WaveArmed(int group) => HasMission && _mission.IsWaveArmed(group);
         public bool WaveSpawned(int group) => HasMission && _mission.IsWaveSpawned(group);
 
@@ -830,7 +898,11 @@ namespace Game.Operations.Loop
                 else
                     required.Add(row);
                 if (focus.Length == 0 && !node.Optional && state.Phase == OperationsTacticalNodePhase.Active)
-                    focus = node.TargetIds.Length > 0 ? node.TargetIds[0] : node.ZoneAnchorId;
+                {
+                    focus = FirstPublicFocus(node, state);
+                    if (focus.Length == 0)
+                        focus = node.ZoneAnchorId;
+                }
                 if (node.Rule == OperationsObjectiveRuleKind.Escort && node.TargetIds.Length > 0)
                     escort = node.TargetIds[0];
             }
@@ -871,6 +943,35 @@ namespace Game.Operations.Loop
                 focus,
                 _mission.IsPaused);
             return true;
+        }
+
+        string FirstPublicFocus(OperationsCompiledNode node, OperationsTacticalNodeState _)
+        {
+            string[] targets = node.TargetIds ?? Array.Empty<string>();
+            if (targets.Length == 0)
+                return string.Empty;
+            if (node.Rule != OperationsObjectiveRuleKind.Scan)
+                return targets[0];
+
+            OperationsTacticalFact[] facts = _mission.CopyFacts();
+            for (int index = 0; index < targets.Length; index++)
+            {
+                if (!HasFact(facts, OperationsTacticalFactKind.ScanConfirmed, targets[index]))
+                    return targets[index];
+            }
+
+            return targets[0];
+        }
+
+        static bool HasFact(OperationsTacticalFact[] facts, OperationsTacticalFactKind kind, string objectId)
+        {
+            for (int index = 0; index < facts.Length; index++)
+            {
+                if (facts[index].Kind == kind && facts[index].ObjectId == objectId)
+                    return true;
+            }
+
+            return false;
         }
 
         public bool TryReadResult(out OperationsResultFrame frame)

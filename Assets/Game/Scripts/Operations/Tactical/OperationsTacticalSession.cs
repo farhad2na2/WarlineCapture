@@ -172,6 +172,17 @@ namespace Game.Operations.Tactical
                 return false;
             }
 
+            string[] targets = node.Spec.TargetIds ?? Array.Empty<string>();
+            var targetCopy = new string[targets.Length];
+            Array.Copy(targets, targetCopy, targets.Length);
+            string[] routes = Array.Empty<string>();
+            if (node.Spec.LegalRoutes != null && node.Spec.LegalRoutes.Length > 0)
+            {
+                routes = new string[node.Spec.LegalRoutes.Length];
+                for (int route = 0; route < node.Spec.LegalRoutes.Length; route++)
+                    routes[route] = node.Spec.LegalRoutes[route].RouteId;
+            }
+
             state = new OperationsTacticalNodeState(
                 node.Spec.NodeId,
                 node.Spec.Rule,
@@ -180,7 +191,11 @@ namespace Game.Operations.Tactical
                 node.ProgressTicks,
                 node.ProgressCount,
                 node.CompletionTick,
-                node.MaterialsCharged);
+                node.MaterialsCharged,
+                targetCopy,
+                node.Spec.ZoneAnchorId,
+                node.Spec.TargetCount,
+                routes);
             return true;
         }
 

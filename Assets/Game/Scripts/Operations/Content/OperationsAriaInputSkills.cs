@@ -51,6 +51,8 @@ namespace Game.Operations.Content
         /// Drives a full visible-control win for an authored vertical-slice mission.
         /// Returns false if the terminal outcome is not Victory. This wires the path;
         /// Programmer 2 / QA still record ARIA evidence later.
+        /// Host coding checks may use this mission-keyed path; ACCEPTANCE AriaWon
+        /// evidence must use <see cref="TryPlayUnassistedWin"/> instead.
         /// </summary>
         public static bool TryPlayVisibleControlWin(OperationsLoopSession loop, string missionId)
         {
@@ -61,6 +63,76 @@ namespace Game.Operations.Content
             if (missionId == "operation.o003")
                 return PlayO003(loop);
             return false;
+        }
+
+        /// <summary>
+        /// Unassisted planner-driven win through public observation + Loop visible-control APIs.
+        /// Does not switch on mission IDs. Suitable as the Operations-owned recordable path
+        /// until shipping Watch virtual-touch is seam-approved for Operations.
+        /// </summary>
+        public static bool TryPlayUnassistedWin(OperationsLoopSession loop, int maxSteps = 1200)
+        {
+            if (loop == null)
+                throw new ArgumentNullException(nameof(loop));
+            if (!loop.HasMission)
+                return false;
+
+            for (int step = 0; step < maxSteps && !loop.MissionTerminal; step++)
+            {
+                OperationsAriaIntent[] plan = OperationsAriaObjectivePlanner.Plan(loop);
+                OperationsAriaIntent intent = default;
+                bool haveIntent = false;
+                for (int index = 0; index < plan.Length; index++)
+                {
+                    if (plan[index].Skill == OperationsAriaSkillKind.Focus)
+                        continue;
+                    intent = plan[index];
+                    haveIntent = true;
+                    break;
+                }
+
+                if (!haveIntent)
+                {
+                    loop.Advance(1);
+                    continue;
+                }
+
+                if (intent.Skill == OperationsAriaSkillKind.Extract)
+                {
+                    for (int index = 0; index < plan.Length; index++)
+                    {
+                        if (plan[index].Skill != OperationsAriaSkillKind.Extract)
+                            continue;
+                        TryExecute(loop, plan[index]);
+                    }
+
+                    loop.Advance(1);
+                    continue;
+                }
+
+                if (intent.ActorId.Length > 0 &&
+                    loop.TryActor(intent.ActorId, out OperationsTacticalActorState actor) &&
+                    actor.ChannelTicks > 0 &&
+                    (intent.Skill == OperationsAriaSkillKind.Scan ||
+                     intent.Skill == OperationsAriaSkillKind.Interact ||
+                     intent.Skill == OperationsAriaSkillKind.Repair ||
+                     intent.Skill == OperationsAriaSkillKind.Observe))
+                {
+                    loop.Advance(1);
+                    continue;
+                }
+
+                OperationsTacticalCommandResult result = TryExecute(loop, intent);
+                if (!result.Accepted && intent.Skill == OperationsAriaSkillKind.Move)
+                {
+                    loop.Advance(1);
+                    continue;
+                }
+
+                loop.Advance(1);
+            }
+
+            return loop.MissionTerminal && loop.MissionOutcome == OperationsOutcomeKind.Victory;
         }
 
         static bool PlayO001(OperationsLoopSession loop)

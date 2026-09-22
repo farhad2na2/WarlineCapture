@@ -35,7 +35,16 @@ namespace Game.UI.Runtime
             if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (watchBuild == null) watchBuild = Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
             var view = new AriaSkirmishObservation { Active = true, Finished = model.Finished || model.StartupFailed,
-                Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen };
+                Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen,
+                ExpandedSession = model.Expanded, PlayerDesignatedAlive = model.PlayerDesignatedAlive,
+                EnemyDesignatedAlive = model.EnemyDesignatedAlive };
+            if (model.Expanded && UiShellRuntimeGateway.TryReadExpandedSquadPage(out UiExpandedSquadPage page))
+            {
+                view.ExpandedAssaultMask = page.AssaultMask;
+                view.ExpandedSelectedMask = page.SelectedMask;
+                view.ExpandedNextPage = page.NextPage;
+                view.ExpandedPageIndex = page.PageIndex;
+            }
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var squads))
             {
                 view.SelectedSlot = watchSquads != null ? (int)watchSquads.VisibleSelectedSlot - 1 : -1;

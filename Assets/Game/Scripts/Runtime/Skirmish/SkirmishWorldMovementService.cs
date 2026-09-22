@@ -42,6 +42,10 @@ namespace Game.Runtime
                 return;
             var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
             intent.Active = 0;
+            intent.Order = SkirmishGroupOrderKind.Hold;
+            intent.AttackTarget = Entity.Null;
+            intent.Engaged = 0;
+            intent.Cooldown = 0f;
             em.SetComponentData(unit, intent);
         }
 
@@ -64,6 +68,13 @@ namespace Game.Runtime
                 var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
                 if (intent.Active == 0)
                     continue;
+                if (intent.Engaged != 0)
+                {
+                    SyncVisual(em, unit);
+                    moved++;
+                    continue;
+                }
+
                 if (em.HasComponent<HoldPositionOrderTag>(unit))
                 {
                     intent.Active = 0;

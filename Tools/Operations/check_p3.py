@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -57,6 +58,26 @@ def check_assembly() -> None:
         for banned in BANNED_SOURCE:
             if banned in text:
                 fail(f"banned={banned} file={path.name}")
+    check_meta_guids()
+
+
+def check_meta_guids() -> None:
+    guid_line = re.compile(r"^guid: ([0-9a-f]{32})\n", re.M)
+    metas = list(LOOP_ROOT.glob("*.meta"))
+    metas.extend((ROOT / "Assets/Tests/Editor/Operations").glob("OperationsP3*.meta"))
+    seen = set()
+    for path in metas:
+        data = path.read_bytes()
+        if data.startswith(b"\xef\xbb\xbf") or b"\r" in data or not data.endswith(b"\n"):
+            fail(f"meta_encoding={path.name}")
+        text = data.decode("utf-8")
+        match = guid_line.search(text)
+        if match is None:
+            fail(f"meta_guid={path.name}")
+        guid = match.group(1)
+        if guid in seen:
+            fail(f"meta_duplicate={guid}")
+        seen.add(guid)
 
 
 def check_ownership() -> None:

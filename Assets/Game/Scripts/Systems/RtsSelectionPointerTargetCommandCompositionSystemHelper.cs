@@ -548,16 +548,14 @@ namespace Game.Runtime
             if (query.IsEmptyIgnoreFilter)
                 return false;
 
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            // Chunk iteration kept an EntityTypeHandle that roster/spawn structural
+            // changes in this same Match view update had already invalidated.
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (!em.Exists(entity))
-                        continue;
+                Entity entity = entities[i];
+                if (!em.Exists(entity))
+                    continue;
 
                     if (TransportBoardingCommandSystem.IsSoldierBoardingCandidate(em, entity))
                         return true;
@@ -570,7 +568,6 @@ namespace Game.Runtime
                     {
                         return true;
                     }
-                }
             }
 
             return false;

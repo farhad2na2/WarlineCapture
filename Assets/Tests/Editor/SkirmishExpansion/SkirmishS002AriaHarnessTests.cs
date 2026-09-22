@@ -852,6 +852,52 @@ namespace Game.Tests.Editor
                 0.001f);
         }
 
+        [Test]
+        public void RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating()
+        {
+            using var world = new World(nameof(RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating));
+            BootPlayingSession(world, out Entity session);
+            EntityManager em = world.EntityManager;
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Entity barracks = DesignatedBase(em, 2);
+            Assert.AreNotEqual(Entity.Null, tank);
+            em.RemoveComponent<SkirmishRoleOverlayComponent>(tank);
+            em.RemoveComponent<UnitHealth>(tank);
+            em.RemoveComponent<SkirmishRoleOverlayComponent>(barracks);
+            em.RemoveComponent<UnitHealth>(barracks);
+
+            world.GetOrCreateSystem<SkirmishRosterProjectionSystem>().Update(world.Unmanaged);
+
+            SkirmishRoleOverlayComponent overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(tank);
+            Assert.AreEqual(1, overlay.Applied);
+            Assert.Greater(overlay.Damage, 0);
+            Assert.Greater(overlay.RangeWorld, 0f);
+            Assert.IsTrue((overlay.TargetDomains & SkirmishTargetDomain.Structure) != 0);
+            Assert.Greater(em.GetComponentData<UnitHealth>(tank).Max, 0);
+            Assert.Greater(em.GetComponentData<UnitHealth>(barracks).Max, 0);
+            Assert.AreEqual(SkirmishPhase.Playing, em.GetComponentData<SkirmishMatchState>(session).Phase);
+        }
+
+        [Test]
+        public void FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery()
+        {
+            using var world = new World(nameof(FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery));
+            BootPlayingSession(world, out Entity session);
+            EntityManager em = world.EntityManager;
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            SkirmishExpandedSessionComponent expanded = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            expanded.Phase = SkirmishSessionPhase.Finished;
+            em.SetComponentData(session, expanded);
+
+            world.GetOrCreateSystem<SkirmishSessionCleanupSystem>().Update(world.Unmanaged);
+
+            Assert.IsFalse(em.Exists(tank));
+            Assert.AreEqual(
+                SkirmishSessionPhase.Cleaning,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            CheckedInRunsCsvStaysHeaderOnly();
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -878,6 +924,8 @@ namespace Game.Tests.Editor
                 suite.PayloadLoggersDoNotStampVictory();
                 suite.SimulationStallFailsFastAfterGrace();
                 suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
+                suite.RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating();
+                suite.FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }
             catch (Exception exception)

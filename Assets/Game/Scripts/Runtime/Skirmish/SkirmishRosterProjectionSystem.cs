@@ -11,25 +11,32 @@ namespace Game.Runtime
     public partial struct SkirmishRosterProjectionSystem : ISystem
     {
         private EntityQuery ownedQuery;
+        private EntityQuery sessions;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
             ownedQuery = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishAttemptOwnedComponent>());
+            sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            // WriteOverlay adds components. A SystemAPI.Query foreach makes that
+            // structural change illegal, so the live match threw before any tank
+            // received Barracks damage.
+            using NativeArray<Entity> entities = sessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (session.ValueRO.IsLegacy != 0 || session.ValueRO.SpawnComplete == 0)
+                Entity entity = entities[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0 || session.SpawnComplete == 0)
                     continue;
                 if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
                     continue;
                 SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
-                Apply(em, ownedQuery, session.ValueRO.SessionId, setup);
+                Apply(em, ownedQuery, session.SessionId, setup);
             }
         }
 

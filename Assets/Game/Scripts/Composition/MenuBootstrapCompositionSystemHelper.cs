@@ -644,11 +644,17 @@ namespace Game.Composition
 
             if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
             {
-                MatchAISettingsStartupProjection.Project(
-                    entityManager,
-                    SkirmishLaunchProjection.TryGet(entityManager, out Entity skirmishEntity, out _)
-                        ? entityManager.GetComponentObject<SkirmishLaunchSnapshot>(skirmishEntity).Configuration.ToAISettingsSnapshot()
-                        : Game.Configs.AISettingsSnapshot.Defaults);
+                // Expanded S002 queues SkirmishMatchState without a legacy snapshot.
+                // Reading it unconditionally threw and aborted the rest of this Update.
+                Game.Configs.AISettingsSnapshot aiSettings = Game.Configs.AISettingsSnapshot.Defaults;
+                if (SkirmishLaunchProjection.TryGet(entityManager, out Entity skirmishEntity, out _) &&
+                    entityManager.HasComponent<SkirmishLaunchSnapshot>(skirmishEntity))
+                {
+                    aiSettings = entityManager.GetComponentObject<SkirmishLaunchSnapshot>(skirmishEntity)
+                        .Configuration.ToAISettingsSnapshot();
+                }
+
+                MatchAISettingsStartupProjection.Project(entityManager, aiSettings);
                 Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
             }
             else

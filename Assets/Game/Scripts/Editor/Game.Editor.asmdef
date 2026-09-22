@@ -10,6 +10,7 @@
         "Game.Narrative.Contracts",
         "Game.Rendering",
         "Game.Rendering.Contracts",
+        "Game.Skirmish.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Shell.Contracts.Ecs",

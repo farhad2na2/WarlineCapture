@@ -1,0 +1,113 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e090c2d9046497a9135ecd6be1cc342, type: 3}
+  m_Name: SkirmishRoleCatalog_V1
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishRoleCatalogConfig
+  catalogId: skirmish.roles.v1
+  contentVersion: 1
+  roles:
+  - RoleId: role.rifle
+    Kind: 1
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_02_Alt_04_Config.asset
+    RuntimePrefabKey: Unit_Chr_Soldier_Male_02_Alt_04
+    Producer: 1
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.gunner
+    Kind: 2
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Soldier_Male_01_Config.asset
+    RuntimePrefabKey: Unit_Chr_Soldier_Male_01
+    Producer: 1
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.rocketeer
+    Kind: 5
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Chr_Ghillie_Male_01_Config.asset
+    RuntimePrefabKey: Unit_Chr_Ghillie_Male_01
+    Producer: 1
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.car
+    Kind: 6
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Light_Armored_Car_Config.asset
+    RuntimePrefabKey: Unit_Veh_Light_Armored_Car
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.apc_armored
+    Kind: 8
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_APC_Slow_Config.asset
+    RuntimePrefabKey: Unit_Veh_APC_Slow
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.tank
+    Kind: 10
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Tank_USA_Config.asset
+    RuntimePrefabKey: Unit_Veh_Tank_USA
+    Producer: 2
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.aa
+    Kind: 11
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config.asset
+    RuntimePrefabKey: Unit_Veh_Missle_Launcher_Air
+    Producer: 2
+    RequiredReadiness: 1
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.attack_heli_light
+    Kind: 15
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Small_Config.asset
+    RuntimePrefabKey: Unit_Veh_Helicopter_Attack_Small
+    Producer: 3
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.attack_heli
+    Kind: 16
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Helicopter_Attack_Config.asset
+    RuntimePrefabKey: Unit_Veh_Helicopter_Attack
+    Producer: 3
+    RequiredReadiness: 2
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.fighter
+    Kind: 18
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_02_Config.asset
+    RuntimePrefabKey: Unit_Veh_Jet_02
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.strike
+    Kind: 19
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Jet_01_Config.asset
+    RuntimePrefabKey: Unit_Veh_Jet_01
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0
+  - RoleId: role.transport_plane
+    Kind: 20
+    SourceConfigPath: Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Plane_Transport_Config.asset
+    RuntimePrefabKey: Unit_Veh_Plane_Transport
+    Producer: 4
+    RequiredReadiness: 3
+    Disposition: 1
+    CapabilityCertified: 0

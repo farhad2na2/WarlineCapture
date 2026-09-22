@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "key": "skirmish.s003.title",
+      "source": "Desert Base · Base Assault · Air Mobile · Field",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرا · حمله به پایگاه · هوابرد · پایگاه صحرایی"
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.brief",
+      "source": "Hold a light ground screen and contest the highway. Build Helipad before you commit attack helicopters. Escort an APC push or transition to air while you guard supply.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یک پوشش زمینی سبک نگه دار و بزرگراه را بگیر. قبل از هلی‌کوپترهای تهاجمی پد بالگرد بساز. یا با نفربر فشار بده یا به هوا برو و تدارکات را نگه دار."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.objective",
+      "source": "Destroy the original enemy Barracks while your original Barracks survives.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.warning.offensive_air",
+      "source": "Field Base cannot queue attack helicopters or jets until Helipad or Airport and matching readiness are ready.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرایی تا وقتی پد بالگرد یا فرودگاه و آمادگی متناظر آماده نباشد هلی‌کوپتر تهاجمی یا جت صف نمی‌کند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.warning.replacement_base",
+      "source": "A replacement Barracks is not the designated victory base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه جایگزین پایگاه پیروزی تعیین‌شده نیست."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.result.victory",
+      "source": "Enemy main base destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی دشمن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.result.defeat",
+      "source": "Your main base was destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه اصلی تو نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.result.draw_bases",
+      "source": "Both original bases were destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو پایگاه اصلی نابود شدند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.result.draw_deadline",
+      "source": "Time expired with both original bases standing.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "زمان تمام شد و هر دو پایگاه اصلی سالم ماندند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s003.result.surrender",
+      "source": "Surrender accepted.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تسلیم پذیرفته شد."
+        }
+      ]
+    }
+  ]
+}

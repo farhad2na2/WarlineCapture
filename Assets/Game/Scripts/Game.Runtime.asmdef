@@ -9,6 +9,7 @@
         "Game.Runtime.Combat",
         "Game.Runtime.Pathfinding",
         "Game.Rendering.Contracts",
+        "Game.Skirmish.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "sniveler-code.gpu-animation",

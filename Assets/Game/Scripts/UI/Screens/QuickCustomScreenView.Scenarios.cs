@@ -115,7 +115,9 @@ namespace Game.UI.Runtime
                     ? (isSelected
                         ? (fa ? "آماده · انتخاب‌شده" : "READY · SELECTED")
                         : (fa ? "آماده · انتخاب" : "READY · SELECT"))
-                    : (fa ? "در حال ساخت" : "PLANNED");
+                    : SkirmishExpandedCopyProjection.IsExpandedS002(entry.ScenarioId)
+                        ? (fa ? "در حال پیشرفت" : "IN PROGRESS")
+                        : (fa ? "در حال ساخت" : "PLANNED");
                 UiLocalizedText.Set(
                     button.GetComponentInChildren<TMP_Text>(),
                     entry.ScenarioId + "  " + ResolveCardTitle(entry) + "\n" + status);
@@ -152,7 +154,14 @@ namespace Game.UI.Runtime
 
             if (scenarioDescription != null)
             {
-                if (!selected.IsPlayable)
+                if (SkirmishExpandedCopyProjection.IsExpandedS002(selected.ScenarioId) &&
+                    SkirmishExpandedCopyProjection.TryResolveS002LibraryBriefing(
+                        fa ? GameLocalization.PersianLocaleCode : GameLocalization.EnglishLocaleCode,
+                        out SkirmishLibraryBriefing briefing))
+                {
+                    UiLocalizedText.Set(scenarioDescription, briefing.Brief);
+                }
+                else if (!selected.IsPlayable)
                 {
                     UiLocalizedText.Set(
                         scenarioDescription,
@@ -386,7 +395,11 @@ namespace Game.UI.Runtime
             if (catalog != null)
             {
                 for (int i = 0; i < catalog.Entries.Count; i++)
-                    _catalogEntries.Add(catalog.Entries[i]);
+                {
+                    SkirmishBattleCatalogEntry entry = catalog.Entries[i];
+                    SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref entry);
+                    _catalogEntries.Add(entry);
+                }
             }
             else
                 SeedFallbackPlayables(_catalogEntries);

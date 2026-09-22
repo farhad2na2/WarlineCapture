@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38db206c95b74fabb1a6b12ca9710305, type: 3}
+  m_Name: SkirmishUpgrade_V1
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishUpgradeConfig
+  catalogId: skirmish.upgrades.v1
+  startingCategoryLevel: 0
+  readinessResearchMaterials: 240
+  readinessResearchSeconds: 45
+  contentVersion: 1
+

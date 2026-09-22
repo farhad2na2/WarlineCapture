@@ -155,10 +155,13 @@ namespace Game.UI.Runtime
                     ResolveSelectedPlayable(out SkirmishBattleCatalogEntry selected);
                     string titleKey;
                     string titleEnglish;
-                    if (selected.IsPlayable && !string.IsNullOrEmpty(selected.TitleKey))
+                    if (!string.IsNullOrEmpty(selected.TitleKey) &&
+                        (selected.IsPlayable || SkirmishExpandedCopyProjection.IsExpandedS002(selected.ScenarioId)))
                     {
                         titleKey = selected.TitleKey;
-                        titleEnglish = selected.TitleEnglish;
+                        titleEnglish = string.IsNullOrEmpty(selected.TitleEnglish)
+                            ? "Desert Base · Base Assault · Established"
+                            : selected.TitleEnglish;
                     }
                     else if (!string.IsNullOrEmpty(selected.TitleEnglish))
                     {

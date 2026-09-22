@@ -15,7 +15,7 @@ namespace Game.Tests.Editor.Operations
         [Test] public void RosterLedgerDoesNotInventExistingTypes() => OperationsP0Checks.RosterLedgerDoesNotInventExistingTypes();
         [Test] public void DashboardOrdinalsMatchVerifiedUiEnum() => OperationsP0Checks.DashboardOrdinalsMatchVerifiedUiEnum();
         [Test] public void AssemblyManifestForbidsSharedEdits() => OperationsP0Checks.AssemblyManifestForbidsSharedEdits();
-        [Test] public void SharedIdentityStillRejectsOperationsNamespace() => OperationsP0Checks.SharedIdentityStillRejectsOperationsNamespace();
+        [Test] public void SharedIdentityAcceptsPublishedOperationsNamespace() => OperationsP0Checks.SharedIdentityAcceptsPublishedOperationsNamespace();
         [Test] public void HostFilesStayInsideOperationsOwnership() => OperationsP0Checks.HostFilesStayInsideOperationsOwnership();
         [Test] public void ShadowProjectIsIsolatedFromSharedCheckout() => OperationsP0Checks.ShadowProjectIsIsolatedFromSharedCheckout();
     }

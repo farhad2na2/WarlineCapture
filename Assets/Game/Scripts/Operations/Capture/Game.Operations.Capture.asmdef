@@ -1,0 +1,18 @@
+{
+    "name": "Game.Operations.Capture",
+    "rootNamespace": "Game.Operations.Capture",
+    "references": [
+        "Game.Operations.Contracts",
+        "Game.Operations.Loop",
+        "Game.Operations.Content"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

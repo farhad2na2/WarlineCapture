@@ -83,13 +83,14 @@ namespace Game.Operations.Loop
 
     public readonly struct OperationsHudObjective
     {
-        public OperationsHudObjective(string nodeId, bool optional, bool complete, bool failed, int progress)
+        public OperationsHudObjective(string nodeId, bool optional, bool complete, bool failed, int progress, bool active)
         {
             NodeId = nodeId ?? string.Empty;
             Optional = optional;
             Complete = complete;
             Failed = failed;
             Progress = progress;
+            Active = active;
         }
 
         public string NodeId { get; }
@@ -97,6 +98,31 @@ namespace Game.Operations.Loop
         public bool Complete { get; }
         public bool Failed { get; }
         public int Progress { get; }
+        /// <summary>True only while the node is in the active phase. Inactive nodes are not active.</summary>
+        public bool Active { get; }
+    }
+
+    /// <summary>
+    /// Objective chrome helpers. Counts never render above the authored required total.
+    /// </summary>
+    public static class OperationsObjectiveChrome
+    {
+        public static int ClampProgress(int current, int required)
+        {
+            if (current < 0)
+                current = 0;
+            if (required > 0 && current > required)
+                return required;
+            return current;
+        }
+
+        public static string FormatProgress(int current, int required)
+        {
+            int cap = required < 1 ? 1 : required;
+            int shown = ClampProgress(current, cap);
+            return shown.ToString(System.Globalization.CultureInfo.InvariantCulture) + "/" +
+                   cap.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
     }
 
     public readonly struct OperationsHudFrame

@@ -82,6 +82,15 @@ namespace Game.Operations.Loop
         public string ResultHash => _store.Committed.ResultHash;
         public string PublishedCheckpointId => _store.Committed.PublishedCheckpointId;
         public string MissionId => _store.Committed.MissionId;
+        /// <summary>Committed city-profile revision. Starts at 0; -1 is not a profile revision.</summary>
+        public int ProfileRevision => _strategic.Revision;
+
+        /// <summary>
+        /// Revision written onto the active campaign run by the last accepted save.
+        /// -1 means the run is absent, which is not a successful settlement stamp.
+        /// </summary>
+        public int CampaignRunRevision =>
+            _strategic.HasActiveRun ? _strategic.Save.activeRun.revision : -1;
         public string MapId => _store.Committed.MapId;
         public string OfferId => _store.Committed.OfferId;
         public string RunId => _store.Committed.RunId;
@@ -401,6 +410,7 @@ namespace Game.Operations.Loop
             next.Practice = attempt.practice;
             next.RefundEligible = false;
             next.BeforeMetrics = Metrics(NumberOf(attempt.districtId));
+            next.AfterMetrics = string.Empty;
             next.CreditsAtLaunch = Credits;
             next.XpAtLaunch = CommanderXp;
             next.ActionPointsAtLaunch = ActionPoints;
@@ -558,12 +568,20 @@ namespace Game.Operations.Loop
             OperationsCommandResult result = _strategic.RetrySave(commandId);
             if (!result.Accepted)
                 return result;
-            if (_store.Committed.Phase != OperationsLoopPhase.Settled)
+            // Freeze the district that this settlement just wrote so a later day or
+            // mission cannot rewrite the result card.
+            string after = string.Empty;
+            if (!string.IsNullOrEmpty(_store.Committed.DistrictId))
+                after = Metrics(NumberOf(_store.Committed.DistrictId));
+            if (_store.Committed.Phase != OperationsLoopPhase.Settled ||
+                string.IsNullOrEmpty(_store.Committed.AfterMetrics))
             {
                 Commit(document =>
                 {
                     document.Phase = OperationsLoopPhase.Settled;
                     document.RefundEligible = false;
+                    if (after.Length > 0)
+                        document.AfterMetrics = after;
                 });
             }
 
@@ -726,6 +744,12 @@ namespace Game.Operations.Loop
 
         public bool MissionTerminal => HasMission && _mission.IsTerminal;
         public OperationsOutcomeKind MissionOutcome => HasMission ? _mission.Outcome : OperationsOutcomeKind.None;
+
+        /// <summary>
+        /// Play HUD may read IN PROGRESS only while the mission is still live.
+        /// The tick that latches Victory or Defeat leaves this in that same step.
+        /// </summary>
+        public bool PlayHudInProgress => HasMission && !_mission.IsTerminal;
 
         /// <summary>
         /// Conclude affordance for Partial teach UX. True only when the tactical
@@ -897,12 +921,16 @@ namespace Game.Operations.Loop
                 OperationsCompiledNode node = _definition.Nodes[index];
                 if (!_mission.TryGetNode(node.NodeId, out OperationsTacticalNodeState state))
                     continue;
+                int progress = state.ProgressCount > 0 ? state.ProgressCount : state.ProgressTicks;
+                if (state.TargetCount > 1)
+                    progress = OperationsObjectiveChrome.ClampProgress(state.ProgressCount, state.TargetCount);
                 var row = new OperationsHudObjective(
                     node.NodeId,
                     node.Optional,
                     state.Phase == OperationsTacticalNodePhase.Complete,
                     state.Phase == OperationsTacticalNodePhase.Failed,
-                    state.ProgressCount > 0 ? state.ProgressCount : state.ProgressTicks);
+                    progress,
+                    state.Phase == OperationsTacticalNodePhase.Active);
                 if (node.Optional)
                     optional.Add(row);
                 else
@@ -1010,12 +1038,15 @@ namespace Game.Operations.Loop
             var next = new string[offers.Length];
             for (int index = 0; index < offers.Length; index++)
                 next[index] = offers[index].missionId;
+            string afterText = _store.Committed.AfterMetrics;
+            if (string.IsNullOrEmpty(afterText))
+                afterText = Metrics(NumberOf(_store.Committed.DistrictId));
             frame = new OperationsResultFrame(
                 result.Outcome,
                 result.TerminalReason,
                 _store.Committed.DistrictId,
                 ParseMetrics(_store.Committed.BeforeMetrics),
-                ParseMetrics(Metrics(NumberOf(_store.Committed.DistrictId))),
+                ParseMetrics(afterText),
                 result.CivilianDeaths,
                 result.TaskForceLosses,
                 credits,

@@ -152,6 +152,18 @@ namespace Game.Tests.Editor.Operations
             Require(OperationsLocalizedCopy.Require(ui.ContinueKey, "en") == "Continue");
             // Victory path: Practice CTA not required (fail/result surface is separate).
             Require(!ui.PracticeAvailable);
+            Require(loop.ProfileRevision >= 0, "profile_revision");
+
+            int trust = ui.Deltas[0].Delta;
+            int intel = ui.Deltas[1].Delta;
+            int heat = ui.Deltas[2].Delta;
+            Require(loop.BeginReturn().Accepted);
+            Require(loop.CompleteReturn().Accepted);
+            Require(loop.RequestEndDay(Id()).Accepted);
+            Require(OperationsMissionResultProjection.TryRead(loop, out OperationsMissionResultUiFrame afterDay));
+            Require(afterDay.MissionId == "operation.o001", afterDay.MissionId);
+            Require(afterDay.Outcome == OperationsOutcomeKind.Victory);
+            Require(afterDay.Deltas[0].Delta == trust && afterDay.Deltas[1].Delta == intel && afterDay.Deltas[2].Delta == heat, "result_lag");
         }
 
         public static void PartialTeachConcludeSeparateFromWithdraw()
@@ -345,6 +357,135 @@ namespace Game.Tests.Editor.Operations
         }
 
 
+        public static void EscortChromeNeverExceedsRequired()
+        {
+            Require(OperationsObjectiveChrome.FormatProgress(3, 2) == "2/2", "cap_3_of_2");
+            Require(OperationsObjectiveChrome.FormatProgress(0, 2) == "0/2", "cap_0_of_2");
+            Require(OperationsObjectiveChrome.ClampProgress(3, 2) == 2, "clamp");
+            string title = OperationsLocalizedCopy.Require("operations.objective.escort_trucks", "en");
+            string primary = OperationsLocalizedCopy.Require("operations.o002.objective.primary", "en");
+            Require(title.IndexOf("two", StringComparison.Ordinal) >= 0, "escort_title_two");
+            Require(primary.IndexOf("two", StringComparison.Ordinal) >= 0, "escort_primary_two");
+            Require(title.IndexOf("ten", StringComparison.OrdinalIgnoreCase) < 0, "escort_title_ten");
+            string presentation = ReadPresentationSource();
+            Require(presentation.Contains("FormatProgress"), "presenter_caps_progress");
+        }
+
+        public static void ProtectChecklistLatchesWithOutcome()
+        {
+            OperationsLoopSession loop = Reach("operation.o002", 2110);
+            OperationsMapGreybox map = OperationsMapGreyboxCatalog.OldQuarter;
+            Require(map.TryGetByAlias("site.junction", out OperationsGreyboxAnchor junction));
+            Require(loop.Move("unit.d01.recon.01", junction.AnchorId).Accepted);
+            for (int step = 0; step < 8; step++)
+                loop.Advance(1);
+            Require(loop.Observe("unit.d01.recon.01", "site.d01.junction").Accepted);
+            Require(loop.Scan("unit.d01.recon.01", "site.d01.junction").Accepted);
+            for (int step = 0; step < 20; step++)
+                loop.Advance(1);
+            Require(NodeComplete(loop, "scan_junction"));
+            loop.Advance(1);
+
+            // While the run is live, Protect may show as surviving. It is not an incomplete gate.
+            Require(loop.PlayHudInProgress, "still_live");
+            Require(loop.TryReadHud(out OperationsHudFrame hud));
+            Require(HudContains(hud, "hold_clinic"), "hold_listed");
+            Require(HudContains(hud, "protect_clinic"), "protect_listed");
+            Require(HudActive(hud, "protect_clinic"), "protect_ongoing");
+            Require(!HudActive(hud, "hold_clinic"), "hold_not_active_yet");
+            Require(loop.TryNode("protect_clinic", out OperationsTacticalNodeState protect));
+            Require(protect.Phase == OperationsTacticalNodePhase.Active, "protect_still_watching");
+            Require(loop.TryNode("escort_trucks", out OperationsTacticalNodeState escort));
+            Require(escort.ProgressCount <= escort.TargetCount, "escort_count");
+
+            OperationsLoopSession won = Reach("operation.o002", 2112);
+            Require(OperationsAriaInputSkills.TryPlayUnassistedWin(won));
+            Require(won.MissionOutcome == OperationsOutcomeKind.Victory, "protect_victory");
+            Require(!won.PlayHudInProgress, "hud_not_in_progress");
+            Require(won.TryMissionTick(out int tick), "victory_tick");
+            won.Advance(1);
+            Require(won.TryMissionTick(out int heldTick) && heldTick == tick, "no_extra_advance");
+            Require(won.TryReadHud(out OperationsHudFrame victoryHud));
+            Require(HudContains(victoryHud, "protect_clinic"), "protect_held_listed");
+            Require(!HudActive(victoryHud, "protect_clinic"), "protect_not_active");
+            Require(HudComplete(victoryHud, "protect_clinic"), "protect_done");
+            Require(won.TryNode("protect_clinic", out OperationsTacticalNodeState held));
+            Require(held.Phase == OperationsTacticalNodePhase.Complete, "protect_phase_held");
+
+            OperationsLoopSession doomed = Reach("operation.o002", 2111);
+            Require(doomed.DestroySite("site.d01.clinic").Accepted);
+            for (int step = 0; step < 5 && doomed.PlayHudInProgress; step++)
+                doomed.Advance(1);
+            Require(doomed.MissionOutcome == OperationsOutcomeKind.Defeat, "protect_fail");
+            Require(doomed.MissionOutcome != OperationsOutcomeKind.Victory, "protect_not_victory");
+            Require(doomed.MissionOutcome != OperationsOutcomeKind.Partial, "protect_not_partial");
+            Require(!doomed.PlayHudInProgress, "defeat_not_in_progress");
+            Require(doomed.TryNode("protect_clinic", out OperationsTacticalNodeState failed));
+            Require(failed.Phase == OperationsTacticalNodePhase.Failed, "protect_failed_phase");
+            Require(doomed.TryReadHud(out OperationsHudFrame defeatHud));
+            Require(!HudActive(defeatHud, "protect_clinic"), "protect_left_active");
+            Require(HudFailed(defeatHud, "protect_clinic"), "protect_failed_row");
+
+            string presentation = ReadPresentationSource();
+            Require(presentation.Contains("PlayHudInProgress"), "presenter_leaves_in_progress");
+            Require(presentation.Contains("operations.hud.held"), "protect_held_copy");
+            Require(presentation.Contains("operations.hud.surviving"), "protect_surviving_copy");
+            string capture = File.ReadAllText(Path.Combine(
+                FindRepoRoot(),
+                "Assets",
+                "Tests",
+                "Editor",
+                "Operations",
+                "OperationsAriaPlayModeCapture.cs"));
+            Require(capture.Contains("PlayHudInProgress"), "capture_same_latch");
+            Require(capture.Contains("ShowMissionResult"), "capture_result_card");
+            Require(capture.Contains("MayStampVictoryEvidence"), "capture_revision_guard");
+        }
+
+        static bool HudContains(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        static bool HudActive(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Active;
+            }
+
+            return false;
+        }
+
+        static bool HudComplete(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Complete;
+            }
+
+            return false;
+        }
+
+        static bool HudFailed(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Failed;
+            }
+
+            return false;
+        }
+
         public static void ContentFramesBoundIntoLandedShell()
         {
             string presentation = ReadPresentationSource();
@@ -406,6 +547,8 @@ namespace Game.Tests.Editor.Operations
             OwnershipStaysOperations();
             ContentFramesBoundIntoLandedShell();
             MobileReadyEvidenceCaptureWired();
+            EscortChromeNeverExceedsRequired();
+            ProtectChecklistLatchesWithOutcome();
         }
 
         public static void DeadlinesAndPartialsPreserved()
@@ -506,6 +649,12 @@ namespace Game.Tests.Editor.Operations
             Require(!world.Contains("Sprites/Default"), "no_builtin_sprite_shader");
             Require(presentation.Contains("OperationsTacticalWorldShell"), "presenter_uses_world");
             Require(presentation.Contains("PhonePanelRect"), "phone_mock");
+            Require(presentation.Contains("_world?.Sync"), "active_syncs_world");
+            int active = presentation.IndexOf("void DrawActiveChrome", StringComparison.Ordinal);
+            int fat = presentation.IndexOf("void DrawFatThumbBar", StringComparison.Ordinal);
+            Require(active >= 0 && fat > active, "active_chrome");
+            string activeBody = presentation.Substring(active, fat - active);
+            Require(!activeBody.Contains("new Rect(0, 0, Screen.width, Screen.height)"), "active_not_void");
             Require(presentation.Contains("ShowDebugChrome = false") || presentation.Contains("ShowDebugChrome=false"), "debug_off");
             Require(!presentation.Contains("Ops-owned win screen (Watch shared-UI seam not opened)"), "no_dev_footer");
         }
@@ -516,8 +665,16 @@ namespace Game.Tests.Editor.Operations
             Require(presentation.Contains("DrawVictoryCard"), "victory_card");
             Require(presentation.Contains("reward_credits"), "credits");
             Require(presentation.Contains("result.victory"), "localized_victory");
+            Require(presentation.Contains("operations.result.continue"), "continue_on_result");
             Require(!presentation.Contains("intents="), "no_intent_chrome");
             Require(!presentation.Contains("result_hash="), "no_hash_chrome");
+            int victory = presentation.IndexOf("public void ShowVictory", StringComparison.Ordinal);
+            int log = presentation.IndexOf("void LogVictoryDebug", StringComparison.Ordinal);
+            Require(victory >= 0 && log > victory, "show_victory");
+            string victoryBody = presentation.Substring(victory, log - victory);
+            Require(victoryBody.Contains("ShowMissionResult"), "result_card_path");
+            Require(!victoryBody.Contains("reward_credits"), "no_credits_only_panel");
+            Require(!victoryBody.Contains("operations.hud.in_progress"), "victory_not_in_progress");
         }
 
         public static void CaptureHarnessStillWired()

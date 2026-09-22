@@ -119,13 +119,42 @@ namespace Game.Operations.Capture
 
         public void ShowPlayHud(OperationsLoopSession loop, string missionId, string language, int seed)
         {
+            MissionId = missionId ?? string.Empty;
+            Language = string.IsNullOrEmpty(language) ? "en" : language;
+            Seed = seed;
+            // Settled outcome uses the mobile-ready result card (Trust / Intel / Heat + Continue).
+            // Do not leave IN PROGRESS, and do not cover the URP world with a credits-only panel
+            // before that card is ready.
+            if (loop != null && !loop.PlayHudInProgress)
+            {
+                bool settled = loop.Phase == OperationsLoopPhase.Settled ||
+                               loop.Phase == OperationsLoopPhase.Dashboard;
+                if (settled && loop.TryCommittedResult(out _))
+                {
+                    ShowMissionResult(loop);
+                    return;
+                }
+
+                VictoryMode = false;
+                ShowDebugChrome = false;
+                ResultDeltasBound = false;
+                ContinueLabel = string.Empty;
+                PhaseLabel = "Terminal";
+                string terminalSlug = MissionSlug(MissionId);
+                Title = ResolveCopy("operations." + terminalSlug + ".title", Language, MissionId);
+                Body = ResolveCopy("operations." + terminalSlug + ".objective.primary", Language, string.Empty);
+                OutcomeLabel = loop.MissionOutcome == OperationsOutcomeKind.Victory
+                    ? ResolveCopy("operations.hud.victory", Language, "VICTORY")
+                    : loop.MissionOutcome.ToString().ToUpperInvariant();
+                BindActiveWorld(loop);
+                BindCoachAndEscort(loop);
+                return;
+            }
+
             VictoryMode = false;
             ShowDebugChrome = false;
             ResultDeltasBound = false;
             ContinueLabel = string.Empty;
-            MissionId = missionId ?? string.Empty;
-            Language = string.IsNullOrEmpty(language) ? "en" : language;
-            Seed = seed;
             PhaseLabel = "Active";
             string slug = MissionSlug(MissionId);
             Title = ResolveCopy("operations." + slug + ".title", Language, MissionId);
@@ -139,6 +168,16 @@ namespace Game.Operations.Capture
             if (loop != null && loop.TryMissionTick(out int tick))
                 Tick = tick;
 
+            BindActiveWorld(loop);
+            BindCoachAndEscort(loop);
+        }
+
+        /// <summary>
+        /// Active phone HUD over the URP tactical world. Does not paint a full-screen void.
+        /// </summary>
+        void BindActiveWorld(OperationsLoopSession loop)
+        {
+            string slug = MissionSlug(MissionId);
             if (loop != null && loop.TryReadHud(out OperationsHudFrame hud))
             {
                 ObjectiveLines = BuildLocalizedObjectives(loop, hud, Language, slug);
@@ -155,14 +194,11 @@ namespace Game.Operations.Capture
                 if (_world == null)
                     _world = OperationsTacticalWorldShell.Ensure(transform);
                 _world?.Sync(loop, hud.CameraFocus);
-            }
-            else
-            {
-                ObjectiveLines = System.Array.Empty<string>();
-                Detail = string.Empty;
+                return;
             }
 
-            BindCoachAndEscort(loop);
+            ObjectiveLines = System.Array.Empty<string>();
+            Detail = string.Empty;
         }
 
         /// <summary>
@@ -194,10 +230,20 @@ namespace Game.Operations.Capture
             MissionId = ui.MissionId ?? string.Empty;
             string slug = MissionSlug(MissionId);
             Title = ResolveCopy("operations." + slug + ".title", Language, MissionId);
-            Body = ResolveCopy(ui.OutcomeKey, Language, ui.Outcome.ToString());
+            string outcomeKey = string.IsNullOrEmpty(ui.OutcomeKey)
+                ? "operations." + slug + ".result.victory"
+                : ui.OutcomeKey;
+            Body = ResolveCopy(outcomeKey, Language, ui.Outcome.ToString());
             OutcomeLabel = ui.Outcome == OperationsOutcomeKind.Victory
                 ? ResolveCopy("operations.hud.victory", Language, "VICTORY")
                 : ui.Outcome.ToString().ToUpperInvariant();
+            Credits = 0;
+            Xp = 0;
+            if (loop.TryReadResult(out OperationsResultFrame settled))
+            {
+                Credits = settled.ReceivedCredits;
+                Xp = settled.ReceivedXp;
+            }
             ContinueLabel = ResolveCopy(
                 string.IsNullOrEmpty(ui.ContinueKey) ? "operations.result.continue" : ui.ContinueKey,
                 Language,
@@ -212,12 +258,16 @@ namespace Game.Operations.Capture
                 lines[index] = name + "  " + sign + line.Delta.ToString();
             }
 
-            ObjectiveLines = lines;
+            var withRewards = new string[lines.Length + 2];
+            System.Array.Copy(lines, withRewards, lines.Length);
+            withRewards[lines.Length] = ResolveCopy("operations.hud.reward_credits", Language, "Credits") + ": +" + Credits;
+            withRewards[lines.Length + 1] = ResolveCopy("operations.hud.reward_xp", Language, "Commander XP") + ": +" + Xp;
+            ObjectiveLines = withRewards;
             if (ui.PracticeAvailable)
             {
-                var withPractice = new string[lines.Length + 1];
-                System.Array.Copy(lines, withPractice, lines.Length);
-                withPractice[lines.Length] = ResolveCopy(ui.PracticeKey, Language, "Practice");
+                var withPractice = new string[withRewards.Length + 1];
+                System.Array.Copy(withRewards, withPractice, withRewards.Length);
+                withPractice[withRewards.Length] = ResolveCopy(ui.PracticeKey, Language, "Practice");
                 ObjectiveLines = withPractice;
             }
         }
@@ -266,70 +316,34 @@ namespace Game.Operations.Capture
 
         public void ShowVictory(OperationsLoopSession loop, OperationsAriaEvidenceRecord record)
         {
-            if (_world != null)
-                _world.Clear();
+            if (record != null && !string.IsNullOrEmpty(record.Language))
+                Language = record.Language;
+            // Same card as the mobile-ready result: outcome, Trust / Intel / Heat, Continue.
+            // There is no credits-only win panel on this shell.
+            ShowMissionResult(loop);
+            LogVictoryDebug(loop, record);
+        }
 
-            CoachVisible = false;
-            WarningVisible = false;
-            ChipLabels = System.Array.Empty<string>();
-            ResultDeltasBound = false;
-            ContinueLabel = string.Empty;
-
-            if (record == null)
-            {
-                VictoryMode = true;
-                ShowDebugChrome = false;
-                Title = "Victory";
-                Body = "Mission complete.";
-                OutcomeLabel = ResolveCopy("operations.hud.victory", Language, "VICTORY");
-                ObjectiveLines = System.Array.Empty<string>();
-                Detail = string.Empty;
-                PressureLine = string.Empty;
-                TimerLine = string.Empty;
-                return;
-            }
-
-            VictoryMode = true;
-            ShowDebugChrome = false;
-            MissionId = record.MissionId ?? string.Empty;
-            Language = string.IsNullOrEmpty(record.Language) ? "en" : record.Language;
-            Seed = record.Seed;
-            PhaseLabel = "MissionResult";
-            string slug = MissionSlug(MissionId);
-            Title = ResolveCopy("operations." + slug + ".title", Language, MissionId);
-            Body = ResolveCopy("operations." + slug + ".result.victory", Language, "Victory.");
-            OutcomeLabel = ResolveCopy("operations.hud.victory", Language, "VICTORY");
-            Tick = record.ObjectiveCompletionTick;
-            Credits = record.ReceivedCredits;
-            Xp = record.ReceivedXp;
-            PressureLine = string.Empty;
-            TimerLine = string.Empty;
-            Detail = string.Empty;
-            ObjectiveLines = new[]
-            {
-                ResolveCopy("operations.hud.reward_credits", Language, "Credits") + ": +" + Credits,
-                ResolveCopy("operations.hud.reward_xp", Language, "Commander XP") + ": +" + Xp
-            };
-
+        void LogVictoryDebug(OperationsLoopSession loop, OperationsAriaEvidenceRecord record)
+        {
             // Keep developer diagnostics available in Editor logs only — not player chrome.
-            if (loop != null)
+            if (loop == null || record == null)
+                return;
+            try
             {
-                try
-                {
-                    string shellTop = loop.ReadShell().Top ?? OperationsShellNames.MissionResult;
-                    Debug.Log(
-                        "[OperationsAriaPlayModePresentation] victory_debug outcome=" +
-                        (record.TerminalOutcome ?? string.Empty) +
-                        " reason=" + (record.TerminalReason ?? string.Empty) +
-                        " hash=" + (record.ResultHash ?? string.Empty) +
-                        " shell=" + shellTop +
-                        " runSeed=" + Seed +
-                        " completeTick=" + Tick);
-                }
-                catch
-                {
-                    // Keep victory presentation even if shell read fails.
-                }
+                string shellTop = loop.ReadShell().Top ?? OperationsShellNames.MissionResult;
+                Debug.Log(
+                    "[OperationsAriaPlayModePresentation] victory_debug outcome=" +
+                    (record.TerminalOutcome ?? string.Empty) +
+                    " reason=" + (record.TerminalReason ?? string.Empty) +
+                    " hash=" + (record.ResultHash ?? string.Empty) +
+                    " shell=" + shellTop +
+                    " runSeed=" + Seed +
+                    " completeTick=" + Tick);
+            }
+            catch
+            {
+                // Keep victory presentation even if shell read fails.
             }
         }
 
@@ -587,11 +601,18 @@ namespace Game.Operations.Capture
                 OperationsHudObjective row = required[index];
                 string nodeId = row.NodeId ?? string.Empty;
                 string label = ResolveObjectiveLabel(nodeId, language, missionSlug);
+                bool protect = loop.TryNode(nodeId, out OperationsTacticalNodeState listed) &&
+                               listed.Rule == OperationsObjectiveRuleKind.Protect;
                 string status = row.Complete
-                    ? ResolveCopy("operations.hud.done", language, "done")
+                    ? ResolveCopy(protect ? "operations.hud.held" : "operations.hud.done", language, protect ? "Held" : "done")
                     : row.Failed
                         ? ResolveCopy("operations.hud.failed", language, "failed")
-                        : ResolveCopy("operations.hud.active", language, "active");
+                        : row.Active
+                            ? ResolveCopy(
+                                protect ? "operations.hud.surviving" : "operations.hud.active",
+                                language,
+                                protect ? "surviving" : "active")
+                            : ResolveCopy("operations.hud.locked", language, "locked");
 
                 string progress = string.Empty;
                 if (loop.TryNode(nodeId, out OperationsTacticalNodeState state) &&
@@ -600,7 +621,7 @@ namespace Game.Operations.Capture
                     int current = state.Phase == OperationsTacticalNodePhase.Complete
                         ? state.TargetCount
                         : state.ProgressCount;
-                    progress = " " + current + "/" + state.TargetCount;
+                    progress = " " + OperationsObjectiveChrome.FormatProgress(current, state.TargetCount);
                 }
                 else if (row.Progress > 0 && !row.Complete)
                 {

@@ -57,6 +57,7 @@ namespace Game.Tests.Editor.Operations
         static string _offerId = string.Empty;
         static string _districtId = string.Empty;
         static string _settleId = string.Empty;
+        static int _settledRevision = -1;
         static int _completionTick = -1;
         static bool _won;
 
@@ -322,27 +323,32 @@ namespace Game.Tests.Editor.Operations
                 return;
             }
 
-            if (!_loop.MissionTerminal)
+            if (_loop.PlayHudInProgress)
             {
                 StepUnassistedOnce();
-                OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
-                if (presenter == null)
+                // The completing step latches the outcome in that same tick.
+                // Do not paint IN PROGRESS, and do not Advance again, once it has.
+                if (_loop.PlayHudInProgress)
                 {
-                    Finish(false, "presenter_ensure_failed");
+                    OperationsAriaPlayModePresentation presenter = OperationsAriaPlayModePresentation.Ensure();
+                    if (presenter == null)
+                    {
+                        Finish(false, "presenter_ensure_failed");
+                        return;
+                    }
+
+                    presenter.ShowPlayHud(_loop, missionId, language, seed);
+                    // Short missions finish before step 40 after pacing compression.
+                    if (_playStep == 3 || _playStep == 40)
+                        CaptureNamed("play-02-mid");
+                    if (_playStep >= 1200 && _loop.PlayHudInProgress)
+                    {
+                        Finish(false, "max_steps");
+                        return;
+                    }
+
                     return;
                 }
-
-                presenter.ShowPlayHud(_loop, missionId, language, seed);
-                // Short missions finish before step 40 after pacing compression.
-                if (_playStep == 3 || _playStep == 40)
-                    CaptureNamed("play-02-mid");
-                if (_playStep >= 1200 && !_loop.MissionTerminal)
-                {
-                    Finish(false, "max_steps");
-                    return;
-                }
-
-                return;
             }
 
             _won = _loop.MissionOutcome == OperationsOutcomeKind.Victory;
@@ -355,6 +361,14 @@ namespace Game.Tests.Editor.Operations
                 return;
             }
 
+            OperationsAriaPlayModePresentation settledPresenter = OperationsAriaPlayModePresentation.Ensure();
+            if (settledPresenter == null)
+            {
+                Finish(false, "presenter_ensure_failed");
+                return;
+            }
+
+            settledPresenter.ShowMissionResult(_loop);
             CaptureNamed("play-03-terminal");
             _record = BuildRecord(missionId, seed, language);
             if (!_record.Victory)
@@ -385,7 +399,6 @@ namespace Game.Tests.Editor.Operations
             _offerId = offer.offerId;
             _districtId = offer.districtId;
             int districtNumber = DistrictNumber(offer.districtId);
-            _beforeDistrict = SnapshotDistrict(_loop, districtNumber);
             if (!_loop.OpenDistrict(districtNumber).Accepted || !_loop.OpenBriefing(offer.offerId).Accepted)
             {
                 failure = "briefing";
@@ -404,6 +417,8 @@ namespace Game.Tests.Editor.Operations
                 failure = "launch";
                 return false;
             }
+
+            _beforeDistrict = SnapshotDistrict(_loop, districtNumber);
 
             if (!_loop.BeginActive(true, true, true, _loop.ContentHash).Accepted || !_loop.CompleteActive().Accepted)
             {
@@ -535,11 +550,22 @@ namespace Game.Tests.Editor.Operations
             }
 
             _settleId = NextId();
-            if (!_loop.BeginSettlement(_settleId).Accepted || !_loop.CompleteSettlement(_settleId).Accepted)
+            OperationsCommandResult begun = _loop.BeginSettlement(_settleId);
+            OperationsCommandResult settled = begun.Accepted ? _loop.CompleteSettlement(_settleId) : begun;
+            if (!begun.Accepted || !settled.Accepted ||
+                !OperationsAriaEvidenceHarness.MayStampVictoryEvidence(
+                    settled.Accepted,
+                    settled.NewRevision,
+                    _loop.ProfileRevision,
+                    _loop.CampaignRunRevision))
             {
-                failure = "settlement";
+                _settledRevision = -1;
+                failure = begun.Accepted && settled.Accepted ? "settlement_revision" : "settlement";
                 return false;
             }
+
+            // 0 is a valid starting profile revision. -1 stays the unset sentinel.
+            _settledRevision = settled.NewRevision;
 
             if (!_loop.BeginReturn().Accepted || !_loop.CompleteReturn().Accepted)
             {
@@ -632,6 +658,20 @@ namespace Game.Tests.Editor.Operations
             string winAbsolute = Path.Combine(absoluteDir, "win-screen." + language + ".png");
             string pngHash = File.Exists(winAbsolute) ? Sha256Hex(winAbsolute) : "PENDING_CAPTURE_FILE";
 
+            if (_loop == null ||
+                !OperationsAriaEvidenceHarness.MayStampVictoryEvidence(
+                    true,
+                    _record.SettledRevision,
+                    _loop.ProfileRevision,
+                    _loop.CampaignRunRevision) ||
+                !_loop.TryReadResult(out OperationsResultFrame settledFrame) ||
+                !OperationsAriaEvidenceHarness.DistrictsMatch(_record.BeforeDistrict, settledFrame.Before) ||
+                !OperationsAriaEvidenceHarness.DistrictsMatch(_record.AfterDistrict, settledFrame.After))
+            {
+                Finish(false, "settlement_revision");
+                return;
+            }
+
             _record.Status = "AriaWon";
             _record.Platform = "windows-editor";
             _record.WatchVirtualTouch = "NotOpened";
@@ -676,7 +716,23 @@ namespace Game.Tests.Editor.Operations
                 resultHash = missionResult.ResultHash;
             }
 
-            bool victory = _won && _loop.MissionVictory(missionId);
+            bool victory = _won &&
+                           _loop.MissionVictory(missionId) &&
+                           OperationsAriaEvidenceHarness.MayStampVictoryEvidence(
+                               true,
+                               _settledRevision,
+                               _loop.ProfileRevision,
+                               _loop.CampaignRunRevision);
+            if (victory && _loop.TryReadResult(out OperationsResultFrame settledFrame))
+            {
+                victory = OperationsAriaEvidenceHarness.DistrictsMatch(_beforeDistrict, settledFrame.Before) &&
+                          OperationsAriaEvidenceHarness.DistrictsMatch(after, settledFrame.After);
+            }
+            else
+            {
+                victory = false;
+            }
+
             return new OperationsAriaEvidenceRecord
             {
                 Status = victory ? "AriaWon" : "HostAttemptFailed",
@@ -706,7 +762,7 @@ namespace Game.Tests.Editor.Operations
                 ReceivedXp = _loop.CommanderXp,
                 SettlementTransactionId = _settleId,
                 ResultHash = resultHash,
-                SettledRevision = -1,
+                SettledRevision = _settledRevision,
                 BeforeDistrict = _beforeDistrict,
                 AfterDistrict = after,
                 IntentTrace = IntentTrace.ToArray(),
@@ -725,6 +781,7 @@ namespace Game.Tests.Editor.Operations
             _offerId = string.Empty;
             _districtId = string.Empty;
             _settleId = string.Empty;
+            _settledRevision = -1;
             _completionTick = -1;
             _won = false;
         }

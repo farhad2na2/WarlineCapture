@@ -71,6 +71,16 @@ namespace Game.Tests.Editor.Operations
             OperationsLoopSession loop = Reach("operation.o002", 2103);
             Require(OperationsAriaInputSkills.TryPlayUnassistedWin(loop));
             Require(loop.MissionOutcome == OperationsOutcomeKind.Victory);
+            Require(!loop.PlayHudInProgress, "hud_in_progress");
+            Require(loop.TryReadHud(out OperationsHudFrame hud), "hud");
+            Require(ProtectNotActive(hud, "protect_clinic"), "protect_not_active");
+            Require(loop.TryNode("protect_clinic", out OperationsTacticalNodeState protect) &&
+                    protect.Phase == OperationsTacticalNodePhase.Complete, "protect_latched");
+            Require(loop.TryNode("hold_clinic", out OperationsTacticalNodeState hold) &&
+                    hold.Phase == OperationsTacticalNodePhase.Complete, "hold_complete");
+            Require(loop.TryNode("escort_trucks", out OperationsTacticalNodeState escort) &&
+                    escort.TargetCount == 2 &&
+                    escort.ProgressCount <= escort.TargetCount, "escort_progress");
         }
 
         public static void UnassistedO003Victory()
@@ -78,6 +88,11 @@ namespace Game.Tests.Editor.Operations
             OperationsLoopSession loop = Reach("operation.o003", 2104);
             Require(OperationsAriaInputSkills.TryPlayUnassistedWin(loop));
             Require(loop.MissionOutcome == OperationsOutcomeKind.Victory);
+            Require(!loop.PlayHudInProgress, "o003_hud_in_progress");
+            Require(loop.TryReadHud(out OperationsHudFrame hud), "o003_hud");
+            Require(ProtectNotActive(hud, "protect_clinic_pumps"), "o003_protect_not_active");
+            Require(loop.TryNode("protect_clinic_pumps", out OperationsTacticalNodeState protect) &&
+                    protect.Phase == OperationsTacticalNodePhase.Complete, "o003_protect_latched");
         }
 
         public static void EvidenceSchemaFields()
@@ -96,15 +111,80 @@ namespace Game.Tests.Editor.Operations
             Require(json.Contains("PENDING_LIVE_BUILD"));
             Require(record.Status == "HostUnassistedVictoryRecorded");
             Require(record.WatchVirtualTouch == "PendingSeam");
+            Require(record.SettledRevision >= 0, "settled_revision");
+            Require(record.Victory, "victory_requires_revision");
+            Require(!json.Contains("\"settled_revision\": -1"), "settled_revision_sentinel");
+            Require(!OperationsAriaEvidenceHarness.MayStampVictoryEvidence(false, -1, 0, 0), "failed_settle");
+            Require(!OperationsAriaEvidenceHarness.MayStampVictoryEvidence(true, -1, 0, 0), "victory_sentinel");
+            Require(!OperationsAriaEvidenceHarness.MayStampVictoryEvidence(true, 2, 3, 2), "revision_mismatch");
+            Require(OperationsAriaEvidenceHarness.MayStampVictoryEvidence(true, 0, 0, 0), "revision_zero");
+            AssertSettlementMatchesSave();
+        }
+
+        static void AssertSettlementMatchesSave()
+        {
+            OperationsLoopSession loop = Reach("operation.o001", 1112);
+            int district = DistrictNumber(loop.DistrictId);
+            int[] before = SnapshotDistrict(loop, district);
+            Require(OperationsAriaInputSkills.TryPlayUnassistedWin(loop));
+            Require(loop.MissionOutcome == OperationsOutcomeKind.Victory, "settle_victory");
+            Require(!loop.PlayHudInProgress, "settle_hud");
+            Require(loop.TryMissionTick(out int tick), "settle_tick");
+            loop.Advance(1);
+            Require(loop.TryMissionTick(out int held) && held == tick, "no_extra_advance");
+            string settleId = Id();
+            Require(loop.BeginResult().Accepted);
+            Require(loop.CompleteResult().Accepted);
+            Require(loop.BeginSettlement(settleId).Accepted);
+            OperationsCommandResult settled = loop.CompleteSettlement(settleId);
+            Require(settled.Accepted, "settle_accepted");
+            Require(settled.NewRevision >= 0, "settle_revision");
+            Require(settled.NewRevision == loop.ProfileRevision, "profile_revision");
+            Require(settled.NewRevision == loop.CampaignRunRevision, "campaign_revision");
+            int[] after = SnapshotDistrict(loop, district);
+            Require(loop.TryReadResult(out OperationsResultFrame frame), "result_frame");
+            Require(OperationsAriaEvidenceHarness.DistrictsMatch(before, frame.Before), "before_delta");
+            Require(OperationsAriaEvidenceHarness.DistrictsMatch(after, frame.After), "after_delta");
+            Require(!OperationsAriaEvidenceHarness.DistrictsMatch(before, after), "delta_applied");
+        }
+
+        static int[] SnapshotDistrict(OperationsLoopSession loop, int number)
+        {
+            var district = loop.District(number);
+            return new[]
+            {
+                district.Security,
+                district.Trust,
+                district.Infrastructure,
+                district.EnemyInfluence,
+                district.IntelConfidence,
+                district.Heat,
+                district.SupplyReadiness
+            };
+        }
+
+        static bool ProtectNotActive(OperationsHudFrame hud, string nodeId)
+        {
+            bool listed = false;
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId != nodeId)
+                    continue;
+                listed = true;
+                if (hud.Required[index].Active || !hud.Required[index].Complete)
+                    return false;
+            }
+
+            return listed;
         }
 
         public static void VerticalSliceEvidenceRecords()
         {
             Require(OperationsAriaEvidenceHarness.TryRunVerticalSliceRegular("en", out OperationsAriaEvidenceRecord[] en, out string failureEn), failureEn);
             Require(en.Length == 3);
-            Require(en[0].MissionId == "operation.o001" && en[0].Victory);
-            Require(en[1].MissionId == "operation.o002" && en[1].Victory);
-            Require(en[2].MissionId == "operation.o003" && en[2].Victory);
+            Require(en[0].MissionId == "operation.o001" && en[0].Victory && en[0].SettledRevision >= 0);
+            Require(en[1].MissionId == "operation.o002" && en[1].Victory && en[1].SettledRevision >= 0);
+            Require(en[2].MissionId == "operation.o003" && en[2].Victory && en[2].SettledRevision >= 0);
 
             Require(OperationsAriaEvidenceHarness.TryRunVerticalSliceRegular("fa", out OperationsAriaEvidenceRecord[] fa, out string failureFa), failureFa);
             Require(fa.Length == 3 && fa[0].Language == "fa" && fa[0].Victory);

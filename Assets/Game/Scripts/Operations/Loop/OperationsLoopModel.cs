@@ -121,6 +121,8 @@ namespace Game.Operations.Loop
         public string ResultText = string.Empty;
         public string ResultHash = string.Empty;
         public string BeforeMetrics = string.Empty;
+        /// <summary>District metrics frozen when settlement commits. Empty until then.</summary>
+        public string AfterMetrics = string.Empty;
         public string History = OperationsShellNames.Operations;
         public int CreditsAtLaunch;
         public int XpAtLaunch;
@@ -155,6 +157,7 @@ namespace Game.Operations.Loop
                 ResultText = ResultText,
                 ResultHash = ResultHash,
                 BeforeMetrics = BeforeMetrics,
+                AfterMetrics = AfterMetrics,
                 History = History,
                 CreditsAtLaunch = CreditsAtLaunch,
                 XpAtLaunch = XpAtLaunch,

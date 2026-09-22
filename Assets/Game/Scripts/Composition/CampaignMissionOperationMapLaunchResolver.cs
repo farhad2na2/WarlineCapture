@@ -26,13 +26,15 @@ namespace Game.Composition
             FixedString64Bytes scenarioId,
             FixedString64Bytes operationMapId,
             OperationMapDefinition definition,
-            bool isCampaign)
+            bool isCampaign,
+            bool isOperations = false)
         {
             MissionId = missionId;
             ScenarioId = scenarioId;
             OperationMapId = operationMapId;
             Definition = definition;
             IsCampaign = isCampaign;
+            IsOperations = isOperations;
         }
 
         public FixedString64Bytes MissionId { get; }
@@ -40,6 +42,7 @@ namespace Game.Composition
         public FixedString64Bytes OperationMapId { get; }
         public OperationMapDefinition Definition { get; }
         public bool IsCampaign { get; }
+        public bool IsOperations { get; }
     }
 
 }

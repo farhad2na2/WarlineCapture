@@ -1,29 +1,29 @@
 # O001 player-ready implementation plan
 
-Date: 2026-09-22. Status: **P0 Operations shell wired; not a shipping player-ready certification. R1–R6 remain open. Historical AriaWon captures are harness evidence, not this gate.**
+Date: 2026-09-22. Status: **Shared O001 launch is wired into MatchSceneView. This is not a player-ready certification. R3, full R4, the R5 matrix, and R6 remain open. Historical AriaWon captures are harness evidence, not this gate.**
 
-## P0 Operations shell (wired, not shipping-certified)
+## Shared launch slice (wired, not certified)
 
-The O001 player shell is an Operations-owned path a person and Regular EN Aria can both use. It is not the capture harness, and it is not yet the shipping Match scene.
+A person and Regular EN Aria use the same shipping controls for `operation.o001`. The capture IMGUI shell is not this route.
 
-1. The hub library opens the D01 briefing for `operation.o001`. Deploy then runs the Package 3 launch into the authored D01 tactical session. The launch request keeps `InvokesSharedSceneView` false. The Watch / Match scene seam stays out of scope.
-2. Play uses that authored mission through visible controls: select, move, scan, interact, extract, and wait. Aria presses those same control ids. The capture script `TryPlayVisibleControlWin` is not the player path.
-3. Victory writes the Package 3 result and settlement into a durable Operations profile directory.
-4. Continue returns to the Operations hub. Opening that directory again restores the settled victory, credits, commander XP, and revision. The O001 library row stays closed once the victory is recorded.
+1. The Ops dashboard district button opens the D01 briefing. Confirming Raid deploys through Package 3 with `InvokesSharedSceneView` true and enters `MatchSceneView`. Campaign or Skirmish occupation rejects the launch. The shared identity rules accept `opmap.operations.old_quarter` and `scenario.operations.o001`. There is still no shipping Old Quarter art asset, so the match scene hosts the authored D01 session instead of a Campaign map.
+2. Select, Move, Attack, Scan, Hold, and Board on the match command bar issue the authored orders. Hold carries evidence interaction. Board extracts. Regular EN Aria presses those same controls. The one-second match clock advances the session. The capture script `TryPlayVisibleControlWin` is not the player path.
+3. Victory writes the Package 3 result into the Operations profile directory and into `PlayerProfileSaveData.operationsEnvelope`. Campaign progress is left in place.
+4. Continue settles and returns to the Ops route. Opening the envelope again restores the settled victory, credits, commander XP, and revision. The O001 district row stays closed once the victory is recorded.
 
-Host marker, three checks. This is the Operations shell, not a player-ready or AriaWon certification. `MatchSceneView` remains closed because Operations map ids are still rejected by the shared identity rules, and there is no shipping map definition for D01:
+Host marker, five checks, plus a shared-identity agreement check in the host process. This is not an AriaWon certification and not phone or Farsi acceptance:
 
 ```text
-[OperationsO001PlayerShellValidation] result=Passed checks=3
+[OperationsO001PlayerShellValidation] result=Passed checks=5
 ```
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsO001PlayerReadyValidation.ps1
 ```
 
-Manual play on the Windows Ops shadow, after the branch is checked out at `D:\Projects\WarlineCapture-Operations`: Editor menu `Operations/P4R/Play O001 Player Shell`. The profile lives under the Editor persistent data path `OperationsO001Player`, so the settled hub survives leaving Play Mode. `Operations/P4R/Play O001 New Profile` starts again.
+Manual play on the Windows Ops shadow, after the branch is checked out at `D:\Projects\WarlineCapture-Operations`: enter Play Mode on the shipping Ops flow. Press the D01 district button, confirm Raid, then use the match Select, Move, Attack, Scan, Hold, Board, and Continue controls. `Operations/P4R/Arm Regular EN Aria` makes Regular EN Aria press those same controls. `Operations/P4R/Clear Aria Arm` returns the clock to manual play. The profile lives under `OperationsO001Player` and in `operationsEnvelope`.
 
-Programmer 2 records Regular EN AriaWon through those same visible controls. This P0 slice does not close that evidence gate, and it does not author O002, O003, or O004.
+This slice does not author O002, O003, or O004, and it does not close the full ARIA matrix, Farsi, device, or unfamiliar-player gates.
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 

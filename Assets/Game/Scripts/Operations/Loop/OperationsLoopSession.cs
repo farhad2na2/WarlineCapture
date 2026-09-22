@@ -251,7 +251,7 @@ namespace Game.Operations.Loop
                 document.SessionId,
                 OperationsShellNames.Operations,
                 true,
-                false,
+                document.InvokeSharedSceneView,
                 OperationsShellNames.DispatchOwner);
             return true;
         }
@@ -402,7 +402,7 @@ namespace Game.Operations.Loop
             return _strategic.RetrySave(commandId);
         }
 
-        public OperationsLoopStep BeginLaunch()
+        public OperationsLoopStep BeginLaunch(bool invokeSharedSceneView = false)
         {
             if (HasPending)
                 return OperationsLoopStep.Reject("pending");
@@ -444,6 +444,7 @@ namespace Game.Operations.Loop
             next.ResultText = string.Empty;
             next.ResultHash = string.Empty;
             next.History = JoinHistory();
+            next.InvokeSharedSceneView = invokeSharedSceneView;
             _store.Begin(next, false);
             return OperationsLoopStep.Ok();
         }

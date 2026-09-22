@@ -8,6 +8,8 @@ namespace Game.UI.Runtime
         {
             private void OnSelectButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Select"))
+                    return;
                 CaptureCommandUiClick();
                 bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
                 bool queued = _selectionUiCommandSystem != null &&
@@ -24,6 +26,8 @@ namespace Game.UI.Runtime
 
             private void OnMoveButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Move"))
+                    return;
                 CaptureCommandUiClick();
                 LogMoveCommandTrace(
                     $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
@@ -44,6 +48,8 @@ namespace Game.UI.Runtime
 
             private void OnAttackButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Attack"))
+                    return;
                 CaptureCommandUiClick();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestAttackCommandMode();

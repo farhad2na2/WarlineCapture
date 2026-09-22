@@ -8,8 +8,9 @@ namespace Game.Operations.Loop
 {
     /// <summary>
     /// Disk copy of the Package 3 strategic profile, loop journal, and checkpoint blobs.
-    /// Opening the directory restores the last committed hub or mission. This is the
-    /// Operations-owned profile, not the shipping save model.
+    /// Opening the directory restores the last committed hub or mission.
+    /// <see cref="OperationsShippingEnvelope"/> copies this directory into the shipping
+    /// profile field <c>operationsEnvelope</c>.
     /// </summary>
     public static class OperationsDurableProfile
     {
@@ -118,6 +119,7 @@ namespace Game.Operations.Loop
             Line(builder, "creditsAtLaunch", document.CreditsAtLaunch.ToString(CultureInfo.InvariantCulture));
             Line(builder, "xpAtLaunch", document.XpAtLaunch.ToString(CultureInfo.InvariantCulture));
             Line(builder, "actionPointsAtLaunch", document.ActionPointsAtLaunch.ToString(CultureInfo.InvariantCulture));
+            Line(builder, "invokeSharedSceneView", document.InvokeSharedSceneView ? "1" : "0");
             return builder.ToString();
         }
 
@@ -177,7 +179,8 @@ namespace Game.Operations.Loop
                 History = Require(values, "history"),
                 CreditsAtLaunch = RequireInt(values, "creditsAtLaunch"),
                 XpAtLaunch = RequireInt(values, "xpAtLaunch"),
-                ActionPointsAtLaunch = RequireInt(values, "actionPointsAtLaunch")
+                ActionPointsAtLaunch = RequireInt(values, "actionPointsAtLaunch"),
+                InvokeSharedSceneView = OptionalBool(values, "invokeSharedSceneView")
             };
         }
 
@@ -198,6 +201,17 @@ namespace Game.Operations.Loop
         static bool RequireBool(Dictionary<string, string> values, string key)
         {
             string value = Require(values, key);
+            if (value == "1")
+                return true;
+            if (value == "0")
+                return false;
+            throw new InvalidOperationException("profile_bool:" + key);
+        }
+
+        static bool OptionalBool(Dictionary<string, string> values, string key)
+        {
+            if (!values.TryGetValue(key, out string value) || value.Length == 0)
+                return false;
             if (value == "1")
                 return true;
             if (value == "0")

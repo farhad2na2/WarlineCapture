@@ -31,6 +31,23 @@ FORBIDDEN_SEAMS = [
     "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs",
     "Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs",
 ]
+# P4R opens these historical seams for operation.o001. Other forbidden paths stay closed.
+P4R_SHARED = {
+    "Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+    "Assets/Game/Scripts/Composition/CampaignMissionOperationMapLaunchResolver.cs",
+    "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
+    "Assets/Game/Scripts/Composition/OperationsMatchSceneSystemHelper.cs",
+    "Assets/Game/Scripts/Composition/OperationsMatchSceneSystemHelper.cs.meta",
+    "Assets/Game/Scripts/Persistence/SaveDataModel.cs",
+    "Assets/Game/Scripts/Persistence/SaveMigration.cs",
+    "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.GuidedCommands.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.CommandTabs.cs",
+}
 MAPS = {
     "d01": "opmap.operations.old_quarter",
     "d02": "opmap.operations.civic_center",
@@ -66,7 +83,7 @@ def numbered(part: str, prefix: str, digits: int, lo: int, hi: int) -> bool:
 
 
 def check_catalog() -> None:
-    rows = list(csv.DictReader(CATALOG.open()))
+    rows = list(csv.DictReader(CATALOG.open(encoding="utf-8-sig")))
     if len(rows) != 60:
         fail(f"catalog_count={len(rows)}")
     seen = set()
@@ -125,6 +142,8 @@ def check_shared_untouched() -> None:
         "Design/Roadmap/Skirmish_Expansion",
     ])
     for path in diff:
+        if path in P4R_SHARED:
+            continue
         if path in forbidden or path.startswith("Design/Roadmap/Skirmish_Expansion/"):
             fail(f"shared_edit={path}")
         if path.startswith("Assets/Game/Scripts/") and "/Operations/" not in path:
@@ -252,8 +271,10 @@ def check_shadow_folder_name_root_discovery() -> None:
 
 def check_identity_source() -> None:
     rules = (ROOT / "Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs").read_text()
-    if 'IsEqual(value, segments[1], "operations")' in rules:
-        fail("shared_identity_already_extended")
+    if 'IsEqual(value, segments[1], "operations")' not in rules or "IsOperationsMissionToken" not in rules:
+        fail("shared_identity_missing_operations")
+    if "old_quarter" not in rules or "airport_perimeter" not in rules:
+        fail("shared_identity_maps")
     if "skirmish" not in rules:
         fail("shared_identity_missing_skirmish")
 

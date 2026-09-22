@@ -51,6 +51,7 @@ namespace Game.Runtime
         public int firstLaunchMissionAttemptOrdinal;
         public CampaignMissionProgressSaveData[] campaignMissionProgress =
             Array.Empty<CampaignMissionProgressSaveData>();
+        public string operationsEnvelope = string.Empty;
     }
 
     public static class FirstLaunchProfileState

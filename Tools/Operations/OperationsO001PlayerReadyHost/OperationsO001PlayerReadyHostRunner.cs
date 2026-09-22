@@ -7,6 +7,7 @@ internal static class OperationsO001PlayerReadyHostRunner
     {
         try
         {
+            OperationsSharedIdentityHostChecks.AssertAgrees();
             OperationsO001PlayerReadyChecks.RunAll();
             Console.WriteLine(OperationsO001PlayerReadyChecks.PassMarker);
             return 0;

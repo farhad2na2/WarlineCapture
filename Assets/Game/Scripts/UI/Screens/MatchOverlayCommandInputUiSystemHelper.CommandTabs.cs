@@ -51,6 +51,8 @@ namespace Game.UI.Runtime
 
             private void OnScanButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Scan"))
+                    return;
                 if (TryRequestMissionScan()) return;
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Scan))

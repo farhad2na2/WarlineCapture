@@ -4,8 +4,8 @@ namespace Game.Operations.Contracts
 {
     /// <summary>
     /// Operations-owned identity grammar. Shared <c>Game.Configs.OperationMapIdentityRules</c>
-    /// currently accepts only chapter and skirmish namespaces and rejects these forms.
-    /// Game PM must extend that shared validator before launch/composition can store these IDs.
+    /// accepts the published <c>opmap.operations.&lt;slug&gt;</c> and <c>scenario.operations.o###</c>
+    /// forms as well as the existing chapter and skirmish forms.
     /// </summary>
     public static class OperationsIdentityRules
     {
@@ -131,8 +131,8 @@ namespace Game.Operations.Contracts
             IsValidRoleId(value) ||
             IsValidFeatureId(value);
 
-        public static bool SharedValidatorCurrentlyAcceptsOperationsMapId => false;
-        public static bool SharedValidatorCurrentlyAcceptsOperationsScenarioId => false;
+        public static bool SharedValidatorCurrentlyAcceptsOperationsMapId => true;
+        public static bool SharedValidatorCurrentlyAcceptsOperationsScenarioId => true;
 
         public static string MapIdForDistrict(int districtNumber) => districtNumber switch
         {

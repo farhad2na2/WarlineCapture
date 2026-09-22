@@ -14,7 +14,8 @@
         "Unity.TextMeshPro",
         "UnityEngine.UI",
         "RTLTMPro",
-        "Game.Missions.Contracts"
+        "Game.Missions.Contracts",
+        "Game.Operations.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

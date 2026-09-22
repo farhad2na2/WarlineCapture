@@ -1,6 +1,7 @@
 using Game.Components;
 using Game.Configs;
 using Game.Missions.Contracts;
+using Game.Operations.Loop;
 using Game.Runtime;
 using Unity.Collections;
 using Unity.Entities;
@@ -18,11 +19,46 @@ namespace Game.Composition
                 string fallbackOperationMapId,
                 out OperationMapLaunchSelection selection,
                 out OperationMapLoadResultCode failureCode,
-                out string error)
+                out string error,
+                bool operationsSharedLaunch = false)
             {
                 selection = default;
                 failureCode = OperationMapLoadResultCode.None;
                 error = null;
+                if (operationsSharedLaunch)
+                {
+                    bool campaignOccupied = CampaignLaunchPending(world);
+                    bool skirmishOccupied = SkirmishLaunchPending(world);
+                    switch (OperationsSharedLaunchRules.Classify(
+                        true,
+                        fallbackMissionId,
+                        fallbackScenarioId,
+                        fallbackOperationMapId,
+                        campaignOccupied,
+                        skirmishOccupied))
+                    {
+                        case OperationsSharedLaunchKind.Operations:
+                            selection = new OperationMapLaunchSelection(
+                                new FixedString64Bytes(fallbackMissionId),
+                                new FixedString64Bytes(fallbackScenarioId),
+                                new FixedString64Bytes(fallbackOperationMapId),
+                                null,
+                                false,
+                                true);
+                            return true;
+                        case OperationsSharedLaunchKind.ExclusiveConflict:
+                            return Reject(
+                                "Operations launch is exclusive with Campaign and Skirmish.",
+                                out failureCode,
+                                out error);
+                        default:
+                            return Reject(
+                                "Operations shared launch identity was rejected.",
+                                out failureCode,
+                                out error);
+                    }
+                }
+
                 if (world == null || !world.IsCreated)
                     return TryCreateFallback(
                         fallbackMissionId,
@@ -145,6 +181,33 @@ namespace Game.Composition
                     definition,
                     true);
                 return true;
+            }
+
+            private static bool CampaignLaunchPending(World world)
+            {
+                if (world == null || !world.IsCreated)
+                    return false;
+                EntityManager entityManager = world.EntityManager;
+                using EntityQuery query = entityManager.CreateEntityQuery(
+                    ComponentType.ReadOnly<CampaignMissionRootComponent>());
+                using NativeArray<Entity> roots = query.ToEntityArray(Allocator.Temp);
+                for (int index = 0; index < roots.Length; index++)
+                {
+                    Entity root = roots[index];
+                    if (!entityManager.HasBuffer<CampaignMissionLaunchRequestElement>(root))
+                        continue;
+                    if (entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(root, true).Length > 0)
+                        return true;
+                }
+
+                return false;
+            }
+
+            private static bool SkirmishLaunchPending(World world)
+            {
+                if (world == null || !world.IsCreated)
+                    return false;
+                return SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out _);
             }
 
             private static bool IsValidRequest(in CampaignMissionLaunchRequestElement request) =>

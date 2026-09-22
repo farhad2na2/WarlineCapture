@@ -1,3 +1,4 @@
+using System;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -14,6 +15,15 @@ namespace Game.Composition
         {
             if (matchRuntimeBound)
                 return;
+            ApplyQueuedOperationsLaunch();
+            if (operationsSharedLaunchRequested)
+            {
+                if (!TryBindOperationsSharedMatch(
+                        World.DefaultGameObjectInjectionWorld,
+                        out string operationsError))
+                    Debug.LogError("[OperationsSharedLaunch] " + operationsError);
+                return;
+            }
             if (!HasCompatibilityMapReferences())
             {
                 EnsureOperationMapSourceSceneLoad();
@@ -23,6 +33,96 @@ namespace Game.Composition
                     World.DefaultGameObjectInjectionWorld,
                     out string operationMapError))
                 Debug.LogError($"[OperationMapCompatibility] {operationMapError}");
+        }
+
+        internal void QueueOperationsSharedLaunch(string mission, string scenario, string map)
+        {
+            PendingOperationsSharedLaunch = true;
+            PendingOperationsMissionId = mission ?? string.Empty;
+            PendingOperationsScenarioId = scenario ?? string.Empty;
+            PendingOperationsMapId = map ?? string.Empty;
+        }
+
+        internal void AcceptOperationsSharedLaunch(string mission, string scenario, string map)
+        {
+            QueueOperationsSharedLaunch(mission, scenario, map);
+            if (matchRuntimeBound)
+                ShutdownMatchRuntimeBound();
+            ApplyQueuedOperationsLaunch();
+            EnsureMatchRuntimeBound();
+        }
+
+        internal void ClearOperationsSharedLaunch()
+        {
+            PendingOperationsSharedLaunch = false;
+            PendingOperationsMissionId = string.Empty;
+            PendingOperationsScenarioId = string.Empty;
+            PendingOperationsMapId = string.Empty;
+            operationsSharedLaunchRequested = false;
+            hasResolvedOperationMapLaunchSelection = false;
+        }
+
+        void ApplyQueuedOperationsLaunch()
+        {
+            if (!PendingOperationsSharedLaunch)
+                return;
+            missionId = PendingOperationsMissionId;
+            scenarioId = PendingOperationsScenarioId;
+            operationMapId = PendingOperationsMapId;
+            operationsSharedLaunchRequested = true;
+            hasResolvedOperationMapLaunchSelection = false;
+            PendingOperationsSharedLaunch = false;
+        }
+
+        internal bool TryBindOperationsSharedMatch(World world, out string error)
+        {
+            if (!operationsSharedLaunchRequested)
+            {
+                error = "Operations shared launch was not requested.";
+                return false;
+            }
+
+            if (world == null || !world.IsCreated)
+            {
+                error = "A live default ECS World is required for the Operations shared launch.";
+                return false;
+            }
+
+            if (!MatchSceneView.OperationMapLaunchResolver.TryResolve(
+                    world,
+                    missionId,
+                    scenarioId,
+                    operationMapId,
+                    out OperationMapLaunchSelection selection,
+                    out _,
+                    out error,
+                    true) ||
+                !selection.IsOperations)
+            {
+                error = string.IsNullOrEmpty(error)
+                    ? "Operations shared launch did not resolve."
+                    : error;
+                return false;
+            }
+
+            resolvedOperationMapLaunchSelection = selection;
+            hasResolvedOperationMapLaunchSelection = true;
+            resolvedOperationMapDefinition = null;
+            ApplyMatchEnvironmentAuthority();
+            try
+            {
+                matchBootstrapSystem.Awake(world, this, transform, gameObject.layer);
+                matchRuntimeBound = true;
+                if (!GameplayStartRequested)
+                    BeginGameplay();
+                error = null;
+                return true;
+            }
+            catch (Exception exception)
+            {
+                error = exception.Message;
+                return false;
+            }
         }
 
         internal bool TryBindMatchRuntime(World world, out string error)
@@ -308,6 +408,8 @@ namespace Game.Composition
 
         private void EnsureOperationMapSourceSceneLoad()
         {
+            if (operationsSharedLaunchRequested)
+                return;
             if (operationMapSceneLoadingSystem != null)
                 return;
 
@@ -362,7 +464,8 @@ namespace Game.Composition
                         operationMapId,
                         out resolvedOperationMapLaunchSelection,
                         out failureCode,
-                        out error))
+                        out error,
+                        operationsSharedLaunchRequested))
                 {
                     definition = null;
                     waiting = false;
@@ -371,9 +474,11 @@ namespace Game.Composition
 
                 hasResolvedOperationMapLaunchSelection = true;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                string source = resolvedOperationMapLaunchSelection.IsCampaign
-                    ? "Campaign"
-                    : "Compatibility";
+                string source = resolvedOperationMapLaunchSelection.IsOperations
+                    ? "Operations"
+                    : resolvedOperationMapLaunchSelection.IsCampaign
+                        ? "Campaign"
+                        : "Compatibility";
                 Debug.Log(
                     $"[OperationMapLaunchIdentity] source={source} " +
                     $"mission={resolvedOperationMapLaunchSelection.MissionId} " +

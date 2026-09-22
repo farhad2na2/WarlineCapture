@@ -29,6 +29,11 @@ namespace Game.Composition
         private OperationMapDefinition resolvedOperationMapDefinition;
         private OperationMapLaunchSelection resolvedOperationMapLaunchSelection;
         private bool hasResolvedOperationMapLaunchSelection;
+        private bool operationsSharedLaunchRequested;
+        internal static bool PendingOperationsSharedLaunch;
+        internal static string PendingOperationsMissionId = string.Empty;
+        internal static string PendingOperationsScenarioId = string.Empty;
+        internal static string PendingOperationsMapId = string.Empty;
         private OperationMapSceneView activeOperationMapSceneView;
         private OperationMapCanonicalPresentationMode loadedOperationMapCanonicalPresentationMode =
             OperationMapCanonicalPresentationMode.SourceRenderersPresent;

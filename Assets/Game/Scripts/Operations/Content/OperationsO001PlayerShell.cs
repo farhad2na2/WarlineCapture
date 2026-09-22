@@ -9,9 +9,10 @@ using Game.Operations.Tactical;
 namespace Game.Operations.Content
 {
     /// <summary>
-    /// P4R P0 player shell for operation.o001. Hub, briefing, play, settle, and return
-    /// all go through Package 3. Play runs the authored D01 mission. Buttons and Regular
-    /// EN Aria share <see cref="Press"/>. The profile directory is the durable copy.
+    /// P4R player shell for operation.o001. Hub, briefing, play, settle, and return
+    /// go through Package 3. Deploy asks the shared match scene to open. Shipping
+    /// controls and Regular EN Aria both call <see cref="Press"/>. The profile directory
+    /// is packed into the shipping profile envelope on return.
     /// </summary>
     public sealed class OperationsO001PlayerShell
     {
@@ -254,7 +255,7 @@ namespace Game.Operations.Content
                 return false;
             }
 
-            OperationsLoopStep launch = _loop.BeginLaunch();
+            OperationsLoopStep launch = _loop.BeginLaunch(true);
             if (!launch.Accepted)
             {
                 _lastReject = "launch:" + launch.Reason;
@@ -269,7 +270,7 @@ namespace Game.Operations.Content
             }
 
             if (!_loop.TryLaunchRequest(out OperationsModeLaunchRequest request) ||
-                request.InvokesSharedSceneView ||
+                !request.InvokesSharedSceneView ||
                 request.Mode != OperationsMatchMode.Operations ||
                 request.MapId != OperationsMapGreyboxCatalog.OldQuarterMapId)
             {

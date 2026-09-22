@@ -17,6 +17,7 @@ namespace Game.Runtime
             data.profile.ownedSupportAbilityUnlocks ??= System.Array.Empty<string>();
             data.profile.ownedCosmetics ??= System.Array.Empty<string>();
             data.profile.campaignMissionProgress ??= System.Array.Empty<CampaignMissionProgressSaveData>();
+            data.profile.operationsEnvelope ??= string.Empty;
             return data;
         }
     }

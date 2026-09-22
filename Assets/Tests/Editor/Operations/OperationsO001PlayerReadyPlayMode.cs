@@ -1,54 +1,34 @@
 #if UNITY_EDITOR
 using System.IO;
-using Game.Operations.Capture;
 using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Game.Tests.Editor.Operations
 {
-    [InitializeOnLoad]
     public static class OperationsO001PlayerReadyPlayMode
     {
-        const string ActiveKey = "OperationsO001PlayerReady.Active";
-        const string NewProfileKey = "OperationsO001PlayerReady.NewProfile";
+        public const string AriaFlagName = "aria-regular-en.txt";
 
-        static OperationsO001PlayerReadyPlayMode()
+        static string ProfileDirectory() =>
+            Path.Combine(Application.persistentDataPath, "OperationsO001Player");
+
+        [MenuItem("Operations/P4R/Arm Regular EN Aria")]
+        public static void ArmRegularEnAria()
         {
-            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+            string directory = ProfileDirectory();
+            Directory.CreateDirectory(directory);
+            File.WriteAllText(Path.Combine(directory, AriaFlagName), "1102\n");
+            Debug.Log(
+                "[OperationsO001PlayerShell] Regular EN Aria is armed. From the Ops dashboard press the D01 district, confirm Raid to deploy into the match, then use Select, Move, Attack, Scan, Hold, Board, and Continue.");
         }
 
-        [MenuItem("Operations/P4R/Play O001 Player Shell")]
-        public static void PlayExistingProfile() => Enter(false);
-
-        [MenuItem("Operations/P4R/Play O001 New Profile")]
-        public static void PlayNewProfile() => Enter(true);
-
-        static void Enter(bool newProfile)
+        [MenuItem("Operations/P4R/Clear Aria Arm")]
+        public static void ClearAriaArm()
         {
-            SessionState.SetBool(ActiveKey, true);
-            SessionState.SetBool(NewProfileKey, newProfile);
-            EditorSceneManager.NewScene(NewSceneSetup.DefaultGameObjects, NewSceneMode.Single);
-            EditorApplication.EnterPlaymode();
-        }
-
-        static void OnPlayModeStateChanged(PlayModeStateChange change)
-        {
-            if (change != PlayModeStateChange.EnteredPlayMode)
-                return;
-            if (!SessionState.GetBool(ActiveKey, false))
-                return;
-            SessionState.EraseBool(ActiveKey);
-            string directory = Path.Combine(Application.persistentDataPath, "OperationsO001Player");
-            if (SessionState.GetBool(NewProfileKey, false))
-            {
-                SessionState.EraseBool(NewProfileKey);
-                if (Directory.Exists(directory))
-                    Directory.Delete(directory, true);
-            }
-
-            OperationsO001PlayerReadyView.Begin(directory);
-            Debug.Log("[OperationsO001PlayerReady] play_mode profile=" + directory);
+            string path = Path.Combine(ProfileDirectory(), AriaFlagName);
+            if (File.Exists(path))
+                File.Delete(path);
+            Debug.Log("[OperationsO001PlayerShell] Regular EN Aria arm cleared. Manual play uses the same district, raid, and match controls.");
         }
     }
 }

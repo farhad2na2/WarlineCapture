@@ -11,7 +11,7 @@ namespace Game.Operations.Content
     }
 
     /// <summary>
-    /// Regular EN Aria plays by pressing the same control ids the player shell shows.
+    /// Regular EN Aria plays by pressing the same shipping controls as a person.
     /// It does not call the capture script or the loop order methods itself.
     /// </summary>
     public static class OperationsAriaVisibleControls
@@ -31,7 +31,7 @@ namespace Game.Operations.Content
 
             if (NeedsContinue(frame))
             {
-                if (!shell.Press(OperationsO001PlayerShell.ContinueId))
+                if (!OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Continue, string.Empty, string.Empty, string.Empty))
                 {
                     detail = shell.Describe();
                     return OperationsVisibleStepKind.Stuck;
@@ -50,7 +50,7 @@ namespace Game.Operations.Content
 
             if (frame.Phase == OperationsLoopPhase.Dashboard && frame.Route == OperationsShellNames.Operations)
             {
-                if (!shell.Press(OperationsO001PlayerShell.LibraryId))
+                if (!OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.District, string.Empty, string.Empty, string.Empty))
                 {
                     detail = shell.Describe();
                     return OperationsVisibleStepKind.Stuck;
@@ -62,7 +62,7 @@ namespace Game.Operations.Content
 
             if (frame.Route == OperationsShellNames.MissionBriefing)
             {
-                if (!shell.Press(OperationsO001PlayerShell.DeployId))
+                if (!OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Raid, string.Empty, string.Empty, string.Empty))
                 {
                     detail = shell.Describe();
                     return OperationsVisibleStepKind.Stuck;
@@ -78,7 +78,7 @@ namespace Game.Operations.Content
 
             if (!TryFirstAction(plan, out OperationsAriaIntent intent))
             {
-                if (shell.Press(OperationsO001PlayerShell.WaitId) || shell.Read().Terminal)
+                if (OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty) || shell.Read().Terminal)
                 {
                     detail = "wait";
                     return OperationsVisibleStepKind.Advanced;
@@ -90,7 +90,7 @@ namespace Game.Operations.Content
 
             if (intent.ActorId.Length > 0 && shell.ChannelTicks(intent.ActorId) > 0)
             {
-                if (!shell.Press(OperationsO001PlayerShell.WaitId))
+                if (!OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty))
                 {
                     detail = shell.Describe();
                     return OperationsVisibleStepKind.Stuck;
@@ -102,7 +102,7 @@ namespace Game.Operations.Content
 
             if (!PressIntent(shell, intent))
             {
-                if (shell.Press(OperationsO001PlayerShell.WaitId) || shell.Read().Terminal)
+                if (OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty) || shell.Read().Terminal)
                 {
                     detail = "wait_after_reject";
                     return OperationsVisibleStepKind.Advanced;
@@ -113,7 +113,7 @@ namespace Game.Operations.Content
             }
 
             if (!shell.Read().Terminal)
-                shell.Press(OperationsO001PlayerShell.WaitId);
+                OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty);
             detail = intent.Skill.ToString();
             return OperationsVisibleStepKind.Advanced;
         }
@@ -133,22 +133,30 @@ namespace Game.Operations.Content
             if (!any)
                 return false;
             if (!shell.Read().Terminal)
-                shell.Press(OperationsO001PlayerShell.WaitId);
+                OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty);
             detail = "extract";
             return true;
         }
 
         static bool PressIntent(OperationsO001PlayerShell shell, OperationsAriaIntent intent)
         {
+            string shipping = OperationsMatchVisibleControls.ShippingName(intent.Skill);
+            if (shipping.Length == 0)
+                return false;
             string orderId = OperationsO001PlayerShell.OrderId(intent);
             if (!Contains(shell, orderId) && intent.ActorId.Length > 0)
             {
-                string selectId = OperationsO001PlayerShell.SelectId(intent.ActorId);
-                if (!Contains(shell, selectId) || !shell.Press(selectId))
+                if (!OperationsMatchVisibleControls.Press(
+                        shell,
+                        OperationsMatchVisibleControls.Select,
+                        intent.ActorId,
+                        string.Empty,
+                        string.Empty))
                     return false;
             }
 
-            return Contains(shell, orderId) && shell.Press(orderId);
+            return Contains(shell, orderId) &&
+                OperationsMatchVisibleControls.Press(shell, shipping, intent.ActorId, intent.TargetId, intent.RouteId);
         }
 
         static bool Contains(OperationsO001PlayerShell shell, string controlId)

@@ -13,7 +13,8 @@ namespace Game.Configs
                 count == 3 &&
                 IsEqual(value, segments[0], "opmap") &&
                 (IsEqual(value, segments[1], "skirmish") ||
-                 IsNumbered(value, segments[1], 'c', 'h'));
+                 IsNumbered(value, segments[1], 'c', 'h') ||
+                 IsOperationsMap(value, segments[1], segments[2]));
         }
 
         public static bool IsValidSourceGlobalObjectId(string value)
@@ -63,11 +64,44 @@ namespace Game.Configs
                 return false;
 
             if (count == 3)
-                return IsEqual(value, segments[1], "skirmish");
+            {
+                if (IsEqual(value, segments[1], "skirmish"))
+                    return true;
+                return IsEqual(value, segments[1], "operations") &&
+                    IsOperationsMissionToken(value, segments[2]);
+            }
 
             return count == 4 &&
                 IsNumbered(value, segments[1], 'c', 'h') &&
                 IsNumbered(value, segments[2], 'm');
+        }
+
+        private static bool IsOperationsMap(string value, IdSegment name, IdSegment slug) =>
+            IsEqual(value, name, "operations") && IsKnownOperationsMapSlug(value, slug);
+
+        private static bool IsKnownOperationsMapSlug(string value, IdSegment segment) =>
+            IsEqual(value, segment, "old_quarter") ||
+            IsEqual(value, segment, "civic_center") ||
+            IsEqual(value, segment, "industrial_belt") ||
+            IsEqual(value, segment, "river_crossing") ||
+            IsEqual(value, segment, "highland_approach") ||
+            IsEqual(value, segment, "airport_perimeter");
+
+        private static bool IsOperationsMissionToken(string value, IdSegment segment)
+        {
+            if (segment.Length != 4 || value[segment.Start] != 'o')
+                return false;
+
+            int number = 0;
+            for (int index = 1; index < segment.Length; index++)
+            {
+                char character = value[segment.Start + index];
+                if (character is < '0' or > '9')
+                    return false;
+                number = (number * 10) + (character - '0');
+            }
+
+            return number is >= 1 and <= 60;
         }
 
         public static bool IsValidCameraId(string value) => IsValidScopedId(value, "camera", 3, 6);

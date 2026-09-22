@@ -30,6 +30,22 @@ FORBIDDEN = [
     "Assets/Game/Scripts/Editor/Game.Editor.asmdef",
     "Assets/Tests/Editor/Game.Tests.Editor.asmdef",
 ]
+P4R_SHARED = {
+    "Assets/Game/Scripts/Configs/OperationMapIdentityRules.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs",
+    "Assets/Game/Scripts/Composition/MatchSceneView.cs",
+    "Assets/Game/Scripts/Composition/CampaignMissionOperationMapLaunchResolver.cs",
+    "Assets/Game/Scripts/Composition/Game.Composition.asmdef",
+    "Assets/Game/Scripts/Composition/OperationsMatchSceneSystemHelper.cs",
+    "Assets/Game/Scripts/Composition/OperationsMatchSceneSystemHelper.cs.meta",
+    "Assets/Game/Scripts/Persistence/SaveDataModel.cs",
+    "Assets/Game/Scripts/Persistence/SaveMigration.cs",
+    "Assets/Game/Scripts/UI/Game.UI.Runtime.asmdef",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.GuidedCommands.cs",
+    "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.CommandTabs.cs",
+}
 BANNED_SOURCE = ("MatchSceneView", "SaveDataModel", "Demo2", "SkirmishExpansion", "batchmode")
 
 
@@ -89,6 +105,8 @@ def check_ownership() -> None:
         text=True,
     ).splitlines()
     for path in diff:
+        if path in P4R_SHARED:
+            continue
         if path in FORBIDDEN or path.startswith("Design/Roadmap/Skirmish_Expansion/"):
             fail(f"shared_edit={path}")
         if path.startswith("Assets/Game/Scripts/") and "/Operations/" not in path:

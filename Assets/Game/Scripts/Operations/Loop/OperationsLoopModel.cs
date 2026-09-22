@@ -124,6 +124,7 @@ namespace Game.Operations.Loop
         /// <summary>District metrics frozen when settlement commits. Empty until then.</summary>
         public string AfterMetrics = string.Empty;
         public string History = OperationsShellNames.Operations;
+        public bool InvokeSharedSceneView;
         public int CreditsAtLaunch;
         public int XpAtLaunch;
         public int ActionPointsAtLaunch;
@@ -159,6 +160,7 @@ namespace Game.Operations.Loop
                 BeforeMetrics = BeforeMetrics,
                 AfterMetrics = AfterMetrics,
                 History = History,
+                InvokeSharedSceneView = InvokeSharedSceneView,
                 CreditsAtLaunch = CreditsAtLaunch,
                 XpAtLaunch = XpAtLaunch,
                 ActionPointsAtLaunch = ActionPointsAtLaunch

@@ -9,6 +9,8 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("opmap.skirmish.desert_base_01")]
     [TestCase("opmap.ch01.district_edge_01")]
     [TestCase("opmap.ch12.airfield_2")]
+    [TestCase("opmap.operations.old_quarter")]
+    [TestCase("opmap.operations.airport_perimeter")]
     public void OperationMapId_AcceptsCanonicalValues(string value)
     {
         Assert.That(OperationMapIdentityRules.IsValidOperationMapId(value), Is.True);
@@ -22,6 +24,8 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("opmap.campaign.district_edge_01")]
     [TestCase("opmap.ch01.district-edge")]
     [TestCase("opmap.ch01._district")]
+    [TestCase("opmap.operations.unknown")]
+    [TestCase("opmap.operations.old_quarter.extra")]
     [TestCase("opmap.ch01.district.edge")]
     public void OperationMapId_RejectsNonCanonicalValues(string value)
     {
@@ -31,6 +35,8 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("scenario.ch01.m01.first_contact")]
     [TestCase("scenario.ch12.m9.counter_attack_2")]
     [TestCase("scenario.skirmish.desert_base_standard")]
+    [TestCase("scenario.operations.o001")]
+    [TestCase("scenario.operations.o060")]
     public void ScenarioId_AcceptsCanonicalValues(string value)
     {
         Assert.That(OperationMapIdentityRules.IsValidScenarioId(value), Is.True);
@@ -42,6 +48,9 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("scenario.campaign.m01.first_contact")]
     [TestCase("scenario.ch01.mission01.first_contact")]
     [TestCase("scenario.skirmish.desert.base")]
+    [TestCase("scenario.operations.o000")]
+    [TestCase("scenario.operations.o061")]
+    [TestCase("scenario.operations.o1")]
     [TestCase("scenario.skirmish._desert")]
     public void ScenarioId_RejectsNonCanonicalValues(string value)
     {

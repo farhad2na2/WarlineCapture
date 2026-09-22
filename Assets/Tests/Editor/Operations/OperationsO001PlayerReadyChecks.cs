@@ -12,8 +12,8 @@ namespace Game.Tests.Editor.Operations
     /// </summary>
     public static class OperationsO001PlayerReadyChecks
     {
-        public const int ExpectedCheckCount = 3;
-        public const string PassMarker = "[OperationsO001PlayerShellValidation] result=Passed checks=3";
+        public const int ExpectedCheckCount = 5;
+        public const string PassMarker = "[OperationsO001PlayerShellValidation] result=Passed checks=5";
 
         public static void RunAll()
         {
@@ -23,8 +23,10 @@ namespace Game.Tests.Editor.Operations
             try
             {
                 SharedLaunchEntersAuthoredO001(launchDirectory);
+                SharedLaunchRejectsOccupiedModes();
                 VisibleControlsSettleAndReturn(playDirectory);
                 ReloadedProfileKeepsSettlement(playDirectory);
+                ShippingEnvelopeRoundTrip(launchDirectory);
             }
             finally
             {
@@ -47,8 +49,49 @@ namespace Game.Tests.Editor.Operations
             Require(frame.ScenarioId == "scenario.operations.o001", shell.Describe());
             Require(frame.ContentHash == OperationsAuthoredMissions.O001Hash, shell.Describe());
             Require(frame.HasMission && frame.HasSharedLaunchRequest, shell.Describe());
-            Require(!frame.InvokesSharedSceneView, shell.Describe());
+            Require(frame.InvokesSharedSceneView, shell.Describe());
             Require(shell.Session.CampaignEnvelope[0] == 9, "envelope");
+            Require(
+                OperationsSharedLaunchRules.Classify(
+                    true,
+                    frame.MissionId,
+                    frame.ScenarioId,
+                    frame.MapId,
+                    false,
+                    false) == OperationsSharedLaunchKind.Operations,
+                shell.Describe());
+        }
+
+        public static void SharedLaunchRejectsOccupiedModes()
+        {
+            Require(OperationsSharedLaunchRules.Classify(
+                false,
+                OperationsO001PlayerShell.MissionId,
+                "scenario.operations.o001",
+                OperationsMapGreyboxCatalog.OldQuarterMapId,
+                false,
+                false) == OperationsSharedLaunchKind.NotRequested, "default");
+            Require(OperationsSharedLaunchRules.Classify(
+                true,
+                OperationsO001PlayerShell.MissionId,
+                "scenario.operations.o001",
+                OperationsMapGreyboxCatalog.OldQuarterMapId,
+                true,
+                false) == OperationsSharedLaunchKind.ExclusiveConflict, "campaign");
+            Require(OperationsSharedLaunchRules.Classify(
+                true,
+                OperationsO001PlayerShell.MissionId,
+                "scenario.operations.o001",
+                OperationsMapGreyboxCatalog.OldQuarterMapId,
+                false,
+                true) == OperationsSharedLaunchKind.ExclusiveConflict, "skirmish");
+            Require(OperationsSharedLaunchRules.Classify(
+                true,
+                "operation.o002",
+                "scenario.operations.o002",
+                "opmap.operations.old_quarter",
+                false,
+                false) == OperationsSharedLaunchKind.RejectedIdentity, "o002");
         }
 
         public static void VisibleControlsSettleAndReturn(string directory)
@@ -59,7 +102,7 @@ namespace Game.Tests.Editor.Operations
             Require(mid.MissionId == OperationsO001PlayerShell.MissionId, shell.Describe());
             Require(mid.ContentHash == OperationsAuthoredMissions.O001Hash, shell.Describe());
             Require(mid.MapId == OperationsMapGreyboxCatalog.OldQuarterMapId, shell.Describe());
-            Require(!mid.InvokesSharedSceneView && mid.HasSharedLaunchRequest, shell.Describe());
+            Require(mid.InvokesSharedSceneView && mid.HasSharedLaunchRequest, shell.Describe());
             string sessionId = mid.SessionId;
             int tick = mid.Tick;
 
@@ -99,6 +142,28 @@ namespace Game.Tests.Editor.Operations
             Require(first.Read().Credits == 120, first.Describe());
             Require(!ContainsEnabled(first.Read(), OperationsO001PlayerShell.LibraryId), first.Describe());
             AssertDistrict(first, 40, 46, 45, 48, 38, 22, 45);
+        }
+
+        public static void ShippingEnvelopeRoundTrip(string directory)
+        {
+            string restored = directory + "-envelope";
+            try
+            {
+                string packed = OperationsShippingEnvelope.Pack(directory);
+                Require(packed.IndexOf("scenario.ch01.m01.first_contact", StringComparison.Ordinal) < 0, "campaign");
+                OperationsShippingEnvelope.Unpack(packed, restored);
+                OperationsO001PlayerShell shell = OperationsO001PlayerShell.Open(restored);
+                OperationsPlayerShellFrame frame = shell.Read();
+                Require(frame.InvokesSharedSceneView, shell.Describe());
+                Require(frame.MissionId == OperationsO001PlayerShell.MissionId, shell.Describe());
+                Require(frame.ContentHash == OperationsAuthoredMissions.O001Hash, shell.Describe());
+                Require(shell.Session.CampaignEnvelope.Length == 3 && shell.Session.CampaignEnvelope[0] == 9, "campaign-bytes");
+                Require(OperationsShippingEnvelope.Normalize(null).Length == 0, "normalize");
+            }
+            finally
+            {
+                DeleteQuiet(restored);
+            }
         }
 
         static void AdvanceUntil(OperationsO001PlayerShell shell, Func<OperationsPlayerShellFrame, bool> done, int maxSteps)

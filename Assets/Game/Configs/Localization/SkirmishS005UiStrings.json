@@ -1,0 +1,114 @@
+{
+  "entries": [
+    {
+      "key": "skirmish.s005.title",
+      "source": "Desert Base · Base Assault · Combined Arms · Field Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرا · حمله به پایگاه · نیروهای ترکیبی · پایگاه صحرایی"
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.brief",
+      "source": "Combined Arms Field start: scout with infantry, car, and APC. R1 AA comes from Ground Staging. Tanks and heavy APCs need Established; siege needs Full Arsenal. Attack helicopters need Helipad and Established; jets need Airport and Full Arsenal. No Helipad or Airport at start.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شروع صحرایی نیروهای ترکیبی: با پیاده، خودرو و نفربر شناسایی کن. پدافند هوایی سطح ۱ از استقرار زمینی می‌آید. تانک و نفربر سنگین به پایگاه برقرار نیاز دارند؛ محاصره به زرادخانه کامل. هلی‌کوپتر تهاجمی به پد بالگرد و برقرار؛ جت به فرودگاه و زرادخانه کامل. در شروع پد بالگرد یا فرودگاه نیست."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.objective",
+      "source": "Destroy the original enemy Barracks while your original Barracks survives.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.warning.offensive_air",
+      "source": "Field Combined Arms: offensive air is gated on readiness and producers. Helipad and Airport are not granted at start.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروهای ترکیبی صحرایی: هوایی تهاجمی پشت آمادگی و تولیدکننده‌ها قفل است. پد بالگرد و فرودگاه در شروع داده نمی‌شود."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.warning.shared_reservation",
+      "source": "Armor, AA, and air queues do not yet share category or Supply reservations; eligibility is per request only.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "صف‌های زرهی، پدافند هوایی و هوایی هنوز رزرو مشترک دسته یا تدارکات ندارند؛ واجد شرایط بودن فقط برای هر درخواست است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.warning.replacement_base",
+      "source": "A replacement Barracks does not replace the original main base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه جایگزین جای پایگاه اصلی اولیه را نمی‌گیرد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.victory",
+      "source": "The original enemy Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.defeat",
+      "source": "The original player Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی بازیکن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.draw_bases",
+      "source": "Both original Barracks were destroyed on the same tick.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو سربازخانه اصلی در همان تیک نابود شدند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.draw_deadline",
+      "source": "Both original Barracks were still standing at the deadline.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در موعد مقرر هنوز هر دو سربازخانه اصلی پابرجا بودند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s005.result.surrender",
+      "source": "Surrender accepted.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تسلیم پذیرفته شد."
+        }
+      ]
+    }
+  ]
+}

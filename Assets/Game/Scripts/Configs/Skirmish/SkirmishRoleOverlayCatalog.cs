@@ -48,6 +48,28 @@ namespace Game.Configs
             return kept.ToArray();
         }
 
+        public static SkirmishRoleOverlay[] CreateCombinedArmsSlice()
+        {
+            SkirmishRoleOverlay[] ground = CreateS002GroundSlice();
+            SkirmishRoleOverlay[] air = CreateAirMobileSlice();
+            var kept = new System.Collections.Generic.List<SkirmishRoleOverlay>(ground.Length + air.Length + 2);
+            for (int i = 0; i < ground.Length; i++)
+                kept.Add(ground[i]);
+
+            kept.Add(Overlay(SkirmishRoleIds.ApcHeavy, SkirmishRoleKind.ApcHeavy, 340, 18, 22f, 280,
+                SkirmishProducerKind.GroundStaging, SkirmishTargetDomain.Infantry | SkirmishTargetDomain.Ground, 1));
+            kept.Add(Overlay(SkirmishRoleIds.Siege, SkirmishRoleKind.Siege, 260, 30, 40f, 420,
+                SkirmishProducerKind.GroundStaging, SkirmishTargetDomain.Ground | SkirmishTargetDomain.Structure, 1));
+            for (int i = 0; i < air.Length; i++)
+            {
+                if (ContainsKind(kept, air[i].RoleKind))
+                    continue;
+                kept.Add(air[i]);
+            }
+
+            return kept.ToArray();
+        }
+
         public static SkirmishRoleOverlay[] CreateS002GroundSlice()
         {
             return new[]
@@ -144,6 +166,19 @@ namespace Game.Configs
 
         public bool TryGet(SkirmishRoleKind kind, out SkirmishRoleOverlay overlay) =>
             TryGet(overlays, kind, out overlay);
+
+        private static bool ContainsKind(
+            System.Collections.Generic.List<SkirmishRoleOverlay> overlays,
+            SkirmishRoleKind kind)
+        {
+            for (int i = 0; i < overlays.Count; i++)
+            {
+                if (overlays[i].RoleKind == kind)
+                    return true;
+            }
+
+            return false;
+        }
 
         private static SkirmishRoleOverlay Overlay(
             string roleId,

@@ -53,6 +53,14 @@ namespace Game.Configs
                     Status = SkirmishPublicationStatus.InProgress,
                     EvidencePath = "Design/AgentReports/SkirmishExpansion/S004/",
                     Notes = "Compiler and Air Mobile Established definition slice. Asset existence cannot set Playable."
+                },
+                new SkirmishPublicationRowConfig
+                {
+                    CatalogId = "S005",
+                    DefinitionId = "skirmish.s005",
+                    Status = SkirmishPublicationStatus.InProgress,
+                    EvidencePath = "Design/AgentReports/SkirmishExpansion/S005/",
+                    Notes = "Compiler and Combined Arms Field definition slice. Asset existence cannot set Playable."
                 }
             };
         }

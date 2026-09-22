@@ -505,7 +505,9 @@ namespace Game.Tests.Editor
             Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig assetS003));
             Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS003.Status);
             Assert.IsTrue(publication.TryGet("S004", out SkirmishPublicationRowConfig assetS004));
-            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS004.Status);
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS004.Status);
+            Assert.IsTrue(publication.TryGet("S005", out SkirmishPublicationRowConfig assetS005));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS005.Status);
         }
 
         public static void RunFocusedValidation()

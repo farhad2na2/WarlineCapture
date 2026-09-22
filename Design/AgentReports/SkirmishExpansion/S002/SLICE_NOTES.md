@@ -513,6 +513,63 @@ Design commit; that does **not** mark Skirmish mission 4 Playable.
 - Publication: **Playable** on tip `2b5f0f6e9` (flip commit `7f0e1def7`).
 - Game View self-gate: Regular Standard seed `104731` Playing PNG + sidecar under `Design/AgentReports/SkirmishExpansion/S002/_Evidence/`.
 - Visual spawn follow-up: `SkirmishVisualSpawnSystem` snapshots session entities before `AttachMissing` (`2b5f0f6e9`) so live Playing no longer throws structural-change during `AddComponentObject`.
-- Still open (do not treat as ARIA/War certified): counted Regular Standard ARIA matrix (seeds 104731 / 130365 / 155923 x en/fa-IR), edge/recovery placeholders, and device review slots in `acceptance.md` / `runs.csv`.
+- Still open (do not treat as ARIA/War certified): counted Regular Standard ARIA matrix (seeds 104731 / 130365 / 155923 x en/fa-IR), the human slot `S002-manual-rs-104731-en`, edge/recovery placeholders, and device review. `runs.csv` is still header-only. Publication Playable is not an ARIA win.
+
+## S002 ARIA win harness
+
+Expanded attack orders now apply overlay damage. A unit on Attack stops while a
+legal visible combatant is in range, then continues to the ordered structure.
+Rifles still cannot damage a Barracks. Hidden contacts take no damage. ARIA
+pages to the assault cards (tank, car, APC, rocketeer), additive-selects them,
+and presses the visible Attack button. That button calls
+`SkirmishArmyCommandService.TryAttack` on the visible enemy base. No forced
+Victory, injected army, extra resources, or hidden wallet.
+
+Live recorder: `Game.Editor.SkirmishS002AriaRunHarness`.
+
+Menus:
+
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 fa-IR`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 fa-IR`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 fa-IR`
+
+Execute methods (same class): `Launch104731En`, `Launch104731Fa`,
+`Launch130365En`, `Launch130365Fa`, `Launch155923En`, `Launch155923Fa`,
+`LaunchFromEnvironment` (`WARLINE_S002_SEED`, `WARLINE_S002_LOCALE`).
+
+Run them from the open Windows Skirmish shadow Editor
+(`D:\Projects\WarlineCapture-Skirmish`) with Hub signed in and the Game View
+focused. `normal_speed` stays 1. The
+`InvokeUnityExecuteMethodValidation.ps1` wrapper passes `-quit` and will not
+wait for the match. On finish or a 1500s abort the harness appends the next
+open `S002-aria-rs-*` row and writes evidence under
+`Design/AgentReports/SkirmishExpansion/S002/_Evidence/`. Census
+`code_hash` / `config_hash` / definition version on that row come from
+`SkirmishAcceptanceCensusCapture.TryCapture` + `FormatLog` for the launched
+seed (same hashes as `Tools/Warline/Skirmish/Capture S002 Regular Standard Census`).
+`AriaPlayEditorValidation.AcceptExpandedPayload` and the watch
+`AcceptExpandedPayload` still only log the selected configuration.
+
+`S002-manual-rs-104731-en` stays empty for a human on
+`Tools/Warline/Skirmish/Launch S002 Regular Standard Game View`.
+
+Focused Editor proof (refuses forced Victory; accepts only a finished match
+outcome; does not write the repo `runs.csv`):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS002AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+This environment has no Unity Editor. Programmer 1 runs that marker on the
+shadow project. Do not mark the ARIA matrix complete from this branch.
 - Focused Editor suites green on Windows Skirmish shadow after Gridlock merge; visual + catalog re-checked on `2b5f0f6e9`.
 

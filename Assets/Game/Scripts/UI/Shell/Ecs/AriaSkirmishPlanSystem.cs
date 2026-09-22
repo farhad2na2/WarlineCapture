@@ -429,8 +429,13 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             if (touch.Phase == AriaPlayPhase.Touching) return;
-            // The campaign watchdog treats one GoalId as stuck after 180s. Expanded
-            // Base Assault keeps that same public goal until a base actually falls.
+            // Campaign opening (OpeningUntil = Time+180, AssaultStarted only after
+            // infantry 24, or 16 at that deadline, or OpeningUntil+60) is not this
+            // skill. The starting tank and rocketeers are already on the field.
+            // Flat EnemyHealth/PlayerHealth/ForceHealth/Infantry for 150s is the
+            // campaign stall. It must not set Blocked here: the column is in
+            // transit, and Blocked stops the hand while the match clock runs to
+            // TimeLimit. Refresh the public watchdog so that march is not a stall.
             touch.LastProgressAt = view.Time;
             touch.LastObjectiveProgressAt = view.Time;
             if (view.ExpandedRetries >= 3)
@@ -482,13 +487,18 @@ namespace Game.UI.Shell.Ecs
                 Target(view.Recruit, false, ref output);
                 return;
             }
-            if (!view.SelectionVisible && view.Squad0.Available)
+            if (!view.SelectionVisible && view.Squad0.Available &&
+                SelectionCanDamageDesignatedBase(view, squad0WithoutSelection: true))
             {
                 plan.Intent = AriaSkirmishIntent.SelectSquad;
                 Target(view.Squad0, false, ref output);
                 return;
             }
-            if (view.EnemyDesignatedAlive && view.Attack.Available && view.SelectionVisible)
+            // Rifles and cars cannot damage a Barracks. Attack only when the
+            // visible selection includes a structure card (tank, rocketeer,
+            // breacher, siege), or when this observation has no page model.
+            if (view.EnemyDesignatedAlive && view.Attack.Available && view.SelectionVisible &&
+                SelectionCanDamageDesignatedBase(view, squad0WithoutSelection: false))
             {
                 plan.Intent = AriaSkirmishIntent.Attack;
                 Target(view.Attack, false, ref output);
@@ -502,6 +512,18 @@ namespace Game.UI.Shell.Ecs
             }
             plan.Intent = AriaSkirmishIntent.Inspect;
             output.Kind = AriaPlayObservationKind.Waiting;
+        }
+
+        private static bool SelectionCanDamageDesignatedBase(
+            in AriaSkirmishObservation view,
+            bool squad0WithoutSelection)
+        {
+            bool pageModel = view.ExpandedNextPage || view.ExpandedStructureMask != 0 || view.ExpandedAssaultMask != 0;
+            if (!pageModel)
+                return true;
+            if (squad0WithoutSelection)
+                return (view.ExpandedStructureMask & 1) != 0;
+            return (view.ExpandedStructureMask & view.ExpandedSelectedMask) != 0;
         }
 
         private static bool TryExpandedGroundAssault(

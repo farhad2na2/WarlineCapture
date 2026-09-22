@@ -291,6 +291,62 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void ExpandedAssaultStartsImmediatelyAndDoesNotBlockOnFlatHealth()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                Infantry = 20,
+                Time = 0f,
+                EnemyHealth = 800f,
+                PlayerHealth = 800f,
+                ForceHealth = 20f,
+                ExpandedNextPage = true,
+                ExpandedPageIndex = 0,
+                Squad4 = new AriaTouchTarget { Id = 14, Available = true },
+                Attack = new AriaTouchTarget { Id = 42, Available = true },
+                Squad0 = new AriaTouchTarget { Id = 10, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0f, plan.OpeningUntil);
+            Assert.AreEqual(0, plan.AssaultStarted);
+            Assert.AreEqual(AriaPlayPhase.Observing, touch.Phase);
+            Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
+            Assert.AreEqual(14, output.TargetId);
+
+            view.Time = 200f;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(AriaPlayPhase.Blocked, touch.Phase);
+            Assert.AreEqual(0f, plan.OpeningUntil);
+            Assert.AreEqual(0, plan.AssaultStarted);
+            Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
+            Assert.AreEqual(14, output.TargetId);
+
+            view.ExpandedPageIndex = 1;
+            view.ExpandedStructureMask = 1 << 3;
+            view.ExpandedAssaultMask = (1 << 0) | (1 << 3);
+            view.ExpandedSelectedMask = 1 << 0;
+            view.SelectionVisible = true;
+            view.Squad3 = new AriaTouchTarget { Id = 13, Available = false };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(AriaSkirmishIntent.Attack, plan.Intent);
+            Assert.AreNotEqual(42, output.TargetId);
+
+            view.ExpandedSelectedMask = (1 << 0) | (1 << 3);
+            view.Squad3 = new AriaTouchTarget { Id = 13, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Attack, plan.Intent);
+            Assert.AreEqual(42, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultIssued);
+        }
+
+        [Test]
         public void BlockedExpandedPlanRestartsTheTouchDriver()
         {
             var view = new AriaSkirmishObservation
@@ -809,6 +865,7 @@ namespace Game.Tests.Editor
                 suite.AssaultColumnKillsTheEnemyTankAndLeavesThePlayerBarracks();
                 suite.ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks();
                 suite.ExpandedAssaultDoesNotAttackWithRiflesWhileNextPageExists();
+                suite.ExpandedAssaultStartsImmediatelyAndDoesNotBlockOnFlatHealth();
                 suite.BlockedExpandedPlanRestartsTheTouchDriver();
                 suite.PendingPathRequestDoesNotFreezeLocalStep();
                 suite.StructureInRangeIsDamagedWhileACombatantIsAlsoInRange();

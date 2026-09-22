@@ -75,10 +75,27 @@ def check_sources() -> None:
 
     if "ShowVictory" not in presentation or "OnGUI" not in presentation:
         fail("presentation_incomplete")
+    if "OperationsTacticalWorldShell" not in presentation and not (CAPTURE_ROOT / "OperationsTacticalWorldShell.cs").is_file():
+        fail("world_shell_missing")
+    world = (CAPTURE_ROOT / "OperationsTacticalWorldShell.cs").read_text(encoding="utf-8")
+    if "CreatePrimitive" not in world or "Selection" not in world:
+        fail("world_incomplete")
+    if "Universal Render Pipeline/Unlit" not in world or "_BaseColor" not in world:
+        fail("world_urp_unlit")
+    if "UniversalAdditionalCameraData" not in world:
+        fail("world_urp_camera")
+    if "BuildLocalizedObjectives" not in presentation or "PhonePanelRect" not in presentation:
+        fail("mobile_chrome")
+    if "Ops-owned win screen (Watch shared-UI seam not opened)" in presentation:
+        fail("dev_footer")
     if "namespace Game.Operations.Capture" not in presentation:
         fail("presentation_runtime_namespace")
     if "AddComponent returned null" not in presentation:
         fail("presentation_null_guard")
+    if "Game.Operations.Tactical" not in asmdef:
+        fail("capture_missing_tactical")
+    if "Unity.RenderPipelines.Universal.Runtime" not in asmdef:
+        fail("capture_missing_urp")
 
     invoke = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCapture.ps1").read_text(encoding="utf-8")
     wiring = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCaptureValidation.ps1").read_text(encoding="utf-8")
@@ -126,17 +143,31 @@ def check_meta_guids() -> None:
 
 
 def check_scaffolds_pending() -> None:
+    """Regular EN evidence is recorded AriaWon. FA scaffolds stay pending. Does not claim playable."""
     samples = [
         EVIDENCE_ROOT / "operation.o001" / "Regular" / "1102" / "result.en.json",
         EVIDENCE_ROOT / "operation.o002" / "Regular" / "1103" / "result.en.json",
         EVIDENCE_ROOT / "operation.o003" / "Regular" / "1104" / "result.en.json",
     ]
+    png_names = ("play-01-start.en.png", "play-02-mid.en.png", "play-03-terminal.en.png", "win-screen.en.png")
     for path in samples:
         text = path.read_text(encoding="utf-8")
-        if "PendingAriaWon" not in text:
-            fail(f"scaffold_not_pending={path.relative_to(ROOT)}")
-        if '"status": "AriaWon"' in text:
-            fail(f"scaffold_premature_ariawon={path.relative_to(ROOT)}")
+        if '"status": "AriaWon"' not in text:
+            fail(f"recorded_status={path.relative_to(ROOT)}")
+        if '"victory": true' not in text:
+            fail(f"recorded_victory={path.relative_to(ROOT)}")
+        if "win-screen.en.png" not in text:
+            fail(f"recorded_capture={path.relative_to(ROOT)}")
+        if "PendingAriaWon" in text:
+            fail(f"recorded_still_scaffold={path.relative_to(ROOT)}")
+        for name in png_names:
+            png = path.parent / name
+            if not png.is_file() or png.stat().st_size < 64:
+                fail(f"recorded_png={png.relative_to(ROOT)}")
+
+    fa = (EVIDENCE_ROOT / "operation.o001" / "Regular" / "9102" / "result.fa.json").read_text(encoding="utf-8")
+    if "PendingAriaWon" not in fa or "PENDING_LIVE_BUILD" not in fa:
+        fail("fa_scaffold_pending")
 
 
 def dotnet_executable() -> str:

@@ -892,7 +892,7 @@ namespace Game.Operations.Loop
                     node.Optional,
                     state.Phase == OperationsTacticalNodePhase.Complete,
                     state.Phase == OperationsTacticalNodePhase.Failed,
-                    state.ProgressTicks);
+                    state.ProgressCount > 0 ? state.ProgressCount : state.ProgressTicks);
                 if (node.Optional)
                     optional.Add(row);
                 else

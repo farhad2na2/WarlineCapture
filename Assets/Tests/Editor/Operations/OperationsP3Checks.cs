@@ -644,15 +644,18 @@ namespace Game.Tests.Editor.Operations
             Require(loop.Move("unit.d02.rifle.01", plaza.AnchorId).Accepted, "move");
             Require(loop.Repair("unit.d02.repair.01", "site.d02.clinic").Accepted, "repair");
             Require(loop.EscortGo("route.main").Accepted, "escort");
-            bool holding = false;
-            for (int step = 0; step < 90 && !loop.MissionTerminal; step++)
+            for (int step = 0; step < 120 && !loop.MissionTerminal; step++)
             {
                 loop.Advance(1);
-                if (!holding && loop.TryActor("unit.d02.rifle.01", out OperationsTacticalActorState rifle) &&
+                if (Completed(loop, "hold_plaza"))
+                    continue;
+                if (!loop.TryNode("hold_plaza", out OperationsTacticalNodeState hold) ||
+                    hold.Phase != OperationsTacticalNodePhase.Active)
+                    continue;
+                if (loop.TryActor("unit.d02.rifle.01", out OperationsTacticalActorState rifle) &&
                     OperationsTacticalRules.Within(rifle.X, rifle.Z, plaza.X, plaza.Z, OperationsTacticalRules.HoldMeters))
                 {
                     Require(loop.Hold("unit.d02.rifle.01", plaza.AnchorId).Accepted, "hold");
-                    holding = true;
                 }
             }
 

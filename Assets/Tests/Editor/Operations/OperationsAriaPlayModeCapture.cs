@@ -62,6 +62,7 @@ namespace Game.Tests.Editor.Operations
 
         const string ExitPendingKey = "OperationsAriaPlayModeCapture.ExitPending";
         const string ExitCodeKey = "OperationsAriaPlayModeCapture.ExitCode";
+        const string WarmupKey = "OperationsAriaPlayModeCapture.WorldWarmup";
 
         [InitializeOnLoadMethod]
         static void ResumeActiveCapture()
@@ -298,7 +299,26 @@ namespace Game.Tests.Editor.Operations
                 }
 
                 presenter.ShowPlayHud(_loop, missionId, language, seed);
-                CaptureNamed("play-01-start");
+                // Let URP draw the shell before ScreenCapture. Same-frame capture was a cyan void.
+                SessionState.SetInt(WarmupKey, 1);
+                return;
+            }
+
+            int warmup = SessionState.GetInt(WarmupKey, 0);
+            if (warmup > 0 && warmup < 6)
+            {
+                OperationsAriaPlayModePresentation warming = OperationsAriaPlayModePresentation.Ensure();
+                if (warming == null)
+                {
+                    Finish(false, "presenter_ensure_failed");
+                    return;
+                }
+
+                warming.ShowPlayHud(_loop, missionId, language, seed);
+                warmup++;
+                SessionState.SetInt(WarmupKey, warmup);
+                if (warmup >= 6)
+                    CaptureNamed("play-01-start");
                 return;
             }
 
@@ -313,7 +333,8 @@ namespace Game.Tests.Editor.Operations
                 }
 
                 presenter.ShowPlayHud(_loop, missionId, language, seed);
-                if (_playStep == 40)
+                // Short missions finish before step 40 after pacing compression.
+                if (_playStep == 3 || _playStep == 40)
                     CaptureNamed("play-02-mid");
                 if (_playStep >= 1200 && !_loop.MissionTerminal)
                 {

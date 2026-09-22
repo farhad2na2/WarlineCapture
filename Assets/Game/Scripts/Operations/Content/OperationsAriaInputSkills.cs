@@ -183,18 +183,18 @@ namespace Game.Operations.Content
             loop.Advance(1);
             Require(loop.EscortGo("route.safe"));
             Require(loop.Move("unit.d01.rifle.01", clinic.AnchorId));
-            bool holding = false;
             for (int step = 0; step < 250 && !loop.MissionTerminal; step++)
             {
                 loop.Advance(1);
-                if (!holding &&
-                    loop.TryActor("unit.d01.rifle.01", out OperationsTacticalActorState rifle) &&
-                    OperationsTacticalRules.Within(rifle.X, rifle.Z, clinic.X, clinic.Z, OperationsTacticalRules.HoldMeters) &&
-                    NodeComplete(loop, "escort_trucks"))
+                if (NodeComplete(loop, "hold_clinic"))
+                    continue;
+                if (!loop.TryNode("hold_clinic", out OperationsTacticalNodeState hold) ||
+                    hold.Phase != OperationsTacticalNodePhase.Active)
+                    continue;
+                if (loop.TryActor("unit.d01.rifle.01", out OperationsTacticalActorState rifle) &&
+                    OperationsTacticalRules.Within(rifle.X, rifle.Z, clinic.X, clinic.Z, OperationsTacticalRules.HoldMeters))
                 {
-                    loop.Advance(1);
                     Require(loop.Hold("unit.d01.rifle.01", clinic.AnchorId));
-                    holding = true;
                 }
             }
 
@@ -223,21 +223,18 @@ namespace Game.Operations.Content
             loop.Advance(1);
             Require(loop.Repair("unit.d01.repair.01", "site.d01.pump_west"));
             Require(loop.Repair("unit.d01.repair.02", "site.d01.pump_east"));
-            bool holding = false;
             for (int step = 0; step < 250 && !loop.MissionTerminal; step++)
             {
                 loop.Advance(1);
-                if (!holding &&
-                    NodeComplete(loop, "repair_pump_west") &&
-                    NodeComplete(loop, "repair_pump_east"))
+                if (NodeComplete(loop, "hold_service_court"))
+                    continue;
+                if (!loop.TryNode("hold_service_court", out OperationsTacticalNodeState hold) ||
+                    hold.Phase != OperationsTacticalNodePhase.Active)
+                    continue;
+                if (loop.TryActor("unit.d01.rifle.03", out OperationsTacticalActorState rifle) &&
+                    OperationsTacticalRules.Within(rifle.X, rifle.Z, court.X, court.Z, OperationsTacticalRules.HoldMeters))
                 {
-                    loop.Advance(1);
-                    if (loop.TryActor("unit.d01.rifle.03", out OperationsTacticalActorState rifle) &&
-                        OperationsTacticalRules.Within(rifle.X, rifle.Z, court.X, court.Z, OperationsTacticalRules.HoldMeters))
-                    {
-                        Require(loop.Hold("unit.d01.rifle.03", court.AnchorId));
-                        holding = true;
-                    }
+                    Require(loop.Hold("unit.d01.rifle.03", court.AnchorId));
                 }
             }
 

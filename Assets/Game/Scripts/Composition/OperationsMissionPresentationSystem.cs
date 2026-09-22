@@ -66,7 +66,7 @@ namespace Game.Composition
                     mission.Phase = OperationsReconPhase.Playing;
                     EntityManager.SetComponentData(root, mission);
                     Focus(definition.exitPosition);
-                    notice = Copy("scan_help", "Select infantry, move within 8 m of a signal, then choose Scan selected. Hold position for 15 seconds.");
+                    notice = Copy("scan_help", "Select infantry, choose MOVE, then click near a signal. Within 8 m, choose SCAN SELECTED and stay for 15 seconds.");
                 }
                 else if (!string.IsNullOrEmpty(error))
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
@@ -219,7 +219,7 @@ namespace Game.Composition
                     ? Array.Find(save.activeRun.attempts, item => item.sessionId == save.pendingDeployment.sessionId && !item.practice) : null;
             }
             if (attempt == null || attempt.missionId != definition.missionId) { notice = Copy("attempt_conflict", "Finish the existing Operations attempt first."); return; }
-            if (!OperationsReconLaunchProjection.TryQueue(EntityManager, definition, attempt.sessionId, out notice)) return;
+            if (!OperationsReconLaunchProjection.TryQueue(EntityManager, definition, attempt.sessionId, out notice, unchecked((uint)save.activeRun.seed))) return;
             resultSaved = false; settlementCommand = null; nextSaveRetry = 0;
             UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch, UIRoute.Match, false);
         }

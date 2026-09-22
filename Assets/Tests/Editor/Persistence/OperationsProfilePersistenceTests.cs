@@ -193,6 +193,34 @@ public sealed class OperationsProfilePersistenceTests
     }
 
     [Test]
+    public void CheckpointPublicationPreservesStrategyAndRetainsPreviousImage()
+    {
+        var commands = new OperationsProfileCommandService(service);
+        Assert.That(commands.TryNewRun(new OperationsCommand("cmd.operations.snap0001", 0,
+            OperationsCommandKind.NewRun, "", "", ""), 1102, OperationsDifficultyKind.Regular, out _, out _), Is.True);
+        var run = commands.Read();
+        var offer = Array.Find(run.activeRun.offers, item => item.missionId == "operation.o001");
+        Assert.That(commands.TrySubmit(new OperationsCommand("cmd.operations.snap0002", run.profileRevision,
+            OperationsCommandKind.Deploy, offer.districtId, offer.offerId, ""), out var deployed, out _), Is.True);
+        Assert.That(deployed.Accepted, Is.True);
+        var reserved = commands.Read();
+        string session = reserved.pendingDeployment.sessionId;
+        Assert.That(service.TrySaveOperationsCheckpoint(session, "first-image", out _), Is.True);
+        Assert.That(service.TrySaveOperationsCheckpoint(session, "second-image", out _), Is.True);
+        var restarted = new SaveService(new JsonSaveRepository(root));
+        var archive = restarted.LoadOperationsCheckpoint(session);
+        Assert.That(archive.current, Is.EqualTo("second-image"));
+        Assert.That(archive.previous, Is.EqualTo("first-image"));
+        Assert.That(commands.Read().profileRevision, Is.EqualTo(reserved.profileRevision));
+        Assert.That(commands.Read().activeRun.actionPoints, Is.EqualTo(reserved.activeRun.actionPoints));
+        string bytes = repository.ReadRaw(SaveService.ProfileFileName);
+        Assert.That(service.TrySaveOperationsCheckpoint(session, "second-image", out _), Is.True);
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+        Assert.That(service.TrySaveOperationsCheckpoint("wrong-attempt", "bad-image", out _), Is.False);
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+    }
+
+    [Test]
     public void RewardLedgerCannotGoBackwards()
     {
         Assert.That(service.TryCommitOperations(0, 0, Transaction(), "result", out var saved, out _), Is.True);

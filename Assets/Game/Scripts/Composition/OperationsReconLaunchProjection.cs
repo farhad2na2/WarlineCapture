@@ -25,7 +25,7 @@ namespace Game.Composition
         }
 
         internal static bool TryQueue(EntityManager em, OperationsReconMissionConfig definition,
-            string sessionId, out string error)
+            string sessionId, out string error, uint seed = 1102)
         {
             error = string.Empty;
             if (definition == null || !definition.TryValidate(out error)) return false;
@@ -60,6 +60,7 @@ namespace Game.Composition
             em.SetComponentData(session, new OperationsReconMissionComponent
             {
                 SessionId = new FixedString64Bytes(sessionId), Phase = OperationsReconPhase.Preparing,
+                Seed = seed,
                 DeadlineSeconds = definition.deadlineSeconds, ScanSeconds = definition.scanSeconds,
                 EvidenceSeconds = definition.evidenceSeconds, ExitPosition = definition.exitPosition, ExitRadius = 8f
             });

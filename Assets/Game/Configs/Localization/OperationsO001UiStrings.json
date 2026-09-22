@@ -12,11 +12,11 @@
     },
     {
       "key": "operations.o001.scan_help",
-      "source": "Select infantry, move within 8 m of a signal, then choose Scan selected. Hold position for 15 seconds.",
+      "source": "Select infantry, choose MOVE, then click near a signal. Within 8 m, choose SCAN SELECTED and stay for 15 seconds.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "پیاده‌نظام را انتخاب کنید، تا فاصلهٔ ۸ متری یک سیگنال بروید و «اسکن با نیروی منتخب» را بزنید. ۱۵ ثانیه در محل بمانید."
+          "value": "پیاده‌نظام را انتخاب کنید، «حرکت» را بزنید و نزدیک سیگنال کلیک کنید. در فاصلهٔ ۸ متری، «اسکن با نیروی منتخب» را بزنید و ۱۵ ثانیه بمانید."
         }
       ]
     },

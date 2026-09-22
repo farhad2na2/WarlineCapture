@@ -26,7 +26,8 @@ namespace Game.UI.Runtime
             foreach (Transform child in body.transform) child.gameObject.SetActive(false);
             var root = new GameObject("StreetSignalsBriefing", typeof(RectTransform));
             root.transform.SetParent(body.transform, false);
-            Stretch((RectTransform)root.transform);
+            root.AddComponent<MainMenuV3SectionLayoutView>().Configure(
+                new Vector2(1672, 941), MainMenuV3SectionAlignment.Center);
             var view = root.AddComponent<OperationsMissionScreenView>(); view.font = font; view.Build(false);
         }
 

@@ -29,6 +29,20 @@ namespace Game.Editor
         public static void RunLifecycle() => Start(true);
         public static void RunRecovery() { recovery = true; Start(true); }
 
+        // Opens a disposable profile for normal mouse/keyboard acceptance. No mission
+        // commands, entity changes, time scaling or automatic outcomes are injected.
+        public static void OpenInteractive()
+        {
+            string saveRoot = Path.Combine(Path.GetTempPath(), "o001-interactive-" + Guid.NewGuid().ToString("N"));
+            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT", saveRoot);
+            SaveService.CreateDefault().SaveProfile(new PlayerProfileSaveData
+            { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = "English" });
+            EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
+            Application.runInBackground = true;
+            Debug.Log("[OperationsInteractiveValidation] profile=" + saveRoot + " input=normal-mouse-keyboard");
+            EditorApplication.EnterPlaymode();
+        }
+
         private static void Start(bool validateLifecycle)
         {
             lifecycle = validateLifecycle;
@@ -208,7 +222,9 @@ namespace Game.Editor
         private static void ObserveLog(string message, string trace, LogType type)
         {
             if (type is LogType.Error or LogType.Exception &&
-                (message.StartsWith("[OperationMapSourceScene]", StringComparison.Ordinal) || trace.Contains("OperationsMissionPresentationSystem")))
+                (message.StartsWith("[OperationMapSourceScene]", StringComparison.Ordinal) ||
+                 message.Contains("OperationsRecon") || trace.Contains("OperationsRecon") ||
+                 trace.Contains("OperationsMissionPresentationSystem")))
                 loadFailure = message;
         }
 

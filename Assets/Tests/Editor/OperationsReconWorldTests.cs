@@ -246,6 +246,18 @@ public sealed class OperationsReconWorldTests
     }
 
     private OperationsReconMissionComponent State => em.GetComponentData<OperationsReconMissionComponent>(root);
+
+    [Test]
+    public void ScanRequestSynchronizesPendingSharedTransformWriter()
+    {
+        Request(OperationsReconAction.Scan, 0);
+        var writer = world.GetOrCreateSystem<OperationsPendingTransformWriterFixture>();
+        writer.Update(world.Unmanaged);
+        Tick();
+        var site = em.GetBuffer<OperationsReconSiteElement>(root)[0];
+        Assert.That(site.Actor, Is.EqualTo(player));
+        Assert.That(site.ChannelSeconds, Is.EqualTo(1));
+    }
     private Entity Unit(float3 position)
     {
         var unit = em.CreateEntity(typeof(UnitHealth), typeof(LocalTransform), typeof(Faction));
@@ -263,4 +275,14 @@ public sealed class OperationsReconWorldTests
     private void Scan(int i) { Move(player, new float3(10 + i * 20, 0, 10)); Request(OperationsReconAction.Scan, i); Tick(15); }
     private void ScanAll() { Scan(0); Scan(1); Scan(2); }
     private void Recover() { Move(player, new float3(65, 0, 10)); Request(OperationsReconAction.RecoverEvidence); Tick(15); }
+}
+
+[DisableAutoCreation]
+public partial struct OperationsPendingTransformWriterFixture : ISystem
+{
+    public void OnUpdate(ref SystemState state) => state.Dependency = new WriteTransforms().ScheduleParallel(state.Dependency);
+    private partial struct WriteTransforms : IJobEntity
+    {
+        private void Execute(ref LocalTransform transform) { transform.Position.y = 0; }
+    }
 }

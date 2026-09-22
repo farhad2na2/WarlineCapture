@@ -7,6 +7,50 @@ namespace Game.Runtime
 {
     public sealed partial class SaveService
     {
+        [Serializable]
+        public sealed class OperationsCheckpointArchive
+        {
+            public int schema = 1;
+            public string sessionId, current, previous;
+        }
+
+        public OperationsCheckpointArchive LoadOperationsCheckpoint(string sessionId)
+        {
+            var profile = LoadProfile();
+            if (profile.operations.pendingDeployment?.reserved != true ||
+                profile.operations.pendingDeployment.sessionId != sessionId || string.IsNullOrEmpty(profile.operationsAttemptJson)) return null;
+            try
+            {
+                var archive = JsonUtility.FromJson<OperationsCheckpointArchive>(profile.operationsAttemptJson);
+                return archive?.schema == 1 && archive.sessionId == sessionId ? archive : null;
+            }
+            catch (ArgumentException) { return null; }
+        }
+
+        // Payload and session reference are one atomic profile replacement. Preserve the
+        // preceding image inside that same replacement so recovery can fall back safely.
+        public bool TrySaveOperationsCheckpoint(string sessionId, string image, out string reason)
+        {
+            reason = string.Empty;
+            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(image)) { reason = "invalid_checkpoint"; return false; }
+            using IDisposable lease = _repository.AcquireWriteLease(ProfileFileName);
+            var profile = LoadProfileForCommit();
+            RequireWritableProfile(profile);
+            if (profile.operations.pendingDeployment?.reserved != true || profile.operations.pendingDeployment.sessionId != sessionId)
+            { reason = "attempt_not_reserved"; return false; }
+            OperationsCheckpointArchive old = null;
+            if (!string.IsNullOrEmpty(profile.operationsAttemptJson))
+                try { old = JsonUtility.FromJson<OperationsCheckpointArchive>(profile.operationsAttemptJson); }
+                catch (ArgumentException) { }
+            if (old?.schema == 1 && old.sessionId == sessionId && old.current == image) return true;
+            var archive = new OperationsCheckpointArchive { sessionId = sessionId, current = image,
+                previous = old?.schema == 1 && old.sessionId == sessionId ? old.current : string.Empty };
+            profile.operationsAttemptJson = JsonUtility.ToJson(archive);
+            profile.profileCommitRevision = checked(profile.profileCommitRevision + 1);
+            _repository.SaveAtomic(ProfileFileName, profile);
+            return true;
+        }
+
         /// <summary>
         /// Commits a verified strategic transaction and its attempt journal in the shipping
         /// profile. Called by the Operations persistence edge after the domain validates the

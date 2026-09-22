@@ -42,6 +42,8 @@ namespace Game.Composition
                     placements.Add(position);
                 }
             int index = 0;
+            em.AddBuffer<OperationsReconSpawnRecord>(session);
+            uint seed = em.GetComponentData<OperationsReconMissionComponent>(session).Seed;
             var patrolRoute = em.AddBuffer<OperationsReconPatrolWaypoint>(session);
             foreach (var point in definition.patrolRoute) patrolRoute.Add(new OperationsReconPatrolWaypoint { Position = point });
             foreach (var force in definition.forces)
@@ -54,7 +56,14 @@ namespace Game.Composition
                     Set(em, unit, new UnitPrevWorldPos { Value = position });
                     Set(em, unit, new UnitMoveVisualComponent());
                     Set(em, unit, new Faction { Id = force.faction });
-                    Set(em, unit, new OperationsReconMemberComponent { Session = session });
+                    Set(em, unit, new OperationsReconMemberComponent { Session = session, StableIndex = index });
+                    em.GetBuffer<OperationsReconSpawnRecord>(session).Add(new OperationsReconSpawnRecord { Unit = unit, StableIndex = index });
+                    if (em.HasComponent<UnitIdleWanderComponent>(unit))
+                    {
+                        var wander = em.GetComponentData<UnitIdleWanderComponent>(unit);
+                        wander.RandomState = math.max(1u, math.hash(new uint2(seed, (uint)index)));
+                        em.SetComponentData(unit, wander);
+                    }
                     if (em.HasComponent<SelectedUnitTag>(unit)) em.RemoveComponent<SelectedUnitTag>(unit);
                     // O001 has a finite original roster; normal skirmish respawn is inapplicable.
                     if (em.HasComponent<UnitRespawnPrefab>(unit)) em.RemoveComponent<UnitRespawnPrefab>(unit);

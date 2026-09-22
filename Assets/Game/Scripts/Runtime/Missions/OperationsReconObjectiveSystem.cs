@@ -28,6 +28,9 @@ namespace Game.Runtime
             var health = SystemAPI.GetComponentLookup<UnitHealth>(true);
             var positions = SystemAPI.GetComponentLookup<LocalTransform>(true);
             var passengers = SystemAPI.GetComponentLookup<UnitTransportPassenger>(true);
+            // Requests use random-access lookups before the later hostile query can
+            // synchronize transforms. Finish shared movement/combat writers first.
+            state.Dependency.Complete();
             bool hasSurface = SystemAPI.TryGetSingleton(out MapSurfaceComponent surface) && surface.SurfaceBlob.IsCreated;
 
             foreach (var (missionRef, evidenceRef, siteBuffer, roster, requests) in

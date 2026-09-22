@@ -2,6 +2,8 @@
 
 Date: 2026-09-22. Status: **Implementation in progress; O001 remains not player-ready.**
 
+Current user-approved target: **Unity Editor readiness only**. Android builds, mobile/device certification and phone release acceptance are out of scope for this implementation pass. Keep those release gates recorded below as deferred; they must not block the Editor milestone or be claimed as passed.
+
 Current checkpoint: disk-backed profile transactions and shared ECS recon rules are implemented; the normal Operations menu now deploys the authored 16-versus-20 finite-force candidate into the shared city world. A button-event smoke verifies real simulation progress and opening-squad visibility. Full outcome/replay validation, active-world checkpoint restoration, tactical review, localization/ARIA acceptance and player/device gates remain open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.

@@ -11,6 +11,14 @@ namespace Game.Components
     public struct OperationsReconMemberComponent : IComponentData
     {
         public Entity Session;
+        public int StableIndex;
+    }
+
+    // Retained even when combat deletes a unit; checkpoint restore must not respawn it.
+    public struct OperationsReconSpawnRecord : IBufferElementData
+    {
+        public Entity Unit;
+        public int StableIndex;
     }
 
     public struct OperationsReconReserveComponent : IComponentData
@@ -48,6 +56,7 @@ namespace Game.Components
     public struct OperationsReconMissionComponent : IComponentData
     {
         public FixedString64Bytes SessionId;
+        public uint Seed;
         public OperationsReconPhase Phase;
         public OperationsReconOutcome Outcome;
         public float ElapsedSeconds;

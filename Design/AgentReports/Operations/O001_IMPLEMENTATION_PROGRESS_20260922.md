@@ -75,3 +75,20 @@ The shared map loader now forwards Operations load errors to the mission owner. 
 - `/private/tmp/o001-recovery-smoke-1.log`: wrapper exit 0 with `[OperationsReconLaunchSmokeValidation] result=Passed journey=deploy-failed-startup-refund-return-redeploy input=button-event-smoke original=16 total=36 ap=2`.
 
 The smoke deliberately injects a startup failure in the Editor fixture. It verifies refund/return/redeployment, not a normal-input mission win or recovery of an interrupted combat world. Full logs remain at the paths above; no additional raw machine logs are published in this change.
+
+### Editor-only follow-up — work in progress
+
+The user narrowed acceptance to Unity Editor and explicitly excluded Android/device work. No new acceptance gate is closed by this section.
+
+A CUA mouse-input journey reached the normal briefing, deployment, squad selection, movement and first scan request. Movement requires choosing the shared Move command before a destination click; green command artwork alone does not indicate active mode. The first scan exposed a real dependency exception: `VehicleSlopeAlignmentSystem.AlignJob` was still writing `LocalTransform` when the Operations objective system read a lookup before reaching its later synchronizing query. The failed/incomplete journey is retained in `/private/tmp/o001-interactive-1.log`; it is not a victory. The wrapper eventually exited 124 after its 1800-second timeout.
+
+Local changes under validation:
+- Complete pending dependencies before the objective system consumes random-access transform/health lookups. Add a pending-transform-job regression fixture and the required test-assembly Burst reference.
+- Fit the briefing using the established responsive menu layout; explicitly teach selecting Move before choosing a destination.
+- Fail the smoke harness on Operations objective exceptions, not only presenter/load exceptions.
+- Add stable finite-roster IDs and retained spawn records so deleted casualties cannot be respawned accidentally. Seed idle randomness from the saved run seed and stable actor index.
+- Add an actual-entity checkpoint codec and atomic profile publication retaining the preceding image. Codec tests cover carrier/channel remapping, dead-unit preservation, movement destinations, health/cooldowns/RNG, and incompatible/corrupt payloads. These are **not yet wired to the resume UI**, and neutral-city state coverage still needs completion before claiming full active-world recovery.
+
+The existing Editor compiled the synchronization fix after a missing Burst-reference correction. The checkpoint codec then exposed a readonly `using`-variable assignment error; it was corrected with explicit disposal. Focused tests are pending: automatic approval review timed out while launching the required wrapper, and the permitted retry also timed out before execution. No focused test process started. Desktop CUA access also began failing during the retry. No test pass or Editor-ready result is claimed from these changes yet.
+
+The user authorized publishing this work-in-progress checkpoint despite the validation block. The updated source localization JSON still needs the normal Editor catalog rebuild. A clean diff check is the only completed check on the final follow-up patch; it is not a compile or gameplay pass.

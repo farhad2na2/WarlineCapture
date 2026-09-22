@@ -66,8 +66,8 @@ Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3C
 Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/TitlePanel/DayText missing binding
 Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CreditsResource/LabelText missing binding
 Assets/Game/Prefabs/UI/Popups/EndOfDayReportPopup.prefab:EndOfDayReportPopup/V3Composition/Header/CommandResource/LabelText missing binding</message>
-            <stack-trace>  at Game.Editor.V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage () [0x00336] in [PROJECT]/Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:321 
-  at GameLocalizationCatalogTests.EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage () [0x00000] in [PROJECT]/Assets/Tests/Editor/GameLocalizationCatalogTests.cs:378 
+            <stack-trace>  at Game.Editor.V3UiLocalizationCatalogBuilder.ValidateBindingsAndCoverage () [0x00336] in [PROJECT]/Assets/Game/Scripts/Editor/V3UiLocalizationCatalogBuilder.cs:321
+  at GameLocalizationCatalogTests.EveryV3UiPrefab_HasSharedEnglishAndPersianCoverage () [0x00000] in [PROJECT]/Assets/Tests/Editor/GameLocalizationCatalogTests.cs:378
   at (wrapper managed-to-native) System.Reflection.RuntimeMethodInfo.InternalInvoke(System.Reflection.RuntimeMethodInfo,object,object[],System.Exception&amp;)
   at System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) [0x0006a] in &lt;299d5c9ae27b4d27af003e5f456f4b13&gt;:0 </stack-trace>
           </failure>

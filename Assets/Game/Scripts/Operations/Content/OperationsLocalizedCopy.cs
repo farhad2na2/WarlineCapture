@@ -5,6 +5,7 @@ namespace Game.Operations.Content
 {
     /// <summary>
     /// Operations-owned EN/FA copy for O001–O003. Does not edit the shipping localization catalog.
+    /// Mobile-ready coach / escort / result keys live here; list any new keys for Game Design.
     /// </summary>
     public static class OperationsLocalizedCopy
     {
@@ -92,7 +93,37 @@ namespace Game.Operations.Content
                 ["operations.aria.extract"] = "Extract eligible infantry to the ground exit.",
                 ["operations.aria.attack"] = "Attack a hostile in range.",
                 ["operations.aria.conclude"] = "Conclude when the partial predicate is true.",
-                ["operations.aria.withdraw"] = "Withdraw with confirmation."
+                ["operations.aria.withdraw"] = "Withdraw with confirmation.",
+
+                ["operations.coach.o001.scan.title"] = "Scan",
+                ["operations.coach.o001.scan.body"] = "Scan the marked courtyards. Keep moving — coaching never locks you out.",
+                ["operations.coach.o001.evidence.title"] = "Evidence",
+                ["operations.coach.o001.evidence.body"] = "Recover the relay evidence at the revealed site.",
+                ["operations.coach.o001.extract.title"] = "Extract",
+                ["operations.coach.o001.extract.body"] = "Extract at least two infantry to the ground exit.",
+                ["operations.coach.o001.done.title"] = "Ready",
+                ["operations.coach.o001.done.body"] = "Objectives complete. Finish the mission.",
+
+                ["operations.controls.escort.go"] = "Go",
+                ["operations.controls.escort.hold"] = "Hold",
+                ["operations.controls.route.main"] = "Main street",
+                ["operations.controls.route.safe"] = "Service loop",
+                ["operations.controls.repair"] = "Repair",
+                ["operations.controls.defend.hold"] = "Hold court",
+                ["operations.warning.clinic"] = "Protect the clinic",
+                ["operations.warning.pumps"] = "Pumps under pressure",
+                ["operations.warning.severity.watch"] = "Watch",
+                ["operations.warning.severity.critical"] = "Critical",
+
+                ["operations.result.continue"] = "Continue",
+                ["operations.result.practice"] = "Practice",
+                ["operations.result.delta.trust"] = "Trust",
+                ["operations.result.delta.intel"] = "Intel",
+                ["operations.result.delta.heat"] = "Heat",
+                ["operations.result.delta.generic"] = "District",
+
+                ["operations.teach.partial.conclude.title"] = "Conclude (Partial)",
+                ["operations.teach.partial.withdraw.title"] = "Withdraw"
             };
             return table;
         }
@@ -146,7 +177,37 @@ namespace Game.Operations.Content
                 ["operations.aria.extract"] = "پیاده‌نظام واجد شرایط را به خروج زمینی ببرید.",
                 ["operations.aria.attack"] = "به دشمن در برد حمله کنید.",
                 ["operations.aria.conclude"] = "وقتی شرط جزئی درست است، نتیجه را ببندید.",
-                ["operations.aria.withdraw"] = "با تأیید عقب‌نشینی کنید."
+                ["operations.aria.withdraw"] = "با تأیید عقب‌نشینی کنید.",
+
+                ["operations.coach.o001.scan.title"] = "اسکن",
+                ["operations.coach.o001.scan.body"] = "حیاط‌های علامت‌گذاری‌شده را اسکن کنید. به حرکت ادامه دهید — مربی شما را قفل نمی‌کند.",
+                ["operations.coach.o001.evidence.title"] = "مدرک",
+                ["operations.coach.o001.evidence.body"] = "مدرک رله را در محل آشکارشده بگیرید.",
+                ["operations.coach.o001.extract.title"] = "خروج",
+                ["operations.coach.o001.extract.body"] = "حداقل دو پیاده را به خروج زمینی ببرید.",
+                ["operations.coach.o001.done.title"] = "آماده",
+                ["operations.coach.o001.done.body"] = "اهداف کامل شد. مأموریت را تمام کنید.",
+
+                ["operations.controls.escort.go"] = "حرکت",
+                ["operations.controls.escort.hold"] = "توقف",
+                ["operations.controls.route.main"] = "خیابان اصلی",
+                ["operations.controls.route.safe"] = "حلقه خدماتی",
+                ["operations.controls.repair"] = "تعمیر",
+                ["operations.controls.defend.hold"] = "نگه داشتن حیاط",
+                ["operations.warning.clinic"] = "از درمانگاه محافظت کنید",
+                ["operations.warning.pumps"] = "پمپ‌ها تحت فشارند",
+                ["operations.warning.severity.watch"] = "مراقب",
+                ["operations.warning.severity.critical"] = "بحرانی",
+
+                ["operations.result.continue"] = "ادامه",
+                ["operations.result.practice"] = "تمرین",
+                ["operations.result.delta.trust"] = "اعتماد",
+                ["operations.result.delta.intel"] = "اطلاعات",
+                ["operations.result.delta.heat"] = "فشار",
+                ["operations.result.delta.generic"] = "منطقه",
+
+                ["operations.teach.partial.conclude.title"] = "بستن (جزئی)",
+                ["operations.teach.partial.withdraw.title"] = "عقب‌نشینی"
             };
             return table;
         }

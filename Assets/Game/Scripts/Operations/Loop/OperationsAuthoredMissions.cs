@@ -12,7 +12,7 @@ namespace Game.Operations.Loop
     {
         public const string O001Hash = "ops-authored-o001-v1";
         public const string O002Hash = "ops-authored-o002-v1";
-        public const string O003Hash = "ops-authored-o003-v1";
+        public const string O003Hash = "ops-authored-o003-v2";
 
         public static bool IsVerticalSlice(string missionId) =>
             missionId == "operation.o001" ||
@@ -278,7 +278,8 @@ namespace Game.Operations.Loop
                         NodeId = "hold_service_court",
                         Rule = OperationsObjectiveRuleKind.Hold,
                         ZoneAnchorId = court,
-                        DurationTicks = 60,
+                        // Trimmed for one mobile sitting (was 60). Light defend wave covers pressure.
+                        DurationTicks = 20,
                         RadiusMeters = (int)OperationsTacticalRules.HoldMeters,
                         Prerequisites = new[] { "repair_pump_west", "repair_pump_east" },
                         Activation = OperationsActivationPolicyKind.Prerequisites
@@ -303,7 +304,9 @@ namespace Game.Operations.Loop
                     Site("site.d01.pump_east", "role.neutral.pump_east", Anchor("site.pump_east"), 25),
                     Hostile("hostile.d01.pump.01", "role.hostile.pump_guard", Anchor("site.pump_west"), 0),
                     Hostile("hostile.d01.pump.02", "role.hostile.pump_guard", Anchor("site.pump_east"), 0),
-                    Hostile("hostile.d01.rifle.a.01", "role.hostile.rifle", Anchor("spawn.enemy_a"), 1)
+                    Hostile("hostile.d01.rifle.a.01", "role.hostile.rifle", Anchor("spawn.enemy_a"), 1),
+                    // Light defend beat during the trimmed hold (group 2).
+                    Hostile("hostile.d01.rifle.b.01", "role.hostile.rifle", Anchor("spawn.enemy_b"), 2)
                 },
                 Waves = new[]
                 {
@@ -313,6 +316,13 @@ namespace Game.Operations.Loop
                         Trigger = OperationsWaveTriggerKind.NodeCompletion,
                         TriggerNodeId = "clear_pump_guards",
                         WarningSeconds = 30
+                    },
+                    new OperationsTacticalWaveAuthoring
+                    {
+                        Group = 2,
+                        Trigger = OperationsWaveTriggerKind.NodeCompletion,
+                        TriggerNodeId = "repair_pump_east",
+                        WarningSeconds = OperationsTacticalRules.MinimumWarningSeconds
                     }
                 }
             };

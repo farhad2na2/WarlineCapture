@@ -727,6 +727,16 @@ namespace Game.Operations.Loop
         public bool MissionTerminal => HasMission && _mission.IsTerminal;
         public OperationsOutcomeKind MissionOutcome => HasMission ? _mission.Outcome : OperationsOutcomeKind.None;
 
+        /// <summary>
+        /// Conclude affordance for Partial teach UX. True only when the tactical
+        /// partial predicate is satisfied and the mission is still live.
+        /// </summary>
+        public bool ConcludeAvailable =>
+            HasMission &&
+            Phase == OperationsLoopPhase.Active &&
+            !_mission.IsTerminal &&
+            _mission.IsPartialPredicateSatisfied;
+
         public bool TryNode(string nodeId, out OperationsTacticalNodeState state)
         {
             if (!HasMission)

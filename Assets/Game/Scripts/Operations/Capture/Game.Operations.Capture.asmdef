@@ -5,7 +5,8 @@
         "Game.Operations.Contracts",
         "Game.Operations.Tactical",
         "Game.Operations.Loop",
-        "Game.Operations.Content"
+        "Game.Operations.Content",
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

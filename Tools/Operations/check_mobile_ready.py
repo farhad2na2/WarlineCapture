@@ -41,6 +41,15 @@ def check_sources() -> None:
         fail("world_shell")
     if "using Game.Operations.Contracts;" not in world:
         fail("world_missing_contracts_using")
+    if "Universal Render Pipeline/Unlit" not in world or "_BaseColor" not in world:
+        fail("world_not_urp_unlit")
+    if "UniversalAdditionalCameraData" not in world:
+        fail("world_camera_not_urp")
+    if "Sprites/Default" in world:
+        fail("world_builtin_sprite_shader")
+    capture = (TESTS_ROOT / "OperationsAriaPlayModeCapture.cs").read_text(encoding="utf-8")
+    if "WarmupKey" not in capture or "_playStep == 3" not in capture:
+        fail("capture_warmup")
     if "PhonePanelRect" not in presentation or "BuildLocalizedObjectives" not in presentation:
         fail("phone_chrome")
     if "Ops-owned win screen (Watch shared-UI seam not opened)" in presentation:

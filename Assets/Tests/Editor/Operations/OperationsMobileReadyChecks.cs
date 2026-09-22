@@ -120,6 +120,10 @@ namespace Game.Tests.Editor.Operations
             Require(world.Contains("using Game.Operations.Contracts;"), "contracts_using");
             Require(world.Contains("CreatePrimitive"), "primitives");
             Require(world.Contains("Selection"), "selection");
+            Require(world.Contains("Universal Render Pipeline/Unlit"), "urp_unlit");
+            Require(world.Contains("_BaseColor"), "base_color");
+            Require(world.Contains("UniversalAdditionalCameraData"), "urp_camera");
+            Require(!world.Contains("Sprites/Default"), "no_builtin_sprite_shader");
             Require(presentation.Contains("OperationsTacticalWorldShell"), "presenter_uses_world");
             Require(presentation.Contains("PhonePanelRect"), "phone_mock");
             Require(presentation.Contains("ShowDebugChrome = false") || presentation.Contains("ShowDebugChrome=false"), "debug_off");

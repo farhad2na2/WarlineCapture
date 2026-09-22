@@ -3,6 +3,7 @@ using Game.Operations.Contracts;
 using Game.Operations.Loop;
 using Game.Operations.Tactical;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 namespace Game.Operations.Capture
 {
@@ -77,9 +78,10 @@ namespace Game.Operations.Capture
 
             Bounds bounds = ComputeBounds(map);
             CreateGround(bounds);
+            CreateGrid(bounds);
             CreateBlockers(map);
             CreateAnchors(map);
-            EnsureCamera();
+            ConfigureCamera();
             _built = true;
         }
 
@@ -92,7 +94,31 @@ namespace Game.Operations.Capture
             float depth = Mathf.Max(24f, bounds.size.z + 16f);
             ground.transform.localPosition = new Vector3(bounds.center.x, GroundY - 0.15f, bounds.center.z);
             ground.transform.localScale = new Vector3(width, 0.3f, depth);
-            ApplyColor(ground, new Color(0.18f, 0.28f, 0.22f));
+            ApplyColor(ground, new Color(0.22f, 0.36f, 0.24f));
+        }
+
+        void CreateGrid(Bounds bounds)
+        {
+            const float step = 8f;
+            Color line = new Color(0.45f, 0.62f, 0.4f);
+            float minX = bounds.min.x - 4f;
+            float maxX = bounds.max.x + 4f;
+            float minZ = bounds.min.z - 4f;
+            float maxZ = bounds.max.z + 4f;
+            for (float x = minX; x <= maxX + 0.1f; x += step)
+                CreateGridLine(new Vector3(x, 0.04f, (minZ + maxZ) * 0.5f), new Vector3(0.18f, 0.04f, maxZ - minZ), line);
+            for (float z = minZ; z <= maxZ + 0.1f; z += step)
+                CreateGridLine(new Vector3((minX + maxX) * 0.5f, 0.04f, z), new Vector3(maxX - minX, 0.04f, 0.18f), line);
+        }
+
+        void CreateGridLine(Vector3 position, Vector3 scale, Color color)
+        {
+            GameObject line = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            line.name = "Grid";
+            line.transform.SetParent(_root, false);
+            line.transform.localPosition = position;
+            line.transform.localScale = scale;
+            ApplyColor(line, color);
         }
 
         void CreateBlockers(OperationsMapGreybox map)
@@ -196,11 +222,11 @@ namespace Game.Operations.Capture
             go.name = actor.ObjectId;
             go.transform.SetParent(_actorsRoot, false);
             if (primitive == PrimitiveType.Capsule)
-                go.transform.localScale = new Vector3(0.9f, 0.9f, 0.9f);
+                go.transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
             else if (actor.Body == OperationsTacticalBodyKind.Cargo || actor.Body == OperationsTacticalBodyKind.Vehicle)
-                go.transform.localScale = new Vector3(1.6f, 0.9f, 1.1f);
+                go.transform.localScale = new Vector3(2.4f, 1.2f, 1.6f);
             else
-                go.transform.localScale = new Vector3(1.4f, 1.1f, 1.4f);
+                go.transform.localScale = new Vector3(2.2f, 1.4f, 2.2f);
             ApplyColor(go, ColorFor(actor));
             return go;
         }
@@ -228,7 +254,7 @@ namespace Game.Operations.Capture
                 GameObject ring = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                 ring.name = "Selection";
                 ring.transform.SetParent(_root, false);
-                ring.transform.localScale = new Vector3(2.2f, 0.05f, 2.2f);
+                ring.transform.localScale = new Vector3(3.4f, 0.08f, 3.4f);
                 ApplyColor(ring, new Color(0.95f, 0.85f, 0.25f));
                 Collider collider = ring.GetComponent<Collider>();
                 if (collider != null)
@@ -243,7 +269,7 @@ namespace Game.Operations.Capture
             {
                 _selection.gameObject.SetActive(true);
                 Vector3 p = view.localPosition;
-                _selection.localPosition = new Vector3(p.x, 0.08f, p.z);
+                _selection.localPosition = new Vector3(p.x, 0.2f, p.z);
             }
             else
             {
@@ -253,7 +279,7 @@ namespace Game.Operations.Capture
 
         void FrameCamera(OperationsTacticalActorState[] actors)
         {
-            EnsureCamera();
+            ConfigureCamera();
             if (_camera == null)
                 return;
 
@@ -274,38 +300,73 @@ namespace Game.Operations.Capture
                 if (actor.Z > maxZ) maxZ = actor.Z;
             }
 
-            if (counted == 0)
+            if (counted == 0 && _root != null)
             {
-                _camera.transform.position = new Vector3(8f, 28f, -8f);
-                _camera.transform.rotation = Quaternion.Euler(55f, 0f, 0f);
-                _camera.orthographicSize = 18f;
-                return;
+                Renderer[] renderers = _root.GetComponentsInChildren<Renderer>();
+                for (int index = 0; index < renderers.Length; index++)
+                {
+                    Bounds item = renderers[index].bounds;
+                    if (index == 0 && counted == 0)
+                    {
+                        minX = item.min.x;
+                        maxX = item.max.x;
+                        minZ = item.min.z;
+                        maxZ = item.max.z;
+                        counted = 1;
+                        continue;
+                    }
+
+                    if (item.min.x < minX) minX = item.min.x;
+                    if (item.max.x > maxX) maxX = item.max.x;
+                    if (item.min.z < minZ) minZ = item.min.z;
+                    if (item.max.z > maxZ) maxZ = item.max.z;
+                }
             }
 
-            float cx = (minX + maxX) * 0.5f;
-            float cz = (minZ + maxZ) * 0.5f;
-            float span = Mathf.Max(maxX - minX, maxZ - minZ, 12f);
+            float cx = counted == 0 ? 8f : (minX + maxX) * 0.5f;
+            float cz = counted == 0 ? 4f : (minZ + maxZ) * 0.5f;
+            float span = counted == 0 ? 24f : Mathf.Max(maxX - minX, maxZ - minZ, 16f);
             _camera.orthographic = true;
-            _camera.orthographicSize = Mathf.Clamp(span * 0.65f + 4f, 10f, 28f);
-            _camera.transform.position = new Vector3(cx, 26f, cz - span * 0.35f);
-            _camera.transform.rotation = Quaternion.Euler(58f, 0f, 0f);
-            _camera.backgroundColor = new Color(0.12f, 0.16f, 0.14f, 1f);
+            _camera.orthographicSize = Mathf.Clamp(span * 0.62f, 14f, 32f);
+            _camera.nearClipPlane = 0.05f;
+            _camera.farClipPlane = 250f;
+            _camera.transform.position = new Vector3(cx, 32f, cz - 10f);
+            _camera.transform.rotation = Quaternion.Euler(68f, 0f, 0f);
+            _camera.backgroundColor = new Color(0.1f, 0.13f, 0.11f, 1f);
             _camera.clearFlags = CameraClearFlags.SolidColor;
         }
 
-        void EnsureCamera()
+        void ConfigureCamera()
         {
-            if (_camera != null)
-                return;
-            _camera = Camera.main;
-            if (_camera != null)
-                return;
-            var cameraObject = new GameObject("OperationsAriaCaptureCamera");
-            _camera = cameraObject.AddComponent<Camera>();
-            _camera.tag = "MainCamera";
+            if (_camera == null)
+                _camera = Camera.main;
+            if (_camera == null)
+            {
+                var cameraObject = new GameObject("OperationsAriaCaptureCamera");
+                _camera = cameraObject.AddComponent<Camera>();
+                _camera.tag = "MainCamera";
+                DontDestroyOnLoad(cameraObject);
+            }
+
+            Camera[] cameras = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            for (int index = 0; index < cameras.Length; index++)
+            {
+                if (cameras[index] != null && cameras[index] != _camera)
+                    cameras[index].enabled = false;
+            }
+
+            _camera.enabled = true;
             _camera.orthographic = true;
             _camera.depth = 100f;
-            DontDestroyOnLoad(cameraObject);
+            _camera.cullingMask = ~0;
+            _camera.clearFlags = CameraClearFlags.SolidColor;
+            _camera.backgroundColor = new Color(0.1f, 0.13f, 0.11f, 1f);
+            _camera.allowHDR = false;
+            _camera.allowMSAA = false;
+            UniversalAdditionalCameraData data = _camera.GetUniversalAdditionalCameraData();
+            data.renderType = CameraRenderType.Base;
+            data.renderShadows = false;
+            data.renderPostProcessing = false;
         }
 
         static Bounds ComputeBounds(OperationsMapGreybox map)
@@ -357,9 +418,26 @@ namespace Game.Operations.Capture
             Renderer renderer = go.GetComponent<Renderer>();
             if (renderer == null)
                 return;
-            Material material = new Material(Shader.Find("Sprites/Default") ?? Shader.Find("Unlit/Color") ?? Shader.Find("Standard"));
-            material.color = color;
+            // Built-in primitive materials do not draw in URP and showed up as a flat cyan slab.
+            Shader shader = Shader.Find("Universal Render Pipeline/Unlit");
+            if (shader == null)
+                shader = Shader.Find("Universal Render Pipeline/Simple Lit");
+            if (shader == null)
+                shader = Shader.Find("Unlit/Color");
+            if (shader == null)
+            {
+                Debug.LogError("[OperationsTacticalWorldShell] missing URP unlit shader");
+                return;
+            }
+
+            Material material = new Material(shader);
+            if (material.HasProperty("_BaseColor"))
+                material.SetColor("_BaseColor", color);
+            if (material.HasProperty("_Color"))
+                material.SetColor("_Color", color);
             renderer.sharedMaterial = material;
+            renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            renderer.receiveShadows = false;
         }
 
         void OnDestroy()

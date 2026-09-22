@@ -510,6 +510,137 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS005.Status);
         }
 
+        [Test]
+        public void S005GameViewNamesAndDryFlipDoNotPublish()
+        {
+            Assert.AreEqual(104734, SkirmishS005FirstVisit.SeedA);
+            Assert.AreEqual(
+                "s005-regular-standard-104734-playing.png",
+                SkirmishAcceptanceScaffold.S005PlayingPngFileName);
+            Assert.AreEqual(
+                "s005-regular-standard-104734-gameview.json",
+                SkirmishAcceptanceScaffold.S005GameViewSidecarFileName);
+            Assert.AreEqual(
+                "Design/AgentReports/SkirmishExpansion/S005/_Evidence",
+                SkirmishAcceptanceScaffold.S005RelativeReportEvidenceDirectory);
+            Assert.AreEqual(2, SkirmishAcceptanceScaffold.S005RequiredGameViewEvidenceFiles.Length);
+            Assert.AreEqual(
+                "s004-regular-standard-104733-playing.png",
+                SkirmishAcceptanceScaffold.S004PlayingPngFileName);
+            Assert.AreEqual(
+                "s003-regular-standard-104732-playing.png",
+                SkirmishAcceptanceScaffold.S003PlayingPngFileName);
+
+            LoadMatrix(out List<SkirmishSetupMatrixRow> matrix);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            Assert.IsTrue(SkirmishAcceptanceCensusCapture.TryCaptureS005RegularStandard(
+                authored,
+                matrix,
+                out SkirmishAcceptanceCensus census,
+                out List<SkirmishCompileReason> reasons),
+                reasons == null || reasons.Count == 0 ? "census failed" : reasons[0].ToString());
+            Assert.AreEqual("S005", census.CatalogId);
+            Assert.AreEqual("skirmish.s005", census.DefinitionId);
+            Assert.AreEqual(104734, census.Seed);
+            Assert.AreEqual("Standard", census.Size);
+            Assert.AreEqual("Regular", census.Difficulty);
+            Assert.AreEqual(12, census.PlayerInfantry);
+            Assert.AreEqual(2, census.PlayerGround);
+            Assert.AreEqual(450, census.MaterialsEach);
+            Assert.AreEqual(1080, census.DeadlineSeconds);
+            Assert.IsTrue(census.MeasuredLayoutBound);
+            Assert.IsFalse(census.PlayableMarked);
+            Assert.IsTrue(SkirmishAcceptanceCensusCapture.TryCaptureS004RegularStandard(
+                authored, matrix, out SkirmishAcceptanceCensus s004, out _));
+            Assert.AreEqual("S004", s004.CatalogId);
+            Assert.AreEqual(104733, s004.Seed);
+            Assert.AreNotEqual(s004.ContentHash, census.ContentHash);
+            Assert.IsTrue(SkirmishAcceptanceCensusCapture.TryCaptureS003RegularStandard(
+                authored, matrix, out SkirmishAcceptanceCensus s003, out _));
+            Assert.AreEqual("S003", s003.CatalogId);
+            Assert.AreNotEqual(s003.ContentHash, census.ContentHash);
+            Assert.IsTrue(SkirmishAcceptanceCensusCapture.TryCaptureRegularStandard(
+                authored, matrix, out SkirmishAcceptanceCensus s002, out _));
+            Assert.AreEqual("S002", s002.CatalogId);
+            Assert.AreNotEqual(s002.ContentHash, census.ContentHash);
+
+            string described = SkirmishS005GameViewCapture.DescribeLaunchPayload();
+            Assert.IsTrue(described.IndexOf("catalog=S005", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(described.IndexOf("definition=skirmish.s005", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(described.IndexOf("size=Standard", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(described.IndexOf("difficulty=Regular", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(described.IndexOf("seed=104734", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(
+                SkirmishS005GameViewCapture.ReportEvidenceDirectory().EndsWith(
+                    Path.Combine("S005", "_Evidence"),
+                    StringComparison.Ordinal));
+            Assert.AreEqual(
+                Path.Combine("proj", "_Evidence"),
+                SkirmishAcceptanceScaffold.ResolveS005EvidenceDirectory("proj", path => false));
+
+            authored.Publication.TryGet("S005", out SkirmishPublicationRowConfig row);
+            var setup = new SkirmishResolvedSetup
+            {
+                CatalogId = census.CatalogId,
+                DefinitionId = census.DefinitionId,
+                ContentHash = census.ContentHash,
+                SetupHash = census.SetupHash,
+                DifficultyId = SkirmishDifficultyId.Regular,
+                SizeId = SkirmishSizeId.Standard
+            };
+            var missing = new SkirmishPlayableFlipRequest
+            {
+                CatalogId = census.CatalogId,
+                DefinitionId = census.DefinitionId,
+                ContentHash = census.ContentHash,
+                SetupHash = census.SetupHash,
+                DifficultyId = SkirmishDifficultyId.Regular,
+                SizeId = SkirmishSizeId.Standard,
+                EvidenceDirectory = "missing-evidence",
+                RequiredRelativeFiles = SkirmishAcceptanceScaffold.S005RequiredGameViewEvidenceFiles,
+                ConfirmWrite = true
+            };
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS005, setup, in missing, path => false,
+                out SkirmishPublicationStatus missingStatus, out _));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, missingStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
+
+            var stale = missing;
+            stale.ContentHash = "stale.hash";
+            stale.EvidenceDirectory = "present";
+            Assert.IsFalse(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS005, setup, in stale, path => true,
+                out _, out List<SkirmishCompileReason> hashReasons));
+            Assert.AreEqual(SkirmishReasonCode.MatrixMismatch, hashReasons[0].Code);
+
+            var ready = missing;
+            ready.ContentHash = census.ContentHash;
+            ready.EvidenceDirectory = "present";
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS005, setup, in ready, path => true,
+                out SkirmishPublicationStatus readyStatus, out _));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
+
+            string dryRun = SkirmishPublicationFlipMenu.EvaluateS005PlayableFlip();
+            Assert.IsTrue(dryRun.IndexOf("catalog=S005", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(dryRun.IndexOf("playable=0", StringComparison.Ordinal) >= 0);
+            Assert.IsTrue(dryRun.IndexOf("confirm=0", StringComparison.Ordinal) >= 0);
+            Assert.IsFalse(dryRun.IndexOf("playable=1", StringComparison.Ordinal) >= 0);
+
+            var publication = AssetDatabase.LoadAssetAtPath<SkirmishPublicationConfig>(
+                "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset");
+            Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig assetS002));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS002.Status);
+            Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig assetS003));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS003.Status);
+            Assert.IsTrue(publication.TryGet("S004", out SkirmishPublicationRowConfig assetS004));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS004.Status);
+            Assert.IsTrue(publication.TryGet("S005", out SkirmishPublicationRowConfig assetS005));
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS005.Status);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -524,6 +655,7 @@ namespace Game.Tests.Editor
                 suite.PlayableFlipRequiresHashesAndEvidencePaths();
                 suite.S003GameViewNamesAndDryFlipDoNotPublish();
                 suite.S004GameViewNamesAndDryFlipDoNotPublish();
+                suite.S005GameViewNamesAndDryFlipDoNotPublish();
                 Debug.Log("[SkirmishExpandedAcceptanceTests] result=Passed");
             }
             catch (Exception exception)

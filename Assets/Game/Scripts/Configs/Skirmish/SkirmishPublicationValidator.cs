@@ -295,7 +295,7 @@ namespace Game.Configs
         private static string PublicationHoldReason(string catalogId)
         {
             if (catalogId == S005CatalogId)
-                return "S005 full evidence stays InProgress until Combined Arms Field visuals, Game View, and the ARIA matrix land.";
+                return "S005 full evidence stays InProgress until Combined Arms flight/refuel and the ARIA matrix land.";
             if (catalogId == S004CatalogId)
                 return "S004 full evidence stays InProgress until Established air flight/refuel and the ARIA matrix land.";
             return "S003 full evidence stays InProgress until air flight/refuel and the ARIA matrix land.";

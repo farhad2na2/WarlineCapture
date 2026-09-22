@@ -16,6 +16,7 @@ namespace Game.Operations.Contracts
     {
         public const string ContractsAssemblyName = "Game.Operations.Contracts";
         public const string StrategicAssemblyName = "Game.Operations.Strategic";
+        public const string TacticalAssemblyName = "Game.Operations.Tactical";
         public const string TestsAssemblyName = "Game.Operations.Tests.Editor";
 
         public static readonly string[] ForbiddenExistingAsmdefEdits =

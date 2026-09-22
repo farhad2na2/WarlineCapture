@@ -3,7 +3,8 @@
     "rootNamespace": "Game.Tests.Editor.Operations",
     "references": [
         "Game.Operations.Contracts",
-        "Game.Operations.Strategic"
+        "Game.Operations.Strategic",
+        "Game.Operations.Tactical"
     ],
     "includePlatforms": [
         "Editor"

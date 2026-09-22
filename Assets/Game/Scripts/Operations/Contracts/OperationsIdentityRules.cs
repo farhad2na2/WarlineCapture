@@ -3,9 +3,8 @@ using System;
 namespace Game.Operations.Contracts
 {
     /// <summary>
-    /// Operations-owned identity grammar. Shared <c>Game.Configs.OperationMapIdentityRules</c>
-    /// currently accepts only chapter and skirmish namespaces and rejects these forms.
-    /// Game PM must extend that shared validator before launch/composition can store these IDs.
+    /// Operations-owned identity grammar, also used by the shared map/config validator.
+    /// Keep this namespace bounded independently of Campaign and Skirmish forms.
     /// </summary>
     public static class OperationsIdentityRules
     {

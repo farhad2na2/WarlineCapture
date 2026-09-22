@@ -5,6 +5,7 @@
         "Game.Catalog.Contracts",
         "Game.Components",
         "Game.Missions.Contracts",
+        "Game.Operations.Contracts",
         "Game.Narrative.Contracts",
         "Game.Skirmish.Contracts",
         "Game.Tactical.Contracts",

@@ -1,6 +1,8 @@
 # O001 player-ready implementation plan
 
-Date: 2026-09-22. Status: **Planned implementation; no shipping integration completed by this document.**
+Date: 2026-09-22. Status: **Implementation in progress; O001 remains not player-ready.**
+
+First implementation checkpoint: shared Operations identity validation, disk-backed profile transactions, strategic-command persistence, and an ECS recon rule system reading actual unit health/positions. Sixty focused EditMode tests pass. This is supporting code, not a normal-route playable mission: deployment/UI, authored map/forces, reinforcement arrivals, checkpoint restoration, settlement/return integration and player acceptance are still open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 

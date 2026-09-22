@@ -14,6 +14,10 @@ namespace Game.Runtime
     [Serializable]
     public sealed class PlayerProfileSaveData
     {
+        public int profileCommitRevision;
+        public Game.Operations.Contracts.OperationsSaveData operations = new();
+        // The active attempt/checkpoint reference commits in the same envelope as AP and rewards.
+        public string operationsAttemptJson = string.Empty;
         public int profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
         public string commanderName = "Commander";
         public int commanderLevel = 1;

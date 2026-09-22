@@ -9,6 +9,7 @@
         "Game.Configs",
         "Game.Editor",
         "Game.Missions.Contracts",
+        "Game.Operations.Contracts",
         "Game.Narrative.Contracts",
         "Game.Narrative.Runtime",
         "Game.Rendering",

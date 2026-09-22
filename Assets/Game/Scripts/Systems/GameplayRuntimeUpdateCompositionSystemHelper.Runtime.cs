@@ -225,10 +225,14 @@ namespace Game.Runtime
                              runtimeCity,
                              out string failOpenReason))
                 {
+                    // Fail-open must arm simulation. Clearing pending without
+                    // SimulationActive=1 left expanded Skirmish Playing with a
+                    // frozen objective clock for the full wall-clock budget.
                     gameplayStartPending = false;
                     _loadingGateStartedFrame = -1;
                     runtimeCity?.MarkSpawnedAfterLoadingGateTimeout();
-                    Debug.LogError($"[LoadingGate] failOpen frame={UnityEngine.Time.frameCount} reason={failOpenReason}");
+                    runtimeGameplayStateSystem.SimulationActive = true;
+                    Debug.LogError($"[LoadingGate] failOpen frame={UnityEngine.Time.frameCount} reason={failOpenReason} simulationActive=1");
                 }
                 else if (gameplayStartPending)
                 {

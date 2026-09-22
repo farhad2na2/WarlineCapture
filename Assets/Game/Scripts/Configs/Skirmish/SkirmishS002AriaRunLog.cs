@@ -38,6 +38,27 @@ namespace Game.Configs
         public const string ResultDefeat = "Defeat";
         public const string ResultDraw = "Draw";
         public const string ResultAbort = "Abort";
+        public const string AbortReasonSimulationNotAdvancing = "simulationNotAdvancing";
+        public const double SimulationStallGraceSeconds = 45d;
+
+        /// <summary>
+        /// After Playing, match elapsed must leave 0 once simulation is armed.
+        /// A stuck-zero clock for the grace window means the watch should abort
+        /// instead of burning the full wall-clock budget.
+        /// </summary>
+        public static bool IsSimulationNotAdvancing(
+            bool playing,
+            bool simulationActive,
+            float matchElapsedSeconds,
+            double wallSecondsSincePlaying,
+            double graceSeconds = SimulationStallGraceSeconds)
+        {
+            if (!playing || wallSecondsSincePlaying < graceSeconds)
+                return false;
+            if (!simulationActive)
+                return true;
+            return matchElapsedSeconds <= 0f;
+        }
 
         public static bool TryNextAriaRunId(string csvText, int seed, string locale, out string runId, out string error)
         {

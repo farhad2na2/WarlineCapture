@@ -527,6 +527,50 @@ Victory, injected army, extra resources, or hidden wallet.
 
 Live recorder: `Game.Editor.SkirmishS002AriaRunHarness`.
 
+### Tip `Abort,timeout` / elapsed stuck at 0 (Windows live)
+
+Observed on tip `9d20bb4b`: Playing for the full ~1500s wall budget with
+`match.ElapsedSeconds` frozen at 0. Expanded spawn marks Playing before
+`SimulationActive` is armed; LoadingGate fail-open previously cleared the
+loading pending flag **without** setting `SimulationActive=1`, so the objective
+clock stayed paused and the harness waited until wall-clock timeout.
+
+Fixes on this branch:
+
+1. LoadingGate fail-open now sets `SimulationActive=1`.
+2. Expanded session control projects objective-clock elapsed onto
+   `SkirmishMatchState.ElapsedSeconds` (RulesSystem is skipped for expanded).
+3. Harness waits for `SimulationActive` before starting ARIA, arms simulation
+   after gameplay bootstrap completes/fails, and aborts with
+   `end_reason=simulationNotAdvancing` if elapsed stays 0 for 45s after Playing
+   (instead of burning 1500s).
+4. Validation profile root uses `Path.GetTempPath()` (Windows-safe).
+
+### Re-run Launch104731En on Windows Skirmish shadow
+
+Keep Hub signed in. Open `D:\Projects\WarlineCapture-Skirmish` on this branch
+tip, focus the Game View, then either:
+
+- Menu: `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en`
+- Or executeMethod (no `-quit` wait for the match — leave the Editor running):
+
+```powershell
+# Prefer the live menu while the shadow Editor is already open.
+# Focused harness proof (does not play the match):
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS002AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+Live watch: run `Launch104731En` / the menu item from the open Editor. Expect
+trace lines with rising `elapsed` / `clockElapsed` and `simulationActive=1`
+within ~45s of Playing. A stuck-zero clock must Abort with
+`simulationNotAdvancing`, not sit until the 1500s timeout. Do not stamp Victory.
+
 Menus:
 
 - `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en`

@@ -282,6 +282,72 @@ namespace Game.Tests.Editor
             Assert.IsTrue(watch.IndexOf("seed=155923", StringComparison.Ordinal) >= 0);
         }
 
+        [Test]
+        public void SimulationStallFailsFastAfterGrace()
+        {
+            Assert.IsFalse(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                playing: true,
+                simulationActive: false,
+                matchElapsedSeconds: 0f,
+                wallSecondsSincePlaying: 10d));
+            Assert.IsTrue(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                playing: true,
+                simulationActive: false,
+                matchElapsedSeconds: 0f,
+                wallSecondsSincePlaying: SkirmishS002AriaRunLog.SimulationStallGraceSeconds));
+            Assert.IsTrue(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                playing: true,
+                simulationActive: true,
+                matchElapsedSeconds: 0f,
+                wallSecondsSincePlaying: SkirmishS002AriaRunLog.SimulationStallGraceSeconds + 1d));
+            Assert.IsFalse(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                playing: true,
+                simulationActive: true,
+                matchElapsedSeconds: 0.5f,
+                wallSecondsSincePlaying: 120d));
+            Assert.AreEqual(
+                SkirmishS002AriaRunLog.AbortReasonSimulationNotAdvancing,
+                "simulationNotAdvancing");
+        }
+
+        [Test]
+        public void ExpandedObjectiveClockProjectsOntoMatchElapsed()
+        {
+            using var world = new World(nameof(ExpandedObjectiveClockProjectsOntoMatchElapsed));
+            EntityManager em = world.EntityManager;
+            Entity session = em.CreateEntity();
+            em.AddComponentData(session, new SkirmishExpandedSessionComponent
+            {
+                SessionId = "elapsed-s002",
+                CatalogId = "S002",
+                IsLegacy = 0,
+                Phase = SkirmishSessionPhase.Playing
+            });
+            em.AddComponentData(session, new SkirmishMatchState
+            {
+                SessionId = "elapsed-s002",
+                Phase = SkirmishPhase.Preparing,
+                ElapsedSeconds = 0f
+            });
+            em.AddComponentData(session, new SkirmishObjectiveClockComponent
+            {
+                ElapsedSeconds = 37.5f,
+                DeadlineSeconds = 1080,
+                Paused = 0,
+                Playing = 1
+            });
+
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
+
+            var match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Playing, match.Phase);
+            Assert.AreEqual(37.5f, match.ElapsedSeconds, 0.001f);
+            Assert.AreEqual(
+                37.5f,
+                SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match),
+                0.001f);
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -295,6 +361,8 @@ namespace Game.Tests.Editor
                 suite.AssaultColumnKillsTheEnemyTankAndLeavesThePlayerBarracks();
                 suite.ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks();
                 suite.PayloadLoggersDoNotStampVictory();
+                suite.SimulationStallFailsFastAfterGrace();
+                suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }
             catch (Exception exception)

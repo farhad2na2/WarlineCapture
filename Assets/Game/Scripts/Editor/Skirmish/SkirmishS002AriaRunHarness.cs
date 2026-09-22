@@ -27,12 +27,14 @@ namespace Game.Editor
         private const string LocaleKey = "Warline.S002.AriaLocale";
         private const string StartedKey = "Warline.S002.AriaStarted";
         private const string NormalKey = "Warline.S002.AriaNormal";
+        private const string PlayingSinceKey = "Warline.S002.AriaPlayingSince";
         private const string RegistryPath = "Assets/Game/Configs/Scene/Game_UnitPrefabRegistry_Config.asset";
         private const double WallClockBudgetSeconds = 1500d;
 
         private static int stage;
         private static double next;
         private static double deadline;
+        private static double playingSince;
         private static bool normalSpeed = true;
         private static int seed = SkirmishAcceptanceCensusCapture.FirstVisitSeed;
         private static string locale = GameLocalization.EnglishLocaleCode;
@@ -44,6 +46,7 @@ namespace Game.Editor
                 seed = SessionState.GetInt(SeedKey, SkirmishAcceptanceCensusCapture.FirstVisitSeed);
                 locale = SessionState.GetString(LocaleKey, GameLocalization.EnglishLocaleCode);
                 normalSpeed = SessionState.GetBool(NormalKey, true);
+                playingSince = SessionState.GetFloat(PlayingSinceKey, 0f);
                 EditorApplication.update += Tick;
             }
         }
@@ -89,19 +92,21 @@ namespace Game.Editor
             stage = 0;
             next = 0d;
             deadline = 0d;
+            playingSince = 0d;
             normalSpeed = true;
             SessionState.SetBool(Key, true);
             SessionState.SetBool(NormalKey, true);
             SessionState.SetInt(SeedKey, seed);
             SessionState.SetString(LocaleKey, locale);
             SessionState.SetString(StartedKey, string.Empty);
+            SessionState.SetFloat(PlayingSinceKey, 0f);
             Directory.CreateDirectory(EvidenceDirectory());
 
+            string profileRoot = ValidationProfileRoot();
             SessionState.SetString("Warline.AriaPlayValidation",
                 Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT") ?? "");
-            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",
-                "/private/tmp/aria-play-validation-profile");
-            var save = new SaveService(new JsonSaveRepository("/private/tmp/aria-play-validation-profile"));
+            Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT", profileRoot);
+            var save = new SaveService(new JsonSaveRepository(profileRoot));
             var profile = save.LoadProfile();
             profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
             profile.firstLaunchWatched = true;
@@ -118,6 +123,11 @@ namespace Game.Editor
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             return Path.Combine(root, SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory);
+        }
+
+        private static string ValidationProfileRoot()
+        {
+            return Path.Combine(Path.GetTempPath(), "aria-play-validation-profile");
         }
 
         private static void Tick()
@@ -171,16 +181,20 @@ namespace Game.Editor
                     return;
                 }
 
-                if (!SkirmishLaunchProjection.TryGet(em, out _, out SkirmishMatchState match))
+                if (!SkirmishLaunchProjection.TryGet(em, out Entity session, out SkirmishMatchState match))
                     return;
                 SkirmishLaunchProjection.TryEnterMatch(em);
                 SkirmishLaunchProjection.TryBeginGameplayIfLoaded();
                 SkirmishLaunchProjection.TryRequestPlay(em);
+                SkirmishLaunchProjection.TryArmExpandedSimulation(em);
                 if (match.StartupFailure != SkirmishStartupFailureCode.None)
                 {
                     Finish(abort: true, abortReason: "startupFailure=" + match.StartupFailure);
                     return;
                 }
+
+                float elapsed = SkirmishLaunchProjection.ReadMatchElapsedSeconds(em, session, in match);
+                bool simulationActive = SkirmishLaunchProjection.IsSimulationActive(em);
 
                 if (stage == 1)
                 {
@@ -190,9 +204,41 @@ namespace Game.Editor
                         return;
                     }
 
+                    if (playingSince <= 0d)
+                    {
+                        playingSince = now;
+                        SessionState.SetFloat(PlayingSinceKey, (float)playingSince);
+                    }
+
+                    // Expanded spawn marks Playing before LoadingGate arms simulation.
+                    // Wait for SimulationActive so ARIA is not started against a frozen clock.
+                    if (!simulationActive)
+                    {
+                        if (SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                                true, false, elapsed, now - playingSince))
+                        {
+                            Finish(abort: true, abortReason: SkirmishS002AriaRunLog.AbortReasonSimulationNotAdvancing);
+                            return;
+                        }
+
+                        next = now + 0.5d;
+                        return;
+                    }
+
                     SessionState.SetString(StartedKey, DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture));
                     stage = 2;
                     next = now + 1d;
+                    return;
+                }
+
+                if (playingSince > 0d &&
+                    SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
+                        match.Phase == SkirmishPhase.Playing,
+                        simulationActive,
+                        elapsed,
+                        now - playingSince))
+                {
+                    Finish(abort: true, abortReason: SkirmishS002AriaRunLog.AbortReasonSimulationNotAdvancing);
                     return;
                 }
 
@@ -210,7 +256,7 @@ namespace Game.Editor
                     return;
                 }
 
-                AppendTrace(in match);
+                AppendTrace(em, session, in match, simulationActive, elapsed);
                 if (match.Phase == SkirmishPhase.Finished)
                 {
                     Finish(abort: false, abortReason: null);
@@ -264,16 +310,33 @@ namespace Game.Editor
             return true;
         }
 
-        private static void AppendTrace(in SkirmishMatchState match)
+        private static void AppendTrace(
+            EntityManager em,
+            Entity session,
+            in SkirmishMatchState match,
+            bool simulationActive,
+            float elapsed)
         {
             Directory.CreateDirectory(EvidenceDirectory());
+            float clockElapsed = elapsed;
+            byte clockPaused = 0;
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+            {
+                SkirmishObjectiveClockComponent clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                clockElapsed = clock.ElapsedSeconds;
+                clockPaused = clock.Paused;
+            }
+
             string line = string.Format(
                 CultureInfo.InvariantCulture,
-                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\"}}\n",
-                match.ElapsedSeconds.ToString("0.###", CultureInfo.InvariantCulture),
+                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6}}}\n",
+                elapsed.ToString("0.###", CultureInfo.InvariantCulture),
                 match.Phase,
                 match.Outcome,
-                match.Reason);
+                match.Reason,
+                simulationActive ? 1 : 0,
+                clockElapsed.ToString("0.###", CultureInfo.InvariantCulture),
+                clockPaused);
             File.AppendAllText(LiveTracePath(), line);
         }
 
@@ -289,17 +352,23 @@ namespace Game.Editor
         {
             EditorApplication.update -= Tick;
             SessionState.SetBool(Key, false);
+            SessionState.SetFloat(PlayingSinceKey, 0f);
             string previous = SessionState.GetString("Warline.AriaPlayValidation", "");
             Environment.SetEnvironmentVariable(
                 "WARLINE_VALIDATION_SAVE_ROOT",
                 string.IsNullOrEmpty(previous) ? null : previous);
 
             SkirmishMatchState match = default;
+            Entity session = Entity.Null;
             bool haveMatch = false;
+            float duration = 0f;
             World world = World.DefaultGameObjectInjectionWorld;
             if (world != null && world.IsCreated &&
-                SkirmishLaunchProjection.TryGet(world.EntityManager, out _, out match))
+                SkirmishLaunchProjection.TryGet(world.EntityManager, out session, out match))
+            {
                 haveMatch = true;
+                duration = SkirmishLaunchProjection.ReadMatchElapsedSeconds(world.EntityManager, session, in match);
+            }
 
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
             string runsPath = Path.Combine(root, SkirmishAcceptanceScaffold.RelativeRunsPath);
@@ -337,7 +406,7 @@ namespace Game.Editor
                 MatchFinished = haveMatch && match.Phase == SkirmishPhase.Finished && match.Outcome != SkirmishOutcome.None,
                 MatchOutcome = outcome,
                 EndReason = abort ? abortReason : haveMatch ? match.Reason.ToString() : abortReason,
-                DurationSeconds = haveMatch ? match.ElapsedSeconds : 0f,
+                DurationSeconds = haveMatch ? duration : 0f,
                 InputViolations = 0,
                 HumanInterventions = 0,
                 TracePath = traceRelative,

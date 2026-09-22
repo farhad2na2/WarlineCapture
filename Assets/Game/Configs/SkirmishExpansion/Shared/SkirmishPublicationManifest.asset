@@ -28,7 +28,7 @@ MonoBehaviour:
       and counted ARIA matrix still open.
   - CatalogId: S004
     DefinitionId: skirmish.s004
-    Status: 1
+    Status: 2
     EvidencePath: Design/AgentReports/SkirmishExpansion/S004/
-    Notes: Compiler and Air Mobile Established definition slice. Asset existence cannot
-      set Playable.
+    Notes: S004 Game View evidence + matching Regular Standard hashes. Established
+      air flight/refuel and counted ARIA matrix still open.

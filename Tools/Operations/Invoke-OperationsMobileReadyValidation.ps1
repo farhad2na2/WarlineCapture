@@ -1,9 +1,11 @@
-# Runs Operations O001–O003 mobile-ready Unity validation against the Ops shadow project only.
+# Runs Operations mobile-ready O001–O003 focused validation against the shadow project only.
+# Marker checks=8 is the content contract (coach, escort, repair, result, partial, O003, practice).
+# Landed presentation/pacing guards run in the same pass. Does NOT claim AriaWon / playable.
 [CmdletBinding()]
 param(
     [string] $ShadowPath = "D:\Projects\WarlineCapture-Operations",
     [string] $SharedPath = "D:\Projects\WarlineCapture",
-    [string] $LogFile = "$env:TEMP\operations-mobile-ready-shadow.log",
+    [string] $LogFile = "$env:TEMP\operations-mobile-ready.log",
     [int] $TimeoutSeconds = 900,
     [switch] $GuiLicensing
 )
@@ -36,7 +38,7 @@ if (-not (Test-Path -LiteralPath $shadow -PathType Container)) {
 
 $sharedLibrary = Join-Path $shared "Library"
 if (Test-Path -LiteralPath $sharedLibrary) {
-    Write-Host "[OperationsMobileReady] leaving_shared_library_untouched=$sharedLibrary"
+    Write-Host "[OperationsMobileReadyValidation] leaving_shared_library_untouched=$sharedLibrary"
 }
 
 $versionFile = Join-Path $shadow "ProjectSettings\ProjectVersion.txt"
@@ -57,9 +59,10 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($unityExe)) {
     throw "Could not resolve Unity $editorVersion for the shadow project."
 }
 
-Write-Host "[OperationsMobileReady] project=$shadow"
-Write-Host "[OperationsMobileReady] unity=$unityExe"
-Write-Host "[OperationsMobileReady] log=$LogFile"
+Write-Host "[OperationsMobileReadyValidation] project=$shadow"
+Write-Host "[OperationsMobileReadyValidation] unity=$unityExe"
+Write-Host "[OperationsMobileReadyValidation] log=$LogFile"
+Write-Host "[OperationsMobileReadyValidation] method=Game.Tests.Editor.Operations.OperationsMobileReadyValidation.RunFocusedValidation"
 
 $gui = $true
 if ($PSBoundParameters.ContainsKey("GuiLicensing")) {
@@ -76,7 +79,7 @@ if ($PSBoundParameters.ContainsKey("GuiLicensing")) {
     -TimeoutSeconds $TimeoutSeconds
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Operations mobile-ready shadow validation failed."
+    throw "Operations mobile-ready validation failed."
 }
 
-Write-Host "[OperationsMobileReady] result=Passed project=$shadow"
+Write-Host "[OperationsMobileReadyValidation] result=Passed project=$shadow"

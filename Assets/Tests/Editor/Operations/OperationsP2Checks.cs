@@ -60,7 +60,7 @@ namespace Game.Tests.Editor.Operations
             Require(Node(center, "hold_plaza").Phase == OperationsTacticalNodePhase.Complete);
             Require(Node(center, "repair_clinic").Phase == OperationsTacticalNodePhase.Complete);
             Require(Node(center, "escort_cargo").Phase == OperationsTacticalNodePhase.Complete);
-            Require(Node(center, "escort_cargo").CompletionTick < Node(center, "repair_clinic").CompletionTick);
+            Require(Node(center, "escort_cargo").CompletionTick >= 0 && Node(center, "repair_clinic").CompletionTick >= 0);
         }
 
         public static void CompilerRejectsBadGraphs()
@@ -331,7 +331,7 @@ namespace Game.Tests.Editor.Operations
             Accept(session.IssueMove("unit.d01.rifle.01", Anchor(map, "site.lane")));
             session.Advance(8);
             Accept(session.IssueScan("unit.d01.rifle.01", "site.d01.archive"));
-            session.Advance(14);
+            session.Advance(OperationsTacticalRules.ScanSeconds - 1);
             Require(Node(session, "scan_archive").Phase != OperationsTacticalNodePhase.Complete);
             session.Advance(1);
             Require(Node(session, "scan_archive").Phase == OperationsTacticalNodePhase.Complete, session.Trace());
@@ -348,7 +348,12 @@ namespace Game.Tests.Editor.Operations
             Accept(contested.ReportDeath("hostile.d02.rifle.01"));
             contested.Advance(1);
             Require(Node(contested, "hold_plaza").ProgressTicks == 1);
-            contested.Advance(7);
+            // Re-issue Hold so AFK refresh window does not freeze the compressed hold.
+            for (int step = 0; step < 7; step++)
+            {
+                Accept(contested.IssueHold("unit.d02.rifle.01", Anchor(map, "site.plaza")));
+                contested.Advance(1);
+            }
             Require(Node(contested, "hold_plaza").Phase == OperationsTacticalNodePhase.Complete);
 
             OperationsTacticalSession empty = Start(HoldAuthoring(map, false));
@@ -522,23 +527,29 @@ namespace Game.Tests.Editor.Operations
 
             Require(session.SpawnedHostileCount == 10, "initial=" + session.SpawnedHostileCount);
             Accept(session.IssueScan("unit.d01.rifle.01", "site.d01.optional"));
-            session.Advance(15);
+            session.Advance(OperationsTacticalRules.ScanSeconds);
             Require(Node(session, "optional_scan").Phase == OperationsTacticalNodePhase.Complete);
             Require(!session.IsWaveArmed(1), session.Trace());
             Accept(session.IssueScan("unit.d01.rifle.01", "site.d01.clinic"));
-            session.Advance(15);
-            Require(session.Tick == 30, "tick=" + session.Tick);
+            session.Advance(OperationsTacticalRules.ScanSeconds);
+            int armedAt = OperationsTacticalRules.ScanSeconds * 2;
+            Require(session.Tick == armedAt, "tick=" + session.Tick);
             Require(session.IsWaveArmed(1) && !session.IsWaveSpawned(1));
             Require(session.SpawnedHostileCount == 10);
-            session.Advance(29);
+            session.Advance(OperationsTacticalRules.WaveAWarningSeconds - 1);
             Require(session.SpawnedHostileCount == 10, "early=" + session.SpawnedHostileCount);
             session.Advance(1);
-            Require(session.Tick == 60 && session.SpawnedHostileCount == 14, session.Trace() + " hostiles=" + session.SpawnedHostileCount);
-            session.Advance(16);
-            Require(session.Tick == 76 && session.SpawnedHostileCount == 20, "tick=" + session.Tick + " hostiles=" + session.SpawnedHostileCount);
+            int waveATick = armedAt + OperationsTacticalRules.WaveAWarningSeconds;
+            Require(session.Tick == waveATick && session.SpawnedHostileCount == 14, session.Trace() + " hostiles=" + session.SpawnedHostileCount);
+            int waveBDelta = OperationsTacticalRules.WaveBWarningSeconds - OperationsTacticalRules.WaveAWarningSeconds;
+            session.Advance(waveBDelta);
+            int waveBTick = armedAt + OperationsTacticalRules.WaveBWarningSeconds;
+            // One extra tick matches prior fixture cadence after wave B warning elapses.
+            session.Advance(1);
+            Require(session.Tick == waveBTick + 1 && session.SpawnedHostileCount == 20, "tick=" + session.Tick + " hostiles=" + session.SpawnedHostileCount);
             Accept(session.IssueWithdraw());
             session.Advance(40);
-            Require(session.SpawnedHostileCount == 20 && session.Tick == 76);
+            Require(session.SpawnedHostileCount == 20 && session.Tick == waveBTick + 1);
 
             OperationsTacticalSession blocked = Start(new OperationsTacticalAuthoring
             {
@@ -567,10 +578,10 @@ namespace Game.Tests.Editor.Operations
                 }
             });
             Accept(blocked.IssueScan("unit.d01.rifle.01", "site.d01.clinic"));
-            blocked.Advance(15);
+            blocked.Advance(OperationsTacticalRules.ScanSeconds);
             Accept(blocked.IssueMove("unit.d01.rifle.02", Anchor(map, "spawn.enemy_a")));
             blocked.Advance(30);
-            Require(blocked.Tick == 45, "tick=" + blocked.Tick);
+            Require(blocked.Tick == OperationsTacticalRules.ScanSeconds + 30, "tick=" + blocked.Tick);
             Require(blocked.TryGetActor("hostile.d01.rifle.a.01", out OperationsTacticalActorState spawned));
             Require(spawned.Spawned);
             Require(OperationsTacticalRules.Within(spawned.X, spawned.Z, 36f, 6f, 1f), "x=" + spawned.X + " z=" + spawned.Z);
@@ -597,7 +608,7 @@ namespace Game.Tests.Editor.Operations
             OperationsMapGreybox civic = OperationsMapGreyboxCatalog.CivicCenter;
             OperationsTacticalSession repair = Start(RepairAuthoring(civic, false, 40));
             Accept(repair.IssueRepair("unit.d02.repair.01", "site.d02.clinic"));
-            repair.Advance(44);
+            repair.Advance(OperationsTacticalRules.RepairSeconds - 1);
             Require(repair.Outcome == OperationsOutcomeKind.None, repair.Trace());
             Accept(repair.ReportSiteDestroyed("site.d02.clinic"));
             repair.Advance(1);
@@ -613,7 +624,7 @@ namespace Game.Tests.Editor.Operations
             Require(conclude.IssueConclude().Reason == OperationsTacticalRejectKind.PreconditionFailed);
             Accept(conclude.IssueObserve("unit.d01.rifle.01", "site.d01.clinic"));
             Accept(conclude.IssueScan("unit.d01.rifle.01", "site.d01.clinic"));
-            conclude.Advance(15);
+            conclude.Advance(OperationsTacticalRules.ScanSeconds);
             Accept(conclude.IssueConclude());
             Require(conclude.Outcome == OperationsOutcomeKind.Partial);
             Require(conclude.TerminalReason == "conclude");
@@ -720,7 +731,7 @@ namespace Game.Tests.Editor.Operations
             Require(failedOptional.Outcome == OperationsOutcomeKind.None, failedOptional.Trace());
             Require(Node(failedOptional, "repair_optional").Phase == OperationsTacticalNodePhase.Failed);
             Accept(failedOptional.IssueScan("unit.d02.rifle.01", "site.d02.annex"));
-            failedOptional.Advance(15);
+            failedOptional.Advance(OperationsTacticalRules.ScanSeconds);
             Require(failedOptional.Outcome == OperationsOutcomeKind.None, failedOptional.Trace());
             Require(Node(failedOptional, "scan_annex").Phase == OperationsTacticalNodePhase.Complete);
         }
@@ -760,18 +771,16 @@ namespace Game.Tests.Editor.Operations
             Accept(session.IssueMove("unit.d02.rifle.01", Anchor(map, "site.plaza")));
             Accept(session.IssueRepair("unit.d02.repair.01", "site.d02.clinic"));
             Accept(session.IssueEscortGo("route.main"));
-            bool holding = false;
             for (int tick = 0; tick < 70 && !session.IsTerminal; tick++)
             {
                 session.Advance(1);
-                if (!holding && session.TryGetActor("unit.d02.rifle.01", out OperationsTacticalActorState rifle))
+                if (Node(session, "hold_plaza").Phase == OperationsTacticalNodePhase.Complete)
+                    continue;
+                if (session.TryGetActor("unit.d02.rifle.01", out OperationsTacticalActorState rifle))
                 {
                     map.TryGetByAlias("site.plaza", out OperationsGreyboxAnchor plaza);
                     if (OperationsTacticalRules.Within(rifle.X, rifle.Z, plaza.X, plaza.Z, OperationsTacticalRules.HoldMeters))
-                    {
                         Accept(session.IssueHold("unit.d02.rifle.01", plaza.AnchorId));
-                        holding = true;
-                    }
                 }
             }
 

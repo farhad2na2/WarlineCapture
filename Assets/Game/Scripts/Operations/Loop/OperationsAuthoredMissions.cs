@@ -100,7 +100,7 @@ namespace Game.Operations.Loop
                         NodeId = "interact_relay",
                         Rule = OperationsObjectiveRuleKind.Interact,
                         TargetIds = new[] { "site.d01.relay_evidence" },
-                        DurationTicks = 15,
+                        DurationTicks = OperationsTacticalRules.InteractSeconds,
                         RadiusMeters = (int)OperationsTacticalRules.InteractMeters,
                         Prerequisites = new[] { "scan_signals" },
                         Activation = OperationsActivationPolicyKind.Prerequisites
@@ -190,7 +190,7 @@ namespace Game.Operations.Loop
                         NodeId = "hold_clinic",
                         Rule = OperationsObjectiveRuleKind.Hold,
                         ZoneAnchorId = clinic,
-                        DurationTicks = 30,
+                        DurationTicks = 12,
                         RadiusMeters = (int)OperationsTacticalRules.HoldMeters,
                         Prerequisites = new[] { "escort_trucks" },
                         Activation = OperationsActivationPolicyKind.Prerequisites

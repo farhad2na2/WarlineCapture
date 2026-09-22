@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Host-side Operations O001–O003 mobile-ready checks. No Unity."""
+"""Host-side Operations O001–O003 mobile-ready checks. No Unity. Does not claim playable.
+
+Content contract marker is checks=8. Landed presentation/pacing source guards run in the
+same script before that marker.
+"""
 
 from __future__ import annotations
 
@@ -16,10 +20,10 @@ PASS_MARKER = "[OperationsMobileReadyValidation] result=Passed checks=8"
 CONTENT_ASMDEF = ROOT / "Assets/Game/Scripts/Operations/Content/Game.Operations.Content.asmdef"
 TESTS_ASMDEF = ROOT / "Assets/Tests/Editor/Operations/Game.Operations.Tests.Editor.asmdef"
 CONTENT_ROOT = ROOT / "Assets/Game/Scripts/Operations/Content"
+CAPTURE_ROOT = ROOT / "Assets/Game/Scripts/Operations/Capture"
 TESTS_ROOT = ROOT / "Assets/Tests/Editor/Operations"
-FORBIDDEN_TOUCH = [
-    "Assets/Game/Scripts/Operations/Capture/OperationsAriaPlayModePresentation.cs",
-]
+TACTICAL_RULES = ROOT / "Assets/Game/Scripts/Operations/Tactical/OperationsTacticalRules.cs"
+AUTHORED = ROOT / "Assets/Game/Scripts/Operations/Loop/OperationsAuthoredMissions.cs"
 REQUIRED_CONTENT = [
     "OperationsOnboardingCoach.cs",
     "OperationsEscortRepairControls.cs",
@@ -27,6 +31,7 @@ REQUIRED_CONTENT = [
     "OperationsPartialTeach.cs",
 ]
 BANNED_SOURCE = ("MatchSceneView", "SaveDataModel", "Demo2", "SkirmishExpansion", "batchmode", "V3UiLocalizationCatalog")
+BANNED_SHELL = ("MatchSceneView", "SaveDataModel", "SkirmishExpansion", "AriaPlayCapability")
 
 
 def fail(message: str) -> None:
@@ -50,14 +55,86 @@ def check_assembly() -> None:
         for banned in BANNED_SOURCE:
             if banned in text:
                 fail(f"banned={banned} file={name}")
-    authored = (ROOT / "Assets/Game/Scripts/Operations/Loop/OperationsAuthoredMissions.cs").read_text(
-        encoding="utf-8"
-    )
+    authored = AUTHORED.read_text(encoding="utf-8")
     if 'O003Hash = "ops-authored-o003-v2"' not in authored:
         fail("o003_hash")
     if "DurationTicks = 20" not in authored:
         fail("o003_hold_trim")
     check_meta_guids()
+
+
+def check_shell_sources() -> None:
+    presentation = (CAPTURE_ROOT / "OperationsAriaPlayModePresentation.cs").read_text(encoding="utf-8")
+    world = (CAPTURE_ROOT / "OperationsTacticalWorldShell.cs").read_text(encoding="utf-8")
+    rules = TACTICAL_RULES.read_text(encoding="utf-8")
+    authored = AUTHORED.read_text(encoding="utf-8")
+    asmdef = json.loads((CAPTURE_ROOT / "Game.Operations.Capture.asmdef").read_text(encoding="utf-8"))
+
+    for banned in BANNED_SHELL:
+        if banned in presentation or banned in world:
+            fail(f"banned={banned}")
+
+    if "Game.Operations.Tactical" not in asmdef.get("references", []):
+        fail("capture_missing_tactical")
+    if "OperationsTacticalWorldShell" not in world or "CreatePrimitive" not in world:
+        fail("world_shell")
+    if "using Game.Operations.Contracts;" not in world:
+        fail("world_missing_contracts_using")
+    if "Universal Render Pipeline/Unlit" not in world or "_BaseColor" not in world:
+        fail("world_not_urp_unlit")
+    if "UniversalAdditionalCameraData" not in world:
+        fail("world_camera_not_urp")
+    if "Sprites/Default" in world:
+        fail("world_builtin_sprite_shader")
+    capture = (TESTS_ROOT / "OperationsAriaPlayModeCapture.cs").read_text(encoding="utf-8")
+    if "WarmupKey" not in capture or "_playStep == 3" not in capture:
+        fail("capture_warmup")
+    if "PhonePanelRect" not in presentation or "BuildLocalizedObjectives" not in presentation:
+        fail("phone_chrome")
+    if "Ops-owned win screen (Watch shared-UI seam not opened)" in presentation:
+        fail("dev_footer")
+    if "intents=" in presentation or "result_hash=" in presentation:
+        fail("bot_chrome")
+    if "OperationsOnboardingCoach" not in presentation:
+        fail("coach_bind")
+    if "OperationsEscortRepairControls" not in presentation:
+        fail("escort_bind")
+    if "OperationsMissionResultProjection" not in presentation or "ShowMissionResult" not in presentation:
+        fail("result_bind")
+    if "operations.result.continue" not in presentation:
+        fail("continue_key")
+    if "class OperationsMobileReadyVoidHud" in presentation:
+        fail("second_void_ui")
+    if "ScanSeconds = 6" not in rules or "RepairSeconds = 18" not in rules:
+        fail("pacing_constants")
+    if "HoldRefreshSeconds = 5" not in rules:
+        fail("hold_refresh")
+    if "DeadlineTicks = 720" not in authored or "DeadlineTicks = 840" not in authored or "DeadlineTicks = 900" not in authored:
+        fail("deadlines")
+    if "DurationTicks = 12" not in authored or "DurationTicks = 20" not in authored:
+        fail("hold_windows")
+
+    ready = (TESTS_ROOT / "OperationsMobileReadyPlayModeCapture.cs").read_text(encoding="utf-8")
+    for token in (
+        "RunO001Coach",
+        "RunO002Escort",
+        "RunResultDeltas",
+        "RunAllEvidence",
+        "o001-coach-scan.en.png",
+        "o001-coach-evidence.en.png",
+        "o001-coach-extract.en.png",
+        "o002-escort-chips.en.png",
+        "result-trust-intel-heat.en.png",
+        "OperationsAriaPlayModePresentation",
+        "Operations/Mobile Ready/Capture O001 Coach",
+    ):
+        if token not in ready:
+            fail(f"evidence_capture={token}")
+    invoke = (ROOT / "Tools/Operations/Invoke-OperationsMobileReadyCapture.ps1").read_text(encoding="utf-8")
+    if "OperationsMobileReadyPlayModeCapture.RunAllEvidence" not in invoke:
+        fail("invoke_capture")
+    if "WarlineCapture-Operations" not in invoke:
+        fail("shadow_path")
 
 
 def check_meta_guids() -> None:
@@ -79,14 +156,6 @@ def check_meta_guids() -> None:
         if guid in seen:
             fail(f"meta_duplicate={guid}")
         seen.add(guid)
-
-
-def check_p2_shell_untouched() -> None:
-    for relative in FORBIDDEN_TOUCH:
-        # Soft ownership note only — file may exist; mobile-ready must not require editing it.
-        path = ROOT / relative
-        if not path.exists():
-            continue
 
 
 def dotnet_executable() -> str:
@@ -121,6 +190,7 @@ def write_host_project(directory: Path) -> Path:
     <Compile Include="{root}/Assets/Game/Scripts/Operations/Tactical/*.cs" />
     <Compile Include="{root}/Assets/Game/Scripts/Operations/Loop/*.cs" />
     <Compile Include="{root}/Assets/Game/Scripts/Operations/Content/*.cs" />
+    <Compile Include="{root}/Assets/Tests/Editor/Operations/OperationsP0Checks.cs" />
     <Compile Include="{root}/Assets/Tests/Editor/Operations/OperationsMobileReadyChecks.cs" />
     <Compile Include="{root}/Tools/Operations/OperationsMobileReadyHost/OperationsMobileReadyHostRunner.cs" />
   </ItemGroup>
@@ -155,7 +225,7 @@ def check_behavior() -> None:
 
 def main() -> int:
     check_assembly()
-    check_p2_shell_untouched()
+    check_shell_sources()
     check_behavior()
     print(PASS_MARKER)
     return 0

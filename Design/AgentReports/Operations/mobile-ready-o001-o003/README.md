@@ -1,6 +1,6 @@
 # Operations O001–O003 mobile-ready (Programmer 1)
 
-Branch: `cursor/ops-o001-o003-mobile-ready-e190` off `main` tip (not Skirmish PR #35).
+Branch: `cursor/ops-o001-o003-mobile-ready-e190`, rebased/merged onto `main` after PR #41 (`4acfb615b`).
 
 ## Scope landed (this PR)
 
@@ -21,23 +21,16 @@ Branch: `cursor/ops-o001-o003-mobile-ready-e190` off `main` tip (not Skirmish PR
 - Partial / Withdraw semantics unchanged (read-only `IsPartialPredicateSatisfied` expose).
 - D01 graphs: O001/O002 untouched; O003 hold/wave trim only (content hash → `ops-authored-o003-v2`). Re-capture AriaWon O003 evidence after merge.
 
-## Programmer 2 coordination (do not duplicate shell)
+## Shell binding (landed P2 shell, no second void UI)
 
-**Do not invent a second void HUD.** Bind these Content frames in the Ops presentation shell when ready:
+Content frames bind inside `OperationsAriaPlayModePresentation` (the landed URP world + phone-mock shell):
 
 | Frame | Bind loci |
 |---|---|
-| `OperationsCoachFrame` | O001 active Match HUD coach rail |
-| `OperationsEscortRepairControlFrame` | O002/O003 fat-thumb chip bar + warning banner |
-| `OperationsMissionResultUiFrame` | MissionResult outcome + 3 delta rows + Continue / Practice |
-| `OperationsPartialTeachFrame` | Conclude affordance vs separate Withdraw confirm |
-
-**Shared files left untouched by Programmer 1 (P2 owns):**
-
-- `Assets/Game/Scripts/Operations/Capture/OperationsAriaPlayModePresentation.cs`
-- Any shipping Match HUD / void presentation shell P2 opens this sprint
-
-If the presentation shell is missing, treat the Content frames above as the contract and leave shell chrome as a P2 blocker — do not fork a second OnGUI void UI on this branch.
+| `OperationsCoachFrame` | O001 coach card on the phone panel (Scan / Evidence / Extract) |
+| `OperationsEscortRepairControlFrame` | Fat-thumb chip bar + clinic/pump warning banner |
+| `OperationsMissionResultUiFrame` | `ShowMissionResult`: outcome + Trust / Intel / Heat + Continue |
+| `OperationsPartialTeachFrame` | Content contract only (Conclude vs Withdraw). Not a second HUD. |
 
 ## New Ops-owned EN/FA keys (for Game Design)
 
@@ -49,34 +42,38 @@ Not added to `V3UiLocalizationCatalog`. Living in `OperationsLocalizedCopy`:
 - `operations.result.continue|practice`, `operations.result.delta.trust|intel|heat|generic`
 - `operations.teach.partial.conclude.title`, `operations.teach.partial.withdraw.title`
 
-## Screenshot loci (Programmer 1)
+## Game View capture (Windows Ops shadow)
 
-When P2 shell binds (or Capture is extended later), capture:
+Refresh `D:\Projects\WarlineCapture-Operations` onto this branch. Do not open `D:\Projects\WarlineCapture`. No Mac.
 
-1. **O001 coach steps** — Scan, Evidence, Extract coach cards (≤3s soft block proof: input still works).
-2. **Escort chips** — O002 Go / Hold / Main street / Service loop + clinic warning readable on phone width.
-3. **Result deltas** — outcome line + Trust / Intel / Heat rows + Continue (and Practice on Withdraw/Defeat).
-
-## Windows Ops shadow validation (no Mac)
-
-Refresh `D:\Projects\WarlineCapture-Operations` onto this branch. Do not open `D:\Projects\WarlineCapture`.
+PNGs land in `Design/AgentReports/Operations/mobile-ready-o001-o003/_Evidence/`.
 
 ```powershell
-# Host (no Unity) — optional on any machine with dotnet
+# Host (no Unity)
 python Tools/Operations/check_mobile_ready.py
 
-# Editor (Windows Ops shadow only)
+# Editor validation — marker checks=8
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyValidation.ps1
 
-# Still green after O003 trim
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsP4Validation.ps1
+# Game View capture (omits Unity -quit; runner calls EditorApplication.Exit)
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyCapture.ps1 -Shot All
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyCapture.ps1 -Shot Coach
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyCapture.ps1 -Shot Escort
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyCapture.ps1 -Shot Result
 ```
 
-Menus / executeMethod:
+| Shot | Menu | executeMethod | PNG |
+|---|---|---|---|
+| O001 coach Scan / Evidence / Extract | `Operations/Mobile Ready/Capture O001 Coach` | `Game.Tests.Editor.Operations.OperationsMobileReadyPlayModeCapture.RunO001Coach` | `o001-coach-scan.en.png`, `o001-coach-evidence.en.png`, `o001-coach-extract.en.png` |
+| O002 escort chips + clinic warning | `Operations/Mobile Ready/Capture O002 Escort Chips` | `Game.Tests.Editor.Operations.OperationsMobileReadyPlayModeCapture.RunO002Escort` | `o002-escort-chips.en.png` |
+| Result outcome + Trust / Intel / Heat + Continue | `Operations/Mobile Ready/Capture Result Deltas` | `Game.Tests.Editor.Operations.OperationsMobileReadyPlayModeCapture.RunResultDeltas` | `result-trust-intel-heat.en.png` |
+| All of the above | `Operations/Mobile Ready/Capture All Mobile-Ready Evidence` | `Game.Tests.Editor.Operations.OperationsMobileReadyPlayModeCapture.RunAllEvidence` | all five PNGs |
+
+Validation executeMethod (checks=8):
 
 - `Game.Tests.Editor.Operations.OperationsMobileReadyValidation.RunFocusedValidation`
 - Marker: `[OperationsMobileReadyValidation] result=Passed checks=8`
-- Existing: `Game.Tests.Editor.Operations.OperationsP4Validation.RunFocusedValidation`
+- Capture marker: `[OperationsMobileReadyPlayModeCapture] result=Passed`
 
 ## No Victory stamping
 

@@ -123,7 +123,38 @@ namespace Game.Operations.Content
                 ["operations.result.delta.generic"] = "District",
 
                 ["operations.teach.partial.conclude.title"] = "Conclude (Partial)",
-                ["operations.teach.partial.withdraw.title"] = "Withdraw"
+                ["operations.teach.partial.withdraw.title"] = "Withdraw",
+
+                ["operations.hud.shell"] = "OPERATIONS",
+                ["operations.hud.in_progress"] = "IN PROGRESS",
+                ["operations.hud.victory"] = "VICTORY",
+                ["operations.hud.objectives"] = "Objectives",
+                ["operations.hud.timer"] = "Time left",
+                ["operations.hud.done"] = "done",
+                ["operations.hud.failed"] = "failed",
+                ["operations.hud.active"] = "active",
+                ["operations.hud.channeling"] = "Working",
+                ["operations.hud.pressure"] = "Stay on target",
+                ["operations.hud.hold_refresh"] = "Re-confirm Hold — do not AFK",
+                ["operations.hud.deadline_pressure"] = "Deadline pressure — decide now",
+                ["operations.hud.reward_credits"] = "Credits",
+                ["operations.hud.reward_xp"] = "Commander XP",
+                ["operations.hud.continue"] = "Tap Continue to return to Operations",
+
+                ["operations.objective.scan_signals"] = "Scan courtyards",
+                ["operations.objective.interact_relay"] = "Recover relay evidence",
+                ["operations.objective.extract_force"] = "Extract infantry",
+                ["operations.objective.scan_junction"] = "Scan junction",
+                ["operations.objective.escort_trucks"] = "Escort medical trucks",
+                ["operations.objective.hold_clinic"] = "Hold the clinic",
+                ["operations.objective.protect_clinic"] = "Protect the clinic",
+                ["operations.objective.clear_pump_guards"] = "Clear pump guards",
+                ["operations.objective.repair_pump_west"] = "Repair west pump",
+                ["operations.objective.repair_pump_east"] = "Repair east pump",
+                ["operations.objective.hold_service_court"] = "Hold service court",
+                ["operations.objective.protect_clinic_pumps"] = "Protect clinic and pumps",
+
+                ["operations.o001.objective.scan_signals"] = "Scan courtyards"
             };
             return table;
         }
@@ -207,7 +238,38 @@ namespace Game.Operations.Content
                 ["operations.result.delta.generic"] = "منطقه",
 
                 ["operations.teach.partial.conclude.title"] = "بستن (جزئی)",
-                ["operations.teach.partial.withdraw.title"] = "عقب‌نشینی"
+                ["operations.teach.partial.withdraw.title"] = "عقب‌نشینی",
+
+                ["operations.hud.shell"] = "عملیات",
+                ["operations.hud.in_progress"] = "در حال انجام",
+                ["operations.hud.victory"] = "پیروزی",
+                ["operations.hud.objectives"] = "اهداف",
+                ["operations.hud.timer"] = "زمان باقی‌مانده",
+                ["operations.hud.done"] = "انجام شد",
+                ["operations.hud.failed"] = "شکست",
+                ["operations.hud.active"] = "فعال",
+                ["operations.hud.channeling"] = "در حال کار",
+                ["operations.hud.pressure"] = "روی هدف بمانید",
+                ["operations.hud.hold_refresh"] = "نگه‌داری را دوباره تأیید کنید — AFK نکنید",
+                ["operations.hud.deadline_pressure"] = "فشار مهلت — الان تصمیم بگیرید",
+                ["operations.hud.reward_credits"] = "اعتبار",
+                ["operations.hud.reward_xp"] = "تجربه فرمانده",
+                ["operations.hud.continue"] = "برای بازگشت به عملیات ادامه را بزنید",
+
+                ["operations.objective.scan_signals"] = "اسکن حیاط‌ها",
+                ["operations.objective.interact_relay"] = "بازیابی مدرک رله",
+                ["operations.objective.extract_force"] = "خروج پیاده‌نظام",
+                ["operations.objective.scan_junction"] = "اسکن تقاطع",
+                ["operations.objective.escort_trucks"] = "اسکورت کامیون‌های پزشکی",
+                ["operations.objective.hold_clinic"] = "نگه‌داری درمانگاه",
+                ["operations.objective.protect_clinic"] = "حفاظت از درمانگاه",
+                ["operations.objective.clear_pump_guards"] = "پاکسازی نگهبانان پمپ",
+                ["operations.objective.repair_pump_west"] = "تعمیر پمپ غربی",
+                ["operations.objective.repair_pump_east"] = "تعمیر پمپ شرقی",
+                ["operations.objective.hold_service_court"] = "نگه‌داری حیاط خدمت",
+                ["operations.objective.protect_clinic_pumps"] = "حفاظت درمانگاه و پمپ‌ها",
+
+                ["operations.o001.objective.scan_signals"] = "اسکن حیاط‌ها"
             };
             return table;
         }

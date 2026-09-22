@@ -28,7 +28,13 @@ namespace Game.UI.Runtime
         }
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {
-            if (!UiShellRuntimeGateway.ReadAriaPlay().Active)
+            AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
+            // Blocked is the stuck-tap watchdog, not the end of the match. Keep
+            // publishing the visible cards so the expanded planner can restart
+            // the touch driver. Manual stays dark until the harness consents.
+            bool resumeExpanded = model.Expanded && !model.Finished && !model.StartupFailed &&
+                                  aria.Phase == AriaPlayPhase.Blocked;
+            if (!aria.Active && !resumeExpanded)
             { watchThreatTracked = false; watchFlankReached = false; UiShellRuntimeGateway.PublishAriaSkirmishObservation(default); return; }
             watchScenarioIndex = model.ScenarioIndex;
             if (watchSkirmish == null) watchSkirmish = Object.FindAnyObjectByType<SkirmishMatchView>();

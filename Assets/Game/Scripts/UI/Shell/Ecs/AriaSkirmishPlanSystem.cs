@@ -20,9 +20,23 @@ namespace Game.UI.Shell.Ecs
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.ExpandedSession)
             {
+                // A blocked expanded hand is the 180s watchdog or three taps on one
+                // control, not consent withdrawn. Restart the shipping touch driver
+                // so Base Assault can keep using the visible cards for the match.
+                if (!view.Finished && touch.Phase == AriaPlayPhase.Blocked &&
+                    (view.EnemyDesignatedAlive || view.PlayerDesignatedAlive))
+                {
+                    touch.Phase = AriaPlayPhase.Starting;
+                    touch.Attempts = 0;
+                    touch.GestureRequested = 0;
+                    touch.DueAt = view.Time;
+                    touch.LastProgressAt = view.Time;
+                    touch.LastObjectiveProgressAt = view.Time;
+                }
+
                 // Manual is idle / pre-consent: still publish the presented control so
-                // the cyan hand and DecisionSystem can see TargetId. Blocked/Starting
-                // are takeover or not-ready. Touching is held inside StepExpanded.
+                // the cyan hand and DecisionSystem can see TargetId. Starting waits
+                // for the touch driver. Touching is held inside StepExpanded.
                 if (!view.Finished && touch.Phase is AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
                     return;
                 StepExpandedBaseAssault(view, ref plan, ref touch, ref output);
@@ -415,6 +429,10 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             if (touch.Phase == AriaPlayPhase.Touching) return;
+            // The campaign watchdog treats one GoalId as stuck after 180s. Expanded
+            // Base Assault keeps that same public goal until a base actually falls.
+            touch.LastProgressAt = view.Time;
+            touch.LastObjectiveProgressAt = view.Time;
             if (view.ExpandedRetries >= 3)
             {
                 if (view.Hold.Available && plan.Intent == AriaSkirmishIntent.Attack)
@@ -441,6 +459,15 @@ namespace Game.UI.Shell.Ecs
             }
             if (TryExpandedGroundAssault(view, ref plan, ref output))
                 return;
+            // Rifles cannot hurt a Barracks. Do not spend the attack button on them
+            // while a later page still holds the tank and rocketeers.
+            if (view.EnemyDesignatedAlive && plan.AssaultIssued == 0 &&
+                view.ExpandedAssaultMask == 0 && view.ExpandedNextPage)
+            {
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                output.Kind = AriaPlayObservationKind.Waiting;
+                return;
+            }
             if (view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
@@ -479,10 +506,11 @@ namespace Game.UI.Shell.Ecs
             bool pageHasAssault = view.ExpandedAssaultMask != 0;
             if (!pageHasAssault)
             {
-                if (plan.PagedToAssault != 0)
-                    return view.ExpandedPageIndex == plan.AssaultPageSeen;
                 if (view.ExpandedNextPage && view.Squad4.Available)
                 {
+                    // Keep pressing the visible next card until the page changes.
+                    // Treating the first tap as done left the tank off-screen and
+                    // the hand waiting with no target.
                     plan.PagedToAssault = 1;
                     plan.AssaultPageSeen = view.ExpandedPageIndex;
                     plan.Intent = AriaSkirmishIntent.SelectSquad;

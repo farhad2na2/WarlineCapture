@@ -42,6 +42,14 @@ namespace Game.Runtime
                 bool playing = session.ValueRO.Phase == SkirmishSessionPhase.Playing;
                 clock.ValueRW.Playing = (byte)(playing ? 1 : 0);
                 clock.ValueRW.Paused = (byte)(paused ? 1 : 0);
+                if (clock.ValueRW.DeadlineSeconds <= 0 &&
+                    em.HasComponent<SkirmishResolvedSetupComponent>(entity))
+                {
+                    int healed = em.GetComponentData<SkirmishResolvedSetupComponent>(entity).DeadlineSeconds;
+                    if (healed > 0)
+                        clock.ValueRW.DeadlineSeconds = healed;
+                }
+
                 if (playing && !paused)
                     clock.ValueRW.ElapsedSeconds += delta;
 
@@ -61,6 +69,11 @@ namespace Game.Runtime
                     em.SetComponentData(entity, component);
                 else
                     em.AddComponentData(entity, component);
+
+                // Same system that advances the clock also publishes the terminal
+                // fact. A live match was still Playing with elapsed past 1080 because
+                // nothing copied that clock into the objective outcome.
+                SkirmishBaseAssaultObjectiveSystem.TryPublishTerminal(em, entity);
             }
         }
 

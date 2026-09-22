@@ -8,6 +8,7 @@ using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
+using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Unity.Entities;
 using UnityEditor;
@@ -257,6 +258,12 @@ namespace Game.Editor
                 }
 
                 AppendTrace(em, session, in match, simulationActive, elapsed);
+                // Stale-frame and unfocus drops return the touch driver to Manual.
+                // The shipping start call is legal from Manual; keep it armed until
+                // the match itself finishes. This does not write a result.
+                AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
+                if (aria.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
+                    UiShellRuntimeGateway.TryStartAriaPlay();
                 if (match.Phase == SkirmishPhase.Finished)
                 {
                     Finish(abort: false, abortReason: null);

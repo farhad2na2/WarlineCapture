@@ -140,7 +140,10 @@ namespace Game.Runtime
 
         private static bool SharedPathOwns(EntityManager em, Entity unit)
         {
-            return em.HasComponent<UnitPathFollow>(unit) || em.HasComponent<UnitPathRequest>(unit);
+            // A pending path request is not movement. Live Desert Base has a grid,
+            // so Attack writes UnitPathRequest, but skirmish units often never gain
+            // a follow. Yielding on the request alone froze the assault at the pad.
+            return em.HasComponent<UnitPathFollow>(unit);
         }
 
         private static void TryReuseSharedPath(EntityManager em, Entity unit, float3 destination)

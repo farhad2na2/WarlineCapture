@@ -50,7 +50,7 @@ namespace Game.Runtime
                 : SkirmishStrategyPriority.None;
             score = SkirmishStrategyScoring.ScoreBaseAssault(
                 perception, army, setup.Readiness, setup.RoleOverlays, current);
-            Execute(em, session, score, perception, army);
+            Execute(em, session, ref score, perception, army);
             return score;
         }
 
@@ -132,13 +132,22 @@ namespace Game.Runtime
         private static void Execute(
             EntityManager em,
             Entity session,
-            SkirmishStrategyScore score,
+            ref SkirmishStrategyScore score,
             in SkirmishPublicPerception perception,
             SkirmishArmyProfileConfig army)
         {
             var state = em.HasComponent<SkirmishEnemyStrategyComponent>(session)
                 ? em.GetComponentData<SkirmishEnemyStrategyComponent>(session)
                 : new SkirmishEnemyStrategyComponent();
+            if (score.Priority == SkirmishStrategyPriority.RecruitCounter && state.CounterCommitted != 0)
+            {
+                // One visible counter purchase, then the base assault. Evaluate runs
+                // every tick; repeating TryProduce printed a rocketeer army in one second.
+                score.Priority = SkirmishStrategyPriority.AttackBase;
+                score.RecruitRole = SkirmishRoleKind.None;
+                score.Field = "assault.after_counter";
+            }
+
             state.Priority = score.Priority;
             state.LastScore = score.Total;
             state.RecruitRole = score.RecruitRole;
@@ -152,7 +161,10 @@ namespace Game.Runtime
                 if (!SkirmishProductionService.TryProduce(em, session, roleId, 1, army, 2, out _))
                     state.FailedAttempts++;
                 else
+                {
                     state.FailedAttempts = 0;
+                    state.CounterCommitted = 1;
+                }
             }
             else if (score.Priority == SkirmishStrategyPriority.AttackBase)
             {
@@ -220,18 +232,18 @@ namespace Game.Runtime
             if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
                 return 0;
             DynamicBuffer<SkirmishArmyGroupRecord> buffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
-            uint rifle = 0;
             for (int i = 0; i < buffer.Length; i++)
             {
                 if (buffer[i].FactionId != 2 || buffer[i].AliveCount <= 0)
                     continue;
+                // Rifles cannot damage a Barracks. Ordering them after the tank
+                // died sent a rifle wave that killed the assault column before
+                // either designated base fell.
                 if (buffer[i].Role == SkirmishRoleKind.Tank)
                     return buffer[i].GroupId;
-                if (rifle == 0 && buffer[i].Role == SkirmishRoleKind.Rifle)
-                    rifle = buffer[i].GroupId;
             }
 
-            return rifle;
+            return 0;
         }
 
         private static uint FirstEnemyRifleGroup(EntityManager em, Entity session)

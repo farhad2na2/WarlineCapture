@@ -546,6 +546,44 @@ Fixes on this branch:
    (instead of burning 1500s).
 4. Validation profile root uses `Path.GetTempPath()` (Windows-safe).
 
+### Outcome stayed None while elapsed rose (Launch104731En)
+
+Live `s002-aria-rs-104731-en-3` kept `phase=Playing`, `outcome=None`,
+`simulationActive=1`, and elapsed climbing to ~1470s, then the harness wrote
+`Abort,timeout`. The clock was moving. The match never became a finished
+Victory, Defeat, or Draw.
+
+Causes, checked in the expanded Base Assault path:
+
+1. The assault planner treated one NEXT tap as done. The page did not change,
+   the hand then waited with no target, and the fallback Attack used the rifle
+   cards. Rifles cannot damage a Barracks.
+2. Mission HUD masks left the expanded NEXT card and the vehicle page
+   non-interactable, so `AriaTouchTarget.Available` stayed false.
+3. The touch watchdog blocked that constant GoalId after 180s. Blocked made
+   `AriaPlayModel.Active` false, the watch HUD published an empty observation,
+   and the planner never restarted. A stale frame can also drop the driver to
+   Manual. The harness started ARIA once.
+4. A tank that reached the enemy pad set `Engaged` for every in-range
+   combatant and stopped short of Barracks range. A pending `UnitPathRequest`
+   without `UnitPathFollow` also froze the local step on the live grid.
+5. Enemy `Evaluate` runs every tick and `TryProduce` is instant, so one visible
+   tank printed rocketeers until the stock was gone. The assault order is one
+   counter recruit, then the tank. Rifles are not ordered onto the Barracks:
+   they cannot hurt it, and that wave killed the column before either base fell.
+6. Re-issuing the same Attack every tick cleared shot cooldown, so the ordered
+   group fired every frame.
+7. Fact projection advanced the clock, but a 0 deadline or a terminal fact that
+   never reached `SkirmishMatchState` left `outcome=None` past 1080s. The clock
+   system now heals the deadline from the resolved setup and publishes the
+   terminal fact the evaluator already computed. Draw is TimeLimit, not a
+   counted win.
+
+Counted `AriaWon` still requires a finished Victory from
+`SkirmishS002AriaRunHarness` at `normal_speed=1` with `input_violations=0` and
+`human_interventions=0`. These edits do not stamp Victory, inject units, skip
+the match, or add resources. `runs.csv` stays header-only in git.
+
 ### Re-run Launch104731En on Windows Skirmish shadow
 
 Keep Hub signed in. Open `D:\Projects\WarlineCapture-Skirmish` on this branch
@@ -566,10 +604,14 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
   -GuiLicensing
 ```
 
-Live watch: run `Launch104731En` / the menu item from the open Editor. Expect
-trace lines with rising `elapsed` / `clockElapsed` and `simulationActive=1`
-within ~45s of Playing. A stuck-zero clock must Abort with
-`simulationNotAdvancing`, not sit until the 1500s timeout. Do not stamp Victory.
+Live watch: run `Launch104731En` or `Launch130365En` from the open Editor
+without `-quit`. Expect rising `elapsed` / `clockElapsed` and
+`simulationActive=1`. The match should reach a real terminal Victory, Defeat,
+or Draw before the 1500s wall Abort. A counted win is Victory with
+`normal_speed=1`, `input_violations=0`, and `human_interventions=0`. A
+stuck-zero clock must Abort with `simulationNotAdvancing`. Do not stamp
+Victory. Also run `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation`
+with the same wrapper and marker style (`[SkirmishExpandedAriaTests] result=Passed`).
 
 Menus:
 

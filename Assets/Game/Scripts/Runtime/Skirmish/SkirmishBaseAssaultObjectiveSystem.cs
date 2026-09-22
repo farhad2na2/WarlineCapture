@@ -140,6 +140,62 @@ namespace Game.Runtime
             return false;
         }
 
+        /// <summary>
+        /// Writes the Base Assault outcome from the clock and designated-base facts.
+        /// Does not award a result that the facts do not already show.
+        /// </summary>
+        public static bool TryPublishTerminal(EntityManager em, Entity session)
+        {
+            if (!em.HasComponent<SkirmishObjectiveStateComponent>(session) ||
+                !em.HasComponent<SkirmishObjectiveClockComponent>(session) ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return false;
+
+            SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            if (objective.Terminal != 0 || objective.Kind != SkirmishObjectiveKind.BaseAssault)
+                return false;
+            if (em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0 ||
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase != SkirmishSessionPhase.Playing)
+                return false;
+
+            SkirmishObjectiveClockComponent clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            int deadline = clock.DeadlineSeconds;
+            if (deadline <= 0 && em.HasComponent<SkirmishResolvedSetupComponent>(session))
+                deadline = em.GetComponentData<SkirmishResolvedSetupComponent>(session).DeadlineSeconds;
+
+            var facts = new SkirmishBaseAssaultFacts
+            {
+                Playing = clock.Playing != 0,
+                Paused = clock.Paused != 0,
+                ElapsedSeconds = clock.ElapsedSeconds,
+                DeadlineSeconds = deadline,
+                PlayerDesignatedAlive = true,
+                EnemyDesignatedAlive = true
+            };
+            if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
+            {
+                SkirmishBaseAssaultFactComponent stored = em.GetComponentData<SkirmishBaseAssaultFactComponent>(session);
+                facts.PlayerDesignatedAlive = stored.PlayerDesignatedAlive != 0;
+                facts.EnemyDesignatedAlive = stored.EnemyDesignatedAlive != 0;
+                facts.ReplacementBarracksPresent = stored.ReplacementBarracksPresent != 0;
+                facts.FieldArmyWiped = stored.FieldArmyWiped != 0;
+            }
+
+            if (!TryEvaluate(in facts, out SkirmishOutcomeKind outcome, out SkirmishEndReasonKind reason))
+                return false;
+
+            objective.Outcome = outcome;
+            objective.Reason = reason;
+            objective.Terminal = 1;
+            objective.State = outcome == SkirmishOutcomeKind.Victory
+                ? SkirmishObjectiveStateKind.TerminalVictory
+                : outcome == SkirmishOutcomeKind.Defeat
+                    ? SkirmishObjectiveStateKind.TerminalDefeat
+                    : SkirmishObjectiveStateKind.TerminalDraw;
+            em.SetComponentData(session, objective);
+            return true;
+        }
+
         private static SkirmishBaseAssaultFacts ReadFacts(
             EntityManager em,
             Entity session,

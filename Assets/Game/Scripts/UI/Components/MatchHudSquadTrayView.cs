@@ -187,11 +187,30 @@ namespace Game.UI.Runtime
 
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel availability))
             {
+                bool expandedSkirmish = UiShellRuntimeGateway.TryReadSkirmish(out UiSkirmishModel skirmishModel) &&
+                                        skirmishModel.Expanded;
                 for (int i = 0; i < 5; i++)
                 {
-                    if (availability.GetCard(i).Visible || !TryGetCard(i, out Card hidden) || hidden.Button == null)
+                    if (!TryGetCard(i, out Card card) || card.Button == null)
                         continue;
-                    hidden.Button.interactable = false;
+                    bool visible = availability.GetCard(i).Visible;
+                    if (!visible)
+                    {
+                        card.Button.interactable = false;
+                        continue;
+                    }
+
+                    // Mission transport/air masks were leaving the expanded NEXT
+                    // card and the tank page non-interactable, so ARIA never left
+                    // the rifle page and never pressed Attack on the enemy base.
+                    if (!expandedSkirmish)
+                        continue;
+                    card.Button.interactable = true;
+                    if (_missionDisabled[i])
+                    {
+                        _missionDisabled[i] = false;
+                        ApplyMissionDisabledTreatment(i, false);
+                    }
                 }
             }
         }

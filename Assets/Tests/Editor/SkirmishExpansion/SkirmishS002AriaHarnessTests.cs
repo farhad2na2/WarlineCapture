@@ -243,7 +243,9 @@ namespace Game.Tests.Editor
 
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(0, plan.AssaultIssued);
-            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
+            Assert.AreEqual(AriaPlayObservationKind.Control, output.Kind);
+            Assert.AreEqual(14, output.TargetId);
 
             view.ExpandedPageIndex = 1;
             view.ExpandedAssaultMask = 1 << 3;
@@ -258,6 +260,189 @@ namespace Game.Tests.Editor
             Assert.AreEqual(42, output.TargetId);
             Assert.AreEqual(1, plan.AssaultIssued);
             Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+        }
+
+        [Test]
+        public void ExpandedAssaultDoesNotAttackWithRiflesWhileNextPageExists()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                Infantry = 20,
+                SelectionVisible = true,
+                ExpandedNextPage = true,
+                ExpandedPageIndex = 0,
+                ExpandedAssaultMask = 0,
+                Squad0 = new AriaTouchTarget { Id = 10, Available = true },
+                Squad4 = new AriaTouchTarget { Id = 14, Available = false },
+                Attack = new AriaTouchTarget { Id = 42, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            Assert.AreEqual(0, output.TargetId);
+        }
+
+        [Test]
+        public void BlockedExpandedPlanRestartsTheTouchDriver()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                Time = 400f,
+                ExpandedNextPage = true,
+                Squad4 = new AriaTouchTarget { Id = 14, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent
+            {
+                Phase = AriaPlayPhase.Blocked,
+                Attempts = 3
+            };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Starting, touch.Phase);
+            Assert.AreEqual(0, touch.Attempts);
+            Assert.AreEqual(0, touch.GestureRequested);
+            Assert.AreEqual(400f, touch.DueAt, 0.001f);
+            Assert.AreEqual(400f, touch.LastProgressAt, 0.001f);
+            Assert.AreEqual(400f, touch.LastObjectiveProgressAt, 0.001f);
+        }
+
+        [Test]
+        public void PendingPathRequestDoesNotFreezeLocalStep()
+        {
+            using var world = new World(nameof(PendingPathRequestDoesNotFreezeLocalStep));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session);
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Place(em, tank, new float3(0f, 0f, 0f));
+            em.AddComponentData(tank, new UnitMove { Speed = 8f, ArriveDistance = 0.35f });
+            em.AddComponentData(tank, new UnitPathRequest { Goal = new int2(4, 0) });
+            SkirmishWorldMovementService.AssignIntent(em, tank, new float3(80f, 0f, 0f), SkirmishGroupOrderKind.Move);
+            Assert.IsFalse(em.HasComponent<UnitPathFollow>(tank));
+            float before = em.GetComponentData<LocalTransform>(tank).Position.x;
+            Assert.Greater(SkirmishWorldMovementService.Step(em, session, 1f, false), 0);
+            Assert.Greater(em.GetComponentData<LocalTransform>(tank).Position.x, before + 1f);
+
+            em.AddComponentData(tank, new UnitPathFollow { PathIndex = 0 });
+            float held = em.GetComponentData<LocalTransform>(tank).Position.x;
+            SkirmishWorldMovementService.Step(em, session, 1f, false);
+            Assert.AreEqual(held, em.GetComponentData<LocalTransform>(tank).Position.x, 0.001f);
+        }
+
+        [Test]
+        public void StructureInRangeIsDamagedWhileACombatantIsAlsoInRange()
+        {
+            using var world = new World(nameof(StructureInRangeIsDamagedWhileACombatantIsAlsoInRange));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session);
+            Entity barracks = DesignatedBase(em, 2);
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Entity enemyCar = FirstFactionUnit(em, 2, SkirmishRoleKind.Car);
+            Place(em, barracks, new float3(10f, 0f, 0f));
+            Place(em, tank, new float3(0f, 0f, 0f));
+            Place(em, enemyCar, new float3(8f, 0f, 0f));
+            RevealAll(em);
+            int carHealth = em.GetComponentData<UnitHealth>(enemyCar).Current;
+            Assert.IsTrue(SkirmishArmyCommandService.TryIssueGroupOrder(
+                em, session, GroupOf(em, tank), 1, SkirmishGroupOrderKind.Attack, barracks, out _));
+            Assert.Greater(SkirmishExpandedEngagementService.Step(em, session, 1f, false), 0);
+            Assert.AreEqual(772, em.GetComponentData<UnitHealth>(barracks).Current);
+            Assert.AreEqual(carHealth, em.GetComponentData<UnitHealth>(enemyCar).Current);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishMoveIntentComponent>(tank).Engaged);
+        }
+
+        [Test]
+        public void DeadlineDrawPublishesFinishedMatchWithoutStampingVictory()
+        {
+            using var world = new World(nameof(DeadlineDrawPublishesFinishedMatchWithoutStampingVictory));
+            BootPlayingSession(world, out Entity session);
+            EntityManager em = world.EntityManager;
+            Assert.Greater(em.GetComponentData<SkirmishResolvedSetupComponent>(session).DeadlineSeconds, 0);
+            var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            clock.DeadlineSeconds = 0;
+            clock.ElapsedSeconds = 1080f;
+            clock.Playing = 1;
+            clock.Paused = 0;
+            em.SetComponentData(session, clock);
+            PublishProjectedMatch(world, session);
+
+            clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            Assert.AreEqual(1080, clock.DeadlineSeconds);
+            SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            Assert.AreEqual(1, objective.Terminal);
+            Assert.AreEqual(SkirmishOutcomeKind.Draw, objective.Outcome);
+            Assert.AreEqual(SkirmishEndReasonKind.TimeLimit, objective.Reason);
+            Assert.AreEqual(SkirmishSessionPhase.Finished, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
+            Assert.AreEqual(SkirmishOutcome.Draw, match.Outcome);
+            Assert.AreEqual(SkirmishEndReason.TimeLimit, match.Reason);
+            CheckedInRunsCsvStaysHeaderOnly();
+        }
+
+        [Test]
+        public void AssaultColumnDestroysEnemyBarracksAndPublishesVictory()
+        {
+            using var world = new World(nameof(AssaultColumnDestroysEnemyBarracksAndPublishesVictory));
+            BootPlayingSession(world, out Entity session);
+            EntityManager em = world.EntityManager;
+            PlaceOnAuthoredPads(em, session);
+            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
+            Entity playerBase = DesignatedBase(em, 1);
+            Entity enemyBase = DesignatedBase(em, 2);
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Entity rocketeer = FirstFactionUnit(em, 1, SkirmishRoleKind.Rocketeer);
+            Entity car = FirstFactionUnit(em, 1, SkirmishRoleKind.Car);
+            Entity apc = FirstApc(em, 1);
+            Assert.Less(em.GetComponentData<LocalTransform>(tank).Position.x, -100f);
+            Assert.Greater(em.GetComponentData<LocalTransform>(enemyBase).Position.x, 100f);
+            RevealAll(em);
+
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, tank), false, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, apc), true, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, car), true, out _));
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, GroupOf(em, rocketeer), true, out _));
+            Assert.IsTrue(SkirmishArmyCommandService.TryAttack(em, session, enemyBase, out _));
+
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            for (int step = 0; step < 180; step++)
+            {
+                SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
+                SkirmishExpandedEngagementService.Step(em, session, 1f, false);
+                SkirmishWorldMovementService.Step(em, session, 1f, false);
+            }
+
+            Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
+            Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
+            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 120, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            Assert.AreNotEqual(
+                SkirmishGroupOrderKind.Attack,
+                FirstFactionGroup(em, session, 2, SkirmishRoleKind.Rifle).LastOrder);
+
+            PublishProjectedMatch(world, session);
+            SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(session);
+            Assert.AreEqual(SkirmishOutcomeKind.Victory, objective.Outcome);
+            Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, objective.Reason);
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
+            Assert.AreEqual(SkirmishOutcome.Victory, match.Outcome);
+            Assert.AreEqual(SkirmishEndReason.MainBaseDestroyed, match.Reason);
+            CheckedInRunsCsvStaysHeaderOnly();
         }
 
         [Test]
@@ -360,6 +545,12 @@ namespace Game.Tests.Editor
                 suite.AttackOrdersDamageOnlyLegalVisibleTargets();
                 suite.AssaultColumnKillsTheEnemyTankAndLeavesThePlayerBarracks();
                 suite.ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks();
+                suite.ExpandedAssaultDoesNotAttackWithRiflesWhileNextPageExists();
+                suite.BlockedExpandedPlanRestartsTheTouchDriver();
+                suite.PendingPathRequestDoesNotFreezeLocalStep();
+                suite.StructureInRangeIsDamagedWhileACombatantIsAlsoInRange();
+                suite.DeadlineDrawPublishesFinishedMatchWithoutStampingVictory();
+                suite.AssaultColumnDestroysEnemyBarracksAndPublishesVictory();
                 suite.PayloadLoggersDoNotStampVictory();
                 suite.SimulationStallFailsFastAfterGrace();
                 suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
@@ -429,6 +620,118 @@ namespace Game.Tests.Editor
         private static string ProjectRoot()
         {
             return Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+        }
+
+        private static void BootPlayingSession(World world, out Entity session)
+        {
+            EntityManager em = world.EntityManager;
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(ProjectRoot(), out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S002",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                104731,
+                authored,
+                matrix,
+                manifest,
+                out _,
+                out _,
+                out var reasons),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            world.GetOrCreateSystem<SkirmishSessionInitializationSystem>().Update(world.Unmanaged);
+            world.GetOrCreateSystem<SkirmishScenarioSpawnSystem>().Update(world.Unmanaged);
+            Assert.AreEqual(SkirmishSessionPhase.Playing, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, setup);
+            SkirmishArmyGroupSystem.RefreshAlive(em, session, owned, sessionId);
+        }
+
+        private static void PublishProjectedMatch(World world, Entity session)
+        {
+            EntityManager em = world.EntityManager;
+            if (!em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
+            {
+                em.AddComponentData(session, new SkirmishBaseAssaultFactComponent
+                {
+                    PlayerDesignatedAlive = 1,
+                    EnemyDesignatedAlive = 1
+                });
+            }
+
+            if (!em.HasComponent<SkirmishResultComponent>(session))
+                em.AddComponentData(session, new SkirmishResultComponent());
+
+            world.GetOrCreateSystem<SkirmishObjectiveFactProjectionSystem>().Update(world.Unmanaged);
+            world.GetOrCreateSystem<SkirmishOutcomeSystem>().Update(world.Unmanaged);
+            world.GetOrCreateSystem<SkirmishExpandedSessionControlSystem>().Update(world.Unmanaged);
+        }
+
+        private static void PlaceOnAuthoredPads(EntityManager em, Entity session)
+        {
+            SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+            using var units = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            using NativeArray<Entity> entities = units.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                byte faction = em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).FactionId;
+                SkirmishRoleKind role = em.GetComponentData<SkirmishUnitRoleComponent>(entities[i]).Role;
+                Assert.IsTrue(TryForceSpawn(setup, faction, role, out float x, out float z), role + " faction " + faction);
+                Place(em, entities[i], new float3(x, 0f, z));
+            }
+
+            using var structures = em.CreateEntityQuery(
+                typeof(SkirmishStructureIdentityComponent),
+                typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> pads = structures.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < pads.Length; i++)
+            {
+                byte faction = em.GetComponentData<SkirmishAttemptOwnedComponent>(pads[i]).FactionId;
+                bool designated = em.GetComponentData<SkirmishStructureIdentityComponent>(pads[i]).DesignatedBase != 0;
+                Assert.IsTrue(TryStructureSpawn(setup, faction, designated, out float x, out float z));
+                Place(em, pads[i], new float3(x, 0f, z));
+            }
+        }
+
+        private static bool TryForceSpawn(SkirmishResolvedSetup setup, byte faction, SkirmishRoleKind role, out float x, out float z)
+        {
+            x = 0f;
+            z = 0f;
+            if (setup?.Forces == null)
+                return false;
+            for (int i = 0; i < setup.Forces.Length; i++)
+            {
+                if (setup.Forces[i].FactionId != faction || setup.Forces[i].RoleKind != role)
+                    continue;
+                x = setup.Forces[i].SpawnWorldX;
+                z = setup.Forces[i].SpawnWorldZ;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryStructureSpawn(SkirmishResolvedSetup setup, byte faction, bool designated, out float x, out float z)
+        {
+            x = 0f;
+            z = 0f;
+            if (setup?.Structures == null)
+                return false;
+            for (int i = 0; i < setup.Structures.Length; i++)
+            {
+                if (setup.Structures[i].FactionId != faction || setup.Structures[i].DesignatedBase != designated)
+                    continue;
+                x = setup.Structures[i].SpawnWorldX;
+                z = setup.Structures[i].SpawnWorldZ;
+                return true;
+            }
+
+            return false;
         }
 
         private static void CompileAndSpawn(EntityManager em, out Entity session)

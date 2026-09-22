@@ -9,7 +9,7 @@ namespace Game.Runtime
 {
     /// <summary>
     /// Applies authored overlay damage when an attack order is in range.
-    /// Combatants met on the way are fought before the ordered structure.
+    /// Combatants met on the way are fought until the ordered structure is in range.
     /// Hidden contacts and out-of-domain targets take no damage.
     /// </summary>
     public static class SkirmishExpandedEngagementService
@@ -55,11 +55,13 @@ namespace Game.Runtime
                 }
 
                 Entity combatant = FindCombatant(em, sessionId, unit, owned.FactionId, overlay);
-                intent.Engaged = combatant != Entity.Null ? (byte)1 : (byte)0;
+                Entity structure = OrderedStructure(em, intent.AttackTarget, owned.FactionId, unit, overlay);
+                // A combatant on the way is fought only until the ordered structure
+                // is itself in range. Stopping for every rifle at the enemy pad
+                // kept tanks outside Barracks range for the whole match.
+                intent.Engaged = structure == Entity.Null && combatant != Entity.Null ? (byte)1 : (byte)0;
                 intent.Cooldown -= deltaSeconds;
-                Entity victim = combatant;
-                if (victim == Entity.Null)
-                    victim = OrderedStructure(em, intent.AttackTarget, owned.FactionId, unit, overlay);
+                Entity victim = structure != Entity.Null ? structure : combatant;
                 if (victim != Entity.Null && intent.Cooldown <= 0f)
                 {
                     ApplyShot(em, victim, overlay.Damage);

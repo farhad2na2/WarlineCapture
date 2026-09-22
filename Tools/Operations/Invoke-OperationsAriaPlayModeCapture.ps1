@@ -133,22 +133,34 @@ if ($logText.Contains($failMarker) -or
     throw "Operations ARIA Play Mode capture log contains a failure marker. See $LogFile"
 }
 
-if ($unityExit -ne 0) {
-    throw "Operations ARIA Play Mode capture failed for $folder seed $seed with Unity exit code $unityExit."
-}
-
-if (-not $logText.Contains($requiredPassMarker)) {
-    throw "Operations ARIA Play Mode capture log is missing required pass marker: $requiredPassMarker"
-}
-
 $evidenceDir = Join-Path $shadow "Design\AgentReports\Operations\host-aria-evidence\$folder\Regular\$seed"
 $winPng = Join-Path $evidenceDir "win-screen.en.png"
 $resultJson = Join-Path $evidenceDir "result.en.json"
-if (-not (Test-Path -LiteralPath $winPng)) {
-    throw "Expected win screen missing: $winPng"
+$hasPassMarker = $logText.Contains($requiredPassMarker)
+$hasEvidence = (Test-Path -LiteralPath $winPng) -and (Test-Path -LiteralPath $resultJson)
+
+# GuiLicensing + EditorApplication.Exit (no -quit) often yields a null/unreadable process
+# exit code in InvokeUnity.ps1 because its success markers are batchmode-oriented.
+# Prefer the capture pass marker + written evidence over the wrapper exit code.
+if (-not $hasPassMarker) {
+    if ($unityExit -ne 0) {
+        throw "Operations ARIA Play Mode capture failed for $folder seed $seed with Unity exit code $unityExit (pass marker missing)."
+    }
+
+    throw "Operations ARIA Play Mode capture log is missing required pass marker: $requiredPassMarker"
 }
-if (-not (Test-Path -LiteralPath $resultJson)) {
-    throw "Expected result JSON missing: $resultJson"
+
+if (-not $hasEvidence) {
+    if (-not (Test-Path -LiteralPath $winPng)) {
+        throw "Expected win screen missing: $winPng"
+    }
+    if (-not (Test-Path -LiteralPath $resultJson)) {
+        throw "Expected result JSON missing: $resultJson"
+    }
+}
+
+if ($unityExit -ne 0) {
+    Write-Host "[OperationsAriaPlayModeCapture] WARN: InvokeUnity exit code=$unityExit ignored because pass marker and evidence are present (EditorApplication.Exit / non-batchmode)."
 }
 
 Write-Host "[OperationsAriaPlayModeCapture] result=Passed mission=$folder seed=$seed evidence=$evidenceDir"

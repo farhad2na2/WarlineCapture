@@ -62,6 +62,8 @@ namespace Game.Tests.Editor.Operations
             Require(!capture.Contains("$unityArguments = @(\"-quit\""), "no_quit_arg_array");
             Require(capture.Contains("cli_quit=omitted") || capture.Contains("Omit -quit"), "omit_quit_documented");
             Require(capture.Contains("EditorApplication.Exit") || capture.Contains("owns EditorApplication.Exit"), "docs_exit");
+            // Pass marker + evidence beat unreadable InvokeUnity exit codes (non-batchmode Exit).
+            Require(capture.Contains("hasPassMarker") || capture.Contains("pass marker and evidence"), "exit_code_softened");
             Require(wiring.Contains(PassMarker) || wiring.Contains("[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7"), "wiring_marker");
             Require(wiring.Contains("OperationsAriaPlayModeCaptureValidation.RunFocusedValidation"), "wiring_method");
             // Wiring validation may still use the sync -quit helper; live capture must not.

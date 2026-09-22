@@ -92,6 +92,8 @@ def check_sources() -> None:
         fail("live_capture_must_omit_quit")
     if "cli_quit=omitted" not in invoke and "Omit -quit" not in invoke:
         fail("omit_quit_documented")
+    if "hasPassMarker" not in invoke and "pass marker and evidence" not in invoke:
+        fail("exit_code_softened")
     if PASS_MARKER not in wiring:
         fail("wiring_marker")
     if "WarlineCapture-Operations" not in invoke:

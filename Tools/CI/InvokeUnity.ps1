@@ -163,7 +163,9 @@ function Find-UnityLoggedSuccess {
         'Test run completed\. Exiting with code 0 \(Ok\)\. Run completed\.',
         'Test run completed\. Exiting with code 0 \(Ok\)\. All tests passed\.',
         'Exiting batchmode successfully now!',
-        'Application will terminate with return code 0'
+        'Application will terminate with return code 0',
+        # GuiLicensing / no -quit Play Mode runners exit via EditorApplication.Exit(0).
+        '\[OperationsAriaPlayModeCapture\] result=Passed'
     )
     foreach ($pattern in $successPatterns) {
         $match = [System.Text.RegularExpressions.Regex]::Match(

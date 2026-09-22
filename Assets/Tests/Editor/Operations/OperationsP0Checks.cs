@@ -22,7 +22,7 @@ namespace Game.Tests.Editor.Operations
             RosterLedgerDoesNotInventExistingTypes();
             DashboardOrdinalsMatchVerifiedUiEnum();
             AssemblyManifestForbidsSharedEdits();
-            SharedIdentityStillRejectsOperationsNamespace();
+            SharedIdentityAcceptsPublishedOperationsNamespace();
             HostFilesStayInsideOperationsOwnership();
             ShadowProjectIsIsolatedFromSharedCheckout();
         }
@@ -204,10 +204,17 @@ namespace Game.Tests.Editor.Operations
             Require(OperationsAssemblyManifest.PendingGamePmReferences.Length >= 6);
         }
 
-        public static void SharedIdentityStillRejectsOperationsNamespace()
+        public static void SharedIdentityAcceptsPublishedOperationsNamespace()
         {
-            Require(!OperationsIdentityRules.SharedValidatorCurrentlyAcceptsOperationsMapId);
-            Require(!OperationsIdentityRules.SharedValidatorCurrentlyAcceptsOperationsScenarioId);
+            Require(OperationsIdentityRules.SharedValidatorCurrentlyAcceptsOperationsMapId);
+            Require(OperationsIdentityRules.SharedValidatorCurrentlyAcceptsOperationsScenarioId);
+            Require(OperationsIdentityRules.IsValidOperationMapId("opmap.operations.old_quarter"));
+            Require(OperationsIdentityRules.IsValidScenarioId("scenario.operations.o001"));
+            Require(!OperationsIdentityRules.IsValidOperationMapId("opmap.operations.unknown"));
+            Require(!OperationsIdentityRules.IsValidScenarioId("scenario.operations.o000"));
+            Require(!OperationsIdentityRules.IsValidScenarioId("scenario.operations.o061"));
+            Require(!OperationsIdentityRules.IsValidOperationMapId("opmap.skirmish.desert_base_01"));
+            Require(!OperationsIdentityRules.IsValidScenarioId("scenario.ch01.m01.first_contact"));
         }
 
         public static void HostFilesStayInsideOperationsOwnership()

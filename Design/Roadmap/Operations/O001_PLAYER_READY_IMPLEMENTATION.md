@@ -1,8 +1,33 @@
 # O001 player-ready implementation plan
 
-Date: 2026-09-22. Status: **Implementation in progress; O001 remains not player-ready.**
+Date: 2026-09-22. Status: **Implementation in progress. O001 is not player-ready.**
 
-First implementation checkpoint: shared Operations identity validation, disk-backed profile transactions, strategic-command persistence, and an ECS recon rule system reading actual unit health/positions. Sixty focused EditMode tests pass. This is supporting code, not a normal-route playable mission: deployment/UI, authored map/forces, reinforcement arrivals, checkpoint restoration, settlement/return integration and player acceptance are still open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
+`main` commit `f65539c4c` added shared Operations identity validation, disk-backed profile transactions, strategic-command persistence, and an ECS recon rule system that reads unit health and positions. That checkpoint is supporting code. It does not make O001 player-ready. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
+
+This branch keeps the P4R shared-launch slice on that foundation. Player-ready is said only after shared launch, real D01 play, durable save/settle, return, and Manual plus Regular EN Aria through the same visible controls are actually wired. Design-APPROVED O001–O003 and the historical Ops AriaWon captures are **WIP/foundation**, not that gate. R3, full R4, the R5 matrix, and R6 remain open.
+
+## Shared launch slice (wired, not certified)
+
+A person uses the shipping Ops buttons for `operation.o001`. Armed Regular EN Aria invokes those same `Button.onClick` handlers. The capture IMGUI shell is not this route, and the host `Step` driver is not the Play Mode route.
+
+1. The Ops dashboard district button opens the D01 briefing. Confirming Raid deploys through Package 3 with `InvokesSharedSceneView` true and enters `MatchSceneView`. Campaign or Skirmish occupation rejects the launch. The shared identity rules accept `opmap.operations.old_quarter` and `scenario.operations.o001`. There is still no shipping Old Quarter art asset, so the match scene hosts the authored D01 session instead of a Campaign map.
+2. Select, Move, Attack, Scan, Hold, and Board on the match command bar issue the authored orders. Hold carries evidence interaction. Board extracts. Armed Regular EN Aria invokes those same buttons, one visible control per second. The one-second match clock is Wait for both Manual and Aria. The capture script `TryPlayVisibleControlWin` is not the player path.
+3. Victory writes the Package 3 result into the Operations profile directory and into `PlayerProfileSaveData.operationsEnvelope`. Campaign progress is left in place. The profile also keeps the disk-backed `operations` state and `operationsAttemptJson` from `main`.
+4. Continue settles and returns to the Ops route. Opening the envelope again restores the settled victory, credits, commander XP, and revision. The O001 district row stays closed once the victory is recorded.
+
+Host marker, five checks, plus a shared-identity agreement check in the host process. Passing it is not a player-ready certification, not an AriaWon certification, and not phone or Farsi acceptance. Design-APPROVED O001–O003 and historical Ops AriaWon captures stay WIP/foundation:
+
+```text
+[OperationsO001PlayerShellValidation] result=Passed checks=5
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsO001PlayerReadyValidation.ps1
+```
+
+Manual play on the Windows Ops shadow, after the branch is checked out at `D:\Projects\WarlineCapture-Operations`: enter Play Mode on the shipping Ops flow. Press the D01 district button, confirm Raid, then use the match Select, Move, Attack, Scan, Hold, Board, and Continue controls. `Operations/P4R/Arm Regular EN Aria` makes Regular EN Aria invoke those same buttons. `Operations/P4R/Clear Aria Arm` returns the clock to manual play. The profile lives under `OperationsO001Player` and in `operationsEnvelope`. Say player-ready only after that visible path, real D01 play, and durable save/settle/return have been shown. This document does not make that claim.
+
+This slice does not author O002, O003, or O004, and it does not close the full ARIA matrix, Farsi, device, or unfamiliar-player gates.
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 

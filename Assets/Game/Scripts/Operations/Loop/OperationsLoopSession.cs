@@ -122,6 +122,33 @@ namespace Game.Operations.Loop
             return new OperationsLoopSession(strategic, new OperationsLoopStore());
         }
 
+        public static OperationsLoopSession Open(
+            string strategicJson,
+            byte[] campaignEnvelope,
+            byte[] quickGameEnvelope,
+            OperationsLoopDocument document,
+            IDictionary<string, string> blobs)
+        {
+            if (string.IsNullOrEmpty(strategicJson))
+                throw new ArgumentException("Strategic json is required.", nameof(strategicJson));
+            if (document == null)
+                throw new ArgumentNullException(nameof(document));
+            OperationsStrategicSession strategic = OperationsStrategicSession.FromCommittedJson(
+                strategicJson,
+                campaignEnvelope,
+                quickGameEnvelope);
+            var store = new OperationsLoopStore();
+            store.LoadCommitted(document, blobs);
+            var session = new OperationsLoopSession(strategic, store);
+            session.LoadShell();
+            session.TryRestore();
+            return session;
+        }
+
+        public OperationsLoopDocument CopyDocument() => _store.Committed.Copy();
+
+        public void CopyCheckpointBlobs(Dictionary<string, string> destination) => _store.CopyBlobs(destination);
+
         public void Interrupt()
         {
             _strategic.SimulateProcessCrash();
@@ -224,7 +251,7 @@ namespace Game.Operations.Loop
                 document.SessionId,
                 OperationsShellNames.Operations,
                 true,
-                false,
+                document.InvokeSharedSceneView,
                 OperationsShellNames.DispatchOwner);
             return true;
         }
@@ -375,7 +402,7 @@ namespace Game.Operations.Loop
             return _strategic.RetrySave(commandId);
         }
 
-        public OperationsLoopStep BeginLaunch()
+        public OperationsLoopStep BeginLaunch(bool invokeSharedSceneView = false)
         {
             if (HasPending)
                 return OperationsLoopStep.Reject("pending");
@@ -417,6 +444,7 @@ namespace Game.Operations.Loop
             next.ResultText = string.Empty;
             next.ResultHash = string.Empty;
             next.History = JoinHistory();
+            next.InvokeSharedSceneView = invokeSharedSceneView;
             _store.Begin(next, false);
             return OperationsLoopStep.Ok();
         }

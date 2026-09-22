@@ -220,6 +220,8 @@ namespace Game.UI.Runtime
 
             private void OnBoardButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Board"))
+                    return;
                 CaptureCommandUiClick();
                 CloseBuildDrawerIfOpen();
                 bool queued = _selectionUiCommandSystem != null &&
@@ -277,6 +279,8 @@ namespace Game.UI.Runtime
 
             private void OnHoldButtonClicked()
             {
+                if (Game.Operations.Contracts.OperationsShippingInputGate.Consume("Hold"))
+                    return;
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Hold))
                     return;

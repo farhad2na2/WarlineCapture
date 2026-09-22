@@ -25,6 +25,7 @@ namespace Game.Operations.Capture
         string _mapId = string.Empty;
         string _selectedId = string.Empty;
         bool _built;
+        bool _preserveSceneCameras;
 
         public static OperationsTacticalWorldShell Ensure(Transform host)
         {
@@ -36,8 +37,9 @@ namespace Game.Operations.Capture
             return shell;
         }
 
-        public void Sync(OperationsLoopSession loop, string selectedActorOrFocus)
+        public void Sync(OperationsLoopSession loop, string selectedActorOrFocus, bool preserveSceneCameras = false)
         {
+            _preserveSceneCameras = preserveSceneCameras;
             if (loop == null || !loop.HasMission)
                 return;
 
@@ -49,6 +51,19 @@ namespace Game.Operations.Capture
             SyncActors(actors);
             UpdateSelection(selectedActorOrFocus, actors);
             FrameCamera(actors);
+        }
+
+        public void PlaceInFrontOf(Camera camera)
+        {
+            if (_root == null || camera == null)
+                return;
+            Vector3 forward = camera.transform.forward;
+            forward.y = 0f;
+            if (forward.sqrMagnitude < 0.01f)
+                forward = Vector3.forward;
+            forward.Normalize();
+            Vector3 position = camera.transform.position + (forward * 36f);
+            _root.position = new Vector3(position.x, 0f, position.z);
         }
 
         public void Clear()
@@ -279,6 +294,8 @@ namespace Game.Operations.Capture
 
         void FrameCamera(OperationsTacticalActorState[] actors)
         {
+            if (_preserveSceneCameras)
+                return;
             ConfigureCamera();
             if (_camera == null)
                 return;
@@ -338,6 +355,8 @@ namespace Game.Operations.Capture
 
         void ConfigureCamera()
         {
+            if (_preserveSceneCameras)
+                return;
             if (_camera == null)
                 _camera = Camera.main;
             if (_camera == null)

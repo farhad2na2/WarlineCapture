@@ -21,7 +21,8 @@ namespace Game.Operations.Tactical
             Move = 5,
             Extract = 6,
             EscortGo = 7,
-            EscortHold = 8
+            EscortHold = 8,
+            Attack = 9
         }
 
         private enum WorldEventKind : byte
@@ -388,6 +389,25 @@ namespace Game.Operations.Tactical
             return OperationsTacticalCommandResult.Ok();
         }
 
+        public OperationsTacticalCommandResult IssueAttack(string unitId, string hostileId)
+        {
+            if (_terminal)
+                return OperationsTacticalCommandResult.Reject(OperationsTacticalRejectKind.Terminal);
+            Actor unit = FindActor(unitId);
+            Actor hostile = FindActor(hostileId);
+            if (unit == null || hostile == null)
+                return OperationsTacticalCommandResult.Reject(OperationsTacticalRejectKind.UnknownTarget);
+            if (!IsEligibleInfantry(unit) && unit.RosterRole != OperationsRosterRoleKind.RepairSpecialist)
+                return OperationsTacticalCommandResult.Reject(OperationsTacticalRejectKind.NotEligible);
+            if (!hostile.Alive || !hostile.Spawned || hostile.Faction != OperationsTacticalFaction.Hostile)
+                return OperationsTacticalCommandResult.Reject(OperationsTacticalRejectKind.UnknownTarget);
+            if (!InRange(unit, hostile.X, hostile.Z, OperationsTacticalRules.AttackMeters))
+                return OperationsTacticalCommandResult.Reject(OperationsTacticalRejectKind.OutOfRange);
+            unit.Order = OrderKind.Attack;
+            unit.OrderTarget = hostileId;
+            return QueueWorld(WorldEventKind.Death, hostileId, string.Empty);
+        }
+
         public OperationsTacticalCommandResult IssueConclude()
         {
             if (_terminal)
@@ -590,6 +610,51 @@ namespace Game.Operations.Tactical
                     case OperationsObjectiveRuleKind.Extract:
                         ProgressExtract(node, true);
                         break;
+                    case OperationsObjectiveRuleKind.Clear:
+                        ProgressClear(node);
+                        break;
+                    case OperationsObjectiveRuleKind.Protect:
+                        ProgressProtect(node);
+                        break;
+                }
+            }
+        }
+
+        private void ProgressClear(Node node)
+        {
+            string[] roles = node.Spec.TargetIds;
+            bool any = false;
+            bool pending = false;
+            for (int index = 0; index < _actors.Count; index++)
+            {
+                Actor actor = _actors[index];
+                if (actor.Faction != OperationsTacticalFaction.Hostile)
+                    continue;
+                if (!Lists(roles, actor.RoleId) && !Lists(roles, actor.ObjectId))
+                    continue;
+                any = true;
+                if (!actor.Spawned || actor.Alive)
+                    pending = true;
+            }
+
+            if (!any)
+                return;
+            if (!pending)
+            {
+                node.ProgressCount = 1;
+                CompleteNode(node);
+            }
+        }
+
+        private void ProgressProtect(Node node)
+        {
+            for (int index = 0; index < node.Spec.TargetIds.Length; index++)
+            {
+                Actor site = FindActor(node.Spec.TargetIds[index]);
+                if (site == null || !site.Alive)
+                {
+                    FailNode(node);
+                    return;
                 }
             }
         }
@@ -1179,7 +1244,11 @@ namespace Game.Operations.Tactical
         {
             for (int index = 0; index < _nodes.Count; index++)
             {
-                if (_nodes[index].Spec.Required && _nodes[index].Phase != OperationsTacticalNodePhase.Complete)
+                if (!_nodes[index].Spec.Required)
+                    continue;
+                if (_nodes[index].Spec.Rule == OperationsObjectiveRuleKind.Protect)
+                    continue;
+                if (_nodes[index].Phase != OperationsTacticalNodePhase.Complete)
                     return false;
             }
 
@@ -1189,12 +1258,52 @@ namespace Game.Operations.Tactical
         private bool PartialSatisfied()
         {
             string[] partials = _definition.PartialNodeIds;
-            if (partials.Length == 0)
-                return false;
-            for (int index = 0; index < partials.Length; index++)
+            if (_definition.PartialMinimumComplete > 0)
             {
-                Node node = FindNode(partials[index]);
-                if (node == null || node.Phase != OperationsTacticalNodePhase.Complete)
+                if (partials.Length == 0)
+                    return false;
+                int complete = 0;
+                for (int index = 0; index < partials.Length; index++)
+                {
+                    Node node = FindNode(partials[index]);
+                    if (node != null && node.Phase == OperationsTacticalNodePhase.Complete)
+                        complete++;
+                }
+
+                if (complete < _definition.PartialMinimumComplete)
+                    return false;
+            }
+            else if (partials.Length > 0)
+            {
+                for (int index = 0; index < partials.Length; index++)
+                {
+                    Node node = FindNode(partials[index]);
+                    if (node == null || node.Phase != OperationsTacticalNodePhase.Complete)
+                        return false;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(_definition.PartialProgressNodeId))
+            {
+                Node progress = FindNode(_definition.PartialProgressNodeId);
+                if (progress == null || progress.ProgressCount < _definition.PartialProgressMinimum)
+                    return false;
+            }
+            else if (partials.Length == 0 &&
+                     string.IsNullOrEmpty(_definition.PartialProgressNodeId) &&
+                     _definition.PartialExtractMinimum <= 0)
+            {
+                return false;
+            }
+
+            if (_definition.PartialExtractMinimum > 0 &&
+                CountExtractArrivals() < _definition.PartialExtractMinimum)
+                return false;
+
+            for (int index = 0; index < _nodes.Count; index++)
+            {
+                if (_nodes[index].Spec.Rule == OperationsObjectiveRuleKind.Protect &&
+                    _nodes[index].Phase == OperationsTacticalNodePhase.Failed)
                     return false;
             }
 

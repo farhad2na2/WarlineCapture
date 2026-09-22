@@ -5,13 +5,25 @@ using Game.Operations.Tactical;
 namespace Game.Operations.Loop
 {
     /// <summary>
-    /// Greybox graphs already proven by package 2. They let the launch loop run a
-    /// real tactical session. They are not authored O001–O003 mission content.
+    /// Launch compile entry. Package 4 authored O001–O003 take priority.
+    /// Greybox map fixtures remain for non-slice catalog offers (for example O011).
     /// </summary>
     public static class OperationsLaunchFixtures
     {
         public const string OldQuarterHash = "ops-greybox-d01-v1";
         public const string CivicCenterHash = "ops-greybox-d02-v1";
+
+        public static bool TryCompileMission(
+            string missionId,
+            string mapId,
+            out OperationsCompiledTactical definition,
+            out string contentHash,
+            out string error)
+        {
+            if (OperationsAuthoredMissions.TryCompile(missionId, out definition, out contentHash, out error))
+                return true;
+            return TryCompile(mapId, out definition, out contentHash, out error);
+        }
 
         public static bool TryCompile(string mapId, out OperationsCompiledTactical definition, out string contentHash, out string error)
         {

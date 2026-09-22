@@ -176,13 +176,22 @@ namespace Game.Operations.Tactical
                 Anchor(1, "viewpoint", "site.viewpoint", 16f, 8f),
                 Anchor(1, "lane", "site.lane", 8f, -4f),
                 Anchor(1, "evidence", "site.evidence", 5f, 2f),
-                Anchor(1, "far_post", "site.far_post", 0f, 30f)
+                Anchor(1, "far_post", "site.far_post", 0f, 30f),
+                Anchor(1, "signal_a", "site.signal_a", 3f, 3f),
+                Anchor(1, "signal_b", "site.signal_b", 3f, -3f),
+                Anchor(1, "signal_c", "site.signal_c", 7f, 1f),
+                Anchor(1, "junction", "site.junction", 4f, 0f),
+                Anchor(1, "cargo_start", "site.cargo_start", 1f, -6f),
+                Anchor(1, "pump_west", "site.pump_west", 10f, 4f),
+                Anchor(1, "pump_east", "site.pump_east", 10f, -4f),
+                Anchor(1, "service_court", "site.service_court", 2f, 8f)
             };
             OperationsGreyboxRoute[] routes =
             {
-                new("route.main", Ids(anchors, "player_spawn", "courtyard", "exit")),
-                new("route.safe", Ids(anchors, "player_spawn", "clinic", "courtyard", "exit")),
-                new("route.flank", Ids(anchors, "viewpoint", "archive", "exit"))
+                new("route.main", Ids(anchors, "cargo_start", "lane", "clinic")),
+                new("route.safe", Ids(anchors, "cargo_start", "courtyard", "clinic")),
+                new("route.flank", Ids(anchors, "viewpoint", "archive", "exit")),
+                new("route.patrol", Ids(anchors, "player_spawn", "courtyard", "exit"))
             };
             return new OperationsMapGreybox(
                 OldQuarterMapId,

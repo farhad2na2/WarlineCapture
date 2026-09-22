@@ -53,6 +53,10 @@ namespace Game.Operations.Tactical
         public int Materials = 80;
         public int DeadlineTicks;
         public string[] PartialNodeIds = Array.Empty<string>();
+        public int PartialMinimumComplete;
+        public string PartialProgressNodeId = string.Empty;
+        public int PartialProgressMinimum;
+        public int PartialExtractMinimum;
         public string[] MandatoryEvidenceIds = Array.Empty<string>();
         public string[] LaunchRestoredSiteIds = Array.Empty<string>();
         public OperationsTacticalNodeAuthoring[] Nodes = Array.Empty<OperationsTacticalNodeAuthoring>();
@@ -125,6 +129,10 @@ namespace Game.Operations.Tactical
         public int Materials;
         public int DeadlineTicks;
         public string[] PartialNodeIds = Array.Empty<string>();
+        public int PartialMinimumComplete;
+        public string PartialProgressNodeId = string.Empty;
+        public int PartialProgressMinimum;
+        public int PartialExtractMinimum;
         public string[] MandatoryEvidenceIds = Array.Empty<string>();
         public string[] LaunchRestoredSiteIds = Array.Empty<string>();
         public string FirstRequiredNodeId;

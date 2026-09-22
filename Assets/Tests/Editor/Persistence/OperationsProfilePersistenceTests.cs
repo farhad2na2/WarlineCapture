@@ -230,6 +230,45 @@ public sealed class OperationsProfilePersistenceTests
     }
 
     [Test]
+    public void ExplicitRestartPreservesReservationAndCountsOnce_RejectsChangedContentAndSavedProgress()
+    {
+        var commands = new OperationsProfileCommandService(service);
+        Assert.That(commands.TryNewRun(new OperationsCommand("cmd.operations.restart0001", 0,
+            OperationsCommandKind.NewRun, "", "", ""), 1102, OperationsDifficultyKind.Regular, out _, out _), Is.True);
+        var run = commands.Read();
+        var offer = Array.Find(run.activeRun.offers, item => item.missionId == "operation.o001");
+        Assert.That(commands.TrySubmit(new OperationsCommand("cmd.operations.restart0002", run.profileRevision,
+            OperationsCommandKind.Deploy, offer.districtId, offer.offerId, ""), out var deployed, out _), Is.True);
+        Assert.That(deployed.Accepted, Is.True);
+        var reserved = commands.Read();
+        string session = reserved.pendingDeployment.sessionId;
+        Assert.That(service.TryBeginOperationsAttempt(session, "content-a", null, out _), Is.True);
+        Assert.That(service.LoadOperationsCheckpoint(session).restartCount, Is.Zero);
+        service = new SaveService(new JsonSaveRepository(root));
+        Assert.That(service.TryBeginOperationsAttempt(session, "content-a", "restart-1", out _), Is.True);
+        string bytes = repository.ReadRaw(SaveService.ProfileFileName);
+        Assert.That(service.TryBeginOperationsAttempt(session, "content-a", "restart-1", out _), Is.True);
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+        Assert.That(service.LoadOperationsCheckpoint(session).restartCount, Is.EqualTo(1));
+        Assert.That(commands.Read().activeRun.actionPoints, Is.EqualTo(reserved.activeRun.actionPoints));
+        Assert.That(commands.Read().pendingDeployment.sessionId, Is.EqualTo(session));
+        Assert.That(commands.Read().profileRevision, Is.EqualTo(reserved.profileRevision));
+        Assert.That(service.TryBeginOperationsAttempt(session, "changed-content", "restart-2", out _), Is.False);
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+        Assert.That(service.TrySaveOperationsCheckpoint(session, "tactical-progress", out _), Is.True);
+        Assert.That(service.LoadOperationsCheckpoint(session).restartCount, Is.EqualTo(1));
+        bytes = repository.ReadRaw(SaveService.ProfileFileName);
+        Assert.That(service.TryBeginOperationsAttempt(session, "content-a", "restart-2", out var reason), Is.False);
+        Assert.That(reason, Is.EqualTo("checkpoint_requires_resume"));
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+        Assert.That(commands.TrySubmit(new OperationsCommand("cmd.operations.restart0003", reserved.profileRevision,
+            OperationsCommandKind.Withdraw, "", "", ""), out var withdrawn, out _), Is.True);
+        Assert.That(withdrawn.Accepted, Is.True);
+        Assert.That(commands.Read().pendingDeployment.reserved, Is.False);
+        Assert.That(commands.Read().activeRun.actionPoints, Is.EqualTo(reserved.activeRun.actionPoints));
+    }
+
+    [Test]
     public void RewardLedgerCannotGoBackwards()
     {
         Assert.That(service.TryCommitOperations(0, 0, Transaction(), "result", out var saved, out _), Is.True);

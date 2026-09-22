@@ -287,6 +287,42 @@ public sealed class GameLocalizationCatalogTests
     }
 
     [Test]
+    public void InactiveLanguageSegmentKeepsRuntimeLabelWhenItsTabOpens()
+    {
+        GameLocalization.Initialize(catalog, GameLocalization.EnglishLocaleCode, persist: false);
+        var root = new GameObject("Inactive language tab", typeof(RectTransform));
+        root.SetActive(false);
+        var child = new GameObject("Language option", typeof(RectTransform), typeof(Image), typeof(Button));
+        child.transform.SetParent(root.transform, false);
+        var label = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI));
+        label.transform.SetParent(child.transform, false);
+        var text = label.GetComponent<TMP_Text>();
+        var binding = label.AddComponent<V3LocalizedTextBindingView>();
+        binding.Configure("legacy.language.second", "DE");
+        var control = root.AddComponent<UISegmentedControlView>();
+        var serialized = new UnityEditor.SerializedObject(control);
+        serialized.FindProperty("segmentButtons").arraySize = 1;
+        serialized.FindProperty("segmentButtons").GetArrayElementAtIndex(0).objectReferenceValue = child.GetComponent<Button>();
+        serialized.FindProperty("segmentLabels").arraySize = 1;
+        serialized.FindProperty("segmentLabels").GetArrayElementAtIndex(0).objectReferenceValue = text;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        try
+        {
+            control.Bind(new[] { "FA" }, -1);
+            root.SetActive(true);
+            EditModeViewLifecycle.Invoke(binding, "OnEnable");
+            Assert.That(text.text, Is.EqualTo("FA"), "Opening the tab must not restore the prefab's old language label.");
+            GameLocalization.SetLocale(GameLocalization.PersianLocaleCode, persist: false);
+            Assert.That(text.text, Is.EqualTo("FA"));
+        }
+        finally
+        {
+            EditModeViewLifecycle.Invoke(binding, "OnDisable");
+            Object.DestroyImmediate(root);
+        }
+    }
+
+    [Test]
     public void LocaleMetadata_DrivesSettingsWithoutScreenSpecificLanguageLists()
     {
         GameLocalization.Initialize(catalog, "de", persist: false);

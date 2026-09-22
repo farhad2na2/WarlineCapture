@@ -4,7 +4,7 @@ Date: 2026-09-22. Status: **Implementation in progress; O001 remains not player-
 
 Current user-approved target: **Unity Editor readiness only**. Android builds, mobile/device certification and phone release acceptance are out of scope for this implementation pass. Keep those release gates recorded below as deferred; they must not block the Editor milestone or be claimed as passed.
 
-Current checkpoint: disk-backed profile transactions and shared ECS recon rules are implemented; the normal Operations menu now deploys the authored 16-versus-20 finite-force candidate into the shared city world. A button-event smoke verifies real simulation progress and opening-squad visibility. Full outcome/replay validation, active-world checkpoint restoration, tactical review, localization/ARIA acceptance and player/device gates remain open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
+Current checkpoint: disk-backed profile transactions and shared ECS recon rules are implemented; the normal Operations menu now deploys the authored 16-versus-20 finite-force candidate into the shared city world. A normal mouse/keyboard run now completes all three scans, evidence recovery, Victory, saved result and menu return in 9:48; runtime building blockers and the unreachable C anchor were corrected. Explicit interrupted-attempt restart/withdrawal and redeployment smoke also pass. Active-world checkpoint restoration, a second reviewed tactical approach, ARIA acceptance, shared Farsi settings polish and unfamiliar-player review remain open. The full Farsi manual Victory and return also pass (7:19). Android/device acceptance remains deferred. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 
@@ -23,7 +23,7 @@ This plan supplies the missing integration completion package, **P4R**, before e
 | Milestone | Required proof | Current O001 status |
 |---|---|---|
 | Rules/presentation prototype | Graph runs, terminal result settles, capture renders | Verified at the review baseline |
-| Manual playable in Editor | Normal menu/briefing/deploy, actual input, full win or loss, working result/return/replay | Pending |
+| Manual playable in Editor | Normal menu/briefing/deploy, actual input, full win or loss, working result/return/replay | Full EN Victory and result/return verified; replay smoke passes |
 | Internally ready alongside existing Campaign/Skirmish baselines | Manual EN/FA, real-input ARIA, recovery, mode isolation, reviewed tactical experience and presentation | Pending |
 | Player-release ready | Internal gate plus unfamiliar-player review and supported-device acceptance on the exact candidate build | Pending |
 
@@ -167,10 +167,10 @@ Follow current root AGENTS.md: RTK wraps repository Unity wrappers, Hub stays op
 |---|---|---|
 | R0 integration/content reconciliation | Planned | File/dependency ownership and final content decisions |
 | R1 normal deployment | In progress: launch and failed-startup refund/redeploy smoke passed; cancel/input checks open | Menu/briefing/world input trace and rollback checks |
-| R2 manual playable | In progress: shared objectives/HUD; full journey pending | Real-input complete journey and outcome coverage |
+| R2 manual playable | Normal-input EN Victory passed (588 s); previous Partial/Withdraw/Defeat evidence retained | Real-input complete journey and outcome coverage |
 | R3 tactical experience | Initial authored candidate; review pending | Real map and two reviewed approaches at normal speed |
-| R4 durable recovery | Transactions tested; active-world recovery pending | Disk/process recovery, exact-once settlement, cross-mode checks |
-| R5 UI/EN/FA/ARIA | UI and translation draft; acceptance pending | Layout/manual journeys and real-input ARIA matrix |
+| R4 durable recovery | Explicit same-attempt restart/withdrawal and saved redeploy passed; active-world resume remains pending | Disk/process recovery, exact-once settlement, cross-mode checks |
+| R5 UI/EN/FA/ARIA | Normal-input EN and FA victories passed; ARIA and shared settings polish pending | Layout/manual journeys and real-input ARIA matrix |
 | R6 release candidate | Planned | Candidate artifact, supported-device and unfamiliar-player review |
 
 Update this table with commit/evidence links and residual issues as work lands. Update the owning brief/config/catalog together when content decisions change. Never close a gate solely because a similarly named P0–P4 host package passed.

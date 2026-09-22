@@ -15,7 +15,7 @@ namespace Game.Runtime
     /// <summary>Versioned shared-entity checkpoint. Entity handles never cross the disk boundary.</summary>
     public static class OperationsReconCheckpointCodec
     {
-        public const int SchemaVersion = 1;
+        public const int SchemaVersion = 2;
         [Serializable] public sealed class Image
         {
             public int schema = SchemaVersion;
@@ -35,7 +35,7 @@ namespace Game.Runtime
         [Serializable] public sealed class Actor
         {
             public int index, target;
-            public bool exists, disabled, revealed, held;
+            public bool exists, disabled, revealed, held, manualControlled, manualMove, manualGroup, selected;
             public string engage, reserve, patrol;
             public Part[] parts;
         }
@@ -94,6 +94,10 @@ namespace Game.Runtime
                 actor.disabled = em.HasComponent<Disabled>(unit);
                 actor.revealed = em.HasComponent<ScanIntelRevealedTag>(unit);
                 actor.held = em.HasComponent<HoldPositionOrderTag>(unit);
+                actor.manualControlled = em.HasComponent<ManualControlledTag>(unit);
+                actor.manualMove = em.HasComponent<ManualMoveOrderTag>(unit);
+                actor.manualGroup = em.HasComponent<ManualMoveGroupMemberTag>(unit);
+                actor.selected = em.HasComponent<SelectedUnitTag>(unit);
                 var parts = new List<Part>();
                 CaptureParts(em, unit, parts); actor.parts = parts.ToArray();
                 if (em.HasComponent<EngageTarget>(unit))
@@ -142,6 +146,10 @@ namespace Game.Runtime
                 if (em.HasComponent<ScanIntelLastSeen>(unit)) { var intel = em.GetComponentData<ScanIntelLastSeen>(unit); intel.LastScanFrame += Time.frameCount - image.frame; em.SetComponentData(unit, intel); }
                 if (em.HasComponent<UnitPathRetryCooldown>(unit)) { var retry = em.GetComponentData<UnitPathRetryCooldown>(unit); retry.ResumeFrame += Time.frameCount - image.frame; em.SetComponentData(unit, retry); }
                 Toggle<HoldPositionOrderTag>(em, unit, actor.held);
+                Toggle<ManualControlledTag>(em, unit, actor.manualControlled);
+                Toggle<ManualMoveOrderTag>(em, unit, actor.manualMove);
+                Toggle<ManualMoveGroupMemberTag>(em, unit, actor.manualGroup);
+                Toggle<SelectedUnitTag>(em, unit, actor.selected);
                 Toggle<Disabled>(em, unit, actor.disabled); Toggle<ScanIntelRevealedTag>(em, unit, actor.revealed);
                 if (!string.IsNullOrEmpty(actor.reserve)) { var reserve = Unpack<OperationsReconReserveComponent>(actor.reserve); reserve.Session = root; Set(em, unit, reserve); }
                 if (!string.IsNullOrEmpty(actor.patrol)) { var patrol = Unpack<OperationsReconPatrolComponent>(actor.patrol); patrol.Session = root; Set(em, unit, patrol); }

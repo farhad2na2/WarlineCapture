@@ -18,9 +18,17 @@ namespace Game.Composition
             if (roster.Length > 0) return true;
             using var registryQuery = em.CreateEntityQuery(typeof(UnitPrefabRegistryTag), typeof(UnitPrefabRegistryEntry));
             using var surfaceQuery = em.CreateEntityQuery(typeof(MapSurfaceComponent));
-            if (registryQuery.CalculateEntityCount() != 1 || surfaceQuery.CalculateEntityCount() != 1) return false;
+            using var gridQuery = em.CreateEntityQuery(typeof(GridConfig), typeof(GridWalkable), typeof(DynamicBlockerComponent));
+            if (registryQuery.CalculateEntityCount() != 1 || surfaceQuery.CalculateEntityCount() != 1 || gridQuery.CalculateEntityCount() != 1) return false;
             var surface = surfaceQuery.GetSingleton<MapSurfaceComponent>();
             if (!surface.SurfaceBlob.IsCreated) return false;
+            em.CompleteAllTrackedJobs();
+            var grid = gridQuery.GetSingleton<GridConfig>();
+            var blockers = gridQuery.GetSingleton<DynamicBlockerComponent>();
+            var walkable = em.GetBuffer<GridWalkable>(gridQuery.GetSingletonEntity(), true);
+            var objectives = new List<float3> { definition.exitPosition, definition.evidencePosition };
+            foreach (var point in definition.scanPositions) objectives.Add(point);
+            if (!ValidateNavigation(grid, walkable, blockers, objectives, out error)) return false;
             var registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryQuery.GetSingletonEntity(), true);
             var prefabs = new Dictionary<string, Entity>();
             foreach (var entry in registry)
@@ -37,7 +45,7 @@ namespace Game.Composition
             foreach (var force in definition.forces)
                 for (int i = 0; i < force.count; i++)
                 {
-                    if (!TryPlace(ref surface, force.position, occupied, out float3 position))
+                    if (!TryPlace(ref surface, grid, walkable, blockers, force.position, occupied, out float3 position))
                     { error = "Insufficient walkable spawn space for " + force.sourceKey; return false; }
                     placements.Add(position);
                 }
@@ -84,7 +92,50 @@ namespace Game.Composition
             return true;
         }
 
-        private static bool TryPlace(ref MapSurfaceComponent surface, float3 near, HashSet<int2> occupied, out float3 position)
+        // Surface bakes alone cannot see runtime building footprints. Validate the
+        // same ground grid used by player movement before allowing the mission clock.
+        internal static bool ValidateNavigation(GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBlockerComponent blockers, List<float3> objectives, out string error)
+        {
+            error = string.Empty;
+            if (objectives == null || objectives.Count == 0 || walkable.Length != grid.Width * grid.Height || !blockers.Blocked.IsCreated)
+            { error = "Mission navigation is not ready."; return false; }
+            var cells = new List<int2>();
+            int2 min = new(grid.Width - 1, grid.Height - 1), max = int2.zero;
+            foreach (var point in objectives)
+            {
+                int2 cell = GridUtils.WorldToCell(grid, point);
+                if (!IsOpen(grid, walkable, blockers, cell))
+                { error = "Mission objective is blocked at " + cell; return false; }
+                cells.Add(cell); min = math.min(min, cell); max = math.max(max, cell);
+            }
+            min = math.max(int2.zero, min - 32); max = math.min(new int2(grid.Width - 1, grid.Height - 1), max + 32);
+            var seen = new HashSet<int2> { cells[0] }; var pending = new Queue<int2>(); pending.Enqueue(cells[0]);
+            int2[] steps = { new(1,0), new(-1,0), new(0,1), new(0,-1) };
+            while (pending.Count > 0)
+            {
+                int2 current = pending.Dequeue();
+                foreach (var step in steps)
+                {
+                    int2 next = current + step;
+                    if (math.any(next < min) || math.any(next > max) || seen.Contains(next) || !IsOpen(grid, walkable, blockers, next)) continue;
+                    seen.Add(next); pending.Enqueue(next);
+                }
+            }
+            foreach (var cell in cells)
+                if (!seen.Contains(cell)) { error = "Mission objective has no ground route at " + cell; return false; }
+            return true;
+        }
+
+        private static bool IsOpen(GridConfig grid, DynamicBuffer<GridWalkable> walkable, DynamicBlockerComponent blockers, int2 cell)
+        {
+            if (!GridUtils.InBounds(cell, grid.Width, grid.Height)) return false;
+            int index = GridUtils.CellToIndex(cell, grid.Width);
+            return walkable[index].Value != 0 && !blockers.Blocked.IsSet(index);
+        }
+
+        private static bool TryPlace(ref MapSurfaceComponent surface, GridConfig grid, DynamicBuffer<GridWalkable> walkable,
+            DynamicBlockerComponent blockers, float3 near, HashSet<int2> occupied, out float3 position)
         {
             int2 center = Cell(surface, near);
             for (int radius = 0; radius <= 12; radius++)
@@ -92,7 +143,7 @@ namespace Game.Composition
             for (int x = -radius; x <= radius; x++)
             {
                 int2 cell = center + new int2(x, z);
-                if (occupied.Contains(cell) || !MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface.SurfaceBlob.Value, cell, out var sample) ||
+                if (occupied.Contains(cell) || !IsOpen(grid, walkable, blockers, cell) || !MapSurfaceBlobAccess.TryGetPrimarySurface(ref surface.SurfaceBlob.Value, cell, out var sample) ||
                     sample.SurfaceType == MapSurfaceType.Blocked || (sample.MovementMask & MapSurfaceMovementMask.Infantry) == 0) continue;
                 occupied.Add(cell);
                 position = surface.GridOrigin + new float3((cell.x + .5f) * surface.CellSize, 0, (cell.y + .5f) * surface.CellSize);

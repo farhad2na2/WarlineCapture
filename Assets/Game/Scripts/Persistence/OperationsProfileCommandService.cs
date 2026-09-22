@@ -19,7 +19,7 @@ namespace Game.Runtime
         public OperationsSaveData Read() => store.LoadProfile().operations;
 
         public bool TrySubmit(OperationsCommand command, out OperationsCommandResult result, out string error) =>
-            TryCommit(session => session.Submit(command), null, out result, out error);
+            TryCommit(session => session.Submit(command), command.Kind == OperationsCommandKind.Deploy ? string.Empty : null, out result, out error);
 
         public bool TryNewRun(OperationsCommand command, int seed, OperationsDifficultyKind difficulty,
             out OperationsCommandResult result, out string error) =>

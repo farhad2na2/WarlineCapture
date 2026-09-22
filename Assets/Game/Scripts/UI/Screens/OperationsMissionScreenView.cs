@@ -14,7 +14,8 @@ namespace Game.UI.Runtime
         private TMP_Text title, description, status, clock, result;
         private TMP_Text[] siteLabels;
         private Button deploy, conclude, continueButton, evidenceButton, recoverButton;
-        private bool evidenceVisible;
+        private bool evidenceVisible, interruptedAttempt;
+        private Button withdrawInterrupted;
         private GameObject briefing, controls, resultPanel, confirmation;
         private RectTransform[] markers;
 
@@ -57,7 +58,13 @@ namespace Game.UI.Runtime
             briefing = card.gameObject;
             if (!hud)
             {
-                deploy = Button(card, Text("operations.deploy", "DEPLOY"), () => Send(UiOperationsMissionAction.Deploy));
+                deploy = Button(card, Text("operations.deploy", "DEPLOY"), () => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy));
+                withdrawInterrupted = Button(card, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
+                var interruptedCard = Modal("ConfirmInterruptedWithdraw"); confirmation = interruptedCard.parent.gameObject;
+                Label(interruptedCard, Text("operations.o001.interrupted_withdraw_confirm", "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences."), 28, 180);
+                Button(interruptedCard, Text("operations.withdraw", "WITHDRAW"), () => { confirmation.SetActive(false); Send(UiOperationsMissionAction.WithdrawInterrupted); });
+                Button(interruptedCard, Text("ui.common.cancel", "CANCEL"), () => confirmation.SetActive(false));
+                confirmation.SetActive(false);
                 Button(card, Text("ui.common.back", "BACK"), () => UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.MainMenu, false));
                 return;
             }
@@ -96,9 +103,14 @@ namespace Game.UI.Runtime
             {
                 markers[i] = Panel("WorldObjective" + i, transform);
                 markers[i].SetAsFirstSibling(); markers[i].anchorMin = markers[i].anchorMax = new Vector2(.5f,.5f);
-                markers[i].sizeDelta = new Vector2(128,36); markers[i].GetComponent<Image>().raycastTarget = false;
+                markers[i].sizeDelta = new Vector2(240,48);
                 string label = i < 3 ? string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)) : i == 3 ? Text("operations.evidence", "EVIDENCE") : Text("operations.exit", "EXIT");
-                var text = Label(markers[i], label, 18, 0); Stretch(text.rectTransform);
+                int markerIndex = i;
+                var advance = markers[i].gameObject.AddComponent<Button>();
+                advance.targetGraphic = markers[i].GetComponent<Image>();
+                advance.onClick.AddListener(() => Send(markerIndex < 3 ? UiOperationsMissionAction.AdvanceSite :
+                    markerIndex == 3 ? UiOperationsMissionAction.AdvanceEvidence : UiOperationsMissionAction.AdvanceExit, markerIndex));
+                var text = Label(markers[i], string.Format(Text("operations.o001.advance_marker", "ADVANCE: {0}"), label), 18, 0); Stretch(text.rectTransform);
             }
         }
 
@@ -109,7 +121,13 @@ namespace Game.UI.Runtime
             {
                 UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Description);
                 UiLocalizedText.Set(status, model.Status); UiLocalizedText.Set(clock, model.Clock);
+                interruptedAttempt = model.InterruptedAttempt;
                 deploy.interactable = model.CanDeploy;
+                UiLocalizedText.Set(deploy.GetComponentInChildren<TMP_Text>(), interruptedAttempt ? Text("operations.o001.restart_attempt", "RESTART ATTEMPT") : Text("operations.deploy", "DEPLOY"));
+                withdrawInterrupted.gameObject.SetActive(interruptedAttempt);
+                // Keep the extra recovery choice inside the briefing card at 1080p.
+                description.GetComponent<LayoutElement>().preferredHeight = interruptedAttempt ? 130 : 160;
+                status.GetComponent<LayoutElement>().preferredHeight = interruptedAttempt ? 80 : 100;
                 return;
             }
             bool ready = UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.CurrentMode == UiShellMode.MatchHud &&

@@ -6,6 +6,8 @@ using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using Game.Composition;
+using Game.UI.Contracts;
 
 public sealed class OperationsReconWorldTests
 {
@@ -60,6 +62,53 @@ public sealed class OperationsReconWorldTests
 
     [TearDown]
     public void TearDown() { world.Dispose(); if (surface.IsCreated) surface.Dispose(); }
+
+    [Test]
+    public void RuntimeNavigationRejectsBlockedAndDisconnectedObjectives()
+    {
+        var entity = em.CreateEntity();
+        var walkable = em.AddBuffer<GridWalkable>(entity);
+        for (int i = 0; i < 100; i++) walkable.Add(new GridWalkable { Value = 1 });
+        using var bits = new NativeBitArray(100, Allocator.Temp, NativeArrayOptions.ClearMemory);
+        var blockers = new DynamicBlockerComponent { Blocked = bits };
+        var grid = new GridConfig { Width = 10, Height = 10, CellSize = 1 };
+        var points = new System.Collections.Generic.List<float3> { new(1.5f,0,1.5f), new(8.5f,0,8.5f) };
+        Assert.That(OperationsReconSpawnCompositionSystemHelper.ValidateNavigation(grid, walkable, blockers, points, out _), Is.True);
+        bits.Set(88, true);
+        Assert.That(OperationsReconSpawnCompositionSystemHelper.ValidateNavigation(grid, walkable, blockers, points, out var error), Is.False);
+        Assert.That(error, Does.Contain("blocked"));
+        bits.Set(88, false);
+        for (int y = 0; y < 10; y++) bits.Set(5 + y * 10, true);
+        Assert.That(OperationsReconSpawnCompositionSystemHelper.ValidateNavigation(grid, walkable, blockers, points, out error), Is.False);
+        Assert.That(error, Does.Contain("no ground route"));
+    }
+
+    [Test]
+    public void ObjectiveAdvanceQueuesSharedAttackMoveWithoutCompletingOrTeleporting()
+    {
+        var grid = em.CreateEntity(typeof(GridConfig));
+        em.SetComponentData(grid, new GridConfig { Width = 100, Height = 100, CellSize = 1 });
+        var input = em.CreateEntity(typeof(RtsSelectionInputStateComponent));
+        em.AddBuffer<RtsSelectionCommandIntentRequestElement>(input);
+        var before = em.GetComponentData<LocalTransform>(player).Position;
+        Assert.That(OperationsMissionPresentationSystem.TryQueueObjectiveAdvance(em, root, UiOperationsMissionAction.AdvanceSite, 2), Is.False);
+        em.AddComponent<SelectedUnitTag>(player);
+        Assert.That(OperationsMissionPresentationSystem.TryQueueObjectiveAdvance(em, root, UiOperationsMissionAction.AdvanceSite, 2), Is.True);
+        var request = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(input)[0];
+        Assert.That(request.Kind, Is.EqualTo(RtsSelectionCommandIntentKind.Attack));
+        Assert.That(request.TargetKind, Is.EqualTo(RtsSelectionCommandTargetKind.Cell));
+        Assert.That(request.TargetCell, Is.EqualTo(new int2(50, 10)));
+        Assert.That(request.HasWorldPosition, Is.EqualTo(1));
+        Assert.That(request.HasScreenPosition, Is.Zero, "Objective orders must not be reprojected onto a roof.");
+        Assert.That(em.GetComponentData<LocalTransform>(player).Position, Is.EqualTo(before));
+        Assert.That(State.CompletedScans, Is.Zero);
+        Assert.That(OperationsMissionPresentationSystem.TryQueueObjectiveAdvance(em, root, UiOperationsMissionAction.AdvanceEvidence, 0), Is.False);
+        Assert.That(OperationsMissionPresentationSystem.TryQueueObjectiveAdvance(em, root, UiOperationsMissionAction.AdvanceSite, 3), Is.False);
+        var paused = em.GetComponentData<RuntimeGameplayStateComponent>(gameplay); paused.SimulationActive = 0;
+        em.SetComponentData(gameplay, paused);
+        Assert.That(OperationsMissionPresentationSystem.TryQueueObjectiveAdvance(em, root, UiOperationsMissionAction.AdvanceExit, 0), Is.False);
+        Assert.That(em.GetBuffer<RtsSelectionCommandIntentRequestElement>(input).Length, Is.EqualTo(1));
+    }
 
     [Test]
     public void ScanRequiresExplicitActionAndFifteenSeconds_ThenTriggersFirstWaveOnlyOnce()

@@ -12,11 +12,11 @@
     },
     {
       "key": "operations.o001.scan_help",
-      "source": "RIFLE SQUAD selects your force. Use ATTACK on open ground to advance and fight. Within 8 m of a signal, SCAN SELECTED for 15 seconds.",
+      "source": "RIFLE SQUAD selects your force. Click an ADVANCE marker to travel and fight. Within 8 m, SCAN SELECTED for 15 seconds.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "«گروه پیاده‌نظام» همهٔ نیروها را انتخاب می‌کند. برای پیشروی همراه با درگیری، «حمله» را روی زمین باز بزنید. در فاصلهٔ ۸ متری سیگنال، ۱۵ ثانیه «اسکن با نیروی منتخب» انجام دهید."
+          "value": "«گروه پیاده‌نظام» همهٔ نیروها را انتخاب می‌کند. برای حرکت همراه با درگیری، نشان «پیشروی» را بزنید. در فاصلهٔ ۸ متری، ۱۵ ثانیه «اسکن با نیروی منتخب» انجام دهید."
         }
       ]
     },
@@ -387,6 +387,86 @@
         {
           "locale": "fa-IR",
           "value": "مأموریت بارگذاری نشد. بازیابی در انتظار ذخیرهٔ بازگشت امتیاز اقدام است."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.advance_marker",
+      "source": "ADVANCE: {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیشروی: {0}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.advancing",
+      "source": "Advancing to the objective. Your selected infantry will engage threats on the way.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیشروی به سوی هدف. پیاده‌نظام منتخب در مسیر با دشمن درگیر می‌شود."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.advance_unavailable",
+      "source": "Select surviving infantry and resume the mission before advancing.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیش از پیشروی، پیاده‌نظام زنده را انتخاب کنید و مأموریت را از حالت توقف خارج کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.interrupted",
+      "source": "An interrupted attempt is reserved. Restart it from the beginning without another AP cost, or withdraw. Active progress cannot currently be resumed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یک نوبت ناتمام رزرو شده است. بدون هزینهٔ دوبارهٔ امتیاز اقدام، از ابتدا شروع کنید یا عقب‌نشینی کنید. ادامهٔ پیشرفت فعلی هنوز ممکن نیست."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.restart_attempt",
+      "source": "RESTART ATTEMPT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شروع دوبارهٔ نوبت"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.interrupted_withdraw_confirm",
+      "source": "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از نوبت ناتمام عقب‌نشینی می‌کنید؟ امتیاز اقدام رزروشده مصرف می‌شود و پیامدهای عقب‌نشینی اعمال می‌گردد."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.resume_unavailable",
+      "source": "A saved checkpoint is present. This version cannot resume it; the saved attempt has been preserved.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "یک نقطهٔ ذخیره وجود دارد. این نسخه نمی‌تواند آن را ادامه دهد؛ نوبت ذخیره‌شده حفظ شده است."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recovery_refunded",
+      "source": "The saved attempt is incompatible. Your action point was returned and recovery data was preserved.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نوبت ذخیره‌شده سازگار نیست. امتیاز اقدام بازگردانده شد و داده‌های بازیابی حفظ شدند."
         }
       ]
     }

@@ -68,7 +68,7 @@ namespace Game.UI.Runtime
             {
                 bool active = i < count;
                 if (segmentLabels[i] != null)
-                    segmentLabels[i].text = active ? labels[i] : string.Empty;
+                    UiLocalizedText.Set(segmentLabels[i], active ? labels[i] : string.Empty);
 
                 if (segmentButtons.Length > i && segmentButtons[i] != null)
                 {

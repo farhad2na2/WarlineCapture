@@ -29,7 +29,9 @@ namespace Game.Editor
             try
             {
                 Vector3 start = FindOpen(ref blob.Value, new int2(1690, 700));
-                Vector3[] scans = { FindOpen(ref blob.Value, new int2(1705, 805)), FindOpen(ref blob.Value, new int2(1790, 790)), FindOpen(ref blob.Value, new int2(1870, 815)) };
+                // C sits in the southern forecourt. The old roof-side point (1870,815)
+                // passed the surface bake but lies inside the runtime building blockers.
+                Vector3[] scans = { FindOpen(ref blob.Value, new int2(1705, 805)), FindOpen(ref blob.Value, new int2(1790, 790)), FindOpen(ref blob.Value, new int2(1882, 796)) };
                 Vector3 evidence = FindOpen(ref blob.Value, new int2(1860, 710));
                 Vector3 guard = FindOpen(ref blob.Value, new int2(1825, 755));
                 Vector3 patrol = FindOpen(ref blob.Value, new int2(1745, 760));

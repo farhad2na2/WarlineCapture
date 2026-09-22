@@ -16,7 +16,7 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: 442071027192efd50030ab242cf4403c72292d7fbebbec2df4d9927bb33fe834
+  contentHash: e21078484c7e10cf0d268e932a7daf86efb6a380e0b61a8031ec757d4d80e84b
   generatedMetadataHash: 28db697020432f63af383d808e9d9af448003d52d495e680b7bdca54329301b4
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
@@ -98,7 +98,7 @@ MonoBehaviour:
     laneIndex: -1
   - anchorId: anchor.operations.d01.signal_c
     kind: 2
-    position: {x: 1870.5, y: -0.0008202214, z: 815.5}
+    position: {x: 1882.5, y: -0.0008202214, z: 796.5}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 8
     factionId: -1

@@ -20,6 +20,8 @@ namespace Game.Composition
     {
         private Entity boundary;
         private OperationsProfileCommandService commands;
+        private SaveService saves;
+        private string restartCommand;
         private OperationsReconMissionConfig definition;
         private OperationsMissionScreenView view;
         private string notice = string.Empty;
@@ -46,7 +48,8 @@ namespace Game.Composition
                 reopenOperationsMenu = false;
             bool live = OperationsReconLaunchProjection.TryGet(EntityManager, out var root, out var mission);
             if (!live && shell.ActiveRoute != UIRoute.Operations) return;
-            commands ??= new OperationsProfileCommandService(SaveService.CreateDefault());
+            saves ??= SaveService.CreateDefault();
+            commands ??= new OperationsProfileCommandService(saves);
             definition ??= Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
             if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root, mission)) return;
             var requests = EntityManager.GetBuffer<UiOperationsMissionRequest>(boundary);
@@ -66,7 +69,7 @@ namespace Game.Composition
                     mission.Phase = OperationsReconPhase.Playing;
                     EntityManager.SetComponentData(root, mission);
                     Focus(definition.exitPosition);
-                    notice = Copy("scan_help", "RIFLE SQUAD selects your force. Use ATTACK on open ground to advance and fight. Within 8 m of a signal, SCAN SELECTED for 15 seconds.");
+                    notice = Copy("scan_help", "RIFLE SQUAD selects your force. Click an ADVANCE marker to travel and fight. Within 8 m, SCAN SELECTED for 15 seconds.");
                 }
                 else if (!string.IsNullOrEmpty(error))
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
@@ -98,7 +101,15 @@ namespace Game.Composition
 
         private void Handle(UiOperationsMissionRequest request, Entity root, OperationsReconMissionComponent mission, bool live)
         {
-            if (request.Action == UiOperationsMissionAction.Deploy && !live) { Deploy(); return; }
+            if (!live && request.Action is UiOperationsMissionAction.Deploy or UiOperationsMissionAction.RestartAttempt)
+            { Deploy(request.Action == UiOperationsMissionAction.RestartAttempt); return; }
+            if (!live && request.Action == UiOperationsMissionAction.WithdrawInterrupted)
+            {
+                var saved = commands.Read();
+                if (saved.pendingDeployment?.reserved == true && commands.TrySubmit(Command(saved, OperationsCommandKind.Withdraw), out var withdrawn, out notice) && withdrawn.Accepted)
+                    notice = Copy("withdrawn", "WITHDRAWN");
+                return;
+            }
             if (!live) return;
             if (request.Action == UiOperationsMissionAction.Return)
             {
@@ -107,6 +118,13 @@ namespace Game.Composition
                 return;
             }
             if (mission.Phase != OperationsReconPhase.Playing) return;
+            if (request.Action is UiOperationsMissionAction.AdvanceSite or UiOperationsMissionAction.AdvanceEvidence or UiOperationsMissionAction.AdvanceExit)
+            {
+                notice = TryQueueObjectiveAdvance(EntityManager, root, request.Action, request.SiteIndex)
+                    ? Copy("advancing", "Advancing to the objective. Your selected infantry will engage threats on the way.")
+                    : Copy("advance_unavailable", "Select surviving infantry and resume the mission before advancing.");
+                return;
+            }
             if (request.Action == UiOperationsMissionAction.PromptWithdraw)
             { view?.ShowWithdrawConfirmation(); return; }
             var sites = EntityManager.GetBuffer<OperationsReconSiteElement>(root);
@@ -147,6 +165,43 @@ namespace Game.Composition
             EntityManager.GetBuffer<OperationsReconActionElement>(root).Add(new OperationsReconActionElement
             { SessionId = mission.SessionId, Action = action, Actor = actor, SiteIndex = request.SiteIndex });
             notice = string.Empty;
+        }
+
+        public static bool TryQueueObjectiveAdvance(EntityManager em, Entity root, UiOperationsMissionAction action, int siteIndex)
+        {
+            if (!em.Exists(root) || !em.HasComponent<OperationsReconMissionComponent>(root)) return false;
+            var mission = em.GetComponentData<OperationsReconMissionComponent>(root);
+            if (mission.Phase != OperationsReconPhase.Playing) return false;
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            using var input = em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent), typeof(RtsSelectionCommandIntentRequestElement));
+            if (gameplay.CalculateEntityCount() != 1 || gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0 ||
+                grids.CalculateEntityCount() != 1 || input.CalculateEntityCount() != 1) return false;
+            bool selected = false;
+            foreach (var member in em.GetBuffer<OperationsReconRosterElement>(root))
+                if (em.Exists(member.Unit) && em.HasComponent<SelectedUnitTag>(member.Unit) &&
+                    em.HasComponent<UnitHealth>(member.Unit) && em.GetComponentData<UnitHealth>(member.Unit).Current > 0)
+                { selected = true; break; }
+            if (!selected) return false;
+            float3 destination;
+            if (action == UiOperationsMissionAction.AdvanceSite)
+            {
+                var sites = em.GetBuffer<OperationsReconSiteElement>(root);
+                if (siteIndex < 0 || siteIndex >= sites.Length) return false;
+                destination = sites[siteIndex].Position;
+            }
+            else if (action == UiOperationsMissionAction.AdvanceEvidence && mission.CompletedScans == 3)
+                destination = em.GetComponentData<OperationsReconEvidenceComponent>(root).Position;
+            else if (action == UiOperationsMissionAction.AdvanceExit) destination = mission.ExitPosition;
+            else return false;
+            var grid = grids.GetSingleton<GridConfig>();
+            em.GetBuffer<RtsSelectionCommandIntentRequestElement>(input.GetSingletonEntity()).Add(new RtsSelectionCommandIntentRequestElement
+            {
+                Kind = RtsSelectionCommandIntentKind.Attack, Frame = UnityEngine.Time.frameCount,
+                TargetKind = RtsSelectionCommandTargetKind.Cell, TargetCell = GridUtils.WorldToCell(grid, destination),
+                WorldPosition = destination, HasTargetCell = 1, HasWorldPosition = 1, ExplicitAttackTargetMode = 1
+            });
+            return true;
         }
 
         private bool ObserveFailedStartup(Entity root, OperationsReconMissionComponent mission)
@@ -194,7 +249,7 @@ namespace Game.Composition
             return true;
         }
 
-        private void Deploy()
+        private void Deploy(bool restart)
         {
             if (definition == null || !definition.TryValidate(out _)) { notice = Copy("content_missing", "Street Signals content is unavailable."); return; }
             var save = commands.Read();
@@ -205,6 +260,9 @@ namespace Game.Composition
             }
             var attempt = save.pendingDeployment?.reserved == true
                 ? Array.Find(save.activeRun.attempts, item => item.sessionId == save.pendingDeployment.sessionId && !item.practice) : null;
+            if (attempt != null && !restart)
+            { notice = Copy("interrupted", "An interrupted attempt is reserved. Restart it from the beginning without another AP cost, or withdraw. Active progress cannot currently be resumed."); return; }
+            if (restart && attempt == null) return;
             if (attempt == null)
             {
                 // Eligibility is recomputed by the strategic command rules. The legacy
@@ -219,7 +277,18 @@ namespace Game.Composition
                     ? Array.Find(save.activeRun.attempts, item => item.sessionId == save.pendingDeployment.sessionId && !item.practice) : null;
             }
             if (attempt == null || attempt.missionId != definition.missionId) { notice = Copy("attempt_conflict", "Finish the existing Operations attempt first."); return; }
+            if (restart) restartCommand ??= Id();
+            if (!saves.TryBeginOperationsAttempt(attempt.sessionId, definition.operationMap.ContentHash, restart ? restartCommand : null, out string recoveryError))
+            {
+                // Preserve incompatible journal bytes; the strategic refund is idempotent.
+                if (recoveryError == "checkpoint_requires_resume")
+                { notice = Copy("resume_unavailable", "A saved checkpoint is present. This version cannot resume it; the saved attempt has been preserved."); return; }
+                if (commands.TrySubmit(Command(save, OperationsCommandKind.TechnicalFailure), out var refunded, out _) && refunded.Accepted)
+                    notice = Copy("recovery_refunded", "The saved attempt is incompatible. Your action point was returned and recovery data was preserved.");
+                return;
+            }
             if (!OperationsReconLaunchProjection.TryQueue(EntityManager, definition, attempt.sessionId, out notice, unchecked((uint)save.activeRun.seed))) return;
+            restartCommand = null;
             resultSaved = false; settlementCommand = null; nextSaveRetry = 0;
             UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch, UIRoute.Match, false);
         }
@@ -235,9 +304,15 @@ namespace Game.Composition
                 CanDeploy = !live && definition != null && (!OperationsSaveMigration.HasActiveRun(save) || save.activeRun.actionPoints > 0 || save.pendingDeployment?.reserved == true),
                 Clock = !OperationsSaveMigration.HasActiveRun(save) ? Copy("new_city", "A new city operation will begin on deployment.") :
                     string.Format(Copy("day_ap", "Day {0} • AP {1}"), save.activeRun.day, save.activeRun.actionPoints),
+                InterruptedAttempt = !live && save?.pendingDeployment?.reserved == true,
                 InMission = live, Finished = live && mission.Phase == OperationsReconPhase.Terminal, Saved = resultSaved
             };
-            if (!live) return model;
+            if (!live)
+            {
+                if (model.InterruptedAttempt && string.IsNullOrEmpty(model.Status))
+                    model.Status = Copy("interrupted", "An interrupted attempt is reserved. Restart it from the beginning without another AP cost, or withdraw. Active progress cannot currently be resumed.");
+                return model;
+            }
             int remaining = Mathf.Max(0, Mathf.CeilToInt(mission.DeadlineSeconds - mission.ElapsedSeconds));
             model.Clock = string.Format(Copy("clock", "{0}:{1} • {2}/16 infantry"), remaining / 60, (remaining % 60).ToString("00"), mission.SurvivingInfantry);
             model.Objective = mission.CompletedScans < 3 ? Copy("scan_objective", "Scan all three signal sites") + "  " + mission.CompletedScans + "/3"

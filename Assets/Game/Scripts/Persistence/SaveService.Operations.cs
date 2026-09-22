@@ -12,6 +12,8 @@ namespace Game.Runtime
         {
             public int schema = 1;
             public string sessionId, current, previous;
+            public string content, restartCommand;
+            public int restartCount;
         }
 
         public OperationsCheckpointArchive LoadOperationsCheckpoint(string sessionId)
@@ -25,6 +27,40 @@ namespace Game.Runtime
                 return archive?.schema == 1 && archive.sessionId == sessionId ? archive : null;
             }
             catch (ArgumentException) { return null; }
+        }
+
+        // A missing tactical checkpoint may be restarted only by explicit player choice.
+        // The journal shares the reservation's atomic profile and never spends another AP.
+        public bool TryBeginOperationsAttempt(string sessionId, string content, string restartCommand, out string reason)
+        {
+            reason = string.Empty;
+            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(content))
+            { reason = "invalid_attempt"; return false; }
+            using IDisposable lease = _repository.AcquireWriteLease(ProfileFileName);
+            var profile = LoadProfileForCommit();
+            RequireWritableProfile(profile);
+            if (profile.operations.pendingDeployment?.reserved != true || profile.operations.pendingDeployment.sessionId != sessionId)
+            { reason = "attempt_not_reserved"; return false; }
+            OperationsCheckpointArchive archive = null;
+            if (!string.IsNullOrEmpty(profile.operationsAttemptJson))
+            {
+                try { archive = JsonUtility.FromJson<OperationsCheckpointArchive>(profile.operationsAttemptJson); }
+                catch (ArgumentException) { reason = "checkpoint_unreadable"; return false; }
+                if (archive == null || archive.schema != 1 || archive.sessionId != sessionId ||
+                    archive.restartCount < 0 || (!string.IsNullOrEmpty(archive.content) && archive.content != content))
+                { reason = "checkpoint_incompatible"; return false; }
+                if (!string.IsNullOrEmpty(archive.current) || !string.IsNullOrEmpty(archive.previous))
+                { reason = "checkpoint_requires_resume"; return false; }
+                if (string.IsNullOrEmpty(restartCommand) || archive.restartCommand == restartCommand) return true;
+            }
+            archive ??= new OperationsCheckpointArchive { sessionId = sessionId };
+            archive.content = content;
+            if (!string.IsNullOrEmpty(restartCommand))
+            { archive.restartCount = checked(archive.restartCount + 1); archive.restartCommand = restartCommand; }
+            profile.operationsAttemptJson = JsonUtility.ToJson(archive);
+            profile.profileCommitRevision = checked(profile.profileCommitRevision + 1);
+            _repository.SaveAtomic(ProfileFileName, profile);
+            return true;
         }
 
         // Payload and session reference are one atomic profile replacement. Preserve the
@@ -46,7 +82,8 @@ namespace Game.Runtime
             { reason = "checkpoint_schema_incompatible"; return false; }
             if (old?.schema == 1 && old.sessionId == sessionId && old.current == image) return true;
             var archive = new OperationsCheckpointArchive { sessionId = sessionId, current = image,
-                previous = old?.schema == 1 && old.sessionId == sessionId ? old.current : string.Empty };
+                previous = old?.schema == 1 && old.sessionId == sessionId ? old.current : string.Empty,
+                content = old?.content, restartCommand = old?.restartCommand, restartCount = old?.restartCount ?? 0 };
             profile.operationsAttemptJson = JsonUtility.ToJson(archive);
             profile.profileCommitRevision = checked(profile.profileCommitRevision + 1);
             _repository.SaveAtomic(ProfileFileName, profile);

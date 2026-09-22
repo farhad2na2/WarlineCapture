@@ -18,6 +18,10 @@ public sealed class OperationsReconCheckpointTests
         var carrier = records[0].Unit;
         var casualty = records[1].Unit;
         em.SetComponentData(carrier, new UnitHealth { Current = 63, Max = 100 });
+        em.AddComponent<ManualControlledTag>(carrier);
+        em.AddComponent<ManualMoveOrderTag>(carrier);
+        em.AddComponent<ManualMoveGroupMemberTag>(carrier);
+        em.AddComponent<SelectedUnitTag>(carrier);
         em.AddComponentData(carrier, new UnitTarget { Cell = new int2(45, 68) });
         em.AddComponentData(carrier, new UnitIdleWanderComponent { RandomState = 0x12345678, RetrySeconds = 3 });
         em.AddComponentData(carrier, new UnitAttackCooldownComponent { CooldownRemaining = .75f });
@@ -35,6 +39,10 @@ public sealed class OperationsReconCheckpointTests
         var restoredCarrier = restoredRecords[0].Unit;
         var restoredCasualty = restoredRecords[1].Unit;
         OperationsReconCheckpointCodec.Apply(target, restoredRoot, image);
+        Assert.That(target.HasComponent<ManualControlledTag>(restoredCarrier), Is.True);
+        Assert.That(target.HasComponent<ManualMoveOrderTag>(restoredCarrier), Is.True);
+        Assert.That(target.HasComponent<ManualMoveGroupMemberTag>(restoredCarrier), Is.True);
+        Assert.That(target.HasComponent<SelectedUnitTag>(restoredCarrier), Is.True);
         Assert.That(restoredCarrier, Is.Not.EqualTo(carrier), "Fixture must require remapping entity handles.");
         Assert.That(target.GetComponentData<OperationsReconEvidenceComponent>(restoredRoot).Carrier, Is.EqualTo(restoredCarrier));
         Assert.That(target.GetBuffer<OperationsReconSiteElement>(restoredRoot)[0].Actor, Is.EqualTo(restoredCarrier));

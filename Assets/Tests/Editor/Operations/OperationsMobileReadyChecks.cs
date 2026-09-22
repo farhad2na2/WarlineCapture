@@ -117,6 +117,7 @@ namespace Game.Tests.Editor.Operations
             string presentation = ReadPresentationSource();
             string world = ReadCaptureSource("OperationsTacticalWorldShell.cs");
             Require(world.Contains("OperationsTacticalWorldShell"), "world_shell");
+            Require(world.Contains("using Game.Operations.Contracts;"), "contracts_using");
             Require(world.Contains("CreatePrimitive"), "primitives");
             Require(world.Contains("Selection"), "selection");
             Require(presentation.Contains("OperationsTacticalWorldShell"), "presenter_uses_world");

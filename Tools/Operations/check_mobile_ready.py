@@ -39,6 +39,8 @@ def check_sources() -> None:
         fail("capture_missing_tactical")
     if "OperationsTacticalWorldShell" not in world or "CreatePrimitive" not in world:
         fail("world_shell")
+    if "using Game.Operations.Contracts;" not in world:
+        fail("world_missing_contracts_using")
     if "PhonePanelRect" not in presentation or "BuildLocalizedObjectives" not in presentation:
         fail("phone_chrome")
     if "Ops-owned win screen (Watch shared-UI seam not opened)" in presentation:

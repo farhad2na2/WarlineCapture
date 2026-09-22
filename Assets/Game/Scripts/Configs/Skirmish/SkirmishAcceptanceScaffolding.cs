@@ -674,8 +674,13 @@ namespace Game.Configs
 
         public static readonly string[] RequiredHeaderFields = RequiredHeader.Split(',');
 
+        public const string S003RelativeDirectory = "Design/AgentReports/SkirmishExpansion/S003";
+        public const string S004RelativeDirectory = "Design/AgentReports/SkirmishExpansion/S004";
+
         public static string RelativeRunsPath => Path.Combine(RelativeDirectory, RunsFileName);
         public static string RelativeAcceptancePath => Path.Combine(RelativeDirectory, AcceptanceFileName);
+        public static string S003RelativeRunsPath => Path.Combine(S003RelativeDirectory, RunsFileName);
+        public static string S004RelativeRunsPath => Path.Combine(S004RelativeDirectory, RunsFileName);
 
         public static bool HeaderMatches(string header)
         {

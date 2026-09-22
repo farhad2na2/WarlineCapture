@@ -376,8 +376,10 @@ namespace Game.Tests.Editor
             clock.Playing = 1;
             clock.Paused = 0;
             em.SetComponentData(session, clock);
+            Assert.IsFalse(em.HasComponent<SkirmishResultComponent>(session));
             PublishProjectedMatch(world, session);
 
+            Assert.AreEqual(1, em.GetComponentData<SkirmishResultComponent>(session).Frozen);
             clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
             Assert.AreEqual(1080, clock.DeadlineSeconds);
             SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(session);
@@ -389,6 +391,32 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
             Assert.AreEqual(SkirmishOutcome.Draw, match.Outcome);
             Assert.AreEqual(SkirmishEndReason.TimeLimit, match.Reason);
+            CheckedInRunsCsvStaysHeaderOnly();
+        }
+
+        [Test]
+        public void DeadEnemyBarracksFinishesVictoryWithoutRulesSystem()
+        {
+            using var world = new World(nameof(DeadEnemyBarracksFinishesVictoryWithoutRulesSystem));
+            BootPlayingSession(world, out Entity session);
+            EntityManager em = world.EntityManager;
+            Entity enemyBase = DesignatedBase(em, 2);
+            Entity playerBase = DesignatedBase(em, 1);
+            var health = em.GetComponentData<UnitHealth>(enemyBase);
+            health.Current = 0;
+            em.SetComponentData(enemyBase, health);
+            Assert.IsFalse(em.HasComponent<SkirmishResultComponent>(session));
+            Assert.AreEqual(SkirmishPhase.Playing, em.GetComponentData<SkirmishMatchState>(session).Phase);
+
+            PublishProjectedMatch(world, session);
+
+            Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
+            Assert.AreEqual(SkirmishOutcomeKind.Victory, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Outcome);
+            Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Reason);
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
+            Assert.AreEqual(SkirmishOutcome.Victory, match.Outcome);
+            Assert.AreEqual(SkirmishEndReason.MainBaseDestroyed, match.Reason);
             CheckedInRunsCsvStaysHeaderOnly();
         }
 
@@ -550,6 +578,7 @@ namespace Game.Tests.Editor
                 suite.PendingPathRequestDoesNotFreezeLocalStep();
                 suite.StructureInRangeIsDamagedWhileACombatantIsAlsoInRange();
                 suite.DeadlineDrawPublishesFinishedMatchWithoutStampingVictory();
+                suite.DeadEnemyBarracksFinishesVictoryWithoutRulesSystem();
                 suite.AssaultColumnDestroysEnemyBarracksAndPublishesVictory();
                 suite.PayloadLoggersDoNotStampVictory();
                 suite.SimulationStallFailsFastAfterGrace();
@@ -654,20 +683,8 @@ namespace Game.Tests.Editor
 
         private static void PublishProjectedMatch(World world, Entity session)
         {
-            EntityManager em = world.EntityManager;
-            if (!em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
-            {
-                em.AddComponentData(session, new SkirmishBaseAssaultFactComponent
-                {
-                    PlayerDesignatedAlive = 1,
-                    EnemyDesignatedAlive = 1
-                });
-            }
-
-            if (!em.HasComponent<SkirmishResultComponent>(session))
-                em.AddComponentData(session, new SkirmishResultComponent());
-
             world.GetOrCreateSystem<SkirmishObjectiveFactProjectionSystem>().Update(world.Unmanaged);
+            world.GetOrCreateSystem<SkirmishBaseAssaultObjectiveSystem>().Update(world.Unmanaged);
             world.GetOrCreateSystem<SkirmishOutcomeSystem>().Update(world.Unmanaged);
             world.GetOrCreateSystem<SkirmishExpandedSessionControlSystem>().Update(world.Unmanaged);
         }

@@ -548,10 +548,33 @@ Fixes on this branch:
 
 ### Outcome stayed None while elapsed rose (Launch104731En)
 
-Live `s002-aria-rs-104731-en-3` kept `phase=Playing`, `outcome=None`,
-`simulationActive=1`, and elapsed climbing to ~1470s, then the harness wrote
-`Abort,timeout`. The clock was moving. The match never became a finished
-Victory, Defeat, or Draw.
+The ~1470–1500s stop is `SkirmishS002AriaRunHarness.WallClockBudgetSeconds`.
+The harness calls `Finish(abort: true)` when `SkirmishMatchState.Phase` is
+still not `Finished`. Live `en-3` jsonl never left `phase=Playing` /
+`outcome=None`. That is not a `SkirmishPhase.Finished` Draw.
+
+`SkirmishRulesSystem` returns immediately for a non-legacy expanded session, so
+the legacy 900s `MatchDurationSeconds` writer never runs. The expanded
+deadline (Standard 1080s) is evaluated by `SkirmishBaseAssaultObjectiveSystem`.
+`SkirmishOutcomeSystem` is what copies that terminal fact onto
+`SkirmishMatchState`, which is the only phase the harness watches.
+
+That copy called `EntityManager.AddComponentData<SkirmishResultComponent>`
+inside the outcome query, before `session.Phase = Finished`. A structural
+change during iteration throws and does not apply, so the result component
+stayed missing and the match phase stayed `Playing` on every later frame.
+The objective clock kept advancing in an earlier system. `IsDesignatedAlive`
+returning true when no role/health pair exists does not block the deadline;
+it only keeps a missing barracks from counting as destroyed. A barracks at
+0 HP is dead. An unspawned base stays alive so the match does not Draw before
+roster projection.
+
+The outcome writer now sets the session phase during iteration and adds the
+result component only after the query ends, then projects `match.Phase` /
+`match.Outcome`. Fact projection likewise adds `SkirmishBaseAssaultFactComponent`
+outside its clock query, heals a 0 deadline from the resolved setup, and
+publishes the terminal objective the evaluator already computed. A passed
+deadline is Draw / TimeLimit, not a counted win.
 
 Causes, checked in the expanded Base Assault path:
 

@@ -87,6 +87,43 @@ namespace Game.Runtime
                 em.SetComponentData(session, match);
         }
 
+        /// <summary>
+        /// Copies a frozen expanded result onto SkirmishMatchState.
+        /// SkirmishRulesSystem does not do this for expanded sessions.
+        /// </summary>
+        public static void ProjectTerminalMatch(EntityManager em, Entity session)
+        {
+            if (!em.HasComponent<SkirmishMatchState>(session) ||
+                !em.HasComponent<SkirmishResultComponent>(session))
+                return;
+            var result = em.GetComponentData<SkirmishResultComponent>(session);
+            if (result.Frozen == 0)
+                return;
+            var match = em.GetComponentData<SkirmishMatchState>(session);
+            match.Phase = SkirmishPhase.Finished;
+            match.Outcome = result.Outcome == SkirmishOutcomeKind.Victory
+                ? SkirmishOutcome.Victory
+                : result.Outcome == SkirmishOutcomeKind.Defeat
+                    ? SkirmishOutcome.Defeat
+                    : result.Outcome == SkirmishOutcomeKind.Draw
+                        ? SkirmishOutcome.Draw
+                        : SkirmishOutcome.None;
+            match.Reason = result.Reason == SkirmishEndReasonKind.Surrender
+                ? SkirmishEndReason.Surrender
+                : result.Reason == SkirmishEndReasonKind.TimeLimit
+                    ? SkirmishEndReason.TimeLimit
+                    : result.Reason == SkirmishEndReasonKind.BothBasesDestroyed
+                        ? SkirmishEndReason.BothBasesDestroyed
+                        : result.Reason == SkirmishEndReasonKind.MainBaseDestroyed
+                            ? SkirmishEndReason.MainBaseDestroyed
+                            : SkirmishEndReason.None;
+            if (result.SaveAcknowledged != 0)
+                match.ResultSaved = 1;
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                match.ElapsedSeconds = em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+            em.SetComponentData(session, match);
+        }
+
         private static bool IsExpandedPlaying(EntityManager em, Entity session)
         {
             if (!IsExpanded(em, session))

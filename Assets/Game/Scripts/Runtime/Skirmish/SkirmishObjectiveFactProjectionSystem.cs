@@ -31,6 +31,7 @@ namespace Game.Runtime
             bool paused = SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
                           gameplay.SimulationActive == 0;
             float delta = paused ? 0f : SystemAPI.Time.DeltaTime;
+            var missingFacts = new NativeList<Entity>(Allocator.Temp);
             foreach ((RefRO<SkirmishExpandedSessionComponent> session,
                       RefRW<SkirmishObjectiveClockComponent> clock,
                       Entity entity) in
@@ -53,6 +54,27 @@ namespace Game.Runtime
                 if (playing && !paused)
                     clock.ValueRW.ElapsedSeconds += delta;
 
+                if (!em.HasComponent<SkirmishBaseAssaultFactComponent>(entity))
+                    missingFacts.Add(entity);
+            }
+
+            // Structural changes are illegal inside the clock query. The first
+            // live frame used to throw here and skip the terminal publish.
+            for (int i = 0; i < missingFacts.Length; i++)
+            {
+                if (!em.HasComponent<SkirmishBaseAssaultFactComponent>(missingFacts[i]))
+                    em.AddComponentData(missingFacts[i], new SkirmishBaseAssaultFactComponent());
+            }
+
+            missingFacts.Dispose();
+            foreach ((RefRO<SkirmishExpandedSessionComponent> session,
+                      RefRW<SkirmishObjectiveClockComponent> clock,
+                      Entity entity) in
+                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>,
+                         RefRW<SkirmishObjectiveClockComponent>>().WithEntityAccess())
+            {
+                if (session.ValueRO.IsLegacy != 0)
+                    continue;
                 SkirmishBaseAssaultFacts facts = Collect(
                     em,
                     designatedBases,
@@ -65,14 +87,11 @@ namespace Game.Runtime
                     ReplacementBarracksPresent = (byte)(facts.ReplacementBarracksPresent ? 1 : 0),
                     FieldArmyWiped = (byte)(facts.FieldArmyWiped ? 1 : 0)
                 };
-                if (em.HasComponent<SkirmishBaseAssaultFactComponent>(entity))
-                    em.SetComponentData(entity, component);
-                else
-                    em.AddComponentData(entity, component);
+                em.SetComponentData(entity, component);
 
                 // Same system that advances the clock also publishes the terminal
-                // fact. A live match was still Playing with elapsed past 1080 because
-                // nothing copied that clock into the objective outcome.
+                // fact. RulesSystem returns immediately for expanded sessions, so
+                // this is what turns a passed deadline into an objective outcome.
                 SkirmishBaseAssaultObjectiveSystem.TryPublishTerminal(em, entity);
             }
         }
@@ -85,17 +104,21 @@ namespace Game.Runtime
         {
             var facts = new SkirmishBaseAssaultFacts
             {
-                PlayerDesignatedAlive = IsDesignatedAlive(em, designated, SkirmishObjectiveRoleKind.PlayerBase),
-                EnemyDesignatedAlive = IsDesignatedAlive(em, designated, SkirmishObjectiveRoleKind.EnemyBase),
+                PlayerDesignatedAlive = IsDesignatedAlive(em, designated, structureQuery, SkirmishObjectiveRoleKind.PlayerBase),
+                EnemyDesignatedAlive = IsDesignatedAlive(em, designated, structureQuery, SkirmishObjectiveRoleKind.EnemyBase),
                 ReplacementBarracksPresent = HasReplacementBarracks(em, structureQuery),
                 FieldArmyWiped = IsArmyWiped(em, combatQuery)
             };
             return facts;
         }
 
-        private static bool IsDesignatedAlive(EntityManager em, EntityQuery query, SkirmishObjectiveRoleKind role)
+        private static bool IsDesignatedAlive(
+            EntityManager em,
+            EntityQuery roleQuery,
+            EntityQuery structureQuery,
+            SkirmishObjectiveRoleKind role)
         {
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            using NativeArray<Entity> entities = roleQuery.ToEntityArray(Allocator.Temp);
             bool found = false;
             for (int i = 0; i < entities.Length; i++)
             {
@@ -106,7 +129,40 @@ namespace Game.Runtime
                     return true;
             }
 
-            return !found;
+            if (found)
+                return false;
+
+            // No role+health pair. A designated barracks at 0 HP must still count
+            // as dead. An unspawned base (no structure yet) stays alive so the
+            // match does not Draw before roster projection.
+            return !DesignatedStructureIsDead(em, structureQuery, role);
+        }
+
+        private static bool DesignatedStructureIsDead(
+            EntityManager em,
+            EntityQuery structureQuery,
+            SkirmishObjectiveRoleKind role)
+        {
+            byte faction = role == SkirmishObjectiveRoleKind.PlayerBase ? (byte)1 : (byte)2;
+            using NativeArray<Entity> entities = structureQuery.ToEntityArray(Allocator.Temp);
+            bool sawHealth = false;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (!em.HasComponent<SkirmishStructureIdentityComponent>(entities[i]) ||
+                    !em.HasComponent<SkirmishAttemptOwnedComponent>(entities[i]))
+                    continue;
+                if (em.GetComponentData<SkirmishStructureIdentityComponent>(entities[i]).DesignatedBase == 0)
+                    continue;
+                if (em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).FactionId != faction)
+                    continue;
+                if (!em.HasComponent<UnitHealth>(entities[i]))
+                    return false;
+                sawHealth = true;
+                if (em.GetComponentData<UnitHealth>(entities[i]).Current > 0)
+                    return false;
+            }
+
+            return sawHealth;
         }
 
         private static bool HasReplacementBarracks(EntityManager em, EntityQuery query)

@@ -2132,6 +2132,28 @@ MonoBehaviour:
       value: Established Air Mobile can queue attack helicopters from the granted Helipad. Jets and the transport plane still need an Airport and Full Arsenal. Tanks, heavy APCs, and ground siege are not in this army.
     - key: skirmish.s004.warning.replacement_base
       value: A replacement Barracks does not replace the original main base.
+    - key: skirmish.s005.brief
+      value: "Combined Arms Field start: scout with infantry, car, and APC. R1 AA comes from Ground Staging. Tanks and heavy APCs need Established; siege needs Full Arsenal. Attack helicopters need Helipad and Established; jets need Airport and Full Arsenal. No Helipad or Airport at start."
+    - key: skirmish.s005.objective
+      value: Destroy the original enemy Barracks while your original Barracks survives.
+    - key: skirmish.s005.result.defeat
+      value: The original player Barracks is destroyed.
+    - key: skirmish.s005.result.draw_bases
+      value: Both original Barracks were destroyed on the same tick.
+    - key: skirmish.s005.result.draw_deadline
+      value: Both original Barracks were still standing at the deadline.
+    - key: skirmish.s005.result.surrender
+      value: Surrender accepted.
+    - key: skirmish.s005.result.victory
+      value: The original enemy Barracks is destroyed.
+    - key: skirmish.s005.title
+      value: Desert Base · Base Assault · Combined Arms · Field Base
+    - key: skirmish.s005.warning.offensive_air
+      value: "Field Combined Arms: offensive air is gated on readiness and producers. Helipad and Airport are not granted at start."
+    - key: skirmish.s005.warning.replacement_base
+      value: A replacement Barracks does not replace the original main base.
+    - key: skirmish.s005.warning.shared_reservation
+      value: Armor, AA, and air queues do not yet share category or Supply reservations; eligibility is per request only.
     - key: tactical.airdrop.cargo_drop_blocked
       value: Cargo drop blocked.
     - key: tactical.airdrop.emergency_drop_visual_missing
@@ -9094,6 +9116,28 @@ MonoBehaviour:
       value: هوابرد برقرار می‌تواند از پد بالگرد داده‌شده هلی‌کوپتر تهاجمی صف کند. جت و هواپیمای ترابری هنوز به فرودگاه و زرادخانه کامل نیاز دارند. تانک، نفربر سنگین و محاصره زمینی در این ارتش نیستند.
     - key: skirmish.s004.warning.replacement_base
       value: سربازخانه جایگزین جای پایگاه اصلی اولیه را نمی‌گیرد.
+    - key: skirmish.s005.brief
+      value: "شروع صحرایی نیروهای ترکیبی: با پیاده، خودرو و نفربر شناسایی کن. پدافند هوایی سطح ۱ از استقرار زمینی می‌آید. تانک و نفربر سنگین به پایگاه برقرار نیاز دارند؛ محاصره به زرادخانه کامل. هلی‌کوپتر تهاجمی به پد بالگرد و برقرار؛ جت به فرودگاه و زرادخانه کامل. در شروع پد بالگرد یا فرودگاه نیست."
+    - key: skirmish.s005.objective
+      value: سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است.
+    - key: skirmish.s005.result.defeat
+      value: سربازخانه اصلی بازیکن نابود شد.
+    - key: skirmish.s005.result.draw_bases
+      value: هر دو سربازخانه اصلی در همان تیک نابود شدند.
+    - key: skirmish.s005.result.draw_deadline
+      value: در موعد مقرر هنوز هر دو سربازخانه اصلی پابرجا بودند.
+    - key: skirmish.s005.result.surrender
+      value: تسلیم پذیرفته شد.
+    - key: skirmish.s005.result.victory
+      value: سربازخانه اصلی دشمن نابود شد.
+    - key: skirmish.s005.title
+      value: پایگاه صحرا · حمله به پایگاه · نیروهای ترکیبی · پایگاه صحرایی
+    - key: skirmish.s005.warning.offensive_air
+      value: "نیروهای ترکیبی صحرایی: هوایی تهاجمی پشت آمادگی و تولیدکننده‌ها قفل است. پد بالگرد و فرودگاه در شروع داده نمی‌شود."
+    - key: skirmish.s005.warning.replacement_base
+      value: سربازخانه جایگزین جای پایگاه اصلی اولیه را نمی‌گیرد.
+    - key: skirmish.s005.warning.shared_reservation
+      value: صف‌های زرهی، پدافند هوایی و هوایی هنوز رزرو مشترک دسته یا تدارکات ندارند؛ واجد شرایط بودن فقط برای هر درخواست است.
     - key: tactical.airdrop.cargo_drop_blocked
       value: "\u0627\u06CC\u0646\u062C\u0627 \u0646\u0645\u06CC\u200C\u0634\u0647
         \u0628\u0627\u0631 \u0631\u0648 \u067E\u0627\u06CC\u06CC\u0646 \u0627\u0646\u062F\u0627\u062E\u062A."

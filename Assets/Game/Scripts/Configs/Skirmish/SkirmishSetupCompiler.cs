@@ -287,9 +287,7 @@ namespace Game.Configs
             }
 
             setup.Structures = BuildStructures(definition, vector);
-            setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
-                ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
-                : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
+            setup.RoleOverlays = ResolveRoleOverlays(definition.ArmyProfileConfig);
             setup.Forces = forces.ToArray();
             setup.PlayerBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.player";
             setup.EnemyBaseObjectId = "obj." + definition.CatalogId.ToLowerInvariant() + ".base.enemy";
@@ -425,6 +423,15 @@ namespace Game.Configs
 
             _ = vector;
             return structures.ToArray();
+        }
+
+        private static SkirmishRoleOverlay[] ResolveRoleOverlays(SkirmishArmyProfileConfig army)
+        {
+            if (army != null && army.Kind == SkirmishArmyProfileId.CombinedArms)
+                return SkirmishRoleOverlayCatalog.CreateCombinedArmsSlice();
+            if (army != null && army.AllowsOffensiveAir)
+                return SkirmishRoleOverlayCatalog.CreateAirMobileSlice();
+            return SkirmishRoleOverlayCatalog.CreateS002GroundSlice();
         }
 
         private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition)

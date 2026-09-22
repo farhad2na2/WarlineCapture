@@ -102,6 +102,15 @@ namespace Game.Configs
             return catalog;
         }
 
+        public static SkirmishVisualPrefabCatalog CreateS005CombinedRegistry()
+        {
+            SkirmishVisualPrefabCatalog catalog = CreateS003AirRegistry();
+            BindStandIn(catalog, "Unit_Veh_APC_Heavy", PrimitiveType.Cube, new Color(0.28f, 0.32f, 0.22f), new Vector3(3.4f, 1.4f, 1.8f));
+            BindStandIn(catalog, "Unit_Veh_Missle_Launcher_Ground", PrimitiveType.Cube, new Color(0.42f, 0.36f, 0.2f), new Vector3(3.2f, 1.2f, 1.6f));
+            BindStandIn(catalog, "Building_Airport", PrimitiveType.Cube, new Color(0.4f, 0.4f, 0.38f), new Vector3(8f, 0.5f, 8f));
+            return catalog;
+        }
+
         private static void BindStandIn(
             SkirmishVisualPrefabCatalog catalog,
             string key,

@@ -349,6 +349,150 @@ namespace Game.Tests.Editor
             }
         }
 
+        [Test]
+        public void S005RegistrySpawnsPaidArmorAaAndAirFromExistingKeys()
+        {
+            using var world = new World(nameof(S005RegistrySpawnsPaidArmorAaAndAirFromExistingKeys));
+            EntityManager em = world.EntityManager;
+            SkirmishVisualPrefabCatalog standIn = SkirmishVisualPrefabCatalog.CreateS005CombinedRegistry();
+            UnitPrefabRegistryAuthoringConfig registry = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            try
+            {
+                AddPrefab(registry, standIn, "Unit_Veh_Missle_Launcher_Air");
+                AddPrefab(registry, standIn, "Unit_Veh_Tank_USA");
+                AddPrefab(registry, standIn, "Unit_Veh_APC_Heavy");
+                AddPrefab(registry, standIn, "Unit_Veh_Missle_Launcher_Ground");
+                AddPrefab(registry, standIn, "Unit_Veh_Helicopter_Attack");
+                AddPrefab(registry, standIn, "Unit_Veh_Jet_02");
+                AddPrefab(registry, standIn, "Building_GroundStaging");
+                AddPrefab(registry, standIn, "Building_Helipad");
+                AddPrefab(registry, standIn, "Building_Airport");
+                AddPrefab(registry, standIn, "Building_Barrack");
+                AddPrefab(registry, standIn, "Unit_Chr_Soldier_Male_02_Alt_04");
+                AddPrefab(registry, standIn, "Unit_Chr_Ghillie_Male_01");
+                AddPrefab(registry, standIn, "Unit_Veh_Light_Armored_Car");
+                AddPrefab(registry, standIn, "Unit_Veh_APC_Slow");
+                CompileAndSpawnS005(em, out Entity session, out _, registry);
+                Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Tank, 1, authored.ArmyCombined, out SkirmishProductionDecision earlyTank));
+                Assert.AreEqual(SkirmishReasonCode.MissingReadiness, earlyTank.Reason);
+                Assert.AreEqual(450, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.IsFalse(HasVisibleKey(em, "Unit_Veh_Tank_USA"));
+                Assert.IsFalse(HasVisibleKey(em, "Building_Helipad"));
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AntiAir, 1, authored.ArmyCombined, out _));
+                Assert.AreEqual(230, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Missle_Launcher_Air"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Missle_Launcher_Air"));
+                Assert.IsTrue(HasVisibleKey(em, "Building_GroundStaging"));
+                Assert.IsTrue(HasGroundStagingState(em));
+                Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                Assert.IsFalse(HasVisibleKey(em, "Unit_Veh_Tank_USA"));
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+
+                var research = em.GetComponentData<SkirmishResearchStateComponent>(session);
+                research.Readiness = SkirmishReadinessStage.Established;
+                em.SetComponentData(session, research);
+                var stock = em.GetComponentData<SkirmishEconomyStockComponent>(session);
+                stock.Materials = 2000;
+                em.SetComponentData(session, stock);
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Tank, 1, authored.ArmyCombined, out _));
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.ApcHeavy, 1, authored.ArmyCombined, out _));
+                Assert.AreEqual(1360, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Tank_USA"));
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_APC_Heavy"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Tank_USA"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_APC_Heavy"));
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Siege, 1, authored.ArmyCombined, out SkirmishProductionDecision earlySiege));
+                Assert.AreEqual(SkirmishReasonCode.MissingReadiness, earlySiege.Reason);
+                Assert.IsFalse(HasVisibleKey(em, "Unit_Veh_Missle_Launcher_Ground"));
+                Assert.AreEqual(1360, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+                research = em.GetComponentData<SkirmishResearchStateComponent>(session);
+                research.Readiness = SkirmishReadinessStage.FullArsenal;
+                em.SetComponentData(session, research);
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Siege, 1, authored.ArmyCombined, out _));
+                Assert.AreEqual(940, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Missle_Launcher_Ground"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Missle_Launcher_Ground"));
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyCombined, out SkirmishProductionDecision missingPad));
+                Assert.AreEqual(SkirmishReasonCode.MissingProducer, missingPad.Reason);
+                Assert.IsFalse(HasVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+
+                FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+                Entity pad = SkirmishScenarioSpawnSystem.CreateStructure(
+                    em,
+                    sessionId,
+                    new SkirmishResolvedStructureEntry
+                    {
+                        FactionId = 1,
+                        StructureId = SkirmishStructureIds.Helipad
+                    });
+                em.AddComponentData(pad, new UnitHealth { Current = 400, Max = 400 });
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyCombined, out _));
+                Assert.AreEqual(520, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.AreEqual(1, CountVisibleKey(em, "Building_Helipad"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Building_Helipad"));
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Fighter, 1, authored.ArmyCombined, out SkirmishProductionDecision missingAirport));
+                Assert.AreEqual(SkirmishReasonCode.MissingProducer, missingAirport.Reason);
+                Assert.IsFalse(HasVisibleKey(em, "Building_Airport"));
+                Assert.IsFalse(HasVisibleKey(em, "Unit_Veh_Jet_02"));
+
+                Entity airport = SkirmishScenarioSpawnSystem.CreateStructure(
+                    em,
+                    sessionId,
+                    new SkirmishResolvedStructureEntry
+                    {
+                        FactionId = 1,
+                        StructureId = SkirmishStructureIds.Airport
+                    });
+                em.AddComponentData(airport, new UnitHealth { Current = 500, Max = 500 });
+                Assert.IsTrue(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.Fighter, 1, authored.ArmyCombined, out _));
+                Assert.AreEqual(40, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(2, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Jet_02"));
+                Assert.AreEqual(1, CountVisibleKey(em, "Building_Airport"));
+                Assert.IsTrue(FirstSpawnedFromRegistry(em, "Unit_Veh_Jet_02"));
+                Assert.IsFalse(SkirmishProductionService.TryProduce(
+                    em, session, SkirmishRoleIds.AttackHeli, 1, authored.ArmyCombined, out SkirmishProductionDecision capped));
+                Assert.AreEqual(SkirmishReasonCode.InsufficientCapacity, capped.Reason);
+                Assert.AreEqual(40, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Helicopter_Attack"));
+                Assert.AreEqual(1, CountVisibleKey(em, "Unit_Veh_Jet_02"));
+                Assert.AreEqual(450, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            }
+            finally
+            {
+                if (em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).CalculateEntityCount() == 1)
+                {
+                    Entity session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                        em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                    if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
+                        em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog?.Dispose();
+                }
+
+                standIn.Dispose();
+                UnityEngine.Object.DestroyImmediate(registry);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -363,6 +507,7 @@ namespace Game.Tests.Editor
                 suite.CleanupDestroysVisualInstances();
                 suite.S003RegistrySpawnsAaAndLightHelicopterFromExistingKeys();
                 suite.S004RegistrySpawnsGrantedTransportAaAndHelipad();
+                suite.S005RegistrySpawnsPaidArmorAaAndAirFromExistingKeys();
                 Debug.Log("[SkirmishExpandedVisualTests] result=Passed");
             }
             catch (Exception exception)
@@ -465,6 +610,42 @@ namespace Game.Tests.Editor
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 SkirmishS004FirstVisit.SeedA,
+                authored,
+                matrix,
+                manifest,
+                out setup,
+                out _,
+                out var reasons,
+                registry),
+                reasons.Count == 0 ? "compile failed" : reasons[0].ToString());
+            session = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+            Assert.IsTrue(SkirmishScenarioSpawnSystem.TrySpawnLedgers(
+                em, session, setup, out SkirmishReasonCode reason, out byte visualPending), reason.ToString());
+            Assert.AreEqual(0, visualPending);
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            SkirmishRosterProjectionSystem.Apply(
+                em,
+                owned,
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId,
+                setup);
+        }
+
+        private static void CompileAndSpawnS005(
+            EntityManager em,
+            out Entity session,
+            out SkirmishResolvedSetup setup,
+            UnitPrefabRegistryAuthoringConfig registry)
+        {
+            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
+            Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var manifest = new SkirmishContentManifest { RequiredFeatureIds = authored.DefinitionS005.RequiredFeatureIds };
+            Assert.IsTrue(SkirmishExpandedLaunchResolver.TryCompileAndQueue(
+                em,
+                "S005",
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS005FirstVisit.SeedA,
                 authored,
                 matrix,
                 manifest,

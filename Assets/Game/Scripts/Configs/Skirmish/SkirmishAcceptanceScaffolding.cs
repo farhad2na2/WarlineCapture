@@ -186,6 +186,31 @@ namespace Game.Configs
                 out payload,
                 out error);
         }
+
+        public static bool TryCreateFirstVisitS005(
+            int seed,
+            string locale,
+            out SkirmishAriaAcceptancePayload payload,
+            out string error)
+        {
+            if (!SkirmishAcceptanceCensusCapture.IsS005RegularStandardSeed(seed))
+            {
+                payload = default;
+                error = "First-visit ARIA seed must be 104734, 130368 or 155926.";
+                return false;
+            }
+
+            return TryCreate(
+                SkirmishAcceptanceCensusCapture.S005CatalogId,
+                SkirmishAcceptanceCensusCapture.S005DefinitionId,
+                SkirmishAcceptanceCensusCapture.S005DefinitionVersion,
+                SkirmishSizeId.Standard,
+                SkirmishDifficultyId.Regular,
+                seed,
+                locale,
+                out payload,
+                out error);
+        }
     }
 
     public sealed class SkirmishAcceptanceCensus
@@ -259,6 +284,9 @@ namespace Game.Configs
         public const string S004CatalogId = "S004";
         public const string S004DefinitionId = "skirmish.s004";
         public const int S004DefinitionVersion = 1;
+        public const string S005CatalogId = "S005";
+        public const string S005DefinitionId = "skirmish.s005";
+        public const int S005DefinitionVersion = 1;
         public const int CodeHashSchemaVersion = 1;
         public const int FirstVisitSeed = 104731;
         public const string CodeHashIdentity =
@@ -292,6 +320,18 @@ namespace Game.Configs
         public static bool IsS004RegularStandardSeed(int seed)
         {
             int[] seeds = SkirmishS004FirstVisit.RegularStandardSeeds;
+            for (int i = 0; i < seeds.Length; i++)
+            {
+                if (seeds[i] == seed)
+                    return true;
+            }
+
+            return false;
+        }
+
+        public static bool IsS005RegularStandardSeed(int seed)
+        {
+            int[] seeds = SkirmishS005FirstVisit.RegularStandardSeeds;
             for (int i = 0; i < seeds.Length; i++)
             {
                 if (seeds[i] == seed)
@@ -349,6 +389,24 @@ namespace Game.Configs
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
                 SkirmishS004FirstVisit.SeedA,
+                out census,
+                out reasons);
+        }
+
+        public static bool TryCaptureS005RegularStandard(
+            SkirmishExpansionAuthoredSet authored,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix,
+            out SkirmishAcceptanceCensus census,
+            out List<SkirmishCompileReason> reasons)
+        {
+            return TryCaptureDefinition(
+                authored,
+                authored == null ? null : authored.DefinitionS005,
+                S005CatalogId,
+                matrix,
+                SkirmishDifficultyId.Regular,
+                SkirmishSizeId.Standard,
+                SkirmishS005FirstVisit.SeedA,
                 out census,
                 out reasons);
         }
@@ -558,6 +616,25 @@ namespace Game.Configs
             S004GameViewSidecarFileName
         };
 
+        public static readonly string S005PlayingPngFileName =
+            FormatRegularStandardPlayingPng(
+                SkirmishAcceptanceCensusCapture.S005CatalogId,
+                SkirmishS005FirstVisit.SeedA);
+
+        public static readonly string S005GameViewSidecarFileName =
+            FormatRegularStandardGameViewSidecar(
+                SkirmishAcceptanceCensusCapture.S005CatalogId,
+                SkirmishS005FirstVisit.SeedA);
+
+        public static readonly string S005RelativeReportEvidenceDirectory =
+            RelativeReportEvidenceDirectoryFor(SkirmishAcceptanceCensusCapture.S005CatalogId);
+
+        public static readonly string[] S005RequiredGameViewEvidenceFiles =
+        {
+            S005PlayingPngFileName,
+            S005GameViewSidecarFileName
+        };
+
         public static readonly string[] EvidenceDirectoryCandidates =
         {
             RelativeEvidenceDirectory,
@@ -574,6 +651,12 @@ namespace Game.Configs
         {
             RelativeEvidenceDirectory,
             S004RelativeReportEvidenceDirectory
+        };
+
+        public static readonly string[] S005EvidenceDirectoryCandidates =
+        {
+            RelativeEvidenceDirectory,
+            S005RelativeReportEvidenceDirectory
         };
 
         public static string FormatRegularStandardPlayingPng(string catalogId, int seed)
@@ -623,6 +706,15 @@ namespace Game.Configs
                 projectRoot,
                 S004EvidenceDirectoryCandidates,
                 S004RequiredGameViewEvidenceFiles,
+                fileExists);
+        }
+
+        public static string ResolveS005EvidenceDirectory(string projectRoot, Func<string, bool> fileExists)
+        {
+            return ResolveEvidenceDirectory(
+                projectRoot,
+                S005EvidenceDirectoryCandidates,
+                S005RequiredGameViewEvidenceFiles,
                 fileExists);
         }
 

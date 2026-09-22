@@ -1,0 +1,389 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf57a3e5e5b455b8bf4ee0258b3ad9d, type: 3}
+  m_Name: SkirmishLayout_S005
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SkirmishMapLayoutConfig
+  layoutId: layout.skirmish.db.ba
+  operationMapId: opmap.skirmish.desert_base_01
+  contentVersion: 1
+  contentHash: measured.db.ba.v1
+  worldWidthMetres: 600
+  worldDepthMetres: 420
+  originX: -300
+  originZ: -210
+  cellSize: 2
+  anchors:
+  - AnchorId: anchor.skirmish.db.base_player
+    RoleId: base.player
+    NormalizedU: 0.12
+    NormalizedV: 0.5
+    WorldX: -228
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.base_enemy
+    RoleId: base.enemy
+    NormalizedU: 0.88
+    NormalizedV: 0.5
+    WorldX: 228
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.staging_player
+    RoleId: staging.player
+    NormalizedU: 0.18
+    NormalizedV: 0.5
+    WorldX: -192
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: staging.enemy
+    NormalizedU: 0.82
+    NormalizedV: 0.5
+    WorldX: 192
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.economy_player
+    RoleId: economy.player
+    NormalizedU: 0.1
+    NormalizedV: 0.24
+    WorldX: -240
+    WorldZ: -109.2
+  - AnchorId: anchor.skirmish.db.economy_enemy
+    RoleId: economy.enemy
+    NormalizedU: 0.9
+    NormalizedV: 0.76
+    WorldX: 240
+    WorldZ: 109.2
+  - AnchorId: anchor.skirmish.db.service_player
+    RoleId: service.player
+    NormalizedU: 0.12
+    NormalizedV: 0.68
+    WorldX: -228
+    WorldZ: 75.6
+  - AnchorId: anchor.skirmish.db.service_enemy
+    RoleId: service.enemy
+    NormalizedU: 0.88
+    NormalizedV: 0.32
+    WorldX: 228
+    WorldZ: -75.6
+  - AnchorId: anchor.skirmish.db.air_player
+    RoleId: air.player
+    NormalizedU: 0.07
+    NormalizedV: 0.78
+    WorldX: -258
+    WorldZ: 117.6
+  - AnchorId: anchor.skirmish.db.air_enemy
+    RoleId: air.enemy
+    NormalizedU: 0.93
+    NormalizedV: 0.22
+    WorldX: 258
+    WorldZ: -117.6
+  - AnchorId: anchor.skirmish.db.supply_expansion_a
+    RoleId: supply.expansion.a
+    NormalizedU: 0.36
+    NormalizedV: 0.22
+    WorldX: -84
+    WorldZ: -117.6
+  - AnchorId: anchor.skirmish.db.supply_expansion_b
+    RoleId: supply.expansion.b
+    NormalizedU: 0.64
+    NormalizedV: 0.78
+    WorldX: 84
+    WorldZ: 117.6
+  - AnchorId: anchor.skirmish.db.highway_near
+    RoleId: highway.near
+    NormalizedU: 0.32
+    NormalizedV: 0.5
+    WorldX: -108
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.highway_mid
+    RoleId: highway.mid
+    NormalizedU: 0.5
+    NormalizedV: 0.5
+    WorldX: 0
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.highway_far
+    RoleId: highway.far
+    NormalizedU: 0.68
+    NormalizedV: 0.5
+    WorldX: 108
+    WorldZ: 0
+  - AnchorId: anchor.skirmish.db.ruins_own
+    RoleId: ruins.own
+    NormalizedU: 0.2
+    NormalizedV: 0.85
+    WorldX: -180
+    WorldZ: 147
+  - AnchorId: anchor.skirmish.db.ruins_west
+    RoleId: ruins.west
+    NormalizedU: 0.35
+    NormalizedV: 0.92
+    WorldX: -90
+    WorldZ: 176.4
+  - AnchorId: anchor.skirmish.db.ruins_north
+    RoleId: ruins.north
+    NormalizedU: 0.5
+    NormalizedV: 0.95
+    WorldX: 0
+    WorldZ: 189
+  - AnchorId: anchor.skirmish.db.ruins_east
+    RoleId: ruins.east
+    NormalizedU: 0.65
+    NormalizedV: 0.92
+    WorldX: 90
+    WorldZ: 176.4
+  - AnchorId: anchor.skirmish.db.ruins_far
+    RoleId: ruins.far
+    NormalizedU: 0.8
+    NormalizedV: 0.85
+    WorldX: 180
+    WorldZ: 147
+  - AnchorId: anchor.skirmish.db.sweep_own
+    RoleId: sweep.own
+    NormalizedU: 0.24
+    NormalizedV: 0.18
+    WorldX: -156
+    WorldZ: -134.4
+  - AnchorId: anchor.skirmish.db.sweep_west
+    RoleId: sweep.west
+    NormalizedU: 0.4
+    NormalizedV: 0.08
+    WorldX: -60
+    WorldZ: -176.4
+  - AnchorId: anchor.skirmish.db.sweep_south
+    RoleId: sweep.south
+    NormalizedU: 0.6
+    NormalizedV: 0.08
+    WorldX: 60
+    WorldZ: -176.4
+  - AnchorId: anchor.skirmish.db.sweep_east
+    RoleId: sweep.east
+    NormalizedU: 0.76
+    NormalizedV: 0.18
+    WorldX: 156
+    WorldZ: -134.4
+  routes:
+  - RouteId: route.skirmish.db.main
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.highway_near
+    - anchor.skirmish.db.highway_mid
+    - anchor.skirmish.db.highway_far
+    - anchor.skirmish.db.staging_enemy
+    Kind: 1
+    LengthMetres: 384.0
+    InfantryTransitSeconds: 96.0
+    GroundTransitSeconds: 48.0
+    AirTransitSeconds: 24.0
+    InfantryFirstContactSeconds: 48.0
+    GroundFirstContactSeconds: 24.0
+    ProvisionalTimes: 1
+    WidthMetres: 12
+    AllowsVehicles: 1
+    AllowsAircraft: 1
+  - RouteId: route.skirmish.db.flank_a
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.ruins_own
+    - anchor.skirmish.db.ruins_west
+    - anchor.skirmish.db.ruins_north
+    - anchor.skirmish.db.ruins_east
+    - anchor.skirmish.db.ruins_far
+    - anchor.skirmish.db.staging_enemy
+    Kind: 2
+    LengthMetres: 666.094
+    InfantryTransitSeconds: 166.5235
+    GroundTransitSeconds: 83.26175
+    AirTransitSeconds: 41.630875
+    InfantryFirstContactSeconds: 83.26175
+    GroundFirstContactSeconds: 41.630875
+    ProvisionalTimes: 1
+    WidthMetres: 6
+    AllowsVehicles: 1
+    AllowsAircraft: 0
+  - RouteId: route.skirmish.db.flank_b
+    WaypointAnchorIds:
+    - anchor.skirmish.db.staging_player
+    - anchor.skirmish.db.sweep_own
+    - anchor.skirmish.db.sweep_west
+    - anchor.skirmish.db.sweep_south
+    - anchor.skirmish.db.sweep_east
+    - anchor.skirmish.db.staging_enemy
+    Kind: 3
+    LengthMetres: 607.8468
+    InfantryTransitSeconds: 151.9617
+    GroundTransitSeconds: 75.98085
+    AirTransitSeconds: 37.990425
+    InfantryFirstContactSeconds: 75.98085
+    GroundFirstContactSeconds: 37.990425
+    ProvisionalTimes: 1
+    WidthMetres: 12
+    AllowsVehicles: 1
+    AllowsAircraft: 1
+  pads:
+  - PadId: pad.skirmish.db.base_player
+    AnchorId: anchor.skirmish.db.base_player
+    RoleId: base.player
+    Kind: 1
+    CenterX: -228
+    CenterZ: 0
+    WidthMetres: 16
+    DepthMetres: 12
+    FactionId: 1
+  - PadId: pad.skirmish.db.base_enemy
+    AnchorId: anchor.skirmish.db.base_enemy
+    RoleId: base.enemy
+    Kind: 1
+    CenterX: 228
+    CenterZ: 0
+    WidthMetres: 16
+    DepthMetres: 12
+    FactionId: 2
+  - PadId: pad.skirmish.db.staging_player
+    AnchorId: anchor.skirmish.db.staging_player
+    RoleId: staging.player
+    Kind: 2
+    CenterX: -192
+    CenterZ: 0
+    WidthMetres: 20
+    DepthMetres: 14
+    FactionId: 1
+  - PadId: pad.skirmish.db.staging_enemy
+    AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: staging.enemy
+    Kind: 2
+    CenterX: 192
+    CenterZ: 0
+    WidthMetres: 20
+    DepthMetres: 14
+    FactionId: 2
+  - PadId: pad.skirmish.db.spawn_infantry_player
+    AnchorId: anchor.skirmish.db.staging_player
+    RoleId: spawn.infantry.player
+    Kind: 3
+    CenterX: -206
+    CenterZ: -22
+    WidthMetres: 12
+    DepthMetres: 10
+    FactionId: 1
+  - PadId: pad.skirmish.db.spawn_infantry_enemy
+    AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: spawn.infantry.enemy
+    Kind: 3
+    CenterX: 206
+    CenterZ: 22
+    WidthMetres: 12
+    DepthMetres: 10
+    FactionId: 2
+  - PadId: pad.skirmish.db.spawn_vehicle_player
+    AnchorId: anchor.skirmish.db.staging_player
+    RoleId: spawn.vehicle.player
+    Kind: 4
+    CenterX: -168
+    CenterZ: 16
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 1
+  - PadId: pad.skirmish.db.spawn_vehicle_enemy
+    AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: spawn.vehicle.enemy
+    Kind: 4
+    CenterX: 168
+    CenterZ: -16
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 2
+  - PadId: pad.skirmish.db.rally_player
+    AnchorId: anchor.skirmish.db.staging_player
+    RoleId: rally.player
+    Kind: 5
+    CenterX: -148
+    CenterZ: 0
+    WidthMetres: 10
+    DepthMetres: 8
+    FactionId: 1
+  - PadId: pad.skirmish.db.rally_enemy
+    AnchorId: anchor.skirmish.db.staging_enemy
+    RoleId: rally.enemy
+    Kind: 5
+    CenterX: 148
+    CenterZ: 0
+    WidthMetres: 10
+    DepthMetres: 8
+    FactionId: 2
+  - PadId: pad.skirmish.db.service_player
+    AnchorId: anchor.skirmish.db.service_player
+    RoleId: service.player
+    Kind: 8
+    CenterX: -228
+    CenterZ: 75.6
+    WidthMetres: 12
+    DepthMetres: 10
+    FactionId: 1
+  - PadId: pad.skirmish.db.service_enemy
+    AnchorId: anchor.skirmish.db.service_enemy
+    RoleId: service.enemy
+    Kind: 8
+    CenterX: 228
+    CenterZ: -75.6
+    WidthMetres: 12
+    DepthMetres: 10
+    FactionId: 2
+  - PadId: pad.skirmish.db.air_player
+    AnchorId: anchor.skirmish.db.air_player
+    RoleId: air.player
+    Kind: 6
+    CenterX: -258
+    CenterZ: 117.6
+    WidthMetres: 16
+    DepthMetres: 16
+    FactionId: 1
+  - PadId: pad.skirmish.db.air_enemy
+    AnchorId: anchor.skirmish.db.air_enemy
+    RoleId: air.enemy
+    Kind: 6
+    CenterX: 258
+    CenterZ: -117.6
+    WidthMetres: 16
+    DepthMetres: 16
+    FactionId: 2
+  - PadId: pad.skirmish.db.supply_player
+    AnchorId: anchor.skirmish.db.economy_player
+    RoleId: economy.player
+    Kind: 7
+    CenterX: -240
+    CenterZ: -109.2
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 1
+  - PadId: pad.skirmish.db.supply_enemy
+    AnchorId: anchor.skirmish.db.economy_enemy
+    RoleId: economy.enemy
+    Kind: 7
+    CenterX: 240
+    CenterZ: 109.2
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 2
+  - PadId: pad.skirmish.db.supply_expansion_a
+    AnchorId: anchor.skirmish.db.supply_expansion_a
+    RoleId: supply.expansion.a
+    Kind: 9
+    CenterX: -84
+    CenterZ: -117.6
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 0
+  - PadId: pad.skirmish.db.supply_expansion_b
+    AnchorId: anchor.skirmish.db.supply_expansion_b
+    RoleId: supply.expansion.b
+    Kind: 9
+    CenterX: 84
+    CenterZ: 117.6
+    WidthMetres: 14
+    DepthMetres: 12
+    FactionId: 0

@@ -74,7 +74,7 @@ namespace Game.Runtime
                     army, setup.Readiness, setup.RoleOverlays, perception,
                     SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer);
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
-                    army, setup.Readiness, setup.RoleOverlays, perception,
+                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
                 view.CanAffordAntiAir = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,

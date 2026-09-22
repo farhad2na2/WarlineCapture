@@ -508,6 +508,7 @@ namespace Game.Tests.Editor
                 SkirmishS002AriaHarnessTests.RunFocusedValidation();
                 SkirmishS003AriaHarnessTests.RunFocusedValidation();
                 SkirmishS004AriaHarnessTests.RunFocusedValidation();
+                SkirmishS005AriaHarnessTests.RunFocusedValidation();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }
             catch (Exception exception)

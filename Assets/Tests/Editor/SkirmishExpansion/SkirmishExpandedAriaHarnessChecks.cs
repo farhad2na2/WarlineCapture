@@ -14,7 +14,7 @@ using UnityEngine;
 namespace Game.Tests.Editor
 {
     /// <summary>
-    /// Recorder checks shared by the S003 and S004 harness suites.
+    /// Recorder checks shared by the S003, S004, and S005 harness suites.
     /// They run without a live match and never write the checked-in runs.csv.
     /// </summary>
     public static class SkirmishExpandedAriaHarnessChecks
@@ -316,6 +316,8 @@ namespace Game.Tests.Editor
                 return SkirmishAcceptanceCensusCapture.IsS003RegularStandardSeed;
             if (catalogId == SkirmishAcceptanceCensusCapture.S004CatalogId)
                 return SkirmishAcceptanceCensusCapture.IsS004RegularStandardSeed;
+            if (catalogId == SkirmishAcceptanceCensusCapture.S005CatalogId)
+                return SkirmishAcceptanceCensusCapture.IsS005RegularStandardSeed;
             return SkirmishAcceptanceCensusCapture.IsRegularStandardAriaSeed;
         }
 

@@ -23,7 +23,7 @@ namespace Game.Editor
 
     /// <summary>
     /// Mission ids, seeds, and report paths for one expanded ARIA watch.
-    /// S002, S003, and S004 share <see cref="SkirmishExpandedAriaWatchDriver"/>; they do not open a second watch path.
+    /// S002, S003, S004, and S005 share <see cref="SkirmishExpandedAriaWatchDriver"/>; they do not open a second watch path.
     /// </summary>
     public sealed class SkirmishExpandedAriaWatchProfile
     {

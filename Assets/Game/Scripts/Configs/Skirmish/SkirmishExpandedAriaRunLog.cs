@@ -29,7 +29,7 @@ namespace Game.Configs
     }
 
     /// <summary>
-    /// Shared runs.csv gate for expanded ARIA watches (S002, S003, S004).
+    /// Shared runs.csv gate for expanded ARIA watches (S002, S003, S004, S005).
     /// A row is accepted only from a finished match outcome or an explicit abort.
     /// A caller-supplied Victory is ignored unless the finished match outcome is Victory.
     /// </summary>

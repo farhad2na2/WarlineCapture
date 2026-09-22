@@ -1,4 +1,5 @@
 using System;
+using Game.Operations.Contracts;
 
 namespace Game.Configs
 {
@@ -8,6 +9,8 @@ namespace Game.Configs
 
         public static bool IsValidOperationMapId(string value)
         {
+            if (OperationsIdentityRules.IsValidOperationMapId(value))
+                return true;
             Span<IdSegment> segments = stackalloc IdSegment[3];
             return TryParse(value, segments, out int count) &&
                 count == 3 &&
@@ -58,6 +61,8 @@ namespace Game.Configs
 
         public static bool IsValidScenarioId(string value)
         {
+            if (OperationsIdentityRules.IsValidScenarioId(value))
+                return true;
             Span<IdSegment> segments = stackalloc IdSegment[4];
             if (!TryParse(value, segments, out int count) ||
                 !IsEqual(value, segments[0], "scenario"))

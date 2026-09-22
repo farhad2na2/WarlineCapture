@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Game.Runtime
 {
-    public sealed class SaveService
+    public sealed partial class SaveService
     {
         public const string ProfileFileName = "profile.json";
         public const string SettingsFileName = "settings.json";
@@ -80,7 +80,20 @@ namespace Game.Runtime
 
         public void SaveProfile(PlayerProfileSaveData data)
         {
-            _repository.SaveAtomic(ProfileFileName, NormalizeProfile(data, false, false));
+            if (data == null) throw new ArgumentNullException(nameof(data));
+            using IDisposable lease = _repository.AcquireWriteLease(ProfileFileName);
+            PlayerProfileSaveData current = LoadProfileForCommit();
+            RequireWritableProfile(current);
+            RequireWritableProfile(data);
+            if (data.profileCommitRevision != current.profileCommitRevision)
+                throw new InvalidOperationException("Profile changed since it was loaded; reload before saving.");
+
+            // Do not publish a new revision to the caller before the atomic write succeeds.
+            PlayerProfileSaveData next = JsonUtility.FromJson<PlayerProfileSaveData>(JsonUtility.ToJson(data));
+            next = NormalizeProfile(next, false, false);
+            next.profileCommitRevision = checked(current.profileCommitRevision + 1);
+            _repository.SaveAtomic(ProfileFileName, next);
+            data.profileCommitRevision = next.profileCommitRevision;
         }
 
         public void ResetFirstLaunchProgress()
@@ -111,7 +124,8 @@ namespace Game.Runtime
             bool futureProfile = false)
         {
             profile ??= new PlayerProfileSaveData();
-            profile.profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
+            if (!futureProfile)
+                profile.profileSchemaVersion = FirstLaunchProfileState.CurrentSchemaVersion;
             if (legacyProfile)
             {
                 profile.firstLaunchStatus = FirstLaunchProfileState.Completed;
@@ -149,6 +163,8 @@ namespace Game.Runtime
             profile.campaignMissionProgress = futureProfile
                 ? Array.Empty<CampaignMissionProgressSaveData>()
                 : profile.campaignMissionProgress ?? Array.Empty<CampaignMissionProgressSaveData>();
+            profile.operations = Game.Operations.Contracts.OperationsSaveMigration.Migrate(profile.operations).Data;
+            profile.operationsAttemptJson ??= string.Empty;
             return profile;
         }
 

@@ -1,6 +1,10 @@
 # O001 player-ready implementation plan
 
-Date: 2026-09-22. Status: **Shared O001 launch is wired into MatchSceneView. This is not a player-ready certification.** Player-ready is said only after shared launch, real D01 play, durable save/settle, return, and Manual plus Regular EN Aria through the same visible controls are actually wired. Design-APPROVED O001–O003 and the historical Ops AriaWon captures are **WIP/foundation**, not that gate. R3, full R4, the R5 matrix, and R6 remain open.
+Date: 2026-09-22. Status: **Implementation in progress. O001 is not player-ready.**
+
+`main` commit `f65539c4c` added shared Operations identity validation, disk-backed profile transactions, strategic-command persistence, and an ECS recon rule system that reads unit health and positions. That checkpoint is supporting code. It does not make O001 player-ready. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
+
+This branch keeps the P4R shared-launch slice on that foundation. Player-ready is said only after shared launch, real D01 play, durable save/settle, return, and Manual plus Regular EN Aria through the same visible controls are actually wired. Design-APPROVED O001–O003 and the historical Ops AriaWon captures are **WIP/foundation**, not that gate. R3, full R4, the R5 matrix, and R6 remain open.
 
 ## Shared launch slice (wired, not certified)
 
@@ -8,7 +12,7 @@ A person uses the shipping Ops buttons for `operation.o001`. Armed Regular EN Ar
 
 1. The Ops dashboard district button opens the D01 briefing. Confirming Raid deploys through Package 3 with `InvokesSharedSceneView` true and enters `MatchSceneView`. Campaign or Skirmish occupation rejects the launch. The shared identity rules accept `opmap.operations.old_quarter` and `scenario.operations.o001`. There is still no shipping Old Quarter art asset, so the match scene hosts the authored D01 session instead of a Campaign map.
 2. Select, Move, Attack, Scan, Hold, and Board on the match command bar issue the authored orders. Hold carries evidence interaction. Board extracts. Armed Regular EN Aria invokes those same buttons, one visible control per second. The one-second match clock is Wait for both Manual and Aria. The capture script `TryPlayVisibleControlWin` is not the player path.
-3. Victory writes the Package 3 result into the Operations profile directory and into `PlayerProfileSaveData.operationsEnvelope`. Campaign progress is left in place.
+3. Victory writes the Package 3 result into the Operations profile directory and into `PlayerProfileSaveData.operationsEnvelope`. Campaign progress is left in place. The profile also keeps the disk-backed `operations` state and `operationsAttemptJson` from `main`.
 4. Continue settles and returns to the Ops route. Opening the envelope again restores the settled victory, credits, commander XP, and revision. The O001 district row stays closed once the victory is recorded.
 
 Host marker, five checks, plus a shared-identity agreement check in the host process. Passing it is not a player-ready certification, not an AriaWon certification, and not phone or Farsi acceptance. Design-APPROVED O001–O003 and historical Ops AriaWon captures stay WIP/foundation:

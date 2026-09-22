@@ -52,7 +52,8 @@ public sealed class SaveServiceTests
         Assert.AreEqual(SaveMigration.CurrentVersion, loaded.saveVersion);
         Assert.AreEqual("Mandel", loaded.profile.commanderName);
         Assert.AreEqual(7, loaded.profile.commanderLevel);
-        Assert.AreEqual("rush", loaded.quickGame.presetId);
+        // Legacy presets migrate to the supported base-assault configuration.
+        Assert.AreEqual("base_assault", loaded.quickGame.presetId);
         Assert.IsFalse(loaded.quickGame.fogOfWar);
     }
 

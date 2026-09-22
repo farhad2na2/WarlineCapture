@@ -25,7 +25,9 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("opmap.ch01.district-edge")]
     [TestCase("opmap.ch01._district")]
     [TestCase("opmap.operations.unknown")]
+    [TestCase("opmap.operations.arbitrary")]
     [TestCase("opmap.operations.old_quarter.extra")]
+    [TestCase("opmap.Operations.old_quarter")]
     [TestCase("opmap.ch01.district.edge")]
     public void OperationMapId_RejectsNonCanonicalValues(string value)
     {
@@ -51,6 +53,7 @@ public sealed class OperationMapIdentityConfigTests
     [TestCase("scenario.operations.o000")]
     [TestCase("scenario.operations.o061")]
     [TestCase("scenario.operations.o1")]
+    [TestCase("scenario.operations.o001.extra")]
     [TestCase("scenario.skirmish._desert")]
     public void ScenarioId_RejectsNonCanonicalValues(string value)
     {

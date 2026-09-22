@@ -29,6 +29,18 @@ namespace Game.Runtime
             return File.Exists(GetPath(fileName));
         }
 
+        /// <summary>
+        /// Serialize profile read/compare/replace across repository instances and processes.
+        /// The lock file is retained so a new writer cannot lock a different inode while
+        /// another writer still owns the old one. Busy writers fail and can retry visibly.
+        /// </summary>
+        internal IDisposable AcquireWriteLease(string fileName)
+        {
+            Directory.CreateDirectory(_rootPath);
+            return new FileStream(GetPath(fileName) + ".lock", FileMode.OpenOrCreate,
+                FileAccess.ReadWrite, FileShare.None);
+        }
+
         public T Load<T>(string fileName) where T : class, new()
         {
             string path = GetPath(fileName);

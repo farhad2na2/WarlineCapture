@@ -10,6 +10,7 @@ namespace Game.Operations.Contracts
         ReadOnlyUnknown = 3
     }
 
+    [Serializable]
     public sealed class OperationsSaveData
     {
         public int schemaVersion = OperationsIdentityRules.CurrentSchemaVersion;
@@ -30,6 +31,7 @@ namespace Game.Operations.Contracts
         public OperationsRewardEntrySaveData[] rewardLedger = Array.Empty<OperationsRewardEntrySaveData>();
     }
 
+    [Serializable]
     public sealed class OperationsRunSaveData
     {
         public string runId = string.Empty;
@@ -57,6 +59,7 @@ namespace Game.Operations.Contracts
         public string[] evidenceFlags = Array.Empty<string>();
     }
 
+    [Serializable]
     public sealed class OperationsDistrictSaveData
     {
         public string districtId = string.Empty;
@@ -72,6 +75,7 @@ namespace Game.Operations.Contracts
         public string publicHintMissionId = string.Empty;
     }
 
+    [Serializable]
     public sealed class OperationsRunSummarySaveData
     {
         public string runId = string.Empty;
@@ -79,6 +83,7 @@ namespace Game.Operations.Contracts
         public int endedDay;
     }
 
+    [Serializable]
     public sealed class OperationsReceiptSaveData
     {
         public string transactionId = string.Empty;
@@ -90,6 +95,7 @@ namespace Game.Operations.Contracts
         public int rewardCommanderXp;
     }
 
+    [Serializable]
     public sealed class OperationsDayReportSaveData
     {
         public int day;
@@ -100,6 +106,7 @@ namespace Game.Operations.Contracts
         public OperationsDistrictDeltaSaveData[] districtDeltas = Array.Empty<OperationsDistrictDeltaSaveData>();
     }
 
+    [Serializable]
     public sealed class OperationsPendingDeploymentSaveData
     {
         public bool reserved;
@@ -109,6 +116,7 @@ namespace Game.Operations.Contracts
         public string snapshotHash = string.Empty;
     }
 
+    [Serializable]
     public sealed class OperationsMilestoneSaveData
     {
         public string missionId = string.Empty;
@@ -117,6 +125,7 @@ namespace Game.Operations.Contracts
         public int attemptCount;
     }
 
+    [Serializable]
     public sealed class OperationsOfferSaveData
     {
         public string offerId = string.Empty;
@@ -127,6 +136,7 @@ namespace Game.Operations.Contracts
         public bool urgent;
     }
 
+    [Serializable]
     public sealed class OperationsIncidentSaveData
     {
         public string incidentId = string.Empty;
@@ -140,6 +150,7 @@ namespace Game.Operations.Contracts
         public string routeId = string.Empty;
     }
 
+    [Serializable]
     public sealed class OperationsSiteSaveData
     {
         public string siteId = string.Empty;
@@ -147,6 +158,7 @@ namespace Game.Operations.Contracts
         public byte state;
     }
 
+    [Serializable]
     public sealed class OperationsRouteSaveData
     {
         public string routeId = string.Empty;
@@ -154,12 +166,14 @@ namespace Game.Operations.Contracts
         public byte state;
     }
 
+    [Serializable]
     public sealed class OperationsActionUseSaveData
     {
         public string districtId = string.Empty;
         public byte actionKind;
     }
 
+    [Serializable]
     public sealed class OperationsAttemptSaveData
     {
         public string sessionId = string.Empty;
@@ -175,6 +189,7 @@ namespace Game.Operations.Contracts
         public bool apRefunded;
     }
 
+    [Serializable]
     public sealed class OperationsCooldownSaveData
     {
         public string districtId = string.Empty;
@@ -182,6 +197,7 @@ namespace Game.Operations.Contracts
         public int availableOnDay;
     }
 
+    [Serializable]
     public sealed class OperationsCommandJournalSaveData
     {
         public string commandId = string.Empty;
@@ -191,6 +207,7 @@ namespace Game.Operations.Contracts
         public string transactionId = string.Empty;
     }
 
+    [Serializable]
     public sealed class OperationsRewardEntrySaveData
     {
         public string transactionId = string.Empty;
@@ -200,6 +217,7 @@ namespace Game.Operations.Contracts
         public string grantKind = string.Empty;
     }
 
+    [Serializable]
     public sealed class OperationsDistrictDeltaSaveData
     {
         public string districtId = string.Empty;

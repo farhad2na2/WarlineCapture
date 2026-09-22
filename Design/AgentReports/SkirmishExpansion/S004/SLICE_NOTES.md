@@ -3,7 +3,7 @@
 Catalog identity **S004** is named once here: Desert Base · Base Assault · Air Mobile · Established Base.
 Handoff ordinal 6. First visit: Regular / Standard. Seeds: `104733`, `130367`, `155925`.
 
-Started from `main` at `9304e097f` (S003 Playable, PR #27). This lane does not edit Operations trees, shared `SaveDataModel`, `MatchSceneView`, or the localization catalog.
+Started from `main` at `9304e097f` (S003 Playable, PR #27). This lane does not edit Operations trees, shared `SaveDataModel`, or `MatchSceneView`. EN/FA catalog copy was merged from Game Design and was not re-authored here.
 
 S002 and S003 publication on the checked-in manifest stay **Playable**. Rebuild of expanded definitions restores either row when it is already Playable. The in-memory factory still authors those rows as InProgress; the asset is the published status.
 
@@ -62,24 +62,24 @@ S002 and S003 publication on the checked-in manifest stay **Playable**. Rebuild 
 | Game View | Launch and guarded flip entry points are in. The Playing PNG for seed `104733` is not captured yet |
 | Playable | Row stays InProgress until the evidence files exist and Programmer 1 runs the confirm flip |
 | ARIA matrix | Seeds `104733` / `130367` / `155925` × EN/FA are not run. `runs.csv` is not opened |
-| Localization | Keys below are listed for Game Design. `V3UiLocalizationCatalog` was not edited |
+| Localization | EN/FA keys are merged from Game Design (`ca4c5f0ee`, PR #30). ARIA matrix runs in both locales are still open |
 | Library / HUD | S004 is not a Quick Custom card |
 | Combat certification | Air overlay health, damage, and range are uncertified. Helipad health 500 is an uncertified placeholder |
 
-### Localization keys for Game Design
+### Localization
 
-Do not treat this list as merged copy. Suggested English gloss only:
+EN/FA keys are merged from `cursor/skirmish-s004-localization-4634` at `ca4c5f0ee` (PR #30). The merge kept Game Design’s `V3UiLocalizationCatalog.asset` and `Assets/Game/Configs/Localization/SkirmishS004UiStrings.json`. Keys were not re-authored on this branch.
 
-- `skirmish.s004.title` — Desert Base · Base Assault · Air Mobile · Established Base
-- `skirmish.s004.brief` — Scout with infantry and the starting transport helicopter. AA covers the staging area. Lift infantry toward the north ruins, or build offensive air while a ground reserve stays home.
-- `skirmish.s004.objective` — Destroy the original enemy Barracks while your original Barracks survives.
-- `skirmish.s004.warning.offensive_air` — Established Air Mobile can queue attack helicopters from the granted Helipad. Jets and the transport plane still need an Airport and Full Arsenal. Tanks, heavy APCs, and ground siege are not in this army.
-- `skirmish.s004.warning.replacement_base` — A replacement Barracks does not replace the original main base.
-- `skirmish.s004.result.victory` — The original enemy Barracks is destroyed.
-- `skirmish.s004.result.defeat` — The original player Barracks is destroyed.
-- `skirmish.s004.result.draw_bases` — Both original Barracks were destroyed on the same tick.
-- `skirmish.s004.result.draw_deadline` — Both original Barracks were still standing at the deadline.
-- `skirmish.s004.result.surrender` — Surrender accepted.
+- `skirmish.s004.title`
+- `skirmish.s004.brief`
+- `skirmish.s004.objective`
+- `skirmish.s004.warning.offensive_air`
+- `skirmish.s004.warning.replacement_base`
+- `skirmish.s004.result.victory`
+- `skirmish.s004.result.defeat`
+- `skirmish.s004.result.draw_bases`
+- `skirmish.s004.result.draw_deadline`
+- `skirmish.s004.result.surrender`
 
 ## How to validate in Editor
 

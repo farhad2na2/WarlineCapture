@@ -140,9 +140,9 @@ namespace Game.Operations.Capture
                 ResultDeltasBound = false;
                 ContinueLabel = string.Empty;
                 PhaseLabel = "Terminal";
-                string slug = MissionSlug(MissionId);
-                Title = ResolveCopy("operations." + slug + ".title", Language, MissionId);
-                Body = ResolveCopy("operations." + slug + ".objective.primary", Language, string.Empty);
+                string terminalSlug = MissionSlug(MissionId);
+                Title = ResolveCopy("operations." + terminalSlug + ".title", Language, MissionId);
+                Body = ResolveCopy("operations." + terminalSlug + ".objective.primary", Language, string.Empty);
                 OutcomeLabel = loop.MissionOutcome == OperationsOutcomeKind.Victory
                     ? ResolveCopy("operations.hud.victory", Language, "VICTORY")
                     : loop.MissionOutcome.ToString().ToUpperInvariant();

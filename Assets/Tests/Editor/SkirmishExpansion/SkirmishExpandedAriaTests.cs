@@ -381,8 +381,115 @@ namespace Game.Tests.Editor
                 em, session, authored.ArmyAir);
             Assert.AreEqual(900, projected.OwnMaterials);
             Assert.IsTrue(projected.PadReady);
+            Assert.IsTrue(projected.AirQueueOffered);
+            Assert.GreaterOrEqual(projected.VisibleHostileAir, 1);
+            Assert.AreEqual(20, projected.OwnInfantry);
             Assert.IsTrue(projected.CanAffordAntiAir);
             Assert.IsFalse(projected.CanAffordTank);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishEnemyCapacityComponent>(session).AirLive);
+            int enemyGround = em.GetComponentData<SkirmishEnemyCapacityComponent>(session).GroundLive;
+            Assert.Greater(enemyGround, 0);
+
+            SkirmishAriaSkillDecision counter = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = projected.VisibleHostileAir,
+                CanAffordAntiAir = projected.CanAffordAntiAir,
+                PadReady = projected.PadReady,
+                AirQueueOffered = projected.AirQueueOffered,
+                RecruitControlAvailable = true,
+                OwnInfantry = projected.OwnInfantry,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                AttackControlAvailable = true,
+                GroupControlAvailable = true
+            });
+            Assert.AreEqual(SkirmishAriaSkillKind.Recruit, counter.Skill);
+            Assert.AreEqual("recruit.aa", counter.Field);
+
+            SkirmishAriaSkillDecision offensive = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = 1,
+                CanAffordAntiAir = false,
+                PadReady = true,
+                AirQueueOffered = true,
+                RecruitControlAvailable = true,
+                OwnInfantry = 20,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                AttackControlAvailable = true,
+                GroupControlAvailable = true
+            });
+            Assert.AreEqual(SkirmishAriaSkillKind.Recruit, offensive.Skill);
+            Assert.AreEqual("recruit.attack_heli", offensive.Field);
+
+            var view = new AriaSkirmishObservation
+            {
+                Active = true,
+                ExpandedSession = true,
+                Infantry = 20,
+                CanAffordAntiAir = true,
+                VisibleHostileAir = projected.VisibleHostileAir,
+                PadReady = true,
+                AirQueueOffered = true,
+                EnemyDesignatedAlive = true,
+                PlayerDesignatedAlive = true,
+                SelectionVisible = true,
+                RecruitAntiAir = new AriaTouchTarget { Id = 51, Available = true },
+                AirPad = new AriaTouchTarget { Id = 52, Available = true },
+                Attack = new AriaTouchTarget { Id = 53, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Recruit, plan.Intent);
+            Assert.AreEqual(51, output.TargetId);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+            view.CanAffordAntiAir = false;
+            view.RecruitAntiAir = new AriaTouchTarget { Id = 51, Available = false };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Attack, plan.Intent);
+            Assert.AreEqual(53, output.TargetId);
+            Assert.AreNotEqual(52, output.TargetId);
+
+            Entity pad = FindStructure(em, 1, SkirmishStructureIds.Helipad);
+            var padHealth = em.GetComponentData<UnitHealth>(pad);
+            padHealth.Current = 0;
+            em.SetComponentData(pad, padHealth);
+            SkirmishAriaPublicView afterPad = SkirmishAriaPublicProjection.FromSession(
+                em, session, authored.ArmyAir);
+            Assert.IsFalse(afterPad.PadReady);
+            Assert.IsFalse(afterPad.AirQueueOffered);
+            Assert.AreEqual(900, afterPad.OwnMaterials);
+            SkirmishAriaSkillDecision padSkill = SkirmishAriaSkillPolicy.Step(new SkirmishAriaPublicView
+            {
+                Playing = true,
+                VisibleHostileAir = 1,
+                CanAffordAntiAir = false,
+                PadReady = afterPad.PadReady,
+                AirQueueOffered = afterPad.AirQueueOffered,
+                AirPadControlAvailable = true,
+                OwnInfantry = 20,
+                RecruitControlAvailable = true
+            });
+            Assert.AreEqual(SkirmishAriaSkillKind.Inspect, padSkill.Skill);
+            Assert.AreEqual("pad.not_ready", padSkill.Field);
+
+            view.PadReady = false;
+            view.AirQueueOffered = true;
+            view.AirPad = new AriaTouchTarget { Id = 52, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
+            Assert.AreEqual(52, output.TargetId);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishEnemyCapacityComponent>(session).AirLive);
+            Assert.AreEqual(enemyGround, em.GetComponentData<SkirmishEnemyCapacityComponent>(session).GroundLive);
         }
 
         public static void RunFocusedValidation()
@@ -513,6 +620,21 @@ namespace Game.Tests.Editor
                 session,
                 owned,
                 em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+        }
+
+        private static Entity FindStructure(EntityManager em, byte faction, string structureId)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishStructureIdentityComponent), typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                if (em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).FactionId != faction)
+                    continue;
+                if (em.GetComponentData<SkirmishStructureIdentityComponent>(entities[i]).StructureId.ToString() == structureId)
+                    return entities[i];
+            }
+
+            return Entity.Null;
         }
 
         private static Entity FirstPlayerBase(EntityManager em)

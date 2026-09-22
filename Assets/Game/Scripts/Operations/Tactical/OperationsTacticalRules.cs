@@ -77,14 +77,22 @@ namespace Game.Operations.Tactical
     {
         public const int TicksPerSecond = 1;
         public const float ScanMeters = 8f;
-        public const int ScanSeconds = 15;
+        /// <summary>Channel length for Scan. Shortened for Regular pacing (≥1 decision / 20–30s).</summary>
+        public const int ScanSeconds = 6;
         public const float ObserveMeters = 16f;
         public const float HoldMeters = 12f;
+        /// <summary>
+        /// Hold must be re-issued within this many ticks or progress freezes (AFK cut).
+        /// Hard deadlines and Partial predicates stay on authored mission budgets.
+        /// </summary>
+        public const int HoldRefreshSeconds = 5;
         public const float InteractMeters = 6f;
         public const float InteractThreatMeters = 12f;
+        public const int InteractSeconds = 6;
         public const float RepairMeters = 6f;
         public const float RepairThreatMeters = 12f;
-        public const int RepairSeconds = 45;
+        /// <summary>Repair channel length. Shortened for Regular pacing; deadlines unchanged.</summary>
+        public const int RepairSeconds = 18;
         public const int RepairMaterialCost = 40;
         public const int RepairHealthPercent = 75;
         public const int ThreeSiteMaterialFloor = 120;

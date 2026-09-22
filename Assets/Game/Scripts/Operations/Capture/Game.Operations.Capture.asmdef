@@ -3,6 +3,7 @@
     "rootNamespace": "Game.Operations.Capture",
     "references": [
         "Game.Operations.Contracts",
+        "Game.Operations.Tactical",
         "Game.Operations.Loop",
         "Game.Operations.Content"
     ],

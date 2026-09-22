@@ -49,7 +49,17 @@ Play Mode capture **wiring** marker (distinct from live AriaWon; does not claim 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
 ```
 
-Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch virtual-touch / Match scene shared-UI seam stays **closed** this sprint; capture uses an Ops-owned victory presentation. Live capture invoke **omits `-quit`** so Play Mode can finish; the runner exits the Editor after writing evidence.
+Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** mid-mission world + win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch virtual-touch / Match scene shared-UI seam stays **closed** this sprint; capture uses Ops-owned tactical world + phone-mock HUD/victory chrome. Live capture invoke **omits `-quit`** so Play Mode can finish; the runner exits the Editor after writing evidence.
+
+Mobile-ready host marker:
+
+```text
+[OperationsMobileReadyValidation] result=Passed checks=8
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyValidation.ps1
+```
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001
@@ -57,7 +67,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O003
 ```
 
-Live marker: `[OperationsAriaPlayModeCapture] result=Passed`. Programmer 2 verifies `win-screen.en.png` before catalog flips. **Playable Operations mission ready is not claimed on this tip.**
+Live marker: `[OperationsAriaPlayModeCapture] result=Passed`. Programmer 2 verifies `play-02-mid.en.png` (world + selection + localized objectives) and `win-screen.en.png` (player-facing victory card). Do **not** re-run Regular EN AriaWon solely to refresh status unless the capture harness breaks. **Playable Operations mission ready is not claimed on this tip.**
 
 ## Game PM seams still closed
 
@@ -70,10 +80,11 @@ Refresh `D:\Projects\WarlineCapture-Operations` onto this branch. Do not open `D
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsP4Validation.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaEvidenceValidation.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsMobileReadyValidation.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O002
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O003
 ```
 
-Required wiring markers: `[OperationsP4Validation] result=Passed checks=14`, `[OperationsAriaEvidenceValidation] result=Passed checks=8`, `[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7`. Live capture marker: `[OperationsAriaPlayModeCapture] result=Passed`. Evidence under `Design/AgentReports/Operations/host-aria-evidence/operation.o00{1,2,3}/Regular/{1102,1103,1104}/` (`win-screen.en.png` + `result.en.json`).
+Required wiring markers: `[OperationsP4Validation] result=Passed checks=14`, `[OperationsAriaEvidenceValidation] result=Passed checks=8`, `[OperationsMobileReadyValidation] result=Passed checks=8`, `[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7`. Live capture marker: `[OperationsAriaPlayModeCapture] result=Passed`. Evidence under `Design/AgentReports/Operations/host-aria-evidence/operation.o00{1,2,3}/Regular/{1102,1103,1104}/` (`play-02-mid.en.png`, `win-screen.en.png`, `result.en.json`).

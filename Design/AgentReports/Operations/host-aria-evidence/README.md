@@ -10,7 +10,15 @@ Shipping Watch virtual-touch has **no** Operations row this sprint; do not open 
 
 1. Public loop observation (`TryReadHud`, node TargetIds, `CopyPublicActors` / facts)
 2. Generic `OperationsAriaObjectivePlanner` (no mission-ID switch)
-3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned victory OnGUI** (`Game.Operations.Capture`, runtime assembly so Play Mode `AddComponent` works) → `ScreenCapture` PNG + `result.en.json`
+3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned tactical world + phone-mock HUD / victory card** (`Game.Operations.Capture`) → `ScreenCapture` PNG + `result.en.json`
+
+Mobile-ready presentation (world mesh, localized objectives, compressed scan/repair/hold pacing with hard deadlines 720/840/900 preserved) is validated by:
+
+```bash
+python3 Tools/Operations/check_mobile_ready.py
+```
+
+Marker: `[OperationsMobileReadyValidation] result=Passed checks=8`
 
 ## Folder layout (ACCEPTANCE)
 

@@ -38,13 +38,19 @@ namespace Game.Tests.Editor.Operations
         public static void PresentationIsOpsOwned()
         {
             string source = ReadCapturePresentationSource();
+            string world = ReadCaptureSource("OperationsTacticalWorldShell.cs");
             Require(source.Contains("OperationsAriaPlayModePresentation"), "presenter");
             Require(source.Contains("ShowVictory"), "victory");
             Require(source.Contains("OnGUI"), "ongui");
             Require(source.Contains("result.victory"), "localized_victory");
             Require(source.Contains("namespace Game.Operations.Capture"), "runtime_namespace");
+            Require(source.Contains("OperationsTacticalWorldShell"), "world_shell");
+            Require(source.Contains("BuildLocalizedObjectives"), "localized_objectives");
+            Require(source.Contains("PhonePanelRect"), "phone_mock");
+            Require(world.Contains("CreatePrimitive"), "world_primitives");
             Require(!source.Contains("MatchSceneView"), "no_match_scene");
             Require(!source.Contains("AriaPlayCapability"), "no_watch_capability");
+            Require(!source.Contains("Ops-owned win screen (Watch shared-UI seam not opened)"), "no_dev_footer");
         }
 
         public static void InvokeScriptWiresExecuteMethods()
@@ -134,7 +140,10 @@ namespace Game.Tests.Editor.Operations
             return File.ReadAllText(path);
         }
 
-        static string ReadCapturePresentationSource()
+        static string ReadCapturePresentationSource() =>
+            ReadCaptureSource("OperationsAriaPlayModePresentation.cs");
+
+        static string ReadCaptureSource(string fileName)
         {
             string path = Path.Combine(
                 FindRepoRoot(),
@@ -143,7 +152,7 @@ namespace Game.Tests.Editor.Operations
                 "Scripts",
                 "Operations",
                 "Capture",
-                "OperationsAriaPlayModePresentation.cs");
+                fileName);
             return File.ReadAllText(path);
         }
 

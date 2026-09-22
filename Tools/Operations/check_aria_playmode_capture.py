@@ -75,10 +75,21 @@ def check_sources() -> None:
 
     if "ShowVictory" not in presentation or "OnGUI" not in presentation:
         fail("presentation_incomplete")
+    if "OperationsTacticalWorldShell" not in presentation and not (CAPTURE_ROOT / "OperationsTacticalWorldShell.cs").is_file():
+        fail("world_shell_missing")
+    world = (CAPTURE_ROOT / "OperationsTacticalWorldShell.cs").read_text(encoding="utf-8")
+    if "CreatePrimitive" not in world or "Selection" not in world:
+        fail("world_incomplete")
+    if "BuildLocalizedObjectives" not in presentation or "PhonePanelRect" not in presentation:
+        fail("mobile_chrome")
+    if "Ops-owned win screen (Watch shared-UI seam not opened)" in presentation:
+        fail("dev_footer")
     if "namespace Game.Operations.Capture" not in presentation:
         fail("presentation_runtime_namespace")
     if "AddComponent returned null" not in presentation:
         fail("presentation_null_guard")
+    if "Game.Operations.Tactical" not in asmdef:
+        fail("capture_missing_tactical")
 
     invoke = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCapture.ps1").read_text(encoding="utf-8")
     wiring = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCaptureValidation.ps1").read_text(encoding="utf-8")

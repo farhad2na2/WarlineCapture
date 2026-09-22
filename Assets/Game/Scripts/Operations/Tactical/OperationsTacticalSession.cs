@@ -62,6 +62,7 @@ namespace Game.Operations.Tactical
             public bool Delivered;
             public OrderKind Order;
             public string OrderTarget = string.Empty;
+            public int OrderIssuedTick = -1;
         }
 
         private sealed class Node
@@ -323,6 +324,7 @@ namespace Game.Operations.Tactical
                 return OperationsTacticalCommandResult.Reject(failure);
             unit.Order = OrderKind.Hold;
             unit.OrderTarget = zoneAnchorId;
+            unit.OrderIssuedTick = _tick;
             return OperationsTacticalCommandResult.Ok();
         }
 
@@ -712,18 +714,30 @@ namespace Game.Operations.Tactical
         private void ProgressHold(Node node)
         {
             bool holder = false;
+            bool staleHold = false;
             for (int index = 0; index < _actors.Count; index++)
             {
                 Actor unit = _actors[index];
                 if (unit.Order != OrderKind.Hold || !string.Equals(unit.OrderTarget, node.Spec.ZoneAnchorId, StringComparison.Ordinal))
                     continue;
-                if (IsEligibleInfantry(unit) && InRange(unit, node.Spec.ZoneX, node.Spec.ZoneZ, OperationsTacticalRules.HoldMeters))
-                    holder = true;
+                if (!IsEligibleInfantry(unit) || !InRange(unit, node.Spec.ZoneX, node.Spec.ZoneZ, OperationsTacticalRules.HoldMeters))
+                    continue;
+                // AFK cut: freeze progress when Hold has not been re-issued recently.
+                // Do not reset ProgressTicks so a refreshed Hold can resume the compressed window.
+                if (unit.OrderIssuedTick >= 0 &&
+                    _tick - unit.OrderIssuedTick > OperationsTacticalRules.HoldRefreshSeconds)
+                {
+                    staleHold = true;
+                    continue;
+                }
+
+                holder = true;
             }
 
             if (!holder || HostileWithin(node.Spec.ZoneX, node.Spec.ZoneZ, OperationsTacticalRules.HoldMeters))
             {
-                node.ProgressTicks = 0;
+                if (!staleHold)
+                    node.ProgressTicks = 0;
                 return;
             }
 

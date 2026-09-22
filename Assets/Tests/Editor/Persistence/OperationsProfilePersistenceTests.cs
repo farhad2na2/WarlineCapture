@@ -160,6 +160,39 @@ public sealed class OperationsProfilePersistenceTests
     }
 
     [Test]
+    public void FailedLaunch_RefundsExactlyOnceAcrossServiceRestart_AndAllowsRedeployment()
+    {
+        var commands = new OperationsProfileCommandService(service);
+        Assert.That(commands.TryNewRun(new OperationsCommand("cmd.operations.fail0001", 0,
+            OperationsCommandKind.NewRun, "", "", ""), 1102, OperationsDifficultyKind.Regular,
+            out var created, out var error), Is.True, error);
+        Assert.That(created.Accepted, Is.True);
+        var before = commands.Read();
+        var offer = Array.Find(before.activeRun.offers, item => item.missionId == "operation.o001");
+        Assert.That(commands.TrySubmit(new OperationsCommand("cmd.operations.fail0002", before.profileRevision,
+            OperationsCommandKind.Deploy, offer.districtId, offer.offerId, ""), out var deployed, out error), Is.True, error);
+        Assert.That(deployed.Accepted, Is.True);
+        var reserved = commands.Read();
+        Assert.That(reserved.activeRun.actionPoints, Is.EqualTo(before.activeRun.actionPoints - 1));
+        var refund = new OperationsCommand("cmd.operations.fail0003", reserved.profileRevision,
+            OperationsCommandKind.TechnicalFailure, "", "", "");
+        Assert.That(commands.TrySubmit(refund, out var refunded, out error), Is.True, error);
+        Assert.That(refunded.Accepted, Is.True, refunded.ReasonCode.ToString());
+        commands = new OperationsProfileCommandService(new SaveService(new JsonSaveRepository(root)));
+        var restored = commands.Read();
+        Assert.That(restored.activeRun.actionPoints, Is.EqualTo(before.activeRun.actionPoints));
+        Assert.That(restored.pendingDeployment.reserved, Is.False);
+        string bytes = repository.ReadRaw(SaveService.ProfileFileName);
+        Assert.That(commands.TrySubmit(refund, out var retry, out error), Is.True, error);
+        Assert.That(retry, Is.EqualTo(refunded));
+        Assert.That(repository.ReadRaw(SaveService.ProfileFileName), Is.EqualTo(bytes));
+        Assert.That(commands.TrySubmit(new OperationsCommand("cmd.operations.fail0004", restored.profileRevision,
+            OperationsCommandKind.Deploy, offer.districtId, offer.offerId, ""), out var redeployed, out error), Is.True, error);
+        Assert.That(redeployed.Accepted, Is.True, redeployed.ReasonCode.ToString());
+        Assert.That(commands.Read().activeRun.actionPoints, Is.EqualTo(before.activeRun.actionPoints - 1));
+    }
+
+    [Test]
     public void RewardLedgerCannotGoBackwards()
     {
         Assert.That(service.TryCommitOperations(0, 0, Transaction(), "result", out var saved, out _), Is.True);

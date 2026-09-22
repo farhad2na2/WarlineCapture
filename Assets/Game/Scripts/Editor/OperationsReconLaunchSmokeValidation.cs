@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Game.Components;
+using Game.Composition;
 using Game.Runtime;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -22,9 +23,11 @@ namespace Game.Editor
         private static int exitCode;
         private static string loadFailure;
         private static bool lifecycle;
+        private static bool recovery;
 
         public static void Run() => Start(false);
         public static void RunLifecycle() => Start(true);
+        public static void RunRecovery() { recovery = true; Start(true); }
 
         private static void Start(bool validateLifecycle)
         {
@@ -53,7 +56,32 @@ namespace Game.Editor
                 if (loadFailure != null) { Complete(false, loadFailure); return; }
                 if (EditorApplication.timeSinceStartup - started > 240)
                 { Complete(false, "timeout stage=" + stage); return; }
+                if (recovery && stage == 2)
+                {
+                    var failureWorld = World.DefaultGameObjectInjectionWorld;
+                    if (failureWorld != null && failureWorld.IsCreated &&
+                        OperationsReconLaunchProjection.TryGet(failureWorld.EntityManager, out var failedRoot, out var preparing))
+                    {
+                        if (preparing.Phase != OperationsReconPhase.Preparing)
+                            throw new InvalidOperationException("Missed startup failure injection window.");
+                        failureWorld.EntityManager.GetComponentObject<OperationsReconLaunchReference>(failedRoot).StartupFailure =
+                            "Editor integration fixture: startup failure";
+                        stage = 8;
+                        Debug.Log("[OperationsReconLaunchSmokeValidation] injectedStartupFailure=1");
+                    }
+                }
                 if (!UiShellRuntimeGateway.TryReadShellState(out var shell) || shell.IsTransitionRunning) return;
+                if (stage == 8 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
+                {
+                    var saved = SaveService.CreateDefault().LoadProfile().operations;
+                    var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                    using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                    if (!roots.IsEmptyIgnoreFilter) return;
+                    if (saved.pendingDeployment?.reserved == true || saved.activeRun.actionPoints != 3)
+                        throw new InvalidOperationException("Failed startup did not refund the reservation.");
+                    if (Click("DEPLOY")) stage = 7;
+                    return;
+                }
                 if (stage == 0 && shell.CurrentMode == UiShellMode.MainMenu)
                 {
                     if (UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.Operations, false)) stage = 1;
@@ -140,9 +168,11 @@ namespace Game.Editor
                     if (mission.Phase != OperationsReconPhase.Playing || mission.ElapsedSeconds < 2) return;
                     using var owned = em.CreateEntityQuery(new EntityQueryDesc
                     { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
-                    if (owned.CalculateEntityCount() != 36 || SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 1)
+                    int expectedAp = recovery ? 2 : 1;
+                    if (owned.CalculateEntityCount() != 36 || SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != expectedAp)
                         throw new InvalidOperationException("Redeployment roster or AP reservation mismatch.");
-                    Complete(true, "journey=deploy-withdraw-save-return-redeploy input=button-event-smoke original=16 total=36 ap=1");
+                    Complete(true, "journey=" + (recovery ? "deploy-failed-startup-refund-return-redeploy" : "deploy-withdraw-save-return-redeploy") +
+                        " input=button-event-smoke original=16 total=36 ap=" + expectedAp);
                 }
             }
             catch (Exception exception) { Complete(false, exception.ToString()); }

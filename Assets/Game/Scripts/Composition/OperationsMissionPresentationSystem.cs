@@ -27,6 +27,8 @@ namespace Game.Composition
         private bool reopenOperationsMenu;
         private double nextRefresh, nextSaveRetry;
         private string settlementCommand;
+        private string startupSession, rollbackCommand;
+        private double startupBeganAt, nextRollbackRetry;
         private readonly Vector3[] markerScreenPositions = new Vector3[5];
 
         protected override void OnCreate()
@@ -46,6 +48,7 @@ namespace Game.Composition
             if (!live && shell.ActiveRoute != UIRoute.Operations) return;
             commands ??= new OperationsProfileCommandService(SaveService.CreateDefault());
             definition ??= Resources.Load<OperationsReconMissionConfig>(OperationsReconMissionConfig.ResourcePath);
+            if (live && mission.Phase == OperationsReconPhase.Preparing && ObserveFailedStartup(root, mission)) return;
             var requests = EntityManager.GetBuffer<UiOperationsMissionRequest>(boundary);
             if (requests.Length > 0)
             {
@@ -65,7 +68,8 @@ namespace Game.Composition
                     Focus(definition.exitPosition);
                     notice = Copy("scan_help", "Select infantry, move within 8 m of a signal, then choose Scan selected. Hold position for 15 seconds.");
                 }
-                else if (!string.IsNullOrEmpty(error)) notice = error;
+                else if (!string.IsNullOrEmpty(error))
+                    EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
             }
             if (live && view == null) view = OperationsMissionScreenView.CreateHud(TMPro.TMP_Settings.defaultFontAsset);
             if (live && view != null && Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(World, out var camera))
@@ -99,15 +103,7 @@ namespace Game.Composition
             if (request.Action == UiOperationsMissionAction.Return)
             {
                 if (mission.Phase != OperationsReconPhase.Terminal || !resultSaved) return;
-                if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.ReturnToMainMenu, UIRoute.Operations, false)) return;
-                reopenOperationsMenu = true;
-                using var owned = EntityManager.CreateEntityQuery(new EntityQueryDesc
-                { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
-                using (var units = owned.ToEntityArray(Unity.Collections.Allocator.Temp))
-                    foreach (var unit in units) if (EntityManager.Exists(unit)) EntityManager.DestroyEntity(unit);
-                EntityManager.DestroyEntity(root);
-                if (view != null) UnityEngine.Object.Destroy(view.gameObject);
-                view = null; resultSaved = false; settlementCommand = null; notice = string.Empty;
+                BeginReturn(root, string.Empty);
                 return;
             }
             if (mission.Phase != OperationsReconPhase.Playing) return;
@@ -151,6 +147,51 @@ namespace Game.Composition
             EntityManager.GetBuffer<OperationsReconActionElement>(root).Add(new OperationsReconActionElement
             { SessionId = mission.SessionId, Action = action, Actor = actor, SiteIndex = request.SiteIndex });
             notice = string.Empty;
+        }
+
+        private bool ObserveFailedStartup(Entity root, OperationsReconMissionComponent mission)
+        {
+            string session = mission.SessionId.ToString();
+            if (startupSession != session)
+            { startupSession = session; startupBeganAt = UnityEngine.Time.realtimeSinceStartupAsDouble; rollbackCommand = null; nextRollbackRetry = 0; }
+            var launch = EntityManager.GetComponentObject<OperationsReconLaunchReference>(root);
+            using var starts = EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
+            bool failed = !string.IsNullOrEmpty(launch.StartupFailure) ||
+                starts.CalculateEntityCount() == 1 && starts.GetSingleton<MatchStartQueueComponent>().LastStatus == MatchStartStatusKind.Failed ||
+                UnityEngine.Time.realtimeSinceStartupAsDouble - startupBeganAt >= 180;
+            if (!failed) return false;
+            StopSimulation();
+            if (UnityEngine.Time.realtimeSinceStartupAsDouble < nextRollbackRetry) return true;
+            nextRollbackRetry = UnityEngine.Time.realtimeSinceStartupAsDouble + 5;
+            try
+            {
+                var saved = commands.Read();
+                rollbackCommand ??= Id();
+                var rollback = new OperationsCommand(rollbackCommand, saved.profileRevision, OperationsCommandKind.TechnicalFailure, "", "", "");
+                if (commands.TrySubmit(rollback, out var result, out _) && result.Accepted)
+                    BeginReturn(root, Copy("load_refunded", "The mission could not load. Your action point was returned. You can try again."));
+                else notice = Copy("load_refund_pending", "The mission could not load. Recovery is waiting for a saved refund.");
+            }
+            catch (IOException) { notice = Copy("load_refund_pending", "The mission could not load. Recovery is waiting for a saved refund."); }
+            catch (InvalidOperationException) { notice = Copy("load_refund_pending", "The mission could not load. Recovery is waiting for a saved refund."); }
+            EntityManager.GetComponentObject<UiOperationsMissionReadModel>(boundary).Value =
+                new UiOperationsMissionModel { Title = Copy("title", "STREET SIGNALS — OLD QUARTER"), Status = notice };
+            nextRefresh = 0;
+            return true;
+        }
+
+        private bool BeginReturn(Entity root, string message)
+        {
+            if (!UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.ReturnToMainMenu, UIRoute.Operations, false)) return false;
+            reopenOperationsMenu = true;
+            using var owned = EntityManager.CreateEntityQuery(new EntityQueryDesc
+            { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
+            using (var units = owned.ToEntityArray(Unity.Collections.Allocator.Temp))
+                foreach (var unit in units) if (EntityManager.Exists(unit)) EntityManager.DestroyEntity(unit);
+            if (EntityManager.Exists(root)) EntityManager.DestroyEntity(root);
+            if (view != null) UnityEngine.Object.Destroy(view.gameObject);
+            view = null; resultSaved = false; settlementCommand = null; notice = message;
+            return true;
         }
 
         private void Deploy()

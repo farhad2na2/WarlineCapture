@@ -9,6 +9,7 @@ namespace Game.Composition
     internal sealed class OperationsReconLaunchReference : IComponentData
     {
         public OperationsReconMissionConfig Definition;
+        public string StartupFailure;
     }
 
     internal static class OperationsReconLaunchProjection

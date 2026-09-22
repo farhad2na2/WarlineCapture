@@ -65,3 +65,13 @@ The current implementation is an integration candidate. Persistent active-world 
 This covers normal menu deployment, five seconds of live simulation, visible starting troops, withdrawal confirmation, durable settlement without AP refund/recharge, complete owned-actor cleanup, a functioning Operations briefing after return, and a fresh paid deployment. It does **not** cover a manual win, tactical challenge, active-world checkpoint restoration, platform acceptance or unfamiliar-player usability.
 
 Final content/catalog rebuild `/private/tmp/o001-shared-content-build-7.log`: wrapper exit **0**, roster/reachability pass, `hudMissingScripts=0`, and 368 total configured localization entries including the O001 additions.
+
+### Startup failure recovery
+
+The shared map loader now forwards Operations load errors to the mission owner. A failed queue, explicit load/spawn error, or 180-second startup timeout stops simulation and submits the durable TechnicalFailure command. Return waits for a saved refund; save failures retry every five seconds using the same command identity. English and Persian recovery messages are in the shipping catalog.
+
+- `/private/tmp/o001-recovery-editmode-1.log` and XML: **23 passed, 0 failed**, wrapper exit 0. The new disk test verifies exactly-once refund across service restart and subsequent paid redeployment.
+- `/private/tmp/o001-recovery-content-build.log`: wrapper exit 0, content/reachability pass, `hudMissingScripts=0`, localization import passed with 370 entries.
+- `/private/tmp/o001-recovery-smoke-1.log`: wrapper exit 0 with `[OperationsReconLaunchSmokeValidation] result=Passed journey=deploy-failed-startup-refund-return-redeploy input=button-event-smoke original=16 total=36 ap=2`.
+
+The smoke deliberately injects a startup failure in the Editor fixture. It verifies refund/return/redeployment, not a normal-input mission win or recovery of an interrupted combat world. Full logs remain at the paths above; no additional raw machine logs are published in this change.

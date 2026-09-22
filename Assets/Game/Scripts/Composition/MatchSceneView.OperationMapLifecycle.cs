@@ -499,6 +499,11 @@ namespace Game.Composition
             operationMapLoadFailureCode = failureCode;
             operationMapLoadFailure = error;
             operationMapLoadFailureReported = true;
+            var world = World.DefaultGameObjectInjectionWorld;
+            if (world != null && world.IsCreated &&
+                OperationsReconLaunchProjection.TryGet(world.EntityManager, out var operationsRoot, out _) &&
+                world.EntityManager.HasComponent<OperationsReconLaunchReference>(operationsRoot))
+                world.EntityManager.GetComponentObject<OperationsReconLaunchReference>(operationsRoot).StartupFailure = error;
             Debug.LogError($"[OperationMapSourceScene] code={failureCode} error={error}");
         }
     }

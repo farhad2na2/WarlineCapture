@@ -164,7 +164,7 @@ Follow current root AGENTS.md: RTK wraps repository Unity wrappers, Hub stays op
 | Gate | Status at plan creation | Evidence needed to close |
 |---|---|---|
 | R0 integration/content reconciliation | Planned | File/dependency ownership and final content decisions |
-| R1 normal deployment | In progress: launch smoke passed; refund/cancel checks open | Menu/briefing/world input trace and rollback checks |
+| R1 normal deployment | In progress: launch and failed-startup refund/redeploy smoke passed; cancel/input checks open | Menu/briefing/world input trace and rollback checks |
 | R2 manual playable | In progress: shared objectives/HUD; full journey pending | Real-input complete journey and outcome coverage |
 | R3 tactical experience | Initial authored candidate; review pending | Real map and two reviewed approaches at normal speed |
 | R4 durable recovery | Transactions tested; active-world recovery pending | Disk/process recovery, exact-once settlement, cross-mode checks |

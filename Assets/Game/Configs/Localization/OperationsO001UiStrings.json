@@ -369,6 +369,26 @@
           "value": "برداشتن {0}/15 ثانیه"
         }
       ]
+    },
+    {
+      "key": "operations.o001.load_refunded",
+      "source": "The mission could not load. Your action point was returned. You can try again.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مأموریت بارگذاری نشد. امتیاز اقدام شما بازگردانده شد. می‌توانید دوباره تلاش کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.load_refund_pending",
+      "source": "The mission could not load. Recovery is waiting for a saved refund.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مأموریت بارگذاری نشد. بازیابی در انتظار ذخیرهٔ بازگشت امتیاز اقدام است."
+        }
+      ]
     }
   ]
 }

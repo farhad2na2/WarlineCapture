@@ -6,7 +6,8 @@
         "Game.Operations.Strategic",
         "Game.Operations.Tactical",
         "Game.Operations.Loop",
-        "Game.Operations.Content"
+        "Game.Operations.Content",
+        "Game.Operations.Capture"
     ],
     "includePlatforms": [
         "Editor"

@@ -55,18 +55,7 @@ namespace Game.Runtime
 
         private static void ProjectMatchPhase(EntityManager em, Entity session)
         {
-            if (!em.HasComponent<SkirmishMatchState>(session) ||
-                !em.HasComponent<SkirmishExpandedSessionComponent>(session))
-                return;
-            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
-            var match = em.GetComponentData<SkirmishMatchState>(session);
-            if (state.Phase == SkirmishSessionPhase.Playing && match.Phase < SkirmishPhase.Playing)
-                match.Phase = SkirmishPhase.Playing;
-            else if (state.Phase == SkirmishSessionPhase.Finished)
-                match.Phase = SkirmishPhase.Finished;
-            else
-                return;
-            em.SetComponentData(session, match);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
         }
 
         private static void ProjectMatchResult(EntityManager em, Entity session)
@@ -97,6 +86,8 @@ namespace Game.Runtime
                             : SkirmishEndReason.None;
             if (result.SaveAcknowledged != 0)
                 match.ResultSaved = 1;
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                match.ElapsedSeconds = em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
             em.SetComponentData(session, match);
         }
     }

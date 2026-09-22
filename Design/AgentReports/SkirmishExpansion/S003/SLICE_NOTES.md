@@ -65,7 +65,7 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 | Field backbone | Matrix reports 7 starting structures. The compiler still spawns the designated Barracks and Ground Staging only |
 | Game View | Launch entry point is in. The Playing PNG for seed `104732` is not captured yet |
 | Playable | Row stays InProgress until the evidence files exist and Programmer 1 runs the confirm flip |
-| ARIA matrix | Seeds `104732` / `130366` / `155924` × EN/FA are not run. `runs.csv` is not opened for S003. The shell does not yet present the AA or pad controls |
+| ARIA matrix | The Windows watch harness and a header-only `runs.csv` are in. Seeds `104732` / `130366` / `155924` × EN/FA are not run. No Victory row is stamped. The shell does not yet present the AA or pad controls |
 | Localization | EN/FA keys are merged from Game Design (`c01a4772b`, PR #28). ARIA matrix runs in both locales are still open |
 | Library / HUD | S002 copy projection is unchanged. S003 is not a Quick Custom card |
 | Combat certification | Air overlay health, damage, and range are uncertified |
@@ -190,3 +190,26 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExec
 ```
 
 Menu names: `Tools/Warline/Skirmish/Launch S003 Regular Standard Game View` and `Tools/Warline/Skirmish/Flip S003 Playable If Evidence Ready`.
+
+## ARIA Windows harness (not a live win)
+
+The recorder is `Game.Editor.SkirmishS003AriaRunHarness`. It uses the same watch driver as S002 (`SkirmishExpandedAriaWatchDriver`): shipping touch ARIA, `normal_speed=1`, and an abort of `simulationNotAdvancing` about 45 seconds after Playing when simulation is inactive or match elapsed stays at 0. It never stamps Victory unless the match has finished with that outcome. This section does not mark the mission or the AriaWon matrix complete. Live S003 AriaWon waits until after the S002 Windows proof and until the Skirmish Editor lock is free. Do not start `Launch*` while that lock is held.
+
+Focused proof (no live match; the wrapper's `-quit` is fine here):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS003AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s003-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS003AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+Live watch, only after the lock is free: run the menu or executeMethod from the open Editor. Do **not** pass `-quit`. `Tools/CI/InvokeUnityExecuteMethodValidation.ps1` always passes `-quit` and will return when Play Mode is scheduled, before any terminal row.
+
+- Menu: `Tools/Warline/Skirmish/Launch S003 ARIA Watch 104732 en`
+- Execute method: `Game.Editor.SkirmishS003AriaRunHarness.Launch104732En`
+
+Keep Unity Hub signed in, focus the Game View, and keep `timeScale` at 1. Expect trace lines under `Design/AgentReports/SkirmishExpansion/S003/_Evidence/` with rising `elapsed` / `clockElapsed` and `simulationActive=1` within about 45 seconds of Playing. A stuck-zero clock must Abort with `simulationNotAdvancing`, not sit until the 1500 second timeout. Fill rules and the other seed menus are in `acceptance.md`.

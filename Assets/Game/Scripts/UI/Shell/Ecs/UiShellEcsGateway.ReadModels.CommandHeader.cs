@@ -154,8 +154,31 @@ namespace Game.UI.Shell.Ecs
                 selectedSlot = state.SelectedSlot;
             }
 
-            if(TrySkirmish(out _,out _,out _))
+            if(TrySkirmish(out EntityManager skirmishEm,out Entity skirmishSession,out _))
             {
+                if (SkirmishExpandedPresentedOrders.TryReadPage(
+                        skirmishEm,
+                        skirmishSession,
+                        out _,
+                        out bool nextPage,
+                        out SkirmishPresentedSlot expanded0,
+                        out SkirmishPresentedSlot expanded1,
+                        out SkirmishPresentedSlot expanded2,
+                        out SkirmishPresentedSlot expanded3))
+                {
+                    UiMatchHudSquadTrayCardModel next = nextPage
+                        ? new UiMatchHudSquadTrayCardModel(true, "NEXT", "", 1f)
+                        : new UiMatchHudSquadTrayCardModel(false, "", "", 0f);
+                    squadTray = new UiMatchHudSquadTrayModel(
+                        selectedSlot,
+                        ExpandedCard(expanded0),
+                        ExpandedCard(expanded1),
+                        ExpandedCard(expanded2),
+                        ExpandedCard(expanded3),
+                        next);
+                    return true;
+                }
+
                 var counts=new int[5];var health=new int[5];var max=new int[5];
                 using var groups=entityManager.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth));
                 using var members=groups.ToEntityArray(Allocator.Temp);
@@ -429,6 +452,14 @@ namespace Game.UI.Shell.Ecs
                    left.SquadText.Equals(right.SquadText) &&
                    left.MaterialsText.Equals(right.MaterialsText) &&
                    left.CivilianRiskText.Equals(right.CivilianRiskText);
+        }
+
+        private static UiMatchHudSquadTrayCardModel ExpandedCard(in SkirmishPresentedSlot slot)
+        {
+            if (!slot.Occupied)
+                return new UiMatchHudSquadTrayCardModel(false, string.Empty, string.Empty, 0f);
+            string title = slot.Role.ToString().ToUpperInvariant() + " (" + slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
+            return new UiMatchHudSquadTrayCardModel(true, title, slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture), 1f);
         }
 
         }

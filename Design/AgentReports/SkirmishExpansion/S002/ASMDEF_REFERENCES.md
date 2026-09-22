@@ -15,6 +15,7 @@ These existing asmdefs now list `"Game.Skirmish.Contracts"` in `references`:
 | `Game.Composition` | `SkirmishExpandedLaunchProjection.cs` |
 | `Game.Editor` | `SkirmishSetupCompilerValidation.cs` |
 | `Game.Tests.Editor` | `SkirmishExpandedDefinitionTests.RunFocusedValidation` |
+| `Game.UI.Shell.Ecs` | expanded squad card reads `SkirmishPresentedSlot.Role` (`SkirmishRoleKind`) |
 
 Not referenced from Operations, `SaveDataModel`, `MatchSceneView`, or the
 localization catalog. `aebf974a` Industrial Basin landing is unchanged.

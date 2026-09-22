@@ -286,6 +286,9 @@ namespace Game.Components
         public float DestinationZ;
         public byte Active;
         public SkirmishGroupOrderKind Order;
+        public Entity AttackTarget;
+        public float Cooldown;
+        public byte Engaged;
     }
 
     public struct SkirmishObservedHealthComponent : IComponentData

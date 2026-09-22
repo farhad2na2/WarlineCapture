@@ -163,13 +163,13 @@ namespace Game.UI.Runtime
                 mask=restrictions.AvailableSquadMask;
             }
 
-            if (_restrictionStateInitialized && lastMissionSquadMask==mask &&
-                _lastCombatVehiclesDisabled == combatVehiclesDisabled &&
-                _lastAirDisabled == airDisabled &&
-                _lastTransportDisabled == transportDisabled &&
-                _lastHideUnrelatedControls == hideUnrelatedControls)
-                return;
-
+            bool restrictionsChanged = !_restrictionStateInitialized || lastMissionSquadMask != mask ||
+                _lastCombatVehiclesDisabled != combatVehiclesDisabled ||
+                _lastAirDisabled != airDisabled ||
+                _lastTransportDisabled != transportDisabled ||
+                _lastHideUnrelatedControls != hideUnrelatedControls;
+            if (restrictionsChanged)
+            {
             lastMissionSquadMask=mask;
             _restrictionStateInitialized = true;
             _lastCombatVehiclesDisabled = combatVehiclesDisabled;
@@ -183,6 +183,17 @@ namespace Game.UI.Runtime
             }
             else ApplyMissionRestrictionVisibility(
                 combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
+            }
+
+            if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel availability))
+            {
+                for (int i = 0; i < 5; i++)
+                {
+                    if (availability.GetCard(i).Visible || !TryGetCard(i, out Card hidden) || hidden.Button == null)
+                        continue;
+                    hidden.Button.interactable = false;
+                }
+            }
         }
 
         public void ApplyMissionRestrictionVisibility(
@@ -334,6 +345,7 @@ namespace Game.UI.Runtime
         private void OnCardClicked(int index)
         {
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
+            UiShellRuntimeGateway.TrySelectExpandedPresentedSlot(index);
             _cardClicked?.Invoke(ToSlot(index));
             if (_assistantGuidanceActive && index == 0)
             {

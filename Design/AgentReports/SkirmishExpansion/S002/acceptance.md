@@ -1,8 +1,11 @@
 # S002 acceptance scaffold (Regular Standard)
 
 Catalog identity **S002** (Desert Base · Base Assault · Ground Maneuver · Established Base).
-First visit remains Regular / Standard. Publication stays **InProgress**. This
-file is a fill-in scaffold, not a certified matrix.
+First visit remains Regular / Standard. The authored publication row may already
+be **Playable** from Game View evidence. That row does not certify this ARIA
+matrix, and this harness must not demote it. This file is a fill-in scaffold,
+not a certified matrix. `runs.csv` stays header-only until a live match appends
+a terminal row.
 
 Pure Editor reducer tests do **not** replace normal-speed matches. Do not force
 Victory, inject an army, skip gameplay, increase money, or call the victory
@@ -38,6 +41,71 @@ attempt after the match has actually finished. Do not pre-write Victory.
 
 Use `SkirmishAcceptanceScaffold.FormatPendingRow` only to reserve a blank
 result row. Never stamp `Victory` from a helper.
+
+### ARIA harness (Windows Skirmish shadow)
+
+Record the 18 ARIA slots from a live match. The cloud agent VM has no Unity.
+Work on `D:\Projects\WarlineCapture-Skirmish`, not the shared checkout. Keep
+Unity Hub open and signed in. Keep the Game View focused for the whole match:
+ARIA stops when the Editor is unfocused or `timeScale` is not 1.
+
+One cell at a time, from the open Editor:
+
+| Seed | Locale | Menu | `-executeMethod` |
+|---|---|---|---|
+| 104731 | en | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en` | `Game.Editor.SkirmishS002AriaRunHarness.Launch104731En` |
+| 104731 | fa-IR | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 fa-IR` | `Game.Editor.SkirmishS002AriaRunHarness.Launch104731Fa` |
+| 130365 | en | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 en` | `Game.Editor.SkirmishS002AriaRunHarness.Launch130365En` |
+| 130365 | fa-IR | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 fa-IR` | `Game.Editor.SkirmishS002AriaRunHarness.Launch130365Fa` |
+| 155923 | en | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 en` | `Game.Editor.SkirmishS002AriaRunHarness.Launch155923En` |
+| 155923 | fa-IR | `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 fa-IR` | `Game.Editor.SkirmishS002AriaRunHarness.Launch155923Fa` |
+
+`LaunchFromEnvironment` reads `WARLINE_S002_SEED` and `WARLINE_S002_LOCALE`.
+Each launch queues expanded S002 Regular Standard at `normal_speed=1`, starts
+ARIA through the shipping touch driver, and writes a live trace under
+`Design/AgentReports/SkirmishExpansion/S002/_Evidence/`. When the match
+finishes, or the 1500s wall clock aborts, it copies that trace to
+`s002-aria-rs-{seed}-{en|fa}-{n}.jsonl`, writes a sibling `-log.txt`, and
+appends the next open slot. It never pre-writes Victory. Draw, Defeat, and
+Abort stay in the file. Do not reuse a filled `run_id`. After three rows exist
+for a seed and locale, the harness logs an error and does not invent a fourth id.
+
+`Tools/CI/InvokeUnityExecuteMethodValidation.ps1` always passes `-quit`, so it
+returns when `Launch*` schedules Play Mode and will not wait for the terminal
+row. Use the menu, or call the executeMethod from the open Editor without
+`-quit`. The wrapper is for the focused Editor suite below.
+
+Census hashes on the row come from `SkirmishAcceptanceCensusCapture.TryCapture`
+plus `FormatLog` for the launched seed (the same hash functions as
+`Tools/Warline/Skirmish/Capture S002 Regular Standard Census`). The menu probe
+still logs seed `104731` only and still refuses a Playable in-memory row. The
+harness does not call `CaptureRegularStandard()` and does not change
+publication status.
+
+Focused proof that the log refuses a forced Victory and accepts only a
+finished match outcome (temp csv; the checked-in `runs.csv` stays one line):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/ResolveUnityEditor.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS002AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+The same suite also runs at the end of
+`Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation`.
+
+### Manual slot still empty
+
+`S002-manual-rs-104731-en` is a human win. Launch
+`Tools/Warline/Skirmish/Launch S002 Regular Standard Game View` (seed `104731`,
+locale `en`, normal speed), destroy the original enemy Barracks while the
+original player Barracks survives, and append that row by hand. The ARIA
+harness must not fill it. A Draw is not a win.
 
 ## Required first-visit matrix
 

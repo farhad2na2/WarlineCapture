@@ -10,6 +10,7 @@ namespace Game.Runtime
     public partial struct SkirmishBaseAssaultObjectiveSystem : ISystem
     {
         private EntityQuery designatedBases;
+        private EntityQuery sessions;
 
         public void OnCreate(ref SystemState state)
         {
@@ -18,50 +19,56 @@ namespace Game.Runtime
             designatedBases = state.GetEntityQuery(
                 ComponentType.ReadOnly<SkirmishObjectiveRoleComponent>(),
                 ComponentType.ReadOnly<UnitHealth>());
+            sessions = state.GetEntityQuery(
+                ComponentType.ReadWrite<SkirmishExpandedSessionComponent>(),
+                ComponentType.ReadWrite<SkirmishObjectiveStateComponent>(),
+                ComponentType.ReadOnly<SkirmishResolvedSetupComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session,
-                      RefRW<SkirmishObjectiveStateComponent> objective,
-                      RefRO<SkirmishResolvedSetupComponent> setup,
-                      Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>,
-                         RefRW<SkirmishObjectiveStateComponent>,
-                         RefRO<SkirmishResolvedSetupComponent>>().WithEntityAccess())
+            float matchElapsed = 0f;
+            bool surrender = false;
+            if (SystemAPI.TryGetSingleton(out SkirmishMatchState match))
             {
-                if (session.ValueRO.IsLegacy != 0 || session.ValueRO.Phase != SkirmishSessionPhase.Playing)
+                matchElapsed = match.ElapsedSeconds;
+                surrender = match.SurrenderRequested != 0;
+            }
+
+            // No SystemAPI.Query foreach in this update. ReadFacts copies other
+            // queries, and that is illegal while an idiomatic foreach is open.
+            using NativeArray<Entity> entities = sessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0 || session.Phase != SkirmishSessionPhase.Playing)
                     continue;
-                if (objective.ValueRO.Kind != SkirmishObjectiveKind.BaseAssault || objective.ValueRO.Terminal != 0)
+                SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(entity);
+                if (objective.Kind != SkirmishObjectiveKind.BaseAssault || objective.Terminal != 0)
                     continue;
 
-                float matchElapsed = 0f;
-                bool surrender = false;
-                if (SystemAPI.TryGetSingleton(out SkirmishMatchState match))
-                {
-                    matchElapsed = match.ElapsedSeconds;
-                    surrender = match.SurrenderRequested != 0;
-                }
-
+                SkirmishResolvedSetupComponent setup = em.GetComponentData<SkirmishResolvedSetupComponent>(entity);
                 SkirmishBaseAssaultFacts facts = ReadFacts(
                     em,
                     entity,
                     designatedBases,
-                    setup.ValueRO.DeadlineSeconds,
+                    setup.DeadlineSeconds,
                     matchElapsed,
                     surrender);
                 if (!TryEvaluate(in facts, out SkirmishOutcomeKind outcome, out SkirmishEndReasonKind reason))
                     continue;
 
-                objective.ValueRW.Outcome = outcome;
-                objective.ValueRW.Reason = reason;
-                objective.ValueRW.Terminal = 1;
-                objective.ValueRW.State = outcome == SkirmishOutcomeKind.Victory
+                objective.Outcome = outcome;
+                objective.Reason = reason;
+                objective.Terminal = 1;
+                objective.State = outcome == SkirmishOutcomeKind.Victory
                     ? SkirmishObjectiveStateKind.TerminalVictory
                     : outcome == SkirmishOutcomeKind.Defeat
                         ? SkirmishObjectiveStateKind.TerminalDefeat
                         : SkirmishObjectiveStateKind.TerminalDraw;
+                em.SetComponentData(entity, objective);
             }
         }
 

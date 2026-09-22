@@ -679,6 +679,8 @@ namespace Game.Tests.Editor
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, setup);
             SkirmishArmyGroupSystem.RefreshAlive(em, session, owned, sessionId);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
+            Assert.AreEqual(SkirmishPhase.Playing, em.GetComponentData<SkirmishMatchState>(session).Phase);
         }
 
         private static void PublishProjectedMatch(World world, Entity session)

@@ -7,6 +7,7 @@ namespace Game.Editor
     /// <summary>
     /// S003 menus and executeMethod entry points for the shared expanded ARIA watch.
     /// First visit is Regular Standard. English launchers are required; fa-IR uses the same driver.
+    /// Stuck-simulation abort uses <see cref="SkirmishExpandedAriaFailFast"/>.
     /// Appends a runs.csv row only after the match finishes or the harness aborts. Never stamps Victory.
     /// </summary>
     [InitializeOnLoad]

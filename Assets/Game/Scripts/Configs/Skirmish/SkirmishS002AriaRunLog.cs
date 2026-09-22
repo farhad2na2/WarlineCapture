@@ -26,8 +26,9 @@ namespace Game.Configs
     }
 
     /// <summary>
-    /// S002 runs.csv gate. Delegates to <see cref="SkirmishExpandedAriaRunLog"/> so S003 and S004
-    /// share the same finished-match and stall rules. A caller-supplied Victory is ignored unless
+    /// S002 runs.csv gate. Finished-match rows delegate to <see cref="SkirmishExpandedAriaRunLog"/>.
+    /// The stuck-simulation abort delegates to <see cref="SkirmishExpandedAriaFailFast"/>, the same
+    /// rule used by the S003, S004, and S005 watches. A caller-supplied Victory is ignored unless
     /// the finished match outcome is Victory.
     /// </summary>
     public static class SkirmishS002AriaRunLog
@@ -36,8 +37,8 @@ namespace Game.Configs
         public const string ResultDefeat = SkirmishExpandedAriaRunLog.ResultDefeat;
         public const string ResultDraw = SkirmishExpandedAriaRunLog.ResultDraw;
         public const string ResultAbort = SkirmishExpandedAriaRunLog.ResultAbort;
-        public const string AbortReasonSimulationNotAdvancing = SkirmishExpandedAriaRunLog.AbortReasonSimulationNotAdvancing;
-        public const double SimulationStallGraceSeconds = SkirmishExpandedAriaRunLog.SimulationStallGraceSeconds;
+        public const string AbortReasonSimulationNotAdvancing = SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing;
+        public const double SimulationStallGraceSeconds = SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds;
         public const string InvalidSeedError = "First-visit ARIA seed must be 104731, 130365 or 155923.";
 
         public static bool IsSimulationNotAdvancing(
@@ -47,7 +48,7 @@ namespace Game.Configs
             double wallSecondsSincePlaying,
             double graceSeconds = SimulationStallGraceSeconds)
         {
-            return SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+            return SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                 playing,
                 simulationActive,
                 matchElapsedSeconds,

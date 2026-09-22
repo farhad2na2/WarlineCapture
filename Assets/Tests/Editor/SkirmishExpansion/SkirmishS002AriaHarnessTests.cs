@@ -285,29 +285,7 @@ namespace Game.Tests.Editor
         [Test]
         public void SimulationStallFailsFastAfterGrace()
         {
-            Assert.IsFalse(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
-                playing: true,
-                simulationActive: false,
-                matchElapsedSeconds: 0f,
-                wallSecondsSincePlaying: 10d));
-            Assert.IsTrue(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
-                playing: true,
-                simulationActive: false,
-                matchElapsedSeconds: 0f,
-                wallSecondsSincePlaying: SkirmishS002AriaRunLog.SimulationStallGraceSeconds));
-            Assert.IsTrue(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
-                playing: true,
-                simulationActive: true,
-                matchElapsedSeconds: 0f,
-                wallSecondsSincePlaying: SkirmishS002AriaRunLog.SimulationStallGraceSeconds + 1d));
-            Assert.IsFalse(SkirmishS002AriaRunLog.IsSimulationNotAdvancing(
-                playing: true,
-                simulationActive: true,
-                matchElapsedSeconds: 0.5f,
-                wallSecondsSincePlaying: 120d));
-            Assert.AreEqual(
-                SkirmishS002AriaRunLog.AbortReasonSimulationNotAdvancing,
-                "simulationNotAdvancing");
+            SkirmishExpandedAriaHarnessChecks.AssertSimulationStallFailsFastAfterGrace();
         }
 
         [Test]

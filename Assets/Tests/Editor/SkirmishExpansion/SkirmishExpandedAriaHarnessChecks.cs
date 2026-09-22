@@ -15,7 +15,7 @@ namespace Game.Tests.Editor
 {
     /// <summary>
     /// Recorder checks shared by the S003, S004, and S005 harness suites.
-    /// They run without a live match and never write the checked-in runs.csv.
+    /// S002 uses the same stall assert. They run without a live match and never write the checked-in runs.csv.
     /// </summary>
     public static class SkirmishExpandedAriaHarnessChecks
     {
@@ -165,30 +165,67 @@ namespace Game.Tests.Editor
 
         public static void AssertSimulationStallFailsFastAfterGrace()
         {
-            Assert.AreEqual(45d, SkirmishExpandedAriaRunLog.SimulationStallGraceSeconds);
-            Assert.IsFalse(SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+            Assert.AreEqual(45d, SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds);
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds,
+                SkirmishExpandedAriaRunLog.SimulationStallGraceSeconds);
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds,
+                SkirmishS002AriaRunLog.SimulationStallGraceSeconds);
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing,
+                SkirmishExpandedAriaRunLog.AbortReasonSimulationNotAdvancing);
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing,
+                SkirmishS002AriaRunLog.AbortReasonSimulationNotAdvancing);
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                 playing: true,
                 simulationActive: false,
                 matchElapsedSeconds: 0f,
                 wallSecondsSincePlaying: 10d));
-            Assert.IsTrue(SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+            Assert.IsTrue(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                 playing: true,
                 simulationActive: false,
                 matchElapsedSeconds: 0f,
-                wallSecondsSincePlaying: SkirmishExpandedAriaRunLog.SimulationStallGraceSeconds));
-            Assert.IsTrue(SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+                wallSecondsSincePlaying: SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds));
+            Assert.IsTrue(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
+                playing: true,
+                simulationActive: false,
+                matchElapsedSeconds: 12f,
+                wallSecondsSincePlaying: SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds));
+            Assert.IsTrue(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                 playing: true,
                 simulationActive: true,
                 matchElapsedSeconds: 0f,
-                wallSecondsSincePlaying: SkirmishExpandedAriaRunLog.SimulationStallGraceSeconds + 1d));
-            Assert.IsFalse(SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+                wallSecondsSincePlaying: SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds + 1d));
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                 playing: true,
                 simulationActive: true,
                 matchElapsedSeconds: 0.5f,
                 wallSecondsSincePlaying: 120d));
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
+                playing: false,
+                simulationActive: false,
+                matchElapsedSeconds: 0f,
+                wallSecondsSincePlaying: 120d));
             Assert.AreEqual(
-                SkirmishExpandedAriaRunLog.AbortReasonSimulationNotAdvancing,
+                SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(true, false, 0f, 45d),
+                SkirmishS002AriaRunLog.IsSimulationNotAdvancing(true, false, 0f, 45d));
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(true, false, 0f, 45d),
+                SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(true, false, 0f, 45d));
+            Assert.AreEqual(
+                SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing,
                 "simulationNotAdvancing");
+            Assert.AreEqual(0d, SkirmishExpandedAriaFailFast.WallSecondsSincePlaying(100d, 0d));
+            Assert.AreEqual(0d, SkirmishExpandedAriaFailFast.WallSecondsSincePlaying(100d, -1d));
+            Assert.AreEqual(45d, SkirmishExpandedAriaFailFast.WallSecondsSincePlaying(100d, 55d));
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationActive(0, 1));
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationActive(2, 1));
+            Assert.IsFalse(SkirmishExpandedAriaFailFast.IsSimulationActive(1, 0));
+            Assert.IsTrue(SkirmishExpandedAriaFailFast.IsSimulationActive(1, 1));
+            Assert.AreEqual(37.5f, SkirmishExpandedAriaFailFast.ReadMatchElapsedSeconds(true, 37.5f, 0f));
+            Assert.AreEqual(4f, SkirmishExpandedAriaFailFast.ReadMatchElapsedSeconds(false, 37.5f, 4f));
         }
 
         public static void AssertExpandedObjectiveClockProjectsOntoMatchElapsed(string catalogId)

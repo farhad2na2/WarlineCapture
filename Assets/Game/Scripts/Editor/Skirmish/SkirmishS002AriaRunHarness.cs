@@ -6,6 +6,7 @@ namespace Game.Editor
 {
     /// <summary>
     /// S002 menus and executeMethod entry points for the shared expanded ARIA watch.
+    /// Stuck-simulation abort uses <see cref="SkirmishExpandedAriaFailFast"/>.
     /// Appends a runs.csv row only after the match finishes or the harness aborts. Never stamps Victory.
     /// </summary>
     [InitializeOnLoad]

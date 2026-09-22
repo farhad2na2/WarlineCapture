@@ -188,17 +188,21 @@ namespace Game.Composition
         public static bool IsSimulationActive(EntityManager em)
         {
             using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
-            if (gameplay.CalculateEntityCount() != 1)
-                return false;
-            return em.GetComponentData<RuntimeGameplayStateComponent>(gameplay.GetSingletonEntity()).SimulationActive != 0;
+            int count = gameplay.CalculateEntityCount();
+            if (count != 1)
+                return SkirmishExpandedAriaFailFast.IsSimulationActive(count, 0);
+            byte active = em.GetComponentData<RuntimeGameplayStateComponent>(gameplay.GetSingletonEntity()).SimulationActive;
+            return SkirmishExpandedAriaFailFast.IsSimulationActive(count, active);
         }
 
         public static float ReadMatchElapsedSeconds(EntityManager em, Entity session, in SkirmishMatchState match)
         {
-            if (session != Entity.Null &&
-                em.HasComponent<SkirmishObjectiveClockComponent>(session))
-                return em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
-            return match.ElapsedSeconds;
+            bool hasClock = session != Entity.Null &&
+                em.HasComponent<SkirmishObjectiveClockComponent>(session);
+            float clockElapsed = hasClock
+                ? em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds
+                : 0f;
+            return SkirmishExpandedAriaFailFast.ReadMatchElapsedSeconds(hasClock, clockElapsed, match.ElapsedSeconds);
         }
 
         public static bool TryActivateStressSimulation(EntityManager em)

@@ -49,8 +49,8 @@ namespace Game.Editor
     /// <summary>
     /// Launches expanded Regular Standard and starts ARIA through the shipping touch driver.
     /// Appends a runs.csv row only after the match finishes or the harness aborts. Never stamps Victory.
-    /// After Playing, aborts with simulationNotAdvancing within about 45s when simulation is inactive
-    /// or match elapsed stays at 0.
+    /// After Playing, <see cref="SkirmishExpandedAriaFailFast"/> aborts with simulationNotAdvancing
+    /// within about 45s when simulation is inactive or match elapsed stays at 0.
     /// </summary>
     public sealed class SkirmishExpandedAriaWatchDriver
     {
@@ -241,10 +241,13 @@ namespace Game.Editor
                     // Wait for SimulationActive so ARIA is not started against a frozen clock.
                     if (!simulationActive)
                     {
-                        if (SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
-                                true, false, elapsed, now - playingSince))
+                        if (SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
+                                true,
+                                false,
+                                elapsed,
+                                SkirmishExpandedAriaFailFast.WallSecondsSincePlaying(now, playingSince)))
                         {
-                            Finish(abort: true, abortReason: SkirmishExpandedAriaRunLog.AbortReasonSimulationNotAdvancing);
+                            Finish(abort: true, abortReason: SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing);
                             return;
                         }
 
@@ -261,13 +264,13 @@ namespace Game.Editor
                 }
 
                 if (playingSince > 0d &&
-                    SkirmishExpandedAriaRunLog.IsSimulationNotAdvancing(
+                    SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
                         match.Phase == SkirmishPhase.Playing,
                         simulationActive,
                         elapsed,
-                        now - playingSince))
+                        SkirmishExpandedAriaFailFast.WallSecondsSincePlaying(now, playingSince)))
                 {
-                    Finish(abort: true, abortReason: SkirmishExpandedAriaRunLog.AbortReasonSimulationNotAdvancing);
+                    Finish(abort: true, abortReason: SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing);
                     return;
                 }
 

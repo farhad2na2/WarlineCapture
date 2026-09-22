@@ -39,13 +39,11 @@ namespace Game.Configs
         public const string ResultDefeat = "Defeat";
         public const string ResultDraw = "Draw";
         public const string ResultAbort = "Abort";
-        public const string AbortReasonSimulationNotAdvancing = "simulationNotAdvancing";
-        public const double SimulationStallGraceSeconds = 45d;
+        public const string AbortReasonSimulationNotAdvancing = SkirmishExpandedAriaFailFast.AbortReasonSimulationNotAdvancing;
+        public const double SimulationStallGraceSeconds = SkirmishExpandedAriaFailFast.SimulationStallGraceSeconds;
 
         /// <summary>
-        /// After Playing, match elapsed must leave 0 once simulation is armed.
-        /// A stuck-zero clock for the grace window means the watch should abort
-        /// instead of burning the full wall-clock budget.
+        /// Stall rule for the expanded watches. The decision lives on <see cref="SkirmishExpandedAriaFailFast"/>.
         /// </summary>
         public static bool IsSimulationNotAdvancing(
             bool playing,
@@ -54,11 +52,12 @@ namespace Game.Configs
             double wallSecondsSincePlaying,
             double graceSeconds = SimulationStallGraceSeconds)
         {
-            if (!playing || wallSecondsSincePlaying < graceSeconds)
-                return false;
-            if (!simulationActive)
-                return true;
-            return matchElapsedSeconds <= 0f;
+            return SkirmishExpandedAriaFailFast.IsSimulationNotAdvancing(
+                playing,
+                simulationActive,
+                matchElapsedSeconds,
+                wallSecondsSincePlaying,
+                graceSeconds);
         }
 
         public static bool TryNextAriaRunId(

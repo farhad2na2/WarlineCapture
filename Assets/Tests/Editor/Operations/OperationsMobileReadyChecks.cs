@@ -649,6 +649,12 @@ namespace Game.Tests.Editor.Operations
             Require(!world.Contains("Sprites/Default"), "no_builtin_sprite_shader");
             Require(presentation.Contains("OperationsTacticalWorldShell"), "presenter_uses_world");
             Require(presentation.Contains("PhonePanelRect"), "phone_mock");
+            Require(presentation.Contains("_world?.Sync"), "active_syncs_world");
+            int active = presentation.IndexOf("void DrawActiveChrome", StringComparison.Ordinal);
+            int fat = presentation.IndexOf("void DrawFatThumbBar", StringComparison.Ordinal);
+            Require(active >= 0 && fat > active, "active_chrome");
+            string activeBody = presentation.Substring(active, fat - active);
+            Require(!activeBody.Contains("new Rect(0, 0, Screen.width, Screen.height)"), "active_not_void");
             Require(presentation.Contains("ShowDebugChrome = false") || presentation.Contains("ShowDebugChrome=false"), "debug_off");
             Require(!presentation.Contains("Ops-owned win screen (Watch shared-UI seam not opened)"), "no_dev_footer");
         }
@@ -659,8 +665,16 @@ namespace Game.Tests.Editor.Operations
             Require(presentation.Contains("DrawVictoryCard"), "victory_card");
             Require(presentation.Contains("reward_credits"), "credits");
             Require(presentation.Contains("result.victory"), "localized_victory");
+            Require(presentation.Contains("operations.result.continue"), "continue_on_result");
             Require(!presentation.Contains("intents="), "no_intent_chrome");
             Require(!presentation.Contains("result_hash="), "no_hash_chrome");
+            int victory = presentation.IndexOf("public void ShowVictory", StringComparison.Ordinal);
+            int log = presentation.IndexOf("void LogVictoryDebug", StringComparison.Ordinal);
+            Require(victory >= 0 && log > victory, "show_victory");
+            string victoryBody = presentation.Substring(victory, log - victory);
+            Require(victoryBody.Contains("ShowMissionResult"), "result_card_path");
+            Require(!victoryBody.Contains("reward_credits"), "no_credits_only_panel");
+            Require(!victoryBody.Contains("operations.hud.in_progress"), "victory_not_in_progress");
         }
 
         public static void CaptureHarnessStillWired()

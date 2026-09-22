@@ -569,12 +569,12 @@ it only keeps a missing barracks from counting as destroyed. A barracks at
 0 HP is dead. An unspawned base stays alive so the match does not Draw before
 roster projection.
 
-The outcome writer now sets the session phase during iteration and adds the
-result component only after the query ends, then projects `match.Phase` /
-`match.Outcome`. Fact projection likewise adds `SkirmishBaseAssaultFactComponent`
-outside its clock query, heals a 0 deadline from the resolved setup, and
-publishes the terminal objective the evaluator already computed. A passed
-deadline is Draw / TimeLimit, not a counted win.
+An idiomatic `foreach (SystemAPI.Query)` keeps structural changes illegal for
+the rest of that `OnUpdate`, so `AddComponent` after the loop still threw.
+Fact projection, the outcome writer, and session control now copy entities
+with `ToEntityArray` and only then add components. Spawn also projects
+`SkirmishMatchState.Phase` to Playing when the expanded session enters Playing.
+A passed deadline is Draw / TimeLimit, not a counted win.
 
 Causes, checked in the expanded Base Assault path:
 

@@ -8,37 +8,47 @@ namespace Game.Runtime
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     public partial struct SkirmishOutcomeSystem : ISystem
     {
+        private EntityQuery terminalSessions;
+
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
+            terminalSessions = state.GetEntityQuery(
+                ComponentType.ReadWrite<SkirmishExpandedSessionComponent>(),
+                ComponentType.ReadOnly<SkirmishObjectiveStateComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
             // Expanded sessions return from SkirmishRulesSystem before it can set
-            // SkirmishPhase.Finished. This writer is the match-phase publisher.
-            // AddComponent inside the query throws, so the result component is
-            // created only after iteration. Phase and match are written first.
+            // SkirmishPhase.Finished. Copy the sessions first. An idiomatic foreach
+            // keeps structural changes illegal for the whole OnUpdate, so
+            // AddComponent after that foreach still threw in the harness.
+            using NativeArray<Entity> sessions = terminalSessions.ToEntityArray(Allocator.Temp);
             var pending = new NativeList<Entity>(Allocator.Temp);
-            foreach ((RefRW<SkirmishExpandedSessionComponent> sessionRef,
-                      RefRO<SkirmishObjectiveStateComponent> objective,
-                      Entity entity) in
-                     SystemAPI.Query<RefRW<SkirmishExpandedSessionComponent>,
-                         RefRO<SkirmishObjectiveStateComponent>>().WithEntityAccess())
+            for (int i = 0; i < sessions.Length; i++)
             {
-                if (sessionRef.ValueRO.IsLegacy != 0 || objective.ValueRO.Terminal == 0)
+                Entity entity = sessions[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(entity);
+                if (session.IsLegacy != 0 || objective.Terminal == 0)
                     continue;
                 if (em.HasComponent<SkirmishResultComponent>(entity) &&
                     em.GetComponentData<SkirmishResultComponent>(entity).Frozen != 0)
                 {
-                    if (sessionRef.ValueRO.Phase != SkirmishSessionPhase.Finished)
-                        sessionRef.ValueRW.Phase = SkirmishSessionPhase.Finished;
+                    if (session.Phase != SkirmishSessionPhase.Finished)
+                    {
+                        session.Phase = SkirmishSessionPhase.Finished;
+                        em.SetComponentData(entity, session);
+                    }
+
                     SkirmishExpandedSessionControlService.ProjectTerminalMatch(em, entity);
                     continue;
                 }
 
-                sessionRef.ValueRW.Phase = SkirmishSessionPhase.Finished;
+                session.Phase = SkirmishSessionPhase.Finished;
+                em.SetComponentData(entity, session);
                 pending.Add(entity);
             }
 

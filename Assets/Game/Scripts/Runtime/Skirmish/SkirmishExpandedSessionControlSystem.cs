@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -8,9 +9,12 @@ namespace Game.Runtime
     [UpdateAfter(typeof(SkirmishResultSettlementSystem))]
     public partial struct SkirmishExpandedSessionControlSystem : ISystem
     {
+        private EntityQuery sessions;
+
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
+            sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
@@ -19,10 +23,12 @@ namespace Game.Runtime
             bool gameplayPaused = SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
                                   gameplay.SimulationActive == 0;
             float dt = SystemAPI.Time.DeltaTime;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using NativeArray<Entity> entities = sessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (session.ValueRO.IsLegacy != 0)
+                Entity entity = entities[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0)
                     continue;
                 bool paused = gameplayPaused;
                 if (em.HasComponent<SkirmishExpandedPauseRequest>(entity))

@@ -84,6 +84,13 @@ namespace Game.Operations.Loop
         public string MissionId => _store.Committed.MissionId;
         /// <summary>Committed city-profile revision. Starts at 0; -1 is not a profile revision.</summary>
         public int ProfileRevision => _strategic.Revision;
+
+        /// <summary>
+        /// Revision written onto the active campaign run by the last accepted save.
+        /// -1 means the run is absent, which is not a successful settlement stamp.
+        /// </summary>
+        public int CampaignRunRevision =>
+            _strategic.HasActiveRun ? _strategic.Save.activeRun.revision : -1;
         public string MapId => _store.Committed.MapId;
         public string OfferId => _store.Committed.OfferId;
         public string RunId => _store.Committed.RunId;
@@ -739,6 +746,12 @@ namespace Game.Operations.Loop
         public OperationsOutcomeKind MissionOutcome => HasMission ? _mission.Outcome : OperationsOutcomeKind.None;
 
         /// <summary>
+        /// Play HUD may read IN PROGRESS only while the mission is still live.
+        /// The tick that latches Victory or Defeat leaves this in that same step.
+        /// </summary>
+        public bool PlayHudInProgress => HasMission && !_mission.IsTerminal;
+
+        /// <summary>
         /// Conclude affordance for Partial teach UX. True only when the tactical
         /// partial predicate is satisfied and the mission is still live.
         /// </summary>
@@ -908,8 +921,6 @@ namespace Game.Operations.Loop
                 OperationsCompiledNode node = _definition.Nodes[index];
                 if (!_mission.TryGetNode(node.NodeId, out OperationsTacticalNodeState state))
                     continue;
-                if (OmitPairedClinicRow(node, state))
-                    continue;
                 int progress = state.ProgressCount > 0 ? state.ProgressCount : state.ProgressTicks;
                 if (state.TargetCount > 1)
                     progress = OperationsObjectiveChrome.ClampProgress(state.ProgressCount, state.TargetCount);
@@ -970,46 +981,6 @@ namespace Game.Operations.Loop
                 focus,
                 _mission.IsPaused);
             return true;
-        }
-
-        /// <summary>
-        /// A Hold and a Protect on the same site are one clinic objective.
-        /// While the site is intact the Hold row is the player objective.
-        /// When Protect fails, that failure replaces the Hold row.
-        /// </summary>
-        bool OmitPairedClinicRow(OperationsCompiledNode node, OperationsTacticalNodeState state)
-        {
-            if (_definition == null)
-                return false;
-            if (node.Rule == OperationsObjectiveRuleKind.Protect &&
-                state.Phase != OperationsTacticalNodePhase.Failed)
-            {
-                for (int index = 0; index < _definition.Nodes.Length; index++)
-                {
-                    OperationsCompiledNode other = _definition.Nodes[index];
-                    if (other.Rule != OperationsObjectiveRuleKind.Hold)
-                        continue;
-                    if (OperationsTacticalSession.ProtectSharesHoldSite(_definition, node, other))
-                        return true;
-                }
-            }
-
-            if (node.Rule == OperationsObjectiveRuleKind.Hold)
-            {
-                for (int index = 0; index < _definition.Nodes.Length; index++)
-                {
-                    OperationsCompiledNode other = _definition.Nodes[index];
-                    if (other.Rule != OperationsObjectiveRuleKind.Protect)
-                        continue;
-                    if (!OperationsTacticalSession.ProtectSharesHoldSite(_definition, other, node))
-                        continue;
-                    if (_mission.TryGetNode(other.NodeId, out OperationsTacticalNodeState protect) &&
-                        protect.Phase == OperationsTacticalNodePhase.Failed)
-                        return true;
-                }
-            }
-
-            return false;
         }
 
         string FirstPublicFocus(OperationsCompiledNode node, OperationsTacticalNodeState _)

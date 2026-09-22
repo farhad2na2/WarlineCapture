@@ -122,10 +122,26 @@ namespace Game.Operations.Capture
             MissionId = missionId ?? string.Empty;
             Language = string.IsNullOrEmpty(language) ? "en" : language;
             Seed = seed;
-            // Settlement already committed: keep the result card instead of falling back to In Progress.
-            if (loop != null && !loop.HasMission && loop.TryCommittedResult(out _))
+            // A decided outcome is not an in-progress frame. The result card is the
+            // settled district (Trust / Intel / Heat), shown once that revision is written.
+            if (loop != null && !loop.PlayHudInProgress)
             {
-                ShowMissionResult(loop);
+                bool settled = loop.Phase == OperationsLoopPhase.Settled ||
+                               loop.Phase == OperationsLoopPhase.Dashboard;
+                if (settled && loop.TryCommittedResult(out _))
+                {
+                    ShowMissionResult(loop);
+                    return;
+                }
+
+                VictoryMode = loop.MissionOutcome == OperationsOutcomeKind.Victory;
+                ShowDebugChrome = false;
+                ResultDeltasBound = false;
+                ContinueLabel = string.Empty;
+                PhaseLabel = "Terminal";
+                OutcomeLabel = VictoryMode
+                    ? ResolveCopy("operations.hud.victory", Language, "VICTORY")
+                    : loop.MissionOutcome.ToString().ToUpperInvariant();
                 return;
             }
 
@@ -619,12 +635,17 @@ namespace Game.Operations.Capture
                 OperationsHudObjective row = required[index];
                 string nodeId = row.NodeId ?? string.Empty;
                 string label = ResolveObjectiveLabel(nodeId, language, missionSlug);
+                bool protect = loop.TryNode(nodeId, out OperationsTacticalNodeState listed) &&
+                               listed.Rule == OperationsObjectiveRuleKind.Protect;
                 string status = row.Complete
-                    ? ResolveCopy("operations.hud.done", language, "done")
+                    ? ResolveCopy(protect ? "operations.hud.held" : "operations.hud.done", language, protect ? "Held" : "done")
                     : row.Failed
                         ? ResolveCopy("operations.hud.failed", language, "failed")
                         : row.Active
-                            ? ResolveCopy("operations.hud.active", language, "active")
+                            ? ResolveCopy(
+                                protect ? "operations.hud.surviving" : "operations.hud.active",
+                                language,
+                                protect ? "surviving" : "active")
                             : ResolveCopy("operations.hud.locked", language, "locked");
 
                 string progress = string.Empty;

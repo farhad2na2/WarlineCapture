@@ -152,7 +152,7 @@ namespace Game.Tests.Editor.Operations
             Require(OperationsLocalizedCopy.Require(ui.ContinueKey, "en") == "Continue");
             // Victory path: Practice CTA not required (fail/result surface is separate).
             Require(!ui.PracticeAvailable);
-            Require(loop.ProfileRevision != -1, "profile_revision");
+            Require(loop.ProfileRevision >= 0, "profile_revision");
 
             int trust = ui.Deltas[0].Delta;
             int intel = ui.Deltas[1].Delta;
@@ -371,7 +371,7 @@ namespace Game.Tests.Editor.Operations
             Require(presentation.Contains("FormatProgress"), "presenter_caps_progress");
         }
 
-        public static void ClinicProtectAndHoldAreNotBothActive()
+        public static void ProtectChecklistLatchesWithOutcome()
         {
             OperationsLoopSession loop = Reach("operation.o002", 2110);
             OperationsMapGreybox map = OperationsMapGreyboxCatalog.OldQuarter;
@@ -386,22 +386,60 @@ namespace Game.Tests.Editor.Operations
             Require(NodeComplete(loop, "scan_junction"));
             loop.Advance(1);
 
+            // While the run is live, Protect may show as surviving. It is not an incomplete gate.
+            Require(loop.PlayHudInProgress, "still_live");
             Require(loop.TryReadHud(out OperationsHudFrame hud));
             Require(HudContains(hud, "hold_clinic"), "hold_listed");
-            Require(!HudContains(hud, "protect_clinic"), "protect_not_duplicated");
+            Require(HudContains(hud, "protect_clinic"), "protect_listed");
+            Require(HudActive(hud, "protect_clinic"), "protect_ongoing");
             Require(!HudActive(hud, "hold_clinic"), "hold_not_active_yet");
             Require(loop.TryNode("protect_clinic", out OperationsTacticalNodeState protect));
             Require(protect.Phase == OperationsTacticalNodePhase.Active, "protect_still_watching");
             Require(loop.TryNode("escort_trucks", out OperationsTacticalNodeState escort));
             Require(escort.ProgressCount <= escort.TargetCount, "escort_count");
 
+            OperationsLoopSession won = Reach("operation.o002", 2112);
+            Require(OperationsAriaInputSkills.TryPlayUnassistedWin(won));
+            Require(won.MissionOutcome == OperationsOutcomeKind.Victory, "protect_victory");
+            Require(!won.PlayHudInProgress, "hud_not_in_progress");
+            Require(won.TryMissionTick(out int tick), "victory_tick");
+            won.Advance(1);
+            Require(won.TryMissionTick(out int heldTick) && heldTick == tick, "no_extra_advance");
+            Require(won.TryReadHud(out OperationsHudFrame victoryHud));
+            Require(HudContains(victoryHud, "protect_clinic"), "protect_held_listed");
+            Require(!HudActive(victoryHud, "protect_clinic"), "protect_not_active");
+            Require(HudComplete(victoryHud, "protect_clinic"), "protect_done");
+            Require(won.TryNode("protect_clinic", out OperationsTacticalNodeState held));
+            Require(held.Phase == OperationsTacticalNodePhase.Complete, "protect_phase_held");
+
             OperationsLoopSession doomed = Reach("operation.o002", 2111);
             Require(doomed.DestroySite("site.d01.clinic").Accepted);
-            for (int step = 0; step < 5 && !doomed.MissionTerminal; step++)
+            for (int step = 0; step < 5 && doomed.PlayHudInProgress; step++)
                 doomed.Advance(1);
             Require(doomed.MissionOutcome == OperationsOutcomeKind.Defeat, "protect_fail");
+            Require(doomed.MissionOutcome != OperationsOutcomeKind.Victory, "protect_not_victory");
+            Require(doomed.MissionOutcome != OperationsOutcomeKind.Partial, "protect_not_partial");
+            Require(!doomed.PlayHudInProgress, "defeat_not_in_progress");
             Require(doomed.TryNode("protect_clinic", out OperationsTacticalNodeState failed));
             Require(failed.Phase == OperationsTacticalNodePhase.Failed, "protect_failed_phase");
+            Require(doomed.TryReadHud(out OperationsHudFrame defeatHud));
+            Require(!HudActive(defeatHud, "protect_clinic"), "protect_left_active");
+            Require(HudFailed(defeatHud, "protect_clinic"), "protect_failed_row");
+
+            string presentation = ReadPresentationSource();
+            Require(presentation.Contains("PlayHudInProgress"), "presenter_leaves_in_progress");
+            Require(presentation.Contains("operations.hud.held"), "protect_held_copy");
+            Require(presentation.Contains("operations.hud.surviving"), "protect_surviving_copy");
+            string capture = File.ReadAllText(Path.Combine(
+                FindRepoRoot(),
+                "Assets",
+                "Tests",
+                "Editor",
+                "Operations",
+                "OperationsAriaPlayModeCapture.cs"));
+            Require(capture.Contains("PlayHudInProgress"), "capture_same_latch");
+            Require(capture.Contains("ShowMissionResult"), "capture_result_card");
+            Require(capture.Contains("MayStampVictoryEvidence"), "capture_revision_guard");
         }
 
         static bool HudContains(OperationsHudFrame hud, string nodeId)
@@ -421,6 +459,28 @@ namespace Game.Tests.Editor.Operations
             {
                 if (hud.Required[index].NodeId == nodeId)
                     return hud.Required[index].Active;
+            }
+
+            return false;
+        }
+
+        static bool HudComplete(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Complete;
+            }
+
+            return false;
+        }
+
+        static bool HudFailed(OperationsHudFrame hud, string nodeId)
+        {
+            for (int index = 0; index < hud.Required.Length; index++)
+            {
+                if (hud.Required[index].NodeId == nodeId)
+                    return hud.Required[index].Failed;
             }
 
             return false;
@@ -488,7 +548,7 @@ namespace Game.Tests.Editor.Operations
             ContentFramesBoundIntoLandedShell();
             MobileReadyEvidenceCaptureWired();
             EscortChromeNeverExceedsRequired();
-            ClinicProtectAndHoldAreNotBothActive();
+            ProtectChecklistLatchesWithOutcome();
         }
 
         public static void DeadlinesAndPartialsPreserved()

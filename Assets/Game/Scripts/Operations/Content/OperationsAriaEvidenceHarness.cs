@@ -47,6 +47,7 @@ namespace Game.Operations.Content
         /// <summary>
         /// City-profile revision written by a successful settlement.
         /// The profile starts at 0, so 0 is a real revision. -1 means unset.
+        /// A Victory record requires this value to be ≥ 0 and equal to the save revision.
         /// </summary>
         public int SettledRevision = -1;
         public int[] BeforeDistrict = Array.Empty<int>();
@@ -178,6 +179,35 @@ namespace Game.Operations.Content
         public static string ResultFileName(string language) =>
             "result." + (string.IsNullOrEmpty(language) ? "en" : language) + ".json";
 
+        /// <summary>
+        /// Victory evidence is legal only after an accepted settlement whose revision
+        /// is ≥ 0 and matches both the city profile and the campaign run save.
+        /// A failed settle, or revision -1, must not stamp Victory.
+        /// </summary>
+        public static bool MayStampVictoryEvidence(
+            bool settlementAccepted,
+            int settledRevision,
+            int profileRevision,
+            int campaignRunRevision)
+        {
+            if (!settlementAccepted || settledRevision < 0)
+                return false;
+            return settledRevision == profileRevision && settledRevision == campaignRunRevision;
+        }
+
+        public static bool DistrictsMatch(int[] left, int[] right)
+        {
+            if (left == null || right == null || left.Length != right.Length || left.Length == 0)
+                return false;
+            for (int index = 0; index < left.Length; index++)
+            {
+                if (left[index] != right[index])
+                    return false;
+            }
+
+            return true;
+        }
+
         public static bool TryRunMission(
             string missionId,
             int seed,
@@ -241,7 +271,6 @@ namespace Game.Operations.Content
             }
 
             int districtNumber = DistrictNumber(offer.districtId);
-            int[] before = SnapshotDistrict(loop, districtNumber);
             if (!loop.OpenDistrict(districtNumber).Accepted || !loop.OpenBriefing(offer.offerId).Accepted)
             {
                 failure = "briefing";
@@ -260,6 +289,9 @@ namespace Game.Operations.Content
                 failure = "launch";
                 return false;
             }
+
+            // District the settlement revision will diff. Deploy does not apply the outcome delta.
+            int[] before = SnapshotDistrict(loop, districtNumber);
 
             if (!loop.BeginActive(true, true, true, loop.ContentHash).Accepted || !loop.CompleteActive().Accepted)
             {
@@ -284,20 +316,35 @@ namespace Game.Operations.Content
             OperationsCommandResult settled = begun.Accepted
                 ? loop.CompleteSettlement(settleId)
                 : begun;
-            if (!begun.Accepted || !settled.Accepted)
+            if (!begun.Accepted || !settled.Accepted ||
+                !MayStampVictoryEvidence(
+                    settled.Accepted,
+                    settled.NewRevision,
+                    loop.ProfileRevision,
+                    loop.CampaignRunRevision))
             {
-                failure = "settlement";
+                failure = begun.Accepted && settled.Accepted ? "settlement_revision" : "settlement";
                 return false;
             }
 
+            int[] after = SnapshotDistrict(loop, districtNumber);
             if (!loop.BeginReturn().Accepted || !loop.CompleteReturn().Accepted)
             {
                 failure = "return";
                 return false;
             }
 
-            int[] after = SnapshotDistrict(loop, districtNumber);
-            bool victory = won && loop.MissionVictory(missionId);
+            int[] afterReturn = SnapshotDistrict(loop, districtNumber);
+            if (!loop.TryReadResult(out OperationsResultFrame settledFrame) ||
+                !DistrictsMatch(before, settledFrame.Before) ||
+                !DistrictsMatch(after, settledFrame.After) ||
+                !DistrictsMatch(after, afterReturn))
+            {
+                failure = "district_delta";
+                return false;
+            }
+
+            bool victory = won && loop.MissionVictory(missionId) && settled.NewRevision >= 0;
             string terminalReason = string.Empty;
             string terminalOutcome = loop.MissionOutcome.ToString();
             int civilianDeaths = 0;

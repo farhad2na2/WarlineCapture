@@ -15,6 +15,7 @@ namespace Game.Operations.Contracts
     public static class OperationsAssemblyManifest
     {
         public const string ContractsAssemblyName = "Game.Operations.Contracts";
+        public const string StrategicAssemblyName = "Game.Operations.Strategic";
         public const string TestsAssemblyName = "Game.Operations.Tests.Editor";
 
         public static readonly string[] ForbiddenExistingAsmdefEdits =

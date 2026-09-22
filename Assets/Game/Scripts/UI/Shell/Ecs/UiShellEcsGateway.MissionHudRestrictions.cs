@@ -10,6 +10,18 @@ namespace Game.UI.Shell.Ecs
         public bool TryReadMissionHudRestrictions(out UiMissionHudRestrictionsModel restrictions)
         {
             restrictions = UiMissionHudRestrictionsModel.Inactive;
+            var operationsWorld = World.DefaultGameObjectInjectionWorld;
+            if (operationsWorld != null && operationsWorld.IsCreated)
+            {
+                using var operations = operationsWorld.EntityManager.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                if (operations.CalculateEntityCount() == 1)
+                {
+                    var mission = operations.GetSingleton<OperationsReconMissionComponent>();
+                    restrictions = new UiMissionHudRestrictionsModel("operation.o001", true, true, true, true, true,
+                        mission.Phase != OperationsReconPhase.Playing);
+                    return true;
+                }
+            }
             if(TrySkirmish(out var skirmishEm,out _,out var skirmish))
             {
                 int mask=0;

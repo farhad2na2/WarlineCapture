@@ -131,13 +131,18 @@ public sealed class OperationsProfilePersistenceTests
     [Test]
     public void StrategicDeploy_PersistsReservationAndChargesOnceAcrossServiceRestart()
     {
+        // JsonUtility may materialize a null nested run as an empty run object.
+        // A normal first-launch profile must still be eligible for new-run creation.
+        service.SaveProfile(service.LoadProfile());
         var commands = new OperationsProfileCommandService(service);
+        Assert.That(OperationsSaveMigration.HasActiveRun(commands.Read()), Is.False);
         var create = new OperationsCommand("cmd.operations.aabb0001", 0,
             OperationsCommandKind.NewRun, "", "", "");
         Assert.That(commands.TryNewRun(create, 1102, OperationsDifficultyKind.Regular,
             out var created, out var error), Is.True, error);
         Assert.That(created.Accepted, Is.True, created.ReasonCode.ToString());
         var before = commands.Read();
+        Assert.That(OperationsSaveMigration.HasActiveRun(before), Is.True);
         var offer = Array.Find(before.activeRun.offers, item => item.missionId == "operation.o001");
         Assert.That(offer, Is.Not.Null);
         var deploy = new OperationsCommand("cmd.operations.aabb0002", before.profileRevision,

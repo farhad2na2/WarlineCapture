@@ -2,7 +2,7 @@
 
 Date: 2026-09-22. Status: **Implementation in progress; O001 remains not player-ready.**
 
-First implementation checkpoint: shared Operations identity validation, disk-backed profile transactions, strategic-command persistence, and an ECS recon rule system reading actual unit health/positions. Sixty focused EditMode tests pass. This is supporting code, not a normal-route playable mission: deployment/UI, authored map/forces, reinforcement arrivals, checkpoint restoration, settlement/return integration and player acceptance are still open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
+Current checkpoint: disk-backed profile transactions and shared ECS recon rules are implemented; the normal Operations menu now deploys the authored 16-versus-20 finite-force candidate into the shared city world. A button-event smoke verifies real simulation progress and opening-squad visibility. Full outcome/replay validation, active-world checkpoint restoration, tactical review, localization/ARIA acceptance and player/device gates remain open. See [implementation evidence](../../AgentReports/Operations/O001_IMPLEMENTATION_PROGRESS_20260922.md).
 
 Owner: Operations integration lead. Contributors: gameplay, UI/ARIA, environment, persistence and QA owners. Scope: **operation.o001 — Street Signals**, using the same shared RTS simulation, input, presentation and save boundaries as Campaign and Skirmish.
 
@@ -164,11 +164,11 @@ Follow current root AGENTS.md: RTK wraps repository Unity wrappers, Hub stays op
 | Gate | Status at plan creation | Evidence needed to close |
 |---|---|---|
 | R0 integration/content reconciliation | Planned | File/dependency ownership and final content decisions |
-| R1 normal deployment | Planned | Menu/briefing/world input trace and rollback checks |
-| R2 manual playable | Planned | Real-input complete journey and outcome coverage |
-| R3 tactical experience | Planned | Real map and two reviewed approaches at normal speed |
-| R4 durable recovery | Planned | Disk/process recovery, exact-once settlement, cross-mode checks |
-| R5 UI/EN/FA/ARIA | Planned | Layout/manual journeys and real-input ARIA matrix |
+| R1 normal deployment | In progress: launch smoke passed; refund/cancel checks open | Menu/briefing/world input trace and rollback checks |
+| R2 manual playable | In progress: shared objectives/HUD; full journey pending | Real-input complete journey and outcome coverage |
+| R3 tactical experience | Initial authored candidate; review pending | Real map and two reviewed approaches at normal speed |
+| R4 durable recovery | Transactions tested; active-world recovery pending | Disk/process recovery, exact-once settlement, cross-mode checks |
+| R5 UI/EN/FA/ARIA | UI and translation draft; acceptance pending | Layout/manual journeys and real-input ARIA matrix |
 | R6 release candidate | Planned | Candidate artifact, supported-device and unfamiliar-player review |
 
 Update this table with commit/evidence links and residual issues as work lands. Update the owning brief/config/catalog together when content decisions change. Never close a gate solely because a similarly named P0–P4 host package passed.

@@ -132,6 +132,26 @@ namespace Game.Composition
                 profile.firstLaunchGuidance = NarrativeGuidanceMode.Full.ToString();
         }
 
-        private void Save()=>store.SaveProfile(profile);
+        private void Save()
+        {
+            // This presentation boundary caches its narrative choices for the sequence.
+            // Campaign acceptance or another mode may commit the shared profile meanwhile.
+            // Copy only narrative-owned fields onto a fresh snapshot before the CAS write.
+            PlayerProfileSaveData latest = store.LoadProfile();
+            latest.firstLaunchStatus = profile.firstLaunchStatus;
+            latest.firstLaunchLastCompletedStateId = profile.firstLaunchLastCompletedStateId;
+            latest.firstLaunchCommanderCallsign = profile.firstLaunchCommanderCallsign;
+            latest.firstLaunchCommanderDisplayName = profile.firstLaunchCommanderDisplayName;
+            latest.firstLaunchCommanderPortraitIndex = profile.firstLaunchCommanderPortraitIndex;
+            latest.firstLaunchGuidance = profile.firstLaunchGuidance;
+            latest.firstLaunchLanguage = profile.firstLaunchLanguage;
+            latest.firstLaunchWatched = profile.firstLaunchWatched;
+            latest.firstLaunchSkipped = profile.firstLaunchSkipped;
+            latest.firstLaunchMissionTransitionToken = profile.firstLaunchMissionTransitionToken;
+            latest.firstLaunchMissionSessionToken = profile.firstLaunchMissionSessionToken;
+            latest.firstLaunchMissionAttemptOrdinal = profile.firstLaunchMissionAttemptOrdinal;
+            store.SaveProfile(latest);
+            profile = latest;
+        }
     }
 }

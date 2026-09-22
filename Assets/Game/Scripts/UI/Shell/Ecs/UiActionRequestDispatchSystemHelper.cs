@@ -35,6 +35,13 @@ namespace Game.UI.Shell.Ecs
             switch (request.Kind)
             {
                 case UiActionKind.MatchMenu:
+                    if (UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
+                    {
+                        UiShellRuntimeGateway.TryRequestOperationsMission(operation.Finished
+                            ? UiOperationsMissionAction.Return : UiOperationsMissionAction.PromptWithdraw);
+                        EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
+                        break;
+                    }
                     if (UiShellRuntimeGateway.TryReadSkirmish(out var skirmish) && !skirmish.Finished)
                     {
                         var skirmishView=UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();

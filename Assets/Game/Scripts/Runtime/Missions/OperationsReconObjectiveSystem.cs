@@ -43,7 +43,8 @@ namespace Game.Runtime
                     requests.Clear();
                     continue;
                 }
-                mission.ElapsedSeconds += dt;
+                float missionDelta = math.min(dt, math.max(0f, mission.DeadlineSeconds - mission.ElapsedSeconds));
+                mission.ElapsedSeconds += missionDelta;
                 bool conclude = false, withdraw = false;
                 foreach (var request in requests)
                 {
@@ -121,12 +122,13 @@ namespace Game.Runtime
                     { site.Actor = Entity.Null; site.ChannelSeconds = 0f; }
                     else
                     {
-                        site.ChannelSeconds += dt;
+                        site.ChannelSeconds += missionDelta;
                         if (site.ChannelSeconds >= mission.ScanSeconds)
                         {
                             site.Completed = 1;
                             site.Actor = Entity.Null;
                             mission.CompletedScans++;
+                            if (mission.FirstScanWaveTriggered == 0) mission.FirstScanPosition = site.Position;
                             mission.FirstScanWaveTriggered = 1;
                         }
                     }
@@ -141,7 +143,7 @@ namespace Game.Runtime
                     { evidence.Actor = Entity.Null; evidence.ChannelSeconds = 0f; }
                     else
                     {
-                        evidence.ChannelSeconds += dt;
+                        evidence.ChannelSeconds += missionDelta;
                         if (evidence.ChannelSeconds >= mission.EvidenceSeconds)
                         {
                             evidence.Carrier = evidence.Actor;

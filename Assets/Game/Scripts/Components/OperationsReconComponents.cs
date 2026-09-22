@@ -8,6 +8,43 @@ namespace Game.Components
     public enum OperationsReconOutcome : byte { None, Victory, Partial, Defeat, Withdraw }
     public enum OperationsReconAction : byte { Scan, RecoverEvidence, CancelInteraction, Conclude, Withdraw }
 
+    public struct OperationsReconMemberComponent : IComponentData
+    {
+        public Entity Session;
+    }
+
+    public struct OperationsReconReserveComponent : IComponentData
+    {
+        public Entity Session;
+        public byte Wave;
+        public byte Released;
+    }
+
+    public struct OperationsReconWaveComponent : IComponentData
+    {
+        public float WarningSeconds;
+        public float EvidenceWarningSeconds;
+        public float WaveAReleaseAt;
+        public float WaveBReleaseAt;
+        public byte WaveAAnnounced;
+        public byte WaveBAnnounced;
+    }
+
+    public struct OperationsReconPatrolComponent : IComponentData
+    {
+        public Entity Session;
+        public float3 Offset;
+        public int Waypoint;
+        public float NextOrderAt;
+        public byte Issued;
+    }
+
+    [InternalBufferCapacity(4)]
+    public struct OperationsReconPatrolWaypoint : IBufferElementData
+    {
+        public float3 Position;
+    }
+
     public struct OperationsReconMissionComponent : IComponentData
     {
         public FixedString64Bytes SessionId;
@@ -27,6 +64,7 @@ namespace Game.Components
         public byte MasteryCompleted;
         // Trigger latches are distinct from wave spawn/arrival state.
         public byte FirstScanWaveTriggered;
+        public float3 FirstScanPosition;
         public byte EvidenceWaveTriggered;
     }
 

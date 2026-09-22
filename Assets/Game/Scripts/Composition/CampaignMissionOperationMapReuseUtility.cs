@@ -29,7 +29,19 @@ namespace Game.Composition
 
             Entity mapRoot = mapQuery.GetSingletonEntity();
             CampaignMissionLaunchRequestElement request;
-            if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish) &&
+            if (OperationsReconLaunchProjection.TryGet(entityManager, out var operationRoot, out var operation) &&
+                entityManager.HasComponent<OperationsReconLaunchReference>(operationRoot))
+            {
+                var content = entityManager.GetComponentObject<OperationsReconLaunchReference>(operationRoot).Definition;
+                if (content == null || !content.TryValidate(out _)) return false;
+                request = new CampaignMissionLaunchRequestElement
+                {
+                    MissionId = new Unity.Collections.FixedString64Bytes(content.missionId),
+                    ScenarioId = new Unity.Collections.FixedString64Bytes(content.scenarioId),
+                    OperationMapId = new Unity.Collections.FixedString64Bytes(content.operationMap.OperationMapId)
+                };
+            }
+            else if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish) &&
                 (skirmish.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ||
                  skirmish.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex))
             {

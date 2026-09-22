@@ -122,7 +122,7 @@ namespace Game.Composition
         public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
         public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
         public BuildingPlacementSystemConfig BuildingPlacementConfig =>
-            IsSkirmishSession ? SkirmishPreset.buildingPlacement : buildingPlacementConfig;
+            IsOperationsSession ? OperationsMissionConfig.startupConfig : IsSkirmishSession ? SkirmishPreset.buildingPlacement : buildingPlacementConfig;
         private MapBuildingPlacementConfig missionPlacementOverlay;
         public MapBuildingPlacementConfig MapBuildingPlacementConfig
         {
@@ -139,7 +139,7 @@ namespace Game.Composition
             }
         }
         public MapVehiclePlacementConfig MapVehiclePlacementConfig =>
-            IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
+            IsOperationsSession ? null : IsSkirmishSession ? SkirmishPreset.mapVehicles : activeOperationMapSceneView != null
                 ? activeOperationMapSceneView.VehiclePlacements
                 : mapVehiclePlacementConfig;
         public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
@@ -155,10 +155,10 @@ namespace Game.Composition
         public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
         public GameStringsConfig GameStringsConfig => gameStringsConfig;
         public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
-        public AIPlanEntryStartupConfig AIPlanEntryConfig => IsSkirmishSession ? SkirmishPreset.aiPlan : aiPlanEntryConfig;
+        public AIPlanEntryStartupConfig AIPlanEntryConfig => IsOperationsSession ? null : IsSkirmishSession ? SkirmishPreset.aiPlan : aiPlanEntryConfig;
         public ResourceExchangeRecipeConfigSet ResourceExchangeConfig => resourceExchangeConfig;
         public IReadOnlyList<AIControllerConfig> AIControllerConfigs =>
-            IsSkirmishSession ? SkirmishPreset.aiControllers : aiControllerConfigs;
+            IsOperationsSession ? System.Array.Empty<AIControllerConfig>() : IsSkirmishSession ? SkirmishPreset.aiControllers : aiControllerConfigs;
         public OperationMapCatalogConfig OperationMapCatalog => ResolveOperationMapCatalog();
         public string OperationMapId => hasResolvedOperationMapLaunchSelection
             ? resolvedOperationMapLaunchSelection.OperationMapId.ToString()

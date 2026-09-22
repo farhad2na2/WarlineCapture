@@ -33,6 +33,19 @@ namespace Game.Composition
                         out error);
 
                 EntityManager entityManager = world.EntityManager;
+                if (OperationsReconLaunchProjection.TryGet(entityManager, out Entity operationsRoot, out var operations))
+                {
+                    if (operations.Phase != OperationsReconPhase.Preparing ||
+                        !entityManager.HasComponent<OperationsReconLaunchReference>(operationsRoot))
+                        return Reject("Operations launch state is invalid.", out failureCode, out error);
+                    var operationsDefinition = entityManager.GetComponentObject<OperationsReconLaunchReference>(operationsRoot).Definition;
+                    if (operationsDefinition == null || !operationsDefinition.TryValidate(out error))
+                        return Reject("Operations content is invalid: " + error, out failureCode, out error);
+                    selection = new OperationMapLaunchSelection(new FixedString64Bytes(operationsDefinition.missionId),
+                        new FixedString64Bytes(operationsDefinition.scenarioId), new FixedString64Bytes(operationsDefinition.operationMap.OperationMapId),
+                        operationsDefinition.operationMap, false);
+                    return true;
+                }
                 if (SkirmishLaunchProjection.TryGet(entityManager, out _, out var skirmish))
                 {
                     var preset = SkirmishPresetConfig.Load(skirmish.ScenarioIndex);

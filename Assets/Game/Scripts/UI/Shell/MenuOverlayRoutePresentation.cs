@@ -110,7 +110,7 @@ namespace Game.UI.Runtime
 
         internal static void InstallOperationsBody(this UIShellContentView contentView)
         {
-            InstallBody(contentView, contentView.OperationsContentPrefab);
+            OperationsMissionScreenView.Install(InstallBody(contentView, contentView.OperationsContentPrefab));
         }
 
         internal static void InstallDistrictDetailBody(this UIShellContentView contentView)

@@ -88,6 +88,20 @@ public sealed class OperationsReconWorldTests
     }
 
     [Test]
+    public void FrameCrossingDeadlineCannotFinishInteractionAfterTimeExpires()
+    {
+        var mission = State;
+        mission.ElapsedSeconds = 710;
+        em.SetComponentData(root, mission);
+        Request(OperationsReconAction.Scan, 0);
+        Tick(20);
+        Assert.That(State.ElapsedSeconds, Is.EqualTo(720));
+        Assert.That(State.CompletedScans, Is.Zero);
+        Assert.That(em.GetBuffer<OperationsReconSiteElement>(root)[0].ChannelSeconds, Is.EqualTo(10));
+        Assert.That(State.Outcome, Is.EqualTo(OperationsReconOutcome.Defeat));
+    }
+
+    [Test]
     public void PausedSimulationDoesNotAdvanceChannelOrDeadline()
     {
         Request(OperationsReconAction.Scan, 0); Tick(5);
@@ -149,6 +163,75 @@ public sealed class OperationsReconWorldTests
         Assert.That(State.Outcome, Is.EqualTo(OperationsReconOutcome.None));
         em.SetComponentData(hostile, new UnitHealth()); Tick();
         Assert.That(State.Outcome, Is.EqualTo(OperationsReconOutcome.Victory));
+    }
+
+    [Test]
+    public void FirstScanReserveWaitsForWarning_ThenReleasesOnceThroughSharedMoveQueue()
+    {
+        var queue = em.CreateEntity(typeof(UnitMoveOrderQueueComponent));
+        em.AddBuffer<UnitMoveOrderRequestElement>(queue);
+        em.AddComponentData(root, new OperationsReconWaveComponent { WarningSeconds = 20 });
+        var reserve = Unit(new float3(80, 0, 20));
+        em.SetComponentData(reserve, new Faction { Id = 2 });
+        em.AddComponentData(reserve, new OperationsReconReserveComponent { Session = root, Wave = 1 });
+        em.AddComponent<Disabled>(reserve);
+        var waves = world.GetOrCreateSystem<OperationsReconWaveSystem>();
+        Scan(0); waves.Update(world.Unmanaged);
+        Assert.That(em.HasComponent<Disabled>(reserve), Is.True);
+        Tick(19); waves.Update(world.Unmanaged);
+        Assert.That(em.HasComponent<Disabled>(reserve), Is.True);
+        Tick(); waves.Update(world.Unmanaged);
+        Assert.That(em.HasComponent<Disabled>(reserve), Is.False);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.EqualTo(1));
+        waves.Update(world.Unmanaged);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void PatrolUsesSharedOrdersAndYieldsToCombatPauseAndTerminal()
+    {
+        var queue = em.CreateEntity(typeof(UnitMoveOrderQueueComponent));
+        em.AddBuffer<UnitMoveOrderRequestElement>(queue);
+        var route = em.AddBuffer<OperationsReconPatrolWaypoint>(root);
+        route.Add(new OperationsReconPatrolWaypoint { Position = new float3(10, 0, 10) });
+        route.Add(new OperationsReconPatrolWaypoint { Position = new float3(40, 0, 10) });
+        em.AddComponentData(player, new OperationsReconPatrolComponent { Session = root });
+        em.AddComponentData(player, new EngageTarget { Target = second });
+        var patrols = world.GetOrCreateSystem<OperationsReconPatrolSystem>();
+        patrols.Update(world.Unmanaged);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.Zero);
+        em.SetComponentData(player, default(EngageTarget));
+        Tick(2); patrols.Update(world.Unmanaged);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.EqualTo(1));
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue)[0].Goal, Is.EqualTo(new int2(40, 10)));
+        em.SetComponentData(gameplay, new RuntimeGameplayStateComponent());
+        Tick(5); patrols.Update(world.Unmanaged);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.EqualTo(1));
+        em.SetComponentData(gameplay, new RuntimeGameplayStateComponent { SimulationActive = 1 });
+        var mission = State; mission.Phase = OperationsReconPhase.Terminal; mission.ElapsedSeconds += 10;
+        em.SetComponentData(root, mission); patrols.Update(world.Unmanaged);
+        Assert.That(em.GetBuffer<UnitMoveOrderRequestElement>(queue).Length, Is.EqualTo(1));
+    }
+
+    [Test]
+    public void FirstScanLocationRemainsLatchedWhenEarlierIndexedSiteCompletesLater()
+    {
+        Scan(2);
+        var first = State.FirstScanPosition;
+        Scan(0);
+        Assert.That(State.FirstScanPosition, Is.EqualTo(first));
+        Assert.That(first, Is.EqualTo(new float3(50, 0, 10)));
+    }
+
+    [Test]
+    public void StartupSuppressesStreamedLegacyForcesWithoutRemovingSelectedStartup()
+    {
+        var legacy = em.CreateEntity(typeof(InitialUnitsSpawnConfig), typeof(InitialUnitsBlockerChurnConfig));
+        var selected = em.CreateEntity(typeof(InitialUnitsSpawnConfig), typeof(CustomGameStartupStateComponent));
+        world.GetOrCreateSystem<OperationsReconStartupSystem>().Update(world.Unmanaged);
+        Assert.That(em.HasComponent<InitialUnitsSpawnConfig>(legacy), Is.False);
+        Assert.That(em.HasComponent<InitialUnitsBlockerChurnConfig>(legacy), Is.False);
+        Assert.That(em.HasComponent<InitialUnitsSpawnConfig>(selected), Is.True);
     }
 
     [Test]

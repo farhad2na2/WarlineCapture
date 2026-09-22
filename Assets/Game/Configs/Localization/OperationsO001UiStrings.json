@@ -1,0 +1,374 @@
+{
+  "entries": [
+    {
+      "key": "operations.o001.save_retry",
+      "source": "Could not save. Try again; progress has not been confirmed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ذخیره انجام نشد. دوباره تلاش کنید؛ پیشرفت هنوز تأیید نشده است."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_help",
+      "source": "Select infantry, move within 8 m of a signal, then choose Scan selected. Hold position for 15 seconds.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام را انتخاب کنید، تا فاصلهٔ ۸ متری یک سیگنال بروید و «اسکن با نیروی منتخب» را بزنید. ۱۵ ثانیه در محل بمانید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.result_retry",
+      "source": "Result pending save. Retrying…",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نتیجه در انتظار ذخیره است. تلاش مجدد…"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.closer",
+      "source": "Select surviving infantry and move them closer to this location first.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام زنده را انتخاب کنید و ابتدا به این محل نزدیک‌تر شوید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.content_missing",
+      "source": "Street Signals content is unavailable.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محتوای مأموریت سیگنال‌های خیابان در دسترس نیست."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.no_offer",
+      "source": "Street Signals is not available in the current Operations day.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سیگنال‌های خیابان در روز فعلی عملیات در دسترس نیست."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.attempt_conflict",
+      "source": "Finish the existing Operations attempt first.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ابتدا نوبت فعلی عملیات را تمام کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.title",
+      "source": "STREET SIGNALS — OLD QUARTER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سیگنال‌های خیابان — محلهٔ قدیمی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.brief",
+      "source": "Scan three courtyards. Recover the relay evidence. Bring it and at least two original infantry to the secured ground exit.\n\n16 infantry • 12-minute deadline • 1 action point • Regular difficulty\nOptional: complete all scans without losing recon infantry.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سه حیاط را اسکن کنید. مدارک ایستگاه مخابراتی را بردارید. مدارک و دست‌کم دو نفر از پیاده‌نظام اولیه را به خروجی زمینی امن برسانید.\n\n۱۶ پیاده‌نظام • مهلت ۱۲ دقیقه • هزینهٔ ۱ امتیاز اقدام • درجهٔ عادی\nاختیاری: همهٔ اسکن‌ها را بدون از دست دادن نیروی شناسایی کامل کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.new_city",
+      "source": "A new city operation will begin on deployment.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با اعزام، عملیات تازه‌ای در شهر آغاز می‌شود."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_objective",
+      "source": "Scan all three signal sites",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر سه محل سیگنال را اسکن کنید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.evidence_objective",
+      "source": "Recover the relay evidence — hold for 15 seconds",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مدارک ایستگاه را بردارید — ۱۵ ثانیه در محل بمانید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.exit_objective",
+      "source": "Bring the evidence and two original infantry to the safe exit",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مدارک و دو نفر از پیاده‌نظام اولیه را به خروجی امن برسانید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.done",
+      "source": "DONE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "کامل شد"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.wave_b",
+      "source": "Evidence recovered. Enemy reinforcements are approaching the relay.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مدارک برداشته شد. نیروهای کمکی دشمن به ایستگاه نزدیک می‌شوند."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.wave_a",
+      "source": "Signal detected. Enemy reinforcements are approaching the search area.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سیگنال شناسایی شد. نیروهای کمکی دشمن به محدودهٔ جست‌وجو نزدیک می‌شوند."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.saved",
+      "source": "District result and rewards saved.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نتیجهٔ منطقه و پاداش‌ها ذخیره شدند."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.saving",
+      "source": "Saving result…",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در حال ذخیرهٔ نتیجه…"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.attempt_missing",
+      "source": "The saved attempt could not be matched. Result retained for recovery.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نوبت ذخیره‌شده پیدا نشد. نتیجه برای بازیابی نگه داشته شد."
+        }
+      ]
+    },
+    {
+      "key": "operations.deploy",
+      "source": "DEPLOY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعزام"
+        }
+      ]
+    },
+    {
+      "key": "operations.scan",
+      "source": "SCAN SELECTED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اسکن با نیروی منتخب"
+        }
+      ]
+    },
+    {
+      "key": "operations.evidence",
+      "source": "EVIDENCE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مدارک"
+        }
+      ]
+    },
+    {
+      "key": "operations.recover",
+      "source": "RECOVER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برداشتن"
+        }
+      ]
+    },
+    {
+      "key": "operations.exit",
+      "source": "EXIT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خروجی"
+        }
+      ]
+    },
+    {
+      "key": "operations.conclude",
+      "source": "CONCLUDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایان مأموریت"
+        }
+      ]
+    },
+    {
+      "key": "operations.withdraw",
+      "source": "WITHDRAW",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "عقب‌نشینی"
+        }
+      ]
+    },
+    {
+      "key": "operations.withdraw.confirm",
+      "source": "Withdraw from Street Signals? This records a withdrawal and applies its district consequences. The mission continues until you confirm.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "از سیگنال‌های خیابان عقب‌نشینی می‌کنید؟ عقب‌نشینی ثبت می‌شود و پیامدهای آن بر منطقه اعمال خواهد شد. مأموریت تا زمان تأیید شما ادامه دارد."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.day_ap",
+      "source": "Day {0} • AP {1}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "روز {0} • امتیاز اقدام {1}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.clock",
+      "source": "{0}:{1} • {2}/16 infantry",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0}:{1} • پیاده‌نظام {2}/16"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.signal",
+      "source": "SIGNAL {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سیگنال {0}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.victory",
+      "source": "VICTORY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیروزی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.partial",
+      "source": "PARTIAL SUCCESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "موفقیت نسبی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.withdrawn",
+      "source": "WITHDRAWN",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "عقب‌نشینی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.defeat",
+      "source": "DEFEAT",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شکست"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.result",
+      "source": "{0}\n{1}/3 signals • {2} extracted\n{3}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0}\nسیگنال‌ها {1}/3 • نیروهای خارج‌شده {2}\n{3}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.carried",
+      "source": "EVIDENCE CARRIED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مدارک همراه نیرو است"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recover_progress",
+      "source": "RECOVER {0}/15 s",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برداشتن {0}/15 ثانیه"
+        }
+      ]
+    }
+  ]
+}

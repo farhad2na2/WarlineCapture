@@ -42,13 +42,29 @@ public sealed class FirstLaunchNarrativeCompositionBoundaryTests
         Assert.IsFalse(context.Boundary.ShouldResumeHandoff(false));
         Assert.IsTrue(context.Boundary.ShouldEnterMenu(true, false));
 
-        context.SaveService.SaveProfile(new PlayerProfileSaveData
-        {
-            firstLaunchStatus = FirstLaunchProfileState.HandoffPending
-        });
+        var updated = context.SaveService.LoadProfile();
+        updated.firstLaunchStatus = FirstLaunchProfileState.HandoffPending;
+        context.SaveService.SaveProfile(updated);
         context.Boundary.Initialize(context.SaveService, CommanderStateId, GuidanceStateId);
         Assert.IsTrue(context.Boundary.ShouldResumeHandoff(false));
         Assert.IsFalse(context.Boundary.ShouldResumeHandoff(true));
+    }
+
+    [Test]
+    public void ProfileBoundary_PreservesOtherModeCommitMadeDuringNarrative()
+    {
+        using ProfileContext context = CreateProfileContext(new PlayerProfileSaveData());
+        var newer = context.SaveService.LoadProfile();
+        newer.credits = 123;
+        newer.starsEarned = 7;
+        newer.operations.profileRevision = 2;
+        context.SaveService.SaveProfile(newer);
+        context.Boundary.CommitGuidance(NarrativeGuidanceMode.Contextual, true);
+        var saved = context.SaveService.LoadProfile();
+        Assert.That(saved.credits, Is.EqualTo(123));
+        Assert.That(saved.starsEarned, Is.EqualTo(7));
+        Assert.That(saved.operations.profileRevision, Is.EqualTo(2));
+        Assert.That(saved.firstLaunchGuidance, Is.EqualTo("Contextual"));
     }
 
     [Test]

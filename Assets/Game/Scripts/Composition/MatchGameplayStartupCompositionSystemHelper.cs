@@ -162,6 +162,7 @@ namespace Game.Composition
                 case GameplayStartStep.ResetStats:
                     SetProgress(0.10f, "Resetting match state");
                     if (world != null && world.IsCreated) SkirmishLaunchProjection.PrepareMap(world.EntityManager);
+                    if (world != null && world.IsCreated) OperationsReconLaunchProjection.PrepareMap(world.EntityManager);
                     pendingAiSettingsSnapshot = AISettingsSnapshot.Defaults;
                     if (world != null && world.IsCreated)
                     {
@@ -268,6 +269,12 @@ namespace Game.Composition
                     break;
 
                 case GameplayStartStep.ValidateScenarioRecovery:
+                    // Finite Operations forces have no economy or production recovery loop.
+                    if (sceneView != null && sceneView.IsOperationsSession)
+                    {
+                        gameplayStartStep = GameplayStartStep.FinalizeRuntimeState;
+                        break;
+                    }
                     SetProgress(0.86f, "Validating scenario recovery");
                     if (materialsScenarioValidationStartedAt < 0d)
                         materialsScenarioValidationStartedAt = Time.realtimeSinceStartupAsDouble;

@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4eb8d8fd597574837a2b9ff5485b1122, type: 3}
+  m_Name: StreetSignals
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationsReconMissionConfig
+  missionId: operation.o001
+  scenarioId: scenario.operations.o001
+  operationMap: {fileID: 11400000, guid: eab21efbe45fc4848958d084dcb8ef3d, type: 2}
+  startupConfig: {fileID: 11400000, guid: ba72e07e385d84104a2ae638b4ebd57d, type: 2}
+  scanPositions:
+  - {x: 1705.5, y: 0.009179778, z: 805.5}
+  - {x: 1790.5, y: 0.009179778, z: 790.5}
+  - {x: 1870.5, y: -0.0008202214, z: 815.5}
+  evidencePosition: {x: 1860.5, y: 0.009179778, z: 710.5}
+  exitPosition: {x: 1690.5, y: 0.009179778, z: 700.5}
+  patrolRoute:
+  - {x: 1745.5, y: 0.009179778, z: 760.5}
+  - {x: 1745.5, y: 0.009179778, z: 800.5}
+  - {x: 1785.5, y: 0.009179778, z: 760.5}
+  forces:
+  - sourceKey: Unit_Chr_Soldier_Male_02_Alt_02
+    position: {x: 1690.5, y: 0.009179778, z: 700.5}
+    count: 12
+    faction: 1
+    recon: 0
+    patrol: 0
+    wave: 0
+  - sourceKey: Unit_Chr_Soldier_Male_02_Alt_04
+    position: {x: 1690.5, y: 0.009179778, z: 704.5}
+    count: 2
+    faction: 1
+    recon: 1
+    patrol: 0
+    wave: 0
+  - sourceKey: Unit_Chr_Soldier_Female_01_Alt_01
+    position: {x: 1690.5, y: 0.009179778, z: 696.5}
+    count: 2
+    faction: 1
+    recon: 0
+    patrol: 0
+    wave: 0
+  - sourceKey: Unit_Chr_Insurgent_Male_03
+    position: {x: 1825.5, y: 0.009179778, z: 755.5}
+    count: 6
+    faction: 2
+    recon: 0
+    patrol: 0
+    wave: 0
+  - sourceKey: Unit_Chr_Insurgent_Female_01
+    position: {x: 1825.5, y: 0.009179778, z: 759.5}
+    count: 2
+    faction: 2
+    recon: 0
+    patrol: 0
+    wave: 0
+  - sourceKey: Unit_Chr_Insurgent_Male_03
+    position: {x: 1745.5, y: 0.009179778, z: 760.5}
+    count: 4
+    faction: 2
+    recon: 0
+    patrol: 1
+    wave: 0
+  - sourceKey: Unit_Chr_Insurgent_Male_03
+    position: {x: 1900.5, y: -0.0008202214, z: 825.5}
+    count: 4
+    faction: 2
+    recon: 0
+    patrol: 0
+    wave: 1
+  - sourceKey: Unit_Chr_Insurgent_Male_03
+    position: {x: 1900.5, y: 0.009179778, z: 695.5}
+    count: 4
+    faction: 2
+    recon: 0
+    patrol: 0
+    wave: 2
+  scanSeconds: 15
+  evidenceSeconds: 15
+  deadlineSeconds: 720
+  reinforcementWarningSeconds: 30
+  evidenceReinforcementWarningSeconds: 45

@@ -26,11 +26,25 @@ namespace Game.UI.Shell.Ecs
             string reason=match.Reason.ToString().ToLowerInvariant();
             if (match.Reason == SkirmishEndReason.MainBaseDestroyed)
                 reason = match.Outcome == SkirmishOutcome.Victory ? "enemy_base_destroyed" : "player_base_destroyed";
+            bool expanded = SkirmishExpandedSessionControlService.IsExpanded(em, session);
             int infantry=0;
-            using(var units=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth)))
+            if (expanded && em.HasComponent<SkirmishCapacityComponent>(session))
+                infantry = em.GetComponentData<SkirmishCapacityComponent>(session).InfantryLive;
+            else
             {
-                using var entities=units.ToEntityArray(Unity.Collections.Allocator.Temp);
-                foreach(var unit in entities)if(em.GetComponentData<SkirmishSquadMember>(unit).Slot<4&&em.GetComponentData<UnitHealth>(unit).Current>0)infantry++;
+                using(var units=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth)))
+                {
+                    using var entities=units.ToEntityArray(Unity.Collections.Allocator.Temp);
+                    foreach(var unit in entities)if(em.GetComponentData<SkirmishSquadMember>(unit).Slot<4&&em.GetComponentData<UnitHealth>(unit).Current>0)infantry++;
+                }
+            }
+            bool playerAlive = true;
+            bool enemyAlive = true;
+            if (expanded && em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
+            {
+                var facts = em.GetComponentData<SkirmishBaseAssaultFactComponent>(session);
+                playerAlive = facts.PlayerDesignatedAlive != 0;
+                enemyAlive = facts.EnemyDesignatedAlive != 0;
             }
             int playerHealth=VisibleBaseHealth(em,match.PlayerMainBase);
             int enemyHealth=VisibleBaseHealth(em,match.EnemyMainBase);
@@ -62,6 +76,7 @@ namespace Game.UI.Shell.Ecs
                 ScenarioIndex=match.ScenarioIndex,
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
                 InfantryCount=infantry, PlayerHealth=playerHealth, EnemyHealth=enemyHealth,
+                Expanded=expanded, PlayerDesignatedAlive=playerAlive, EnemyDesignatedAlive=enemyAlive,
                 Infantry=infantry+" / "+SkirmishPresetConfig.InfantryLimitPerFaction,
                 PlayerBase=playerBase,
                 EnemyBase=enemyBase,

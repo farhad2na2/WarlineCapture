@@ -148,6 +148,59 @@ namespace Game.Composition
             return true;
         }
 
+        /// <summary>
+        /// Expanded S002 can reach Playing via spawn while SimulationActive is still 0.
+        /// After gameplay bootstrap finishes (or fails), arm simulation so the objective
+        /// clock and engagement systems advance. Does not bypass an intentional pause.
+        /// </summary>
+        public static bool TryArmExpandedSimulation(EntityManager em)
+        {
+            if (!TryGet(em, out Entity session, out SkirmishMatchState match))
+                return false;
+            if (match.Phase < SkirmishPhase.Playing)
+                return false;
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy != 0)
+                return false;
+
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1)
+                return false;
+            Entity entity = gameplay.GetSingletonEntity();
+            var state = em.GetComponentData<RuntimeGameplayStateComponent>(entity);
+            if (state.SimulationActive != 0)
+                return true;
+            if (state.PlayRequested == 0)
+                return false;
+
+            var scene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            if (scene == null || !scene.GameplayStartRequested)
+                return false;
+            if (!scene.GameplayStartComplete && !scene.GameplayStartFailed)
+                return false;
+
+            state.SimulationActive = 1;
+            em.SetComponentData(entity, state);
+            Debug.Log("[SkirmishLaunch] expandedSimulationActive=1");
+            return true;
+        }
+
+        public static bool IsSimulationActive(EntityManager em)
+        {
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() != 1)
+                return false;
+            return em.GetComponentData<RuntimeGameplayStateComponent>(gameplay.GetSingletonEntity()).SimulationActive != 0;
+        }
+
+        public static float ReadMatchElapsedSeconds(EntityManager em, Entity session, in SkirmishMatchState match)
+        {
+            if (session != Entity.Null &&
+                em.HasComponent<SkirmishObjectiveClockComponent>(session))
+                return em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+            return match.ElapsedSeconds;
+        }
+
         public static bool TryActivateStressSimulation(EntityManager em)
         {
             if (!TryGet(em, out var session, out var match)) return false;

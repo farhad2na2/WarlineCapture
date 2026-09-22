@@ -50,6 +50,43 @@ namespace Game.Runtime
                    em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0;
         }
 
+        /// <summary>
+        /// Projects expanded session phase and objective-clock elapsed onto SkirmishMatchState.
+        /// Expanded matches skip SkirmishRulesSystem, so this is the live elapsed source.
+        /// </summary>
+        public static void ProjectMatchPhase(EntityManager em, Entity session)
+        {
+            if (!em.HasComponent<SkirmishMatchState>(session) ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return;
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            var match = em.GetComponentData<SkirmishMatchState>(session);
+            bool changed = false;
+            if (state.Phase == SkirmishSessionPhase.Playing && match.Phase < SkirmishPhase.Playing)
+            {
+                match.Phase = SkirmishPhase.Playing;
+                changed = true;
+            }
+            else if (state.Phase == SkirmishSessionPhase.Finished && match.Phase != SkirmishPhase.Finished)
+            {
+                match.Phase = SkirmishPhase.Finished;
+                changed = true;
+            }
+
+            if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
+            {
+                float elapsed = em.GetComponentData<SkirmishObjectiveClockComponent>(session).ElapsedSeconds;
+                if (match.ElapsedSeconds != elapsed)
+                {
+                    match.ElapsedSeconds = elapsed;
+                    changed = true;
+                }
+            }
+
+            if (changed)
+                em.SetComponentData(session, match);
+        }
+
         private static bool IsExpandedPlaying(EntityManager em, Entity session)
         {
             if (!IsExpanded(em, session))

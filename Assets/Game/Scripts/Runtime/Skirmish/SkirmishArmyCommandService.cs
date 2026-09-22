@@ -153,7 +153,7 @@ namespace Game.Runtime
                                      em.HasComponent<LocalTransform>(target)
                     ? em.GetComponentData<LocalTransform>(target).Position
                     : SkirmishWorldMovementService.DefaultAdvance(em, session);
-                ApplyOrder(em, unit, order, destination);
+                ApplyOrder(em, unit, order, destination, target);
                 issued++;
             }
 
@@ -218,7 +218,7 @@ namespace Game.Runtime
                     continue;
                 }
 
-                ApplyOrder(em, unit, order, destination);
+                ApplyOrder(em, unit, order, destination, target);
                 issued++;
             }
 
@@ -233,7 +233,6 @@ namespace Game.Runtime
             }
 
             StampGroups(em, session, order);
-            _ = target;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             return true;
@@ -255,7 +254,8 @@ namespace Game.Runtime
             EntityManager em,
             Entity unit,
             SkirmishGroupOrderKind order,
-            float3 destination)
+            float3 destination,
+            Entity target)
         {
             if (order == SkirmishGroupOrderKind.Hold)
             {
@@ -268,6 +268,13 @@ namespace Game.Runtime
             if (em.HasComponent<HoldPositionOrderTag>(unit))
                 em.RemoveComponent<HoldPositionOrderTag>(unit);
             SkirmishWorldMovementService.AssignIntent(em, unit, destination, order);
+            if (!em.HasComponent<SkirmishMoveIntentComponent>(unit))
+                return;
+            var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+            intent.AttackTarget = order == SkirmishGroupOrderKind.Attack ? target : Entity.Null;
+            intent.Cooldown = 0f;
+            intent.Engaged = 0;
+            em.SetComponentData(unit, intent);
         }
 
         private static void StampGroups(EntityManager em, Entity session, SkirmishGroupOrderKind order)

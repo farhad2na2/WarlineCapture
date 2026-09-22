@@ -505,6 +505,10 @@ namespace Game.Tests.Editor
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
                 suite.S003AirMobilePublicControlsDoNotMutateGameplay();
                 suite.S004EstablishedPadReadyDoesNotMutatePlayerStocks();
+                SkirmishS002AriaHarnessTests.RunFocusedValidation();
+                SkirmishS003AriaHarnessTests.RunFocusedValidation();
+                SkirmishS004AriaHarnessTests.RunFocusedValidation();
+                SkirmishS005AriaHarnessTests.RunFocusedValidation();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }
             catch (Exception exception)

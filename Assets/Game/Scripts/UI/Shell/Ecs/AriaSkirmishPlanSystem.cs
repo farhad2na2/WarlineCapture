@@ -439,6 +439,8 @@ namespace Game.UI.Shell.Ecs
                 Target(view.AirPad, false, ref output);
                 return;
             }
+            if (TryExpandedGroundAssault(view, ref plan, ref output))
+                return;
             if (view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
@@ -465,6 +467,67 @@ namespace Game.UI.Shell.Ecs
             }
             plan.Intent = AriaSkirmishIntent.Inspect;
             output.Kind = AriaPlayObservationKind.Waiting;
+        }
+
+        private static bool TryExpandedGroundAssault(
+            in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan,
+            ref AriaPlayObservationComponent output)
+        {
+            if (!view.EnemyDesignatedAlive || plan.AssaultIssued != 0)
+                return false;
+            bool pageHasAssault = view.ExpandedAssaultMask != 0;
+            if (!pageHasAssault)
+            {
+                if (plan.PagedToAssault != 0)
+                    return view.ExpandedPageIndex == plan.AssaultPageSeen;
+                if (view.ExpandedNextPage && view.Squad4.Available)
+                {
+                    plan.PagedToAssault = 1;
+                    plan.AssaultPageSeen = view.ExpandedPageIndex;
+                    plan.Intent = AriaSkirmishIntent.SelectSquad;
+                    Target(view.Squad4, false, ref output);
+                    return true;
+                }
+
+                return false;
+            }
+
+            int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
+            if (pending != 0)
+            {
+                int slot = LowestSetBit(pending);
+                AriaTouchTarget card = view.Squad(slot);
+                if (!card.Available)
+                    return false;
+                plan.AssaultSelecting = 1;
+                plan.Intent = AriaSkirmishIntent.SelectSquad;
+                Target(card, false, ref output);
+                return true;
+            }
+
+            if (plan.AssaultSelecting != 0 && view.Attack.Available)
+            {
+                plan.AssaultIssued = 1;
+                plan.Intent = AriaSkirmishIntent.Attack;
+                Target(view.Attack, false, ref output);
+                return true;
+            }
+
+            return false;
+        }
+
+        private static int LowestSetBit(int mask)
+        {
+            int bit = 0;
+            int value = mask;
+            while ((value & 1) == 0)
+            {
+                value >>= 1;
+                bit++;
+            }
+
+            return bit;
         }
 
         private static void Target(AriaTouchTarget target, bool world, ref AriaPlayObservationComponent output)

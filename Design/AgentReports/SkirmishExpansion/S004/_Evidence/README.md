@@ -19,3 +19,16 @@ When the PNGs exist and the compiler hashes still match, Programmer 1 may run
 the only writer. `RunFocusedFlipS004DryRun` never persists Playable, and the
 write does not change the S002 or S003 rows. The checked-in S004 row stays
 **InProgress** until that confirm runs.
+
+ARIA matrix traces are separate from the Game View flip. They are not a
+mission-complete claim and they do not stamp Victory on their own.
+`Tools/Warline/Skirmish/Launch S004 ARIA Watch …` writes
+`s004-aria-live-{seed}-{en|fa}.jsonl` while the match runs, then copies a
+finished or aborted trace to `s004-aria-rs-{seed}-{en|fa}-{n}.jsonl` plus
+`s004-aria-rs-…-log.txt`. Live samples include `elapsed`, `simulationActive`,
+and `clockElapsed`. A stuck-zero clock after Playing must Abort with
+`simulationNotAdvancing` within about 45 seconds rather than waiting for the
+1500 second wall budget. Those files appear only after a live Editor run.
+Do not commit a Victory row ahead of that run. `runs.csv` stays header-only
+in git until a real terminal outcome is appended. Live AriaWon for S004 waits
+until after the S002 Windows proof and until the Skirmish Editor lock is free.

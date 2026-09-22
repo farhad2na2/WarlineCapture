@@ -45,6 +45,7 @@ namespace Game.UI.Runtime
             private void OnAttackButtonClicked()
             {
                 CaptureCommandUiClick();
+                UiShellRuntimeGateway.TryAttackExpandedEnemyBase();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestAttackCommandMode();
                 if (queued)

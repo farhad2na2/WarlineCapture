@@ -19,7 +19,7 @@ namespace Game.Tests.Editor.Operations
             Directory.CreateDirectory(directory);
             File.WriteAllText(Path.Combine(directory, AriaFlagName), "1102\n");
             Debug.Log(
-                "[OperationsO001PlayerShell] Regular EN Aria is armed. From the Ops dashboard press the D01 district, confirm Raid to deploy into the match, then use Select, Move, Attack, Scan, Hold, Board, and Continue.");
+                "[OperationsO001PlayerShell] Regular EN Aria is armed. In Play Mode she invokes the D01 district button, the Raid confirm button, the match Select, Move, Attack, Scan, Hold, and Board buttons, and Continue. This arm is not a player-ready certification.");
         }
 
         [MenuItem("Operations/P4R/Clear Aria Arm")]

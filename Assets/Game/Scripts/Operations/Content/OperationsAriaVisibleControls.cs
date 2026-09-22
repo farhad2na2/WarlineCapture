@@ -11,8 +11,9 @@ namespace Game.Operations.Content
     }
 
     /// <summary>
-    /// Regular EN Aria plays by pressing the same shipping controls as a person.
-    /// It does not call the capture script or the loop order methods itself.
+    /// Regular EN Aria chooses the same shipping control names as a person.
+    /// <see cref="Step"/> is the host driver. Play Mode invokes the visible button
+    /// for <see cref="TryPeekShippingControl"/> and does not call <see cref="Step"/>.
     /// </summary>
     public static class OperationsAriaVisibleControls
     {
@@ -116,6 +117,82 @@ namespace Game.Operations.Content
                 OperationsMatchVisibleControls.Press(shell, OperationsMatchVisibleControls.Wait, string.Empty, string.Empty, string.Empty);
             detail = intent.Skill.ToString();
             return OperationsVisibleStepKind.Advanced;
+        }
+
+        /// <summary>
+        /// Names the next shipping control without pressing it.
+        /// Wait is the one-second clock, not a button.
+        /// </summary>
+        public static bool TryPeekShippingControl(OperationsO001PlayerShell shell, out string shippingControl)
+        {
+            shippingControl = string.Empty;
+            if (shell == null)
+                throw new ArgumentNullException(nameof(shell));
+
+            OperationsPlayerShellFrame frame = shell.Read();
+            if (frame.O001Victory && frame.ReturnAcknowledged && frame.Phase == OperationsLoopPhase.Dashboard)
+                return false;
+
+            if (NeedsContinue(frame))
+            {
+                shippingControl = OperationsMatchVisibleControls.Continue;
+                return true;
+            }
+
+            if (frame.Phase == OperationsLoopPhase.Dashboard && frame.Route == OperationsShellNames.Operations)
+            {
+                shippingControl = OperationsMatchVisibleControls.District;
+                return true;
+            }
+
+            if (frame.Route == OperationsShellNames.MissionBriefing)
+            {
+                shippingControl = OperationsMatchVisibleControls.Raid;
+                return true;
+            }
+
+            OperationsAriaIntent[] plan = OperationsAriaObjectivePlanner.Plan(shell.Session);
+            if (TryPeekExtract(shell, plan, out shippingControl))
+                return true;
+
+            if (!TryFirstAction(plan, out OperationsAriaIntent intent) ||
+                (intent.ActorId.Length > 0 && shell.ChannelTicks(intent.ActorId) > 0) ||
+                !TryPeekIntent(shell, intent, out shippingControl))
+            {
+                shippingControl = OperationsMatchVisibleControls.Wait;
+                return true;
+            }
+
+            return true;
+        }
+
+        static bool TryPeekExtract(OperationsO001PlayerShell shell, OperationsAriaIntent[] plan, out string shippingControl)
+        {
+            shippingControl = string.Empty;
+            for (int index = 0; index < plan.Length; index++)
+            {
+                if (plan[index].Skill != OperationsAriaSkillKind.Extract)
+                    continue;
+                if (TryPeekIntent(shell, plan[index], out shippingControl))
+                    return true;
+            }
+
+            return false;
+        }
+
+        static bool TryPeekIntent(OperationsO001PlayerShell shell, OperationsAriaIntent intent, out string shippingControl)
+        {
+            shippingControl = OperationsMatchVisibleControls.ShippingName(intent.Skill);
+            if (shippingControl.Length == 0)
+                return false;
+            string orderId = OperationsO001PlayerShell.OrderId(intent);
+            if (!Contains(shell, orderId) && intent.ActorId.Length > 0)
+            {
+                shippingControl = OperationsMatchVisibleControls.Select;
+                return true;
+            }
+
+            return Contains(shell, orderId);
         }
 
         static bool TryExtract(OperationsO001PlayerShell shell, OperationsAriaIntent[] plan, out string detail)

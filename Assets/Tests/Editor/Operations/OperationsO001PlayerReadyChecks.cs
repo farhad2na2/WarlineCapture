@@ -7,8 +7,9 @@ using Game.Operations.Tactical;
 namespace Game.Tests.Editor.Operations
 {
     /// <summary>
-    /// Host and Editor checks for the O001 player shell. They press the visible controls.
-    /// They do not claim AriaWon.
+    /// Host and Editor checks for the O001 shared-launch shell.
+    /// Passing them is not a player-ready certification.
+    /// Design-APPROVED O001–O003 and historical Ops AriaWon captures are WIP/foundation.
     /// </summary>
     public static class OperationsO001PlayerReadyChecks
     {
@@ -38,10 +39,18 @@ namespace Game.Tests.Editor.Operations
         public static void SharedLaunchEntersAuthoredO001(string directory)
         {
             OperationsO001PlayerShell shell = OperationsO001PlayerShell.CreateNew(directory, OperationsO001PlayerShell.RegularEnSeed);
+            Require(
+                OperationsAriaVisibleControls.TryPeekShippingControl(shell, out string district) &&
+                district == OperationsMatchVisibleControls.District,
+                shell.Describe());
             Require(!shell.Press(OperationsO001PlayerShell.ContinueId), shell.Describe());
             Require(!shell.Press(OperationsO001PlayerShell.DeployId), shell.Describe());
             Require(shell.Press(OperationsO001PlayerShell.LibraryId), shell.Describe());
             Require(shell.Read().Route == OperationsShellNames.MissionBriefing, shell.Describe());
+            Require(
+                OperationsAriaVisibleControls.TryPeekShippingControl(shell, out string raid) &&
+                raid == OperationsMatchVisibleControls.Raid,
+                shell.Describe());
             Require(shell.Press(OperationsO001PlayerShell.DeployId), shell.Describe());
             OperationsPlayerShellFrame frame = shell.Read();
             Require(frame.MissionId == OperationsO001PlayerShell.MissionId, shell.Describe());

@@ -1,5 +1,7 @@
-# Runs Operations P4R P0 O001 player-shell validation against the shadow project only.
-# Does not claim AriaWon. Programmer 2 records Regular EN evidence after this passes.
+# Runs the Operations P4R O001 shared-launch marker against the shadow project only.
+# Passing it is not a player-ready certification.
+# Design-APPROVED O001–O003 and historical Ops AriaWon captures are WIP/foundation.
+# Programmer 2 records Manual and Regular EN visible-control evidence after this passes.
 [CmdletBinding()]
 param(
     [string] $ShadowPath = "D:\Projects\WarlineCapture-Operations",
@@ -77,7 +79,7 @@ if ($PSBoundParameters.ContainsKey("GuiLicensing")) {
     -TimeoutSeconds $TimeoutSeconds
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Operations O001 player-ready shadow validation failed."
+    throw "Operations O001 shared-launch shadow validation failed. This marker is not a player-ready certification."
 }
 
 Write-Host "[OperationsO001PlayerReady] result=Passed project=$shadow"

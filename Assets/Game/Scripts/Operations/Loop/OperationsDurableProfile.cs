@@ -14,6 +14,9 @@ namespace Game.Operations.Loop
     /// </summary>
     public static class OperationsDurableProfile
     {
+        /// <summary>
+        /// Directory sentinel written to ready.txt. It is not a player-ready certification.
+        /// </summary>
         public const string ReadyMarker = "o001-player-ready";
 
         const string ReadyFile = "ready.txt";

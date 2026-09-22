@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Host checks for the O001 player shell. No Unity. Does not claim AriaWon."""
+"""Host checks for the O001 shared-launch shell. No Unity.
+
+Passing the marker is not a player-ready certification. Design-APPROVED
+O001–O003 and historical Ops AriaWon captures are WIP/foundation.
+"""
 
 from __future__ import annotations
 
@@ -18,6 +22,7 @@ DRIVER = CONTENT / "OperationsAriaVisibleControls.cs"
 VIEW = CAPTURE / "OperationsO001PlayerReadyView.cs"
 PLAYMODE = ROOT / "Assets/Tests/Editor/Operations/OperationsO001PlayerReadyPlayMode.cs"
 VISIBLE = CONTENT / "OperationsMatchVisibleControls.cs"
+HELPER = ROOT / "Assets/Game/Scripts/Composition/OperationsMatchSceneSystemHelper.cs"
 LAUNCH = ROOT / "Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLaunch.cs"
 SAVE = ROOT / "Assets/Game/Scripts/Persistence/SaveDataModel.cs"
 MIGRATION = ROOT / "Assets/Game/Scripts/Persistence/SaveMigration.cs"
@@ -33,6 +38,7 @@ def check_sources() -> None:
     driver = DRIVER.read_text(encoding="utf-8")
     view = VIEW.read_text(encoding="utf-8")
     visible = VISIBLE.read_text(encoding="utf-8")
+    helper = HELPER.read_text(encoding="utf-8")
     playmode = PLAYMODE.read_text(encoding="utf-8")
     launch = LAUNCH.read_text(encoding="utf-8")
     save = SAVE.read_text(encoding="utf-8")
@@ -48,6 +54,12 @@ def check_sources() -> None:
         fail("driver_direct_press")
     if "OperationsMatchVisibleControls.Press(" not in driver:
         fail("driver_press")
+    if "TryPeekShippingControl" not in driver:
+        fail("aria_peek")
+    if "OperationsAriaVisibleControls.Step" in helper:
+        fail("aria_hidden_step")
+    if "onClick.Invoke" not in helper or "TryPeekShippingControl" not in helper:
+        fail("aria_visible_click")
     for hidden in (".Scan(", ".Move(", ".Extract(", "TryExecute", "BeginSettlement", "BeginLaunch"):
         if hidden in driver:
             fail(f"driver_hidden={hidden}")

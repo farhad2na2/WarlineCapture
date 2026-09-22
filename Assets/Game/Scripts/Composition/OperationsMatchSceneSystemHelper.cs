@@ -30,6 +30,7 @@ namespace Game.Composition
         Button _continueButton;
         float _nextStep;
         bool _loggedMissingDistrict;
+        string _missingVisible;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Install()
@@ -252,17 +253,47 @@ namespace Game.Composition
             if (Time.unscaledTime < _nextStep)
                 return;
             _nextStep = Time.unscaledTime + 1f;
-            if (AriaArmed())
+            if (!AriaArmed())
             {
-                OperationsVisibleStepKind kind = OperationsAriaVisibleControls.Step(_shell, out string detail);
-                PublishEnvelope();
-                if (kind == OperationsVisibleStepKind.Stuck)
-                    Debug.LogWarning("[OperationsSharedLaunch] Aria stopped. " + detail);
-                if (kind == OperationsVisibleStepKind.Victory)
-                    ClearAriaFlag();
+                PumpWait();
                 return;
             }
 
+            if (!OperationsAriaVisibleControls.TryPeekShippingControl(_shell, out string shipping))
+            {
+                ClearAriaFlag();
+                return;
+            }
+
+            if (shipping == OperationsMatchVisibleControls.Wait)
+            {
+                PumpWait();
+                return;
+            }
+
+            if (!TryInvokeVisible(shipping))
+            {
+                NoteMissing(shipping);
+                return;
+            }
+
+            _missingVisible = null;
+            PublishEnvelope();
+            ReturnToOpsIfSettled();
+            if (IsMatchClockControl(shipping))
+                PumpWait();
+        }
+
+        static bool IsMatchClockControl(string shipping) =>
+            shipping == OperationsMatchVisibleControls.Select ||
+            shipping == OperationsMatchVisibleControls.Move ||
+            shipping == OperationsMatchVisibleControls.Attack ||
+            shipping == OperationsMatchVisibleControls.Scan ||
+            shipping == OperationsMatchVisibleControls.Hold ||
+            shipping == OperationsMatchVisibleControls.Board;
+
+        void PumpWait()
+        {
             OperationsPlayerShellFrame frame = _shell.Read();
             if (!frame.HasMission || frame.Phase != OperationsLoopPhase.Active || frame.Terminal)
                 return;
@@ -273,6 +304,87 @@ namespace Game.Composition
                     string.Empty,
                     string.Empty))
                 PublishEnvelope();
+        }
+
+        bool TryInvokeVisible(string shippingControl)
+        {
+            switch (shippingControl)
+            {
+                case OperationsMatchVisibleControls.District:
+                    return InvokeDistrict();
+                case OperationsMatchVisibleControls.Raid:
+                    return InvokeRaid();
+                case OperationsMatchVisibleControls.Continue:
+                    return InvokeIfLive(_continueButton);
+                case OperationsMatchVisibleControls.Select:
+                case OperationsMatchVisibleControls.Move:
+                case OperationsMatchVisibleControls.Attack:
+                case OperationsMatchVisibleControls.Scan:
+                case OperationsMatchVisibleControls.Hold:
+                case OperationsMatchVisibleControls.Board:
+                    return InvokeMatch(shippingControl);
+                default:
+                    return false;
+            }
+        }
+
+        bool InvokeDistrict()
+        {
+            if (_dashboard == null)
+                return false;
+            Button[] buttons = _dashboard.DistrictButtons;
+            if (buttons == null || buttons.Length == 0)
+                return false;
+            return InvokeIfLive(buttons[0]);
+        }
+
+        bool InvokeRaid()
+        {
+            ConfirmRaidV3PopupView popup = UnityEngine.Object.FindAnyObjectByType<ConfirmRaidV3PopupView>();
+            if (popup != null && popup.isActiveAndEnabled)
+                return InvokeIfLive(popup.ConfirmButton);
+            if (_district == null)
+                return false;
+            Button[] actions = _district.ActionButtons;
+            if (actions == null || actions.Length <= (int)DistrictOperationActionKind.Raid)
+                return false;
+            return InvokeIfLive(actions[(int)DistrictOperationActionKind.Raid]);
+        }
+
+        static bool InvokeMatch(string shippingControl)
+        {
+            MatchOverlayCommandControlsView commands =
+                UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if (commands == null)
+                return false;
+            Button button = shippingControl switch
+            {
+                OperationsMatchVisibleControls.Select => commands.SelectButton,
+                OperationsMatchVisibleControls.Move => commands.MoveButton,
+                OperationsMatchVisibleControls.Attack => commands.AttackButton,
+                OperationsMatchVisibleControls.Scan => commands.ScanButton,
+                OperationsMatchVisibleControls.Hold => commands.HoldButton,
+                OperationsMatchVisibleControls.Board => commands.BoardButton,
+                _ => null
+            };
+            return InvokeIfLive(button);
+        }
+
+        static bool InvokeIfLive(Button button)
+        {
+            if (button == null || !button.isActiveAndEnabled || !button.interactable)
+                return false;
+            button.onClick.Invoke();
+            return true;
+        }
+
+        void NoteMissing(string shipping)
+        {
+            if (_missingVisible == shipping)
+                return;
+            _missingVisible = shipping;
+            Debug.LogWarning(
+                "[OperationsSharedLaunch] Regular EN Aria did not find the visible " + shipping + " control.");
         }
 
         void ReturnToOpsIfSettled()

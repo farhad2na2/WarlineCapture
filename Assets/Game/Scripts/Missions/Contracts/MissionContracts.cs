@@ -75,7 +75,8 @@ namespace Game.Missions.Contracts
         SecureBreachArchive = 12,
         RestoreGridlockSiteA = 13,
         RestoreGridlockSiteB = 14,
-        DeliverGridlockRelief = 15
+        DeliverGridlockRelief = 15,
+        TransferSupplyOil = 16, TransferSupplyFuel = 17, SecureSupplyReserve = 18
     }
 
     public enum MissionStarRuleKind : byte

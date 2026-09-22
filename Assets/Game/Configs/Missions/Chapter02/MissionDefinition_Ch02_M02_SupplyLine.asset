@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch02_M02_SupplyLine
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch02.m02.supply_line
+  schemaVersion: 1
+  displayNameKey: mission.supply_line.name
+  displaySummaryKey: mission.supply_line.summary
+  locationNameKey: mission.supply_line.location
+  scenarioId: scenario.ch02.m02.supply_line
+  operationMapId: opmap.ch02.supply_yard_01
+  briefingSequenceId: seq.ch02.m02.brief
+  commsSequenceId: seq.ch02.m02.comms
+  debriefSequenceId: seq.ch02.m02.debrief
+  objectives:
+  - objectiveId: obj.ch02.m02.oil
+    displayTextKey: mission.supply_line.objective.oil
+    rule: 16
+    missionRoleId: role.supply.oil
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch02.m02.fuel
+    displayTextKey: mission.supply_line.objective.fuel
+    rule: 17
+    missionRoleId: role.supply.fuel
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch02.m02.reserve
+    displayTextKey: mission.supply_line.objective.reserve
+    rule: 18
+    missionRoleId: role.supply.reserve
+    targetConfigId: 
+    requiredCount: 40
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.supply_line.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.supply_line.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.supply_line.star.3
+    threshold: 480000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 800
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 4000
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

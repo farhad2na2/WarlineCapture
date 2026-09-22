@@ -234,7 +234,8 @@ namespace Game.Components
         BreachCore = 41, BreachCounterattack = 42, BreachArchive = 43, BreachHold = 44,
         GridlockEscortA = 45, GridlockFadiA = 46, GridlockWorkerA = 47, GridlockWorkA = 48,
         GridlockEscortB = 49, GridlockFadiB = 50, GridlockWorkerB = 51, GridlockWorkB = 52,
-        GridlockProtectRoute = 53, GridlockHospitalHold = 54
+        GridlockProtectRoute = 53, GridlockHospitalHold = 54,
+        SupplyLineOil = 55, SupplyLineRefinery = 56, SupplyLineStorage = 57, SupplyLineHold = 58
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData
@@ -299,6 +300,7 @@ namespace Game.Components
         public CampaignMissionExtractionDefinitionBlob Extraction;
         public CampaignMissionBreachDefinitionBlob Breach;
         public CampaignMissionGridlockDefinitionBlob Gridlock;
+        public CampaignMissionSupplyLineDefinitionBlob SupplyLine;
         public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;

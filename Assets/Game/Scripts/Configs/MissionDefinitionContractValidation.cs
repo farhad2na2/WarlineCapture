@@ -206,6 +206,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.RestoreGridlockSiteA:
                 case MissionObjectiveRuleKind.RestoreGridlockSiteB:
                 case MissionObjectiveRuleKind.DeliverGridlockRelief:
+                case MissionObjectiveRuleKind.TransferSupplyOil:
+                case MissionObjectiveRuleKind.TransferSupplyFuel:
+                case MissionObjectiveRuleKind.SecureSupplyReserve:
                 case MissionObjectiveRuleKind.ExtractPassengers:
                 case MissionObjectiveRuleKind.ProtectExtractionTransport:
                 case MissionObjectiveRuleKind.SecureLandingZone:

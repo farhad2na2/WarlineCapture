@@ -11226,6 +11226,7 @@ MonoBehaviour:
   m05MissionArt: {fileID: 2800000, guid: 6fac5173b42724e0da3626d90eba0590, type: 3}
   gridlockMissionArt: {fileID: 2800000, guid: ae7730a65d54f44d79a4c9e1e1596f74, type: 3}
   m03MissionArt: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
+  supplyLineMissionArt: {fileID: 2800000, guid: b99d871cee7b64c25a2a9970a28c409f, type: 3}
   backRouteButton: {fileID: 4579297816043088970}
   missionOverview: {fileID: 4284717024942189541}
   primaryObjectives: {fileID: 8233866179177459740}

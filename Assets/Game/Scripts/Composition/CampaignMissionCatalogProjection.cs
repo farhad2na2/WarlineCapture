@@ -159,6 +159,7 @@ namespace Game.Composition
             definition.Extraction = ProjectExtraction(scenario.Extraction);
             definition.Breach = ProjectBreach(scenario.Breach);
             definition.Gridlock = ProjectGridlock(scenario.Gridlock);
+            definition.SupplyLine = ProjectSupplyLine(scenario.SupplyLine);
             definition.ScenarioId = new FixedString64Bytes(scenario.ScenarioId);
             definition.OperationMapId = new FixedString64Bytes(mission.OperationMapId);
             definition.DisplayNameKey = new FixedString64Bytes(mission.DisplayNameKey);

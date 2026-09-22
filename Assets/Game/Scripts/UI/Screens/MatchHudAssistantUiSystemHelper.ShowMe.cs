@@ -28,7 +28,7 @@ namespace Game.UI.Runtime
         private bool _focusNextTutorialWorld;
         private float _tutorialFocusPendingUntil;
         private int _tutorialFocusPendingStep;
-        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 5 or 8 or 9 or 10 or 12;
+        private bool UsesNextTutorialAction => _lastPanelModel.TutorialStepCount is 4 or 5 or 8 or 9 or 10 or 12;
 
         private bool ShowNextTutorialAction()
         {

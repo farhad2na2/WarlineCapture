@@ -32,6 +32,7 @@ namespace Game.UI.Shell.Ecs
             var mission = missions.GetSingleton<CampaignMissionRuntimeComponent>();
             if (mission.Outcome != Game.Missions.Contracts.MissionOutcomeKind.None) return AriaPlayCapability.None;
             string id = mission.MissionId.ToString();
+            if(id==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine)return AriaPlayCapability.GuidedCampaign;
             return id is "saga.ch01.m01.first_contact" or "saga.ch01.m02.establish_base" or
                 "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault" or
                 "saga.ch02.m01.gridlock"

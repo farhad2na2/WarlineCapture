@@ -15,6 +15,7 @@ namespace Game.Runtime
 
         private static readonly FixedString64Bytes M02 = "saga.ch01.m02.establish_base";
         private static readonly FixedString64Bytes M03 = "saga.ch01.m03.radar_warning";
+        private static readonly FixedString64Bytes SupplyLine = "saga.ch02.m02.supply_line";
         private static readonly FixedString64Bytes Gridlock = "saga.ch02.m01.gridlock";
         private static readonly FixedString64Bytes M05 = "saga.ch01.m05.breach_assault";
         private static readonly FixedString64Bytes M04 = "saga.ch01.m04.airlift";
@@ -25,7 +26,7 @@ namespace Game.Runtime
         internal static bool UsesBlockingComms(in FixedString64Bytes missionId, in CampaignMissionAttemptFactsComponent facts) =>
             missionId.Equals(M02) && facts.DefenseWaveWarningIssued!=0 && facts.DefenseWaveActivated==0;
         internal static bool UsesMissionSequences(in FixedString64Bytes missionId) =>
-            missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
+            missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
         internal static FixedString64Bytes ResolveDebrief(in FixedString64Bytes missionId,
             in CampaignMissionAttemptFactsComponent facts, in FixedString64Bytes fallback)
         {

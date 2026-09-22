@@ -115,7 +115,7 @@ namespace Game.Runtime
                 ? source.ReservedFuelOutboundBarrels
                 : source.ReservedOilOutboundBarrels;
             float stored = resourceKind == FuelResourceKind
-                ? source.StoredFuelBarrels
+                ? math.max(0f, source.StoredFuelBarrels - source.CivilianFuelReserveBarrels)
                 : source.StoredOilBarrels;
             if (reserved + 0.001f < amount || stored + 0.001f < amount)
                 return false;

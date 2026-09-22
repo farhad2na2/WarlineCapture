@@ -1676,6 +1676,107 @@ MonoBehaviour:
       value: COMMANDER XP
     - key: mission.reward.credits
       value: CREDITS
+    - key: mission.supply_line.deadline
+      value: 12 minutes
+    - key: mission.supply_line.enemy_intel
+      value: Ash Line sabotage teams are targeting the supply chain.
+    - key: mission.supply_line.failure.deadline
+      value: The reserve was not secured within twelve minutes.
+    - key: mission.supply_line.failure.hauler
+      value: A required hauler was destroyed. Both trucks must survive.
+    - key: mission.supply_line.failure.integrity
+      value: The supply chain could not initialize safely. Exit and retry; no result
+        or reward has been recorded.
+    - key: mission.supply_line.failure.link
+      value: A critical supply building was destroyed. Protect the pump, refinery
+        and reserve depot.
+    - key: mission.supply_line.failure.squad
+      value: The defending rifle squads were lost. Retry with both sites covered.
+    - key: mission.supply_line.forces
+      value: "8 rifles \xB7 Oil truck \xB7 Fuel tanker"
+    - key: mission.supply_line.guide.1.body
+      value: Move rifles beside the Oil pump. The tray truck carries Oil automatically;
+        check its load and route if production stalls.
+    - key: mission.supply_line.guide.1.title
+      value: Protect Oil extraction
+    - key: mission.supply_line.guide.2.body
+      value: Keep the refinery and both trucks safe. Oil becomes Fuel here; the tanker
+        delivers it to the warehouse.
+    - key: mission.supply_line.guide.2.title
+      value: Protect refinery output
+    - key: mission.supply_line.guide.3.body
+      value: Defend the warehouse while the tanker unloads. Keep 20 civilian barrels
+        and 20 relief barrels in storage.
+    - key: mission.supply_line.guide.3.title
+      value: Secure the reserve depot
+    - key: mission.supply_line.guide.4.body
+      value: Defeat the sabotage teams and keep all links intact. Hold the full reserve
+        for twenty seconds.
+    - key: mission.supply_line.guide.4.title
+      value: Hold the supply line
+    - key: mission.supply_line.guide.diagram
+      value: "OIL PUMP \u2192 TRAY TRUCK \u2192 REFINERY \u2192 TANKER \u2192 RESERVE"
+    - key: mission.supply_line.guide.example
+      value: Select rifles, press Move, then tap the threatened site. Trucks haul
+        automatically. At 20 stored barrels, press Reserve civilian Fuel.
+    - key: mission.supply_line.guide.mistake
+      value: Do not send unarmed trucks into the sabotage teams. A stopped truck
+        may be waiting for a full load; inspect its status before changing orders.
+    - key: mission.supply_line.guide.recovery.body
+      value: Select the Oil truck, press Move and send it to the marked southern
+        road. Automatic hauling resumes after arrival. Defend this alternate lane
+        around the ruined block.
+    - key: mission.supply_line.guide.recovery.title
+      value: Use the southern haul lane
+    - key: mission.supply_line.guide.title
+      value: Supply Line field guide
+    - key: mission.supply_line.location
+      value: Industrial supply yard
+    - key: mission.supply_line.name
+      value: Supply Line
+    - key: mission.supply_line.objective.fuel
+      value: Deliver refined Fuel to storage
+    - key: mission.supply_line.objective.fuel.body
+      value: Redirect the Oil truck through the marked southern lane. The tanker
+        automatically carries refinery output to the reserve depot.
+    - key: mission.supply_line.objective.oil
+      value: Supply Oil to the refinery
+    - key: mission.supply_line.objective.oil.body
+      value: The tray truck automatically hauls Oil from the pump to the refinery.
+    - key: mission.supply_line.objective.reserve
+      value: Protect 40 barrels and hold for 20 seconds
+    - key: mission.supply_line.objective.reserve.body
+      value: Reroute the Oil truck through the southern lane, allocate 20 civilian
+        barrels, keep 40 in storage and hold the intact chain for 20 seconds after
+        defeating the attackers.
+    - key: mission.supply_line.reserve.allocate
+      value: Reserve 20 civilian Fuel
+    - key: mission.supply_line.reserve.allocated
+      value: Civilian reserve protected
+    - key: mission.supply_line.reserve.status
+      value: 'Fuel: {0}/40 | Civilian reserve: {1}/20'
+    - key: mission.supply_line.resources
+      value: 20 civilian + 20 relief Fuel barrels
+    - key: mission.supply_line.result.defeat
+      value: Supply line lost
+    - key: mission.supply_line.result.success
+      value: Fuel is secured for clinics, water pumps and relief transport. The stolen
+        manifest points toward the dormant Relay corridor.
+    - key: mission.supply_line.result.victory
+      value: Supply line restored
+    - key: mission.supply_line.reward.card
+      value: "800 Commander XP \xB7 4,000 Credits"
+    - key: mission.supply_line.star.1
+      value: Complete the mission
+    - key: mission.supply_line.star.2
+      value: Lose no rifle soldiers
+    - key: mission.supply_line.star.3
+      value: Finish within 8 minutes
+    - key: mission.supply_line.summary
+      value: Restore the Oil-to-Fuel chain and protect the reserve for clinics, water
+        pumps and JRC relief transport.
+    - key: mission.supply_line.time_limit
+      value: Time limit
     - key: narrative.first_launch.control.cancel_skip
       value: KEEP WATCHING
     - key: narrative.first_launch.control.confirm_skip
@@ -1944,6 +2045,9 @@ MonoBehaviour:
       value: Captain Laila Nasser
     - key: narrative.speaker.laila.role
       value: Airlift pilot
+    - key: narrative.supply_line.comms.01
+      value: Fuel has reached the reserve. A captured manifest shows the diverted
+        tankers used the same dormant corridor we found at the hospital road.
     - key: not_enough_money
       value: Not enough money
     - key: selection.building.base_structure
@@ -8354,6 +8458,201 @@ MonoBehaviour:
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
       value: "\u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.supply_line.deadline
+      value: "\u06F1\u06F2 \u062F\u0642\u06CC\u0642\u0647"
+    - key: mission.supply_line.enemy_intel
+      value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u062E\u0631\u0627\u0628\u06A9\u0627\u0631
+        \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0648 \u0647\u062F\u0641
+        \u06AF\u0631\u0641\u062A\u0646."
+    - key: mission.supply_line.failure.deadline
+      value: "\u0630\u062E\u06CC\u0631\u0647 \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646
+        \u062F\u0648\u0627\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u0627\u0645\u0646
+        \u0646\u0634\u062F."
+    - key: mission.supply_line.failure.hauler
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC
+        \u0636\u0631\u0648\u0631\u06CC \u0646\u0627\u0628\u0648\u062F \u0634\u062F.
+        \u0647\u0631 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0628\u0627\u06CC\u062F
+        \u0632\u0646\u062F\u0647 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.supply_line.failure.integrity
+      value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u062F\u0631\u0633\u062A \u0631\u0627\u0647\u200C\u0627\u0646\u062F\u0627\u0632\u06CC
+        \u0646\u0634\u062F. \u062E\u0627\u0631\u062C \u0634\u0648 \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u0646\u062A\u06CC\u062C\u0647
+        \u06CC\u0627 \u067E\u0627\u062F\u0627\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: mission.supply_line.failure.link
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0636\u0631\u0648\u0631\u06CC \u0646\u0627\u0628\u0648\u062F \u0634\u062F.
+        \u0627\u0632 \u067E\u0645\u067E\u060C \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u0648 \u0627\u0646\u0628\u0627\u0631 \u0630\u062E\u06CC\u0631\u0647 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646."
+    - key: mission.supply_line.failure.squad
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627\u06CC \u0645\u062F\u0627\u0641\u0639
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646 \u0648 \u0627\u0632 \u0647\u0631 \u062F\u0648
+        \u0645\u062D\u0644 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.supply_line.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u0646\u0641\u062A \xB7 \u062A\u0627\u0646\u06A9\u0631 \u0633\u0648\u062E\u062A"
+    - key: mission.supply_line.guide.1.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u06A9\u0646\u0627\u0631 \u067E\u0645\u067E \u0646\u0641\u062A \u0628\u0628\u0631.
+        \u06A9\u0627\u0645\u06CC\u0648\u0646 \u06A9\u0641\u06CC \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0646\u0641\u062A \u0631\u0648 \u0645\u06CC\u200C\u0628\u0631\u0647\u061B
+        \u0627\u06AF\u0647 \u062A\u0648\u0644\u06CC\u062F \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F\u060C \u0628\u0627\u0631 \u0648 \u0645\u0633\u06CC\u0631\u0634
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646."
+    - key: mission.supply_line.guide.1.title
+      value: "\u0627\u0632 \u0627\u0633\u062A\u062E\u0631\u0627\u062C \u0646\u0641\u062A
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.supply_line.guide.2.body
+      value: "\u0627\u0632 \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u0648 \u0647\u0631 \u062F\u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646. \u0627\u06CC\u0646\u062C\u0627 \u0646\u0641\u062A \u0628\u0647
+        \u0633\u0648\u062E\u062A \u062A\u0628\u062F\u06CC\u0644 \u0645\u06CC\u200C\u0634\u0647\u061B
+        \u062A\u0627\u0646\u06A9\u0631 \u0627\u0648\u0646 \u0631\u0648 \u0628\u0647
+        \u0627\u0646\u0628\u0627\u0631 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647."
+    - key: mission.supply_line.guide.2.title
+      value: "\u0627\u0632 \u062E\u0631\u0648\u062C\u06CC \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.supply_line.guide.3.body
+      value: "\u062A\u0627 \u062A\u0627\u0646\u06A9\u0631 \u0628\u0627\u0631\u0634
+        \u0631\u0648 \u062E\u0627\u0644\u06CC \u0645\u06CC\u200C\u06A9\u0646\u0647
+        \u0627\u0632 \u0627\u0646\u0628\u0627\u0631 \u062F\u0641\u0627\u0639 \u06A9\u0646.
+        \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u0627\u0645\u062F\u0627\u062F
+        \u0631\u0648 \u062F\u0631 \u0627\u0646\u0628\u0627\u0631 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.supply_line.guide.3.title
+      value: "\u0627\u0646\u0628\u0627\u0631 \u0630\u062E\u06CC\u0631\u0647 \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646"
+    - key: mission.supply_line.guide.4.body
+      value: "\u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u0634\u06A9\u0633\u062A \u0628\u062F\u0647 \u0648 \u0647\u0645\u0647\u0654
+        \u062D\u0644\u0642\u0647\u200C\u0647\u0627 \u0631\u0648 \u0633\u0627\u0644\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u06A9\u0627\u0645\u0644 \u0631\u0648 \u0628\u06CC\u0633\u062A \u062B\u0627\u0646\u06CC\u0647
+        \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.supply_line.guide.4.title
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0648
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.supply_line.guide.diagram
+      value: "\u067E\u0645\u067E \u0646\u0641\u062A \u2190 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u06A9\u0641\u06CC \u2190 \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u2190 \u062A\u0627\u0646\u06A9\u0631 \u2190 \u0630\u062E\u06CC\u0631\u0647"
+    - key: mission.supply_line.guide.example
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \u062D\u0631\u06A9\u062A
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0631\u0648\u06CC \u0645\u062D\u0644
+        \u062F\u0631 \u062E\u0637\u0631 \u0628\u0632\u0646. \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627
+        \u062E\u0648\u062F\u06A9\u0627\u0631 \u0628\u0627\u0631 \u0645\u06CC\u200C\u0628\u0631\u0646.
+        \u0648\u0642\u062A\u06CC \u0630\u062E\u06CC\u0631\u0647 \u0628\u0647 \u06F2\u06F0
+        \u0628\u0634\u06A9\u0647 \u0631\u0633\u06CC\u062F\u060C \u062F\u06A9\u0645\u0647\u0654
+        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0631\u062F\u0645 \u0631\u0648
+        \u0628\u0632\u0646."
+    - key: mission.supply_line.guide.mistake
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0631\u0648 \u0628\u0647 \u0633\u0645\u062A \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627
+        \u0646\u0641\u0631\u0633\u062A. \u0645\u0645\u06A9\u0646\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u0645\u062A\u0648\u0642\u0641\u200C\u0634\u062F\u0647 \u0645\u0646\u062A\u0638\u0631
+        \u0628\u0627\u0631 \u06A9\u0627\u0645\u0644 \u0628\u0627\u0634\u0647\u061B
+        \u0642\u0628\u0644 \u0627\u0632 \u0639\u0648\u0636 \u06A9\u0631\u062F\u0646
+        \u062F\u0633\u062A\u0648\u0631\u060C \u0648\u0636\u0639\u06CC\u062A\u0634
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646."
+    - key: mission.supply_line.guide.recovery.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0646\u0641\u062A \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \u062D\u0631\u06A9\u062A
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0628\u0647 \u062C\u0627\u062F\u0647\u0654
+        \u062C\u0646\u0648\u0628\u06CC\u0650 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0641\u0631\u0633\u062A. \u0628\u0639\u062F \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646\u060C
+        \u0628\u0627\u0631\u0628\u0631\u06CC \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0627\u0632 \u0627\u06CC\u0646 \u0645\u0633\u06CC\u0631 \u062C\u0627\u06CC\u06AF\u0632\u06CC\u0646
+        \u06A9\u0646\u0627\u0631 \u0628\u0644\u0648\u06A9 \u0648\u06CC\u0631\u0627\u0646\u200C\u0634\u062F\u0647
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.supply_line.guide.recovery.title
+      value: "\u0627\u0632 \u0645\u0633\u06CC\u0631 \u0628\u0627\u0631\u0628\u0631\u06CC
+        \u062C\u0646\u0648\u0628\u06CC \u0628\u0631\u0648"
+    - key: mission.supply_line.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: mission.supply_line.location
+      value: "\u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u0635\u0646\u0639\u062A\u06CC"
+    - key: mission.supply_line.name
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: mission.supply_line.objective.fuel
+      value: "\u0633\u0648\u062E\u062A \u062A\u0648\u0644\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0627\u0646\u0628\u0627\u0631 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.supply_line.objective.fuel.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0646\u0641\u062A\u0650 \u062E\u0627\u0644\u06CC
+        \u0631\u0648 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062C\u0646\u0648\u0628\u06CC\u0650
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0641\u0631\u0633\u062A.
+        \u062A\u0627\u0646\u06A9\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631 \u0633\u0648\u062E\u062A
+        \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0647
+        \u0627\u0646\u0628\u0627\u0631 \u0630\u062E\u06CC\u0631\u0647 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647."
+    - key: mission.supply_line.objective.oil
+      value: "\u0646\u0641\u062A \u0631\u0648 \u0628\u0647 \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
+        \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.supply_line.objective.oil.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u06A9\u0641\u06CC \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0646\u0641\u062A \u0631\u0648 \u0627\u0632 \u067E\u0645\u067E \u0628\u0647
+        \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647 \u0645\u06CC\u200C\u0628\u0631\u0647."
+    - key: mission.supply_line.objective.reserve
+      value: "\u0627\u0632 \u06F4\u06F0 \u0628\u0634\u06A9\u0647 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646 \u0648 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631"
+    - key: mission.supply_line.objective.reserve.body
+      value: "\u06F2\u06F0 \u0628\u0634\u06A9\u0647 \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645
+        \u06A9\u0646\u0627\u0631 \u0628\u0630\u0627\u0631\u060C \u06F4\u06F0 \u0628\u0634\u06A9\u0647
+        \u062F\u0631 \u0627\u0646\u0628\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u0648 \u0628\u0639\u062F \u0627\u0632 \u0634\u06A9\u0633\u062A \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u060C
+        \u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0633\u0627\u0644\u0645 \u0631\u0648
+        \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.supply_line.reserve.allocate
+      value: "\u06F2\u06F0 \u0628\u0634\u06A9\u0647 \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645
+        \u0630\u062E\u06CC\u0631\u0647 \u06A9\u0646"
+    - key: mission.supply_line.reserve.allocated
+      value: "\u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0631\u062F\u0645 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u0645\u06CC\u200C\u0634\u0647"
+    - key: mission.supply_line.reserve.status
+      value: "\u0633\u0648\u062E\u062A: {0}/\u06F4\u06F0 | \u0630\u062E\u06CC\u0631\u0647\u0654
+        \u0645\u0631\u062F\u0645: {1}/\u06F2\u06F0"
+    - key: mission.supply_line.resources
+      value: "\u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        + \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u0627\u0645\u062F\u0627\u062F"
+    - key: mission.supply_line.result.defeat
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.supply_line.result.success
+      value: "\u0633\u0648\u062E\u062A \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u067E\u0645\u067E\u200C\u0647\u0627\u06CC \u0622\u0628 \u0648 \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0627\u0645\u062F\u0627\u062F \u0627\u0645\u0646\u0647. \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u0654
+        \u062F\u0632\u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647 \u0628\u0647
+        \u0645\u0633\u06CC\u0631 \u0645\u062A\u0631\u0648\u06A9 \u0634\u0628\u06A9\u0647
+        \u0627\u0634\u0627\u0631\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.supply_line.result.victory
+      value: "\u062E\u0637 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0628\u0631\u0642\u0631\u0627\u0631
+        \u0634\u062F"
+    - key: mission.supply_line.reward.card
+      value: "\u06F8\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F4\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.supply_line.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.supply_line.star.2
+      value: "\u0647\u06CC\u0686 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u06CC
+        \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A \u0646\u062F\u0647"
+    - key: mission.supply_line.star.3
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F8 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0645\u0627\u0645 \u06A9\u0646"
+    - key: mission.supply_line.summary
+      value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0646\u0641\u062A \u062A\u0627
+        \u0633\u0648\u062E\u062A \u0631\u0648 \u0631\u0627\u0647 \u0628\u0646\u062F\u0627\u0632
+        \u0648 \u0627\u0632 \u0630\u062E\u06CC\u0631\u0647\u0654 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627\u060C
+        \u067E\u0645\u067E\u200C\u0647\u0627\u06CC \u0622\u0628 \u0648 \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0627\u0645\u062F\u0627\u062F \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.supply_line.time_limit
+      value: "\u0645\u0647\u0644\u062A"
     - key: narrative.first_launch.control.cancel_skip
       value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u062A\u0645\u0627\u0634\u0627"
     - key: narrative.first_launch.control.confirm_skip
@@ -8895,6 +9194,15 @@ MonoBehaviour:
     - key: narrative.speaker.laila.role
       value: "\u062E\u0644\u0628\u0627\u0646 \u062A\u0631\u0627\u0628\u0631\u06CC
         \u0647\u0648\u0627\u06CC\u06CC"
+    - key: narrative.supply_line.comms.01
+      value: "\u0633\u0648\u062E\u062A \u0628\u0647 \u0627\u0646\u0628\u0627\u0631
+        \u0631\u0633\u06CC\u062F\u0647. \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u0654
+        \u0628\u0647\u200C\u062F\u0633\u062A\u200C\u0627\u0648\u0645\u062F\u0647
+        \u0646\u0634\u0648\u0646 \u0645\u06CC\u200C\u062F\u0647 \u062A\u0627\u0646\u06A9\u0631\u0647\u0627\u06CC
+        \u0645\u0646\u062D\u0631\u0641\u200C\u0634\u062F\u0647 \u0627\u0632 \u0647\u0645\u0648\u0646
+        \u0645\u0633\u06CC\u0631 \u0645\u062A\u0631\u0648\u06A9\u06CC \u0631\u0641\u062A\u0646
+        \u06A9\u0647 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654 \u0628\u06CC\u0645\u0627\u0631\u0633\u062A\u0627\u0646
+        \u067E\u06CC\u062F\u0627 \u06A9\u0631\u062F\u06CC\u0645."
     - key: not_enough_money
       value: "\u0627\u0639\u062A\u0628\u0627\u0631 \u06A9\u0627\u0641\u06CC \u0646\u062F\u0627\u0631\u06CC"
     - key: selection.building.base_structure

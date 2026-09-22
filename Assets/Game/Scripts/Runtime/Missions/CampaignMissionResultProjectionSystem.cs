@@ -146,6 +146,10 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.SupplyLine.Enabled != 0)
+                return facts.SupplyFailure != SupplyLineFailure.Integrity && (outcome == MissionOutcomeKind.Victory
+                    ? facts.SupplyFailure == SupplyLineFailure.None && facts.SupplyOilTransferred!=0 && facts.SupplyFuelTransferred!=0 && facts.SupplyReserveComplete!=0
+                    : facts.SupplyFailure != SupplyLineFailure.None);
             if (definition.Gridlock.Enabled != 0)
                 return facts.GridlockFailure != GridlockFailure.Integrity && (outcome == MissionOutcomeKind.Victory
                     ? facts.GridlockFailure == GridlockFailure.None && facts.GridlockDelivered != 0 && facts.GridlockSiteAComplete != 0 && facts.GridlockSiteBComplete != 0

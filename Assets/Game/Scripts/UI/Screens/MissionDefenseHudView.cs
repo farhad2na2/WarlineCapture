@@ -22,10 +22,14 @@ namespace Game.UI.Runtime
         [SerializeField] private V3LocalizedTextBindingView status,supportLabel;
         [SerializeField] private Image supportIcon;
         [SerializeField] private Sprite radarIcon;
+        [SerializeField] private Button supplyReserveButton;
+        public Button SupplyReserveButton => supplyReserveButton;
+        [SerializeField] private V3LocalizedTextBindingView supplyReserveLabel,supplyReserveStatus;
         public bool IsCameraTourControl(Selectable control)=>control==skipCameraTourButton;
         private void OnEnable()
         {
             cameraPreferencesApplied=false;
+            if(supplyReserveButton!=null)supplyReserveButton.onClick.AddListener(AllocateSupplyLine);
             if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(false);
             if(skipCameraTourButton!=null) skipCameraTourButton.gameObject.SetActive(false);
             if(skipCameraTourButton!=null) skipCameraTourButton.onClick.AddListener(SkipCameraTour);
@@ -37,6 +41,7 @@ namespace Game.UI.Runtime
         }
         private void OnDisable()
         {
+            if(supplyReserveButton!=null)supplyReserveButton.onClick.RemoveListener(AllocateSupplyLine);
             if(skipCameraTourButton!=null) skipCameraTourButton.onClick.RemoveListener(SkipCameraTour);
             UiShellRuntimeGateway.Localization.LocaleChanged -= Refresh;
             if(guideButton!=null) guideButton.onClick.RemoveListener(OpenGuide);
@@ -69,15 +74,24 @@ namespace Game.UI.Runtime
         private void Refresh()
         {
             using var marker = RefreshMarker.Auto();
+            bool supply=UiShellRuntimeGateway.TryReadSupplyLine(out int fuel,out int reserve,out bool canAllocate);
             bool active=UiShellRuntimeGateway.TryReadMissionDefense(out var model);
             bool breach=(UiShellRuntimeGateway.IsBreachGuideContext() || UiShellRuntimeGateway.IsGridlockGuideContext()) && !UiShellRuntimeGateway.TryReadMissionCameraTour();
-            if(actions!=null) actions.SetActive(active || breach);
+            if(actions!=null) actions.SetActive(active || breach || supply);
             if(warningButton!=null) warningButton.gameObject.SetActive(active);
             if(skipButton!=null && !active) skipButton.gameObject.SetActive(false);
             bool touring=UiShellRuntimeGateway.TryReadMissionCameraTour() && UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restriction) && restriction.MissionId=="saga.ch01.m03.radar_warning";
             if(touchLayout!=null) touchLayout.Apply(active || touring || UiShellRuntimeGateway.TryReadMissionExtraction(out _));
             if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(false);
             if(status!=null) status.gameObject.SetActive(false);
+            if(supplyReserveButton!=null)supplyReserveButton.gameObject.SetActive(supply);
+            if(supplyReserveStatus!=null)supplyReserveStatus.gameObject.SetActive(false);
+            if(supply)
+            {
+                if(supplyReserveButton!=null)supplyReserveButton.interactable=canAllocate;
+                if(supplyReserveLabel!=null)supplyReserveLabel.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(reserve>0?"mission.supply_line.reserve.allocated":"mission.supply_line.reserve.allocate")+"\n"+Game.Configs.GameText.Format("mission.supply_line.reserve.status","Fuel: {0}/40 | Civilian reserve: {1}/20",fuel,reserve));
+                if(supplyReserveStatus!=null){supplyReserveStatus.SetLocalizedValue(Game.Configs.GameText.Format("mission.supply_line.reserve.status","Fuel: {0}/40 | Civilian reserve: {1}/20",fuel,reserve));}
+            }
             if(!active) {lastScanResult=0; return;}
             if(warningButton!=null) warningButton.interactable=model.HasWarning;
             if(warningButton!=null && model.ScanResultVersion!=lastScanResult && !string.IsNullOrEmpty(model.ScanFeedback))
@@ -88,6 +102,7 @@ namespace Game.UI.Runtime
             }
             if(skipButton!=null) skipButton.gameObject.SetActive(!model.RequiresHoldResume && model.GuidanceId is 45004 or 45007 or 45008 or 45009);
         }
+        private void AllocateSupplyLine()=>UiShellRuntimeGateway.TryAllocateSupplyLineReserve();
         private void OpenGuide()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenGuide);
         private void OpenWarning()=>UiShellRuntimeGateway.TryRequestMissionDefenseAction(UiMissionDefenseAction.OpenWarning);
         private void Skip()

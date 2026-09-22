@@ -5,6 +5,9 @@ namespace Game.Components
 {
     public struct CampaignMissionAttemptFactsComponent : IComponentData
     {
+        public byte SupplyOilTransferred, SupplyFuelTransferred, SupplyReserveComplete;
+        public int SupplyStoredFuel;
+        public SupplyLineFailure SupplyFailure;
         public byte GridlockSiteAComplete, GridlockSiteBComplete, GridlockDelivered;
         public GridlockFailure GridlockFailure;
         public int ElapsedMilliseconds;

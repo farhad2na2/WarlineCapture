@@ -1,0 +1,818 @@
+{
+  "Assets/AddressableAssetsData/AddressableAssetSettings.asset": {
+    "beforeSha256": "f6bc5dada8db25afdf224331ef5fe589e0321cb377c99def28a65a3927920807",
+    "installedSha256": "6362251b35ec239323b22f0d651ba6d0b9a97fe81a284961e5aeb3d321badca7"
+  },
+  "Assets/AddressableAssetsData/AddressableAssetSettings.asset.meta": {
+    "beforeSha256": "69ddd638b3093aec2ede1c2d1f6584163ff3eaae7f03da71776ec92440213ead",
+    "installedSha256": "69ddd638b3093aec2ede1c2d1f6584163ff3eaae7f03da71776ec92440213ead"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Schemas/Supply Line Narrative_BundledAssetGroupSchema.asset": {
+    "beforeSha256": null,
+    "installedSha256": "701606075dbce30f6115db8b9b2da7e62c28f1f5716c1b7020b16cae6fd1f882"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Schemas/Supply Line Narrative_BundledAssetGroupSchema.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "6de7c7a3c83ca2b4af428a28c7fd8d49c4559c98e9c2d7b7a89605f6781ea65b"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Schemas/Supply Line Narrative_ContentUpdateGroupSchema.asset": {
+    "beforeSha256": null,
+    "installedSha256": "a7dee0195816b29b788af58c7a0670d32c1f43a5e7dd956359cf65af35cc497c"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Schemas/Supply Line Narrative_ContentUpdateGroupSchema.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "bc92d0575478b7f4acd16f37a287de057e8b901a4b05b9a4cab1958fb401a2ba"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Supply Line Narrative.asset": {
+    "beforeSha256": null,
+    "installedSha256": "1295a97775665d76a06c51db0f4a4f8519ad1481c61f683cb2b9334f319a6a34"
+  },
+  "Assets/AddressableAssetsData/AssetGroups/Supply Line Narrative.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "77c10fa1f27a44febc2ce1cd9bf478c16f8c5a576c3dd0a9ac91c2dd593231ac"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine.meta": {
+    "beforeSha256": null,
+    "installedSha256": "13a58f5e50abe446b88a6de8c794f74c7550edfed5c85cc6c4857525f1bea032"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/EmergencyServices.png": {
+    "beforeSha256": null,
+    "installedSha256": "0294d9b4a9e1e8140c2021099de28a36ba5cfdd449a813fe35100791b937fc8a"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/EmergencyServices.png.meta": {
+    "beforeSha256": null,
+    "installedSha256": "4a0e060730baeece179f32c6aff971b478101d4688db0c3674073c73276dff30"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/Manifest.png": {
+    "beforeSha256": null,
+    "installedSha256": "f2a1aa675c577b99ca97290028cf0c90c3f296cd6518b43e328c89f60518b479"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/Manifest.png.meta": {
+    "beforeSha256": null,
+    "installedSha256": "6ebdeffd804cddf008aac3e26a876d3b698310ee0d70486a144ec9da54323418"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/SupplyChain.png": {
+    "beforeSha256": null,
+    "installedSha256": "d71955fbf8b81e74f533f6b8368b3ffee7a4de05cf3bf139da86e2b160fb550b"
+  },
+  "Assets/Game/Art/Narrative/CH02M02SupplyLine/SupplyChain.png.meta": {
+    "beforeSha256": null,
+    "installedSha256": "b7b1931affaae182e3cdda741bd76b6b7a9587c51ae934361ec8634cba6a10b6"
+  },
+  "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset": {
+    "beforeSha256": "bacc4d5e4da4edf52b77056a3605ccc4e6e4436698d5c354354928dcec996336",
+    "installedSha256": "b873d4d4f63f477ba0758ed74c3e8ce722b05dc1a53d70cc7cf9882ab28a954c"
+  },
+  "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset.meta": {
+    "beforeSha256": "5209f82e07dc6e975147d16651f111ffd1fc6aa9c44e75c4045cf594a9952b06",
+    "installedSha256": "5209f82e07dc6e975147d16651f111ffd1fc6aa9c44e75c4045cf594a9952b06"
+  },
+  "Assets/Game/Configs/Missions/Chapter02/CH02M02_SupplyLine_FieldGuide.asset": {
+    "beforeSha256": null,
+    "installedSha256": "cb48d0baf2079a881369a34001f2df087be7db82e33a37aa3018447249b38588"
+  },
+  "Assets/Game/Configs/Missions/Chapter02/CH02M02_SupplyLine_FieldGuide.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "8d5a7c3b7babd3edd2d3c4a42ebcea7ae1c1bb1ecf2e452b8dc3c71d9d6014fe"
+  },
+  "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M02_SupplyLine.asset": {
+    "beforeSha256": null,
+    "installedSha256": "ac73f6db9995ee317a0eb85f36e5550ea307e935148119a8fe3dce17e025860f"
+  },
+  "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M02_SupplyLine.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "cc9a3d042108a6faa2929cacb42c574d2216be911343c26cce1d5945c29947a7"
+  },
+  "Assets/Game/Configs/Narrative/Chapter02/CH02M02_SupplyLine_Narrative.asset": {
+    "beforeSha256": null,
+    "installedSha256": "70a76a7d425a9f3f69dd171310d6ea8ee4e02f27bbf2b886362c3e037f9c0724"
+  },
+  "Assets/Game/Configs/Narrative/Chapter02/CH02M02_SupplyLine_Narrative.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "b88712ff7b96080b745293f659f0f80909ea70ce010ba34a0ce39eee5671b3a0"
+  },
+  "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset": {
+    "beforeSha256": "b09f18c200df89baa3e999076de7f04983e58dce33a1f8b67ad2ae7bb281a441",
+    "installedSha256": "deff48fc73ae0aca9372ae8dcdee2e4cb72c99a1dbe3b93c7f661793cf14b4d6"
+  },
+  "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset.meta": {
+    "beforeSha256": "2c9ef3646134a0ac947b693b67af673745f55d9df52189a12bf46a6d63cc0f9e",
+    "installedSha256": "2c9ef3646134a0ac947b693b67af673745f55d9df52189a12bf46a6d63cc0f9e"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset": {
+    "beforeSha256": "fcac37241ca109814891089120cb3109d2899b9dfe9365165d86bc9436a134b8",
+    "installedSha256": "030cfcd24fc898b595dbe7d342bc4e6242cf1bb5777b4b34ed962938462917b3"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset.meta": {
+    "beforeSha256": "e826ea8c9d35bb43edd89dc0bb27be0ddf605b81c3457599fed01267f7e8e2aa",
+    "installedSha256": "e826ea8c9d35bb43edd89dc0bb27be0ddf605b81c3457599fed01267f7e8e2aa"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_SupplyYard01.asset": {
+    "beforeSha256": null,
+    "installedSha256": "fb6c797e5bfe39f36c591872e807afc2c517751dc9becaac848a0509b7314bed"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_SupplyYard01.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "6fb3cea4ef402724eba76b6340f955cf911c5c8060be90670a5edab22261ccca"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter02/SupplyLinePlacements.asset": {
+    "beforeSha256": null,
+    "installedSha256": "64bc72fb15ccaa82a33091eaac07f4ad760f51f36b26c404dd2565ead6df4145"
+  },
+  "Assets/Game/Configs/OperationMaps/Chapter02/SupplyLinePlacements.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "6fc5f9bd8cdcdada0e367978b5426e8ab7ba30527815c866bb6233a64785526b"
+  },
+  "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M02_SupplyLine.asset": {
+    "beforeSha256": null,
+    "installedSha256": "7245e4a216f36150b61d7bc03b06202cdee425a924846bd53e089fa089337104"
+  },
+  "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M02_SupplyLine.asset.meta": {
+    "beforeSha256": null,
+    "installedSha256": "3db3077aad44b081c40becf472a7b33c03c88a356ecf240a164ae33577e66ba2"
+  },
+  "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset": {
+    "beforeSha256": "5bdb6b05da01b99f3555d1df210a3cd80fa8cbe9c67629bc6f7331e066f00aec",
+    "installedSha256": "ecea1ebd58d50222a20704722067c8591f9372bb4a4ce330f40c8adf91be4aaa"
+  },
+  "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset.meta": {
+    "beforeSha256": "cd100bb57aeb584cbb25e7d1cee0a2a707c037aa016598b735eef2758565278d",
+    "installedSha256": "cd100bb57aeb584cbb25e7d1cee0a2a707c037aa016598b735eef2758565278d"
+  },
+  "Assets/Game/Prefabs/Buildings/CH02M02SupplyLine.meta": {
+    "beforeSha256": null,
+    "installedSha256": "9ec0e563e53c0733339524a742989cec1138432e15e45a3a97a82e478cb02f3e"
+  },
+  "Assets/Game/Prefabs/Buildings/CH02M02SupplyLine/SupplyLine_Building_OilPump.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "19fb6376b2d916a6fbfcd513c01d64566b2ea5831c27effa88ce435f59142fbe"
+  },
+  "Assets/Game/Prefabs/Buildings/CH02M02SupplyLine/SupplyLine_Building_OilPump.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "f52f8dca65c8833a57e59dd5d8d2d959e93b6e402ed66a376d6dd7cc886d6ce1"
+  },
+  "Assets/Game/Prefabs/Buildings/CH02M02SupplyLine/SupplyLine_Building_Refinery.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "bd4eb5e7540121ed4832f84fe3172164d2b7f5f36e2fbcc3e190523fe9cfed6d"
+  },
+  "Assets/Game/Prefabs/Buildings/CH02M02SupplyLine/SupplyLine_Building_Refinery.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "1e825f2a503a5cf04cf8beb173eb6a8314a74a9a9560a2ed76aa19f0e7db7310"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted.meta": {
+    "beforeSha256": null,
+    "installedSha256": "b407911c0285475facaefb24199a898b0ffe4070b73e40933ddaf3470b894ed3"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics.meta": {
+    "beforeSha256": null,
+    "installedSha256": "d3931329663c220224606dbba4fe0620bbdb658c0ea226c7040af439c903608e"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_container.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "74c1fe9715bc61f6f5fd15f514eb9affbb48af7992491120dc89083feda93980"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_container.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "1a3e1f7c5bc5ea6b42e9744dcc5c3555b08ed89b5616bd066cbbe3a20f57021f"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_loaded_pallet.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "337e6a2f24b65bf963989b6fe4afdee52b767f1763c18a1f292c6e99ff9cbebd"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_loaded_pallet.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "20c77e4b862a41cf68eff0318b244d117251bc258b1244576b22aba105ea0d86"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_medical_crate.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "a376bb76ae7b6143fee9c08495b6661e7014c9b203c960cc50c7899083dd1135"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_medical_crate.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "6064d32da931aec89742acd66a18f948efa0a930400e01ba1e16e39416f4549c"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_warehouse.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "3f619e163f06befeee78e5a7a6dcc8392b6dc9a0f22464c2503a471c6e66b252"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/ENV_D2_warehouse.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "cf477953388e23a21c0a20720798d70a5498899ccf8fc8b28b799cc99d297cc4"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/SupplyLine_Reserve_Depot.prefab": {
+    "beforeSha256": null,
+    "installedSha256": "58f1fcd95595937ce6fa3a3ed2f0c9557961082acc006437c444f43d70769c9c"
+  },
+  "Assets/Game/Prefabs/Environment/Demo2Adapted/Logistics/SupplyLine_Reserve_Depot.prefab.meta": {
+    "beforeSha256": null,
+    "installedSha256": "0c7f12d3aa02973f08314998514adbe71b2426041bb4df10dd3dee61552f342b"
+  },
+  "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab": {
+    "beforeSha256": "13425b6a8e12e150c103f851dcedf81ba898aaa6c9a1a54b1e8c4189849f6e7e",
+    "installedSha256": "2ed10726948138aaaf53ea21c9ac74b5865c6a78520b9cea1eabc8881e9e9ac6"
+  },
+  "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab.meta": {
+    "beforeSha256": "c747a85ca04814b7b327926caa11380116cbb63868398e108fc3bcf7f8fcd6f7",
+    "installedSha256": "c747a85ca04814b7b327926caa11380116cbb63868398e108fc3bcf7f8fcd6f7"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab": {
+    "beforeSha256": "f03b4c3a939d878067451d722a4a61f7e86a3b16363708508af5bb0420eb21db",
+    "installedSha256": "bdf593f571a6836064e8125af88b92bb79c1ec9360b75967ba69d27022dfdd21"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN05_CampaignOperationsContent.prefab.meta": {
+    "beforeSha256": "04ff92917c8d18e2697fd8f88109b3e9088fade80099b8fba58fe6d3e5f9f758",
+    "installedSha256": "04ff92917c8d18e2697fd8f88109b3e9088fade80099b8fba58fe6d3e5f9f758"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab": {
+    "beforeSha256": "1d6d965696aa76bcc415591a42abbe4951fed5ba6dfa86e45bba07a4e5116474",
+    "installedSha256": "54c6f687720f77bd4f53f301e92a303aaca8614096ebc56b2354f2d3b63ef291"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN06_MissionBriefingContent.prefab.meta": {
+    "beforeSha256": "a24f4fdf423f23db9e80af1c059b322b99efa7aa2780615d6ffb17a060855bbc",
+    "installedSha256": "a24f4fdf423f23db9e80af1c059b322b99efa7aa2780615d6ffb17a060855bbc"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab": {
+    "beforeSha256": "36b7b3900fd28a7463e054024eacd28ce6d648eae697a3e04f6bce4bd950b65e",
+    "installedSha256": "05141000565170fe0d86dbb1d12248419e773b2dd9ba7e76fbde062d2c26dfa0"
+  },
+  "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab.meta": {
+    "beforeSha256": "344ac51bbdb8fe65a007cd396387f83d2909eb3edce189f7db84a3d7261b9348",
+    "installedSha256": "344ac51bbdb8fe65a007cd396387f83d2909eb3edce189f7db84a3d7261b9348"
+  },
+  "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset": {
+    "beforeSha256": "2200697bd83c7dbb486586b8613404887422b0d3ec18b233e44a13c827c0d0f5",
+    "installedSha256": "1027af9ce1dd32c8c9ffb2014b5d5032ad64d7068a41f226999477281cb92c5e"
+  },
+  "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset.meta": {
+    "beforeSha256": "27350cfdcba8d3b16a015be2c3ec6592ebe985e29f42f150621fe59c283773be",
+    "installedSha256": "27350cfdcba8d3b16a015be2c3ec6592ebe985e29f42f150621fe59c283773be"
+  },
+  "Assets/Game/Scenes/Menu.unity": {
+    "beforeSha256": "fb749488f6190cc3fbbd03ccbcd8292959c6f6f846319345d5a3043c0dd74e77",
+    "installedSha256": "556736bb9e62974b249035ceb5aad0f24100ae71005231fba545ef12b290f663"
+  },
+  "Assets/Game/Scenes/Menu.unity.meta": {
+    "beforeSha256": "3b3b972a317f8b1596ed8108041379c3f343f85172384dd864cbc9aa88501c46",
+    "installedSha256": "3b3b972a317f8b1596ed8108041379c3f343f85172384dd864cbc9aa88501c46"
+  },
+  "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs": {
+    "beforeSha256": "50b32b1b4bbe1f6548933cca0c7a769b79f09d1653826038c57a34297497638a",
+    "installedSha256": "5aa3f3b492fd7a45e8a17fb4769b1b090d00ffb87389f42ad2788e5186d33739"
+  },
+  "Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs.meta": {
+    "beforeSha256": "8cc90bbe08d55db0a4af2f650c5e52036b84b620e7b6d94410eab5c723ef3da4",
+    "installedSha256": "8cc90bbe08d55db0a4af2f650c5e52036b84b620e7b6d94410eab5c723ef3da4"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionAttemptFactComponents.cs": {
+    "beforeSha256": "d2b1a19449058cd70229952c8ad6126182f0c32ee2d9310d4a2363d499379dcc",
+    "installedSha256": "32b2c13a5c96e9ded44a3feb62c605d571a4161668b2ae461ad246bbfed793e8"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionAttemptFactComponents.cs.meta": {
+    "beforeSha256": "6f550283cb632caa6051bb8924e12ca86b9af8b809b4375b81f8323ab58e90ad",
+    "installedSha256": "6f550283cb632caa6051bb8924e12ca86b9af8b809b4375b81f8323ab58e90ad"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionComponents.cs": {
+    "beforeSha256": "56b0103e5376b894f9ec4720b31f2669f2394ce644c5a02780dc86b6538e8d85",
+    "installedSha256": "1a8514e75b4c8a2473b972e3a15812d3d570595efb6396ccdad3e59aa0c3a8e2"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionComponents.cs.meta": {
+    "beforeSha256": "fcde7683dfb79f7f27d0b025cae90ee4707637d2b257344d895a0a11878d9743",
+    "installedSha256": "fcde7683dfb79f7f27d0b025cae90ee4707637d2b257344d895a0a11878d9743"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionSupplyLineComponents.cs": {
+    "beforeSha256": null,
+    "installedSha256": "f72160d615e3ceeef41c738a15756a76a2229a38798f7e676d1190e46b43d0c7"
+  },
+  "Assets/Game/Scripts/Components/CampaignMissionSupplyLineComponents.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "e23861bf11368a21dd63f1b69570074966e8eab2c106eb54bb8b0dc0d105c42f"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Matching.cs": {
+    "beforeSha256": "3ec502078cf6830e18369f1f7d01ca765e4a2e87b33b5ac7cf2e7ad98fd196ff",
+    "installedSha256": "cf8580eb5a1174eee1d0e0372af45cdf98e0e07311e51069f111332188eff5b9"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.Matching.cs.meta": {
+    "beforeSha256": "3fb4fb92e13380a28df64f856a59d9433c66d3cba01c657c6fb7be7367aa1c75",
+    "installedSha256": "3fb4fb92e13380a28df64f856a59d9433c66d3cba01c657c6fb7be7367aa1c75"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "12255a9e61ab7fa4fae090f61040619e437068df1d08027b842caa4b60619a01"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "9ea67b09564d2bab2a57831610838aaea93ce279bec194aaae0e5f1372cb542c"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs": {
+    "beforeSha256": "ea9320b2b167582c7f5ed352919975763a63dda7bf54ac5e95533ffab1bbc271",
+    "installedSha256": "a4d9e87d12aa556d64e9dc61ff5e1a2c1306e15d110e07af2d85749a782a0fba"
+  },
+  "Assets/Game/Scripts/Composition/CampaignMissionCatalogProjection.cs.meta": {
+    "beforeSha256": "8815cfa5bceac0d9a1ac767006c4293c6634d4556968e5af2b38228ae10d488e",
+    "installedSha256": "8815cfa5bceac0d9a1ac767006c4293c6634d4556968e5af2b38228ae10d488e"
+  },
+  "Assets/Game/Scripts/Configs/MissionDefinitionContractValidation.cs": {
+    "beforeSha256": "dccd8fc248e3bc7d6d6cb3f058e31831757265ec6737db38686acad6554c2aba",
+    "installedSha256": "8f4c9d2e793b5e3d8ae613da52c2442a23eceb861bc016f8e933f223bf64749c"
+  },
+  "Assets/Game/Scripts/Configs/MissionDefinitionContractValidation.cs.meta": {
+    "beforeSha256": "c54b829fc45e8936956a939720558d24b68ac86c0e1ee4429ff5f3f600081478",
+    "installedSha256": "c54b829fc45e8936956a939720558d24b68ac86c0e1ee4429ff5f3f600081478"
+  },
+  "Assets/Game/Scripts/Configs/MissionSupplyLineDefinitionConfig.cs": {
+    "beforeSha256": null,
+    "installedSha256": "4d19d0c044a16f7318466b269e6c63f0fe336b397cee8e1aa5433e4638b28c31"
+  },
+  "Assets/Game/Scripts/Configs/MissionSupplyLineDefinitionConfig.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "815c9923abbeb8dd2dc81d6bf1bf318e2b577ce467358b969e9e4d5a46899d7b"
+  },
+  "Assets/Game/Scripts/Configs/Narrative/CH02M02SupplyLineCopy.cs": {
+    "beforeSha256": null,
+    "installedSha256": "a0493d77df34802502e9a1982a9bc95aa66ea2147f05cb435bee03ee58289fa7"
+  },
+  "Assets/Game/Scripts/Configs/Narrative/CH02M02SupplyLineCopy.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "b8b296507f1c92d1d643639c17a5ea50089f2103cbefae602d5a2161f8e9e2c9"
+  },
+  "Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs": {
+    "beforeSha256": "90c5b8126a7a993670ca58c279d97f807db2a89cc58532e1f3f0ee453a85ab5d",
+    "installedSha256": "e81a5671dc9b4ca3dee0e37a4a502b06122b25a31e8b6eddaca7389fd4b5879c"
+  },
+  "Assets/Game/Scripts/Configs/ScenarioSetupConfig.cs.meta": {
+    "beforeSha256": "ab3581f37793f8c524ccbc7826729baf1547f7fd040897337488ddf600d2e35b",
+    "installedSha256": "ab3581f37793f8c524ccbc7826729baf1547f7fd040897337488ddf600d2e35b"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs": {
+    "beforeSha256": null,
+    "installedSha256": "5862ee9854433bdf7b363514207fec7cbde6783916a8eeabcce9958bda12cb6b"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "22c864c697e4229328fd86d61d183467085b6a3e2ee0aa16b15721e3c36c8e3d"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineEnvironmentBuilder.cs": {
+    "beforeSha256": null,
+    "installedSha256": "ca6522c5420e5411b37362250c1fa0dd1be3029931d4e1a5fe889ccbb2ddce45"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineEnvironmentBuilder.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "35daaf3b0de3a735ea119e5cf4e4ccc221090df15be14b8066a743a04390c586"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineFlowProbe.cs": {
+    "beforeSha256": null,
+    "installedSha256": "6cb78a637ef3d2f400fc8ecfc42196894346a918c5dc79db3efe6a15d224fa2a"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineFlowProbe.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "08878765252f8375dc105adbc771b8d0cdc8606a9f291d7b70643ec1b41a30af"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs": {
+    "beforeSha256": null,
+    "installedSha256": "95780be0915c8dc934e8a1c2139eb6add4bc7ab872e9b49d3b5b301cf899b49e"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineInputProbe.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "15bbb20da48fed59cd6000fd24da2a0f313eb29d3a22cfac625898bd1d961338"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineMediaImporter.cs": {
+    "beforeSha256": null,
+    "installedSha256": "1cd67cd7dd40e6f67176bb609730df9953972a144e7b7da6aae4347c68ee6f1c"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineMediaImporter.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "8fa54f1bd2bd088c6cfaf4eee7892966e4c87ac8f2b11f0ff9060f74fe964626"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs": {
+    "beforeSha256": null,
+    "installedSha256": "cbc4c759e2105a76c6ff906f3a04ee10d96c27ad9bcd1b0c5942c57b0a79afe6"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "5789277ed3f98124e54c2e5c3b52384a795280e477164033e8426b224c844fc3"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs": {
+    "beforeSha256": null,
+    "installedSha256": "6d717384822c76605ae175cd14446d683d617a505fc003162ce3b474578a73d3"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "ef7c8bca661754b21afb788bf6dbfeaf171848609d084c06d84e91ed0d79c76b"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineRulesValidation.cs": {
+    "beforeSha256": null,
+    "installedSha256": "21cc495b2f0252a77fe723100b9dbeace74b789fd6a9b9e6d0432f071c816dc9"
+  },
+  "Assets/Game/Scripts/Editor/CH02M02SupplyLineRulesValidation.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "7bb619b3de16f373faa683a99835e80045c72be8c92de8145f14c8c15493cf0f"
+  },
+  "Assets/Game/Scripts/Missions/Contracts/CampaignMissionSequence.cs": {
+    "beforeSha256": "e934a97ecf5dd824e27b1d92f8626d3799d1cdc886a3dd61315284fcbc8b2b15",
+    "installedSha256": "e53a06d757726b4979f4b1e4b1690d0578d4aa45514cbee24cf825d01c64e73a"
+  },
+  "Assets/Game/Scripts/Missions/Contracts/CampaignMissionSequence.cs.meta": {
+    "beforeSha256": "0dbf55a77db64c409432447e59e06e2ecec3234192885ae43472c681d73f49f1",
+    "installedSha256": "0dbf55a77db64c409432447e59e06e2ecec3234192885ae43472c681d73f49f1"
+  },
+  "Assets/Game/Scripts/Missions/Contracts/MissionContracts.cs": {
+    "beforeSha256": "64677b74d0aa10bc6aed9af580af6b9eac60f170cf37f1719788a7ae431d665e",
+    "installedSha256": "76ddc1d554c2b68867f1342efa64bff72debd1a865a0e6767d7c0552147c7c5e"
+  },
+  "Assets/Game/Scripts/Missions/Contracts/MissionContracts.cs.meta": {
+    "beforeSha256": "59923d689fd20a785dddb5772b65e7a642fd84c8197461b9defe46ecb9ecd427",
+    "installedSha256": "59923d689fd20a785dddb5772b65e7a642fd84c8197461b9defe46ecb9ecd427"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "30ac012e99ecc748a96efe23e0ce77e32ec26a96f20b8d462a4906cb1582a36c"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "8bf7c1817263fc2aec4d3ef6603b7a7d94ea6f5256df090de7cb472d869c9e33"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.cs": {
+    "beforeSha256": "560ee67d4e7c09e3c965c11a5186fd34cea591f7d5f31607adc94576c1e31c01",
+    "installedSha256": "7f5e8f5e763c7f0aa0c4707e98550a03af28e727e42525a68f7eb02b46fd94b4"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.cs.meta": {
+    "beforeSha256": "9e63145113f7cd7b758f8e8250215c364ebf80c69f6338360ba86deeadaf72e8",
+    "installedSha256": "9e63145113f7cd7b758f8e8250215c364ebf80c69f6338360ba86deeadaf72e8"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.DefenseCleanup.cs": {
+    "beforeSha256": "6398f79d8578d29032e5f9f2b83db56a1ebb68c846b262c31f67efae85b8c4a7",
+    "installedSha256": "145921fb2ded0e3932405be696af43339d1597a64ee75b1d652346e986a89a1c"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.DefenseCleanup.cs.meta": {
+    "beforeSha256": "8079f844ee3714b02852b8fb6b5607ad2d32a7228f417ed705c564d977056eb1",
+    "installedSha256": "8079f844ee3714b02852b8fb6b5607ad2d32a7228f417ed705c564d977056eb1"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.SupplyLineCleanup.cs": {
+    "beforeSha256": null,
+    "installedSha256": "f4438a6457356cf01bcacefa89faf98a79f576c33d687199a4c2437ece363ecf"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.SupplyLineCleanup.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "d50d52b8df74a4f6daa8c193485ca78c7f47aef5c9b56de1aa7f042ab8fbf82a"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs": {
+    "beforeSha256": "a4877c1091936c706bc0bd5b4c9bc4edc88d5539c14203dab1853b0c380c501b",
+    "installedSha256": "19e230fa79c6a34128ea683fa9d2d38e35819f3bb5c778ba9b6947dc5df11b2b"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs.meta": {
+    "beforeSha256": "e70f56e7afdc73b4d03c8c52b4c081763e313dcebd08e6830e90621e16a8a479",
+    "installedSha256": "e70f56e7afdc73b4d03c8c52b4c081763e313dcebd08e6830e90621e16a8a479"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs": {
+    "beforeSha256": "2992943663bed3410493865990c60f0c81c8717483060b5636d8fc7ca4ce5db4",
+    "installedSha256": "0c587dadb70870ab4268ef61640321eaa33a96768924cc57d7f8feeaa82757f4"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionObjectiveProjectionSystem.cs.meta": {
+    "beforeSha256": "59d11eb0199cf2212c7460e74fda4751e4b46d823df82614355f5de99b8a9e28",
+    "installedSha256": "59d11eb0199cf2212c7460e74fda4751e4b46d823df82614355f5de99b8a9e28"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs": {
+    "beforeSha256": "306b162220ea6c35f7392bd1077a1dc673125a4ff054bbb260414277c3566c3b",
+    "installedSha256": "861f8200ea43f0049c5c58339be1188b4a2638e8883ea6698c7769b7f55db58c"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionResultProjectionSystem.cs.meta": {
+    "beforeSha256": "94061ff4115e7ae10b0f9355157d8f1e5ed23e76a8a203f785282434a1a761ca",
+    "installedSha256": "94061ff4115e7ae10b0f9355157d8f1e5ed23e76a8a203f785282434a1a761ca"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "3185cd41b0ffc8dd59d6d43546124d9be2330fc347694d41af1008810ec35921"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "634c94851f2113cb0b41abbbc3e31db96c4dbbc7af639ddb86d8c338f26d5e3d"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs": {
+    "beforeSha256": "a928db7443f3ccc37151608935f08827fb102a3979d9df0cf3577207ff2a76e9",
+    "installedSha256": "a2e936696c9eeb96f34f2db924ed2396272848f3cf66ec2980d93b4d8518c995"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs.meta": {
+    "beforeSha256": "b1479cf71cd849abf15b0fd78a669d87cb88f7c476988ec6ce17971b270484c5",
+    "installedSha256": "b1479cf71cd849abf15b0fd78a669d87cb88f7c476988ec6ce17971b270484c5"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.MapDefenses.cs": {
+    "beforeSha256": "4234d7a195d43c27574799f2d079cdb14c2c4fccf355f1b96bb784cf82c3f3dd",
+    "installedSha256": "85ca8b990f8f0d79f08e7ee7d026456efbe8aba7147f3bd19f295d56f04e9aac"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.MapDefenses.cs.meta": {
+    "beforeSha256": "8eb05cdaaf7b8fa93dcdf00f7e4d251d8acd080b9d9c3a84ba316cddf946f2a6",
+    "installedSha256": "8eb05cdaaf7b8fa93dcdf00f7e4d251d8acd080b9d9c3a84ba316cddf946f2a6"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "8beac22c5156d4580119f85e57edcece5141c3ae955c22edf53ac13af12a8113"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "39ee5c3318700103c4f3187d9fcafe79b7735baadbe03879abdfc7248b6b6138"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs": {
+    "beforeSha256": "013afd3822db3f3a0f4f756083da6e99f52c05c8a9ebfa8e06e4a5c51ebb4424",
+    "installedSha256": "867102c09e6971bd88f1398e5cfeb974ea35ea26a2cfaeb0f99013c057f36bc1"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.cs.meta": {
+    "beforeSha256": "9211d4c0e54c80663ce8560c57fe613c26497b5890afb6d7f662e747b24a6d25",
+    "installedSha256": "9211d4c0e54c80663ce8560c57fe613c26497b5890afb6d7f662e747b24a6d25"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSupplyLineRuleUtility.cs": {
+    "beforeSha256": null,
+    "installedSha256": "585050d3fd5d41342299d10d321277e0579ee3f80a0cf91c0dc861cac28db757"
+  },
+  "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSupplyLineRuleUtility.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "cabb7c9a9c6cb15e15ea1fce28439b878b573a71197af384b66f29a352617301"
+  },
+  "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs": {
+    "beforeSha256": "4a45576694de2ee3a8a590a6eccf75655fdcec2dd9833f36e7e20c3b21bd83f0",
+    "installedSha256": "06afa0b3338041661a5076c00e1ef309413b5b692fb72c58dc1a4d811da3f2b6"
+  },
+  "Assets/Game/Scripts/Systems/AircraftFuelSafetyReturnSystem.cs.meta": {
+    "beforeSha256": "7ffc0c20ef65645f7bcf71a280143da214966f30af047376a7e0625030ef09fe",
+    "installedSha256": "7ffc0c20ef65645f7bcf71a280143da214966f30af047376a7e0625030ef09fe"
+  },
+  "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs": {
+    "beforeSha256": "86743a6a8720298bec8c380e6763073643fd50608fb8a8d3677553dbf2815736",
+    "installedSha256": "6f586e8a9f5334624a82a4518a94577097d22b143c7c13c09b72bc5924ba87b5"
+  },
+  "Assets/Game/Scripts/Systems/BuildingResourceStorageReservationSystemHelper.cs.meta": {
+    "beforeSha256": "79faff649d0685f89fd5a7190e6e20a3de0f71a1c0d10f9323d30f5178030be7",
+    "installedSha256": "79faff649d0685f89fd5a7190e6e20a3de0f71a1c0d10f9323d30f5178030be7"
+  },
+  "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs": {
+    "beforeSha256": "cc73f7ff163314096f704a18f275c5fb5ae5ef9f1bb8d3abc78d511aea6c7992",
+    "installedSha256": "cf85d4f3abf434b7226d36121a4a9541bfba8497a2fca28989217abc302964c8"
+  },
+  "Assets/Game/Scripts/Systems/BuildingResourceStorageTransferSystemHelper.cs.meta": {
+    "beforeSha256": "b97b22d5e27a02c905ac883800aab0a8e99f318454ea04d98a421bd7c0d06076",
+    "installedSha256": "b97b22d5e27a02c905ac883800aab0a8e99f318454ea04d98a421bd7c0d06076"
+  },
+  "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs": {
+    "beforeSha256": "6dce1c80738189ea65611fdd13f499f6ca80a2c95c0c4ee16fa108c94a2eb607",
+    "installedSha256": "76f9e5c71777ec515faf4e1865f0e3d5bff24fc0c1e63f0d8322b34c740086e4"
+  },
+  "Assets/Game/Scripts/Systems/FactionResourceCompositionSystemHelper.cs.meta": {
+    "beforeSha256": "0770987e6481842c168c742ee0bf3e9180a4e40ce35b4f1a2e7c5e752a97612c",
+    "installedSha256": "0770987e6481842c168c742ee0bf3e9180a4e40ce35b4f1a2e7c5e752a97612c"
+  },
+  "Assets/Game/Scripts/Systems/GroundVehicleFuelHoldSystem.cs": {
+    "beforeSha256": "d5050efbf8336c8e5579624fd0a0d9721fe920701e33f02872a9f32a499bb1e5",
+    "installedSha256": "b2c5df2e1ab845996a0d552c4d7321642caa722ff3944ca11fa9f84b1c8a2eae"
+  },
+  "Assets/Game/Scripts/Systems/GroundVehicleFuelHoldSystem.cs.meta": {
+    "beforeSha256": "5fe744cb59d4ce442db318764f4ff857f48f49ad75353f5fc2ab675812cf215f",
+    "installedSha256": "5fe744cb59d4ce442db318764f4ff857f48f49ad75353f5fc2ab675812cf215f"
+  },
+  "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs": {
+    "beforeSha256": "a91590b086fa4ecca7518a61e8f7a203a77d032a468bde3b7f95ccca3548992f",
+    "installedSha256": "f7b1a763f2c81d24af83cef229e7711e28ad59a5748c142b3bf20216582c6762"
+  },
+  "Assets/Game/Scripts/Systems/Pathfinding/PathfindBatchJob.cs.meta": {
+    "beforeSha256": "1c1d383466bef04e6d722cd9f169dcd998f2ae9cc98e6277848f9835de330fe4",
+    "installedSha256": "1c1d383466bef04e6d722cd9f169dcd998f2ae9cc98e6277848f9835de330fe4"
+  },
+  "Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs": {
+    "beforeSha256": "be2d59386625c1eb477ac3ea0f9bd72d4a3a24144273a7a91b1124e58fa4ecea",
+    "installedSha256": "672bcea3444841ca0b57667e538f3a4a9ed5c494b1b8efcaf38895f5cd7d0832"
+  },
+  "Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs.meta": {
+    "beforeSha256": "b0def64cd06fbe749f7107d6affa429fb54f8d598eebdbbebdbfa4f0831b3333",
+    "installedSha256": "b0def64cd06fbe749f7107d6affa429fb54f8d598eebdbbebdbfa4f0831b3333"
+  },
+  "Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs": {
+    "beforeSha256": "5b889dd84ba13b40cf938f8598c1403ef201c572e75286245c79d50c051fd1e4",
+    "installedSha256": "5e004ba2e9548409f9a600b04b8386b960b9f3ec49bafafb9240aea45bc82a5e"
+  },
+  "Assets/Game/Scripts/Systems/UnitPathfindingScheduler.cs.meta": {
+    "beforeSha256": "e5694dfe7e43cc38ca87f671710e420b034fb97239e6c607f156d3e2074915a3",
+    "installedSha256": "e5694dfe7e43cc38ca87f671710e420b034fb97239e6c607f156d3e2074915a3"
+  },
+  "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs": {
+    "beforeSha256": "05ff59f9d6a3fb263f031d9e1c5c9b2f95674ce6e191097e99a71c43c8de054c",
+    "installedSha256": "2913bafa2923f3c4ee1c86233f864f910ba1cc92d2c0226027331f02e225c066"
+  },
+  "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs.meta": {
+    "beforeSha256": "7ef010d26d91aef1f2af6051dea55ee3a7ae798e0e33babc5628cceb57ed5dca",
+    "installedSha256": "7ef010d26d91aef1f2af6051dea55ee3a7ae798e0e33babc5628cceb57ed5dca"
+  },
+  "Assets/Game/Scripts/UI/Contracts/IUiSupplyLineGateway.cs": {
+    "beforeSha256": null,
+    "installedSha256": "7a7a2833fea70aa7f2f318b608f25e49254395bf8b1123f4bbe2f340acc31e0a"
+  },
+  "Assets/Game/Scripts/UI/Contracts/IUiSupplyLineGateway.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "789370f7532a937b15bebbefb92077179ce65450ca2d333492558a79e588ef7a"
+  },
+  "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs": {
+    "beforeSha256": "4b33dab8d4e8876e998fea64e6a00eb6637e9f5a021144b2e9055e5cbf609825",
+    "installedSha256": "0089f3a32567871206617674a2b4a579032ff748b89d83f3b75d0339c5775bc5"
+  },
+  "Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.cs.meta": {
+    "beforeSha256": "5c3039cc205a80a337b96f159e493fa053ee743f6f81cb3d14eda918cc71cf77",
+    "installedSha256": "5c3039cc205a80a337b96f159e493fa053ee743f6f81cb3d14eda918cc71cf77"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinderView.cs": {
+    "beforeSha256": "d41efe8d62e32868e9d064a5b90f83829cb1931c0b4e5770b3a95c4bb332abd9",
+    "installedSha256": "7fd72b78e7b20d411c00970cdfba8d053f604faa177f75d1b841ea62651eabb3"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinderView.cs.meta": {
+    "beforeSha256": "341f145a74e591d572c4fcf9fa99fde4a73cec8e97f3a73d57a46b9dc7b1ff22",
+    "installedSha256": "341f145a74e591d572c4fcf9fa99fde4a73cec8e97f3a73d57a46b9dc7b1ff22"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Goals.cs": {
+    "beforeSha256": "a83b81d748e2066dba6d36de43fb299e9f9ff351fb85a55b771728c2ffa56286",
+    "installedSha256": "d85de2ac297fe55ffe918d817ce587912cc66303cb8926459a79d12c5a70c69e"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Goals.cs.meta": {
+    "beforeSha256": "46cfc821c55744bb82349c0f69f57f178581ec6e3f733c3facbda4b8b0c84153",
+    "installedSha256": "46cfc821c55744bb82349c0f69f57f178581ec6e3f733c3facbda4b8b0c84153"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Gridlock.cs": {
+    "beforeSha256": "b01801bcdd1bc83539d34068a32cbae40a7e271fbc783a7f3427b27ce96484f4",
+    "installedSha256": "f5aff16fab44a5bf6221fdd5b97e98c13fee7c71b4a9bbd768c25990098b8c95"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Gridlock.cs.meta": {
+    "beforeSha256": "c9ae917d8bbef7bd5864317b19f1d42600dfc0534aac9bf52525caada32394ba",
+    "installedSha256": "c9ae917d8bbef7bd5864317b19f1d42600dfc0534aac9bf52525caada32394ba"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "bbc643af4417f9603d781ac82026dd42aa8458b3debebf6d728d711558eb2211"
+  },
+  "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "9b0ea2f7e7a82cafb372d48106e84ec83edec1a5f1fcdca05cc0f298b225ffb6"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs": {
+    "beforeSha256": "305368ef85edcac9999f50cc6018755d36dfd40a26f31b6b03d70a6682f4a102",
+    "installedSha256": "361087064a4b4f5b9cfc98a7b5ed90099dade72ef78e9a20fd566ff816688d45"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs.meta": {
+    "beforeSha256": "7f8f445932a537fdcbc129ecd578a950fdaa94f21444f19f96dfedb114a99a2d",
+    "installedSha256": "7f8f445932a537fdcbc129ecd578a950fdaa94f21444f19f96dfedb114a99a2d"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ShowMe.cs": {
+    "beforeSha256": "525bb86d3e2b36842dbb8ebac505a2cbaa4bca4c07cfe876c3275456b72cc024",
+    "installedSha256": "2835bf71f4deedc99be9cd4e82e050eae2d31738a5461e7e7f1c171de73c7705"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.ShowMe.cs.meta": {
+    "beforeSha256": "55af8722c2635aa1a4ba276b9125e4cb243d4f9b80ea21c9764a404e10ae071d",
+    "installedSha256": "55af8722c2635aa1a4ba276b9125e4cb243d4f9b80ea21c9764a404e10ae071d"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "9a1659b2463e6cc47e50b1a2948cfc0c6fd9518faa4e74374bf16f180391d6f7"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "1e9448cf614e809d328fc7cf27ff424f9d7c419bf1a742f736411367247a7245"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs": {
+    "beforeSha256": "8fa75dbdbcd04966f2f9d8a9036fab9d4729a3f8d76cdaca761c0ed3d7fc5bdc",
+    "installedSha256": "ca417b947e4c6b92fbdcadb9cd1a489ae8236e55e5b50bb2a85ef2ec201b4a10"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs.meta": {
+    "beforeSha256": "fe0eb076667ff9b3cee9bd7563143730d5e7b7cadf5a2f23b61a0d00745bb3b7",
+    "installedSha256": "fe0eb076667ff9b3cee9bd7563143730d5e7b7cadf5a2f23b61a0d00745bb3b7"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudResourceHeaderPresentation.cs": {
+    "beforeSha256": "baa945dd9d9cb70048b5c05bfc719599b64066d3ec162deb1e7b8c5e207a9261",
+    "installedSha256": "9818f6b6a89b5f6bdc45b8fe7452b03f74c0fdafde1f0289094de792a04b2e3f"
+  },
+  "Assets/Game/Scripts/UI/Screens/MatchHudResourceHeaderPresentation.cs.meta": {
+    "beforeSha256": "7e754a84eb3a0d03502bad32e9525b49f735139c53231900400c3c94555f89bf",
+    "installedSha256": "7e754a84eb3a0d03502bad32e9525b49f735139c53231900400c3c94555f89bf"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "30f256c1f162f274d588f1c36e65ea1a723ab71d0c310a23c8d4fbf3eae0da98"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "0842b6077448dd2960098efe2ca48a15108f8004171ab846c3dfdeb71e3ccf9e"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs": {
+    "beforeSha256": "8b469029e7e84bde2e049af4265879c37fd9e729adfa9040d092224a41514bc5",
+    "installedSha256": "e4dfdb3e7b22aeadb52d05b1d247100602b48eb3d2b1ae3a37ab2660f50922c1"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs.meta": {
+    "beforeSha256": "4a5f02feb9e0e40c97572f21c6f13aebac0414e380e0c7c3dbe7f09891d0ae66",
+    "installedSha256": "4a5f02feb9e0e40c97572f21c6f13aebac0414e380e0c7c3dbe7f09891d0ae66"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs": {
+    "beforeSha256": "9b091e13430eac776c88cc423a8cf9a6d56615ae47de01fb92025e79d889edd6",
+    "installedSha256": "505405da12791acb792a4d2eceb71915bac486c39e36a1ca3445a7dd21e8b2b5"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionDefenseHudView.cs.meta": {
+    "beforeSha256": "54ac4073b0b6fb598172f74a3a13a28eea575ad139d1bb09c03bb2ab90f73781",
+    "installedSha256": "54ac4073b0b6fb598172f74a3a13a28eea575ad139d1bb09c03bb2ab90f73781"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs": {
+    "beforeSha256": "44f2963eb12b290443defc0eef38ca84e2b20a2177495f73bb967045818b6373",
+    "installedSha256": "d83037852748bcf844e92b97632a969062b4d84968e4ebbb7e8a347e0779fe3e"
+  },
+  "Assets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs.meta": {
+    "beforeSha256": "772c18cb9c1639faefe9ecda8c60cd11d3ba5fe29ce7f5648fb13561708f416d",
+    "installedSha256": "772c18cb9c1639faefe9ecda8c60cd11d3ba5fe29ce7f5648fb13561708f416d"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs": {
+    "beforeSha256": "587f398a1f9fd624b4325de8cf217a5d0426f72b77c8c647a31ef997172cc75f",
+    "installedSha256": "a99e336db48abce95f941f84096c18a682bd03a21883f2aaf26d3d1aa72af208"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs.meta": {
+    "beforeSha256": "065509e6522d51da166a0cbdbc3e6d358b3ffb4dfbbc2f0ba52c3f78d0d0da15",
+    "installedSha256": "065509e6522d51da166a0cbdbc3e6d358b3ffb4dfbbc2f0ba52c3f78d0d0da15"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/SupplyLineRadioReportProjectionSystem.cs": {
+    "beforeSha256": null,
+    "installedSha256": "ee87010cb8af0ec484d6a2acb406041bdb97e29d9c4a52384704e6726d515dd7"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/SupplyLineRadioReportProjectionSystem.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "eb98ff9a2991ce8345e6b7bb1bc0fd7f0c61c35a1f8ee0073656a69a6d5c01b6"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs": {
+    "beforeSha256": "b12138ef5b023db14d1ec82dcf69502729ae680846cf42ae48c3ce800a0c5a5b",
+    "installedSha256": "fad61b0789f38b3972fca2aedd782d119c5e5c8bb9db09e42c22ef726c86f900"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiCampaignMissionProjectionSystem.Catalog.cs.meta": {
+    "beforeSha256": "44e89afd389fb219cb3ea5948fd773f2f4d9a18925f2d8971f0ac572e2298c6e",
+    "installedSha256": "44e89afd389fb219cb3ea5948fd773f2f4d9a18925f2d8971f0ac572e2298c6e"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs": {
+    "beforeSha256": "1eab6ad0121100d9ee9476e9c1ff028f1fd4ad42734a647f77e948f43971e623",
+    "installedSha256": "af932cf74b1968679b69dd3538a8977bc4a850e373e129db2f95680ea45f16ea"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs.meta": {
+    "beforeSha256": "de2a6d7661d89579680756a3ed953f1f64217ae4eb55acddde872918c1529eb4",
+    "installedSha256": "de2a6d7661d89579680756a3ed953f1f64217ae4eb55acddde872918c1529eb4"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldGuide.cs": {
+    "beforeSha256": "db7e01139d9ed9f854e922c78b41a41e333f738a60c97be73d3cc0bba160cc29",
+    "installedSha256": "adcef519b3b70d5f3124af5e07b1a7baa3b343af74d35b5895843582b43ddad5"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.FieldGuide.cs.meta": {
+    "beforeSha256": "842e032639037793a6f45608b4b4e4ada36f96c4f7355fb1634a8a704a670b3e",
+    "installedSha256": "842e032639037793a6f45608b4b4e4ada36f96c4f7355fb1634a8a704a670b3e"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs": {
+    "beforeSha256": "1a5301ffce48d7d9307e2848bef71c29fcf65442829cb06b297b919f01598b32",
+    "installedSha256": "d108e92d2cd1393da701760b1a0ceca62e444467779f03a323a860f74fe7a5a5"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs.meta": {
+    "beforeSha256": "0b1b8cad933007ca3a70194bd366659683caeb9e77dc6dac844e56be2d54e27b",
+    "installedSha256": "0b1b8cad933007ca3a70194bd366659683caeb9e77dc6dac844e56be2d54e27b"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs": {
+    "beforeSha256": "d7d8cd918f7eca77f0e41e4d71a37714d9901260992160ff194e6debf4d7eb2b",
+    "installedSha256": "07413eb3bea35e3e525aea8dfd630258dbaad7a8eb98a4ebc968df75fddddac2"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs.meta": {
+    "beforeSha256": "2b8813b332f8eb32ed3fab09ecd4648518e7097d89d6503d2e9a64581bdf9544",
+    "installedSha256": "2b8813b332f8eb32ed3fab09ecd4648518e7097d89d6503d2e9a64581bdf9544"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs": {
+    "beforeSha256": "d6d0a0e57a2c2d7c7626a171da1ebf3f4161c0a7c8c4337004cd595590f1c754",
+    "installedSha256": "65897f4df7d1862d1e140b21ec13af980b556b759b36169f95eb2559532ab8a7"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs.meta": {
+    "beforeSha256": "d4048ff439cbcdb0c917a15580ec2f893116393941acd3c82033a953282b8712",
+    "installedSha256": "d4048ff439cbcdb0c917a15580ec2f893116393941acd3c82033a953282b8712"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "035dfdabe2526c1116db2853ddbce59b54ddb5ad93c361c2393a430dc9f173bf"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "d7ad0ec9e32a89131b31c30bd90c00046a1ce19af858e5293db633897fbc2d56"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialTarget.cs": {
+    "beforeSha256": "1aef21a3b86110b074577128980229ac864210b25abcf07b3e5949088540f82c",
+    "installedSha256": "7216c374199082577b96934207ddd92b4e30c59e6e7579a1cc48bf2cfd5adee3"
+  },
+  "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialTarget.cs.meta": {
+    "beforeSha256": "46f509d067a102d9d01023556e4c17a48a15cd96df92173cdf7e6972a2254f6a",
+    "installedSha256": "46f509d067a102d9d01023556e4c17a48a15cd96df92173cdf7e6972a2254f6a"
+  },
+  "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.SupplyLine.cs": {
+    "beforeSha256": null,
+    "installedSha256": "d323988142bcf176803fc42133945cfe309b79a55725521e531ad309835aeccc"
+  },
+  "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.SupplyLine.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "84ffd37ad59b7c9168bd807eac271f7476f9407218a17fc2e4242d2c9e2f370f"
+  },
+  "Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs": {
+    "beforeSha256": null,
+    "installedSha256": "6b4fae7eac7ce199e6e9a5d134208b923a6d3528e5678804a38aff2422cb350f"
+  },
+  "Assets/Tests/Editor/CH02M02SupplyLineRegressionTests.cs.meta": {
+    "beforeSha256": null,
+    "installedSha256": "3855092283ee0ebd8cf4335af21ba488ee312ccc7f8da9e46d5673b686871982"
+  }
+}

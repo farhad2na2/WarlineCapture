@@ -127,10 +127,11 @@ namespace Game.UI.Runtime
                 ApplyVisibility(showOil: false);
 
             bool appliedNumericValues = false;
+            bool supplyLine = UiShellRuntimeGateway.TryReadSupplyLine(out _, out _, out _);
             bool showMissionCredits = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel missionRestrictions) &&
                 missionRestrictions.ShowMissionCredits;
-            if (UiShellRuntimeGateway.TryReadMatchHudResourceValues(
+            if (!supplyLine && UiShellRuntimeGateway.TryReadMatchHudResourceValues(
                     out UiMatchHudResourceValuesModel values) &&
                 values.IsValid &&
                 (!values.RequiresTextFallback || showMissionCredits))

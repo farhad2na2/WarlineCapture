@@ -8,6 +8,10 @@ namespace Game.Runtime
     {
         private static void ResetDefenseAttemptState(EntityManager em, Entity root)
         {
+            ClearBufferIfPresent<CampaignMissionSupplyLineMember>(em, root);
+            ClearBufferIfPresent<CampaignMissionSupplyLineLink>(em, root);
+            ResetComponentIfPresent<CampaignMissionSupplyLineState>(em, root);
+            ResetComponentIfPresent<CampaignMissionSupplyLineAllocationRequest>(em, root);
             ClearBufferIfPresent<CampaignMissionGridlockMember>(em, root);
             ClearBufferIfPresent<CampaignMissionGridlockWorkSite>(em, root);
             ResetComponentIfPresent<CampaignMissionGridlockState>(em, root);
@@ -30,6 +34,7 @@ namespace Game.Runtime
         private static bool TryQueueDefenseAttemptCleanup(EntityManager em,ref EntityCommandBuffer cleanup,Entity root,
             in CampaignMissionCatalogComponent catalog,in CampaignMissionRuntimeComponent runtime)
         {
+            if(TryQueueSupplyLineCleanup(em,root,in runtime)) return true;
             if(TryQueueGridlockCleanup(em,root,in runtime)) return true;
             if(TryQueueBreachCleanup(em,root,in runtime)) return true;
             if(!CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int index) || catalog.Blob.Value.Missions[index].Defense.Enabled==0)

@@ -26,11 +26,12 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
-            if(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock)) &&
-                guidance.GuidanceId>=75001 && guidance.GuidanceId<=75010 && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SupplyLine)) && guidance.GuidanceId>=76001 && guidance.GuidanceId<=76004 || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock))) &&
+                (guidance.GuidanceId>=75001 && guidance.GuidanceId<=75010 || guidance.GuidanceId>=76001 && guidance.GuidanceId<=76004) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
                 target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
-                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity),
+                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),
+                    IsTutorialActorMoving(em,guidance.SourceEntity) && (!em.HasComponent<UnitResourceHauler>(guidance.SourceEntity) || em.HasComponent<ManualMoveOrderTag>(guidance.SourceEntity)),
                     battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:UiTutorialBattleAction.Move,areaRadius:5);
                 return true;
             }

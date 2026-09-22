@@ -26,7 +26,11 @@ namespace Game.UI.Runtime
             bool skirmish = UiShellRuntimeGateway.TryReadSkirmish(out var skirmishModel);
             bool supported = UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None;
             bool available = supported && (skirmish ? !skirmishModel.Finished && !skirmishModel.StartupFailed : UsesNextTutorialAction && _lastPanelModel.HasRecommendation);
-            if (available && !skirmish)
+            bool supplyWaiting=_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyTarget) &&
+                (supplyTarget.BattleAction==UiTutorialBattleAction.Watch || supplyTarget.Moving) &&
+                !(UiShellRuntimeGateway.TryReadSupplyLine(out _,out _,out bool canReserve) && canReserve);
+            if (available && !skirmish && supplyWaiting)kind=AriaPlayObservationKind.Waiting;
+            if (available && !skirmish && !supplyWaiting)
             {
                 kind = _tutorialCinematicSuspended ? AriaPlayObservationKind.Cinematic : AriaPlayObservationKind.Waiting;
                 if(!_tutorialCinematicSuspended && _highlightPresentationSystem.TryObserveVisibleSelectionDrag(out position,out dragEnd))
@@ -52,8 +56,13 @@ namespace Game.UI.Runtime
             if (skirmish && supported) { kind = skirmishModel.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting; ObserveSkirmishWatch(skirmishModel); }
             else UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
             if (!skirmish && _finalTutorialSuppressed) kind = AriaPlayObservationKind.Finished;
+            int goalId=_lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep;
+            // A delivered load is visible reserve progress, even while the same
+            // defend-storage instruction remains on screen.
+            if(_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadSupplyLine(out int reserveFuel,out _,out _))
+                goalId=7600+_lastPanelModel.TutorialStep*8+Mathf.Clamp(reserveFuel/8,0,6);
             UiShellRuntimeGateway.PublishAriaObservation(new AriaPlayObservation(kind, target,
-                _lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep, position, Time.frameCount, Time.unscaledTime,drag,dragEnd));
+                goalId, position, Time.frameCount, Time.unscaledTime,drag,dragEnd));
             var state = UiShellRuntimeGateway.ReadAriaPlay();
             _embeddedTutorialView.PresentWatch(state, available);
             _embeddedTutorialView.RefreshContentLayout();

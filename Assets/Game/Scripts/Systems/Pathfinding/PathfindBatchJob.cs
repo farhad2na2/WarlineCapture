@@ -303,9 +303,9 @@ namespace Game.Runtime
 
             int startIndex = GridUtils.CellToIndex(start, Grid.Width);
             int goalIndex = GridUtils.CellToIndex(goal, Grid.Width);
-            // Mode 2 retains the vehicle expansion budget while allowing a
-            // bounded skirmish route to detour around entire ruined blocks.
-            int searchBoundsPadding = CheapSegmentModes.IsCreated && CheapSegmentModes[index] == 2
+            // Modes 2 and 3 allow detours around industrial/ruined blocks.
+            // Mode 3 gives resource haulers the larger manual-move search budget.
+            int searchBoundsPadding = CheapSegmentModes.IsCreated && CheapSegmentModes[index] >= 2
                 ? InfantrySegmentedSearchBoundsPaddingCells : isVehicle
                 ? VehicleSearchBoundsPaddingCells
                 : cheapSegmentMode ? InfantrySegmentedSearchBoundsPaddingCells : InfantrySearchBoundsPaddingCells;
@@ -379,7 +379,7 @@ namespace Game.Runtime
             HeapPush(threadOffset, ref heapCount, PackHeapEntry(HeuristicOctile(start, goal), startIndex));
             int expansions = 0;
             int maxExpansions = isVehicle
-                ? (manualMove ? VehicleManualMaxAStarExpansions : VehicleMaxAStarExpansions)
+                ? (manualMove || CheapSegmentModes.IsCreated && CheapSegmentModes[index] == 3 ? VehicleManualMaxAStarExpansions : VehicleMaxAStarExpansions)
                 : (cheapSegmentMode ? InfantrySegmentedMaxAStarExpansions : InfantryMaxAStarExpansions);
 
             bool found = false;

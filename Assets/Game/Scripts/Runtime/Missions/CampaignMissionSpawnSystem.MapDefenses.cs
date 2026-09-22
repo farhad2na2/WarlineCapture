@@ -17,7 +17,7 @@ namespace Game.Runtime
                 ref CampaignMissionDefinitionBlob definition = ref catalog.Blob.Value.Missions[index];
                 dormant = IsPeacefulEstablishBase(ref definition) ||
                     definition.Defense.Enabled != 0 && definition.Defense.AuthoredMapDefensesDormant != 0 ||
-                    definition.Extraction.Enabled != 0 && definition.Extraction.AuthoredMapDefensesDormant != 0 || definition.Breach.Enabled != 0 || definition.Gridlock.Enabled != 0;
+                    definition.Extraction.Enabled != 0 && definition.Extraction.AuthoredMapDefensesDormant != 0 || definition.Breach.Enabled != 0 || definition.Gridlock.Enabled != 0 || definition.SupplyLine.Enabled != 0;
             }
             EntityCommandBuffer changes = new(Allocator.Temp);
             if (dormant)

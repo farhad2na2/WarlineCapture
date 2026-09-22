@@ -20,6 +20,11 @@ namespace Game.UI.Shell.Ecs
             mission=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if(shell.GetComponentData<UiShellStateComponent>(boundary).ActiveRoute==UIRoute.Match)
             {
+                if(em.HasComponent<CampaignMissionSupplyLineState>(root) && mission.MissionId.Equals(new Unity.Collections.FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SupplyLine)))
+                {
+                    var supply=em.GetComponentData<CampaignMissionSupplyLineState>(root);
+                    return supply.SessionToken.Equals(mission.SessionToken) && supply.AttemptOrdinal==mission.AttemptOrdinal && supply.SourceVersion==mission.SourceVersion;
+                }
                 if(em.HasComponent<CampaignMissionGridlockState>(root) && mission.MissionId.Equals(new Unity.Collections.FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.Gridlock)))
                 {
                     var gridlock=em.GetComponentData<CampaignMissionGridlockState>(root);
@@ -39,7 +44,7 @@ namespace Game.UI.Shell.Ecs
                 var defense=em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
                 return defense.SessionToken.Equals(mission.SessionToken) && defense.AttemptOrdinal==mission.AttemptOrdinal && defense.SourceVersion==mission.SourceVersion;
             }
-            if(!UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) || campaign.SelectedMission.MissionId!="saga.ch01.m03.radar_warning" && campaign.SelectedMission.MissionId!="saga.ch01.m04.airlift" && campaign.SelectedMission.MissionId!="saga.ch01.m05.breach_assault" && campaign.SelectedMission.MissionId!=Game.Missions.Contracts.CampaignMissionSequence.Gridlock || !campaign.SelectedMission.Available) return false;
+            if(!UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) || campaign.SelectedMission.MissionId!="saga.ch01.m03.radar_warning" && campaign.SelectedMission.MissionId!="saga.ch01.m04.airlift" && campaign.SelectedMission.MissionId!="saga.ch01.m05.breach_assault" && campaign.SelectedMission.MissionId!=Game.Missions.Contracts.CampaignMissionSequence.Gridlock && campaign.SelectedMission.MissionId!=Game.Missions.Contracts.CampaignMissionSequence.SupplyLine || !campaign.SelectedMission.Available) return false;
             archived=campaign.SelectedMission.FirstClearCompleted; mission=default; return true;
         }
         public bool TryReadMissionRadioArchive()

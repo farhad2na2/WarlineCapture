@@ -384,7 +384,7 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    usableFuel += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+                    usableFuel += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);
                 }
             }
 

@@ -28,7 +28,7 @@ namespace Game.Runtime
             byte resourceKind)
         {
             return resourceKind == FuelResourceKind
-                ? math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels)
+                ? math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels)
                 : math.max(0f, storage.StoredOilBarrels - storage.ReservedOilOutboundBarrels);
         }
 

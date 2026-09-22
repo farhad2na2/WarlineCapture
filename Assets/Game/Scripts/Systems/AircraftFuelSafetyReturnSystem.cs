@@ -30,7 +30,7 @@ namespace Game.Runtime
                 if (!IsUsableFuelStorage(storage))
                     continue;
 
-                usableFuelByFaction[storage.OwnerFactionId] += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+                usableFuelByFaction[storage.OwnerFactionId] += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);
             }
 
             EntityCommandBuffer ecb = new(Allocator.Temp);

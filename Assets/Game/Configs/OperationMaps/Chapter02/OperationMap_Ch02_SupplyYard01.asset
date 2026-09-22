@@ -1,0 +1,199 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f935472054514bc4baed4554d4d90758, type: 3}
+  m_Name: OperationMap_Ch02_SupplyYard01
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
+  operationMapId: opmap.ch02.supply_yard_01
+  schemaVersion: 1
+  contentVersion: 1
+  sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+  contentHash: d6feee92f1f67d0f2b48a7253f6375d9cf4e5df8b84d78f2ed4987837e2e8ee1
+  generatedMetadataHash: d6feee92f1f67d0f2b48a7253f6375d9cf4e5df8b84d78f2ed4987837e2e8ee1
+  sourceBinding:
+    sourceOperationMapId: opmap.skirmish.desert_base_01
+    sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
+    sourceContentHash: 2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c
+  bounds:
+    worldMin: {x: 0, y: -6.9545445, z: 0}
+    worldMax: {x: 2048, y: 100, z: 1024}
+    playableMin: {x: 665, y: 0, z: 410}
+    playableMax: {x: 830, y: 100, z: 490}
+    cameraMin: {x: 540, y: 4, z: 220}
+    cameraMax: {x: 1280, y: 100, z: 640}
+  gridMetadata:
+    assetGuid: b201000000000000000000000000000b
+    contentHash: 8ef1b3f17074774040111a48ea82901b3355da8b8b86c8dc5c6e2a0bcccc2cfb
+    origin: {x: 0, y: 0, z: 0}
+    dimensions: {x: 2048, y: 1024}
+    cellSize: 1
+    authoredBlockedCellCount: 0
+  surfaceMetadata:
+    assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
+    contentHash: cf25bb0edf3375531b4a0e3fab1659f5a9e20008b13381be54ba0d17c6e10b5b
+    runtimeBlobHash: bbe23826402ec39b275c405cc946484f
+    surfaceCount: 2097152
+    payloadVersion: 3
+    payloadEncoding: 1
+    minimumHeight: -5.31082
+    maximumHeight: 17.199179
+  navigationMetadata:
+    authoredSubSceneGuid: c00140f2e94a04c3084c8dcb0c18cbd0
+    gridAuthoringLocalId: 146043441
+    staticGridBlockerCount: 0
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
+  cameras:
+  - cameraId: camera.ch02.m02.overview
+    position: {x: 748, y: 70, z: 395}
+    eulerAngles: {x: 60.255123, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 55
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  - cameraId: camera.ch02.m02.battle
+    position: {x: 735, y: 70, z: 386}
+    eulerAngles: {x: 60.255123, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 55
+    orthographicSize: 5
+    clampToCameraBounds: 1
+  planningCameraId: camera.ch02.m02.overview
+  battleCameraId: camera.ch02.m02.battle
+  minimap:
+    minimapId: minimap.ch02.m02.supply_yard
+    projectionOrigin: {x: 665, y: 0, z: 410}
+    projectionSize: {x: 165, y: 80}
+    orientationDegrees: 0
+  anchors:
+  - anchorId: anchor.ch02.m02.oil
+    kind: 2
+    position: {x: 684, y: 0.33917978, z: 450}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.refinery
+    kind: 2
+    position: {x: 737, y: 0.019179778, z: 457}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.storage
+    kind: 2
+    position: {x: 796, y: 1.5391798, z: 450}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.squad_a
+    kind: 3
+    position: {x: 695, y: 0.72917974, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.squad_b
+    kind: 3
+    position: {x: 760, y: 0.57917976, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.oil_hauler
+    kind: 3
+    position: {x: 704, y: 0.57917976, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.fuel_hauler
+    kind: 3
+    position: {x: 779, y: 0.71917975, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.screen_a
+    kind: 1
+    position: {x: 715, y: 0.07917978, z: 475}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.screen_b
+    kind: 1
+    position: {x: 785, y: 1.0691798, z: 475}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.return_rts
+    kind: 12
+    position: {x: 735, y: 0.57917976, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 2
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.alternate_lane
+    kind: 11
+    position: {x: 750, y: 0.6291798, z: 426}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  presentationKind: 1
+  renderResidencyMode: 1
+  sourceSceneReference:
+    m_AssetGUID: dad0bd13fb20943dfb2f881cbe225f05
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  optionalHeavyMetadataReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  staticPresentationManifestReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  mapSurfaceDataReference:
+    m_AssetGUID: 12f517deb32ab49698acbfdaf7c3eac7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  minimapRasterReference:
+    m_AssetGUID: 3b1a8dbd670bf4e94863c00acbc3a3a7
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  buildingPlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  vehiclePlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  additionalBuildingPlacements: {fileID: 11400000, guid: 492a7c1a2dfe348208e5b4c41ae8b82b, type: 2}

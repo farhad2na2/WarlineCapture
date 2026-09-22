@@ -178,6 +178,7 @@ namespace Game.Configs
         [SerializeField] private MissionExtractionDefinitionConfig extraction;
         [SerializeField] private MissionBreachDefinitionConfig breach;
         [SerializeField] private MissionGridlockDefinitionConfig gridlock;
+        [SerializeField] private MissionSupplyLineDefinitionConfig supplyLine;
 
         public string ScenarioId => scenarioId;
         public string OperationMapId => operationMapId;
@@ -193,6 +194,7 @@ namespace Game.Configs
         public MissionExtractionDefinitionConfig Extraction => extraction;
         public MissionBreachDefinitionConfig Breach => breach;
         public MissionGridlockDefinitionConfig Gridlock => gridlock;
+        public MissionSupplyLineDefinitionConfig SupplyLine => supplyLine;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -261,7 +263,8 @@ namespace Game.Configs
                 !ScenarioMissionRuntimeContractValidation.TryValidate(this, out error) ||
                 !MissionExtractionDefinitionValidation.TryValidate(this, out error) ||
                 !MissionBreachDefinitionValidation.TryValidate(this, out error) ||
-                !MissionGridlockDefinitionValidation.TryValidate(this, out error))
+                !MissionGridlockDefinitionValidation.TryValidate(this, out error) ||
+                !MissionSupplyLineDefinitionValidation.TryValidate(this, out error))
                 return false;
 
             error = null;

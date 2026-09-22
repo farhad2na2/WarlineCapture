@@ -192,7 +192,14 @@ namespace Game.Runtime
                     bool detailedSkirmishPath = em.HasComponent<SkirmishCombatTuned>(requestEntities[i]) &&
                         math.distancesq(start, requestedGoal) <=
                         UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells * UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells;
-                    if (detailedSkirmishPath)
+                    // Automatic haulers need to detour around a whole industrial block.
+                    // The default 32-cell straight segment and 12-cell search margin can
+                    // repeatedly reject a reachable loading bay on the other side of it.
+                    bool detailedHaulerPath = isVehicle && em.HasComponent<UnitResourceHaulOrder>(requestEntities[i]) &&
+                        math.distancesq(start, requestedGoal) <=
+                        UnitPathSegmentation.ManualVehicleLongDistanceSegmentCells * UnitPathSegmentation.ManualVehicleLongDistanceSegmentCells;
+                    bool detailedVehiclePath = detailedSkirmishPath || detailedHaulerPath;
+                    if (detailedVehiclePath)
                     {
                         pathGoal = requestedGoal;
                         usedHierarchicalWaypoint = false;
@@ -205,8 +212,8 @@ namespace Game.Runtime
                     bool isSegmentedRequest = !pathGoal.Equals(requestedGoal);
                     segmented[i] = (byte)(isSegmentedRequest ? 1 : 0);
                     bool cheapSegmentMode = isManualMove && !isVehicle;
-                    cheapSegmentModes[i] = (byte)(detailedSkirmishPath && isVehicle ? 2 : cheapSegmentMode ? 1 : 0);
-                    bool skipAlternateSearch = isManualMove && (!isVehicle || detailedSkirmishPath);
+                    cheapSegmentModes[i] = (byte)(detailedHaulerPath ? 3 : detailedVehiclePath && isVehicle ? 2 : cheapSegmentMode ? 1 : 0);
+                    bool skipAlternateSearch = detailedHaulerPath || isManualMove && (!isVehicle || detailedSkirmishPath);
                     alternateSearchSkipped[i] = (byte)(skipAlternateSearch ? 1 : 0);
                     alternateAttempts[i] = 0;
                     int2 assignedGoal = goalAssignment.FindNearestFreeGoal(

@@ -193,6 +193,7 @@ namespace Game.Components
         public float ReservedOilOutboundBarrels;
         public float ReservedFuelInboundBarrels;
         public float ReservedFuelOutboundBarrels;
+        public float CivilianFuelReserveBarrels;
         public uint Version;
     }
 

@@ -85,7 +85,7 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    float availableFuel = math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels);
+                    float availableFuel = math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);
                     float drained = math.min(availableFuel, remaining);
                     if (drained <= 0f)
                         continue;

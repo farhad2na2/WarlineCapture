@@ -198,7 +198,11 @@ namespace Game.UI.Shell.Ecs
             int resourceFuel = 0;
             bool hasUsableFuelSummaryBuffer =
                 entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
-            if (TryReadPlayerUsableFuelSummary(
+            if (TryFormatSupplyLineResources(out oilText,out fuelText))
+            {
+                showOil=true;oilVisibilityResolved=true;
+            }
+            else if (TryReadPlayerUsableFuelSummary(
                     entityManager,
                     boundary,
                     out int usableOil,

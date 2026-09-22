@@ -31,3 +31,6 @@ MonoBehaviour:
   - missionId: saga.ch02.m01.gridlock
     definition: {fileID: 11400000, guid: 2fecdefd1294d4d2eae500bd7878eaf6, type: 2}
     scenario: {fileID: 11400000, guid: 773a4622693914147a2200f7cf030a93, type: 2}
+  - missionId: saga.ch02.m02.supply_line
+    definition: {fileID: 11400000, guid: f8a8115efb86240289c13f3b7b592750, type: 2}
+    scenario: {fileID: 11400000, guid: 363014a9e51e449568e0f567bea3bc4d, type: 2}

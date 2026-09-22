@@ -166,6 +166,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == "saga.ch01.m04.airlift") ApplyAirlift(in model);
             if (model.MissionId == "saga.ch01.m05.breach_assault") ApplyBreach(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.Gridlock) ApplyGridlock(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SupplyLine) ApplySupplyLine(in model);
         }
 
         public void ApplyUnavailable()

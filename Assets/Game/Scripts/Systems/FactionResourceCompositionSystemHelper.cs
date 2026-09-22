@@ -654,7 +654,7 @@ namespace Game.Runtime
                 return;
             }
 
-            float stored = resourceKind == ResourceKind.Fuel ? storage.StoredFuelBarrels : storage.StoredOilBarrels;
+            float stored = resourceKind == ResourceKind.Fuel ? Mathf.Max(0f, storage.StoredFuelBarrels - storage.CivilianFuelReserveBarrels) : storage.StoredOilBarrels;
             float drained = Mathf.Min(Mathf.Max(0f, stored), remaining);
             if (drained <= 0f)
                 return;

@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
             if(_lastPanelModel.TutorialStepCount==5) { ShowFirstContactNextAction(step); return; }
+            if(_lastPanelModel.TutorialStepCount==4) {ShowSupplyLineNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==10) {ShowGridlockNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)

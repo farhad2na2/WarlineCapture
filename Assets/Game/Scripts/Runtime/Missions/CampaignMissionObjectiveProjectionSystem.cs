@@ -135,6 +135,11 @@ namespace Game.Runtime
                             !objective.MissionRoleId.Equals(definition.BaseMissionRoleId))
                             return false;
                         break;
+                    case MissionObjectiveRuleKind.TransferSupplyOil:
+                    case MissionObjectiveRuleKind.TransferSupplyFuel:
+                    case MissionObjectiveRuleKind.SecureSupplyReserve:
+                        if (definition.SupplyLine.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
+                        break;
                     case MissionObjectiveRuleKind.RestoreGridlockSiteA:
                     case MissionObjectiveRuleKind.RestoreGridlockSiteB:
                     case MissionObjectiveRuleKind.DeliverGridlockRelief:
@@ -229,7 +234,7 @@ namespace Game.Runtime
                 State = objectiveState,
                 Priority = (byte)math.min(byte.MaxValue, index + 2),
                 IsPrimary = index == 0 ? (byte)1 : (byte)0,
-                Title = definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
+                Title = definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
                     MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
@@ -265,6 +270,9 @@ namespace Game.Runtime
                     : facts.ForwardPostDestroyed != 0
                     ? MatchObjectiveState.Failed
                     : facts.ForwardPostDamaged != 0 ? MatchObjectiveState.Warning : MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.TransferSupplyOil => facts.SupplyOilTransferred!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.TransferSupplyFuel => facts.SupplyFuelTransferred!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.SecureSupplyReserve => facts.SupplyReserveComplete!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestoreGridlockSiteA => facts.GridlockSiteAComplete != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestoreGridlockSiteB => facts.GridlockSiteBComplete != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteAComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DeliverGridlockRelief => facts.GridlockDelivered != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteBComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
@@ -288,6 +296,9 @@ namespace Game.Runtime
         {
             return objective.Rule switch
             {
+                MissionObjectiveRuleKind.TransferSupplyOil => definition.SupplyLine.OilAnchorId,
+                MissionObjectiveRuleKind.TransferSupplyFuel => definition.SupplyLine.RefineryAnchorId,
+                MissionObjectiveRuleKind.SecureSupplyReserve => definition.SupplyLine.StorageAnchorId,
                 MissionObjectiveRuleKind.RestoreGridlockSiteA => definition.Gridlock.SiteAAnchorId,
                 MissionObjectiveRuleKind.RestoreGridlockSiteB => definition.Gridlock.SiteBAnchorId,
                 MissionObjectiveRuleKind.DeliverGridlockRelief => definition.Gridlock.HospitalAnchorId,
@@ -327,6 +338,9 @@ namespace Game.Runtime
         {
             switch (objective.Rule)
             {
+                case MissionObjectiveRuleKind.TransferSupplyOil: return new FixedString128Bytes("mission.supply_line.objective.oil.body");
+                case MissionObjectiveRuleKind.TransferSupplyFuel: return new FixedString128Bytes("mission.supply_line.objective.fuel.body");
+                case MissionObjectiveRuleKind.SecureSupplyReserve: return new FixedString128Bytes(facts.SupplyFailure==SupplyLineFailure.Integrity?"mission.supply_line.failure.integrity":"mission.supply_line.objective.reserve.body");
                 case MissionObjectiveRuleKind.RestoreGridlockSiteA: return new FixedString128Bytes("mission.gridlock.objective.site_a.body");
                 case MissionObjectiveRuleKind.RestoreGridlockSiteB: return new FixedString128Bytes("mission.gridlock.objective.site_b.body");
                 case MissionObjectiveRuleKind.DeliverGridlockRelief: return new FixedString128Bytes("mission.gridlock.objective.delivery.body");

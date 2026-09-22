@@ -130,8 +130,6 @@ namespace Game.Operations.Tactical
             for (int index = 0; index < nodes.Length; index++)
             {
                 OperationsTacticalNodeAuthoring node = nodes[index];
-                if (node.Rule == OperationsObjectiveRuleKind.Clear)
-                    continue;
                 if (!OperationsTacticalRules.IsPackageVerb(node.Rule))
                     return "verb_not_in_package:" + node.NodeId + ":" + node.Rule;
                 int radius = node.RadiusMeters;
@@ -161,6 +159,14 @@ namespace Game.Operations.Tactical
                     case OperationsObjectiveRuleKind.Extract:
                         if (node.TargetCount < OperationsTacticalRules.ExtractMinimumInfantry)
                             return "budget:extract_infantry:" + node.NodeId;
+                        break;
+                    case OperationsObjectiveRuleKind.Clear:
+                        if (node.RoleIds == null || node.RoleIds.Length == 0)
+                            return "missing_anchor:" + node.NodeId;
+                        break;
+                    case OperationsObjectiveRuleKind.Protect:
+                        if (node.TargetIds == null || node.TargetIds.Length == 0)
+                            return "missing_anchor:" + node.NodeId;
                         break;
                 }
 
@@ -216,12 +222,6 @@ namespace Game.Operations.Tactical
                     if (total > 0 && late > 0)
                         return "wave_clear_cycle:" + node.NodeId + ":" + roleId;
                 }
-            }
-
-            for (int index = 0; index < nodes.Length; index++)
-            {
-                if (nodes[index].Rule == OperationsObjectiveRuleKind.Clear)
-                    return "verb_not_in_package:" + nodes[index].NodeId + ":" + nodes[index].Rule;
             }
 
             return null;
@@ -345,8 +345,7 @@ namespace Game.Operations.Tactical
                     return "missing_wave:" + spawn.Group;
 
                 bool singleton = spawn.Body == OperationsTacticalBodyKind.Site ||
-                                 spawn.Body == OperationsTacticalBodyKind.Evidence ||
-                                 spawn.Body == OperationsTacticalBodyKind.Cargo;
+                                 spawn.Body == OperationsTacticalBodyKind.Evidence;
                 if (singleton && !singletonRoles.Add(spawn.RoleId))
                     return "duplicate_role:" + spawn.RoleId;
 
@@ -424,6 +423,10 @@ namespace Game.Operations.Tactical
                     return "graph:missing_prerequisite:" + partials[index];
             }
 
+            if (!string.IsNullOrEmpty(authoring.PartialProgressNodeId) &&
+                Find(nodes, authoring.PartialProgressNodeId) == null)
+                return "graph:missing_prerequisite:" + authoring.PartialProgressNodeId;
+
             if (authoring.DeadlineTicks > 0)
             {
                 int longest = LongestRequiredTicks(map, nodes);
@@ -474,6 +477,10 @@ namespace Game.Operations.Tactical
                 ExitZ = exitAnchor.Z,
                 DeadlineTicks = authoring.DeadlineTicks,
                 PartialNodeIds = authoring.PartialNodeIds ?? Array.Empty<string>(),
+                PartialMinimumComplete = authoring.PartialMinimumComplete,
+                PartialProgressNodeId = authoring.PartialProgressNodeId ?? string.Empty,
+                PartialProgressMinimum = authoring.PartialProgressMinimum,
+                PartialExtractMinimum = authoring.PartialExtractMinimum,
                 MandatoryEvidenceIds = authoring.MandatoryEvidenceIds ?? Array.Empty<string>(),
                 LaunchRestoredSiteIds = authoring.LaunchRestoredSiteIds ?? Array.Empty<string>(),
                 FirstRequiredNodeId = DesignatedFirst(nodes),
@@ -524,7 +531,7 @@ namespace Game.Operations.Tactical
             {
                 NodeId = node.NodeId,
                 Rule = node.Rule,
-                TargetIds = node.TargetIds ?? Array.Empty<string>(),
+                TargetIds = CompileTargetIds(node),
                 TargetCount = node.TargetCount,
                 DurationTicks = node.DurationTicks,
                 RadiusMeters = node.RadiusMeters,
@@ -538,6 +545,18 @@ namespace Game.Operations.Tactical
                 LegalRoutes = routes,
                 HiddenUntilObserved = node.HiddenUntilObserved
             };
+        }
+
+        private static string[] CompileTargetIds(OperationsTacticalNodeAuthoring node)
+        {
+            if (node.Rule == OperationsObjectiveRuleKind.Clear)
+            {
+                string[] roles = node.RoleIds ?? Array.Empty<string>();
+                if (roles.Length > 0)
+                    return roles;
+            }
+
+            return node.TargetIds ?? Array.Empty<string>();
         }
 
         private static OperationsCompiledSpawn BuildSpawn(

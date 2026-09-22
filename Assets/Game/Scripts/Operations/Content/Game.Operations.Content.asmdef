@@ -1,16 +1,13 @@
 {
-    "name": "Game.Operations.Tests.Editor",
-    "rootNamespace": "Game.Tests.Editor.Operations",
+    "name": "Game.Operations.Content",
+    "rootNamespace": "Game.Operations.Content",
     "references": [
         "Game.Operations.Contracts",
         "Game.Operations.Strategic",
         "Game.Operations.Tactical",
-        "Game.Operations.Loop",
-        "Game.Operations.Content"
+        "Game.Operations.Loop"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
@@ -18,8 +15,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "optionalUnityReferences": [
-        "TestAssemblies"
-    ],
-    "noEngineReferences": false
+    "noEngineReferences": true
 }

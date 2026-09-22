@@ -25,6 +25,9 @@ namespace Game.Operations.Loop
         const byte ExtractOrder = 9;
         const byte ConcludeOrder = 10;
         const byte WithdrawOrder = 11;
+        const byte AttackOrder = 12;
+        const byte EscortHoldOrder = 13;
+        const byte DestroyOrder = 14;
 
         readonly OperationsStrategicSession _strategic;
         readonly OperationsLoopStore _store;
@@ -364,7 +367,7 @@ namespace Game.Operations.Loop
                 return OperationsLoopStep.Reject("reservation");
             if (!TryCatalog(attempt.missionId, out OperationsCatalogEntry entry))
                 return OperationsLoopStep.Reject("catalog");
-            if (!OperationsLaunchFixtures.TryCompile(entry.OperationMapId, out _, out string hash, out string error))
+            if (!OperationsLaunchFixtures.TryCompileMission(attempt.missionId, entry.OperationMapId, out _, out string hash, out string error))
                 return OperationsLoopStep.Reject(error);
 
             OperationsLoopDocument next = _store.Committed.Copy();
@@ -420,7 +423,12 @@ namespace Game.Operations.Loop
                 return FailReady("readiness_catalog");
             if (announcedHash != _store.Committed.ContentHash)
                 return FailReady("hash_mismatch");
-            if (!OperationsLaunchFixtures.TryCompile(_store.Committed.MapId, out _, out _, out string error))
+            if (!OperationsLaunchFixtures.TryCompileMission(
+                    _store.Committed.MissionId,
+                    _store.Committed.MapId,
+                    out _,
+                    out _,
+                    out string error))
                 return FailReady(error);
 
             OperationsLoopDocument next = _store.Committed.Copy();
@@ -652,8 +660,17 @@ namespace Game.Operations.Loop
         public OperationsTacticalCommandResult EscortGo(string routeId) =>
             Record(EscortOrder, routeId, string.Empty, 0, () => _mission.IssueEscortGo(routeId));
 
+        public OperationsTacticalCommandResult EscortHold() =>
+            Record(EscortHoldOrder, string.Empty, string.Empty, 0, () => _mission.IssueEscortHold());
+
         public OperationsTacticalCommandResult Extract(string unitId) =>
             Record(ExtractOrder, unitId, string.Empty, 0, () => _mission.IssueExtract(unitId));
+
+        public OperationsTacticalCommandResult Attack(string unitId, string hostileId) =>
+            Record(AttackOrder, unitId, hostileId, 0, () => _mission.IssueAttack(unitId, hostileId));
+
+        public OperationsTacticalCommandResult DestroySite(string siteId) =>
+            Record(DestroyOrder, siteId, string.Empty, 0, () => _mission.ReportSiteDestroyed(siteId));
 
         public OperationsTacticalCommandResult ConcludeMission() =>
             Record(ConcludeOrder, string.Empty, string.Empty, 0, () => _mission.IssueConclude());
@@ -766,9 +783,12 @@ namespace Game.Operations.Loop
                 return false;
             if (!TryCatalog(offer.missionId, out OperationsCatalogEntry entry))
                 return false;
-            if (!OperationsLaunchFixtures.TryCompile(entry.OperationMapId, out _, out string hash, out _))
+            if (!OperationsLaunchFixtures.TryCompileMission(offer.missionId, entry.OperationMapId, out _, out string hash, out _))
                 return false;
             OperationsMissionDefinitionSchema schema = entry.ToDefinitionSchema();
+            string[] approaches = OperationsAuthoredMissions.IsVerticalSlice(offer.missionId)
+                ? OperationsAuthoredMissions.ApproachRoutes(offer.missionId)
+                : OperationsLaunchFixtures.ApproachRoutes(entry.OperationMapId);
             frame = new OperationsBriefingFrame(
                 offer.missionId,
                 offer.districtId,
@@ -776,7 +796,7 @@ namespace Game.Operations.Loop
                 entry.ScenarioId,
                 1,
                 0,
-                OperationsLaunchFixtures.ApproachRoutes(entry.OperationMapId),
+                approaches,
                 schema.DisplayNameKey,
                 schema.BriefKey,
                 schema.DebriefKey,
@@ -913,7 +933,12 @@ namespace Game.Operations.Loop
 
         void Spawn(OperationsLoopDocument document)
         {
-            if (!OperationsLaunchFixtures.TryCompile(document.MapId, out _definition, out _, out string error))
+            if (!OperationsLaunchFixtures.TryCompileMission(
+                    document.MissionId,
+                    document.MapId,
+                    out _definition,
+                    out _,
+                    out string error))
                 throw new InvalidOperationException(error);
             _mission = new OperationsTacticalSession(_definition, Payload(document));
             _orders.Clear();
@@ -971,7 +996,10 @@ namespace Game.Operations.Loop
                 case HoldOrder: _mission.IssueHold(order.A, order.B); break;
                 case MoveOrder: _mission.IssueMove(order.A, order.B); break;
                 case EscortOrder: _mission.IssueEscortGo(order.A); break;
+                case EscortHoldOrder: _mission.IssueEscortHold(); break;
                 case ExtractOrder: _mission.IssueExtract(order.A); break;
+                case AttackOrder: _mission.IssueAttack(order.A, order.B); break;
+                case DestroyOrder: _mission.ReportSiteDestroyed(order.A); break;
                 case ConcludeOrder: _mission.IssueConclude(); break;
                 case WithdrawOrder: _mission.IssueWithdraw(); break;
                 default: throw new InvalidOperationException("order");

@@ -59,15 +59,16 @@ namespace Game.Tests.Editor.Operations
             Require(loop.CompleteActive().Accepted);
 
             Require(loop.TryReadHud(out OperationsHudFrame hud));
-            Require(!hud.TimerVisible);
+            Require(hud.TimerVisible && hud.TimerRemaining > 0);
             Require(hud.WithdrawAvailable && hud.PauseAvailable);
-            Require(hud.CameraFocus == "site.d01.clinic");
+            Require(hud.CameraFocus == "site.d01.signal_a");
             Require(hud.CivilianDeaths == 0 && hud.ProtectedSites >= 1);
-            Require(ContainsObjective(hud.Required, "scan_clinic") && !ContainsObjective(hud.Required, "hold_courtyard"));
-            Require(ContainsObjective(hud.Optional, "hold_courtyard"));
+            Require(ContainsObjective(hud.Required, "scan_signals"));
+            Require(ContainsObjective(hud.Required, "interact_relay"));
+            Require(ContainsObjective(hud.Required, "extract_force"));
             Require(hud.EscortTarget.Length == 0);
 
-            PlayOldQuarter(loop);
+            PlayO001(loop);
             Require(loop.MissionOutcome == OperationsOutcomeKind.Victory, "outcome=" + loop.MissionOutcome);
             Require(loop.BeginResult().Accepted);
             Require(loop.CompleteResult().Accepted);
@@ -89,9 +90,9 @@ namespace Game.Tests.Editor.Operations
             Require(settled.DistrictId == "district.operations.d01");
             Require(settled.CivilianDeaths == 0 && settled.TaskForceLosses == 0);
             Require(ContainsFact(settled.Achieved, "extract_force"));
-            Require(!ContainsFact(settled.Achieved, "hold_courtyard"));
+            Require(ContainsFact(settled.Achieved, "scan_signals"));
             Require(loop.TryCommittedResult(out OperationsMissionResult result));
-            Require(Contains(result.ExtractedEvidenceIds, "site.d01.evidence"));
+            Require(Contains(result.ExtractedEvidenceIds, "site.d01.relay_evidence"));
             int credits = loop.Credits;
             Require(loop.TryReadResult(out _));
             Require(loop.Credits == credits);
@@ -251,7 +252,7 @@ namespace Game.Tests.Editor.Operations
             Require(publish.PublishedCheckpointId.Length == 0 && !publish.HasMission);
 
             OperationsLoopSession result = Reach("operation.o001", 1312);
-            PlayOldQuarter(result);
+            PlayO001(result);
             Require(result.BeginResult().Accepted);
             result.Interrupt();
             Require(result.ResultHash.Length == 0 && result.Credits == 0);
@@ -259,7 +260,7 @@ namespace Game.Tests.Editor.Operations
             Require(result.Phase == OperationsLoopPhase.Active);
 
             OperationsLoopSession settled = Reach("operation.o001", 1313);
-            PlayOldQuarter(settled);
+            PlayO001(settled);
             Require(settled.BeginResult().Accepted);
             Require(settled.CompleteResult().Accepted);
             string settleId = Id();
@@ -333,15 +334,26 @@ namespace Game.Tests.Editor.Operations
             Require(civic.MissionMaterials == materials);
 
             OperationsLoopSession quarter = Reach("operation.o001", 1321);
-            Require(quarter.Observe("unit.d01.rifle.01", "site.d01.clinic").Accepted);
-            Require(quarter.Scan("unit.d01.rifle.01", "site.d01.clinic").Accepted);
+            OperationsMapGreybox mapQ = OperationsMapGreyboxCatalog.OldQuarter;
+            Require(mapQ.TryGetByAlias("site.signal_a", out OperationsGreyboxAnchor sa));
+            Require(mapQ.TryGetByAlias("site.signal_b", out OperationsGreyboxAnchor sb));
+            Require(mapQ.TryGetByAlias("site.signal_c", out OperationsGreyboxAnchor sc));
+            ScanSite(quarter, "unit.d01.rifle.01", "site.d01.signal_a", sa.AnchorId);
+            ScanSite(quarter, "unit.d01.rifle.01", "site.d01.signal_b", sb.AnchorId);
+            // Final scan: stop as soon as the wave arms so warning remaining is a full 30 s.
+            Require(quarter.Move("unit.d01.rifle.01", sc.AnchorId).Accepted);
+            for (int step = 0; step < 8; step++)
+                quarter.Advance(1);
+            Require(quarter.Observe("unit.d01.rifle.01", "site.d01.signal_c").Accepted);
+            Require(quarter.Scan("unit.d01.rifle.01", "site.d01.signal_c").Accepted);
             bool armed = false;
-            for (int step = 0; step < 40 && !armed; step++)
+            for (int step = 0; step < 30 && !armed; step++)
             {
                 quarter.Advance(1);
                 armed = quarter.WaveArmed(1);
             }
 
+            Require(Completed(quarter, "scan_signals"));
             Require(armed && !quarter.WaveSpawned(1));
             int armedTick = Tick(quarter);
             Require(quarter.BeginCheckpoint().Accepted);
@@ -402,7 +414,7 @@ namespace Game.Tests.Editor.Operations
         public static void DuplicateConflictAndStaleSession()
         {
             OperationsLoopSession loop = Reach("operation.o001", 1350);
-            PlayOldQuarter(loop);
+            PlayO001(loop);
             Finish(loop);
             Require(loop.TryCommittedResult(out OperationsMissionResult original));
             Require(loop.Credits == 120);
@@ -481,7 +493,7 @@ namespace Game.Tests.Editor.Operations
             Require(practice.CompleteLaunch().Accepted);
             Require(practice.BeginActive(true, true, true, practice.ContentHash).Accepted);
             Require(practice.CompleteActive().Accepted);
-            PlayOldQuarter(practice);
+            PlayO001(practice);
             Finish(practice);
             Require(practice.ActionPoints == 3 && practice.Credits == 0 && practice.CommanderXp == 0);
             Require(!practice.MissionVictory("operation.o001"));
@@ -520,7 +532,7 @@ namespace Game.Tests.Editor.Operations
         public static void FrozenResultRejectsWithdrawRewrite()
         {
             OperationsLoopSession loop = Reach("operation.o001", 1380);
-            PlayOldQuarter(loop);
+            PlayO001(loop);
             Require(loop.BeginResult().Accepted);
             Require(loop.CompleteResult().Accepted);
             OperationsCommandResult early = loop.Withdraw(Id());
@@ -588,30 +600,41 @@ namespace Game.Tests.Editor.Operations
             Require(loop.CompleteReturn().Accepted);
         }
 
-        static void PlayOldQuarter(OperationsLoopSession loop)
+        static void PlayO001(OperationsLoopSession loop)
         {
-            Require(loop.Observe("unit.d01.rifle.01", "site.d01.clinic").Accepted, "observe");
-            Require(loop.Scan("unit.d01.rifle.01", "site.d01.clinic").Accepted, "scan");
-            Require(loop.Interact("unit.d01.rifle.02", "site.d01.evidence").Accepted, "interact");
-            bool extractA = false;
-            bool extractB = false;
-            for (int step = 0; step < 50 && !loop.MissionTerminal; step++)
-            {
+            OperationsMapGreybox map = OperationsMapGreyboxCatalog.OldQuarter;
+            Require(map.TryGetByAlias("site.signal_a", out OperationsGreyboxAnchor a), "signal_a");
+            Require(map.TryGetByAlias("site.signal_b", out OperationsGreyboxAnchor b), "signal_b");
+            Require(map.TryGetByAlias("site.signal_c", out OperationsGreyboxAnchor c), "signal_c");
+            Require(map.TryGetByAlias("site.evidence", out OperationsGreyboxAnchor evidence), "evidence");
+            ScanSite(loop, "unit.d01.rifle.01", "site.d01.signal_a", a.AnchorId);
+            ScanSite(loop, "unit.d01.rifle.01", "site.d01.signal_b", b.AnchorId);
+            ScanSite(loop, "unit.d01.rifle.01", "site.d01.signal_c", c.AnchorId);
+            Require(Completed(loop, "scan_signals"), "scan_signals");
+            Require(loop.Move("unit.d01.rifle.02", evidence.AnchorId).Accepted, "move-evidence");
+            for (int step = 0; step < 6; step++)
                 loop.Advance(1);
-                if (!extractB && Completed(loop, "interact_evidence"))
-                {
-                    Require(loop.Extract("unit.d01.rifle.02").Accepted, "extract-b");
-                    extractB = true;
-                }
+            Require(loop.Interact("unit.d01.rifle.02", "site.d01.relay_evidence").Accepted, "interact");
+            for (int step = 0; step < 30 && !Completed(loop, "interact_relay"); step++)
+                loop.Advance(1);
+            Require(Completed(loop, "interact_relay"), "interact_relay");
+            loop.Advance(1);
+            Require(loop.Extract("unit.d01.rifle.01").Accepted, "extract-a");
+            Require(loop.Extract("unit.d01.rifle.02").Accepted, "extract-b");
+            for (int step = 0; step < 40 && !loop.MissionTerminal; step++)
+                loop.Advance(1);
+            Require(loop.MissionTerminal && loop.MissionOutcome == OperationsOutcomeKind.Victory, "o001 " + loop.MissionOutcome + " tick=" + Tick(loop));
+        }
 
-                if (!extractA && Completed(loop, "scan_clinic"))
-                {
-                    Require(loop.Extract("unit.d01.rifle.01").Accepted, "extract-a");
-                    extractA = true;
-                }
-            }
-
-            Require(loop.MissionTerminal && loop.MissionOutcome == OperationsOutcomeKind.Victory, "old-quarter " + loop.MissionOutcome + " tick=" + Tick(loop));
+        static void ScanSite(OperationsLoopSession loop, string unitId, string siteId, string anchorId)
+        {
+            Require(loop.Move(unitId, anchorId).Accepted, "move:" + siteId);
+            for (int step = 0; step < 8; step++)
+                loop.Advance(1);
+            Require(loop.Observe(unitId, siteId).Accepted, "observe:" + siteId);
+            Require(loop.Scan(unitId, siteId).Accepted, "scan:" + siteId);
+            for (int step = 0; step < 20; step++)
+                loop.Advance(1);
         }
 
         static void PlayCivic(OperationsLoopSession loop)

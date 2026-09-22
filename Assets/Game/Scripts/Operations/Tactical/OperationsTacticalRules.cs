@@ -99,13 +99,17 @@ namespace Game.Operations.Tactical
         public const int MinimumWarningSeconds = 20;
         public const float SpawnOccupationMeters = 8f;
 
+        public const float AttackMeters = 12f;
+
         public static bool IsPackageVerb(OperationsObjectiveRuleKind rule) =>
             rule == OperationsObjectiveRuleKind.Scan ||
             rule == OperationsObjectiveRuleKind.Hold ||
             rule == OperationsObjectiveRuleKind.Interact ||
             rule == OperationsObjectiveRuleKind.Repair ||
             rule == OperationsObjectiveRuleKind.Escort ||
-            rule == OperationsObjectiveRuleKind.Extract;
+            rule == OperationsObjectiveRuleKind.Extract ||
+            rule == OperationsObjectiveRuleKind.Clear ||
+            rule == OperationsObjectiveRuleKind.Protect;
 
         public static void SplitBudget(int count, out int initial, out int waveA, out int waveB)
         {

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Game.Components;
+using Game.Composition;
 using Game.Configs;
 using Game.Editor;
 using Game.Runtime;

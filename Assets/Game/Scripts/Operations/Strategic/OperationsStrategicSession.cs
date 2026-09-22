@@ -103,13 +103,31 @@ namespace Game.Operations.Strategic
             return Finish(command, working, created, true, OperationsReasonCode.None, string.Empty, string.Empty, string.Empty, "new-run", false);
         }
 
-        public OperationsCommandResult SubmitResult(OperationsCommand command, OperationsMissionResult result)
+        public OperationsCommandResult SubmitResult(OperationsCommand command, OperationsMissionResult result) =>
+            SubmitResult(command, result, false);
+
+        public OperationsCommandResult SubmitResult(OperationsCommand command, OperationsMissionResult result, bool leavePending)
         {
             if (!TryPrepare(command, out OperationsSaveData working, out OperationsCommandResult blocked))
                 return blocked;
 
             OperationsCityWorld world = OperationsCityWorld.FromSave(working);
             string key = SettlementKey(result);
+            if (OpenAttemptSessionDiffers(world, result.SessionId))
+            {
+                return Finish(
+                    command,
+                    working,
+                    world,
+                    false,
+                    OperationsReasonCode.Conflict,
+                    string.Empty,
+                    key,
+                    result.ResultHash,
+                    "stale-session",
+                    leavePending);
+            }
+
             if (TryFindReceipt(working, key, out OperationsReceiptSaveData receipt))
             {
                 if (receipt.resultHash == result.ResultHash)
@@ -124,11 +142,11 @@ namespace Game.Operations.Strategic
                         key,
                         result.ResultHash,
                         "duplicate-result",
-                        false,
+                        leavePending,
                         false);
                 }
 
-                return Finish(command, working, world, false, OperationsReasonCode.Conflict, string.Empty, key, result.ResultHash, "conflict-result", false);
+                return Finish(command, working, world, false, OperationsReasonCode.Conflict, string.Empty, key, result.ResultHash, "conflict-result", leavePending);
             }
 
             bool accepted = OperationsConsequenceSystem.TryApply(world, working, result, out OperationsReasonCode reason);
@@ -149,7 +167,7 @@ namespace Game.Operations.Strategic
                 key,
                 result.ResultHash,
                 result.Outcome.ToString(),
-                false,
+                leavePending,
                 accepted);
         }
 
@@ -517,6 +535,18 @@ namespace Game.Operations.Strategic
 
             transactionId = attempt.TransactionId;
             return true;
+        }
+
+        private static bool OpenAttemptSessionDiffers(OperationsCityWorld world, string sessionId)
+        {
+            for (int index = 0; index < world.Attempts.Count; index++)
+            {
+                OperationsAttemptComponent attempt = world.Attempts[index];
+                if (attempt.Phase == OperationsAttemptPhase.Reserved && attempt.SessionId != sessionId)
+                    return true;
+            }
+
+            return false;
         }
 
         private OperationsCommandResult Finish(

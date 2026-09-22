@@ -39,17 +39,41 @@ Host marker for the evidence harness (does not claim AriaWon):
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaEvidenceValidation.ps1
 ```
 
+Play Mode capture **wiring** marker (distinct from live AriaWon; does not claim playable):
+
+```text
+[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7
+```
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
+```
+
+Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch `AriaPlayCapability` / MatchSceneView shared-UI seam stays **closed** this sprint; capture uses an Ops-owned victory presentation.
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O002
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O003
+```
+
+Live marker: `[OperationsAriaPlayModeCapture] result=Passed`. Programmer 2 verifies `win-screen.en.png` before catalog flips. **Playable Operations mission ready is not claimed on this tip.**
+
 ## Game PM seams still closed
 
 `SaveDataModel`, `MatchSceneView`, shared asmdefs, shipping localization catalog, Demo 2 scene import, SkirmishExpansion. Shipping Watch virtual-touch (`AriaPlayCapability` Operations row) needs an explicit Game PM seam before it can replace the Operations loop visible-control evidence path.
 
 ## Programmer 2
 
-Refresh `D:\Projects\WarlineCapture-Operations` onto this branch. Do not open `D:\Projects\WarlineCapture`.
+Refresh `D:\Projects\WarlineCapture-Operations` onto this branch. Do not open `D:\Projects\WarlineCapture`. Keep Hub signed in.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsP4Validation.ps1
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaEvidenceValidation.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O002
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O003
 ```
 
-Required log markers: `[OperationsP4Validation] result=Passed checks=14` and `[OperationsAriaEvidenceValidation] result=Passed checks=8`. Then run Play Mode / Watch capture for O001–O003 Regular EN (seeds 1102/1103/1104) before flipping AriaWon.
+Required wiring markers: `[OperationsP4Validation] result=Passed checks=14`, `[OperationsAriaEvidenceValidation] result=Passed checks=8`, `[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7`. Live capture marker: `[OperationsAriaPlayModeCapture] result=Passed`. Evidence under `Design/AgentReports/Operations/host-aria-evidence/operation.o00{1,2,3}/Regular/{1102,1103,1104}/` (`win-screen.en.png` + `result.en.json`).

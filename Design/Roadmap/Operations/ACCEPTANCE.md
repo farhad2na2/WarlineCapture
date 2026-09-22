@@ -1,6 +1,6 @@
 # Operations acceptance and required ARIA wins
 
-**User requirement, 2026-09-21: ARIA must be able to play and win.** This is a mandatory product acceptance criterion for **every Operations mission**, plus the complete persistent city run. All gates currently Pending; this planning task ran no game or ARIA sessions.
+**User requirement, 2026-09-21: ARIA must be able to play and win.** This is a mandatory product acceptance criterion for **every Operations mission**, plus the complete persistent city run. The original planning task ran no sessions. Subsequent O001–O003 host and automated Play Mode captures verify the isolated model/presentation; their `AriaWon` badges do not fulfill this document's shipping visible-input gates. Normal manual play, shipping-input ARIA, durable profile and device acceptance remain pending. The next implementation is [P4R: O001 player-ready integration](O001_PLAYER_READY_IMPLEMENTATION.md).
 
 ## Non-negotiable mission gate
 

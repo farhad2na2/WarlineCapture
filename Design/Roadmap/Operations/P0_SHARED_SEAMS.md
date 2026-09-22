@@ -2,6 +2,8 @@
 
 Owner: Game PM / integration lead. P0 did not edit these files.
 
+**2026-09-22 integration clarification:** the restrictions below describe the historical P0 scope, not a permanent exclusion from Operations. These shared changes are required work in [P4R: O001 player-ready implementation](O001_PLAYER_READY_IMPLEMENTATION.md). The integration owner coordinates and validates them; leaving them untouched cannot satisfy a shipping mission gate. This document records no implementation of those changes.
+
 ## Required existing-assembly references
 
 `Game.Operations.Contracts` is a new no-engine assembly with empty `references`. ARCHITECTURE asks existing assemblies to take a directional reference to it. That is a shared asmdef edit and is blocked here.

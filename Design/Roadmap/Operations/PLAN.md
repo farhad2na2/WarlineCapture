@@ -1,6 +1,8 @@
 # Operations: mode and mission production plan
 
-Recorded 2026-09-21. **Design proposal and implementation handoff.** P0 added Operations-owned contracts/schemas only; no Operations gameplay, launch loop, or acceptance is claimed. This package interprets the request as the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review. See [P0_BASELINE_RECHECK.md](P0_BASELINE_RECHECK.md), [P0_SHARED_SEAMS.md](P0_SHARED_SEAMS.md), and [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). Operations Unity work stays on `D:\Projects\WarlineCapture-Operations`.
+Recorded 2026-09-21; implementation status clarified 2026-09-22. **Design and implementation handoff.** P0–P4 now provide Operations-owned contracts, strategic/tactical/loop models, O001–O003 graphs and Play Mode capture tooling. Shipping UI, shared gameplay and durable profile integration are still incomplete; a model/capture win is not player readiness. The next delivery is [P4R: O001 player-ready implementation](O001_PLAYER_READY_IMPLEMENTATION.md), which closes the original integration requirements before content expansion. See the [review evidence](../../AgentReports/Operations/O001_READINESS_REVIEW_20260922.md).
+
+This package targets the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review. See [P0_BASELINE_RECHECK.md](P0_BASELINE_RECHECK.md), [P0_SHARED_SEAMS.md](P0_SHARED_SEAMS.md), and [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). Windows Operations Unity work uses `D:\Projects\WarlineCapture-Operations`; all platforms follow current root AGENTS.md and project-ownership rules.
 
 ## Recommended scope
 
@@ -25,6 +27,7 @@ For environment work, also read the [Demo 2 integration guide](../../Demo2_Asset
 | [MISSION_CATALOG.csv](MISSION_CATALOG.csv) | Exactly 60 stable planning entries and machine-readable references |
 | [District briefs](Missions/README.md) | Every mission's player intent, ordered implementation, branches, tests |
 | [DELIVERY.md](DELIVERY.md) | Bounded coding packages, dependencies, ownership, and agent instructions |
+| [O001_PLAYER_READY_IMPLEMENTATION.md](O001_PLAYER_READY_IMPLEMENTATION.md) | Immediate P4R integration sequence, manual-playable and release gates, ownership and evidence |
 | [ACCEPTANCE.md](ACCEPTANCE.md) | Catalog, simulation, interaction, save, localization, and device gates |
 
 The CSV is the identity/index inventory; a mission's district brief owns its objective parameters. Shared family behavior comes from MISSION_IMPLEMENTATION; city rules from STRATEGIC_RULES. All numeric tuning in this package is an **initial test specification**, not measured balance. If a brief needs a different rule, amend the owning shared contract and its tests before implementing the exception.
@@ -64,6 +67,6 @@ ARIA acts as a staff officer: explains likely district consequences, uncertainty
 
 ## Scope and dependencies
 
-This task produces documentation only. Implementation can begin package by package after the owner assigns it. Existing M01–M05, the small Skirmish baseline, and concurrent Skirmish expansion work must remain intact. Operations does not depend on all 120 Skirmish scenarios, jets, or 340-unit battles. It does depend on certified shared selection, movement, combat, transport, visibility, map readiness, and saving for whichever missions use them.
+The original planning task produced documentation only; the implementation status above reflects subsequent P0–P4 work. Continue with P4R's shipping integration gates. Existing M01–M05, the small Skirmish baseline, and concurrent Skirmish expansion work must remain intact. Operations does not depend on all 120 Skirmish scenarios, jets, or 340-unit battles. It does depend on certified shared selection, movement, combat, transport, visibility, map readiness, and saving for whichever missions use them.
 
 Architecture authority: [SOLID/ECS contract](../../Architecture/gameplay_solid_ecs_contract.md), [map identity](../../Architecture/operation_map_and_scenario_identity_contract.md), [economy](../../Economy_Reward_Design.md), [product GDD](../../AAA_Mobile_Game_Design_Document_v0_2.md), and [content grammar](../../Gameplay_North_Star_And_Content_Grammar.md). This plan refines Operations; it does not override those shared contracts. Feature presence in source is not feature certification.

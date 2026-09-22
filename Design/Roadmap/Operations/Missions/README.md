@@ -1,6 +1,6 @@
 # All 60 mission briefs
 
-Status: **Planned**. Every entry requires its own manual and ARIA win evidence before release. Read [shared implementation](../MISSION_IMPLEMENTATION.md), [strategic rules](../STRATEGIC_RULES.md) and [acceptance](../ACCEPTANCE.md) first. All target names in graphs are scenario role aliases to bind to typed map anchors/entities, not existing GameObject names.
+Status: **O001–O003 authored prototypes; O004–O060 planned.** O001–O003 have automated Regular EN Play Mode captures, but each entry still needs normal manual and shipping-input ARIA acceptance before release. Start with [O001 player-ready integration](../O001_PLAYER_READY_IMPLEMENTATION.md). Read [shared implementation](../MISSION_IMPLEMENTATION.md), [strategic rules](../STRATEGIC_RULES.md) and [acceptance](../ACCEPTANCE.md) first. All target names in graphs are scenario role aliases to bind to typed map anchors/entities, not existing GameObject names.
 
 | District | Mission IDs | Detailed briefs |
 |---|---|---|

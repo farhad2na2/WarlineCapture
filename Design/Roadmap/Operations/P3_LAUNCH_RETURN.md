@@ -2,6 +2,8 @@
 
 Recorded 2026-09-22. Package 3 owns the mode loop in `Game.Operations.Loop`. It does not author O001–O003, import Demo 2, or edit the shared scene, save, or localization seams.
 
+**Scope clarification:** “dashboard”, “launch”, “HUD” and “recovery” below describe Operations-owned model APIs and an in-memory journal, not a complete shipping player route or disk/process recovery. [P4R](O001_PLAYER_READY_IMPLEMENTATION.md) owns the missing integration and its separate acceptance evidence.
+
 ## What landed
 
 Assembly `Game.Operations.Loop` (no engine references; references `Game.Operations.Contracts`, `Game.Operations.Strategic`, and `Game.Operations.Tactical`):

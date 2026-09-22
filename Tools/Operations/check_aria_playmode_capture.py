@@ -52,6 +52,8 @@ def check_sources() -> None:
         "win-screen",
         "AriaWon",
         "NotOpened",
+        "EditorApplication.Exit",
+        "owns_editor_exit=1",
     ):
         if needle not in capture:
             fail(f"capture_missing={needle}")
@@ -63,10 +65,20 @@ def check_sources() -> None:
     wiring = (TOOLS_ROOT / "Invoke-OperationsAriaPlayModeCaptureValidation.ps1").read_text(encoding="utf-8")
     if "OperationsAriaPlayModeCapture.RunO001RegularEn" not in invoke:
         fail("invoke_o001")
+    if "InvokeUnity.ps1" not in invoke:
+        fail("invoke_unity_direct")
+    if '$unityArguments = @("-executeMethod"' not in invoke:
+        fail("execute_only_args")
+    if '$unityArguments = @("-quit"' in invoke:
+        fail("live_capture_must_omit_quit")
+    if "cli_quit=omitted" not in invoke and "Omit -quit" not in invoke:
+        fail("omit_quit_documented")
     if PASS_MARKER not in wiring:
         fail("wiring_marker")
     if "WarlineCapture-Operations" not in invoke:
         fail("shadow_path")
+    if "InvokeUnityExecuteMethodValidation.ps1" not in wiring:
+        fail("wiring_uses_sync_helper")
 
     check_meta_guids()
 

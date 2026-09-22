@@ -166,7 +166,8 @@ namespace Game.Tests.Editor.Operations
                     "[OperationsAriaPlayModeCapture] started mission=" + missionId +
                     " seed=" + seed.ToString(CultureInfo.InvariantCulture) +
                     " language=" + language +
-                    " watch_seam=not_opened");
+                    " watch_seam=not_opened" +
+                    " cli_quit=forbidden await_playmode=1 owns_editor_exit=1");
             }
             catch (Exception exception)
             {

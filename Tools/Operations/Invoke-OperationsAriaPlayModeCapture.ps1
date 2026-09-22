@@ -1,6 +1,11 @@
 # Runs Operations ARIA Play Mode capture for one O001–O003 Regular EN seed on the shadow project.
 # Presents Ops-owned win screen, writes PNG + result.en.json (AriaWon). Watch seam not opened.
 # Does NOT flip MISSION_CATALOG playable / aria_win_acceptance — Programmer 2 verifies PNGs first.
+#
+# IMPORTANT: Do NOT pass Unity -quit. EnterPlaymode is async; the capture runner owns process
+# lifetime and calls EditorApplication.Exit(0/1) only after PNGs + result.en.json are written
+# (or an explicit Failed marker is logged). The focused executeMethod validation helper always
+# adds -quit and would shut down before Play Mode completes — call InvokeUnity.ps1 directly.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
@@ -63,8 +68,8 @@ if (-not (Test-Path -LiteralPath $versionFile)) {
 $editorVersion = (Select-String -LiteralPath $versionFile -Pattern "m_EditorVersion:\s*(.+)$").Matches.Groups[1].Value.Trim()
 $wrapperRoot = Join-Path $shadow "Tools\CI"
 $resolveScript = Join-Path $wrapperRoot "ResolveUnityEditor.ps1"
-$validateScript = Join-Path $wrapperRoot "InvokeUnityExecuteMethodValidation.ps1"
-if (-not (Test-Path -LiteralPath $resolveScript) -or -not (Test-Path -LiteralPath $validateScript)) {
+$invokeUnityScript = Join-Path $wrapperRoot "InvokeUnity.ps1"
+if (-not (Test-Path -LiteralPath $resolveScript) -or -not (Test-Path -LiteralPath $invokeUnityScript)) {
     throw "Checked Unity wrappers are missing under $wrapperRoot"
 }
 
@@ -73,29 +78,67 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($unityExe)) {
     throw "Could not resolve Unity $editorVersion for the shadow project."
 }
 
+$requiredPassMarker = "[OperationsAriaPlayModeCapture] result=Passed"
+$failMarker = "[OperationsAriaPlayModeCapture] result=Failed"
+
 Write-Host "[OperationsAriaPlayModeCapture] project=$shadow"
 Write-Host "[OperationsAriaPlayModeCapture] mission=$folder seed=$seed"
 Write-Host "[OperationsAriaPlayModeCapture] unity=$unityExe"
 Write-Host "[OperationsAriaPlayModeCapture] method=$executeMethod"
 Write-Host "[OperationsAriaPlayModeCapture] log=$LogFile"
 Write-Host "[OperationsAriaPlayModeCapture] watch_seam=not_opened"
+Write-Host "[OperationsAriaPlayModeCapture] cli_quit=omitted (capture owns EditorApplication.Exit after Play Mode)"
 
 $gui = $true
 if ($PSBoundParameters.ContainsKey("GuiLicensing")) {
     $gui = [bool] $GuiLicensing
 }
 
-& $validateScript `
+Remove-Item -LiteralPath $LogFile -Force -ErrorAction Ignore
+
+# Omit -quit: executeMethod only starts EnterPlaymode; capture finishes asynchronously.
+$unityArguments = @("-executeMethod", $executeMethod)
+
+& $invokeUnityScript `
     -UnityExe $unityExe `
     -ProjectPath $shadow `
-    -ExecuteMethod $executeMethod `
     -LogFile $LogFile `
-    -RequiredPassMarker "[OperationsAriaPlayModeCapture] result=Passed" `
+    -NoProcessExit `
     -GuiLicensing:$gui `
-    -TimeoutSeconds $TimeoutSeconds
+    -TimeoutSeconds $TimeoutSeconds `
+    -UnityArguments $unityArguments
+$unityExit = $LASTEXITCODE
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Operations ARIA Play Mode capture failed for $folder seed $seed."
+if (-not (Test-Path -LiteralPath $LogFile -PathType Leaf)) {
+    throw "Operations ARIA Play Mode capture did not create log $LogFile."
+}
+
+$logText = $null
+$readDeadline = [DateTime]::UtcNow.AddSeconds(15)
+do {
+    try {
+        $logText = [System.IO.File]::ReadAllText($LogFile)
+    } catch [System.IO.IOException] {
+        if ([DateTime]::UtcNow -ge $readDeadline) {
+            throw
+        }
+
+        Start-Sleep -Milliseconds 250
+    }
+} while ($null -eq $logText)
+
+if ($logText.Contains($failMarker) -or
+    $logText.Contains("executeMethod method $executeMethod threw exception.") -or
+    $logText.Contains("StackOverflowException:")) {
+    throw "Operations ARIA Play Mode capture log contains a failure marker. See $LogFile"
+}
+
+if ($unityExit -ne 0) {
+    throw "Operations ARIA Play Mode capture failed for $folder seed $seed with Unity exit code $unityExit."
+}
+
+if (-not $logText.Contains($requiredPassMarker)) {
+    throw "Operations ARIA Play Mode capture log is missing required pass marker: $requiredPassMarker"
 }
 
 $evidenceDir = Join-Path $shadow "Design\AgentReports\Operations\host-aria-evidence\$folder\Regular\$seed"

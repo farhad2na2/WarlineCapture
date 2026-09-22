@@ -15,6 +15,6 @@
 - `Invoke-OperationsP4Validation.ps1` — Programmer 2 later: P4 Unity validation against that shadow project only. Point the shadow worktree at the P4 branch first.
 - `Invoke-OperationsAriaEvidenceValidation.ps1` — Programmer 2 later: ARIA evidence harness Unity validation against that shadow project only.
 - `Invoke-OperationsAriaPlayModeCaptureValidation.ps1` — Programmer 2: Play Mode capture wiring Unity validation (marker checks=7). Not a live AriaWon claim.
-- `Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001|O002|O003` — Programmer 2: live Play Mode win-screen capture on the Ops shadow. Marker `[OperationsAriaPlayModeCapture] result=Passed`. Watch seam not opened.
+- `Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001|O002|O003` — Programmer 2: live Play Mode win-screen capture on the Ops shadow. **Omits Unity `-quit`** (async EnterPlaymode; runner calls `EditorApplication.Exit`). Marker `[OperationsAriaPlayModeCapture] result=Passed`. Watch seam not opened.
 
 Do not point Unity at `D:\Projects\WarlineCapture`.

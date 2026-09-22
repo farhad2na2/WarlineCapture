@@ -55,8 +55,16 @@ namespace Game.Tests.Editor.Operations
             Require(capture.Contains("OperationsAriaPlayModeCapture.RunO002RegularEn"), "invoke_o002");
             Require(capture.Contains("OperationsAriaPlayModeCapture.RunO003RegularEn"), "invoke_o003");
             Require(capture.Contains("WarlineCapture-Operations"), "shadow_only");
+            // Live Play Mode capture must omit Unity -quit; runner owns EditorApplication.Exit.
+            Require(capture.Contains("InvokeUnity.ps1"), "invoke_unity_direct");
+            Require(capture.Contains("$unityArguments = @(\"-executeMethod\""), "execute_only_args");
+            Require(!capture.Contains("$unityArguments = @(\"-quit\""), "no_quit_arg_array");
+            Require(capture.Contains("cli_quit=omitted") || capture.Contains("Omit -quit"), "omit_quit_documented");
+            Require(capture.Contains("EditorApplication.Exit") || capture.Contains("owns EditorApplication.Exit"), "docs_exit");
             Require(wiring.Contains(PassMarker) || wiring.Contains("[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7"), "wiring_marker");
             Require(wiring.Contains("OperationsAriaPlayModeCaptureValidation.RunFocusedValidation"), "wiring_method");
+            // Wiring validation may still use the sync -quit helper; live capture must not.
+            Require(wiring.Contains("InvokeUnityExecuteMethodValidation.ps1"), "wiring_uses_sync_helper");
         }
 
         public static void BannedSeamsStayClosed()
@@ -100,6 +108,8 @@ namespace Game.Tests.Editor.Operations
             Require(source.Contains("win-screen"), "win_screen_name");
             Require(source.Contains("Status = \"AriaWon\"") || source.Contains("status=AriaWon"), "ariawon_write");
             Require(source.Contains("CapturePassMarkerPrefix"), "live_marker_const");
+            Require(source.Contains("EditorApplication.Exit"), "owns_editor_exit");
+            Require(source.Contains("owns_editor_exit=1") || source.Contains("ExitPendingKey"), "async_lifecycle");
         }
 
         public static void WiringMarkerDistinctFromLiveCapture()

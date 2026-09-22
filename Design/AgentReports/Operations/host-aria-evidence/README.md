@@ -76,7 +76,9 @@ Markers:
 - `[OperationsAriaEvidenceValidation] result=Passed checks=8`
 - `[OperationsAriaPlayModeCaptureValidation] result=Passed checks=7`
 
-4. **Farhad bar — Play Mode win screen capture** (O001, then O002, then O003):
+4. **Farhad bar — Play Mode win screen capture** (O001, then O002, then O003).
+
+   The live capture invoke **omits Unity `-quit`**. `EnterPlaymode` is async; the runner logs `[OperationsAriaPlayModeCapture] result=Passed` (or Failed) and then calls `EditorApplication.Exit`. Do not route this through the sync executeMethod helper that always adds `-quit`.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001

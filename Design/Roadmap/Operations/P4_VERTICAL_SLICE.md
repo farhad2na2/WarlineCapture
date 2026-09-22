@@ -49,7 +49,7 @@ Play Mode capture **wiring** marker (distinct from live AriaWon; does not claim 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
 ```
 
-Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch `AriaPlayCapability` / MatchSceneView shared-UI seam stays **closed** this sprint; capture uses an Ops-owned victory presentation.
+Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch virtual-touch / Match scene shared-UI seam stays **closed** this sprint; capture uses an Ops-owned victory presentation. Live capture invoke **omits `-quit`** so Play Mode can finish; the runner exits the Editor after writing evidence.
 
 ```powershell
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O001

@@ -23,7 +23,7 @@ Checks cover: compile of all three missions, localized EN/FA keys, manual win pa
 
 ## Playable claim
 
-**Not claimed.** ARIA win paths are wired and host-driven. Programmer 2 / QA must record unassisted ARIA wins before any playable/complete status.
+**Yes for O001–O003 Regular EN** after Windows Ops shadow Play Mode AriaWon captures (seeds 1102/1103/1104) with win-screen PNGs under `Design/AgentReports/Operations/host-aria-evidence/`. Device baseline not required. FA Regular still pending. Watch virtual-touch seam not opened.
 
 ## ARIA evidence gate (next)
 

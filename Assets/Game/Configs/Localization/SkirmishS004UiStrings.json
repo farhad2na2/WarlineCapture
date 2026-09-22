@@ -1,0 +1,104 @@
+{
+  "entries": [
+    {
+      "key": "skirmish.s004.title",
+      "source": "Desert Base · Base Assault · Air Mobile · Established Base",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه صحرا · حمله به پایگاه · هوابرد · پایگاه برقرار"
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.brief",
+      "source": "Scout with infantry and the starting transport helicopter. AA covers the staging area. Lift infantry toward the north ruins, or build offensive air while a ground reserve stays home.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با پیاده و هلی‌کوپتر ترابری شروع‌شده شناسایی کن. پدافند هوایی محل استقرار را می‌پوشاند. پیاده را به خرابه‌های شمال ببر، یا هوایی تهاجمی بساز و یک ذخیره زمینی در خانه نگه دار."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.objective",
+      "source": "Destroy the original enemy Barracks while your original Barracks survives.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن را نابود کن، در حالی که سربازخانه اصلی خودت سالم است."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.warning.offensive_air",
+      "source": "Established Air Mobile can queue attack helicopters from the granted Helipad. Jets and the transport plane still need an Airport and Full Arsenal. Tanks, heavy APCs, and ground siege are not in this army.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هوابرد برقرار می‌تواند از پد بالگرد داده‌شده هلی‌کوپتر تهاجمی صف کند. جت و هواپیمای ترابری هنوز به فرودگاه و زرادخانه کامل نیاز دارند. تانک، نفربر سنگین و محاصره زمینی در این ارتش نیستند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.warning.replacement_base",
+      "source": "A replacement Barracks does not replace the original main base.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه جایگزین جای پایگاه اصلی اولیه را نمی‌گیرد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.result.victory",
+      "source": "The original enemy Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی دشمن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.result.defeat",
+      "source": "The original player Barracks is destroyed.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سربازخانه اصلی بازیکن نابود شد."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.result.draw_bases",
+      "source": "Both original Barracks were destroyed on the same tick.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هر دو سربازخانه اصلی در همان تیک نابود شدند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.result.draw_deadline",
+      "source": "Both original Barracks were still standing at the deadline.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "در موعد مقرر هنوز هر دو سربازخانه اصلی پابرجا بودند."
+        }
+      ]
+    },
+    {
+      "key": "skirmish.s004.result.surrender",
+      "source": "Surrender accepted.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تسلیم پذیرفته شد."
+        }
+      ]
+    }
+  ]
+}

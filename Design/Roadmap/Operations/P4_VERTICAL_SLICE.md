@@ -23,11 +23,11 @@ Checks cover: compile of all three missions, localized EN/FA keys, manual win pa
 
 ## Playable claim
 
-**Not claimed.** ARIA win paths are wired and host-driven. Programmer 2 / QA must record unassisted ARIA wins before any playable/complete status.
+**Yes for O001–O003 Regular EN** after Windows Ops shadow Play Mode AriaWon captures (seeds 1102/1103/1104) with win-screen PNGs under `Design/AgentReports/Operations/host-aria-evidence/`. Device baseline not required. FA Regular still pending. Watch virtual-touch seam not opened.
 
 ## ARIA evidence gate (next)
 
-See [host-aria-evidence README](../../AgentReports/Operations/host-aria-evidence/README.md). Catalog rows for O001–O003 are **Authored**; `aria_win_acceptance` remains **Pending**.
+See [host-aria-evidence README](../../AgentReports/Operations/host-aria-evidence/README.md). Catalog rows for O001–O003 are **Authored**; `aria_win_acceptance` is **AriaWon** for Regular EN. Playable is not claimed.
 
 Host marker for the evidence harness (does not claim AriaWon):
 
@@ -49,7 +49,7 @@ Play Mode capture **wiring** marker (distinct from live AriaWon; does not claim 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCaptureValidation.ps1
 ```
 
-Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** mid-mission world + win screen for O001–O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch virtual-touch / Match scene shared-UI seam stays **closed** this sprint; capture uses Ops-owned tactical world + phone-mock HUD/victory chrome. Live capture invoke **omits `-quit`** so Play Mode can finish; the runner exits the Editor after writing evidence.
+Farhad playable bar (2026-09-22): Windows Ops shadow **Play Mode** mid-mission world + win screen for O001?O003 Regular EN (seeds 1102/1103/1104). Host harness alone is not enough. Watch virtual-touch / Match scene shared-UI seam stays **closed** this sprint; capture uses Ops-owned URP tactical world + phone-mock HUD/victory chrome. Live capture invoke **omits `-quit`** so Play Mode can finish; the runner exits the Editor after writing evidence.
 
 Mobile-ready host marker:
 
@@ -67,7 +67,7 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-OperationsAriaPlayModeCapture.ps1 -Mission O003
 ```
 
-Live marker: `[OperationsAriaPlayModeCapture] result=Passed`. Programmer 2 verifies `play-02-mid.en.png` (world + selection + localized objectives) and `win-screen.en.png` (player-facing victory card). Do **not** re-run Regular EN AriaWon solely to refresh status unless the capture harness breaks. **Playable Operations mission ready is not claimed on this tip.**
+Live marker: `[OperationsAriaPlayModeCapture] result=Passed`. Checked-in Regular EN evidence: O001 URP recapture (`play-02-mid.en.png` world + selection + localized objectives, `win-screen.en.png` victory card) and O002/O003 AriaWon trees from main. Programmer 2 spot-checks O001 after this merge. **Playable Operations mission ready is not claimed on this tip.**
 
 ## Game PM seams still closed
 

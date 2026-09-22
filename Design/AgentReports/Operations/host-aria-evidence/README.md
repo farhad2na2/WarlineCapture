@@ -1,6 +1,6 @@
 # Operations ARIA evidence scaffolding (O001–O003)
 
-Recorded with the Operations ARIA evidence harness gate after P4 coding (`28b955f2` / PR #36) and the Play Mode capture runner (this branch). **Playable Operations mission ready is not claimed.** Catalog `aria_win_acceptance` stays Pending until Programmer 2 verifies win-screen PNGs on the Windows Ops shadow.
+Recorded with the Operations ARIA evidence harness gate after P4 coding (`28b955f2` / PR #36) and the Play Mode capture runner (PR #38 / PR #39, plus the URP O001 recapture on this branch). **Playable Operations mission ready is not claimed.** Catalog `aria_win_acceptance` is AriaWon for O001–O003 Regular EN; Programmer 2 still spot-checks the O001 URP PNGs on the Windows Ops shadow.
 
 ## Gap verified
 
@@ -10,9 +10,9 @@ Shipping Watch virtual-touch has **no** Operations row this sprint; do not open 
 
 1. Public loop observation (`TryReadHud`, node TargetIds, `CopyPublicActors` / facts)
 2. Generic `OperationsAriaObjectivePlanner` (no mission-ID switch)
-3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned tactical world + phone-mock HUD / victory card** (`Game.Operations.Capture`) → `ScreenCapture` PNG + `result.en.json`
+3. Play Mode enter → planner ARIA through Loop visible-controls → **Ops-owned URP tactical world + phone-mock HUD / victory card** (`Game.Operations.Capture`, runtime assembly so Play Mode `AddComponent` works) → `ScreenCapture` PNG + `result.en.json`
 
-Mobile-ready presentation (world mesh, localized objectives, compressed scan/repair/hold pacing with hard deadlines 720/840/900 preserved) is validated by:
+Mobile-ready presentation (URP world mesh, localized objectives, compressed scan/repair/hold pacing with hard deadlines 720/840/900 preserved) is validated by:
 
 ```bash
 python3 Tools/Operations/check_mobile_ready.py
@@ -34,7 +34,7 @@ This scaffold uses build id `host-aria-evidence`.
 | O002 | 1103 | `operation.o002/Regular/1103/result.en.json` | `9103` |
 | O003 | 1104 | `operation.o003/Regular/1104/result.en.json` | `9104` |
 
-Checked-in JSON files remain **PendingAriaWon** templates until the Windows Play Mode capture overwrites them with `status=AriaWon`, real hashes, and `capture_path` pointing at `win-screen.en.png`. FA seeds `9102–9104` stay optional/scaffolded.
+Regular EN `result.en.json` files are recorded **AriaWon** captures (`victory: true`, `capture_path` at `win-screen.en.png`). O001 Regular/1102 is the URP world-shell recapture. O002 Regular/1103 and O003 Regular/1104 are the PR #39 captures. FA seeds `9102–9104` stay **PendingAriaWon** scaffolds. Catalog `aria_win_acceptance` is AriaWon for these three rows; **playable is not claimed** by this tree.
 
 Expected after a successful capture (per mission):
 
@@ -96,12 +96,12 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/Operations/Invoke-
 
 Live capture marker (per mission): `[OperationsAriaPlayModeCapture] result=Passed`
 
-5. Verify each `win-screen.en.png` shows the Ops victory UI, confirm `result.en.json` has `victory: true` and `status: AriaWon`, then flip catalog `aria_win_acceptance` / evidence paths. Device baseline is **not** required for the playable claim (Farhad). Watch seam stays closed.
+5. Verify each `win-screen.en.png` shows the Ops victory UI and `result.en.json` has `victory: true` and `status: AriaWon`. Catalog `aria_win_acceptance` for O001–O003 Regular EN is already AriaWon. Device baseline is **not** required for the playable claim (Farhad). Watch seam stays closed. **Playable is not claimed by this merge.**
 
 ## Status
 
 | Mission | Authored | Host unassisted path | Play Mode capture runner | AriaWon | Playable claim |
 |---|---|---|---|---|---|
-| O001 | Yes | Runnable via harness | Wired; run on Windows shadow | Pending until capture verified | Not claimed |
-| O002 | Yes | Runnable via harness | Wired; run on Windows shadow | Pending until capture verified | Not claimed |
-| O003 | Yes | Runnable via harness | Wired; run on Windows shadow | Pending until capture verified | Not claimed |
+| O001 | Yes | Runnable via harness | Wired; URP recapture checked in at Regular/1102 | Recorded (URP world + phone HUD) | Not claimed |
+| O002 | Yes | Runnable via harness | Wired; PR #39 capture checked in at Regular/1103 | Recorded | Not claimed |
+| O003 | Yes | Runnable via harness | Wired; PR #39 capture checked in at Regular/1104 | Recorded | Not claimed |

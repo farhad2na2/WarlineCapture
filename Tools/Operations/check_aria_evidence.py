@@ -86,11 +86,16 @@ def check_scaffold() -> None:
         "terminal_outcome",
         "before_district",
         "after_district",
-        "PENDING_LIVE_BUILD",
-        "PendingAriaWon",
+        "win-screen.en.png",
+        '"status": "AriaWon"',
+        '"victory": true',
     ):
         if field not in sample:
             fail(f"scaffold_field={field}")
+    fa = (EVIDENCE_ROOT / "operation.o001" / "Regular" / "9102" / "result.fa.json").read_text(encoding="utf-8")
+    for field in ("PendingAriaWon", "PENDING_LIVE_BUILD"):
+        if field not in fa:
+            fail(f"fa_scaffold_field={field}")
 
 
 def dotnet_executable() -> str:

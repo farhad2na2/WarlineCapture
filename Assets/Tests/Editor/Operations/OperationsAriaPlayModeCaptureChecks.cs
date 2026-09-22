@@ -92,6 +92,8 @@ namespace Game.Tests.Editor.Operations
 
         public static void ScaffoldsRemainPendingUntilLiveCapture()
         {
+            // Regular EN captures are recorded AriaWon (O001 URP recapture + O002/O003 from main).
+            // FA scaffolds stay pending. This wiring check does not claim playable.
             string root = FindRepoRoot();
             string[] paths =
             {
@@ -102,9 +104,24 @@ namespace Game.Tests.Editor.Operations
             for (int index = 0; index < paths.Length; index++)
             {
                 string json = File.ReadAllText(paths[index]);
-                Require(json.Contains("PendingAriaWon"), "scaffold_pending:" + index);
-                Require(!json.Contains("\"status\": \"AriaWon\""), "scaffold_not_flipped:" + index);
+                Require(json.Contains("\"status\": \"AriaWon\""), "recorded_ariawon:" + index);
+                Require(json.Contains("\"victory\": true"), "recorded_victory:" + index);
+                Require(json.Contains("win-screen.en.png"), "recorded_capture:" + index);
+                Require(!json.Contains("PendingAriaWon"), "recorded_not_scaffold:" + index);
             }
+
+            string faScaffold = File.ReadAllText(Path.Combine(
+                root,
+                "Design",
+                "AgentReports",
+                "Operations",
+                "host-aria-evidence",
+                "operation.o001",
+                "Regular",
+                "9102",
+                "result.fa.json"));
+            Require(faScaffold.Contains("PendingAriaWon"), "fa_scaffold_pending");
+            Require(faScaffold.Contains("PENDING_LIVE_BUILD"), "fa_scaffold_placeholder");
 
             Require(OperationsAriaEvidenceHarness.CanonicalRegularSeeds[0] == 1102);
             Require(OperationsAriaEvidenceHarness.CanonicalRegularSeeds[1] == 1103);

@@ -42,8 +42,8 @@ namespace Game.Operations.Content
     }
 
     /// <summary>
-    /// Plans the next visible-control intents from public HUD/objective state.
-    /// Does not inject facts or read hidden enemy positions.
+    /// Plans the next visible-control intents from public HUD/objective/actor state.
+    /// Does not inject facts, read hidden fog, or switch on mission IDs.
     /// </summary>
     public static class OperationsAriaObjectivePlanner
     {
@@ -55,6 +55,9 @@ namespace Game.Operations.Content
                 return Array.Empty<OperationsAriaIntent>();
 
             var intents = new List<OperationsAriaIntent>();
+            OperationsTacticalFact[] facts = loop.CopyPublicFacts();
+            OperationsTacticalActorState[] actors = loop.CopyPublicActors();
+
             if (hud.CameraFocus.Length > 0)
                 intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Focus, string.Empty, hud.CameraFocus, string.Empty, "operations.aria.focus"));
 
@@ -65,118 +68,222 @@ namespace Game.Operations.Content
                     continue;
                 if (!loop.TryNode(row.NodeId, out OperationsTacticalNodeState state))
                     continue;
-                AppendForNode(loop, state, intents);
+                if (state.Phase != OperationsTacticalNodePhase.Active)
+                    continue;
+                AppendForNode(loop, state, facts, actors, intents);
             }
 
-            if (hud.WithdrawAvailable)
-                intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Withdraw, string.Empty, string.Empty, string.Empty, "operations.aria.withdraw"));
             return intents.ToArray();
         }
 
-        static void AppendForNode(OperationsLoopSession loop, OperationsTacticalNodeState state, List<OperationsAriaIntent> intents)
+        static void AppendForNode(
+            OperationsLoopSession loop,
+            OperationsTacticalNodeState state,
+            OperationsTacticalFact[] facts,
+            OperationsTacticalActorState[] actors,
+            List<OperationsAriaIntent> intents)
         {
             switch (state.Rule)
             {
                 case OperationsObjectiveRuleKind.Scan:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Observe, FirstPlayer(loop), FirstNodeTarget(loop, state.NodeId), string.Empty, "operations.aria.scan"));
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Scan, FirstPlayer(loop), FirstNodeTarget(loop, state.NodeId), string.Empty, "operations.aria.scan"));
+                    string scanTarget = FirstUnconfirmed(state.TargetIds, facts, OperationsTacticalFactKind.ScanConfirmed);
+                    if (scanTarget.Length == 0)
+                        break;
+                    string scout = PreferRole(actors, OperationsRosterRoleKind.ReconInfantry) ?? FirstCommandable(actors);
+                    if (!AtMoveAnchor(loop, scout, scanTarget))
+                    {
+                        AppendApproach(loop, scout, scanTarget, intents);
+                        break;
+                    }
+
+                    if (!HasFact(facts, OperationsTacticalFactKind.Observed, scanTarget))
+                    {
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Observe, scout, scanTarget, string.Empty, "operations.aria.scan"));
+                        break;
+                    }
+
+                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Scan, scout, scanTarget, string.Empty, "operations.aria.scan"));
                     break;
                 case OperationsObjectiveRuleKind.Interact:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Interact, FirstPlayer(loop), FirstNodeTarget(loop, state.NodeId), string.Empty, "operations.aria.interact"));
+                    string interactTarget = FirstTarget(state.TargetIds);
+                    string interactor = FirstCommandable(actors);
+                    if (!AtMoveAnchor(loop, interactor, interactTarget))
+                        AppendApproach(loop, interactor, interactTarget, intents);
+                    else
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Interact, interactor, interactTarget, string.Empty, "operations.aria.interact"));
                     break;
                 case OperationsObjectiveRuleKind.Repair:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Repair, FirstRepair(loop), FirstNodeTarget(loop, state.NodeId), string.Empty, "operations.aria.repair"));
+                    string repairTarget = FirstTarget(state.TargetIds);
+                    string repairer = PreferRole(actors, OperationsRosterRoleKind.RepairSpecialist) ?? FirstCommandable(actors);
+                    if (!AtMoveAnchor(loop, repairer, repairTarget))
+                        AppendApproach(loop, repairer, repairTarget, intents);
+                    else
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Repair, repairer, repairTarget, string.Empty, "operations.aria.repair"));
                     break;
                 case OperationsObjectiveRuleKind.Hold:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Move, FirstPlayer(loop), FirstZone(loop, state.NodeId), string.Empty, "operations.aria.hold"));
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Hold, FirstPlayer(loop), FirstZone(loop, state.NodeId), string.Empty, "operations.aria.hold"));
+                    string holder = FirstCommandable(actors);
+                    string zone = state.ZoneAnchorId;
+                    if (zone.Length == 0)
+                        break;
+                    if (!InRangeAnchor(loop, holder, zone, OperationsTacticalRules.HoldMeters))
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Move, holder, zone, string.Empty, "operations.aria.hold"));
+                    else
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Hold, holder, zone, string.Empty, "operations.aria.hold"));
                     break;
                 case OperationsObjectiveRuleKind.Escort:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.EscortGo, string.Empty, string.Empty, "route.safe", "operations.aria.escort_go"));
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.EscortHold, string.Empty, string.Empty, string.Empty, "operations.aria.escort_hold"));
+                    string route = FirstRoute(state.LegalRouteIds);
+                    if (route.Length > 0)
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.EscortGo, string.Empty, string.Empty, route, "operations.aria.escort_go"));
                     break;
                 case OperationsObjectiveRuleKind.Extract:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Extract, FirstPlayer(loop), string.Empty, string.Empty, "operations.aria.extract"));
+                    for (int index = 0; index < actors.Length; index++)
+                    {
+                        if (IsCommandablePlayer(actors[index]) &&
+                            actors[index].Body == OperationsTacticalBodyKind.Infantry)
+                            intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Extract, actors[index].ObjectId, string.Empty, string.Empty, "operations.aria.extract"));
+                    }
                     break;
                 case OperationsObjectiveRuleKind.Clear:
-                    intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Attack, FirstPlayer(loop), FirstHostile(loop), string.Empty, "operations.aria.attack"));
+                    string hostile = FirstListedHostile(actors, state.TargetIds);
+                    string attacker = FirstCommandable(actors);
+                    if (hostile.Length == 0)
+                        break;
+                    if (!AtMoveAnchor(loop, attacker, hostile) &&
+                        !InRange(loop, attacker, hostile, OperationsTacticalRules.AttackMeters))
+                        AppendApproach(loop, attacker, hostile, intents);
+                    else
+                        intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Attack, attacker, hostile, string.Empty, "operations.aria.attack"));
                     break;
             }
         }
 
-        static string FirstPlayer(OperationsLoopSession loop)
+        static void AppendApproach(OperationsLoopSession loop, string actorId, string focusId, List<OperationsAriaIntent> intents)
         {
-            OperationsTacticalActorState[] actors = CopyActors(loop);
-            for (int index = 0; index < actors.Length; index++)
-            {
-                if (actors[index].Faction == OperationsTacticalFaction.Player &&
-                    actors[index].Body == OperationsTacticalBodyKind.Infantry &&
-                    actors[index].Alive &&
-                    actors[index].Spawned &&
-                    actors[index].Commandable)
-                    return actors[index].ObjectId;
-            }
-
-            return string.Empty;
+            if (string.IsNullOrEmpty(actorId) || string.IsNullOrEmpty(focusId))
+                return;
+            if (!loop.TryResolveMoveAnchor(focusId, out string anchorId))
+                return;
+            intents.Add(new OperationsAriaIntent(OperationsAriaSkillKind.Move, actorId, anchorId, string.Empty, "operations.aria.move"));
         }
 
-        static string FirstRepair(OperationsLoopSession loop)
+        static bool AtMoveAnchor(OperationsLoopSession loop, string actorId, string focusId)
         {
-            OperationsTacticalActorState[] actors = CopyActors(loop);
-            for (int index = 0; index < actors.Length; index++)
-            {
-                if (actors[index].RosterRole == OperationsRosterRoleKind.RepairSpecialist &&
-                    actors[index].Alive &&
-                    actors[index].Spawned)
-                    return actors[index].ObjectId;
-            }
-
-            return FirstPlayer(loop);
+            if (!loop.TryResolveMoveAnchor(focusId, out string anchorId))
+                return false;
+            return InRangeAnchor(loop, actorId, anchorId, 0.75f);
         }
 
-        static string FirstHostile(OperationsLoopSession loop)
+        static bool InRange(OperationsLoopSession loop, string actorId, string targetId, float meters)
         {
-            OperationsTacticalActorState[] actors = CopyActors(loop);
-            for (int index = 0; index < actors.Length; index++)
-            {
-                if (actors[index].Faction == OperationsTacticalFaction.Hostile &&
-                    actors[index].Alive &&
-                    actors[index].Spawned)
-                    return actors[index].ObjectId;
-            }
-
-            return string.Empty;
+            if (!loop.TryActor(actorId, out OperationsTacticalActorState actor) ||
+                !loop.TryActor(targetId, out OperationsTacticalActorState target))
+                return false;
+            return OperationsTacticalRules.Within(actor.X, actor.Z, target.X, target.Z, meters);
         }
 
-        static OperationsTacticalActorState[] CopyActors(OperationsLoopSession loop)
+        static bool InRangeAnchor(OperationsLoopSession loop, string actorId, string anchorId, float meters)
         {
-            if (!loop.TryActor("unit.d01.rifle.01", out _))
-                return Array.Empty<OperationsTacticalActorState>();
-            var list = new List<OperationsTacticalActorState>();
-            // Public observation uses TryActor for known IDs exposed by HUD targets.
-            string[] probes =
-            {
-                "unit.d01.rifle.01", "unit.d01.rifle.02", "unit.d01.rifle.03", "unit.d01.rifle.04",
-                "unit.d01.recon.01", "unit.d01.recon.02", "unit.d01.repair.01", "unit.d01.repair.02",
-                "hostile.d01.pump.01", "hostile.d01.pump.02", "hostile.d01.rifle.i.01",
-                "hostile.d01.rifle.a.01", "hostile.d01.rifle.b.01"
-            };
-            for (int index = 0; index < probes.Length; index++)
-            {
-                if (loop.TryActor(probes[index], out OperationsTacticalActorState state))
-                    list.Add(state);
-            }
-
-            return list.ToArray();
+            if (!loop.TryActor(actorId, out OperationsTacticalActorState actor))
+                return false;
+            if (!OperationsMapGreyboxCatalog.TryGet(loop.MapId, out OperationsMapGreybox map) ||
+                !map.TryGetById(anchorId, out OperationsGreyboxAnchor anchor))
+                return false;
+            return OperationsTacticalRules.Within(actor.X, actor.Z, anchor.X, anchor.Z, meters);
         }
 
-        static string FirstNodeTarget(OperationsLoopSession loop, string nodeId)
+        static string FirstUnconfirmed(string[] targets, OperationsTacticalFact[] facts, OperationsTacticalFactKind kind)
         {
-            if (!loop.TryReadHud(out OperationsHudFrame hud))
+            if (targets == null)
                 return string.Empty;
-            return hud.CameraFocus;
+            for (int index = 0; index < targets.Length; index++)
+            {
+                if (!HasFact(facts, kind, targets[index]))
+                    return targets[index];
+            }
+
+            return string.Empty;
         }
 
-        static string FirstZone(OperationsLoopSession loop, string nodeId) => FirstNodeTarget(loop, nodeId);
+        static string FirstTarget(string[] targets) =>
+            targets != null && targets.Length > 0 ? targets[0] : string.Empty;
+
+        static string FirstRoute(string[] routes)
+        {
+            if (routes == null || routes.Length == 0)
+                return string.Empty;
+            for (int index = 0; index < routes.Length; index++)
+            {
+                if (routes[index] == "route.safe")
+                    return routes[index];
+            }
+
+            return routes[0];
+        }
+
+        static string PreferRole(OperationsTacticalActorState[] actors, OperationsRosterRoleKind role)
+        {
+            for (int index = 0; index < actors.Length; index++)
+            {
+                if (actors[index].RosterRole == role && IsCommandablePlayer(actors[index]))
+                    return actors[index].ObjectId;
+            }
+
+            return null;
+        }
+
+        static string FirstCommandable(OperationsTacticalActorState[] actors)
+        {
+            for (int index = 0; index < actors.Length; index++)
+            {
+                if (IsCommandablePlayer(actors[index]))
+                    return actors[index].ObjectId;
+            }
+
+            return string.Empty;
+        }
+
+        static string FirstListedHostile(OperationsTacticalActorState[] actors, string[] listed)
+        {
+            for (int index = 0; index < actors.Length; index++)
+            {
+                OperationsTacticalActorState actor = actors[index];
+                if (actor.Faction != OperationsTacticalFaction.Hostile || !actor.Alive || !actor.Spawned)
+                    continue;
+                if (listed == null || listed.Length == 0 || Contains(listed, actor.ObjectId) || Contains(listed, actor.RoleId))
+                    return actor.ObjectId;
+            }
+
+            return string.Empty;
+        }
+
+        static bool IsCommandablePlayer(OperationsTacticalActorState actor) =>
+            actor.Faction == OperationsTacticalFaction.Player &&
+            actor.Alive &&
+            actor.Spawned &&
+            actor.Commandable &&
+            (actor.Body == OperationsTacticalBodyKind.Infantry ||
+             actor.RosterRole == OperationsRosterRoleKind.RepairSpecialist);
+
+        static bool HasFact(OperationsTacticalFact[] facts, OperationsTacticalFactKind kind, string objectId)
+        {
+            for (int index = 0; index < facts.Length; index++)
+            {
+                if (facts[index].Kind == kind && facts[index].ObjectId == objectId)
+                    return true;
+            }
+
+            return false;
+        }
+
+        static bool Contains(string[] values, string needle)
+        {
+            for (int index = 0; index < values.Length; index++)
+            {
+                if (values[index] == needle)
+                    return true;
+            }
+
+            return false;
+        }
     }
 }

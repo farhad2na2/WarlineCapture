@@ -9,6 +9,7 @@ namespace Game.Operations.Capture
     /// <summary>
     /// Operations-owned Play Mode HUD / victory presentation for O001–O003 mobile-ready capture.
     /// Active: tactical world + phone-mock objective chrome (no seed/tick/bot debug).
+    /// Binds Programmer 1 content frames: O001 coach, O002/O003 escort chips, result Trust/Intel/Heat.
     /// Victory: player-facing result card that sells the outcome.
     /// Does not use shipping Match scene view, Watch virtual-touch, or shipping UI screens.
     /// </summary>
@@ -30,6 +31,15 @@ namespace Game.Operations.Capture
         public int Credits;
         public int Xp;
         public string[] ObjectiveLines = System.Array.Empty<string>();
+        public bool CoachVisible;
+        public string CoachStepLabel = string.Empty;
+        public string CoachTitle = string.Empty;
+        public string CoachBody = string.Empty;
+        public bool WarningVisible;
+        public string WarningLabel = string.Empty;
+        public string[] ChipLabels = System.Array.Empty<string>();
+        public bool ResultDeltasBound;
+        public string ContinueLabel = string.Empty;
 
         OperationsTacticalWorldShell _world;
         static OperationsAriaPlayModePresentation _cached;
@@ -111,6 +121,8 @@ namespace Game.Operations.Capture
         {
             VictoryMode = false;
             ShowDebugChrome = false;
+            ResultDeltasBound = false;
+            ContinueLabel = string.Empty;
             MissionId = missionId ?? string.Empty;
             Language = string.IsNullOrEmpty(language) ? "en" : language;
             Seed = seed;
@@ -149,12 +161,119 @@ namespace Game.Operations.Capture
                 ObjectiveLines = System.Array.Empty<string>();
                 Detail = string.Empty;
             }
+
+            BindCoachAndEscort(loop);
+        }
+
+        /// <summary>
+        /// Mission-result card from <see cref="OperationsMissionResultProjection"/>:
+        /// outcome, Trust / Intel / Heat, and Continue. Uses this shell; no second void HUD.
+        /// </summary>
+        public void ShowMissionResult(OperationsLoopSession loop)
+        {
+            if (_world != null)
+                _world.Clear();
+
+            VictoryMode = true;
+            ShowDebugChrome = false;
+            CoachVisible = false;
+            WarningVisible = false;
+            ChipLabels = System.Array.Empty<string>();
+            ResultDeltasBound = false;
+            ContinueLabel = ResolveCopy("operations.result.continue", Language, "Continue");
+            ObjectiveLines = System.Array.Empty<string>();
+            if (loop == null || !OperationsMissionResultProjection.TryRead(loop, out OperationsMissionResultUiFrame ui))
+            {
+                Title = "Result";
+                Body = string.Empty;
+                OutcomeLabel = string.Empty;
+                return;
+            }
+
+            ResultDeltasBound = true;
+            MissionId = ui.MissionId ?? string.Empty;
+            string slug = MissionSlug(MissionId);
+            Title = ResolveCopy("operations." + slug + ".title", Language, MissionId);
+            Body = ResolveCopy(ui.OutcomeKey, Language, ui.Outcome.ToString());
+            OutcomeLabel = ui.Outcome == OperationsOutcomeKind.Victory
+                ? ResolveCopy("operations.hud.victory", Language, "VICTORY")
+                : ui.Outcome.ToString().ToUpperInvariant();
+            ContinueLabel = ResolveCopy(
+                string.IsNullOrEmpty(ui.ContinueKey) ? "operations.result.continue" : ui.ContinueKey,
+                Language,
+                "Continue");
+            PhaseLabel = "MissionResult";
+            var lines = new string[ui.Deltas.Length];
+            for (int index = 0; index < ui.Deltas.Length; index++)
+            {
+                OperationsDistrictDeltaLine line = ui.Deltas[index];
+                string name = ResolveCopy(line.LabelKey, Language, line.Metric.ToString());
+                string sign = line.Delta > 0 ? "+" : string.Empty;
+                lines[index] = name + "  " + sign + line.Delta.ToString();
+            }
+
+            ObjectiveLines = lines;
+            if (ui.PracticeAvailable)
+            {
+                var withPractice = new string[lines.Length + 1];
+                System.Array.Copy(lines, withPractice, lines.Length);
+                withPractice[lines.Length] = ResolveCopy(ui.PracticeKey, Language, "Practice");
+                ObjectiveLines = withPractice;
+            }
+        }
+
+        void BindCoachAndEscort(OperationsLoopSession loop)
+        {
+            CoachVisible = false;
+            CoachStepLabel = string.Empty;
+            CoachTitle = string.Empty;
+            CoachBody = string.Empty;
+            WarningVisible = false;
+            WarningLabel = string.Empty;
+            ChipLabels = System.Array.Empty<string>();
+            if (loop == null)
+                return;
+
+            if (MissionId == OperationsOnboardingCoach.MissionId)
+            {
+                var coach = new OperationsOnboardingCoach();
+                if (coach.TryRead(loop, out OperationsCoachFrame frame) &&
+                    frame.Step != OperationsCoachStepKind.None &&
+                    frame.Step != OperationsCoachStepKind.Done)
+                {
+                    CoachVisible = true;
+                    CoachStepLabel = frame.StepIndex.ToString() + "/" + frame.StepCount.ToString();
+                    CoachTitle = ResolveCopy(frame.TitleKey, Language, frame.Step.ToString());
+                    CoachBody = ResolveCopy(frame.BodyKey, Language, string.Empty);
+                }
+            }
+
+            if (!OperationsEscortRepairControls.TryRead(loop, out OperationsEscortRepairControlFrame controls))
+                return;
+
+            WarningVisible = controls.WarningVisible;
+            WarningLabel = ResolveCopy(controls.WarningKey, Language, string.Empty);
+            OperationsFatThumbChip[] chips = controls.Chips ?? System.Array.Empty<OperationsFatThumbChip>();
+            var labels = new string[chips.Length];
+            for (int index = 0; index < chips.Length; index++)
+            {
+                string label = ResolveCopy(chips[index].LabelKey, Language, chips[index].Kind.ToString());
+                labels[index] = chips[index].Enabled ? label : label + " ·";
+            }
+
+            ChipLabels = labels;
         }
 
         public void ShowVictory(OperationsLoopSession loop, OperationsAriaEvidenceRecord record)
         {
             if (_world != null)
                 _world.Clear();
+
+            CoachVisible = false;
+            WarningVisible = false;
+            ChipLabels = System.Array.Empty<string>();
+            ResultDeltasBound = false;
+            ContinueLabel = string.Empty;
 
             if (record == null)
             {
@@ -316,10 +435,64 @@ namespace Game.Operations.Capture
                 y += 24f;
             }
 
+            if (CoachVisible)
+            {
+                y += 8f;
+                GUI.Label(new Rect(x, y, width, 22f), "Coach " + (CoachStepLabel ?? string.Empty), accentStyle);
+                y += 22f;
+                GUI.Label(new Rect(x, y, width, 28f), CoachTitle ?? string.Empty, titleStyle);
+                y += 30f;
+                GUI.Label(new Rect(x, y, width, 72f), CoachBody ?? string.Empty, bodyStyle);
+            }
+
             if (!string.IsNullOrEmpty(PressureLine))
             {
                 y += 10f;
                 GUI.Label(new Rect(x, y, width, 48f), PressureLine, accentStyle);
+            }
+
+            DrawFatThumbBar(labelSkin);
+        }
+
+        void DrawFatThumbBar(GUIStyle labelSkin)
+        {
+            bool hasChips = ChipLabels != null && ChipLabels.Length > 0;
+            if (!WarningVisible && !hasChips)
+                return;
+
+            float chipHeight = 64f;
+            float warningHeight = WarningVisible ? 40f : 0f;
+            float width = Mathf.Clamp(Screen.width * 0.92f, 280f, Screen.width - 24f);
+            float x = (Screen.width - width) * 0.5f;
+            float y = Screen.height - chipHeight - warningHeight - 16f;
+            Color previous = GUI.color;
+            Texture2D white = Texture2D.whiteTexture;
+            var chipStyle = Style(labelSkin, 18, FontStyle.Bold, Color.white);
+            chipStyle.alignment = TextAnchor.MiddleCenter;
+
+            if (WarningVisible && white != null)
+            {
+                GUI.color = new Color(0.45f, 0.22f, 0.08f, 0.92f);
+                GUI.DrawTexture(new Rect(x, y, width, warningHeight - 4f), white);
+                GUI.color = previous;
+                var warnStyle = Style(labelSkin, 18, FontStyle.Bold, new Color(1f, 0.86f, 0.45f));
+                warnStyle.alignment = TextAnchor.MiddleLeft;
+                GUI.Label(new Rect(x + 16f, y, width - 32f, warningHeight - 4f), WarningLabel ?? string.Empty, warnStyle);
+                y += warningHeight;
+            }
+
+            if (!hasChips || white == null)
+                return;
+
+            float gap = 8f;
+            float chipWidth = (width - gap * (ChipLabels.Length - 1)) / ChipLabels.Length;
+            for (int index = 0; index < ChipLabels.Length; index++)
+            {
+                Rect chip = new Rect(x + index * (chipWidth + gap), y, chipWidth, chipHeight);
+                GUI.color = new Color(0.12f, 0.28f, 0.36f, 0.94f);
+                GUI.DrawTexture(chip, white);
+                GUI.color = previous;
+                GUI.Label(chip, ChipLabels[index] ?? string.Empty, chipStyle);
             }
         }
 
@@ -362,11 +535,23 @@ namespace Game.Operations.Capture
                 y += 30f;
             }
 
-            y = card.yMax - 56f;
-            GUI.Label(
-                new Rect(x, y, width, 32f),
-                ResolveCopy("operations.hud.continue", Language, "Tap Continue to return to Operations"),
-                bodyStyle);
+            y = card.yMax - 64f;
+            string continueText = ResultDeltasBound && !string.IsNullOrEmpty(ContinueLabel)
+                ? ContinueLabel
+                : ResolveCopy("operations.hud.continue", Language, "Tap Continue to return to Operations");
+            if (ResultDeltasBound && white != null)
+            {
+                GUI.color = new Color(0.2f, 0.45f, 0.28f, 0.98f);
+                GUI.DrawTexture(new Rect(x, y, width, 40f), white);
+                GUI.color = previous;
+                var continueStyle = Style(labelSkin, 20, FontStyle.Bold, Color.white);
+                continueStyle.alignment = TextAnchor.MiddleCenter;
+                GUI.Label(new Rect(x, y, width, 40f), continueText, continueStyle);
+            }
+            else
+            {
+                GUI.Label(new Rect(x, y, width, 32f), continueText, bodyStyle);
+            }
         }
 
         static Rect PhonePanelRect()

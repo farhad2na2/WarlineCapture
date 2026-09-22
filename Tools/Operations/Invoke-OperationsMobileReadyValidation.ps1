@@ -1,5 +1,6 @@
 # Runs Operations mobile-ready O001–O003 focused validation against the shadow project only.
-# Does NOT claim AriaWon / playable regression.
+# Marker checks=8 is the content contract (coach, escort, repair, result, partial, O003, practice).
+# Landed presentation/pacing guards run in the same pass. Does NOT claim AriaWon / playable.
 [CmdletBinding()]
 param(
     [string] $ShadowPath = "D:\Projects\WarlineCapture-Operations",
@@ -61,6 +62,7 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($unityExe)) {
 Write-Host "[OperationsMobileReadyValidation] project=$shadow"
 Write-Host "[OperationsMobileReadyValidation] unity=$unityExe"
 Write-Host "[OperationsMobileReadyValidation] log=$LogFile"
+Write-Host "[OperationsMobileReadyValidation] method=Game.Tests.Editor.Operations.OperationsMobileReadyValidation.RunFocusedValidation"
 
 $gui = $true
 if ($PSBoundParameters.ContainsKey("GuiLicensing")) {

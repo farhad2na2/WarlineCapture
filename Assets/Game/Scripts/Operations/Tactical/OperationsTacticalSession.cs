@@ -425,6 +425,12 @@ namespace Game.Operations.Tactical
             return QueueWorld(WorldEventKind.Death, hostileId, string.Empty);
         }
 
+        /// <summary>
+        /// True when Conclude would be accepted (authoritative partial predicate).
+        /// Read-only; does not latch Partial or change facts.
+        /// </summary>
+        public bool IsPartialPredicateSatisfied => !_terminal && PartialSatisfied();
+
         public OperationsTacticalCommandResult IssueConclude()
         {
             if (_terminal)

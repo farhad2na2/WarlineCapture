@@ -29,6 +29,8 @@ namespace Game.Editor
         private static int exitCode;
         private static string loadFailure;
         private static bool lifecycle, checkpointResume, processSave, processRestore, ariaVictory;
+        private static int ariaSeed = 1102;
+        private static OperationsDifficultyKind ariaDifficulty = OperationsDifficultyKind.Regular;
         private static string checkpointSession;
         private static float checkpointElapsed;
         private const string ProcessCheckpointMarker = "/private/tmp/o001-process-checkpoint.json";
@@ -47,7 +49,17 @@ namespace Game.Editor
         public static void RunCheckpointResume() { checkpointResume = true; Start(false); }
         public static void RunCheckpointSaveForRestart() { checkpointResume = processSave = true; Start(false); }
         public static void RunCheckpointResumeAfterRestart() { processRestore = true; Start(false); }
-        public static void RunAriaVictory() { ariaVictory = true; Start(false); }
+        public static void RunAriaVictory()
+        {
+            ariaVictory = true;
+            try { Start(false); }
+            catch (Exception exception)
+            {
+                Debug.LogError("[OperationsReconLaunchSmokeValidation] result=Failed setup=" + exception);
+                EditorApplication.Exit(1);
+            }
+        }
+        public static void RunAriaVictoryPersian() { persian = true; RunAriaVictory(); }
         public static void RunInterruptedRecovery() { interrupted = true; Start(true); }
         public static void RunRecovery() { recovery = true; Start(true); }
         public static void RunManualVictory() => StartManual(OperationsReconOutcome.Victory);
@@ -96,6 +108,25 @@ namespace Game.Editor
                 save.SaveProfile(new PlayerProfileSaveData
                 { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = "English" });
                 save.SaveSettings(new SettingsSaveData { language = persian ? "Persian" : "English" });
+            }
+            ariaSeed = 1102;
+            ariaDifficulty = OperationsDifficultyKind.Regular;
+            if (ariaVictory && Environment.GetEnvironmentVariable("WARLINE_VALIDATION_O001_DIFFICULTY") is { Length: > 0 } difficultyText &&
+                (!Enum.TryParse(difficultyText, true, out ariaDifficulty) || !Enum.IsDefined(typeof(OperationsDifficultyKind), ariaDifficulty)))
+                throw new InvalidOperationException("Invalid O001 ARIA validation difficulty: " + difficultyText);
+            if (ariaVictory && Environment.GetEnvironmentVariable("WARLINE_VALIDATION_O001_SEED") is { Length: > 0 } seedText)
+            {
+                if (!int.TryParse(seedText, out ariaSeed) || ariaSeed <= 0)
+                    throw new InvalidOperationException("Invalid O001 ARIA validation seed: " + seedText);
+            }
+            if (ariaVictory && (ariaSeed != 1102 || ariaDifficulty != OperationsDifficultyKind.Regular))
+            {
+                var commands = new OperationsProfileCommandService(save);
+                var state = commands.Read();
+                if (!commands.TryNewRun(new OperationsCommand("cmd.operations.aria" + ariaSeed, state.profileRevision,
+                        OperationsCommandKind.NewRun, "", "", ""), ariaSeed, ariaDifficulty,
+                        out var created, out _) || !created.Accepted)
+                    throw new InvalidOperationException("Could not create seeded O001 validation run: " + ariaSeed + " / " + ariaDifficulty);
             }
             if (interrupted)
             {
@@ -417,7 +448,8 @@ namespace Game.Editor
                 {
                     if (SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("ARIA victory did not settle one AP.");
-                    Complete(true, "journey=aria-victory-return input=visible-touch seed=1102 ap=2");
+                    Complete(true, "journey=aria-victory-return input=visible-touch seed=" + ariaSeed +
+                        " difficulty=" + ariaDifficulty + " language=" + (persian ? "fa" : "en") + " ap=2");
                 }
             }
             catch (Exception exception) { Complete(false, exception.ToString()); }

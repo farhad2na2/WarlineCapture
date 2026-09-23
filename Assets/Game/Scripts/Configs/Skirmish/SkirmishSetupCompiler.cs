@@ -416,6 +416,23 @@ namespace Game.Configs
                 Structure(1, SkirmishStructureIds.GroundStaging, playerStaging, string.Empty, false),
                 Structure(2, SkirmishStructureIds.GroundStaging, enemyStaging, string.Empty, false)
             };
+
+            // Field backbone (7 per side): designated Barracks, Ground Staging, and the
+            // supply yard (pump, refinery, bladder, fabrication depot) plus one watchtower.
+            // Established adds the approach tower and Satellite Dish. A functional Helipad
+            // is only the offensive-air grant. A second refinery is the War/Large module.
+            // Queue capacity stays on the starting Barracks; it is not a second building.
+            AddMirrored(structures, definition, SkirmishStructureIds.OilPump, "economy.player", "economy.enemy", -12f, -8f);
+            AddMirrored(structures, definition, SkirmishStructureIds.Refinery, "economy.player", "economy.enemy", 12f, -8f);
+            AddMirrored(structures, definition, SkirmishStructureIds.FuelBladder, "economy.player", "economy.enemy", -12f, 10f);
+            AddMirrored(structures, definition, SkirmishStructureIds.FabricationDepot, "economy.player", "economy.enemy", 12f, 10f);
+            AddMirrored(structures, definition, SkirmishStructureIds.Watchtower, "service.player", "service.enemy", -10f, 0f);
+            if (IsEstablished(definition))
+            {
+                AddMirrored(structures, definition, SkirmishStructureIds.WatchtowerApproach, "service.player", "service.enemy", 10f, 0f);
+                AddMirrored(structures, definition, SkirmishStructureIds.SatelliteDish, "service.player", "service.enemy", 0f, 14f);
+            }
+
             if (GrantsEstablishedHelipad(definition))
             {
                 string playerAir = definition.MapLayout.TryGetAnchor("air.player", out SkirmishLayoutAnchorConfig playerPad)
@@ -428,8 +445,37 @@ namespace Game.Configs
                 structures.Add(Structure(2, SkirmishStructureIds.Helipad, enemyAir, string.Empty, false));
             }
 
-            _ = vector;
+            if (vector.RefineryModulesEach >= 2)
+                AddMirrored(structures, definition, SkirmishStructureIds.RefineryModule, "economy.player", "economy.enemy", 0f, 24f);
+
             return structures.ToArray();
+        }
+
+        private static bool IsEstablished(SkirmishScenarioDefinitionConfig definition)
+        {
+            return definition.StartPackageConfig != null &&
+                   definition.StartPackageConfig.Kind == SkirmishStartPackageId.EstablishedBase;
+        }
+
+        private static void AddMirrored(
+            List<SkirmishResolvedStructureEntry> structures,
+            SkirmishScenarioDefinitionConfig definition,
+            string structureId,
+            string playerRole,
+            string enemyRole,
+            float acrossMetres,
+            float forwardMetres)
+        {
+            string playerAnchor = definition.MapLayout != null &&
+                                  definition.MapLayout.TryGetAnchor(playerRole, out SkirmishLayoutAnchorConfig player)
+                ? player.AnchorId
+                : playerRole;
+            string enemyAnchor = definition.MapLayout != null &&
+                                 definition.MapLayout.TryGetAnchor(enemyRole, out SkirmishLayoutAnchorConfig enemy)
+                ? enemy.AnchorId
+                : enemyRole;
+            structures.Add(Structure(1, structureId, playerAnchor, string.Empty, false, acrossMetres, forwardMetres));
+            structures.Add(Structure(2, structureId, enemyAnchor, string.Empty, false, -acrossMetres, forwardMetres));
         }
 
         private static bool GrantsEstablishedHelipad(SkirmishScenarioDefinitionConfig definition)
@@ -442,13 +488,25 @@ namespace Game.Configs
 
         private static SkirmishResolvedStructureEntry Structure(
             byte faction, string id, string anchor, string role, bool designated) =>
+            Structure(faction, id, anchor, role, designated, 0f, 0f);
+
+        private static SkirmishResolvedStructureEntry Structure(
+            byte faction,
+            string id,
+            string anchor,
+            string role,
+            bool designated,
+            float acrossOffsetMetres,
+            float forwardOffsetMetres) =>
             new SkirmishResolvedStructureEntry
             {
                 FactionId = faction,
                 StructureId = id,
                 SpawnAnchorId = anchor,
                 ObjectiveRoleId = role,
-                DesignatedBase = designated
+                DesignatedBase = designated,
+                AcrossOffsetMetres = acrossOffsetMetres,
+                ForwardOffsetMetres = forwardOffsetMetres
             };
 
         private static void CompareInt(int expected, int actual, string field, List<SkirmishCompileReason> reasons)

@@ -29,6 +29,8 @@ namespace Game.Configs
         public bool DesignatedBase;
         public float SpawnWorldX;
         public float SpawnWorldZ;
+        public float AcrossOffsetMetres;
+        public float ForwardOffsetMetres;
     }
 
     [Serializable]

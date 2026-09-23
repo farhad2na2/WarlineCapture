@@ -608,7 +608,7 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(440.25f, pad.SpawnWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 2, SkirmishStructureIds.Helipad, out _));
             Assert.IsFalse(HasStructure(setup, SkirmishStructureIds.Airport, false));
-            Assert.AreEqual(6, setup.Structures.Length);
+            Assert.AreEqual(20, setup.Structures.Length);
             Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.TransportHeli, out SkirmishResolvedForceEntry transport));
             Assert.AreEqual("Unit_Veh_Helicopter_Transport", transport.RuntimePrefabKey);
             Assert.AreEqual(pad.SpawnWorldX, transport.SpawnWorldX, 0.2f);
@@ -624,11 +624,57 @@ public sealed class SkirmishExpandedDefinitionTests
 
         CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup ground, out _);
         Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.Helipad, false));
-        Assert.AreEqual(4, ground.Structures.Length);
+        Assert.AreEqual(18, ground.Structures.Length);
         CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup field, out _);
         Assert.IsFalse(HasStructure(field, SkirmishStructureIds.Helipad, false));
         Assert.AreEqual(0, field.PlayerAir);
         Assert.AreEqual(1, (int)field.Readiness);
+    }
+
+    [Test]
+    public void FieldAndEstablishedBackboneMatchesMatrix()
+    {
+        CompileS003(SkirmishSizeId.Standard, SkirmishS003FirstVisit.SeedA, out SkirmishResolvedSetup field, out _);
+        Assert.AreEqual(7, field.PlayerStartingStructures);
+        Assert.AreEqual(14, field.Structures.Length);
+        Assert.AreEqual(7, CountStructures(field, 1));
+        Assert.AreEqual(7, CountStructures(field, 2));
+        Assert.AreEqual(1, CountDesignated(field, 1));
+        Assert.IsTrue(HasStructure(field, SkirmishStructureIds.OilPump, false));
+        Assert.IsTrue(HasStructure(field, SkirmishStructureIds.Refinery, false));
+        Assert.IsTrue(HasStructure(field, SkirmishStructureIds.FuelBladder, false));
+        Assert.IsTrue(HasStructure(field, SkirmishStructureIds.FabricationDepot, false));
+        Assert.IsTrue(HasStructure(field, SkirmishStructureIds.Watchtower, false));
+        Assert.IsFalse(HasStructure(field, SkirmishStructureIds.WatchtowerApproach, false));
+        Assert.IsFalse(HasStructure(field, SkirmishStructureIds.SatelliteDish, false));
+        Assert.IsFalse(HasStructure(field, SkirmishStructureIds.Helipad, false));
+        Assert.IsFalse(HasStructure(field, SkirmishStructureIds.RefineryModule, false));
+        Assert.IsTrue(TryFindStructure(field, 1, SkirmishStructureIds.OilPump, out SkirmishResolvedStructureEntry pump));
+        Assert.AreEqual(894.5f, pump.SpawnWorldX, 1f);
+        Assert.AreEqual(267.7f, pump.SpawnWorldZ, 1f);
+        AssertSeparated(field);
+
+        CompileS002(SkirmishSizeId.Standard, 104731, out SkirmishResolvedSetup ground, out _);
+        Assert.AreEqual(10, ground.PlayerStartingStructures);
+        Assert.AreEqual(18, ground.Structures.Length);
+        Assert.IsTrue(HasStructure(ground, SkirmishStructureIds.SatelliteDish, false));
+        Assert.IsTrue(HasStructure(ground, SkirmishStructureIds.WatchtowerApproach, false));
+        Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.Helipad, false));
+        Assert.IsFalse(HasStructure(ground, SkirmishStructureIds.RefineryModule, false));
+
+        CompileS004(SkirmishSizeId.Standard, SkirmishS004FirstVisit.SeedA, out SkirmishResolvedSetup established, out _);
+        Assert.AreEqual(10, established.PlayerStartingStructures);
+        Assert.AreEqual(20, established.Structures.Length);
+        Assert.IsTrue(HasStructure(established, SkirmishStructureIds.Helipad, false));
+        Assert.IsTrue(HasStructure(established, SkirmishStructureIds.SatelliteDish, false));
+        Assert.IsFalse(HasStructure(established, SkirmishStructureIds.RefineryModule, false));
+        Assert.AreEqual(1, CountDesignated(established, 1));
+
+        CompileS004(SkirmishSizeId.War, 393245, out SkirmishResolvedSetup war, out _);
+        Assert.AreEqual(11, war.PlayerStartingStructures);
+        Assert.AreEqual(22, war.Structures.Length);
+        Assert.IsTrue(HasStructure(war, SkirmishStructureIds.RefineryModule, false));
+        Assert.IsTrue(HasStructure(war, SkirmishStructureIds.Helipad, false));
     }
 
     [Test]
@@ -959,6 +1005,7 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.S003AirMobileRejectsArmorAndGatesOffensiveAir();
             suite.S003AssetsReuseDesertBaseLayoutAndStayPlayable();
             suite.S004RegularStandardCompilesFirstVisitSeeds();
+            suite.FieldAndEstablishedBackboneMatchesMatrix();
             suite.S004EstablishedSizesMatchMatrixWithStartingAir();
             suite.S004EstablishedAirRejectsArmorAndKeepsGrantedPad();
             suite.S004AssetsReuseDesertBaseLayoutAndStayInProgress();
@@ -1135,6 +1182,51 @@ public sealed class SkirmishExpandedDefinitionTests
     {
         string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
         Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out matrix, out string error), error);
+    }
+
+    private static int CountStructures(SkirmishResolvedSetup setup, byte faction)
+    {
+        int total = 0;
+        for (int i = 0; i < setup.Structures.Length; i++)
+        {
+            if (setup.Structures[i].FactionId == faction)
+                total++;
+        }
+
+        return total;
+    }
+
+    private static int CountDesignated(SkirmishResolvedSetup setup, byte faction)
+    {
+        int total = 0;
+        for (int i = 0; i < setup.Structures.Length; i++)
+        {
+            if (setup.Structures[i].FactionId == faction && setup.Structures[i].DesignatedBase)
+                total++;
+        }
+
+        return total;
+    }
+
+    private static void AssertSeparated(SkirmishResolvedSetup setup)
+    {
+        for (int i = 0; i < setup.Structures.Length; i++)
+        {
+            SkirmishResolvedStructureEntry left = setup.Structures[i];
+            Assert.Greater(left.SpawnWorldX, 8f);
+            Assert.Less(left.SpawnWorldX, 2040f);
+            Assert.Greater(left.SpawnWorldZ, 8f);
+            Assert.Less(left.SpawnWorldZ, 1016f);
+            for (int j = i + 1; j < setup.Structures.Length; j++)
+            {
+                SkirmishResolvedStructureEntry right = setup.Structures[j];
+                if (left.FactionId != right.FactionId)
+                    continue;
+                float dx = left.SpawnWorldX - right.SpawnWorldX;
+                float dz = left.SpawnWorldZ - right.SpawnWorldZ;
+                Assert.Greater(dx * dx + dz * dz, 64f);
+            }
+        }
     }
 
     private static int Count(SkirmishResolvedSetup setup, byte faction, SkirmishRoleKind role)

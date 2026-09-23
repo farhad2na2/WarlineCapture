@@ -284,6 +284,21 @@ namespace Game.Configs
                     }
 
                     ProjectPad(layout, pad, out structure.SpawnWorldX, out structure.SpawnWorldZ);
+                    ApplyFrameOffset(
+                        layout,
+                        structure.AcrossOffsetMetres,
+                        structure.ForwardOffsetMetres,
+                        ref structure.SpawnWorldX,
+                        ref structure.SpawnWorldZ);
+                    if (layout.HasWorldBinding &&
+                        !InsideDesertBaseMap(structure.SpawnWorldX, structure.SpawnWorldZ, 8f))
+                    {
+                        reasons?.Add(new SkirmishCompileReason(
+                            SkirmishReasonCode.BlockedSpawn,
+                            structure.StructureId,
+                            "Structure projects outside the loaded map."));
+                    }
+
                     setup.Structures[i] = structure;
                 }
             }
@@ -306,6 +321,39 @@ namespace Game.Configs
 
             worldX = pad.CenterX;
             worldZ = pad.CenterZ;
+        }
+
+        /// <summary>
+        /// Shifts a projected pad center along the layout's across/forward frame so
+        /// several facilities can share one supply or service pad without stacking.
+        /// </summary>
+        public static void ApplyFrameOffset(
+            SkirmishMapLayoutConfig layout,
+            float acrossMetres,
+            float forwardMetres,
+            ref float worldX,
+            ref float worldZ)
+        {
+            if (acrossMetres == 0f && forwardMetres == 0f)
+                return;
+            if (layout != null && layout.HasWorldBinding)
+            {
+                SkirmishLayoutWorldBindingConfig binding = layout.WorldBinding;
+                worldX += acrossMetres * binding.AcrossX + forwardMetres * binding.ForwardX;
+                worldZ += acrossMetres * binding.AcrossZ + forwardMetres * binding.ForwardZ;
+                return;
+            }
+
+            worldX += acrossMetres;
+            worldZ += forwardMetres;
+        }
+
+        private static bool InsideDesertBaseMap(float worldX, float worldZ, float margin)
+        {
+            return worldX >= SkirmishMapLayoutValidation.DesertBaseMapMinX + margin &&
+                   worldZ >= SkirmishMapLayoutValidation.DesertBaseMapMinZ + margin &&
+                   worldX <= SkirmishMapLayoutValidation.DesertBaseMapMaxX - margin &&
+                   worldZ <= SkirmishMapLayoutValidation.DesertBaseMapMaxZ - margin;
         }
 
         public static bool TryPadForForce(
@@ -333,12 +381,26 @@ namespace Game.Configs
             pad = default;
             if (layout == null)
                 return false;
-            SkirmishLegalPadKind kind = structure.StructureId == SkirmishStructureIds.GroundStaging
-                ? SkirmishLegalPadKind.GroundStaging
-                : structure.StructureId == SkirmishStructureIds.Helipad
-                    ? SkirmishLegalPadKind.AirReturn
-                    : SkirmishLegalPadKind.BaseBarracks;
-            return layout.TryGetPad(structure.FactionId, kind, out pad);
+            return layout.TryGetPad(structure.FactionId, PadKindForStructure(structure.StructureId), out pad);
+        }
+
+        public static SkirmishLegalPadKind PadKindForStructure(string structureId)
+        {
+            if (structureId == SkirmishStructureIds.GroundStaging)
+                return SkirmishLegalPadKind.GroundStaging;
+            if (structureId == SkirmishStructureIds.Helipad || structureId == SkirmishStructureIds.Airport)
+                return SkirmishLegalPadKind.AirReturn;
+            if (structureId == SkirmishStructureIds.OilPump ||
+                structureId == SkirmishStructureIds.Refinery ||
+                structureId == SkirmishStructureIds.RefineryModule ||
+                structureId == SkirmishStructureIds.FuelBladder ||
+                structureId == SkirmishStructureIds.FabricationDepot)
+                return SkirmishLegalPadKind.Supply;
+            if (structureId == SkirmishStructureIds.Watchtower ||
+                structureId == SkirmishStructureIds.WatchtowerApproach ||
+                structureId == SkirmishStructureIds.SatelliteDish)
+                return SkirmishLegalPadKind.Service;
+            return SkirmishLegalPadKind.BaseBarracks;
         }
 
         public static float PolylineLength(IReadOnlyList<SkirmishLayoutAnchorConfig> waypoints)

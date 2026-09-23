@@ -52,6 +52,7 @@ namespace Game.Runtime
             var catalog = new SkirmishVisualPrefabCatalog();
             if (registry != null)
                 catalog.BindRegistry(registry);
+            BindPlacementSpawnables(catalog);
             EnsureAuthoredGroundStaging(catalog);
 
             if (catalog.Count == 0)
@@ -443,6 +444,26 @@ namespace Game.Runtime
             UnitPrefabRegistryAuthoringConfig[] loaded =
                 Resources.FindObjectsOfTypeAll<UnitPrefabRegistryAuthoringConfig>();
             return loaded != null && loaded.Length > 0 ? loaded[0] : null;
+        }
+
+        private static void BindPlacementSpawnables(SkirmishVisualPrefabCatalog catalog)
+        {
+            BuildingPlacementSystemConfig[] placements =
+                Resources.FindObjectsOfTypeAll<BuildingPlacementSystemConfig>();
+            if (placements == null)
+                return;
+            for (int i = 0; i < placements.Length; i++)
+            {
+                if (placements[i] == null || placements[i].Spawnables == null)
+                    continue;
+                for (int j = 0; j < placements[i].Spawnables.Count; j++)
+                {
+                    GameObject prefab = placements[i].Spawnables[j];
+                    if (prefab == null || catalog.Contains(prefab.name))
+                        continue;
+                    catalog.Bind(prefab.name, prefab);
+                }
+            }
         }
 
         private static void EnsureAuthoredGroundStaging(SkirmishVisualPrefabCatalog catalog)

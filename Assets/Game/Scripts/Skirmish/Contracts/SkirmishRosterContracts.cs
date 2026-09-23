@@ -272,6 +272,14 @@ namespace Game.Skirmish.Contracts
         public const string BarracksReplacement = "building.barracks.replacement";
         public const string Helipad = "building.helipad";
         public const string Airport = "building.airport";
+        public const string OilPump = "building.oil_pump";
+        public const string Refinery = "building.refinery";
+        public const string RefineryModule = "building.refinery.module";
+        public const string FuelBladder = "building.fuel_bladder";
+        public const string FabricationDepot = "building.fabrication_depot";
+        public const string Watchtower = "building.watchtower";
+        public const string WatchtowerApproach = "building.watchtower.approach";
+        public const string SatelliteDish = "building.satellite_dish";
 
         public static string VisualKey(string structureId)
         {
@@ -281,6 +289,18 @@ namespace Game.Skirmish.Contracts
                 return "Building_Helipad";
             if (structureId == Airport)
                 return "Building_Airport";
+            if (structureId == OilPump)
+                return "Building_OilPump";
+            if (structureId == Refinery || structureId == RefineryModule)
+                return "Building_Refinery";
+            if (structureId == FuelBladder)
+                return "Building_Fuel_Bladder";
+            if (structureId == FabricationDepot)
+                return "Building_Ammunition_Depot";
+            if (structureId == Watchtower || structureId == WatchtowerApproach)
+                return "Building_GuardTower";
+            if (structureId == SatelliteDish)
+                return "Building_Satelite_Dish";
             if (!string.IsNullOrEmpty(structureId) && structureId.StartsWith(Barracks, System.StringComparison.Ordinal))
                 return "Building_Barrack";
             return string.Empty;

@@ -49,8 +49,22 @@ pushed on branch `cursor/skirmish-mission-5-runtime-repair-e8ac` (9 commits, hea
    `skirmish.sNNN.*` convention (S003 EN/FA strings already merged).
 8. **Tests** — new: `LibraryDispatchIndexQueuesAirMobileS003`, `PackagedMatrixMatchesDesignCsv`,
    `PackagedCatalogResolvesAuthoredDefinitions`, `WorldBindingProjectsDeploymentOntoMapAnchors`,
-   `WorldBindingMissingFailsValidation`. Updated envelope-coordinate assertions to map-space;
-   fixed the stale S004 manifest assertion (pre-existing main drift from commit `6678b47d4`).
+   `WorldBindingMissingFailsValidation`, `FieldAndEstablishedBackboneMatchesMatrix`. Updated
+   envelope-coordinate assertions to map-space; fixed the stale S004 manifest assertion
+   (pre-existing main drift from commit `6678b47d4`).
+9. **Field/Established backbone** — the compiler emits the documented facilities. Field is
+   7 per side (Barracks, Ground Staging, oil pump, refinery, Fuel Bladder, fabrication
+   depot, watchtower) on the existing base/staging/supply/service pads, separated by
+   frame offsets that stay inside the Desert Base map. Established adds the approach
+   watchtower and Satellite Dish. Offensive-air Established also gets the Helipad (10).
+   War/Large adds `building.refinery.module` when `refinery_modules_each >= 2` (11).
+   Ground Established (S002) stays at 9 physical structures: the Helipad grant still
+   requires `AllowsOffensiveAir`, while the matrix column still reports 10. Designated-base
+   identity stays on the original Barracks. Visual keys use the existing building prefabs.
+   `BindSceneRegistry` also binds `BuildingPlacementSystemConfig.Spawnables` (Construction
+   already lists pump/refinery/bladder/depot/tower/barracks). Satellite Dish
+   (`Building_Satelite_Dish`) is not in that roster. Extraction, haul, and refinery
+   processing are not driven by these entities.
 
 ## What remains (in order)
 
@@ -99,11 +113,10 @@ for the run-log rules; `runs.csv` starts header-only, never pre-write Victory).
   `CampaignMissionCombatSuppressedTag` so the fog-aware overlay engagement stays the single
   combat path. Reconnecting `UnitEngagementSystem` requires fog-aware acquisition first
   (hidden contacts must stay undamageable); validate balance live.
-- **Field/Established backbone structures** — matrix expects 7 (F) / 10 (E) starting
-  structures; the compiler spawns Barracks + Ground Staging (+ Helipad for Established Air).
-  MATCH_SETUP.md lists the facilities (oil pump, refinery, Fuel Bladder, ammo depot,
-  watchtower; Established adds 2nd Barracks, 2nd watchtower, Satellite Dish, Helipad).
-  Needs pads in the layout, visual keys, and real economy function.
+- **Backbone logistics** — the facilities are placed and keyed. Oil extraction, physical
+  haul, and refinery/fabrication processing still do not run on those entities. Do not
+  treat the yard as a working logistics chain, and do not add a second Barracks to
+  close the S002 matrix's reported 10 (that tenth is the withheld ground Helipad).
 - **Air motion for S003's Air Mobile roster** — attack pass/return/landing/refuel are open
   (see S003 SLICE_NOTES.md "Remaining gaps"). Field start cannot queue offensive air until
   Helipad + readiness are paid for — that gating already works.

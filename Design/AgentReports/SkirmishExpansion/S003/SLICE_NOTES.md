@@ -62,7 +62,7 @@ S002 publication on the checked-in manifest stays **Playable**. Rebuild of expan
 |---|---|
 | Air motion | No attack pass, return, landing, or refuel. Fuel return is not simulated |
 | Helipad yard | The Helipad/Airport prefab keys attach when the registry already has them. There is still no authored Skirmish pad yard, taxi path, or landing reservation |
-| Field backbone | Matrix reports 7 starting structures. The compiler still spawns the designated Barracks and Ground Staging only |
+| Field backbone | Compiler emits the 7 Field facilities per side (Barracks, Ground Staging, pump, refinery, bladder, depot, watchtower) on existing pads. Extraction and haul are still not simulated |
 | Game View | Launch entry point is in. The Playing PNG for seed `104732` is not captured yet |
 | Playable | Row stays InProgress until the evidence files exist and Programmer 1 runs the confirm flip |
 | ARIA matrix | Seeds `104732` / `130366` / `155924` × EN/FA are not run. `runs.csv` is not opened for S003. The shell does not yet present the AA or pad controls |

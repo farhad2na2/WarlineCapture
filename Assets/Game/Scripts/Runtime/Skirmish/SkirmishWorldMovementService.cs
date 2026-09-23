@@ -16,8 +16,8 @@ namespace Game.Runtime
 
         public static void AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
         {
-            if (!em.HasComponent<LocalTransform>(unit))
-                em.AddComponentData(unit, LocalTransform.FromPosition(destination * 0f));
+            // A missing anchor is filled from the measured pad before the step.
+            // Pinning the unit at the origin here kept that pad from ever applying.
             var intent = new SkirmishMoveIntentComponent
             {
                 DestinationX = destination.x,
@@ -66,6 +66,7 @@ namespace Game.Runtime
                 if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).SessionId.Equals(sessionId))
                     continue;
                 var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+                HomeAttackDestination(em, unit, ref intent);
                 if (intent.Active == 0)
                     continue;
                 if (intent.Engaged != 0)
@@ -114,6 +115,40 @@ namespace Game.Runtime
             }
 
             return moved;
+        }
+
+        private static void HomeAttackDestination(
+            EntityManager em,
+            Entity unit,
+            ref SkirmishMoveIntentComponent intent)
+        {
+            if (intent.Order != SkirmishGroupOrderKind.Attack)
+                return;
+            Entity target = intent.AttackTarget;
+            if (target == Entity.Null || !em.Exists(target) || !em.HasComponent<LocalTransform>(target))
+                return;
+
+            // Attack issued before the base had a transform stored the stand-in pad.
+            // Follow the target's current position or the column never enters range.
+            float3 live = em.GetComponentData<LocalTransform>(target).Position;
+            float dx = live.x - intent.DestinationX;
+            float dz = live.z - intent.DestinationZ;
+            bool moved = dx * dx + dz * dz > 0.01f;
+            byte active = intent.Active;
+            if (em.HasComponent<LocalTransform>(unit))
+            {
+                float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+                float distance = math.length(new float3(live.x - position.x, 0f, live.z - position.z));
+                if (distance > ArriveDistance)
+                    active = 1;
+            }
+
+            if (!moved && active == intent.Active)
+                return;
+            intent.DestinationX = live.x;
+            intent.DestinationZ = live.z;
+            intent.Active = active;
+            em.SetComponentData(unit, intent);
         }
 
         public static float3 DefaultAdvance(EntityManager em, Entity session)

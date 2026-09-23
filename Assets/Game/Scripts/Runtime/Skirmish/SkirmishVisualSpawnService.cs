@@ -103,7 +103,46 @@ namespace Game.Runtime
                 memberIndex++;
             }
 
+            // The live unit registry binds without Building_Barrack, so TryAttach
+            // leaves the designated base with health and no transform. Attack then
+            // stores the 40m stand-in and never enters range. Combat still needs
+            // the measured pad when the prefab is missing.
+            EnsureMissingCombatTransforms(em, session);
             return spawned;
+        }
+
+        public static int EnsureMissingCombatTransforms(EntityManager em, Entity session)
+        {
+            if (em == default || session == Entity.Null || !em.Exists(session) ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return 0;
+
+            SkirmishResolvedSetup setup = em.HasComponent<SkirmishResolvedSetupRecord>(session)
+                ? em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup
+                : null;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            int placed = 0;
+            int memberIndex = 0;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (!em.Exists(entity) || !em.HasComponent<SkirmishAttemptOwnedComponent>(entity))
+                    continue;
+                SkirmishAttemptOwnedComponent owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                if (!owned.SessionId.Equals(sessionId))
+                    continue;
+                int index = memberIndex;
+                memberIndex++;
+                if (em.HasComponent<LocalTransform>(entity))
+                    continue;
+                Vector3 position = ResolvePosition(em, session, setup, entity, owned, index);
+                em.AddComponentData(entity, LocalTransform.FromPosition(new float3(position.x, position.y, position.z)));
+                placed++;
+            }
+
+            return placed;
         }
 
         public static bool TryAttach(

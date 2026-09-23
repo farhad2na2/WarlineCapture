@@ -953,6 +953,121 @@ namespace Game.Tests.Editor
             CheckedInRunsCsvStaysHeaderOnly();
         }
 
+        [Test]
+        public void MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt()
+        {
+            using var world = new World(nameof(MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt));
+            BootPlayingSession(world, out Entity session, 130365);
+            EntityManager em = world.EntityManager;
+            Entity playerBase = DesignatedBase(em, 1);
+            Entity enemyBase = DesignatedBase(em, 2);
+            Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
+            Entity rocketeer = FirstFactionUnit(em, 1, SkirmishRoleKind.Rocketeer);
+            Assert.IsFalse(em.HasComponent<LocalTransform>(enemyBase));
+            Assert.IsFalse(em.HasComponent<LocalTransform>(playerBase));
+            Assert.IsFalse(em.HasComponent<LocalTransform>(rocketeer));
+
+            GameObject tankPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            tankPrefab.name = "Unit_Veh_Tank_USA";
+            tankPrefab.hideFlags = HideFlags.HideAndDontSave;
+            tankPrefab.SetActive(false);
+            var catalog = new SkirmishVisualPrefabCatalog();
+            catalog.Bind("Unit_Veh_Tank_USA", tankPrefab, true);
+            try
+            {
+                SkirmishVisualSpawnService.BindCatalog(em, session, catalog);
+                Assert.IsFalse(catalog.Contains("Building_Barrack"));
+                world.GetOrCreateSystem<SkirmishVisualSpawnSystem>().Update(world.Unmanaged);
+
+                Assert.IsTrue(em.HasComponent<LocalTransform>(enemyBase));
+                Assert.IsTrue(em.HasComponent<LocalTransform>(playerBase));
+                Assert.IsTrue(em.HasComponent<LocalTransform>(rocketeer));
+                Assert.IsFalse(VisuallySpawned(em, enemyBase));
+                Assert.IsFalse(VisuallySpawned(em, rocketeer));
+                Assert.IsTrue(VisuallySpawned(em, tank));
+                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                Assert.IsTrue(TryStructureSpawn(setup, 2, true, out float enemyX, out float enemyZ));
+                float3 enemyPos = em.GetComponentData<LocalTransform>(enemyBase).Position;
+                Assert.AreEqual(enemyX, enemyPos.x, 0.05f);
+                Assert.AreEqual(enemyZ, enemyPos.z, 0.05f);
+                Assert.IsTrue(TryStructureSpawn(setup, 1, true, out float playerX, out float playerZ));
+                float3 playerPos = em.GetComponentData<LocalTransform>(playerBase).Position;
+                Assert.AreEqual(playerX, playerPos.x, 0.05f);
+                Assert.AreEqual(playerZ, playerPos.z, 0.05f);
+                float3 standIn = SkirmishWorldMovementService.DefaultAdvance(em, session);
+                Assert.Greater(math.distance(enemyPos, standIn), 100f);
+                Assert.Greater(math.distance(em.GetComponentData<LocalTransform>(tank).Position, float3.zero), 50f);
+
+                int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+                Entity shell = em.CreateEntity();
+                em.AddComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Manual });
+                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                Assert.AreNotEqual(
+                    SkirmishGroupOrderKind.Attack,
+                    FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
+
+                em.SetComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing });
+                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                Assert.AreEqual(
+                    SkirmishGroupOrderKind.Attack,
+                    FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
+                Assert.AreEqual(
+                    SkirmishGroupOrderKind.Attack,
+                    FirstFactionGroup(em, session, 1, SkirmishRoleKind.Rocketeer).LastOrder);
+                SkirmishMoveIntentComponent ordered = em.GetComponentData<SkirmishMoveIntentComponent>(tank);
+                Assert.AreEqual(enemyPos.x, ordered.DestinationX, 0.05f);
+                Assert.AreEqual(enemyPos.z, ordered.DestinationZ, 0.05f);
+                Assert.AreEqual(enemyBase, ordered.AttackTarget);
+                Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+                ordered.DestinationX = standIn.x;
+                ordered.DestinationZ = standIn.z;
+                ordered.Active = 0;
+                em.SetComponentData(tank, ordered);
+                Assert.Greater(SkirmishWorldMovementService.Step(em, session, 1f, false), 0);
+                ordered = em.GetComponentData<SkirmishMoveIntentComponent>(tank);
+                Assert.AreEqual(enemyPos.x, ordered.DestinationX, 0.05f);
+                Assert.AreEqual(enemyPos.z, ordered.DestinationZ, 0.05f);
+                Assert.AreEqual(1, ordered.Active);
+
+                SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+                using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+                int steps = 0;
+                while (steps < 1080 && em.GetComponentData<UnitHealth>(enemyBase).Current > 0)
+                {
+                    world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                    SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
+                    SkirmishVisualSpawnService.EnsureMissingCombatTransforms(em, session);
+                    SkirmishExpandedEngagementService.Step(em, session, 1f, false);
+                    SkirmishWorldMovementService.Step(em, session, 1f, false);
+                    steps++;
+                }
+
+                Assert.Less(steps, 1080, "enemyHp=" + em.GetComponentData<UnitHealth>(enemyBase).Current);
+                Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
+                Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
+                Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                PublishProjectedMatch(world, session);
+                Assert.AreEqual(SkirmishOutcomeKind.Victory, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Outcome);
+                Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Reason);
+                SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+                Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
+                Assert.AreEqual(SkirmishOutcome.Victory, match.Outcome);
+                Assert.AreEqual(SkirmishEndReason.MainBaseDestroyed, match.Reason);
+                CheckedInRunsCsvStaysHeaderOnly();
+            }
+            finally
+            {
+                if (em.Exists(session))
+                {
+                    SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
+                        em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                }
+
+                catalog.Dispose();
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -982,6 +1097,7 @@ namespace Game.Tests.Editor
                 suite.RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating();
                 suite.FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery();
                 suite.AriaSessionOrdersStructureColumnAndDestroysEnemyBase();
+                suite.MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }
             catch (Exception exception)
@@ -1261,6 +1377,12 @@ namespace Game.Tests.Editor
                 em.SetComponentData(unit, transform);
             else
                 em.AddComponentData(unit, transform);
+        }
+
+        private static bool VisuallySpawned(EntityManager em, Entity entity)
+        {
+            return em.HasComponent<SkirmishVisualSpawnedComponent>(entity) &&
+                   em.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned != 0;
         }
 
         private static void RevealAll(EntityManager em)

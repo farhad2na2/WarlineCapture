@@ -34,6 +34,7 @@ namespace Game.Runtime
                 if (em.HasComponent<SkirmishObjectiveClockComponent>(entity) &&
                     em.GetComponentData<SkirmishObjectiveClockComponent>(entity).Paused != 0)
                     paused = true;
+                SkirmishVisualSpawnService.EnsureMissingCombatTransforms(em, entity);
                 SkirmishExpandedEngagementService.Step(em, entity, delta, paused);
                 SkirmishWorldMovementService.Step(em, entity, delta, paused);
                 SkirmishArmyDrawerProjection.Project(em, entity);

@@ -150,8 +150,10 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex, entries[1].PlayableScenarioIndex);
             Assert.AreEqual("skirmish.s002.title", entries[1].TitleKey);
             Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseEstablishedDefinitionId, entries[1].DefinitionId);
-            Assert.IsFalse(entries[2].IsPlayable);
-            Assert.AreEqual(-1, entries[2].PlayableScenarioIndex);
+            Assert.IsTrue(entries[2].IsPlayable);
+            Assert.AreEqual(SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex, entries[2].PlayableScenarioIndex);
+            Assert.AreEqual("skirmish.s003.title", entries[2].TitleKey);
+            Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldDefinitionId, entries[2].DefinitionId);
             Assert.IsTrue(entries[3].IsPlayable);
             Assert.IsTrue(entries[4].IsPlayable);
         }
@@ -212,7 +214,10 @@ namespace Game.Tests.Editor
             Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig s003));
             Assert.AreEqual(SkirmishPublicationStatus.Playable, s003.Status);
             Assert.IsTrue(publication.TryGet("S004", out SkirmishPublicationRowConfig s004));
-            Assert.AreEqual(SkirmishPublicationStatus.InProgress, s004.Status);
+            // The checked-in manifest row was flipped Playable by the guarded Game View
+            // flip (commit 6678b47d4); the evaluator still holds S004 InProgress until
+            // Established air flight/refuel and the counted ARIA matrix land.
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, s004.Status);
 
             string root = System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath, ".."));
             Assert.IsTrue(SkirmishSetupMatrixTable.TryLoad(root, out var matrix, out string error), error);

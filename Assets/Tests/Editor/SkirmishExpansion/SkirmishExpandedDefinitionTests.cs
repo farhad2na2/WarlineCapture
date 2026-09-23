@@ -141,13 +141,19 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual("S073", basin);
         Assert.IsTrue(SkirmishLegacyPrototypeMap.IsEditorStressIndex(2));
         Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(4, out _));
+        Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(5, out _));
         var established = QuickGameConfig.Defaults;
         established.ScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
         Assert.AreEqual(
             SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex,
             established.NormalizeForBaseAssault().ScenarioIndex);
+        var airMobile = QuickGameConfig.Defaults;
+        airMobile.ScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex;
+        Assert.AreEqual(
+            SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex,
+            airMobile.NormalizeForBaseAssault().ScenarioIndex);
         var unknown = QuickGameConfig.Defaults;
-        unknown.ScenarioIndex = 5;
+        unknown.ScenarioIndex = 6;
         Assert.AreEqual(0, unknown.NormalizeForBaseAssault().ScenarioIndex);
         unknown.ScenarioIndex = 2;
         Assert.AreEqual(2, unknown.NormalizeForBaseAssault().ScenarioIndex);
@@ -290,11 +296,14 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.IsFalse(payload.IsLegacy);
         Assert.AreEqual("layout.skirmish.db.ba", setup.LayoutId);
         Assert.AreEqual("route.skirmish.db.main", setup.DefaultRouteId);
-        Assert.AreEqual(-228f, setup.PlayerBaseWorldX, 0.05f);
-        Assert.AreEqual(0f, setup.PlayerBaseWorldZ, 0.05f);
-        Assert.AreEqual(-192f, setup.PlayerStagingWorldX, 0.05f);
-        Assert.AreEqual(0f, setup.PlayerStagingWorldZ, 0.05f);
-        Assert.AreEqual(192f, setup.EnemyStagingWorldX, 0.05f);
+        // Map-relative deployment: pads deploy through the pinned world binding onto the
+        // operation map's authored deployment anchors, not the raw authoring envelope.
+        Assert.AreEqual(949f, setup.PlayerBaseWorldX, 0.5f);
+        Assert.AreEqual(344.7f, setup.PlayerBaseWorldZ, 0.5f);
+        Assert.AreEqual(1007.21f, setup.PlayerStagingWorldX, 0.5f);
+        Assert.AreEqual(326.01f, setup.PlayerStagingWorldZ, 0.5f);
+        Assert.AreEqual(1627.84f, setup.EnemyStagingWorldX, 0.5f);
+        Assert.AreEqual(126.69f, setup.EnemyStagingWorldZ, 0.5f);
         Assert.AreNotEqual(setup.PlayerStagingWorldX, setup.PlayerSpawnPadX);
         Assert.AreNotEqual(setup.PlayerSpawnPadX, setup.PlayerRallyPadX);
 
@@ -404,8 +413,10 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(7, setup.PlayerStartingStructures);
             Assert.AreEqual(seed, payload.Seed);
             Assert.IsTrue(setup.MeasuredLayoutBound);
-            Assert.AreEqual(-228f, setup.PlayerBaseWorldX, 0.05f);
-            Assert.AreEqual(-192f, setup.PlayerStagingWorldX, 0.05f);
+            Assert.AreEqual(949f, setup.PlayerBaseWorldX, 0.5f);
+            Assert.AreEqual(344.7f, setup.PlayerBaseWorldZ, 0.5f);
+            Assert.AreEqual(1007.21f, setup.PlayerStagingWorldX, 0.5f);
+            Assert.AreEqual(326.01f, setup.PlayerStagingWorldZ, 0.5f);
             Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Rifle, out SkirmishResolvedForceEntry rifle));
             Assert.IsTrue(TryFindForce(setup, 1, SkirmishRoleKind.Car, out SkirmishResolvedForceEntry car));
             Assert.AreNotEqual(rifle.SpawnWorldX, car.SpawnWorldX);
@@ -587,12 +598,14 @@ public sealed class SkirmishExpandedDefinitionTests
             Assert.AreEqual(1, setup.VehicleQueuesEach);
             Assert.AreEqual(seed, payload.Seed);
             Assert.IsTrue(setup.MeasuredLayoutBound);
-            Assert.AreEqual(-228f, setup.PlayerBaseWorldX, 0.05f);
-            Assert.AreEqual(-192f, setup.PlayerStagingWorldX, 0.05f);
+            Assert.AreEqual(949f, setup.PlayerBaseWorldX, 0.5f);
+            Assert.AreEqual(344.7f, setup.PlayerBaseWorldZ, 0.5f);
+            Assert.AreEqual(1007.21f, setup.PlayerStagingWorldX, 0.5f);
+            Assert.AreEqual(326.01f, setup.PlayerStagingWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 1, SkirmishStructureIds.Helipad, out SkirmishResolvedStructureEntry pad));
             Assert.IsFalse(pad.DesignatedBase);
-            Assert.AreEqual(-258f, pad.SpawnWorldX, 0.2f);
-            Assert.AreEqual(117.6f, pad.SpawnWorldZ, 0.2f);
+            Assert.AreEqual(926.22f, pad.SpawnWorldX, 0.5f);
+            Assert.AreEqual(440.25f, pad.SpawnWorldZ, 0.5f);
             Assert.IsTrue(TryFindStructure(setup, 2, SkirmishStructureIds.Helipad, out _));
             Assert.IsFalse(HasStructure(setup, SkirmishStructureIds.Airport, false));
             Assert.AreEqual(6, setup.Structures.Length);
@@ -808,6 +821,114 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
     }
 
+    [Test]
+    public void LibraryDispatchIndexQueuesAirMobileS003()
+    {
+        using var world = new World(nameof(LibraryDispatchIndexQueuesAirMobileS003));
+        EntityManager em = world.EntityManager;
+        var config = QuickGameConfig.Defaults;
+        config.ScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex;
+        config.MapSeed = SkirmishS003FirstVisit.SeedA;
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em, config));
+        Entity sessionEntity = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
+        Assert.AreEqual(0, session.IsLegacy);
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId, session.CatalogId.ToString());
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldDefinitionId, session.DefinitionId.ToString());
+        Assert.AreEqual(SkirmishDifficultyId.Regular, session.DifficultyId);
+        Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
+        SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(sessionEntity);
+        Assert.AreEqual(SkirmishPresetConfig.DesertBaseScenarioIndex, match.ScenarioIndex);
+        Assert.AreEqual(SkirmishS003FirstVisit.SeedA, match.Seed);
+        SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity).Setup;
+        Assert.AreEqual(SkirmishStartPackageId.FieldBase, setup.StartPackageId);
+        Assert.AreEqual(SkirmishArmyProfileId.AirMobile, setup.ArmyProfileId);
+        Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
+        Assert.AreEqual("skirmish.s003.title", setup.TitleKey);
+        Assert.AreEqual("skirmish.s003.objective", setup.ObjectiveKey);
+    }
+
+    [Test]
+    public void PackagedMatrixMatchesDesignCsv()
+    {
+        Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> packaged, out string packagedError), packagedError);
+        LoadMatrix(out List<SkirmishSetupMatrixRow> design);
+        Assert.AreEqual(design.Count, packaged.Count, "Packaged matrix must mirror the design CSV row count.");
+        for (int i = 0; i < design.Count; i++)
+        {
+            Assert.AreEqual(design[i].CatalogId, packaged[i].CatalogId);
+            Assert.AreEqual(design[i].SizeId, packaged[i].SizeId);
+            Assert.AreEqual(design[i].DeadlineSeconds, packaged[i].DeadlineSeconds);
+            Assert.AreEqual(design[i].MaterialsEach, packaged[i].MaterialsEach);
+            Assert.AreEqual(design[i].InfantryCapEach, packaged[i].InfantryCapEach);
+        }
+    }
+
+    [Test]
+    public void PackagedCatalogResolvesAuthoredDefinitions()
+    {
+        SkirmishExpansionCatalogConfig catalog = SkirmishExpansionCatalogConfig.Load();
+        Assert.IsNotNull(catalog, "Packaged expansion catalog must load from Resources.");
+        Assert.IsTrue(catalog.TryValidate(out string error), error);
+        Assert.IsTrue(catalog.TryGetDefinition("S002", out SkirmishScenarioDefinitionConfig s002));
+        Assert.IsTrue(catalog.TryGetDefinition("S003", out SkirmishScenarioDefinitionConfig s003));
+        Assert.IsTrue(catalog.TryGetDefinition("S004", out SkirmishScenarioDefinitionConfig s004));
+        Assert.AreEqual("skirmish.s002", s002.DefinitionId);
+        Assert.AreEqual("skirmish.s003", s003.DefinitionId);
+        Assert.AreEqual("skirmish.s004", s004.DefinitionId);
+        SkirmishExpansionAuthoredSet set = catalog.ToAuthoredSet();
+        Assert.IsNotNull(set.DefinitionS002);
+        Assert.IsNotNull(set.DefinitionS003);
+        Assert.IsNotNull(set.DefinitionS004);
+        Assert.IsNotNull(set.LayoutDbBa);
+        Assert.IsTrue(set.LayoutDbBa.HasWorldBinding, "Packaged layout must carry the pinned world binding.");
+    }
+
+    [Test]
+    public void WorldBindingProjectsDeploymentOntoMapAnchors()
+    {
+        SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+        SkirmishMapLayoutConfig layout = authored.LayoutDbBa;
+        Assert.IsTrue(layout.HasWorldBinding);
+        Assert.IsTrue(layout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig player));
+        Assert.IsTrue(layout.TryProjectToMap(player.NormalizedU, player.NormalizedV, out float px, out float pz));
+        Assert.AreEqual(949f, px, 0.5f);
+        Assert.AreEqual(344.7f, pz, 0.5f);
+        Assert.IsTrue(layout.TryGetAnchor("base.enemy", out SkirmishLayoutAnchorConfig enemy));
+        Assert.IsTrue(layout.TryProjectToMap(enemy.NormalizedU, enemy.NormalizedV, out float ex, out float ez));
+        Assert.AreEqual(1686f, ex, 0.5f);
+        Assert.AreEqual(108f, ez, 0.5f);
+
+        foreach (SkirmishLayoutAnchorConfig anchor in layout.Anchors)
+        {
+            Assert.IsTrue(layout.TryProjectToMap(anchor.NormalizedU, anchor.NormalizedV, out float x, out float z));
+            Assert.GreaterOrEqual(x, 0f, anchor.AnchorId);
+            Assert.LessOrEqual(x, 2048f, anchor.AnchorId);
+            Assert.GreaterOrEqual(z, 0f, anchor.AnchorId);
+            Assert.LessOrEqual(z, 1024f, anchor.AnchorId);
+        }
+
+        foreach (SkirmishLegalPadConfig pad in layout.Pads)
+        {
+            Assert.IsTrue(layout.TryProjectLocalToMap(pad.CenterX, pad.CenterZ, out float x, out float z));
+            Assert.GreaterOrEqual(x - pad.WidthMetres * 0.5f, 0f, pad.PadId);
+            Assert.LessOrEqual(x + pad.WidthMetres * 0.5f, 2048f, pad.PadId);
+            Assert.GreaterOrEqual(z - pad.DepthMetres * 0.5f, 0f, pad.PadId);
+            Assert.LessOrEqual(z + pad.DepthMetres * 0.5f, 1024f, pad.PadId);
+        }
+    }
+
+    [Test]
+    public void WorldBindingMissingFailsValidation()
+    {
+        // A layout without a pinned world binding must not certify: envelope
+        // coordinates alone deploy outside the loaded map's bounds.
+        SkirmishMapLayoutConfig layout = ScriptableObject.CreateInstance<SkirmishMapLayoutConfig>();
+        var reasons = new List<SkirmishCompileReason>();
+        Assert.IsFalse(SkirmishMapLayoutValidation.TryValidateDesertBaseAssault(layout, reasons));
+        Assert.IsTrue(reasons.Exists(r => r.Field == "worldBinding"));
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -822,6 +943,11 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.ExpandedLaunchDoesNotNormalizeLegacyQuickGame();
             suite.LegacyPrototypeIndicesRemainReserved();
             suite.LibraryDispatchIndexQueuesEstablishedS002();
+            suite.LibraryDispatchIndexQueuesAirMobileS003();
+            suite.PackagedMatrixMatchesDesignCsv();
+            suite.PackagedCatalogResolvesAuthoredDefinitions();
+            suite.WorldBindingProjectsDeploymentOntoMapAnchors();
+            suite.WorldBindingMissingFailsValidation();
             suite.S002GroundOverlaysAndProductionGate();
             suite.S002SpawnProjectsRoleOverlaysAndGroundStaging();
             suite.CompilerAcceptsTypedDesertBaseLayout();

@@ -995,7 +995,9 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(playerX, playerPos.x, 0.05f);
                 Assert.AreEqual(playerZ, playerPos.z, 0.05f);
                 float3 standIn = SkirmishWorldMovementService.DefaultAdvance(em, session);
-                Assert.Greater(math.distance(enemyPos, standIn), 100f);
+                // The advance default is the enemy staging pad, distinct from the
+                // designated base; map-bound spacing is ~61 m along the base axis.
+                Assert.Greater(math.distance(enemyPos, standIn), 40f);
                 Assert.Greater(math.distance(em.GetComponentData<LocalTransform>(tank).Position, float3.zero), 50f);
 
                 int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;

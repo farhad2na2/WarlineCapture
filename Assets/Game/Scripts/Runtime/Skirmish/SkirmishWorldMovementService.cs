@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Configs;
 using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
@@ -59,6 +60,9 @@ namespace Game.Runtime
                 typeof(SkirmishAttemptOwnedComponent),
                 typeof(LocalTransform));
             using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            bool hasGrid = !grids.IsEmptyIgnoreFilter;
+            GridConfig grid = hasGrid ? grids.GetSingleton<GridConfig>() : default;
             int moved = 0;
             for (int i = 0; i < entities.Length; i++)
             {
@@ -83,10 +87,18 @@ namespace Game.Runtime
                     continue;
                 }
 
-                // Live Desert Base pathfinding can attach UnitPathFollow after Attack
-                // writes a path request. That follow does not integrate skirmish
-                // intents, so yielding here left the column on the pad for 1080s.
-                // The local step is the assault movement.
+                // Shared navigation owns movement whenever the unit carries real
+                // movement data and the destination resolves inside the loaded grid.
+                // The direct step remains only for worlds without a grid (Editor
+                // fixtures) and as a bounded stall recovery, never as the default.
+                if (TrySharedPathStep(em, unit, ref intent, deltaSeconds, hasGrid, in grid))
+                {
+                    moved++;
+                    continue;
+                }
+
+                // Fallback integration: no shared follower can exist without a grid,
+                // and a stalled follower is cleared so it cannot double-integrate.
                 if (em.HasComponent<UnitPathFollow>(unit))
                     em.RemoveComponent<UnitPathFollow>(unit);
 
@@ -153,9 +165,81 @@ namespace Game.Runtime
 
         public static float3 DefaultAdvance(EntityManager em, Entity session)
         {
-            _ = session;
-            _ = em;
+            // The assault default is the enemy staging pad in the loaded map's frame.
+            // The stand-in extent frame is only a no-layout fallback.
+            if (em.HasComponent<SkirmishResolvedSetupRecord>(session))
+            {
+                SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                if (setup != null && setup.MeasuredLayoutBound &&
+                    (setup.EnemyStagingWorldX != 0f || setup.EnemyStagingWorldZ != 0f))
+                    return new float3(setup.EnemyStagingWorldX, 0f, setup.EnemyStagingWorldZ);
+            }
+
             return SkirmishVisualSpawnService.StagingWorld(2, true);
+        }
+
+        private const float SharedPathStallSeconds = 3f;
+
+        /// <summary>
+        /// Drives the unit through the shared grid pathfinding pipeline instead of
+        /// stepping the transform locally. Returns false when the shared path cannot
+        /// own this unit (no movement data, no grid, out-of-grid goal) or after a
+        /// bounded stall, in which case the caller falls back to the local step.
+        /// </summary>
+        private static bool TrySharedPathStep(
+            EntityManager em,
+            Entity unit,
+            ref SkirmishMoveIntentComponent intent,
+            float deltaSeconds,
+            bool hasGrid,
+            in GridConfig grid)
+        {
+            if (!hasGrid || !em.HasComponent<UnitMove>(unit))
+                return false;
+
+            int2 cell = GridUtils.WorldToCell(grid, new float3(intent.DestinationX, 0f, intent.DestinationZ));
+            if (cell.x < 0 || cell.y < 0 || cell.x >= grid.Width || cell.y >= grid.Height)
+                return false;
+
+            // A stalled unit keeps the local step until the shared follower engages or
+            // a new order arrives; it does not re-enter the wait every tick.
+            if (intent.SharedStalled != 0)
+            {
+                if (!em.HasComponent<UnitPathFollow>(unit))
+                    return false;
+                intent.SharedStalled = 0;
+            }
+
+            var request = new UnitPathRequest { Goal = cell };
+            if (!em.HasComponent<UnitPathRequest>(unit))
+                em.AddComponentData(unit, request);
+            else if (!em.GetComponentData<UnitPathRequest>(unit).Goal.Equals(cell))
+                em.SetComponentData(unit, request);
+
+            float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+            float dx = position.x - intent.LastProgressX;
+            float dz = position.z - intent.LastProgressZ;
+            bool progressed = dx * dx + dz * dz > 0.0004f;
+            if (em.HasComponent<UnitPathFollow>(unit) || progressed)
+            {
+                intent.NoSharedPathSeconds = 0f;
+                intent.LastProgressX = position.x;
+                intent.LastProgressZ = position.z;
+            }
+            else if ((intent.NoSharedPathSeconds += deltaSeconds) >= SharedPathStallSeconds)
+            {
+                intent.NoSharedPathSeconds = 0f;
+                intent.SharedStalled = 1;
+                em.SetComponentData(unit, intent);
+                return false;
+            }
+
+            float3 toDestination = new float3(intent.DestinationX - position.x, 0f, intent.DestinationZ - position.z);
+            if (math.length(toDestination) <= ArriveDistance * 2f)
+                intent.Active = 0;
+
+            em.SetComponentData(unit, intent);
+            return true;
         }
 
         private static float ResolveSpeed(EntityManager em, Entity unit)

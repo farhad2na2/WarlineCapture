@@ -290,6 +290,14 @@ namespace Game.Components
         public Entity AttackTarget;
         public float Cooldown;
         public byte Engaged;
+        // Shared-path stall tracking: seconds without an active follow or position
+        // progress while the shared pathfinding owns movement.
+        public float NoSharedPathSeconds;
+        public float LastProgressX;
+        public float LastProgressZ;
+        // Latched when the shared path never engaged; cleared by a new order or by a
+        // follower appearing. While latched the local step integrates movement.
+        public byte SharedStalled;
     }
 
     public struct SkirmishObservedHealthComponent : IComponentData

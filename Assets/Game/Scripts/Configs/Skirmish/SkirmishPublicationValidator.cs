@@ -287,6 +287,13 @@ namespace Game.Configs
                     SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref entry);
                     entries[i] = entry;
                 }
+                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId)
+                {
+                    entry.Status = SkirmishBattleCatalogStatus.Playable;
+                    entry.PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex;
+                    SkirmishExpandedCopyProjection.ApplyLibraryCopyS003(ref entry);
+                    entries[i] = entry;
+                }
                 else
                 {
                     entry.Status = SkirmishBattleCatalogStatus.Planned;

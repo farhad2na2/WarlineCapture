@@ -287,6 +287,11 @@ namespace Game.Configs
             }
 
             setup.Structures = BuildStructures(definition, vector);
+            setup.TitleKey = definition.TitleKey ?? string.Empty;
+            setup.BriefingKey = definition.BriefingKey ?? string.Empty;
+            setup.ObjectiveKey = definition.ObjectiveKey ?? string.Empty;
+            setup.ResultVictoryKey = definition.ResultVictoryKey ?? string.Empty;
+            setup.ResultDefeatKey = definition.ResultDefeatKey ?? string.Empty;
             setup.RoleOverlays = definition.ArmyProfileConfig != null && definition.ArmyProfileConfig.AllowsOffensiveAir
                 ? SkirmishRoleOverlayCatalog.CreateAirMobileSlice()
                 : SkirmishRoleOverlayCatalog.CreateS002GroundSlice();

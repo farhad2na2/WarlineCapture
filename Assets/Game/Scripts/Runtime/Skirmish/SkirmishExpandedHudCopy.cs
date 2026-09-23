@@ -22,7 +22,9 @@ namespace Game.Runtime
             if (!em.HasComponent<SkirmishResolvedSetupRecord>(session))
                 return false;
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
-            if (setup == null || !SkirmishExpandedCopyProjection.IsExpandedS002(setup.CatalogId))
+            if (setup == null ||
+                (!SkirmishExpandedCopyProjection.IsExpandedS002(setup.CatalogId) &&
+                 string.IsNullOrEmpty(setup.ObjectiveKey)))
                 return false;
 
             MapOutcome(match, out SkirmishOutcomeKind outcome, out SkirmishEndReasonKind reason);

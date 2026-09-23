@@ -54,6 +54,9 @@ namespace Game.Configs
     public static class SkirmishExpandedCopyProjection
     {
         public const string S002CatalogId = "S002";
+        public const string S003CatalogId = "S003";
+        public const string S003TitleKey = "skirmish.s003.title";
+        public const string S003BriefKey = "skirmish.s003.brief";
         public const string TitleKey = "skirmish.s002.title";
         public const string BriefKey = "skirmish.s002.brief";
         public const string ObjectiveKey = "skirmish.s002.objective";
@@ -81,6 +84,34 @@ namespace Game.Configs
 
         public static bool IsExpandedS002(string catalogId) =>
             string.Equals(catalogId, S002CatalogId, StringComparison.Ordinal);
+
+        public static bool IsExpandedS003(string catalogId) =>
+            string.Equals(catalogId, S003CatalogId, StringComparison.Ordinal);
+
+        public static void ApplyLibraryCopyS003(ref SkirmishBattleCatalogEntry entry)
+        {
+            if (!IsExpandedS003(entry.ScenarioId))
+                return;
+            entry.TitleKey = S003TitleKey;
+            entry.DefinitionId = "skirmish.s003";
+            entry.ContentVersion = 1;
+            entry.ReadinessManifestId = "publication.skirmish.s003";
+            if (string.IsNullOrEmpty(entry.DescriptionEnglish))
+            {
+                entry.DescriptionEnglish = Resolve(
+                    S003BriefKey,
+                    GameLocalization.EnglishLocaleCode,
+                    "Hold a light ground screen and contest the highway. Build Helipad before you commit attack helicopters. Escort an APC push or transition to air while you guard supply.");
+            }
+
+            if (string.IsNullOrEmpty(entry.DescriptionFarsi))
+            {
+                entry.DescriptionFarsi = Resolve(
+                    S003BriefKey,
+                    GameLocalization.PersianLocaleCode,
+                    "یک پوشش زمینی سبک نگه دار و بزرگراه را بگیر. قبل از هلی‌کوپترهای تهاجمی پد بالگرد بساز. یا با نفربر فشار بده یا به هوا برو و تدارکات را نگه دار.");
+            }
+        }
 
         public static bool TryResolveS002LibraryBriefing(string locale, out SkirmishLibraryBriefing briefing)
         {
@@ -129,59 +160,105 @@ namespace Game.Configs
             out SkirmishHudCopy copy)
         {
             copy = default;
-            if (setup == null || !IsExpandedS002(setup.CatalogId))
+            if (setup == null)
                 return false;
 
-            string objective = Resolve(ObjectiveKey, locale, "Destroy the original enemy Barracks while your original Barracks survives.");
+            // Any expanded entry with compiled copy keys resolves here; the key prefix
+            // convention (skirmish.sNNN.*) keeps result keys derivable per entry.
+            bool s002 = IsExpandedS002(setup.CatalogId);
+            if (!s002 && string.IsNullOrEmpty(setup.ObjectiveKey))
+                return false;
+
+            string objectiveKey = s002 ? ObjectiveKey : setup.ObjectiveKey;
+            string objective = Resolve(objectiveKey, locale, "Destroy the original enemy Barracks while your original Barracks survives.");
             if (outcome == SkirmishOutcomeKind.None)
             {
-                copy = new SkirmishHudCopy(ObjectiveKey, string.Empty, objective, string.Empty);
+                copy = new SkirmishHudCopy(objectiveKey, string.Empty, objective, string.Empty);
                 return true;
             }
 
-            if (!TryResultKey(outcome, reason, out string resultKey, out string english))
+            if (!TryResultKey(setup, outcome, reason, out string resultKey, out string english))
                 return false;
-            copy = new SkirmishHudCopy(ObjectiveKey, resultKey, objective, Resolve(resultKey, locale, english));
+            copy = new SkirmishHudCopy(objectiveKey, resultKey, objective, Resolve(resultKey, locale, english));
             return true;
         }
 
         public static bool TryResultKey(
+            SkirmishResolvedSetup setup,
             SkirmishOutcomeKind outcome,
             SkirmishEndReasonKind reason,
             out string key,
             out string english)
         {
+            if (setup != null && !IsExpandedS002(setup.CatalogId))
+            {
+                string prefix = "skirmish." + setup.CatalogId.ToLowerInvariant();
+                return TryMapResultKey(
+                    outcome,
+                    reason,
+                    string.IsNullOrEmpty(setup.ResultVictoryKey) ? prefix + ".result.victory" : setup.ResultVictoryKey,
+                    string.IsNullOrEmpty(setup.ResultDefeatKey) ? prefix + ".result.defeat" : setup.ResultDefeatKey,
+                    prefix + ".result.surrender",
+                    prefix + ".result.draw_deadline",
+                    prefix + ".result.draw_bases",
+                    out key,
+                    out english);
+            }
+
+            return TryMapResultKey(
+                outcome,
+                reason,
+                ResultVictoryKey,
+                ResultDefeatKey,
+                ResultSurrenderKey,
+                ResultDrawDeadlineKey,
+                ResultDrawBasesKey,
+                out key,
+                out english);
+        }
+
+        private static bool TryMapResultKey(
+            SkirmishOutcomeKind outcome,
+            SkirmishEndReasonKind reason,
+            string victoryKey,
+            string defeatKey,
+            string surrenderKey,
+            string drawDeadlineKey,
+            string drawBasesKey,
+            out string key,
+            out string english)
+        {
             if (outcome == SkirmishOutcomeKind.Victory)
             {
-                key = ResultVictoryKey;
+                key = victoryKey;
                 english = "Enemy main base destroyed.";
                 return true;
             }
 
             if (outcome == SkirmishOutcomeKind.Defeat && reason == SkirmishEndReasonKind.Surrender)
             {
-                key = ResultSurrenderKey;
+                key = surrenderKey;
                 english = "Surrender accepted.";
                 return true;
             }
 
             if (outcome == SkirmishOutcomeKind.Defeat)
             {
-                key = ResultDefeatKey;
+                key = defeatKey;
                 english = "Your main base was destroyed.";
                 return true;
             }
 
             if (reason == SkirmishEndReasonKind.TimeLimit || reason == SkirmishEndReasonKind.ObjectiveDeadline)
             {
-                key = ResultDrawDeadlineKey;
+                key = drawDeadlineKey;
                 english = "Time expired with both original bases standing.";
                 return true;
             }
 
             if (reason == SkirmishEndReasonKind.BothBasesDestroyed || outcome == SkirmishOutcomeKind.Draw)
             {
-                key = ResultDrawBasesKey;
+                key = drawBasesKey;
                 english = "Both original bases were destroyed.";
                 return true;
             }

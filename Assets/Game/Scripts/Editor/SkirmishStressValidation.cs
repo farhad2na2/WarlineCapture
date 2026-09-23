@@ -216,12 +216,16 @@ namespace Game.Editor
                 "Legacy fixed Scenario1 control must be removed.");
             var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(
                 SkirmishBattleCatalogBuilder.AssetPath);
-            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 4,
-                "Battle catalog must keep 120 entries with four player playables.");
+            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 5,
+                "Battle catalog must keep 120 entries with five player playables.");
             Check(catalog.TryGet(SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, out var s002) &&
                   s002.IsPlayable &&
                   s002.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex,
                 "S002 must occupy playable scenario index 4.");
+            Check(catalog.TryGet(SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId, out var s003) &&
+                  s003.IsPlayable &&
+                  s003.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex,
+                "S003 must occupy playable scenario index 5.");
             Check(SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex) == desert,
                 "S002 reuses the Desert Base map preset; index 4 is the library dispatch, not a new Resources preset.");
             Check(SkirmishPresetConfig.IndustrialBasinScenarioIndex == 3,

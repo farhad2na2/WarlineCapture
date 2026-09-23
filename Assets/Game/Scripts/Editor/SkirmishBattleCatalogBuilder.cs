@@ -78,8 +78,8 @@ namespace Game.Editor
                     throw new InvalidOperationException(error ?? "Catalog invalid.");
                 if (catalog.Entries.Count != 120)
                     throw new InvalidOperationException($"Expected 120 catalog entries, got {catalog.Entries.Count}.");
-                if (catalog.CountPlayable() != 4)
-                    throw new InvalidOperationException($"Expected 4 playable entries, got {catalog.CountPlayable()}.");
+                if (catalog.CountPlayable() != 5)
+                    throw new InvalidOperationException($"Expected 5 playable entries, got {catalog.CountPlayable()}.");
 
                 var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(SetupPrefabPath);
                 if (prefab.transform.Find("SkirmishSetupComposition/OperationPreview/BattleLibrary") == null)

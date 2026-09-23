@@ -99,6 +99,13 @@ namespace Game.Configs
         public int LastSeenExpireSeconds = 20;
         public string CheckpointVersion = "skirmish.checkpoint.v1";
         public string Report = string.Empty;
+        // Localized copy keys compiled from the definition, so HUD/library copy
+        // resolves for any expanded entry instead of a hard-coded scenario.
+        public string TitleKey = string.Empty;
+        public string BriefingKey = string.Empty;
+        public string ObjectiveKey = string.Empty;
+        public string ResultVictoryKey = string.Empty;
+        public string ResultDefeatKey = string.Empty;
         public bool MeasuredLayoutBound;
         public float WorldWidthMetres;
         public float WorldDepthMetres;

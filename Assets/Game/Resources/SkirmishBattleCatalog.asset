@@ -47,12 +47,18 @@ MonoBehaviour:
     ObjectiveId: BA
     ArmyProfile: A
     StartProfile: F
-    TitleKey: 
+    TitleKey: skirmish.s003.title
     TitleEnglish: "Desert Base \xB7 Base Assault \xB7 Air Mobile \xB7 Field Base"
-    DescriptionEnglish: 
-    DescriptionFarsi: 
-    Status: 0
-    PlayableScenarioIndex: -1
+    DescriptionEnglish: Hold a light ground screen and contest the highway. Build Helipad
+      before you commit attack helicopters. Escort an APC push or transition to air
+      while you guard supply.
+    DescriptionFarsi: "یک پوشش زمینی سبک نگه دار و بزرگراه را بگیر. قبل از هلی‌کوپترهای
+      تهاجمی پد بالگرد بساز. یا با نفربر فشار بده یا به هوا برو و تدارکات را نگه دار."
+    Status: 1
+    PlayableScenarioIndex: 5
+    DefinitionId: skirmish.s003
+    ContentVersion: 1
+    ReadinessManifestId: publication.skirmish.s003
   - ScenarioId: S004
     MapId: DB
     ObjectiveId: BA

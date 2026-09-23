@@ -75,6 +75,7 @@ namespace Game.Configs
         // Player battlefields: Desert Base prototype (0), City Crossroads (1), Industrial Basin (3).
         // Scenario 2 remains the Editor-only E0.3 stress probe.
         // Scenario 4 is the S002 Established library dispatch and must not collapse to index 0.
+        // Scenario 5 is the S003 Air Mobile Field library dispatch and must not collapse to index 0.
         public QuickGameConfig NormalizeForBaseAssault()
         {
             QuickGameConfig normalized = Defaults;
@@ -83,7 +84,8 @@ namespace Game.Configs
                 ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ||
                 ScenarioIndex == SkirmishPresetConfig.StressScaleProbeScenarioIndex ||
                 ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ||
-                ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex
+                ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ||
+                ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex
                     ? ScenarioIndex
                     : SkirmishPresetConfig.DesertBaseScenarioIndex;
             return normalized;

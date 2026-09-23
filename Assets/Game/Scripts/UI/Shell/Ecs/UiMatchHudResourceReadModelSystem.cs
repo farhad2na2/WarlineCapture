@@ -12,6 +12,7 @@ namespace Game.UI.Shell.Ecs
     public partial struct UiMatchHudResourceReadModelSystem : ISystem
     {
         private EntityQuery _boundaryQuery;
+        private EntityQuery _expandedStockQuery;
         private Entity _lastBoundary;
         private int _lastMaterials;
         private int _lastMaterialsCapacity;
@@ -23,6 +24,9 @@ namespace Game.UI.Shell.Ecs
             _boundaryQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<UiShellRootComponent>(),
                 ComponentType.ReadWrite<UiMatchHudHeaderComponent>());
+            _expandedStockQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(),
+                ComponentType.ReadOnly<SkirmishEconomyStockComponent>());
             state.RequireForUpdate(_boundaryQuery);
         }
 
@@ -34,17 +38,39 @@ namespace Game.UI.Shell.Ecs
             uint materialsVersion = 0u;
             bool foundPlayer = false;
 
-            foreach (RefRO<FactionTacticalMaterialsComponent> tacticalMaterials
-                     in SystemAPI.Query<RefRO<FactionTacticalMaterialsComponent>>())
+            // An expanded skirmish session keeps its ledger on the session entity;
+            // the faction tactical component either does not exist or belongs to the
+            // legacy economy and would misreport the match as 0/0.
+            if (!_expandedStockQuery.IsEmptyIgnoreFilter)
             {
-                if (!FactionIdentity.IsPlayerControlled(tacticalMaterials.ValueRO.FactionId))
-                    continue;
+                Entity session = _expandedStockQuery.GetSingletonEntity();
+                SkirmishExpandedSessionComponent expanded =
+                    state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session);
+                if (expanded.IsLegacy == 0)
+                {
+                    SkirmishEconomyStockComponent stock =
+                        state.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(session);
+                    materials = math.max(0, stock.Materials);
+                    materialsCapacity = math.max(0, stock.MaterialsCapacity);
+                    materialsVersion = (uint)materials;
+                    foundPlayer = true;
+                }
+            }
 
-                materials = math.max(0, tacticalMaterials.ValueRO.Current);
-                materialsCapacity = math.max(0, tacticalMaterials.ValueRO.Capacity);
-                materialsVersion = tacticalMaterials.ValueRO.Version;
-                foundPlayer = true;
-                break;
+            if (!foundPlayer)
+            {
+                foreach (RefRO<FactionTacticalMaterialsComponent> tacticalMaterials
+                         in SystemAPI.Query<RefRO<FactionTacticalMaterialsComponent>>())
+                {
+                    if (!FactionIdentity.IsPlayerControlled(tacticalMaterials.ValueRO.FactionId))
+                        continue;
+
+                    materials = math.max(0, tacticalMaterials.ValueRO.Current);
+                    materialsCapacity = math.max(0, tacticalMaterials.ValueRO.Capacity);
+                    materialsVersion = tacticalMaterials.ValueRO.Version;
+                    foundPlayer = true;
+                    break;
+                }
             }
 
             if (!foundPlayer)

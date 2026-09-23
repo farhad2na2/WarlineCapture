@@ -19,17 +19,32 @@ namespace Game.UI.Shell.Ecs
                 model.ResultDetail=GameText.Get("ui.skirmish.start_failed."+match.StartupFailure.ToString().ToLowerInvariant());
                 return true;
             }
-            int remaining=Mathf.Max(0,Mathf.CeilToInt(SkirmishPresetConfig.MatchDurationSeconds-match.ElapsedSeconds));
+            bool expanded = SkirmishExpandedSessionControlService.IsExpanded(em, session);
+            // Expanded sessions own their objective clock/deadline; the legacy
+            // 900-second constant would describe a different rules model.
+            float elapsedSeconds = match.ElapsedSeconds;
+            int deadlineSeconds = SkirmishPresetConfig.MatchDurationSeconds;
+            if (expanded && em.HasComponent<SkirmishObjectiveClockComponent>(session))
+            {
+                var objectiveClock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+                elapsedSeconds = objectiveClock.ElapsedSeconds;
+                deadlineSeconds = objectiveClock.DeadlineSeconds;
+            }
+            int remaining=Mathf.Max(0,Mathf.CeilToInt(deadlineSeconds-elapsedSeconds));
             using var gameplay=em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
             bool paused=gameplay.CalculateEntityCount()==1&&gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive==0;
             string outcome=match.Outcome.ToString().ToLowerInvariant();
             string reason=match.Reason.ToString().ToLowerInvariant();
             if (match.Reason == SkirmishEndReason.MainBaseDestroyed)
                 reason = match.Outcome == SkirmishOutcome.Victory ? "enemy_base_destroyed" : "player_base_destroyed";
-            bool expanded = SkirmishExpandedSessionControlService.IsExpanded(em, session);
             int infantry=0;
+            int infantryCap = SkirmishPresetConfig.InfantryLimitPerFaction;
             if (expanded && em.HasComponent<SkirmishCapacityComponent>(session))
-                infantry = em.GetComponentData<SkirmishCapacityComponent>(session).InfantryLive;
+            {
+                var capacity = em.GetComponentData<SkirmishCapacityComponent>(session);
+                infantry = capacity.InfantryLive;
+                infantryCap = capacity.InfantryCap;
+            }
             else
             {
                 using(var units=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth)))
@@ -77,7 +92,7 @@ namespace Game.UI.Shell.Ecs
                 Finished=match.Phase==SkirmishPhase.Finished,Paused=paused,
                 InfantryCount=infantry, PlayerHealth=playerHealth, EnemyHealth=enemyHealth,
                 Expanded=expanded, PlayerDesignatedAlive=playerAlive, EnemyDesignatedAlive=enemyAlive,
-                Infantry=infantry+" / "+SkirmishPresetConfig.InfantryLimitPerFaction,
+                Infantry=infantry+" / "+infantryCap,
                 PlayerBase=playerBase,
                 EnemyBase=enemyBase,
                 Clock=GameText.Get("ui.skirmish.time_remaining","TIME LEFT")+"  "+remaining/60+":"+(remaining%60).ToString("00"),

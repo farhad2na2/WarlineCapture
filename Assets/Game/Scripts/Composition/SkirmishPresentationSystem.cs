@@ -43,7 +43,12 @@ namespace Game.Composition
             if(match.Phase<SkirmishPhase.Playing&&!startupFailed)return;
             if(view==null)view=SkirmishMatchView.Create();
             if(!startupFailed&&UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
-            {Focus(match.PlayerMainBase,true);focusedSession=match.SessionId.ToString();}
+            {
+                // Latch only after the focus request is actually written. The base
+                // transform or the camera boundary can lag the shell entry by a frame;
+                // marking focused on an early-out dropped the opening frame forever.
+                if(Focus(match.PlayerMainBase,true))focusedSession=match.SessionId.ToString();
+            }
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var worldCamera = Camera.main;
             bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
@@ -115,11 +120,11 @@ namespace Game.Composition
                 SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Timeout);
             match=EntityManager.GetComponentData<SkirmishMatchState>(session);
         }
-        private void Focus(Entity entity,bool opening)
+        private bool Focus(Entity entity,bool opening)
         {
-            if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return;
+            if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return false;
             using var query=EntityManager.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
-            if(query.CalculateEntityCount()!=1)return;
+            if(query.CalculateEntityCount()!=1)return false;
             using var matches = EntityManager.CreateEntityQuery(typeof(SkirmishMatchState));
             bool basinOpening = opening && matches.CalculateEntityCount() == 1 &&
                 matches.GetSingleton<SkirmishMatchState>().ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
@@ -132,6 +137,7 @@ namespace Game.Composition
                 World=EntityManager.GetComponentData<LocalTransform>(entity).Position+
                     (opening?new Unity.Mathematics.float3(20,0,6):new Unity.Mathematics.float3(0,0,12))
             });
+            return true;
         }
         private void HandleReturn(Entity entity)
         {

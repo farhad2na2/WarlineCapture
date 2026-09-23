@@ -10,6 +10,7 @@ using Game.Runtime;
 using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -314,7 +315,7 @@ namespace Game.Editor
 
             Debug.Log(string.Format(
                 CultureInfo.InvariantCulture,
-                "[SkirmishS002AriaRun] queued catalog={0} seed={1} hash={2:X8} playable=0 normal_speed=1",
+                "[SkirmishS002AriaRun] queued catalog={0} seed={1} hash={2:X8} playable=0 gatesAssault=0 normal_speed=1",
                 setup.CatalogId,
                 setup.Seed,
                 setup.SetupHash));
@@ -338,17 +339,47 @@ namespace Game.Editor
                 clockPaused = clock.Paused;
             }
 
+            int playerBaseHp = DesignatedBaseHp(em, session, 1);
+            int enemyBaseHp = DesignatedBaseHp(em, session, 2);
             string line = string.Format(
                 CultureInfo.InvariantCulture,
-                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6}}}\n",
+                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6},\"playerBaseHp\":{7},\"enemyBaseHp\":{8}}}\n",
                 elapsed.ToString("0.###", CultureInfo.InvariantCulture),
                 match.Phase,
                 match.Outcome,
                 match.Reason,
                 simulationActive ? 1 : 0,
                 clockElapsed.ToString("0.###", CultureInfo.InvariantCulture),
-                clockPaused);
+                clockPaused,
+                playerBaseHp,
+                enemyBaseHp);
             File.AppendAllText(LiveTracePath(), line);
+        }
+
+        private static int DesignatedBaseHp(EntityManager em, Entity session, byte faction)
+        {
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return -1;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using EntityQuery query = em.CreateEntityQuery(
+                typeof(SkirmishObjectiveRoleComponent),
+                typeof(SkirmishAttemptOwnedComponent),
+                typeof(UnitHealth));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            SkirmishObjectiveRoleKind role = faction == 1
+                ? SkirmishObjectiveRoleKind.PlayerBase
+                : SkirmishObjectiveRoleKind.EnemyBase;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                SkirmishAttemptOwnedComponent owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]);
+                if (!owned.SessionId.Equals(sessionId) || owned.FactionId != faction)
+                    continue;
+                if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entities[i]).Role != role)
+                    continue;
+                return em.GetComponentData<UnitHealth>(entities[i]).Current;
+            }
+
+            return -1;
         }
 
         private static string LiveTracePath()

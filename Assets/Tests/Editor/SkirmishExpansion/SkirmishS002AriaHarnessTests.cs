@@ -393,8 +393,9 @@ namespace Game.Tests.Editor
 
             em.AddComponentData(tank, new UnitPathFollow { PathIndex = 0 });
             float held = em.GetComponentData<LocalTransform>(tank).Position.x;
-            SkirmishWorldMovementService.Step(em, session, 1f, false);
-            Assert.AreEqual(held, em.GetComponentData<LocalTransform>(tank).Position.x, 0.001f);
+            Assert.Greater(SkirmishWorldMovementService.Step(em, session, 1f, false), 0);
+            Assert.Greater(em.GetComponentData<LocalTransform>(tank).Position.x, held + 1f);
+            Assert.IsFalse(em.HasComponent<UnitPathFollow>(tank));
         }
 
         [Test]
@@ -898,6 +899,60 @@ namespace Game.Tests.Editor
             CheckedInRunsCsvStaysHeaderOnly();
         }
 
+        [Test]
+        public void AriaSessionOrdersStructureColumnAndDestroysEnemyBase()
+        {
+            using var world = new World(nameof(AriaSessionOrdersStructureColumnAndDestroysEnemyBase));
+            BootPlayingSession(world, out Entity session, 130365);
+            EntityManager em = world.EntityManager;
+            PlaceOnAuthoredPads(em, session);
+            RevealAll(em);
+            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            Entity playerBase = DesignatedBase(em, 1);
+            Entity enemyBase = DesignatedBase(em, 2);
+            Entity shell = em.CreateEntity();
+            em.AddComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Manual });
+            world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+            Assert.AreNotEqual(
+                SkirmishGroupOrderKind.Attack,
+                FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
+
+            em.SetComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing });
+            world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+            Assert.AreEqual(
+                SkirmishGroupOrderKind.Attack,
+                FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
+            Assert.AreEqual(
+                SkirmishGroupOrderKind.Attack,
+                FirstFactionGroup(em, session, 1, SkirmishRoleKind.Rocketeer).LastOrder);
+            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            int steps = 0;
+            while (steps < 1080 && em.GetComponentData<UnitHealth>(enemyBase).Current > 0)
+            {
+                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
+                SkirmishExpandedEngagementService.Step(em, session, 1f, false);
+                SkirmishWorldMovementService.Step(em, session, 1f, false);
+                steps++;
+            }
+
+            Assert.Less(steps, 1080, "enemyHp=" + em.GetComponentData<UnitHealth>(enemyBase).Current);
+            Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
+            Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
+            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            PublishProjectedMatch(world, session);
+            Assert.AreEqual(SkirmishOutcomeKind.Victory, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Outcome);
+            Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Reason);
+            SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, match.Phase);
+            Assert.AreEqual(SkirmishOutcome.Victory, match.Outcome);
+            Assert.AreEqual(SkirmishEndReason.MainBaseDestroyed, match.Reason);
+            CheckedInRunsCsvStaysHeaderOnly();
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -926,6 +981,7 @@ namespace Game.Tests.Editor
                 suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
                 suite.RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating();
                 suite.FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery();
+                suite.AriaSessionOrdersStructureColumnAndDestroysEnemyBase();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }
             catch (Exception exception)

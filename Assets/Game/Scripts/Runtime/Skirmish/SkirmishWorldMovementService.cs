@@ -82,12 +82,12 @@ namespace Game.Runtime
                     continue;
                 }
 
-                if (SharedPathOwns(em, unit))
-                {
-                    SyncVisual(em, unit);
-                    moved++;
-                    continue;
-                }
+                // Live Desert Base pathfinding can attach UnitPathFollow after Attack
+                // writes a path request. That follow does not integrate skirmish
+                // intents, so yielding here left the column on the pad for 1080s.
+                // The local step is the assault movement.
+                if (em.HasComponent<UnitPathFollow>(unit))
+                    em.RemoveComponent<UnitPathFollow>(unit);
 
                 var transform = em.GetComponentData<LocalTransform>(unit);
                 float3 dest = new float3(intent.DestinationX, transform.Position.y, intent.DestinationZ);
@@ -136,14 +136,6 @@ namespace Game.Runtime
                    domain == SkirmishPopulationCategory.LogisticsSupport
                 ? GroundMetersPerSecond
                 : InfantryMetersPerSecond;
-        }
-
-        private static bool SharedPathOwns(EntityManager em, Entity unit)
-        {
-            // A pending path request is not movement. Live Desert Base has a grid,
-            // so Attack writes UnitPathRequest, but skirmish units often never gain
-            // a follow. Yielding on the request alone froze the assault at the pad.
-            return em.HasComponent<UnitPathFollow>(unit);
         }
 
         private static void TryReuseSharedPath(EntityManager em, Entity unit, float3 destination)

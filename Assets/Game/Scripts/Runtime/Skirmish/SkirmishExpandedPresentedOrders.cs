@@ -117,6 +117,60 @@ namespace Game.Runtime
             return SkirmishArmyCommandService.TryAttack(em, session, target, out _);
         }
 
+        /// <summary>
+        /// Orders every living player group that can damage a Barracks onto the
+        /// designated enemy base. Same command as the public Attack button, without
+        /// requiring the squad page or a raycast. Does not add units or materials.
+        /// </summary>
+        public static int TryOrderStructureAssault(EntityManager em, Entity session)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase != SkirmishSessionPhase.Playing)
+                return 0;
+            if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
+                return 0;
+
+            Entity target = FindVisibleEnemyBase(em, session);
+            if (target == Entity.Null && em.HasComponent<SkirmishFogStateComponent>(session))
+            {
+                SkirmishFogService.Project(em, session);
+                target = FindVisibleEnemyBase(em, session);
+            }
+
+            if (target == Entity.Null)
+                return 0;
+
+            DynamicBuffer<SkirmishArmyGroupRecord> groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+            var groupIds = new NativeList<uint>(groups.Length, Allocator.Temp);
+            for (int i = 0; i < groups.Length; i++)
+            {
+                SkirmishArmyGroupRecord group = groups[i];
+                if (group.FactionId != 1 || group.AliveCount <= 0)
+                    continue;
+                if (!IsStructureAssaultRole(group.Role))
+                    continue;
+                groupIds.Add(group.GroupId);
+            }
+
+            int issued = 0;
+            for (int i = 0; i < groupIds.Length; i++)
+            {
+                if (SkirmishArmyCommandService.TryIssueGroupOrder(
+                        em,
+                        session,
+                        groupIds[i],
+                        1,
+                        SkirmishGroupOrderKind.Attack,
+                        target,
+                        out _))
+                    issued++;
+            }
+
+            groupIds.Dispose();
+            return issued;
+        }
+
         public static bool TryAdvancePage(EntityManager em, Entity session)
         {
             if (!em.HasComponent<SkirmishArmySelectionComponent>(session))

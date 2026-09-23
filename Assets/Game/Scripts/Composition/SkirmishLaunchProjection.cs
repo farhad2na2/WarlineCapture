@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using Game.Components;
 using Game.Configs;
 using Game.Missions.Contracts;
@@ -50,7 +49,9 @@ namespace Game.Composition
             }
             config = config.NormalizeForBaseAssault();
             if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex)
-                return TryQueueExpandedDesertBaseEstablished(em, config.MapSeed);
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, config.MapSeed);
+            if (config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)
+                return TryQueueExpanded(em, SkirmishBattleCatalogConfig.DesertBaseAirMobileFieldScenarioId, config.MapSeed);
 
             var entity = em.CreateEntity(typeof(SkirmishMatchState));
             em.SetName(entity, "SkirmishSession");
@@ -67,21 +68,35 @@ namespace Game.Composition
             return true;
         }
 
-        private static bool TryQueueExpandedDesertBaseEstablished(EntityManager em, int seed)
+        private static bool TryQueueExpanded(EntityManager em, string catalogId, int seed)
         {
-            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out string error))
+            // Packaged content only: a standalone player cannot read the repository
+            // Design directory, and the authored definition asset is the source of truth.
+            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))
             {
-                Debug.LogError("[SkirmishLaunch] S002 Established queue failed. matrix=" + error);
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " matrix=" + error);
                 return false;
             }
 
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionCatalogConfig catalog = SkirmishExpansionCatalogConfig.Load();
+            if (catalog == null)
+            {
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId +
+                    " missing Resources/" + SkirmishExpansionCatalogConfig.ResourceName);
+                return false;
+            }
+
+            if (!catalog.TryGetDefinition(catalogId, out SkirmishScenarioDefinitionConfig definition) ||
+                definition == null)
+            {
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " definition=missing");
+                return false;
+            }
+
+            SkirmishExpansionAuthoredSet authored = catalog.ToAuthoredSet();
             var manifest = new SkirmishContentManifest
             {
-                RequiredFeatureIds = authored.DefinitionS002 != null
-                    ? authored.DefinitionS002.RequiredFeatureIds
-                    : Array.Empty<string>()
+                RequiredFeatureIds = definition.RequiredFeatureIds ?? Array.Empty<string>()
             };
             SkirmishPresetConfig mapPreset = SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseScenarioIndex);
             UnitPrefabRegistryAuthoringConfig registry = mapPreset != null && mapPreset.buildingPlacement != null
@@ -89,7 +104,7 @@ namespace Game.Composition
                 : null;
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
-                    SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId,
+                    catalogId,
                     SkirmishDifficultyId.Regular,
                     SkirmishSizeId.Standard,
                     seed,
@@ -102,7 +117,7 @@ namespace Game.Composition
                     registry))
             {
                 string detail = reasons == null || reasons.Count == 0 ? "compile failed" : reasons[0].ToString();
-                Debug.LogError("[SkirmishLaunch] S002 Established queue failed. " + detail);
+                Debug.LogError("[SkirmishLaunch] expanded queue failed. catalog=" + catalogId + " " + detail);
                 return false;
             }
 
@@ -113,8 +128,7 @@ namespace Game.Composition
                 " difficulty=" + setup.DifficultyId +
                 " size=" + setup.SizeId +
                 " seed=" + setup.Seed +
-                " mapHint=" + SkirmishPresetConfig.DesertBaseScenarioIndex +
-                " dispatch=" + SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex);
+                " mapHint=" + SkirmishPresetConfig.DesertBaseScenarioIndex);
             return true;
         }
 

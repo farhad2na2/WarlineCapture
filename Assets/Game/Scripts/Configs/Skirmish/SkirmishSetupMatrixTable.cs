@@ -75,18 +75,48 @@ namespace Game.Configs
     public static class SkirmishSetupMatrixTable
     {
         public const string RelativeCsvPath = "Design/Roadmap/Skirmish_Expansion/INITIAL_SETUP_MATRIX.csv";
+        public const string PackagedResourceName = "SkirmishExpansion/InitialSetupMatrix";
 
         public static bool TryLoad(string projectRoot, out List<SkirmishSetupMatrixRow> rows, out string error)
         {
-            rows = new List<SkirmishSetupMatrixRow>();
             string path = Path.Combine(projectRoot, RelativeCsvPath);
             if (!File.Exists(path))
             {
+                rows = new List<SkirmishSetupMatrixRow>();
                 error = "INITIAL_SETUP_MATRIX.csv is missing.";
                 return false;
             }
 
-            string[] lines = File.ReadAllLines(path);
+            return TryLoadFromText(File.ReadAllText(path), out rows, out error);
+        }
+
+        /// <summary>
+        /// Packaged runtime path: the matrix ships as a TextAsset under Resources so a
+        /// standalone player never reads the repository Design directory.
+        /// </summary>
+        public static bool TryLoadPackaged(out List<SkirmishSetupMatrixRow> rows, out string error)
+        {
+            var asset = UnityEngine.Resources.Load<UnityEngine.TextAsset>(PackagedResourceName);
+            if (asset == null)
+            {
+                rows = new List<SkirmishSetupMatrixRow>();
+                error = "Packaged skirmish setup matrix is missing (Resources/" + PackagedResourceName + ").";
+                return false;
+            }
+
+            return TryLoadFromText(asset.text, out rows, out error);
+        }
+
+        public static bool TryLoadFromText(string csvText, out List<SkirmishSetupMatrixRow> rows, out string error)
+        {
+            rows = new List<SkirmishSetupMatrixRow>();
+            if (string.IsNullOrEmpty(csvText))
+            {
+                error = "INITIAL_SETUP_MATRIX.csv has no data rows.";
+                return false;
+            }
+
+            string[] lines = csvText.Split('\n');
             if (lines.Length < 2)
             {
                 error = "INITIAL_SETUP_MATRIX.csv has no data rows.";

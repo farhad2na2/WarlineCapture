@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Runtime;
+using Game.Skirmish.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Collections;

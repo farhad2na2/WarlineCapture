@@ -233,6 +233,29 @@ namespace Game.Runtime
             return origin + (spawnPad ? new Vector3(4.5f, 0f, 0f) : Vector3.zero);
         }
 
+        public static bool TryResolveUnitSpawnWorld(
+            SkirmishResolvedSetup setup,
+            byte factionId,
+            SkirmishRoleKind role,
+            int memberIndex,
+            out Vector3 world)
+        {
+            return TryResolveMeasuredWorld(setup, factionId, false, string.Empty, role, memberIndex, out world);
+        }
+
+        /// <summary>
+        /// No-layout fallback pad offset. Prefab instances must always receive a
+        /// deliberate position; a baked prefab origin is never a deployment.
+        /// </summary>
+        public static Vector3 ResolveUnitFallbackWorld(byte factionId, int memberIndex)
+        {
+            Vector3 pad = StagingWorld(factionId, true);
+            int column = memberIndex % 4;
+            int row = memberIndex / 4;
+            float side = factionId == 2 ? -1f : 1f;
+            return pad + new Vector3(column * 2.2f * side, 0f, -row * 2.2f);
+        }
+
         public static bool TryResolveMeasuredWorld(
             SkirmishResolvedSetup setup,
             byte factionId,

@@ -1,8 +1,12 @@
+using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
 
 namespace Game.Runtime
 {
@@ -128,6 +132,11 @@ namespace Game.Runtime
             SkirmishArmyGroupSystem.EnsureSession(em, session, setup);
             SkirmishResearchService.EnsureSession(em, session, setup);
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            // The shared baked prefab registry is the compliant spawn source. Units
+            // instantiated from it render and move through the same entity pipeline as
+            // every other mode; the bare-entity fallback only covers Editor fixtures
+            // without a baked registry and keeps SpawnVisualPending set.
+            Dictionary<string, Entity> prefabLookup = BuildPrefabEntityLookup(em);
             bool startingSetBound = true;
             int infantryLive = 0;
             int groundLive = 0;
@@ -160,7 +169,9 @@ namespace Game.Runtime
                         i,
                         member,
                         perMemberSupply,
-                        prefabKey);
+                        prefabKey,
+                        prefabLookup,
+                        setup);
                     bool infantry = category == SkirmishPopulationCategory.Infantry;
                     bool needNew = openGroupId == 0 ||
                                    force.FactionId != openFaction ||
@@ -282,24 +293,120 @@ namespace Game.Runtime
             int perMemberSupply,
             string prefabKey)
         {
-            var owned = em.CreateEntity();
-            em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+            return CreateForceMember(em, sessionId, force, forceIndex, member, perMemberSupply, prefabKey, null, null);
+        }
+
+        internal static Entity CreateForceMember(
+            EntityManager em,
+            FixedString64Bytes sessionId,
+            SkirmishResolvedForceEntry force,
+            int forceIndex,
+            int member,
+            int perMemberSupply,
+            string prefabKey,
+            Dictionary<string, Entity> prefabLookup,
+            SkirmishResolvedSetup setup)
+        {
+            bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
+            Entity owned = fromPrefab
+                ? em.Instantiate(prefabEntity)
+                : em.CreateEntity();
+            SetOrAdd(em, owned, new SkirmishAttemptOwnedComponent
             {
                 SessionId = sessionId,
                 StableObjectId = new FixedString64Bytes(force.RoleId + "." + force.FactionId + "." + forceIndex + "." + member),
                 FactionId = force.FactionId,
                 IsStructure = 0
             });
-            em.AddComponentData(owned, new SkirmishUnitRoleComponent
+            SetOrAdd(em, owned, new SkirmishUnitRoleComponent
             {
                 Role = force.RoleKind,
                 Category = SkirmishRoleIds.Category(force.RoleKind),
                 SupplyCost = perMemberSupply
             });
-            em.AddComponentData(owned, new Faction { Id = force.FactionId });
+            SetOrAdd(em, owned, new Faction { Id = force.FactionId });
             if (!string.IsNullOrEmpty(prefabKey))
-                em.AddComponentData(owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(prefabKey) });
+                SetOrAdd(em, owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(prefabKey) });
+            if (fromPrefab)
+            {
+                Vector3 position = setup != null &&
+                    SkirmishVisualSpawnService.TryResolveUnitSpawnWorld(setup, force.FactionId, force.RoleKind, member, out Vector3 measured)
+                        ? measured
+                        : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
+                PlaceOnMap(em, owned, position);
+                // Rendered by the shared impostor/model presentation, not a per-unit
+                // GameObject; the visual attach pass must skip prefab instances.
+                SetOrAdd(em, owned, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
+                // The session keeps its fog-aware objective combat rules; shared
+                // auto-engagement must not open a second combat path on these units.
+                if (!em.HasComponent<CampaignMissionCombatSuppressedTag>(owned))
+                    em.AddComponentData(owned, new CampaignMissionCombatSuppressedTag());
+            }
+
             return owned;
+        }
+
+        private static bool TryResolvePrefabEntity(
+            Dictionary<string, Entity> prefabLookup,
+            string prefabKey,
+            out Entity prefabEntity)
+        {
+            prefabEntity = Entity.Null;
+            return prefabLookup != null &&
+                   !string.IsNullOrEmpty(prefabKey) &&
+                   prefabLookup.TryGetValue(prefabKey, out prefabEntity) &&
+                   prefabEntity != Entity.Null;
+        }
+
+        internal static Dictionary<string, Entity> BuildPrefabEntityLookup(EntityManager em)
+        {
+            var lookup = new Dictionary<string, Entity>(System.StringComparer.OrdinalIgnoreCase);
+            using var query = em.CreateEntityQuery(typeof(UnitPrefabRegistryTag), typeof(UnitPrefabRegistryEntry));
+            using NativeArray<Entity> registries = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < registries.Length; i++)
+            {
+                if (!em.HasBuffer<UnitPrefabRegistryEntry>(registries[i]))
+                    continue;
+                DynamicBuffer<UnitPrefabRegistryEntry> entries = em.GetBuffer<UnitPrefabRegistryEntry>(registries[i]);
+                for (int j = 0; j < entries.Length; j++)
+                {
+                    Entity prefab = entries[j].Prefab;
+                    if (prefab == Entity.Null || !em.Exists(prefab) || !em.HasComponent<UnitSourcePrefabKey>(prefab))
+                        continue;
+                    string key = em.GetComponentData<UnitSourcePrefabKey>(prefab).Value.ToString();
+                    if (key.Length == 0)
+                        continue;
+                    lookup[key] = prefab;
+                }
+            }
+
+            return lookup;
+        }
+
+        private static void PlaceOnMap(EntityManager em, Entity entity, Vector3 position)
+        {
+            var pos = new float3(position.x, position.y, position.z);
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (!grids.IsEmptyIgnoreFilter)
+            {
+                GridConfig grid = grids.GetSingleton<GridConfig>();
+                int2 cell = GridUtils.WorldToCell(grid, pos);
+                if (cell.x >= 0 && cell.y >= 0 && cell.x < grid.Width && cell.y < grid.Height)
+                {
+                    default(MapSurfaceSpawnGrounding).TryGroundCellCenter(em, grid, cell, ref pos, out _);
+                    SetOrAdd(em, entity, new UnitGrid { Cell = cell });
+                }
+            }
+
+            SetOrAdd(em, entity, LocalTransform.FromPosition(pos));
+        }
+
+        private static void SetOrAdd<T>(EntityManager em, Entity entity, T component) where T : unmanaged, IComponentData
+        {
+            if (em.HasComponent<T>(entity))
+                em.SetComponentData(entity, component);
+            else
+                em.AddComponentData(entity, component);
         }
 
         public static Entity CreateStructure(

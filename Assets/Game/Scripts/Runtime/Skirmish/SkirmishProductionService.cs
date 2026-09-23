@@ -126,10 +126,12 @@ namespace Game.Runtime
                 Quantity = decision.MemberCount,
                 SupplyCost = decision.SupplyCost
             };
+            System.Collections.Generic.Dictionary<string, Entity> prefabLookup =
+                SkirmishScenarioSpawnSystem.BuildPrefabEntityLookup(em);
             for (int i = 0; i < decision.MemberCount; i++)
             {
                 Entity member = SkirmishScenarioSpawnSystem.CreateForceMember(
-                    em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey);
+                    em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey, prefabLookup, setup);
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);
@@ -338,10 +340,12 @@ namespace Game.Runtime
                 Quantity = reservation.MemberCount,
                 SupplyCost = reservation.SupplyCost
             };
+            System.Collections.Generic.Dictionary<string, Entity> prefabLookup =
+                SkirmishScenarioSpawnSystem.BuildPrefabEntityLookup(em);
             for (int i = 0; i < reservation.MemberCount; i++)
             {
                 Entity member = SkirmishScenarioSpawnSystem.CreateForceMember(
-                    em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey);
+                    em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey, prefabLookup, setup);
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);

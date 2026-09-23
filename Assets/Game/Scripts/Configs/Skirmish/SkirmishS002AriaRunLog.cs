@@ -8,6 +8,7 @@ namespace Game.Configs
     public struct SkirmishS002AriaTerminalFacts
     {
         public string RunId;
+        public string CatalogId;
         public int DefinitionVersion;
         public string CodeHash;
         public string ConfigHash;
@@ -117,10 +118,27 @@ namespace Game.Configs
 
         public static bool TryNextAriaRunId(string csvText, int seed, string locale, out string runId, out string error)
         {
+            return TryNextAriaRunId(csvText, SkirmishAcceptanceCensusCapture.CatalogId, seed, locale, out runId, out error);
+        }
+
+        public static bool TryNextAriaRunId(
+            string csvText,
+            string catalogId,
+            int seed,
+            string locale,
+            out string runId,
+            out string error)
+        {
             runId = null;
-            if (!SkirmishAcceptanceCensusCapture.IsRegularStandardAriaSeed(seed))
+            string catalog = string.IsNullOrEmpty(catalogId) ? SkirmishAcceptanceCensusCapture.CatalogId : catalogId;
+            bool seedOk = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+                ? SkirmishAcceptanceCensusCapture.IsS003RegularStandardSeed(seed)
+                : SkirmishAcceptanceCensusCapture.IsRegularStandardAriaSeed(seed);
+            if (!seedOk)
             {
-                error = "First-visit ARIA seed must be 104731, 130365 or 155923.";
+                error = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+                    ? "First-visit ARIA seed must be 104732, 130366 or 155924."
+                    : "First-visit ARIA seed must be 104731, 130365 or 155923.";
                 return false;
             }
 
@@ -132,7 +150,7 @@ namespace Game.Configs
             }
 
             string token = string.Equals(locale, GameLocalization.EnglishLocaleCode, StringComparison.Ordinal) ? "en" : "fa";
-            string prefix = string.Format(CultureInfo.InvariantCulture, "S002-aria-rs-{0}-{1}-", seed, token);
+            string prefix = string.Format(CultureInfo.InvariantCulture, "{0}-aria-rs-{1}-{2}-", catalog, seed, token);
             for (int attempt = 1; attempt <= 3; attempt++)
             {
                 string candidate = prefix + attempt.ToString(CultureInfo.InvariantCulture);
@@ -206,7 +224,7 @@ namespace Game.Configs
             string[] fields =
             {
                 facts.RunId,
-                SkirmishAcceptanceCensusCapture.CatalogId,
+                string.IsNullOrEmpty(facts.CatalogId) ? SkirmishAcceptanceCensusCapture.CatalogId : facts.CatalogId,
                 facts.DefinitionVersion.ToString(CultureInfo.InvariantCulture),
                 facts.CodeHash ?? string.Empty,
                 facts.ConfigHash ?? string.Empty,

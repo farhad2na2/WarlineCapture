@@ -323,6 +323,16 @@ namespace Game.Configs
             out SkirmishAcceptanceCensus census,
             out List<SkirmishCompileReason> reasons)
         {
+            return TryCaptureS003RegularStandard(authored, matrix, SkirmishS003FirstVisit.SeedA, out census, out reasons);
+        }
+
+        public static bool TryCaptureS003RegularStandard(
+            SkirmishExpansionAuthoredSet authored,
+            IReadOnlyList<SkirmishSetupMatrixRow> matrix,
+            int seed,
+            out SkirmishAcceptanceCensus census,
+            out List<SkirmishCompileReason> reasons)
+        {
             return TryCaptureDefinition(
                 authored,
                 authored == null ? null : authored.DefinitionS003,
@@ -330,7 +340,7 @@ namespace Game.Configs
                 matrix,
                 SkirmishDifficultyId.Regular,
                 SkirmishSizeId.Standard,
-                SkirmishS003FirstVisit.SeedA,
+                seed,
                 out census,
                 out reasons);
         }

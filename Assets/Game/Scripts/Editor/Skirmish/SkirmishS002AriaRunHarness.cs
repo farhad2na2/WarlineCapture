@@ -25,6 +25,7 @@ namespace Game.Editor
     public static class SkirmishS002AriaRunHarness
     {
         private const string Key = "Warline.S002.AriaRun";
+        private const string CatalogKey = "Warline.Skirmish.AriaCatalog";
         private const string SeedKey = "Warline.S002.AriaSeed";
         private const string LocaleKey = "Warline.S002.AriaLocale";
         private const string StartedKey = "Warline.S002.AriaStarted";
@@ -41,6 +42,7 @@ namespace Game.Editor
         private static SkirmishS002NormalSpeedLatch speedLatch = SkirmishS002NormalSpeedLatch.Start();
         private static int seed = SkirmishAcceptanceCensusCapture.FirstVisitSeed;
         private static string locale = GameLocalization.EnglishLocaleCode;
+        private static string catalogId = SkirmishAcceptanceCensusCapture.CatalogId;
 
         static SkirmishS002AriaRunHarness()
         {
@@ -48,6 +50,7 @@ namespace Game.Editor
             {
                 seed = SessionState.GetInt(SeedKey, SkirmishAcceptanceCensusCapture.FirstVisitSeed);
                 locale = SessionState.GetString(LocaleKey, GameLocalization.EnglishLocaleCode);
+                catalogId = SessionState.GetString(CatalogKey, SkirmishAcceptanceCensusCapture.CatalogId);
                 speedLatch = SkirmishS002NormalSpeedLatch.Start();
                 speedLatch.Normal = SessionState.GetBool(NormalKey, true);
                 normalSpeed = speedLatch.Normal;
@@ -74,6 +77,10 @@ namespace Game.Editor
         [MenuItem("Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 fa-IR")]
         public static void Launch155923Fa() => Launch(155923, GameLocalization.PersianLocaleCode);
 
+        [MenuItem("Tools/Warline/Skirmish/Launch S003 ARIA Watch 104732 en")]
+        public static void LaunchS003104732En() =>
+            LaunchCatalog(SkirmishAcceptanceCensusCapture.S003CatalogId, 104732, GameLocalization.EnglishLocaleCode);
+
         public static void LaunchFromEnvironment()
         {
             string seedText = Environment.GetEnvironmentVariable("WARLINE_S002_SEED");
@@ -87,11 +94,23 @@ namespace Game.Editor
 
         public static void Launch(int requestedSeed, string requestedLocale)
         {
-            if (!SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(requestedSeed, requestedLocale, out _, out string error))
+            LaunchCatalog(SkirmishAcceptanceCensusCapture.CatalogId, requestedSeed, requestedLocale);
+        }
+
+        public static void LaunchCatalog(string requestedCatalog, int requestedSeed, string requestedLocale)
+        {
+            string error;
+            bool accepted = requestedCatalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+                ? SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(requestedSeed, requestedLocale, out _, out error)
+                : SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(requestedSeed, requestedLocale, out _, out error);
+            if (!accepted)
                 throw new InvalidOperationException(error);
             if (EditorApplication.isPlaying)
-                throw new InvalidOperationException("Exit play mode before launching S002 ARIA watch.");
+                throw new InvalidOperationException("Exit play mode before launching the ARIA watch.");
 
+            catalogId = string.IsNullOrEmpty(requestedCatalog)
+                ? SkirmishAcceptanceCensusCapture.CatalogId
+                : requestedCatalog;
             seed = requestedSeed;
             locale = requestedLocale;
             stage = 0;
@@ -104,6 +123,7 @@ namespace Game.Editor
             SessionState.SetBool(NormalKey, true);
             SessionState.SetInt(SeedKey, seed);
             SessionState.SetString(LocaleKey, locale);
+            SessionState.SetString(CatalogKey, catalogId);
             SessionState.SetString(StartedKey, string.Empty);
             SessionState.SetFloat(PlayingSinceKey, 0f);
             Directory.CreateDirectory(EvidenceDirectory());
@@ -132,7 +152,18 @@ namespace Game.Editor
         public static string EvidenceDirectory()
         {
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            return Path.Combine(root, SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory);
+            string relative = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
+                ? SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory
+                : SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory;
+            return Path.Combine(root, relative);
+        }
+
+        private static string RunsCsvPath(string root)
+        {
+            string relative = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
+                ? Path.Combine(SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory, "..", SkirmishAcceptanceScaffold.RunsFileName)
+                : SkirmishAcceptanceScaffold.RelativeRunsPath;
+            return Path.GetFullPath(Path.Combine(root, relative));
         }
 
         private static string ValidationProfileRoot()
@@ -180,8 +211,11 @@ namespace Game.Editor
 
                     if (!TryQueueExpanded(em))
                         return;
-                    if (!SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(
-                            seed, locale, out SkirmishAriaAcceptancePayload payload, out _))
+                    SkirmishAriaAcceptancePayload payload;
+                    bool selected = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
+                        ? SkirmishAriaAcceptancePayload.TryCreateFirstVisitS003(seed, locale, out payload, out _)
+                        : SkirmishAriaAcceptancePayload.TryCreateFirstVisitS002(seed, locale, out payload, out _);
+                    if (!selected)
                         return;
                     Debug.Log("[SkirmishS002AriaRun] selected " + payload.FormatSelectedConfiguration());
                     if (TryReadCensus(Path.GetFullPath(Path.Combine(Application.dataPath, "..")), out SkirmishAcceptanceCensus census))
@@ -294,9 +328,14 @@ namespace Game.Editor
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out string error))
                 throw new InvalidOperationException(error);
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            bool airMobile = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId;
+            SkirmishScenarioDefinitionConfig definition = airMobile ? authored.DefinitionS003 : authored.DefinitionS002;
+            string queuedCatalog = airMobile
+                ? SkirmishAcceptanceCensusCapture.S003CatalogId
+                : SkirmishAcceptanceCensusCapture.CatalogId;
             var manifest = new SkirmishContentManifest
             {
-                RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds
+                RequiredFeatureIds = definition.RequiredFeatureIds
             };
             UnitPrefabRegistryAuthoringConfig registry =
                 AssetDatabase.LoadAssetAtPath<UnitPrefabRegistryAuthoringConfig>(RegistryPath);
@@ -304,7 +343,7 @@ namespace Game.Editor
                 return false;
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
-                    SkirmishAcceptanceCensusCapture.CatalogId,
+                    queuedCatalog,
                     SkirmishDifficultyId.Regular,
                     SkirmishSizeId.Standard,
                     seed,
@@ -315,7 +354,7 @@ namespace Game.Editor
                     out _,
                     out List<SkirmishCompileReason> reasons,
                     registry))
-                throw new InvalidOperationException(reasons == null || reasons.Count == 0 ? "S002 queue failed" : reasons[0].ToString());
+                throw new InvalidOperationException(reasons == null || reasons.Count == 0 ? queuedCatalog + " queue failed" : reasons[0].ToString());
 
             Debug.Log(string.Format(
                 CultureInfo.InvariantCulture,
@@ -389,9 +428,10 @@ namespace Game.Editor
         private static string LiveTracePath()
         {
             string token = string.Equals(locale, GameLocalization.EnglishLocaleCode, StringComparison.Ordinal) ? "en" : "fa";
+            string catalogToken = string.IsNullOrEmpty(catalogId) ? "s002" : catalogId.ToLowerInvariant();
             return Path.Combine(
                 EvidenceDirectory(),
-                string.Format(CultureInfo.InvariantCulture, "s002-aria-live-{0}-{1}.jsonl", seed, token));
+                string.Format(CultureInfo.InvariantCulture, "{0}-aria-live-{1}-{2}.jsonl", catalogToken, seed, token));
         }
 
         internal static void ResetLiveTrace(string path)
@@ -435,19 +475,23 @@ namespace Game.Editor
             }
 
             string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            string runsPath = Path.Combine(root, SkirmishAcceptanceScaffold.RelativeRunsPath);
+            string runsPath = RunsCsvPath(root);
             string csv = File.Exists(runsPath) ? File.ReadAllText(runsPath) : SkirmishAcceptanceScaffold.RequiredHeader + "\n";
-            if (!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, seed, locale, out string runId, out string idError))
+            if (!SkirmishS002AriaRunLog.TryNextAriaRunId(csv, catalogId, seed, locale, out string runId, out string idError))
             {
                 Debug.LogError("[SkirmishS002AriaRun] result=Failed " + idError);
                 UiShellRuntimeGateway.StopAriaPlay();
                 EditorApplication.ExitPlaymode();
+                RequestQuitIfAsked(2);
                 return;
             }
 
             string evidenceName = runId.ToLowerInvariant();
-            string traceRelative = SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory + "/" + evidenceName + ".jsonl";
-            string logRelative = SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory + "/" + evidenceName + "-log.txt";
+            string evidenceRelative = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId
+                ? SkirmishAcceptanceScaffold.S003RelativeReportEvidenceDirectory
+                : SkirmishAcceptanceScaffold.RelativeReportEvidenceDirectory;
+            string traceRelative = evidenceRelative + "/" + evidenceName + ".jsonl";
+            string logRelative = evidenceRelative + "/" + evidenceName + "-log.txt";
             string traceAbsolute = Path.Combine(root, traceRelative.Replace('/', Path.DirectorySeparatorChar));
             string logAbsolute = Path.Combine(root, logRelative.Replace('/', Path.DirectorySeparatorChar));
             Directory.CreateDirectory(EvidenceDirectory());
@@ -463,6 +507,7 @@ namespace Game.Editor
             var facts = new SkirmishS002AriaTerminalFacts
             {
                 RunId = runId,
+                CatalogId = catalogId,
                 Seed = seed,
                 Locale = locale,
                 Device = "Editor",
@@ -503,6 +548,7 @@ namespace Game.Editor
 
             UiShellRuntimeGateway.StopAriaPlay();
             EditorApplication.ExitPlaymode();
+            RequestQuitIfAsked(counted ? 0 : 2);
         }
 
         private static bool TryReadCensus(string root, out SkirmishAcceptanceCensus census)
@@ -511,6 +557,16 @@ namespace Game.Editor
             if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out _))
                 return false;
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            if (catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId)
+            {
+                return SkirmishAcceptanceCensusCapture.TryCaptureS003RegularStandard(
+                    authored,
+                    matrix,
+                    seed,
+                    out census,
+                    out _);
+            }
+
             return SkirmishAcceptanceCensusCapture.TryCapture(
                 authored,
                 matrix,
@@ -519,6 +575,13 @@ namespace Game.Editor
                 seed,
                 out census,
                 out _);
+        }
+
+        private static void RequestQuitIfAsked(int exitCode)
+        {
+            if (!string.Equals(Environment.GetEnvironmentVariable("WARLINE_ARIA_QUIT"), "1", StringComparison.Ordinal))
+                return;
+            EditorApplication.delayCall += () => EditorApplication.Exit(exitCode);
         }
 
         private static string RowResult(string row)

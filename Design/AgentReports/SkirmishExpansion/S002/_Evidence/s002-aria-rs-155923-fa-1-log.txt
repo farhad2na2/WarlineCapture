@@ -1,0 +1,2 @@
+[SkirmishS002AriaRun] appended=1 countedWin=1 error=
+S002-aria-rs-155923-fa-1,S002,1,0c104508f96f68b3850abae2dcc62f719934aadd5ff84f0c3853023afc2f067f,930b49cd157b1a32283e14046b7bb1fc2f89f38b47ca105ef3026e069f725890,Standard,Regular,155923,fa-IR,Editor,aria,1,2026-09-23T11:40:59Z,Victory,MainBaseDestroyed,99.497,0,0,Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-rs-155923-fa-1.jsonl,Design/AgentReports/SkirmishExpansion/S002/_Evidence/s002-aria-rs-155923-fa-1-log.txt

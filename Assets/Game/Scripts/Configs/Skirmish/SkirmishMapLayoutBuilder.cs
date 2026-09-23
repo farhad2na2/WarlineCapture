@@ -16,6 +16,31 @@ namespace Game.Configs
         public const float GroundMetresPerSecond = 8f;
         public const float AirMetresPerSecond = 16f;
 
+        /// <summary>
+        /// Desert Base world binding derived from the operation map's authored deployment
+        /// anchors (faction_1 at 949,344.7; faction_2 at 1686,108; radius 102.1). The base
+        /// axis (u .12 -> .88) maps onto the anchor pair; the across extent is fitted to
+        /// 300 m so every authored anchor and legal pad stays inside the map's
+        /// 2048 x 1024 world bounds (the envelope aspect would reach past the southern
+        /// edge behind the enemy deployment). Re-derive from the map definition in the
+        /// Editor builder when the map changes.
+        /// </summary>
+        public static SkirmishLayoutWorldBindingConfig DesertBaseWorldBinding =>
+            new SkirmishLayoutWorldBindingConfig
+            {
+                OriginX = 832.6532f,
+                OriginZ = 382.0755f,
+                ForwardX = 0.9521014f,
+                ForwardZ = -0.3057846f,
+                AcrossX = 0.3057846f,
+                AcrossZ = 0.9521014f,
+                ForwardMetres = 1018.5232f,
+                AcrossMetres = 300f,
+                PlayerAnchorId = "anchor.skirmish.desert_base_01.deployment.faction_1",
+                EnemyAnchorId = "anchor.skirmish.desert_base_01.deployment.faction_2",
+                SourceHash = "db.deploy-anchors.v1"
+            };
+
         public static void ApplyDesertBaseAssault(SkirmishMapLayoutConfig layout)
         {
             if (layout == null)
@@ -149,6 +174,7 @@ namespace Game.Configs
                 anchors.ToArray(),
                 routes,
                 pads);
+            layout.ApplyWorldBinding(DesertBaseWorldBinding);
         }
 
         public static bool ShouldBindRegularStandard(SkirmishResolvedSetup setup)
@@ -186,50 +212,42 @@ namespace Game.Configs
 
             if (layout.TryGetPad(1, SkirmishLegalPadKind.BaseBarracks, out SkirmishLegalPadConfig playerBase))
             {
-                setup.PlayerBaseWorldX = playerBase.CenterX;
-                setup.PlayerBaseWorldZ = playerBase.CenterZ;
+                ProjectPad(layout, playerBase, out setup.PlayerBaseWorldX, out setup.PlayerBaseWorldZ);
             }
 
             if (layout.TryGetPad(2, SkirmishLegalPadKind.BaseBarracks, out SkirmishLegalPadConfig enemyBase))
             {
-                setup.EnemyBaseWorldX = enemyBase.CenterX;
-                setup.EnemyBaseWorldZ = enemyBase.CenterZ;
+                ProjectPad(layout, enemyBase, out setup.EnemyBaseWorldX, out setup.EnemyBaseWorldZ);
             }
 
             if (layout.TryGetPad(1, SkirmishLegalPadKind.GroundStaging, out SkirmishLegalPadConfig playerStaging))
             {
-                setup.PlayerStagingWorldX = playerStaging.CenterX;
-                setup.PlayerStagingWorldZ = playerStaging.CenterZ;
+                ProjectPad(layout, playerStaging, out setup.PlayerStagingWorldX, out setup.PlayerStagingWorldZ);
             }
 
             if (layout.TryGetPad(2, SkirmishLegalPadKind.GroundStaging, out SkirmishLegalPadConfig enemyStaging))
             {
-                setup.EnemyStagingWorldX = enemyStaging.CenterX;
-                setup.EnemyStagingWorldZ = enemyStaging.CenterZ;
+                ProjectPad(layout, enemyStaging, out setup.EnemyStagingWorldX, out setup.EnemyStagingWorldZ);
             }
 
             if (layout.TryGetPad(1, SkirmishLegalPadKind.VehicleSpawn, out SkirmishLegalPadConfig playerSpawn))
             {
-                setup.PlayerSpawnPadX = playerSpawn.CenterX;
-                setup.PlayerSpawnPadZ = playerSpawn.CenterZ;
+                ProjectPad(layout, playerSpawn, out setup.PlayerSpawnPadX, out setup.PlayerSpawnPadZ);
             }
 
             if (layout.TryGetPad(1, SkirmishLegalPadKind.Rally, out SkirmishLegalPadConfig playerRally))
             {
-                setup.PlayerRallyPadX = playerRally.CenterX;
-                setup.PlayerRallyPadZ = playerRally.CenterZ;
+                ProjectPad(layout, playerRally, out setup.PlayerRallyPadX, out setup.PlayerRallyPadZ);
             }
 
             if (layout.TryGetPad(2, SkirmishLegalPadKind.VehicleSpawn, out SkirmishLegalPadConfig enemySpawn))
             {
-                setup.EnemySpawnPadX = enemySpawn.CenterX;
-                setup.EnemySpawnPadZ = enemySpawn.CenterZ;
+                ProjectPad(layout, enemySpawn, out setup.EnemySpawnPadX, out setup.EnemySpawnPadZ);
             }
 
             if (layout.TryGetPad(2, SkirmishLegalPadKind.Rally, out SkirmishLegalPadConfig enemyRally))
             {
-                setup.EnemyRallyPadX = enemyRally.CenterX;
-                setup.EnemyRallyPadZ = enemyRally.CenterZ;
+                ProjectPad(layout, enemyRally, out setup.EnemyRallyPadX, out setup.EnemyRallyPadZ);
             }
 
             if (setup.Forces != null)
@@ -246,8 +264,7 @@ namespace Game.Configs
                         continue;
                     }
 
-                    force.SpawnWorldX = pad.CenterX;
-                    force.SpawnWorldZ = pad.CenterZ;
+                    ProjectPad(layout, pad, out force.SpawnWorldX, out force.SpawnWorldZ);
                     setup.Forces[i] = force;
                 }
             }
@@ -266,11 +283,29 @@ namespace Game.Configs
                         continue;
                     }
 
-                    structure.SpawnWorldX = pad.CenterX;
-                    structure.SpawnWorldZ = pad.CenterZ;
+                    ProjectPad(layout, pad, out structure.SpawnWorldX, out structure.SpawnWorldZ);
                     setup.Structures[i] = structure;
                 }
             }
+        }
+
+        /// <summary>
+        /// Pad centers are stored in the layout's authoring envelope. When the layout
+        /// pins a world binding to the loaded operation map, positions deploy through
+        /// that binding; otherwise the legacy envelope coordinates pass through.
+        /// </summary>
+        private static void ProjectPad(
+            SkirmishMapLayoutConfig layout,
+            in SkirmishLegalPadConfig pad,
+            out float worldX,
+            out float worldZ)
+        {
+            if (layout != null && layout.HasWorldBinding &&
+                layout.TryProjectLocalToMap(pad.CenterX, pad.CenterZ, out worldX, out worldZ))
+                return;
+
+            worldX = pad.CenterX;
+            worldZ = pad.CenterZ;
         }
 
         public static bool TryPadForForce(

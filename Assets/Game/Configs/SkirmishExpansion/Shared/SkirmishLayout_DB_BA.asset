@@ -387,3 +387,15 @@ MonoBehaviour:
     WidthMetres: 14
     DepthMetres: 12
     FactionId: 0
+  worldBinding:
+    OriginX: 832.6532
+    OriginZ: 382.0755
+    ForwardX: 0.9521014
+    ForwardZ: -0.3057846
+    AcrossX: 0.3057846
+    AcrossZ: 0.9521014
+    ForwardMetres: 1018.5232
+    AcrossMetres: 300
+    PlayerAnchorId: anchor.skirmish.desert_base_01.deployment.faction_1
+    EnemyAnchorId: anchor.skirmish.desert_base_01.deployment.faction_2
+    SourceHash: db.deploy-anchors.v1

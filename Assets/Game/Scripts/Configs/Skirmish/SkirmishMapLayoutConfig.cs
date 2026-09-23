@@ -68,6 +68,35 @@ namespace Game.Configs
         public byte FactionId;
     }
 
+    /// <summary>
+    /// Pins the layout's normalized authoring frame onto the loaded operation map.
+    /// The map owner derives Origin/Forward/Across and usable metres from the map
+    /// definition's authored deployment anchors and saves them here; runtime never
+    /// reapplies the raw envelope coordinates to the world.
+    /// </summary>
+    [Serializable]
+    public struct SkirmishLayoutWorldBindingConfig
+    {
+        public float OriginX;
+        public float OriginZ;
+        public float ForwardX;
+        public float ForwardZ;
+        public float AcrossX;
+        public float AcrossZ;
+        public float ForwardMetres;
+        public float AcrossMetres;
+        public string PlayerAnchorId;
+        public string EnemyAnchorId;
+        public string SourceHash;
+
+        public bool IsValid =>
+            ForwardMetres > 0f && AcrossMetres > 0f &&
+            (ForwardX != 0f || ForwardZ != 0f) &&
+            (AcrossX != 0f || AcrossZ != 0f) &&
+            !string.IsNullOrEmpty(PlayerAnchorId) &&
+            !string.IsNullOrEmpty(EnemyAnchorId);
+    }
+
     [CreateAssetMenu(menuName = "Game/SkirmishExpansion/Map Layout")]
     public sealed class SkirmishMapLayoutConfig : ScriptableObject
     {
@@ -89,6 +118,7 @@ namespace Game.Configs
         [SerializeField] private SkirmishLayoutAnchorConfig[] anchors = Array.Empty<SkirmishLayoutAnchorConfig>();
         [SerializeField] private SkirmishLayoutRouteConfig[] routes = Array.Empty<SkirmishLayoutRouteConfig>();
         [SerializeField] private SkirmishLegalPadConfig[] pads = Array.Empty<SkirmishLegalPadConfig>();
+        [SerializeField] private SkirmishLayoutWorldBindingConfig worldBinding;
 
         public string LayoutId => layoutId;
         public string OperationMapId => operationMapId;
@@ -102,6 +132,50 @@ namespace Game.Configs
         public SkirmishLayoutAnchorConfig[] Anchors => anchors;
         public SkirmishLayoutRouteConfig[] Routes => routes;
         public SkirmishLegalPadConfig[] Pads => pads;
+        public SkirmishLayoutWorldBindingConfig WorldBinding => worldBinding;
+        public bool HasWorldBinding => worldBinding.IsValid;
+
+        internal void ApplyWorldBinding(in SkirmishLayoutWorldBindingConfig binding)
+        {
+            worldBinding = binding;
+        }
+
+        /// <summary>
+        /// Projects a normalized authoring position into the loaded map's world frame.
+        /// u runs player rear to enemy rear along Forward; v runs across, with v=0.5 on
+        /// the base-to-base axis. Returns false when no map binding is pinned.
+        /// </summary>
+        public bool TryProjectToMap(float u, float v, out float worldX, out float worldZ)
+        {
+            worldX = 0f;
+            worldZ = 0f;
+            if (!HasWorldBinding)
+                return false;
+
+            worldX = worldBinding.OriginX +
+                     u * worldBinding.ForwardMetres * worldBinding.ForwardX +
+                     (v - 0.5f) * worldBinding.AcrossMetres * worldBinding.AcrossX;
+            worldZ = worldBinding.OriginZ +
+                     u * worldBinding.ForwardMetres * worldBinding.ForwardZ +
+                     (v - 0.5f) * worldBinding.AcrossMetres * worldBinding.AcrossZ;
+            return true;
+        }
+
+        /// <summary>
+        /// Converts a stored envelope-frame position (anchors/pads authored against
+        /// Origin/WorldWidth/WorldDepth) into the loaded map's world frame.
+        /// </summary>
+        public bool TryProjectLocalToMap(float localX, float localZ, out float mapX, out float mapZ)
+        {
+            mapX = 0f;
+            mapZ = 0f;
+            if (!HasWorldBinding || worldWidthMetres <= 0f || worldDepthMetres <= 0f)
+                return false;
+
+            float u = (localX - originX) / worldWidthMetres;
+            float v = (localZ - originZ) / worldDepthMetres;
+            return TryProjectToMap(u, v, out mapX, out mapZ);
+        }
 
         public void ConfigureDesertBaseAssault()
         {

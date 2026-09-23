@@ -11,6 +11,17 @@ namespace Game.Configs
         public const float FlankInfantryContactMax = 105f;
         public const float ProjectionEpsilon = 0.05f;
 
+        // Loaded Desert Base operation-map world bounds (OperationMap_Compatibility_DesertBase01).
+        public const float DesertBaseMapMinX = 0f;
+        public const float DesertBaseMapMinZ = 0f;
+        public const float DesertBaseMapMaxX = 2048f;
+        public const float DesertBaseMapMaxZ = 1024f;
+        public const float DesertBasePlayerDeploymentX = 949f;
+        public const float DesertBasePlayerDeploymentZ = 344.7f;
+        public const float DesertBaseEnemyDeploymentX = 1686f;
+        public const float DesertBaseEnemyDeploymentZ = 108f;
+        public const float WorldBindingEpsilon = 0.5f;
+
         private static readonly string[] RequiredRoles =
         {
             "base.player",
@@ -119,7 +130,78 @@ namespace Game.Configs
                     reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.InsufficientAnchor, "routes", "Approaches must keep independent interiors."));
             }
 
+            ValidateWorldBinding(layout, reasons);
+
             return reasons.Count == start;
+        }
+
+        /// <summary>
+        /// A pinned world binding must keep every authored anchor and legal pad inside the
+        /// loaded map's world bounds, and the base anchors must land on the operation
+        /// map's authored deployment anchors. This is the guard against deploying outside
+        /// the playable/camera area.
+        /// </summary>
+        private static void ValidateWorldBinding(SkirmishMapLayoutConfig layout, List<SkirmishCompileReason> reasons)
+        {
+            if (!layout.HasWorldBinding)
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.InsufficientAnchor,
+                    "worldBinding",
+                    "Layout has no pinned operation-map world binding."));
+                return;
+            }
+
+            SkirmishLayoutAnchorConfig[] anchors = layout.Anchors;
+            for (int i = 0; i < anchors.Length; i++)
+            {
+                if (!layout.TryProjectToMap(anchors[i].NormalizedU, anchors[i].NormalizedV, out float x, out float z) ||
+                    !InsideMapBounds(x, z, 0f, 0f))
+                {
+                    reasons.Add(new SkirmishCompileReason(
+                        SkirmishReasonCode.BlockedSpawn, anchors[i].AnchorId, "Anchor projects outside the loaded map."));
+                }
+            }
+
+            SkirmishLegalPadConfig[] pads = layout.Pads;
+            if (pads != null)
+            {
+                for (int i = 0; i < pads.Length; i++)
+                {
+                    if (!layout.TryProjectLocalToMap(pads[i].CenterX, pads[i].CenterZ, out float x, out float z) ||
+                        !InsideMapBounds(x, z, pads[i].WidthMetres, pads[i].DepthMetres))
+                    {
+                        reasons.Add(new SkirmishCompileReason(
+                            SkirmishReasonCode.BlockedSpawn, pads[i].PadId, "Pad projects outside the loaded map."));
+                    }
+                }
+            }
+
+            if (layout.TryGetAnchor("base.player", out SkirmishLayoutAnchorConfig playerBase) &&
+                layout.TryProjectToMap(playerBase.NormalizedU, playerBase.NormalizedV, out float px, out float pz) &&
+                (Abs(px - DesertBasePlayerDeploymentX) > WorldBindingEpsilon ||
+                 Abs(pz - DesertBasePlayerDeploymentZ) > WorldBindingEpsilon))
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.InsufficientAnchor, "worldBinding",
+                    "base.player does not land on the map's player deployment anchor."));
+            }
+
+            if (layout.TryGetAnchor("base.enemy", out SkirmishLayoutAnchorConfig enemyBase) &&
+                layout.TryProjectToMap(enemyBase.NormalizedU, enemyBase.NormalizedV, out float ex, out float ez) &&
+                (Abs(ex - DesertBaseEnemyDeploymentX) > WorldBindingEpsilon ||
+                 Abs(ez - DesertBaseEnemyDeploymentZ) > WorldBindingEpsilon))
+            {
+                reasons.Add(new SkirmishCompileReason(
+                    SkirmishReasonCode.InsufficientAnchor, "worldBinding",
+                    "base.enemy does not land on the map's enemy deployment anchor."));
+            }
+        }
+
+        private static bool InsideMapBounds(float x, float z, float width, float depth)
+        {
+            return x - width * 0.5f >= DesertBaseMapMinX && x + width * 0.5f <= DesertBaseMapMaxX &&
+                   z - depth * 0.5f >= DesertBaseMapMinZ && z + depth * 0.5f <= DesertBaseMapMaxZ;
         }
 
         private static void RequirePad(

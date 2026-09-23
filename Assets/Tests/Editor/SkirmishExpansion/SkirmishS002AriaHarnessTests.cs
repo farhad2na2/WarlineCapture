@@ -1068,6 +1068,48 @@ namespace Game.Tests.Editor
             }
         }
 
+        [Test]
+        public void LaunchResetsLiveTraceSoVictoryEvidenceOmitsPriorDraws()
+        {
+            string directory = Path.Combine(Path.GetTempPath(), "s002-aria-trace-" + Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(directory);
+            try
+            {
+                string live = Path.Combine(directory, "s002-aria-live-130365-en.jsonl");
+                File.WriteAllText(
+                    live,
+                    "{\"elapsed\":1080.03,\"phase\":\"Finished\",\"outcome\":\"Draw\",\"reason\":\"TimeLimit\",\"playerBaseHp\":800,\"enemyBaseHp\":800}\n" +
+                    "{\"elapsed\":12,\"phase\":\"Finished\",\"outcome\":\"Abort\",\"reason\":\"timeout\"}\n");
+
+                SkirmishS002AriaRunHarness.ResetLiveTrace(live);
+                Assert.AreEqual(string.Empty, File.ReadAllText(live));
+
+                const string playing =
+                    "{\"elapsed\":2,\"phase\":\"Playing\",\"outcome\":\"None\",\"reason\":\"None\",\"playerBaseHp\":800,\"enemyBaseHp\":760}\n";
+                const string victory =
+                    "{\"elapsed\":90,\"phase\":\"Finished\",\"outcome\":\"Victory\",\"reason\":\"MainBaseDestroyed\",\"playerBaseHp\":800,\"enemyBaseHp\":0}\n";
+                File.AppendAllText(live, playing);
+                File.AppendAllText(live, victory);
+
+                string evidence = Path.Combine(directory, "s002-aria-rs-130365-en-1.jsonl");
+                SkirmishS002AriaRunHarness.CopyLiveTraceToEvidence(live, evidence);
+                string copied = File.ReadAllText(evidence);
+                Assert.AreEqual(playing + victory, copied);
+                Assert.AreEqual(2, File.ReadAllLines(evidence).Length);
+                Assert.IsTrue(copied.IndexOf("\"phase\":\"Playing\"", StringComparison.Ordinal) >= 0);
+                Assert.IsTrue(copied.IndexOf("\"outcome\":\"Victory\"", StringComparison.Ordinal) >= 0);
+                Assert.IsTrue(copied.IndexOf("\"reason\":\"MainBaseDestroyed\"", StringComparison.Ordinal) >= 0);
+                Assert.IsTrue(copied.IndexOf("\"outcome\":\"Draw\"", StringComparison.Ordinal) < 0);
+                Assert.IsTrue(copied.IndexOf("\"outcome\":\"Abort\"", StringComparison.Ordinal) < 0);
+                Assert.IsTrue(copied.IndexOf("TimeLimit", StringComparison.Ordinal) < 0);
+            }
+            finally
+            {
+                if (Directory.Exists(directory))
+                    Directory.Delete(directory, true);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -1098,6 +1140,7 @@ namespace Game.Tests.Editor
                 suite.FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery();
                 suite.AriaSessionOrdersStructureColumnAndDestroysEnemyBase();
                 suite.MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt();
+                suite.LaunchResetsLiveTraceSoVictoryEvidenceOmitsPriorDraws();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }
             catch (Exception exception)

@@ -119,6 +119,10 @@ namespace Game.Editor
             save.SaveProfile(profile);
 
             EditorApplication.update -= Tick;
+            // One live jsonl per seed and locale. Finish copies that whole file
+            // into the run evidence, so each launch truncates it. A domain reload
+            // resumes Tick without calling Launch and keeps the in-progress run.
+            ResetLiveTrace(LiveTracePath());
             EditorApplication.update += Tick;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920, 1080);
             UnityEditor.SceneManagement.EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity");
@@ -390,6 +394,24 @@ namespace Game.Editor
                 string.Format(CultureInfo.InvariantCulture, "s002-aria-live-{0}-{1}.jsonl", seed, token));
         }
 
+        internal static void ResetLiveTrace(string path)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+            string directory = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(directory))
+                Directory.CreateDirectory(directory);
+            File.WriteAllText(path, string.Empty);
+        }
+
+        internal static void CopyLiveTraceToEvidence(string livePath, string evidencePath)
+        {
+            if (!string.IsNullOrEmpty(livePath) && File.Exists(livePath))
+                File.Copy(livePath, evidencePath, true);
+            else
+                File.WriteAllText(evidencePath, string.Empty);
+        }
+
         private static void Finish(bool abort, string abortReason)
         {
             EditorApplication.update -= Tick;
@@ -429,10 +451,7 @@ namespace Game.Editor
             string traceAbsolute = Path.Combine(root, traceRelative.Replace('/', Path.DirectorySeparatorChar));
             string logAbsolute = Path.Combine(root, logRelative.Replace('/', Path.DirectorySeparatorChar));
             Directory.CreateDirectory(EvidenceDirectory());
-            if (File.Exists(LiveTracePath()))
-                File.Copy(LiveTracePath(), traceAbsolute, true);
-            else
-                File.WriteAllText(traceAbsolute, string.Empty);
+            CopyLiveTraceToEvidence(LiveTracePath(), traceAbsolute);
 
             double wall = playingSince > 0d ? EditorApplication.timeSinceStartup - playingSince : 0d;
             normalSpeed = SkirmishS002AriaRunLog.FinishNormalSpeed(speedLatch, Time.timeScale, duration, wall);

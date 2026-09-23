@@ -43,7 +43,8 @@
         "Game.Runtime.Combat",
         "Unity.InputSystem",
         "Game.UI.ScenarioLab.Runtime",
-        "Unity.2D.Sprite.Editor"
+        "Unity.2D.Sprite.Editor",
+        "Game.Operations.Strategic"
     ],
     "includePlatforms": [
         "Editor"

@@ -15,7 +15,9 @@
         "Game.Catalog.Contracts",
         "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
-        "Game.Tactical.Contracts"
+        "Game.Tactical.Contracts",
+        "Game.Operations.Contracts",
+        "Game.Skirmish.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

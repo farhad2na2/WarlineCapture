@@ -39,7 +39,8 @@
         "Unity.Transforms",
         "UnityEngine.UI",
         "sniveler-code.gpu-animation.Editor",
-        "Game.UI.ScenarioLab.Runtime"
+        "Game.UI.ScenarioLab.Runtime",
+        "Game.Operations.Strategic"
     ],
     "includePlatforms": [
         "Editor"

@@ -32,7 +32,9 @@
         "Unity.Transforms",
         "UnityEngine.UI",
         "Game.Runtime.Combat",
-        "Game.Runtime.Pathfinding"
+        "Game.Runtime.Pathfinding",
+        "Game.Operations.Strategic",
+        "sniveler-code.gpu-animation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

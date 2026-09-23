@@ -21,7 +21,9 @@
         "Game.Rendering.Contracts",
         "Game.Runtime.Combat",
         "Game.Runtime.Pathfinding",
-        "sniveler-code.gpu-animation"
+        "sniveler-code.gpu-animation",
+        "Game.Operations.Contracts",
+        "Game.Operations.Strategic"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

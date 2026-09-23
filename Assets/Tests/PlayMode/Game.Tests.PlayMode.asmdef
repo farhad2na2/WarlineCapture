@@ -31,7 +31,10 @@
         "Game.Narrative.Runtime",
         "Game.Runtime.Combat",
         "Game.Runtime.Pathfinding",
-        "sniveler-code.gpu-animation"
+        "sniveler-code.gpu-animation",
+        "Game.Operations.Contracts",
+        "Game.Operations.Strategic",
+        "Game.Skirmish.Contracts"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

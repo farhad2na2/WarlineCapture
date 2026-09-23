@@ -13,6 +13,11 @@ namespace Game.Configs
         public const int CityCrossroadsScenarioIndex = 1;
         public const int StressScaleProbeScenarioIndex = 2;
         public const int IndustrialBasinScenarioIndex = 3;
+        /// <summary>
+        /// Library dispatch for expanded S002 (Desert Base, Established). Not a Resources preset
+        /// and not the editor stress probe. Match entry compiles skirmish.s002 and stores map hint 0.
+        /// </summary>
+        public const int DesertBaseEstablishedScenarioIndex = 4;
         public const string IndustrialBasinMissionId = "skirmish.industrial_basin";
         public const string IndustrialBasinScenarioSetupId = "scenario.skirmish.industrial_basin";
         public const string IndustrialBasinOperationMapId = "opmap.skirmish.industrial_basin";

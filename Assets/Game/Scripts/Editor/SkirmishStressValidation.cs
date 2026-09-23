@@ -37,6 +37,18 @@ namespace Game.Editor
             stress.ScenarioIndex = SkirmishPresetConfig.StressScaleProbeScenarioIndex;
             stress.MapSeed = SkirmishStressRecipe.FixedSeed;
             Check(stress.NormalizeForBaseAssault().ScenarioIndex == 2, "Editor stress index must survive normalization.");
+            var established = QuickGameConfig.Defaults;
+            established.ScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+            established.MapSeed = 104731;
+            var normalizedEstablished = established.NormalizeForBaseAssault();
+            Check(normalizedEstablished.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex &&
+                  normalizedEstablished.MapSeed == 104731,
+                "S002 Established dispatch index must survive normalization.");
+            Check(SkirmishSaveMigration.Normalize(new QuickGameSaveData
+            {
+                schemaVersion = SkirmishSaveMigration.Version,
+                configuration = normalizedEstablished
+            }).presetId == "desert_base_established", "S002 Established save identity.");
             Check(SkirmishSaveMigration.Normalize(new QuickGameSaveData
             {
                 schemaVersion = SkirmishSaveMigration.Version,
@@ -204,8 +216,14 @@ namespace Game.Editor
                 "Legacy fixed Scenario1 control must be removed.");
             var catalog = AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(
                 SkirmishBattleCatalogBuilder.AssetPath);
-            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 3,
-                "Battle catalog must keep 120 entries with three player playables.");
+            Check(catalog != null && catalog.Entries.Count == 120 && catalog.CountPlayable() == 4,
+                "Battle catalog must keep 120 entries with four player playables.");
+            Check(catalog.TryGet(SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, out var s002) &&
+                  s002.IsPlayable &&
+                  s002.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex,
+                "S002 must occupy playable scenario index 4.");
+            Check(SkirmishPresetConfig.Load(SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex) == desert,
+                "S002 reuses the Desert Base map preset; index 4 is the library dispatch, not a new Resources preset.");
             Check(SkirmishPresetConfig.IndustrialBasinScenarioIndex == 3,
                 "Industrial Basin must occupy player scenario index 3.");
             var basin = SkirmishPresetConfig.Load(SkirmishPresetConfig.IndustrialBasinScenarioIndex);

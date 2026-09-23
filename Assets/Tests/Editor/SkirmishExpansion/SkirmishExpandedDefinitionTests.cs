@@ -141,8 +141,13 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual("S073", basin);
         Assert.IsTrue(SkirmishLegacyPrototypeMap.IsEditorStressIndex(2));
         Assert.IsFalse(SkirmishLegacyPrototypeMap.TryGetLegacyCatalogId(4, out _));
+        var established = QuickGameConfig.Defaults;
+        established.ScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+        Assert.AreEqual(
+            SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex,
+            established.NormalizeForBaseAssault().ScenarioIndex);
         var unknown = QuickGameConfig.Defaults;
-        unknown.ScenarioIndex = 4;
+        unknown.ScenarioIndex = 5;
         Assert.AreEqual(0, unknown.NormalizeForBaseAssault().ScenarioIndex);
         unknown.ScenarioIndex = 2;
         Assert.AreEqual(2, unknown.NormalizeForBaseAssault().ScenarioIndex);
@@ -778,6 +783,31 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(setup.DeadlineSeconds, em.GetComponentData<SkirmishObjectiveClockComponent>(session).DeadlineSeconds);
     }
 
+    [Test]
+    public void LibraryDispatchIndexQueuesEstablishedS002()
+    {
+        using var world = new World(nameof(LibraryDispatchIndexQueuesEstablishedS002));
+        EntityManager em = world.EntityManager;
+        var config = QuickGameConfig.Defaults;
+        config.ScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+        config.MapSeed = SkirmishAcceptanceCensusCapture.FirstVisitSeed;
+        Assert.IsTrue(SkirmishLaunchProjection.TryQueue(em, config));
+        Entity sessionEntity = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)).GetSingletonEntity();
+        SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
+        Assert.AreEqual(0, session.IsLegacy);
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, session.CatalogId.ToString());
+        Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseEstablishedDefinitionId, session.DefinitionId.ToString());
+        Assert.AreEqual(SkirmishDifficultyId.Regular, session.DifficultyId);
+        Assert.AreEqual(SkirmishSizeId.Standard, session.SizeId);
+        SkirmishMatchState match = em.GetComponentData<SkirmishMatchState>(sessionEntity);
+        Assert.AreEqual(SkirmishPresetConfig.DesertBaseScenarioIndex, match.ScenarioIndex);
+        Assert.AreEqual(SkirmishAcceptanceCensusCapture.FirstVisitSeed, match.Seed);
+        SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(sessionEntity).Setup;
+        Assert.AreEqual(SkirmishStartPackageId.EstablishedBase, setup.StartPackageId);
+        Assert.AreEqual(SkirmishArmyProfileId.GroundManeuver, setup.ArmyProfileId);
+        Assert.AreEqual("opmap.skirmish.desert_base_01", setup.OperationMapId);
+    }
+
     public static void RunFocusedValidation()
     {
         try
@@ -791,6 +821,7 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.BaseAssaultReducerKeepsReplacementAndWipeNonTerminal();
             suite.ExpandedLaunchDoesNotNormalizeLegacyQuickGame();
             suite.LegacyPrototypeIndicesRemainReserved();
+            suite.LibraryDispatchIndexQueuesEstablishedS002();
             suite.S002GroundOverlaysAndProductionGate();
             suite.S002SpawnProjectsRoleOverlaysAndGroundStaging();
             suite.CompilerAcceptsTypedDesertBaseLayout();

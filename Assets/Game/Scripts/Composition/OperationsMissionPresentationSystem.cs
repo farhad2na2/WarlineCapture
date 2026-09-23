@@ -31,6 +31,10 @@ namespace Game.Composition
         private string settlementCommand;
         private string startupSession, rollbackCommand;
         private double startupBeganAt, nextRollbackRetry;
+        private OperationsReconCheckpointCodec.Image pendingResume;
+        private double nextCheckpointAt, nextCheckpointRetry;
+        private int checkpointScans = -1;
+        private bool checkpointEvidence, checkpointTerminal;
         private readonly Vector3[] markerScreenPositions = new Vector3[5];
 
         protected override void OnCreate()
@@ -66,10 +70,27 @@ namespace Game.Composition
             {
                 if (OperationsReconSpawnCompositionSystemHelper.TrySpawn(EntityManager, root, definition, out string error))
                 {
-                    mission.Phase = OperationsReconPhase.Playing;
-                    EntityManager.SetComponentData(root, mission);
-                    Focus(definition.exitPosition);
-                    notice = Copy("scan_help", "RIFLE SQUAD selects your force. Click an ADVANCE marker to travel and fight. Within 8 m, SCAN SELECTED for 15 seconds.");
+                    try
+                    {
+                        if (pendingResume != null)
+                        {
+                            OperationsReconCheckpointCodec.Apply(EntityManager, root, pendingResume);
+                            mission = EntityManager.GetComponentData<OperationsReconMissionComponent>(root);
+                            pendingResume = null;
+                            notice = Copy("resumed", "Saved attempt resumed.");
+                        }
+                        else
+                        {
+                            mission.Phase = OperationsReconPhase.Playing;
+                            EntityManager.SetComponentData(root, mission);
+                            notice = Copy("scan_help", "RIFLE SQUAD selects your force. Click an ADVANCE marker to travel and fight. Within 8 m, SCAN SELECTED for 15 seconds.");
+                        }
+                        Focus(definition.exitPosition);
+                        checkpointScans = -1;
+                        nextCheckpointAt = 0;
+                    }
+                    catch (InvalidOperationException exception)
+                    { EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = exception.Message; }
                 }
                 else if (!string.IsNullOrEmpty(error))
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
@@ -83,6 +104,8 @@ namespace Game.Composition
                 markerScreenPositions[4] = camera.WorldToScreenPoint(mission.ExitPosition);
                 view.PresentMarkers(markerScreenPositions);
             }
+            if (live && mission.Phase is OperationsReconPhase.Playing or OperationsReconPhase.Terminal)
+                SaveCheckpointWhenDue(root, mission);
             if (live && mission.Phase == OperationsReconPhase.Terminal)
             {
                 StopSimulation();
@@ -101,8 +124,8 @@ namespace Game.Composition
 
         private void Handle(UiOperationsMissionRequest request, Entity root, OperationsReconMissionComponent mission, bool live)
         {
-            if (!live && request.Action is UiOperationsMissionAction.Deploy or UiOperationsMissionAction.RestartAttempt)
-            { Deploy(request.Action == UiOperationsMissionAction.RestartAttempt); return; }
+            if (!live && request.Action is UiOperationsMissionAction.Deploy or UiOperationsMissionAction.RestartAttempt or UiOperationsMissionAction.ResumeAttempt)
+            { Deploy(request.Action == UiOperationsMissionAction.RestartAttempt, request.Action == UiOperationsMissionAction.ResumeAttempt); return; }
             if (!live && request.Action == UiOperationsMissionAction.WithdrawInterrupted)
             {
                 var saved = commands.Read();
@@ -118,6 +141,12 @@ namespace Game.Composition
                 return;
             }
             if (mission.Phase != OperationsReconPhase.Playing) return;
+            if (request.Action == UiOperationsMissionAction.SaveAndExit)
+            {
+                if (TrySaveCheckpoint(root, mission))
+                    BeginReturn(root, Copy("saved_exit", "Mission saved. Resume this attempt from Operations."));
+                return;
+            }
             if (request.Action is UiOperationsMissionAction.AdvanceSite or UiOperationsMissionAction.AdvanceEvidence or UiOperationsMissionAction.AdvanceExit)
             {
                 notice = TryQueueObjectiveAdvance(EntityManager, root, request.Action, request.SiteIndex)
@@ -245,11 +274,11 @@ namespace Game.Composition
                 foreach (var unit in units) if (EntityManager.Exists(unit)) EntityManager.DestroyEntity(unit);
             if (EntityManager.Exists(root)) EntityManager.DestroyEntity(root);
             if (view != null) UnityEngine.Object.Destroy(view.gameObject);
-            view = null; resultSaved = false; settlementCommand = null; notice = message;
+            view = null; resultSaved = false; settlementCommand = null; pendingResume = null; notice = message;
             return true;
         }
 
-        private void Deploy(bool restart)
+        private void Deploy(bool restart, bool resume)
         {
             if (definition == null || !definition.TryValidate(out _)) { notice = Copy("content_missing", "Street Signals content is unavailable."); return; }
             var save = commands.Read();
@@ -260,9 +289,10 @@ namespace Game.Composition
             }
             var attempt = save.pendingDeployment?.reserved == true
                 ? Array.Find(save.activeRun.attempts, item => item.sessionId == save.pendingDeployment.sessionId && !item.practice) : null;
-            if (attempt != null && !restart)
-            { notice = Copy("interrupted", "An interrupted attempt is reserved. Restart it from the beginning without another AP cost, or withdraw. Active progress cannot currently be resumed."); return; }
+            if (attempt != null && !restart && !resume)
+            { notice = Copy("interrupted", "An interrupted attempt is reserved. Resume its checkpoint, restart from the beginning if no checkpoint exists, or withdraw."); return; }
             if (restart && attempt == null) return;
+            if (resume && attempt == null) return;
             if (attempt == null)
             {
                 // Eligibility is recomputed by the strategic command rules. The legacy
@@ -277,20 +307,67 @@ namespace Game.Composition
                     ? Array.Find(save.activeRun.attempts, item => item.sessionId == save.pendingDeployment.sessionId && !item.practice) : null;
             }
             if (attempt == null || attempt.missionId != definition.missionId) { notice = Copy("attempt_conflict", "Finish the existing Operations attempt first."); return; }
+            pendingResume = null;
+            if (resume)
+            {
+                var archive = saves.LoadOperationsCheckpoint(attempt.sessionId);
+                string content = definition.operationMap.ContentHash;
+                if (archive == null || archive.content != content ||
+                    !OperationsReconCheckpointCodec.TryDecode(archive.current, attempt.sessionId, content, out pendingResume) &&
+                    !OperationsReconCheckpointCodec.TryDecode(archive.previous, attempt.sessionId, content, out pendingResume))
+                {
+                    if (commands.TrySubmit(Command(save, OperationsCommandKind.TechnicalFailure), out var refunded, out _) && refunded.Accepted)
+                        notice = Copy("recovery_refunded", "The saved attempt is incompatible. Your action point was returned and recovery data was preserved.");
+                    return;
+                }
+            }
             if (restart) restartCommand ??= Id();
-            if (!saves.TryBeginOperationsAttempt(attempt.sessionId, definition.operationMap.ContentHash, restart ? restartCommand : null, out string recoveryError))
+            if (!resume && !saves.TryBeginOperationsAttempt(attempt.sessionId, definition.operationMap.ContentHash, restart ? restartCommand : null, out string recoveryError))
             {
                 // Preserve incompatible journal bytes; the strategic refund is idempotent.
                 if (recoveryError == "checkpoint_requires_resume")
-                { notice = Copy("resume_unavailable", "A saved checkpoint is present. This version cannot resume it; the saved attempt has been preserved."); return; }
+                { notice = Copy("resume_available", "Resume the saved attempt to keep its progress."); return; }
                 if (commands.TrySubmit(Command(save, OperationsCommandKind.TechnicalFailure), out var refunded, out _) && refunded.Accepted)
                     notice = Copy("recovery_refunded", "The saved attempt is incompatible. Your action point was returned and recovery data was preserved.");
                 return;
             }
-            if (!OperationsReconLaunchProjection.TryQueue(EntityManager, definition, attempt.sessionId, out notice, unchecked((uint)save.activeRun.seed))) return;
+            if (!OperationsReconLaunchProjection.TryQueue(EntityManager, definition, attempt.sessionId, out notice, unchecked((uint)save.activeRun.seed)))
+            { pendingResume = null; return; }
             restartCommand = null;
             resultSaved = false; settlementCommand = null; nextSaveRetry = 0;
+            checkpointScans = -1; checkpointEvidence = false; checkpointTerminal = false; nextCheckpointAt = 0;
             UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.EnterMatch, UIRoute.Match, false);
+        }
+
+        private void SaveCheckpointWhenDue(Entity root, OperationsReconMissionComponent mission)
+        {
+            bool terminal = mission.Phase == OperationsReconPhase.Terminal;
+            bool evidence = EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Recovered != 0;
+            if (mission.ElapsedSeconds < nextCheckpointAt && mission.CompletedScans == checkpointScans &&
+                evidence == checkpointEvidence && terminal == checkpointTerminal) return;
+            if (UnityEngine.Time.realtimeSinceStartupAsDouble < nextCheckpointRetry) return;
+            if (TrySaveCheckpoint(root, mission))
+            {
+                checkpointScans = mission.CompletedScans;
+                checkpointEvidence = evidence;
+                checkpointTerminal = terminal;
+                nextCheckpointAt = mission.ElapsedSeconds + 30;
+            }
+            else nextCheckpointRetry = UnityEngine.Time.realtimeSinceStartupAsDouble + 5;
+        }
+
+        private bool TrySaveCheckpoint(Entity root, OperationsReconMissionComponent mission)
+        {
+            try
+            {
+                string image = OperationsReconCheckpointCodec.Encode(
+                    OperationsReconCheckpointCodec.Capture(EntityManager, root, definition.operationMap.ContentHash));
+                if (saves.TrySaveOperationsCheckpoint(mission.SessionId.ToString(), image, out _)) return true;
+                notice = Copy("checkpoint_failed", "Could not save mission progress. Try again.");
+            }
+            catch (Exception exception) when (exception is IOException or InvalidOperationException or ArgumentException)
+            { notice = Copy("checkpoint_failed", "Could not save mission progress. Try again."); }
+            return false;
         }
 
         private UiOperationsMissionModel Project(Entity root, OperationsReconMissionComponent mission, bool live)
@@ -309,8 +386,15 @@ namespace Game.Composition
             };
             if (!live)
             {
+                if (model.InterruptedAttempt)
+                {
+                    var archive = saves.LoadOperationsCheckpoint(save.pendingDeployment.sessionId);
+                    model.CanResume = archive != null && (!string.IsNullOrEmpty(archive.current) || !string.IsNullOrEmpty(archive.previous));
+                }
                 if (model.InterruptedAttempt && string.IsNullOrEmpty(model.Status))
-                    model.Status = Copy("interrupted", "An interrupted attempt is reserved. Restart it from the beginning without another AP cost, or withdraw. Active progress cannot currently be resumed.");
+                    model.Status = model.CanResume
+                        ? Copy("resume_available", "Resume the saved attempt to keep its progress.")
+                        : Copy("interrupted", "An interrupted attempt is reserved. Restart from the beginning without another AP cost, or withdraw.");
                 return model;
             }
             int remaining = Mathf.Max(0, Mathf.CeilToInt(mission.DeadlineSeconds - mission.ElapsedSeconds));

@@ -2076,6 +2076,8 @@ MonoBehaviour:
         complete all scans without losing recon infantry."
     - key: operations.o001.carried
       value: EVIDENCE CARRIED
+    - key: operations.o001.checkpoint_failed
+      value: Could not save mission progress. Try again.
     - key: operations.o001.clock
       value: "{0}:{1} \u2022 {2}/16 infantry"
     - key: operations.o001.closer
@@ -2093,8 +2095,8 @@ MonoBehaviour:
     - key: operations.o001.exit_objective
       value: Bring the evidence and two original infantry to the safe exit
     - key: operations.o001.interrupted
-      value: An interrupted attempt is reserved. Restart it from the beginning without
-        another AP cost, or withdraw. Active progress cannot currently be resumed.
+      value: An interrupted attempt is reserved. Restart from the beginning without
+        another AP cost, or withdraw.
     - key: operations.o001.interrupted_withdraw_confirm
       value: Withdraw from the interrupted attempt? This spends the reserved action
         point and applies withdrawal consequences.
@@ -2120,13 +2122,23 @@ MonoBehaviour:
       value: "{0}\n{1}/3 signals \u2022 {2} extracted\n{3}"
     - key: operations.o001.result_retry
       value: "Result pending save. Retrying\u2026"
+    - key: operations.o001.resume_attempt
+      value: RESUME ATTEMPT
+    - key: operations.o001.resume_available
+      value: Resume the saved attempt to keep its progress.
     - key: operations.o001.resume_unavailable
       value: A saved checkpoint is present. This version cannot resume it; the saved
         attempt has been preserved.
+    - key: operations.o001.resumed
+      value: Saved attempt resumed.
+    - key: operations.o001.save_exit
+      value: SAVE & EXIT
     - key: operations.o001.save_retry
       value: Could not save. Try again; progress has not been confirmed.
     - key: operations.o001.saved
       value: District result and rewards saved.
+    - key: operations.o001.saved_exit
+      value: Mission saved. Resume this attempt from Operations.
     - key: operations.o001.saving
       value: "Saving result\u2026"
     - key: operations.o001.scan_help
@@ -9368,6 +9380,10 @@ MonoBehaviour:
     - key: operations.o001.carried
       value: "\u0645\u062F\u0627\u0631\u06A9 \u0647\u0645\u0631\u0627\u0647 \u0646\u06CC\u0631\u0648
         \u0627\u0633\u062A"
+    - key: operations.o001.checkpoint_failed
+      value: "\u067E\u06CC\u0634\u0631\u0641\u062A \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0630\u062E\u06CC\u0631\u0647 \u0646\u0634\u062F. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F."
     - key: operations.o001.clock
       value: "{0}:{1} \u2022 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
         {2}/16"
@@ -9402,10 +9418,7 @@ MonoBehaviour:
         \u0647\u0632\u06CC\u0646\u0647\u0654 \u062F\u0648\u0628\u0627\u0631\u0647\u0654
         \u0627\u0645\u062A\u06CC\u0627\u0632 \u0627\u0642\u062F\u0627\u0645\u060C
         \u0627\u0632 \u0627\u0628\u062A\u062F\u0627 \u0634\u0631\u0648\u0639 \u06A9\u0646\u06CC\u062F
-        \u06CC\u0627 \u0639\u0642\u0628\u200C\u0646\u0634\u06CC\u0646\u06CC \u06A9\u0646\u06CC\u062F.
-        \u0627\u062F\u0627\u0645\u0647\u0654 \u067E\u06CC\u0634\u0631\u0641\u062A
-        \u0641\u0639\u0644\u06CC \u0647\u0646\u0648\u0632 \u0645\u0645\u06A9\u0646
-        \u0646\u06CC\u0633\u062A."
+        \u06CC\u0627 \u0639\u0642\u0628\u200C\u0646\u0634\u06CC\u0646\u06CC \u06A9\u0646\u06CC\u062F."
     - key: operations.o001.interrupted_withdraw_confirm
       value: "\u0627\u0632 \u0646\u0648\u0628\u062A \u0646\u0627\u062A\u0645\u0627\u0645
         \u0639\u0642\u0628\u200C\u0646\u0634\u06CC\u0646\u06CC \u0645\u06CC\u200C\u06A9\u0646\u06CC\u062F\u061F
@@ -9454,6 +9467,12 @@ MonoBehaviour:
       value: "\u0646\u062A\u06CC\u062C\u0647 \u062F\u0631 \u0627\u0646\u062A\u0638\u0627\u0631
         \u0630\u062E\u06CC\u0631\u0647 \u0627\u0633\u062A. \u062A\u0644\u0627\u0634
         \u0645\u062C\u062F\u062F\u2026"
+    - key: operations.o001.resume_attempt
+      value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u0646\u0648\u0628\u062A"
+    - key: operations.o001.resume_available
+      value: "\u0628\u0631\u0627\u06CC \u062D\u0641\u0638 \u067E\u06CC\u0634\u0631\u0641\u062A\u060C
+        \u0646\u0648\u0628\u062A \u0630\u062E\u06CC\u0631\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0627\u062F\u0627\u0645\u0647 \u062F\u0647\u06CC\u062F."
     - key: operations.o001.resume_unavailable
       value: "\u06CC\u06A9 \u0646\u0642\u0637\u0647\u0654 \u0630\u062E\u06CC\u0631\u0647
         \u0648\u062C\u0648\u062F \u062F\u0627\u0631\u062F. \u0627\u06CC\u0646 \u0646\u0633\u062E\u0647
@@ -9461,6 +9480,11 @@ MonoBehaviour:
         \u0627\u062F\u0627\u0645\u0647 \u062F\u0647\u062F\u061B \u0646\u0648\u0628\u062A
         \u0630\u062E\u06CC\u0631\u0647\u200C\u0634\u062F\u0647 \u062D\u0641\u0638
         \u0634\u062F\u0647 \u0627\u0633\u062A."
+    - key: operations.o001.resumed
+      value: "\u0646\u0648\u0628\u062A \u0630\u062E\u06CC\u0631\u0647\u200C\u0634\u062F\u0647
+        \u0627\u062F\u0627\u0645\u0647 \u06CC\u0627\u0641\u062A."
+    - key: operations.o001.save_exit
+      value: "\u0630\u062E\u06CC\u0631\u0647 \u0648 \u062E\u0631\u0648\u062C"
     - key: operations.o001.save_retry
       value: "\u0630\u062E\u06CC\u0631\u0647 \u0627\u0646\u062C\u0627\u0645 \u0646\u0634\u062F.
         \u062F\u0648\u0628\u0627\u0631\u0647 \u062A\u0644\u0627\u0634 \u06A9\u0646\u06CC\u062F\u061B
@@ -9470,6 +9494,11 @@ MonoBehaviour:
       value: "\u0646\u062A\u06CC\u062C\u0647\u0654 \u0645\u0646\u0637\u0642\u0647
         \u0648 \u067E\u0627\u062F\u0627\u0634\u200C\u0647\u0627 \u0630\u062E\u06CC\u0631\u0647
         \u0634\u062F\u0646\u062F."
+    - key: operations.o001.saved_exit
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0630\u062E\u06CC\u0631\u0647
+        \u0634\u062F. \u0627\u0632 \u0628\u062E\u0634 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0627\u06CC\u0646 \u0646\u0648\u0628\u062A \u0631\u0627 \u0627\u062F\u0627\u0645\u0647
+        \u062F\u0647\u06CC\u062F."
     - key: operations.o001.saving
       value: "\u062F\u0631 \u062D\u0627\u0644 \u0630\u062E\u06CC\u0631\u0647\u0654
         \u0646\u062A\u06CC\u062C\u0647\u2026"

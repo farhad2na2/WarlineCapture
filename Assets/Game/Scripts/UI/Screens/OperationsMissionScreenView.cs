@@ -13,7 +13,7 @@ namespace Game.UI.Runtime
         private TMP_FontAsset font;
         private TMP_Text title, description, status, clock, result;
         private TMP_Text[] siteLabels;
-        private Button deploy, conclude, continueButton, evidenceButton, recoverButton;
+        private Button deploy, resume, saveAndExit, conclude, continueButton, evidenceButton, recoverButton;
         private bool evidenceVisible, interruptedAttempt;
         private Button withdrawInterrupted;
         private GameObject briefing, controls, resultPanel, confirmation;
@@ -59,6 +59,7 @@ namespace Game.UI.Runtime
             if (!hud)
             {
                 deploy = Button(card, Text("operations.deploy", "DEPLOY"), () => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy));
+                resume = Button(card, Text("operations.o001.resume_attempt", "RESUME ATTEMPT"), () => Send(UiOperationsMissionAction.ResumeAttempt));
                 withdrawInterrupted = Button(card, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
                 var interruptedCard = Modal("ConfirmInterruptedWithdraw"); confirmation = interruptedCard.parent.gameObject;
                 Label(interruptedCard, Text("operations.o001.interrupted_withdraw_confirm", "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences."), 28, 180);
@@ -69,7 +70,7 @@ namespace Game.UI.Runtime
                 return;
             }
             var actionPanel = Panel("MissionActions", transform); controls = actionPanel.gameObject;
-            actionPanel.anchorMin = new Vector2(.28f, .56f); actionPanel.anchorMax = new Vector2(.75f, .76f);
+            actionPanel.anchorMin = new Vector2(.28f, .50f); actionPanel.anchorMax = new Vector2(.75f, .76f);
             actionPanel.offsetMin = actionPanel.offsetMax = Vector2.zero;
             Vertical(actionPanel, 4);
             var row = Row(actionPanel); row.GetComponent<LayoutElement>().preferredHeight = 124; siteLabels = new TMP_Text[3];
@@ -88,6 +89,7 @@ namespace Game.UI.Runtime
             Button(secondRow, Text("operations.exit", "EXIT"), () => Send(UiOperationsMissionAction.FocusExit));
             conclude = Button(secondRow, Text("operations.conclude", "CONCLUDE"), () => Send(UiOperationsMissionAction.Conclude));
             Button(secondRow, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
+            saveAndExit = Button(actionPanel, Text("operations.o001.save_exit", "SAVE & EXIT"), () => Send(UiOperationsMissionAction.SaveAndExit));
 
             var resultCard = Modal("MissionResult"); resultPanel = resultCard.parent.gameObject;
             result = Label(resultCard, "", 34, 220);
@@ -122,8 +124,9 @@ namespace Game.UI.Runtime
                 UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Description);
                 UiLocalizedText.Set(status, model.Status); UiLocalizedText.Set(clock, model.Clock);
                 interruptedAttempt = model.InterruptedAttempt;
-                deploy.interactable = model.CanDeploy;
+                deploy.interactable = model.CanDeploy && !model.CanResume;
                 UiLocalizedText.Set(deploy.GetComponentInChildren<TMP_Text>(), interruptedAttempt ? Text("operations.o001.restart_attempt", "RESTART ATTEMPT") : Text("operations.deploy", "DEPLOY"));
+                resume.gameObject.SetActive(model.CanResume);
                 withdrawInterrupted.gameObject.SetActive(interruptedAttempt);
                 // Keep the extra recovery choice inside the briefing card at 1080p.
                 description.GetComponent<LayoutElement>().preferredHeight = interruptedAttempt ? 130 : 160;
@@ -134,6 +137,7 @@ namespace Game.UI.Runtime
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
             briefing.SetActive(ready && model.InMission && !model.Finished);
             controls.SetActive(briefing.activeSelf);
+            saveAndExit.interactable = model.InMission && !model.Finished;
             resultPanel.SetActive(ready && model.Finished);
             if (model.Finished) confirmation.SetActive(false);
             UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Objective);

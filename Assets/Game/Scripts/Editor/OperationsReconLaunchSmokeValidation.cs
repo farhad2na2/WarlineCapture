@@ -23,7 +23,11 @@ namespace Game.Editor
         private static string capturePath;
         private static int exitCode;
         private static string loadFailure;
-        private static bool lifecycle;
+        private static bool lifecycle, checkpointResume, processSave, processRestore;
+        private static string checkpointSession;
+        private static float checkpointElapsed;
+        private const string ProcessCheckpointMarker = "/private/tmp/o001-process-checkpoint.json";
+        [Serializable] private sealed class ProcessCheckpoint { public string root, session; public float elapsed; }
         private static bool recovery, interrupted;
         private static string interruptedSession;
         private static bool manual, persian;
@@ -35,6 +39,9 @@ namespace Game.Editor
 
         public static void Run() => Start(false);
         public static void RunLifecycle() => Start(true);
+        public static void RunCheckpointResume() { checkpointResume = true; Start(false); }
+        public static void RunCheckpointSaveForRestart() { checkpointResume = processSave = true; Start(false); }
+        public static void RunCheckpointResumeAfterRestart() { processRestore = true; Start(false); }
         public static void RunInterruptedRecovery() { interrupted = true; Start(true); }
         public static void RunRecovery() { recovery = true; Start(true); }
         public static void RunManualVictory() => StartManual(OperationsReconOutcome.Victory);
@@ -72,12 +79,18 @@ namespace Game.Editor
         private static void Start(bool validateLifecycle)
         {
             lifecycle = validateLifecycle;
-            string saveRoot = Path.Combine(Path.GetTempPath(), "o001-launch-smoke-" + Guid.NewGuid().ToString("N"));
+            if (processSave && File.Exists(ProcessCheckpointMarker)) File.Delete(ProcessCheckpointMarker);
+            ProcessCheckpoint prior = processRestore ? JsonUtility.FromJson<ProcessCheckpoint>(File.ReadAllText(ProcessCheckpointMarker)) : null;
+            string saveRoot = prior?.root ?? Path.Combine(Path.GetTempPath(), "o001-launch-smoke-" + Guid.NewGuid().ToString("N"));
             Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT", saveRoot);
+            if (processRestore) { checkpointSession = prior.session; checkpointElapsed = prior.elapsed; }
             var save = SaveService.CreateDefault();
-            save.SaveProfile(new PlayerProfileSaveData
-            { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = "English" });
-            save.SaveSettings(new SettingsSaveData { language = persian ? "Persian" : "English" });
+            if (!processRestore)
+            {
+                save.SaveProfile(new PlayerProfileSaveData
+                { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = "English" });
+                save.SaveSettings(new SettingsSaveData { language = persian ? "Persian" : "English" });
+            }
             if (interrupted)
             {
                 var commands = new OperationsProfileCommandService(save);
@@ -144,10 +157,16 @@ namespace Game.Editor
                 }
                 if (stage == 1 && shell.ActiveRoute == UIRoute.Operations && UiShellRuntimeGateway.TryReadOperationsMission(out var model) && model.CanDeploy)
                 {
+                    if (processRestore)
+                    {
+                        if (!model.CanResume) throw new InvalidOperationException("Fresh Editor did not offer the saved attempt.");
+                        if (Click("RESUME ATTEMPT")) stage = 2;
+                        return;
+                    }
                     if (interrupted && !model.InterruptedAttempt) throw new InvalidOperationException("Interrupted attempt was not presented for explicit recovery.");
                     foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                        if (button.name == "DEPLOY" && button.interactable && button.GetComponentInParent<OperationsMissionScreenView>() != null &&
-                            (!interrupted || button.GetComponentInChildren<TMPro.TMP_Text>().text == "RESTART ATTEMPT"))
+                        if (button.name == Visible("DEPLOY") && button.interactable && button.GetComponentInParent<OperationsMissionScreenView>() != null &&
+                            (!interrupted || button.GetComponentInChildren<TMPro.TMP_Text>().text == Visible("RESTART ATTEMPT")))
                         { button.onClick.Invoke(); stage = 2; Debug.Log("[OperationsReconLaunchSmokeValidation] deployButtonInvoked=1 input=button-event-smoke"); break; }
                     return;
                 }
@@ -162,6 +181,15 @@ namespace Game.Editor
                     if (query.CalculateEntityCount() != 1) return;
                     var mission = query.GetSingleton<OperationsReconMissionComponent>();
                     if (mission.Phase != OperationsReconPhase.Playing) return;
+                    if (processRestore)
+                    {
+                        if (mission.SessionId.ToString() != checkpointSession || mission.ElapsedSeconds < checkpointElapsed ||
+                            SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
+                            throw new InvalidOperationException("Process restart changed the session, clock, or AP reservation.");
+                        Complete(true, "journey=process-restart-resume input=button-event-smoke session=" + checkpointSession +
+                            " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + mission.ElapsedSeconds + " ap=2");
+                        return;
+                    }
                     var root = query.GetSingletonEntity();
                     if (interrupted)
                     {
@@ -194,6 +222,16 @@ namespace Game.Editor
                 }
                 if (stage == 3 && ++captureFrames > 30 && File.Exists(capturePath))
                 {
+                    if (checkpointResume)
+                    {
+                        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                        using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                        var active = roots.GetSingleton<OperationsReconMissionComponent>();
+                        checkpointSession = active.SessionId.ToString();
+                        checkpointElapsed = active.ElapsedSeconds;
+                        if (Click("SAVE & EXIT")) stage = 10;
+                        return;
+                    }
                     if (!lifecycle)
                     { Complete(true, "route=Operations phase=Playing clockAdvanced=5s original=16 total=36 capture=" + capturePath); return; }
                     if (Click("WITHDRAW")) stage = 4;
@@ -237,6 +275,40 @@ namespace Game.Editor
                         throw new InvalidOperationException("Redeployment roster or AP reservation mismatch.");
                     Complete(true, "journey=" + (recovery ? "deploy-failed-startup-refund-return-redeploy" : (interrupted ? "interrupted-restart-withdraw-save-return-redeploy" : "deploy-withdraw-save-return-redeploy")) +
                         " input=button-event-smoke original=16 total=36 ap=" + expectedAp);
+                }
+                if (stage == 10 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu &&
+                    UiShellRuntimeGateway.TryReadOperationsMission(out var resumable) && resumable.CanResume)
+                {
+                    var save = SaveService.CreateDefault();
+                    var profile = save.LoadProfile();
+                    var archive = save.LoadOperationsCheckpoint(checkpointSession);
+                    if (profile.operations.activeRun.actionPoints != 2 || archive == null ||
+                        !OperationsReconCheckpointCodec.TryDecode(archive.current, checkpointSession,
+                            Resources.Load<Game.Configs.OperationsReconMissionConfig>(Game.Configs.OperationsReconMissionConfig.ResourcePath).operationMap.ContentHash, out _))
+                        throw new InvalidOperationException("Save & Exit did not retain a valid same-attempt checkpoint and one AP cost.");
+                    if (processSave)
+                    {
+                        File.WriteAllText(ProcessCheckpointMarker, JsonUtility.ToJson(new ProcessCheckpoint
+                        { root = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"), session = checkpointSession, elapsed = checkpointElapsed }));
+                        Complete(true, "journey=process-restart-save input=button-event-smoke session=" + checkpointSession +
+                            " elapsed=" + checkpointElapsed + " ap=2 marker=" + ProcessCheckpointMarker);
+                        return;
+                    }
+                    if (Click("RESUME ATTEMPT")) stage = 11;
+                    return;
+                }
+                if (stage == 11 && shell.CurrentMode == UiShellMode.MatchHud)
+                {
+                    var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                    using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                    if (roots.CalculateEntityCount() != 1) return;
+                    var resumed = roots.GetSingleton<OperationsReconMissionComponent>();
+                    if (resumed.Phase != OperationsReconPhase.Playing) return;
+                    if (resumed.SessionId.ToString() != checkpointSession || resumed.ElapsedSeconds < checkpointElapsed ||
+                        SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
+                        throw new InvalidOperationException("Resume changed the session, clock, or AP reservation.");
+                    Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
+                        " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds + " ap=2");
                 }
             }
             catch (Exception exception) { Complete(false, exception.ToString()); }
@@ -304,7 +376,7 @@ namespace Game.Editor
         {
             foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
-                if (button.name != name || !button.interactable || button.GetComponentInParent<OperationsMissionScreenView>() == null) continue;
+                if (button.name != Visible(name) || !button.interactable || button.GetComponentInParent<OperationsMissionScreenView>() == null) continue;
                 if (ancestor != null)
                 {
                     bool found = false;
@@ -316,6 +388,17 @@ namespace Game.Editor
             }
             return false;
         }
+
+        private static string Visible(string name) => name switch
+        {
+            "DEPLOY" => UiShellRuntimeGateway.Localization.Get("operations.deploy", name),
+            "RESTART ATTEMPT" => UiShellRuntimeGateway.Localization.Get("operations.o001.restart_attempt", name),
+            "SAVE & EXIT" => UiShellRuntimeGateway.Localization.Get("operations.o001.save_exit", name),
+            "RESUME ATTEMPT" => UiShellRuntimeGateway.Localization.Get("operations.o001.resume_attempt", name),
+            "WITHDRAW" => UiShellRuntimeGateway.Localization.Get("operations.withdraw", name),
+            "CONTINUE" => UiShellRuntimeGateway.Localization.Get("ui.common.continue", name),
+            _ => name
+        };
 
         private static void Complete(bool passed, string detail)
         {

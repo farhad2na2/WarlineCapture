@@ -15,10 +15,23 @@ namespace Game.UI.Runtime
         private PointerEventData watchRaycast;
         private EventSystem watchEventSystem;
         private readonly List<RaycastResult> watchHits = new(16);
+        private OperationsMissionScreenView watchOperations;
+        private int operationsWatchActions;
+        private bool operationsLastWasTravel;
+        private float operationsTravelUntil;
 
         private void TickWatch()
         {
             if (_embeddedTutorialView == null) return;
+            if (UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
+            {
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                UiShellRuntimeGateway.PublishAriaObservation(ObserveOperationsWatch(operation));
+                var operationState = UiShellRuntimeGateway.ReadAriaPlay();
+                _embeddedTutorialView.PresentWatch(operationState, false);
+                RenderWatchFinger(operationState);
+                return;
+            }
             var kind = AriaPlayObservationKind.Unavailable;
             int target = 0;
             Vector2 position = default;
@@ -67,6 +80,79 @@ namespace Game.UI.Runtime
             _embeddedTutorialView.PresentWatch(state, available);
             _embeddedTutorialView.RefreshContentLayout();
             RenderWatchFinger(state);
+        }
+
+        private AriaPlayObservation ObserveOperationsWatch(UiOperationsMissionModel model)
+        {
+            float now = Time.unscaledTime;
+            int goal = 300;
+            int site = -1;
+            for (int i = 0; i < 3; i++)
+                if (model.SiteCompleted == null || i >= model.SiteCompleted.Length || !model.SiteCompleted[i])
+                { site = i; goal = 100 + i; break; }
+            if (site < 0 && !model.EvidenceCarried) goal = 200;
+            if (model.Finished) return new AriaPlayObservation(AriaPlayObservationKind.Finished, 0, goal,
+                default, Time.frameCount, now);
+            var state = UiShellRuntimeGateway.ReadAriaPlay();
+            if (state.Actions != operationsWatchActions)
+            {
+                if (operationsLastWasTravel) operationsTravelUntil = now + 120f;
+                operationsWatchActions = state.Actions;
+            }
+            if (!state.Active) operationsTravelUntil = 0;
+            if (watchOperations == null || watchOperations.ScanButton(0) == null)
+            {
+                foreach (var candidate in Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    if (candidate.ScanButton(0) != null) { watchOperations = candidate; break; }
+            }
+            if (watchOperations == null) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
+                default, Time.frameCount, now);
+            Button target = null;
+            bool travel = false;
+            if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            if (watchSquads == null || (int)watchSquads.VisibleSelectedSlot <= 0)
+                target = watchSquads?.VisibleCardButton(0);
+            else if (site >= 0)
+            {
+                if (model.SiteProgress != null && site < model.SiteProgress.Length && model.SiteProgress[site] > 0)
+                    return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
+                if (model.CanScanSite != null && site < model.CanScanSite.Length && model.CanScanSite[site])
+                    target = watchOperations.ScanButton(site);
+                else if (now >= operationsTravelUntil)
+                { target = watchOperations.AdvanceButton(site); travel = true; }
+            }
+            else if (!model.EvidenceCarried)
+            {
+                // Reissuing recovery resets its 15-second channel. Wait for the
+                // visible progress before considering another tap.
+                if (model.EvidenceProgress > 0)
+                    return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
+                if (model.CanRecoverHere) target = watchOperations.RecoverButton;
+                else if (now >= operationsTravelUntil)
+                { target = watchOperations.AdvanceButton(3); travel = true; }
+            }
+            else if (now >= operationsTravelUntil)
+            { target = watchOperations.AdvanceButton(4); travel = true; }
+            if (target == null) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
+                default, Time.frameCount, now);
+            var observed = ObserveWatchButton(target);
+            if (!observed.Available && travel)
+            {
+                target = watchOperations.FocusButton(site >= 0 ? site : model.EvidenceCarried ? 4 : 3);
+                observed = ObserveWatchButton(target);
+                travel = false;
+            }
+            if (!observed.Available && !watchOperations.GuideOpen && target != watchSquads?.VisibleCardButton(0))
+            {
+                target = watchOperations.GuideButton;
+                observed = ObserveWatchButton(target);
+                travel = false;
+            }
+            if (!observed.Available) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
+                default, Time.frameCount, now);
+            operationsLastWasTravel = travel;
+            return new AriaPlayObservation(AriaPlayObservationKind.Control, observed.Id, goal,
+                observed.Position, Time.frameCount, now);
         }
 
         private bool WatchTargetIsReachable(Vector2 point, int targetId, bool world)
@@ -125,6 +211,15 @@ namespace Game.UI.Runtime
                 panelStopRect.TransformPoint(panelStopRect.rect.center));
             watchStop.gameObject.SetActive(!panelStop.IsActive() ||
                 !WatchTargetIsReachable(panelStopPoint, panelStop.GetEntityId().GetHashCode(), false));
+            if (watchOperations != null && watchOperations.AriaButton is Button operationStop &&
+                operationStop.IsActive() && operationStop.IsInteractable())
+            {
+                var operationRect = (RectTransform)operationStop.transform;
+                var operationPoint = RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(operationStop),
+                    operationRect.TransformPoint(operationRect.rect.center));
+                if (WatchTargetIsReachable(operationPoint, operationStop.GetEntityId().GetHashCode(), false))
+                    watchStop.gameObject.SetActive(false);
+            }
             string locale = UiShellRuntimeGateway.Localization.CurrentLocaleCode;
             if (watchStopLocale != locale)
             {

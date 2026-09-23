@@ -156,7 +156,15 @@ namespace Game.UI.Runtime
 
             if (_popupView == null && !EnsurePopupView())
                 return;
+            bool operationMission = UiShellRuntimeGateway.TryReadOperationsMission(out var activeOperation) && activeOperation.InMission;
+            if (_embeddedTutorialView.gameObject.activeSelf == operationMission)
+                _embeddedTutorialView.gameObject.SetActive(!operationMission);
             _panelUiSystem.ApplyReadModel(model);
+            if (operationMission)
+            {
+                if (IsPanelOpen) SetPanelOpen(false);
+                return;
+            }
             _embeddedTutorialView.Apply(model);
             _embeddedTutorialView.ApplyInteractionState(
                 _activeCommandMode,
@@ -410,7 +418,8 @@ namespace Game.UI.Runtime
 
         private void ShowEmbeddedTutorial()
         {
-            if (_embeddedTutorialView == null || _lastPanelModel.TutorialStep == 0)
+            if (_embeddedTutorialView == null || _lastPanelModel.TutorialStep == 0 ||
+                UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
                 return;
 
             if (IsPanelOpen)

@@ -13,12 +13,13 @@ namespace Game.UI.Shell.Ecs
     public partial class AriaPlayInputSystem : SystemBase
     {
         private AriaTouchInputUiSystemHelper touch;
-        private EntityQuery missionQuery, skirmishQuery;
+        private EntityQuery missionQuery, skirmishQuery, operationsQuery;
         protected override void OnCreate()
         {
             touch = new AriaTouchInputUiSystemHelper();
             skirmishQuery = GetEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
             missionQuery = GetEntityQuery(ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
+            operationsQuery = GetEntityQuery(ComponentType.ReadOnly<OperationsReconMissionComponent>());
         }
         protected override void OnDestroy() { touch?.Dispose(); }
         public void Cancel() => touch?.Stop();
@@ -36,9 +37,11 @@ namespace Game.UI.Shell.Ecs
             // Terminal outcome is a public lifecycle signal, never a targeting/planning input.
             bool hasSkirmish = skirmishQuery.CalculateEntityCount() == 1;
             bool hasCampaign = missionQuery.CalculateEntityCount() == 1;
+            bool hasOperations = operationsQuery.CalculateEntityCount() == 1;
             bool ended = IsCurrentMatchFinished(hasSkirmish,
                 hasSkirmish ? skirmishQuery.GetSingleton<SkirmishMatchState>().Phase : default,
-                hasCampaign, hasCampaign ? missionQuery.GetSingleton<CampaignMissionRuntimeComponent>().Outcome : default);
+                hasCampaign, hasCampaign ? missionQuery.GetSingleton<CampaignMissionRuntimeComponent>().Outcome : default) ||
+                hasOperations && operationsQuery.GetSingleton<OperationsReconMissionComponent>().Phase == OperationsReconPhase.Terminal;
             foreach (var (observation, session, shell) in SystemAPI.Query<RefRO<AriaPlayObservationComponent>, RefRW<AriaPlaySessionComponent>, RefRO<UiShellStateComponent>>())
             {
                 found = true;
@@ -66,7 +69,7 @@ namespace Game.UI.Shell.Ecs
                     else if (UnityEngine.Time.unscaledTime - current.DueAt > 3) current.Phase = AriaPlayPhase.Blocked;
                     continue;
                 }
-                if (!touch.IsRunning) { current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0; current.StopReason = 6; continue; }
+                if (!touch.IsRunning) { current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0; current.StopReason = touch.LastInterruption != 0 ? touch.LastInterruption : (byte)6; continue; }
                 if (current.GestureRequested != 0)
                 {
                     current.GestureRequested = 0;

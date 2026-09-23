@@ -443,32 +443,82 @@
     {
       "key": "operations.o001.resume_attempt",
       "source": "RESUME ATTEMPT",
-      "translations": [{ "locale": "fa-IR", "value": "ادامهٔ نوبت" }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ادامهٔ نوبت"
+        }
+      ]
     },
     {
       "key": "operations.o001.save_exit",
       "source": "SAVE & EXIT",
-      "translations": [{ "locale": "fa-IR", "value": "ذخیره و خروج" }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ذخیره و خروج"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.aria_play",
+      "source": "ARIA PLAY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازی با آریا"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.aria_stop",
+      "source": "STOP ARIA",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "توقف آریا"
+        }
+      ]
     },
     {
       "key": "operations.o001.saved_exit",
       "source": "Mission saved. Resume this attempt from Operations.",
-      "translations": [{ "locale": "fa-IR", "value": "مأموریت ذخیره شد. از بخش عملیات این نوبت را ادامه دهید." }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مأموریت ذخیره شد. از بخش عملیات این نوبت را ادامه دهید."
+        }
+      ]
     },
     {
       "key": "operations.o001.resume_available",
       "source": "Resume the saved attempt to keep its progress.",
-      "translations": [{ "locale": "fa-IR", "value": "برای حفظ پیشرفت، نوبت ذخیره‌شده را ادامه دهید." }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای حفظ پیشرفت، نوبت ذخیره‌شده را ادامه دهید."
+        }
+      ]
     },
     {
       "key": "operations.o001.resumed",
       "source": "Saved attempt resumed.",
-      "translations": [{ "locale": "fa-IR", "value": "نوبت ذخیره‌شده ادامه یافت." }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نوبت ذخیره‌شده ادامه یافت."
+        }
+      ]
     },
     {
       "key": "operations.o001.checkpoint_failed",
       "source": "Could not save mission progress. Try again.",
-      "translations": [{ "locale": "fa-IR", "value": "پیشرفت مأموریت ذخیره نشد. دوباره تلاش کنید." }]
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیشرفت مأموریت ذخیره نشد. دوباره تلاش کنید."
+        }
+      ]
     },
     {
       "key": "operations.o001.interrupted_withdraw_confirm",
@@ -499,6 +549,79 @@
           "value": "نوبت ذخیره‌شده سازگار نیست. امتیاز اقدام بازگردانده شد و داده‌های بازیابی حفظ شدند."
         }
       ]
-    }
+    },
+    {
+      "key": "operations.o001.brief_compact",
+      "source": "Scan 3 courtyards • recover relay evidence • extract 2 infantry\n16 infantry • 12 min • 1 AP",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۳ حیاط را اسکن کنید • مدارک را بردارید • ۲ نیروی پیاده را خارج کنید\n۱۶ نیروی پیاده • ۱۲ دقیقه • ۱ امتیاز اقدام"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.open_guide",
+      "source": "MISSION GUIDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "راهنمای مأموریت"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.close_guide",
+      "source": "CLOSE GUIDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بستن راهنما"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.guide_title",
+      "source": "MISSION GUIDE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "راهنمای مأموریت"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.guide_hint",
+      "source": "Select infantry, advance to a signal, then scan nearby. Recover the evidence and reach extraction.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام را انتخاب کنید، به سیگنال پیشروی کنید و از نزدیک اسکن کنید. سپس مدارک را بردارید و به خروجی برسید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.signals_title",
+      "source": "SIGNAL SITES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محل‌های سیگنال"
+        }
+      ]
+    },
+    { "key": "operations.o001.dashboard_day", "source": "DAY {0}", "translations": [{ "locale": "fa-IR", "value": "روز {0}" }] },
+    { "key": "operations.o001.dashboard_ap", "source": "AP {0}", "translations": [{ "locale": "fa-IR", "value": "اقدام {0}" }] },
+    { "key": "operations.o001.dashboard_new_city", "source": "NEW CITY", "translations": [{ "locale": "fa-IR", "value": "شهر جدید" }] },
+    { "key": "operations.o001.dashboard_no_warnings", "source": "NO ACTIVE WARNINGS", "translations": [{ "locale": "fa-IR", "value": "هشدار فعالی وجود ندارد" }] },
+    { "key": "operations.o001.dashboard_start", "source": "DEPLOY TO BEGIN", "translations": [{ "locale": "fa-IR", "value": "برای شروع اعزام کنید" }] },
+    { "key": "operations.o001.dashboard_security", "source": "CITY SECURITY", "translations": [{ "locale": "fa-IR", "value": "امنیت شهر" }] },
+    { "key": "operations.o001.dashboard_trust", "source": "CIVILIAN TRUST", "translations": [{ "locale": "fa-IR", "value": "اعتماد غیرنظامیان" }] },
+    { "key": "operations.o001.dashboard_threat", "source": "THREAT LEVEL", "translations": [{ "locale": "fa-IR", "value": "سطح تهدید" }] },
+    { "key": "operations.o001.dashboard_heat", "source": "HEAT LEVEL", "translations": [{ "locale": "fa-IR", "value": "تنش سطح" }] },
+    { "key": "operations.o001.dashboard_supply", "source": "SUPPLY READINESS", "translations": [{ "locale": "fa-IR", "value": "آمادگی تدارکات" }] },
+    { "key": "operations.o001.dashboard_service", "source": "SERVICE DISRUPTION", "translations": [{ "locale": "fa-IR", "value": "اختلال خدمات" }] },
+    { "key": "operations.o001.dashboard_road", "source": "ROAD BLOCKADE", "translations": [{ "locale": "fa-IR", "value": "انسداد مسیر" }] },
+    { "key": "operations.o001.dashboard_hostile", "source": "HOSTILE PRESSURE", "translations": [{ "locale": "fa-IR", "value": "فشار دشمن" }] }
   ]
 }

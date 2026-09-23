@@ -1,4 +1,5 @@
 using TMPro;
+using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,8 @@ namespace Game.UI.Runtime
     [DisallowMultipleComponent]
     public sealed class OperationsDashboardScreenView : MonoBehaviour
     {
+        private static readonly string[] ReadinessKeys = { "security", "trust", "threat", "heat", "supply" };
+        private static readonly string[] ReadinessFallbacks = { "CITY SECURITY", "CIVILIAN TRUST", "THREAT LEVEL", "HEAT LEVEL", "SUPPLY READINESS" };
         [SerializeField] private UIShellRouteButtonView backRouteButton;
         [SerializeField] private RectTransform readinessRail;
         [SerializeField] private RectTransform districtMap;
@@ -53,6 +56,56 @@ namespace Game.UI.Runtime
         public RawImage DistrictMapImage => districtMapImage;
         public TMP_Text ScreenTitle => screenTitle;
         public TMP_Text DayLabel => dayLabel;
+
+        public void Present(UiOperationsDashboardModel model)
+        {
+            SetValue(transform.Find("Credits/Value"), model.Credits.ToString("N0"));
+            SetValue(transform.Find("Command/Value"), model.Command.ToString("N0"));
+            string localeDay = UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_day", "DAY {0}");
+            SetValue(dayLabel, model.HasRun
+                ? string.Format(localeDay, model.Day)
+                : UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_new_city", "NEW CITY"));
+            SetValue(dailyBriefing != null ? dailyBriefing.Find("Time") : null, model.HasRun
+                ? string.Format(UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_ap", "AP {0}"), model.ActionPoints)
+                : "—");
+            if (readinessCards != null)
+                for (int i = 0; i < readinessCards.Length; i++)
+                {
+                    var card = readinessCards[i];
+                    if (card == null) continue;
+                    if (i < ReadinessKeys.Length)
+                        SetValue(card.Find("Label"), UiShellRuntimeGateway.Localization.Get(
+                            "operations.o001.dashboard_" + ReadinessKeys[i], ReadinessFallbacks[i]));
+                    int value = model.Readiness != null && i < model.Readiness.Length ? Mathf.Clamp(model.Readiness[i], 0, 100) : -1;
+                    var valueText = card.Find("Value")?.GetComponent<TMP_Text>();
+                    SetValue(valueText, value < 0 ? "—" : value + "%");
+                    for (int segment = 0; segment < 6; segment++)
+                    {
+                        var bar = card.Find("Segment" + segment)?.GetComponent<Image>();
+                        if (bar != null) bar.color = value >= 0 && segment < Mathf.CeilToInt(value * .06f)
+                            ? valueText.color : new Color32(39, 45, 45, 255);
+                    }
+                }
+            if (warningButtons == null) return;
+            int count = model.Warnings?.Length ?? 0;
+            for (int i = 0; i < warningButtons.Length; i++)
+            {
+                var button = warningButtons[i];
+                if (button == null) continue;
+                bool show = i < count || i == 0 && count == 0;
+                button.gameObject.SetActive(show);
+                if (!show) continue;
+                button.interactable = false;
+                var label = button.transform.Find("Label")?.GetComponent<TMP_Text>();
+                SetValue(label, i < count ? model.Warnings[i] : UiShellRuntimeGateway.Localization.Get(
+                    model.HasRun ? "operations.o001.dashboard_no_warnings" : "operations.o001.dashboard_start",
+                    model.HasRun ? "NO ACTIVE WARNINGS" : "DEPLOY TO BEGIN"));
+            }
+        }
+
+        private static void SetValue(Transform target, string value) => SetValue(target?.GetComponent<TMP_Text>(), value);
+        private static void SetValue(TMP_Text target, string value)
+        { if (target != null) UiLocalizedText.Set(target, value); }
 
         private void Awake() => RefreshBindings();
 

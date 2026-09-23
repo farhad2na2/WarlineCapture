@@ -6,6 +6,7 @@ using Game.Runtime;
 using Game.Operations.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
+using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -20,10 +21,14 @@ namespace Game.Editor
         private static double started;
         private static int stage;
         private static int captureFrames;
+        private static int menuCaptureFrames;
+        private static int menuReturnFrames;
+        private static int ariaTraceBucket;
+        private static bool ariaWasActive;
         private static string capturePath;
         private static int exitCode;
         private static string loadFailure;
-        private static bool lifecycle, checkpointResume, processSave, processRestore;
+        private static bool lifecycle, checkpointResume, processSave, processRestore, ariaVictory;
         private static string checkpointSession;
         private static float checkpointElapsed;
         private const string ProcessCheckpointMarker = "/private/tmp/o001-process-checkpoint.json";
@@ -42,6 +47,7 @@ namespace Game.Editor
         public static void RunCheckpointResume() { checkpointResume = true; Start(false); }
         public static void RunCheckpointSaveForRestart() { checkpointResume = processSave = true; Start(false); }
         public static void RunCheckpointResumeAfterRestart() { processRestore = true; Start(false); }
+        public static void RunAriaVictory() { ariaVictory = true; Start(false); }
         public static void RunInterruptedRecovery() { interrupted = true; Start(true); }
         public static void RunRecovery() { recovery = true; Start(true); }
         public static void RunManualVictory() => StartManual(OperationsReconOutcome.Victory);
@@ -108,7 +114,7 @@ namespace Game.Editor
             Directory.CreateDirectory(Path.GetDirectoryName(capturePath));
             if (!manual && File.Exists(capturePath)) File.Delete(capturePath);
             EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
-            started = EditorApplication.timeSinceStartup; stage = 0; captureFrames = 0; loadFailure = null;
+            started = EditorApplication.timeSinceStartup; stage = 0; captureFrames = menuCaptureFrames = menuReturnFrames = 0; ariaTraceBucket = -1; ariaWasActive = false; loadFailure = null;
             Application.logMessageReceived += ObserveLog;
             EditorApplication.update += Tick;
             EditorApplication.EnterPlaymode();
@@ -121,7 +127,7 @@ namespace Game.Editor
             try
             {
                 if (loadFailure != null) { Complete(false, loadFailure); return; }
-                if (EditorApplication.timeSinceStartup - started > (manual ? 1200 : 240))
+                if (EditorApplication.timeSinceStartup - started > (manual || ariaVictory ? 1200 : 240))
                 { Complete(false, "timeout stage=" + stage); return; }
                 if (manual) { ObserveManualJourney(); return; }
                 if (recovery && stage == 2)
@@ -157,6 +163,20 @@ namespace Game.Editor
                 }
                 if (stage == 1 && shell.ActiveRoute == UIRoute.Operations && UiShellRuntimeGateway.TryReadOperationsMission(out var model) && model.CanDeploy)
                 {
+                    var dashboard = UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>();
+                    if (dashboard == null || dashboard.DailyBriefing == null ||
+                        dashboard.transform.Find("DistrictMap") == null ||
+                        dashboard.DailyBriefing.Find("StreetSignalsMissionCard") == null)
+                        throw new InvalidOperationException("Operations dashboard was replaced instead of presenting O001 inside its briefing.");
+                    if (menuCaptureFrames++ < 90) return;
+                    if (dashboard.DayLabel.text.Contains("12") ||
+                        dashboard.transform.Find("Credits/Value")?.GetComponent<TMPro.TMP_Text>().text != "0")
+                        throw new InvalidOperationException("Fresh Operations dashboard still shows authored resource or day placeholders: day=" +
+                            dashboard.DayLabel.text + " credits=" + dashboard.transform.Find("Credits/Value")?.GetComponent<TMPro.TMP_Text>().text +
+                            " expected=fresh city and zero credits");
+                    if (menuCaptureFrames == 91)
+                        ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001OperationsDashboard.png"));
+                    if (menuCaptureFrames < 110) return;
                     if (processRestore)
                     {
                         if (!model.CanResume) throw new InvalidOperationException("Fresh Editor did not offer the saved attempt.");
@@ -206,6 +226,19 @@ namespace Game.Editor
                     // Editor update callbacks can outpace game frames. Require actual
                     // simulation progress so a frozen world cannot pass the launch gate.
                     if (mission.ElapsedSeconds < 5f) return;
+                    var operationHud = UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                    bool compactHud = false;
+                    foreach (var candidate in operationHud)
+                    {
+                        if (candidate.ScanButton(0) == null) continue;
+                        var tracker = candidate.transform.Find("MissionCard") as RectTransform;
+                        compactHud = tracker != null && tracker.anchorMin.x >= .75f &&
+                            !candidate.GuideOpen && !tracker.gameObject.activeSelf &&
+                            candidate.GuideButton.gameObject.activeSelf &&
+                            candidate.transform.Find("MissionGuideDrawer") is Transform drawer && !drawer.gameObject.activeSelf;
+                        break;
+                    }
+                    if (!compactHud) throw new InvalidOperationException("Operation HUD did not preserve a compact, closed guide at launch.");
                     if (!Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(world, out var camera))
                         throw new InvalidOperationException("Missing shared world camera.");
                     var first = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root)[0].Unit;
@@ -222,6 +255,11 @@ namespace Game.Editor
                 }
                 if (stage == 3 && ++captureFrames > 30 && File.Exists(capturePath))
                 {
+                    if (ariaVictory)
+                    {
+                        if (Click("ARIA PLAY")) stage = 20;
+                        return;
+                    }
                     if (checkpointResume)
                     {
                         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -233,9 +271,32 @@ namespace Game.Editor
                         return;
                     }
                     if (!lifecycle)
-                    { Complete(true, "route=Operations phase=Playing clockAdvanced=5s original=16 total=36 capture=" + capturePath); return; }
+                    {
+                        var operationView = UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                        foreach (var candidate in operationView)
+                        {
+                            if (candidate.GuideButton == null) continue;
+                            candidate.GuideButton.onClick.Invoke();
+                            if (!candidate.GuideOpen) throw new InvalidOperationException("Mission Guide did not open from its button.");
+                            ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001MissionGuidePopup.png"));
+                            stage = 31; captureFrames = 0; return;
+                        }
+                        throw new InvalidOperationException("Mission Guide button is missing.");
+                    }
                     if (Click("WITHDRAW")) stage = 4;
                     return;
+                }
+                if (stage == 31 && ++captureFrames > 30 &&
+                    File.Exists(Path.GetFullPath("Build/EditorEvidence/O001MissionGuidePopup.png")))
+                {
+                    foreach (var candidate in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    {
+                        if (candidate.GuideButton == null) continue;
+                        candidate.GuideButton.onClick.Invoke();
+                        if (candidate.GuideOpen) throw new InvalidOperationException("Mission Guide did not close from its button.");
+                        Complete(true, "route=Operations phase=Playing clockAdvanced=5s original=16 total=36 guide=open-closed capture=" + capturePath);
+                        return;
+                    }
                 }
                 if (stage == 4)
                 {
@@ -252,6 +313,12 @@ namespace Game.Editor
                 }
                 if (stage == 6 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
                 {
+                    if (menuReturnFrames++ < 90) return;
+                    var dashboard = UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>();
+                    if (dashboard == null || !dashboard.DayLabel.text.Contains("1") ||
+                        !dashboard.DailyBriefing.Find("Time").GetComponent<TMPro.TMP_Text>().text.Contains("2"))
+                        throw new InvalidOperationException("Operations dashboard did not reflect the settled day and action points: day=" +
+                            dashboard?.DayLabel?.text + " ap=" + dashboard?.DailyBriefing?.Find("Time")?.GetComponent<TMPro.TMP_Text>()?.text);
                     var em = World.DefaultGameObjectInjectionWorld.EntityManager;
                     using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
                     using var owned = em.CreateEntityQuery(new EntityQueryDesc
@@ -309,6 +376,48 @@ namespace Game.Editor
                         throw new InvalidOperationException("Resume changed the session, clock, or AP reservation.");
                     Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
                         " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds + " ap=2");
+                }
+                if (stage == 20)
+                {
+                    var world = World.DefaultGameObjectInjectionWorld;
+                    if (world == null || !world.IsCreated ||
+                        !OperationsReconLaunchProjection.TryGet(world.EntityManager, out var root, out var operation)) return;
+                    int traceBucket = Mathf.FloorToInt(operation.ElapsedSeconds / 30f);
+                    var ariaState = UiShellRuntimeGateway.ReadAriaPlay();
+                    if (ariaState.Active) ariaWasActive = true;
+                    using var sessions = world.EntityManager.CreateEntityQuery(typeof(AriaPlaySessionComponent));
+                    var session = sessions.IsEmptyIgnoreFilter ? default : sessions.GetSingleton<AriaPlaySessionComponent>();
+                    if (traceBucket > ariaTraceBucket)
+                    {
+                        ariaTraceBucket = traceBucket;
+                        using var observations = world.EntityManager.CreateEntityQuery(typeof(AriaPlayObservationComponent));
+                        var observation = observations.IsEmptyIgnoreFilter ? default : observations.GetSingleton<AriaPlayObservationComponent>();
+                        Debug.Log("[OperationsReconAriaTrace] elapsed=" + operation.ElapsedSeconds.ToString("F0") +
+                            " phase=" + ariaState.Phase + " actions=" + ariaState.Actions + " scans=" + operation.CompletedScans +
+                            " goal=" + observation.GoalId + " kind=" + observation.Kind + " target=" + observation.TargetId +
+                            " stopReason=" + session.StopReason + " focused=" + Application.isFocused + " timeScale=" + Time.timeScale);
+                    }
+                    if (ariaWasActive && !ariaState.Active && operation.Phase != OperationsReconPhase.Terminal)
+                        throw new InvalidOperationException("ARIA stopped before O001 finished: elapsed=" + operation.ElapsedSeconds.ToString("F0") +
+                            " phase=" + ariaState.Phase + " actions=" + ariaState.Actions +
+                            " attempts=" + session.Attempts + " goal=" + session.GoalId +
+                            " target=" + session.TargetId + " evidenceProgress=" +
+                            world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).ChannelSeconds.ToString("F1") +
+                            " stopReason=" + session.StopReason +
+                            " focused=" + Application.isFocused + " timeScale=" + Time.timeScale);
+                    if (operation.Phase != OperationsReconPhase.Terminal) return;
+                    if (!UiShellRuntimeGateway.TryReadOperationsMission(out var outcome) || !outcome.Saved) return;
+                    if (operation.Outcome != OperationsReconOutcome.Victory)
+                        throw new InvalidOperationException("ARIA did not win O001: outcome=" + operation.Outcome +
+                            " scans=" + operation.CompletedScans + " actions=" + UiShellRuntimeGateway.ReadAriaPlay().Actions);
+                    if (Click("CONTINUE")) stage = 21;
+                    return;
+                }
+                if (stage == 21 && shell.ActiveRoute == UIRoute.Operations && shell.CurrentMode == UiShellMode.MainMenu)
+                {
+                    if (SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
+                        throw new InvalidOperationException("ARIA victory did not settle one AP.");
+                    Complete(true, "journey=aria-victory-return input=visible-touch seed=1102 ap=2");
                 }
             }
             catch (Exception exception) { Complete(false, exception.ToString()); }
@@ -395,6 +504,7 @@ namespace Game.Editor
             "RESTART ATTEMPT" => UiShellRuntimeGateway.Localization.Get("operations.o001.restart_attempt", name),
             "SAVE & EXIT" => UiShellRuntimeGateway.Localization.Get("operations.o001.save_exit", name),
             "RESUME ATTEMPT" => UiShellRuntimeGateway.Localization.Get("operations.o001.resume_attempt", name),
+            "ARIA PLAY" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_play", name),
             "WITHDRAW" => UiShellRuntimeGateway.Localization.Get("operations.withdraw", name),
             "CONTINUE" => UiShellRuntimeGateway.Localization.Get("ui.common.continue", name),
             _ => name

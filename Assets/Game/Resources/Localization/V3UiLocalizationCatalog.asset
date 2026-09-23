@@ -2065,6 +2065,10 @@ MonoBehaviour:
     - key: operations.o001.advancing
       value: Advancing to the objective. Your selected infantry will engage threats
         on the way.
+    - key: operations.o001.aria_play
+      value: ARIA PLAY
+    - key: operations.o001.aria_stop
+      value: STOP ARIA
     - key: operations.o001.attempt_conflict
       value: Finish the existing Operations attempt first.
     - key: operations.o001.attempt_missing
@@ -2074,16 +2078,47 @@ MonoBehaviour:
         least two original infantry to the secured ground exit.\n\n16 infantry \u2022
         12-minute deadline \u2022 1 action point \u2022 Regular difficulty\nOptional:
         complete all scans without losing recon infantry."
+    - key: operations.o001.brief_compact
+      value: "Scan 3 courtyards \u2022 recover relay evidence \u2022 extract 2 infantry\n16
+        infantry \u2022 12 min \u2022 1 AP"
     - key: operations.o001.carried
       value: EVIDENCE CARRIED
     - key: operations.o001.checkpoint_failed
       value: Could not save mission progress. Try again.
     - key: operations.o001.clock
       value: "{0}:{1} \u2022 {2}/16 infantry"
+    - key: operations.o001.close_guide
+      value: CLOSE GUIDE
     - key: operations.o001.closer
       value: Select surviving infantry and move them closer to this location first.
     - key: operations.o001.content_missing
       value: Street Signals content is unavailable.
+    - key: operations.o001.dashboard_ap
+      value: AP {0}
+    - key: operations.o001.dashboard_day
+      value: DAY {0}
+    - key: operations.o001.dashboard_heat
+      value: HEAT LEVEL
+    - key: operations.o001.dashboard_hostile
+      value: HOSTILE PRESSURE
+    - key: operations.o001.dashboard_new_city
+      value: NEW CITY
+    - key: operations.o001.dashboard_no_warnings
+      value: NO ACTIVE WARNINGS
+    - key: operations.o001.dashboard_road
+      value: ROAD BLOCKADE
+    - key: operations.o001.dashboard_security
+      value: CITY SECURITY
+    - key: operations.o001.dashboard_service
+      value: SERVICE DISRUPTION
+    - key: operations.o001.dashboard_start
+      value: DEPLOY TO BEGIN
+    - key: operations.o001.dashboard_supply
+      value: SUPPLY READINESS
+    - key: operations.o001.dashboard_threat
+      value: THREAT LEVEL
+    - key: operations.o001.dashboard_trust
+      value: CIVILIAN TRUST
     - key: operations.o001.day_ap
       value: "Day {0} \u2022 AP {1}"
     - key: operations.o001.defeat
@@ -2094,6 +2129,11 @@ MonoBehaviour:
       value: "Recover the relay evidence \u2014 hold for 15 seconds"
     - key: operations.o001.exit_objective
       value: Bring the evidence and two original infantry to the safe exit
+    - key: operations.o001.guide_hint
+      value: Select infantry, advance to a signal, then scan nearby. Recover the
+        evidence and reach extraction.
+    - key: operations.o001.guide_title
+      value: MISSION GUIDE
     - key: operations.o001.interrupted
       value: An interrupted attempt is reserved. Restart from the beginning without
         another AP cost, or withdraw.
@@ -2109,6 +2149,8 @@ MonoBehaviour:
       value: A new city operation will begin on deployment.
     - key: operations.o001.no_offer
       value: Street Signals is not available in the current Operations day.
+    - key: operations.o001.open_guide
+      value: MISSION GUIDE
     - key: operations.o001.partial
       value: PARTIAL SUCCESS
     - key: operations.o001.recover_progress
@@ -2148,6 +2190,8 @@ MonoBehaviour:
       value: Scan all three signal sites
     - key: operations.o001.signal
       value: SIGNAL {0}
+    - key: operations.o001.signals_title
+      value: SIGNAL SITES
     - key: operations.o001.title
       value: "STREET SIGNALS \u2014 OLD QUARTER"
     - key: operations.o001.victory
@@ -9352,6 +9396,10 @@ MonoBehaviour:
         \u0647\u062F\u0641. \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
         \u0645\u0646\u062A\u062E\u0628 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0628\u0627
         \u062F\u0634\u0645\u0646 \u062F\u0631\u06AF\u06CC\u0631 \u0645\u06CC\u200C\u0634\u0648\u062F."
+    - key: operations.o001.aria_play
+      value: "\u0628\u0627\u0632\u06CC \u0628\u0627 \u0622\u0631\u06CC\u0627"
+    - key: operations.o001.aria_stop
+      value: "\u062A\u0648\u0642\u0641 \u0622\u0631\u06CC\u0627"
     - key: operations.o001.attempt_conflict
       value: "\u0627\u0628\u062A\u062F\u0627 \u0646\u0648\u0628\u062A \u0641\u0639\u0644\u06CC
         \u0639\u0645\u0644\u06CC\u0627\u062A \u0631\u0627 \u062A\u0645\u0627\u0645
@@ -9377,6 +9425,14 @@ MonoBehaviour:
         \u0628\u062F\u0648\u0646 \u0627\u0632 \u062F\u0633\u062A \u062F\u0627\u062F\u0646
         \u0646\u06CC\u0631\u0648\u06CC \u0634\u0646\u0627\u0633\u0627\u06CC\u06CC
         \u06A9\u0627\u0645\u0644 \u06A9\u0646\u06CC\u062F."
+    - key: operations.o001.brief_compact
+      value: "\u06F3 \u062D\u06CC\u0627\u0637 \u0631\u0627 \u0627\u0633\u06A9\u0646
+        \u06A9\u0646\u06CC\u062F \u2022 \u0645\u062F\u0627\u0631\u06A9 \u0631\u0627
+        \u0628\u0631\u062F\u0627\u0631\u06CC\u062F \u2022 \u06F2 \u0646\u06CC\u0631\u0648\u06CC
+        \u067E\u06CC\u0627\u062F\u0647 \u0631\u0627 \u062E\u0627\u0631\u062C \u06A9\u0646\u06CC\u062F\n\u06F1\u06F6
+        \u0646\u06CC\u0631\u0648\u06CC \u067E\u06CC\u0627\u062F\u0647 \u2022 \u06F1\u06F2
+        \u062F\u0642\u06CC\u0642\u0647 \u2022 \u06F1 \u0627\u0645\u062A\u06CC\u0627\u0632
+        \u0627\u0642\u062F\u0627\u0645"
     - key: operations.o001.carried
       value: "\u0645\u062F\u0627\u0631\u06A9 \u0647\u0645\u0631\u0627\u0647 \u0646\u06CC\u0631\u0648
         \u0627\u0633\u062A"
@@ -9387,6 +9443,8 @@ MonoBehaviour:
     - key: operations.o001.clock
       value: "{0}:{1} \u2022 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
         {2}/16"
+    - key: operations.o001.close_guide
+      value: "\u0628\u0633\u062A\u0646 \u0631\u0627\u0647\u0646\u0645\u0627"
     - key: operations.o001.closer
       value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0632\u0646\u062F\u0647
         \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F
@@ -9396,6 +9454,34 @@ MonoBehaviour:
       value: "\u0645\u062D\u062A\u0648\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
         \u0633\u06CC\u06AF\u0646\u0627\u0644\u200C\u0647\u0627\u06CC \u062E\u06CC\u0627\u0628\u0627\u0646
         \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."
+    - key: operations.o001.dashboard_ap
+      value: "\u0627\u0642\u062F\u0627\u0645 {0}"
+    - key: operations.o001.dashboard_day
+      value: "\u0631\u0648\u0632 {0}"
+    - key: operations.o001.dashboard_heat
+      value: "\u062A\u0646\u0634 \u0633\u0637\u062D"
+    - key: operations.o001.dashboard_hostile
+      value: "\u0641\u0634\u0627\u0631 \u062F\u0634\u0645\u0646"
+    - key: operations.o001.dashboard_new_city
+      value: "\u0634\u0647\u0631 \u062C\u062F\u06CC\u062F"
+    - key: operations.o001.dashboard_no_warnings
+      value: "\u0647\u0634\u062F\u0627\u0631 \u0641\u0639\u0627\u0644\u06CC \u0648\u062C\u0648\u062F
+        \u0646\u062F\u0627\u0631\u062F"
+    - key: operations.o001.dashboard_road
+      value: "\u0627\u0646\u0633\u062F\u0627\u062F \u0645\u0633\u06CC\u0631"
+    - key: operations.o001.dashboard_security
+      value: "\u0627\u0645\u0646\u06CC\u062A \u0634\u0647\u0631"
+    - key: operations.o001.dashboard_service
+      value: "\u0627\u062E\u062A\u0644\u0627\u0644 \u062E\u062F\u0645\u0627\u062A"
+    - key: operations.o001.dashboard_start
+      value: "\u0628\u0631\u0627\u06CC \u0634\u0631\u0648\u0639 \u0627\u0639\u0632\u0627\u0645
+        \u06A9\u0646\u06CC\u062F"
+    - key: operations.o001.dashboard_supply
+      value: "\u0622\u0645\u0627\u062F\u06AF\u06CC \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: operations.o001.dashboard_threat
+      value: "\u0633\u0637\u062D \u062A\u0647\u062F\u06CC\u062F"
+    - key: operations.o001.dashboard_trust
+      value: "\u0627\u0639\u062A\u0645\u0627\u062F \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0627\u0646"
     - key: operations.o001.day_ap
       value: "\u0631\u0648\u0632 {0} \u2022 \u0627\u0645\u062A\u06CC\u0627\u0632
         \u0627\u0642\u062F\u0627\u0645 {1}"
@@ -9412,6 +9498,16 @@ MonoBehaviour:
         \u0627\u0632 \u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645
         \u0627\u0648\u0644\u06CC\u0647 \u0631\u0627 \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC
         \u0627\u0645\u0646 \u0628\u0631\u0633\u0627\u0646\u06CC\u062F"
+    - key: operations.o001.guide_hint
+      value: "\u067E\u06CC\u0627\u062F\u0647\u200C\u0646\u0638\u0627\u0645 \u0631\u0627
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F\u060C \u0628\u0647
+        \u0633\u06CC\u06AF\u0646\u0627\u0644 \u067E\u06CC\u0634\u0631\u0648\u06CC
+        \u06A9\u0646\u06CC\u062F \u0648 \u0627\u0632 \u0646\u0632\u062F\u06CC\u06A9
+        \u0627\u0633\u06A9\u0646 \u06A9\u0646\u06CC\u062F. \u0633\u067E\u0633 \u0645\u062F\u0627\u0631\u06A9
+        \u0631\u0627 \u0628\u0631\u062F\u0627\u0631\u06CC\u062F \u0648 \u0628\u0647
+        \u062E\u0631\u0648\u062C\u06CC \u0628\u0631\u0633\u06CC\u062F."
+    - key: operations.o001.guide_title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
     - key: operations.o001.interrupted
       value: "\u06CC\u06A9 \u0646\u0648\u0628\u062A \u0646\u0627\u062A\u0645\u0627\u0645
         \u0631\u0632\u0631\u0648 \u0634\u062F\u0647 \u0627\u0633\u062A. \u0628\u062F\u0648\u0646
@@ -9446,6 +9542,8 @@ MonoBehaviour:
       value: "\u0633\u06CC\u06AF\u0646\u0627\u0644\u200C\u0647\u0627\u06CC \u062E\u06CC\u0627\u0628\u0627\u0646
         \u062F\u0631 \u0631\u0648\u0632 \u0641\u0639\u0644\u06CC \u0639\u0645\u0644\u06CC\u0627\u062A
         \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."
+    - key: operations.o001.open_guide
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
     - key: operations.o001.partial
       value: "\u0645\u0648\u0641\u0642\u06CC\u062A \u0646\u0633\u0628\u06CC"
     - key: operations.o001.recover_progress
@@ -9518,6 +9616,8 @@ MonoBehaviour:
         \u0631\u0627 \u0627\u0633\u06A9\u0646 \u06A9\u0646\u06CC\u062F"
     - key: operations.o001.signal
       value: "\u0633\u06CC\u06AF\u0646\u0627\u0644 {0}"
+    - key: operations.o001.signals_title
+      value: "\u0645\u062D\u0644\u200C\u0647\u0627\u06CC \u0633\u06CC\u06AF\u0646\u0627\u0644"
     - key: operations.o001.title
       value: "\u0633\u06CC\u06AF\u0646\u0627\u0644\u200C\u0647\u0627\u06CC \u062E\u06CC\u0627\u0628\u0627\u0646
         \u2014 \u0645\u062D\u0644\u0647\u0654 \u0642\u062F\u06CC\u0645\u06CC"

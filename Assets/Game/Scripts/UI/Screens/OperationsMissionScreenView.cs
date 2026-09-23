@@ -13,10 +13,14 @@ namespace Game.UI.Runtime
         private TMP_FontAsset font;
         private TMP_Text title, description, status, clock, result;
         private TMP_Text[] siteLabels;
-        private Button deploy, resume, saveAndExit, conclude, continueButton, evidenceButton, recoverButton;
+        private Button deploy, resume, saveAndExit, conclude, continueButton, evidenceButton, recoverButton, ariaButton, guideButton;
+        private Button[] scanButtons, focusButtons, advanceButtons;
         private bool evidenceVisible, interruptedAttempt;
         private Button withdrawInterrupted;
         private GameObject briefing, controls, resultPanel, confirmation;
+        private bool guideOpen;
+        private bool missionPlaying;
+        private AriaTutorialBriefingView duplicateAria;
         private RectTransform[] markers;
 
         public static void Install(GameObject body)
@@ -24,11 +28,18 @@ namespace Game.UI.Runtime
             if (body == null) return;
             var existing = body.GetComponentInChildren<TMP_Text>(true);
             var font = existing != null ? existing.font : TMP_Settings.defaultFontAsset;
-            foreach (Transform child in body.transform) child.gameObject.SetActive(false);
-            var root = new GameObject("StreetSignalsBriefing", typeof(RectTransform));
-            root.transform.SetParent(body.transform, false);
-            root.AddComponent<MainMenuV3SectionLayoutView>().Configure(
-                new Vector2(1672, 941), MainMenuV3SectionAlignment.Center);
+            var dashboard = body.GetComponentInChildren<OperationsDashboardScreenView>(true);
+            Transform parent = dashboard != null && dashboard.DailyBriefing != null
+                ? dashboard.DailyBriefing : body.transform;
+            if (dashboard != null && dashboard.DailyBriefing != null)
+                foreach (Transform child in dashboard.DailyBriefing)
+                    if (child.name is "AriaPortraitClip" or "Briefing") child.gameObject.SetActive(false);
+            var root = new GameObject("StreetSignalsMissionCard", typeof(RectTransform));
+            root.transform.SetParent(parent, false);
+            var rect = (RectTransform)root.transform;
+            rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+            rect.offsetMin = dashboard != null ? new Vector2(12, 8) : Vector2.zero;
+            rect.offsetMax = dashboard != null ? new Vector2(-12, -102) : Vector2.zero;
             var view = root.AddComponent<OperationsMissionScreenView>(); view.font = font; view.Build(false);
         }
 
@@ -38,7 +49,10 @@ namespace Game.UI.Runtime
             var canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32600;
             var scaler = root.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = 1;
-            var view = root.AddComponent<OperationsMissionScreenView>(); view.font = font; view.Build(true); return view;
+            var squad = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+            var styledFont = squad != null ? squad.GetComponentInChildren<TMP_Text>(true)?.font : null;
+            var view = root.AddComponent<OperationsMissionScreenView>(); view.font = styledFont != null ? styledFont : font;
+            view.Build(true); return view;
         }
 
         private void Build(bool isHud)
@@ -46,50 +60,98 @@ namespace Game.UI.Runtime
             hud = isHud;
             var card = Panel("MissionCard", transform);
             if (hud)
-            { card.anchorMin = new Vector2(.28f, .76f); card.anchorMax = new Vector2(.75f, .90f); card.offsetMin = card.offsetMax = Vector2.zero; }
+            { card.anchorMin = new Vector2(.77f, .66f); card.anchorMax = new Vector2(.985f, .91f); card.offsetMin = card.offsetMax = Vector2.zero; }
             else
-            { card.anchorMin = new Vector2(.15f, .13f); card.anchorMax = new Vector2(.85f, .86f); card.offsetMin = card.offsetMax = Vector2.zero; }
-            Vertical(card, hud ? 1 : 14);
-            if (hud) card.GetComponent<VerticalLayoutGroup>().padding = new RectOffset(6,6,4,4);
-            title = Label(card, "STREET SIGNALS", hud ? 22 : 42, hud ? 26 : 60);
-            description = Label(card, "", hud ? 22 : 28, hud ? 26 : 160);
-            status = Label(card, "", hud ? 20 : 22, hud ? 48 : 100);
-            clock = Label(card, "", hud ? 22 : 24, hud ? 26 : 30);
+            { card.anchorMin = Vector2.zero; card.anchorMax = Vector2.one; card.offsetMin = card.offsetMax = Vector2.zero; }
+            card.GetComponent<Image>().color = new Color(.025f, .06f, .075f, .94f);
+            Frame(card);
+            Vertical(card, hud ? 5 : 6);
+            card.GetComponent<VerticalLayoutGroup>().padding = new RectOffset(12,12,9,9);
+            title = Label(card, "STREET SIGNALS", 24, 32);
+            title.color = new Color(.08f, .76f, .89f);
+            title.alignment = TextAlignmentOptions.Left;
+            description = Label(card, "", hud ? 17 : 18, hud ? 69 : 60);
+            description.alignment = TextAlignmentOptions.TopLeft;
+            status = Label(card, "", hud ? 16 : 15, hud ? 46 : 42);
+            status.alignment = TextAlignmentOptions.TopLeft;
+            status.color = new Color(.94f, .74f, .36f);
+            if (!hud)
+            {
+                var spacer = Panel("BriefingSpacer", card, false);
+                var layout = spacer.gameObject.AddComponent<LayoutElement>();
+                layout.minHeight = 0; layout.flexibleHeight = 1;
+            }
+            clock = Label(card, "", 19, 28);
+            clock.alignment = TextAlignmentOptions.Left;
             briefing = card.gameObject;
             if (!hud)
             {
-                deploy = Button(card, Text("operations.deploy", "DEPLOY"), () => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy));
-                resume = Button(card, Text("operations.o001.resume_attempt", "RESUME ATTEMPT"), () => Send(UiOperationsMissionAction.ResumeAttempt));
-                withdrawInterrupted = Button(card, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
+                var menuActions = Row(card); menuActions.GetComponent<LayoutElement>().preferredHeight = 43;
+                deploy = Button(menuActions, Text("operations.deploy", "DEPLOY"), () => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy));
+                resume = Button(menuActions, Text("operations.o001.resume_attempt", "RESUME ATTEMPT"), () => Send(UiOperationsMissionAction.ResumeAttempt));
+                withdrawInterrupted = Button(menuActions, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
                 var interruptedCard = Modal("ConfirmInterruptedWithdraw"); confirmation = interruptedCard.parent.gameObject;
-                Label(interruptedCard, Text("operations.o001.interrupted_withdraw_confirm", "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences."), 28, 180);
+                Label(interruptedCard, Text("operations.o001.interrupted_withdraw_confirm", "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences."), 23, 135);
                 Button(interruptedCard, Text("operations.withdraw", "WITHDRAW"), () => { confirmation.SetActive(false); Send(UiOperationsMissionAction.WithdrawInterrupted); });
                 Button(interruptedCard, Text("ui.common.cancel", "CANCEL"), () => confirmation.SetActive(false));
                 confirmation.SetActive(false);
-                Button(card, Text("ui.common.back", "BACK"), () => UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.MainMenu, false));
                 return;
             }
-            var actionPanel = Panel("MissionActions", transform); controls = actionPanel.gameObject;
-            actionPanel.anchorMin = new Vector2(.28f, .50f); actionPanel.anchorMax = new Vector2(.75f, .76f);
+            var trackerActions = Row(card); trackerActions.GetComponent<LayoutElement>().preferredHeight = 44;
+            saveAndExit = Button(trackerActions, Text("operations.o001.save_exit", "SAVE & EXIT"), () => Send(UiOperationsMissionAction.SaveAndExit));
+            guideButton = Button(transform, Text("operations.o001.open_guide", "MISSION GUIDE"), () => guideOpen = !guideOpen);
+            var guideRect = (RectTransform)guideButton.transform;
+            guideRect.anchorMin = new Vector2(.77f, .925f); guideRect.anchorMax = new Vector2(.89f, .99f);
+            guideRect.offsetMin = guideRect.offsetMax = Vector2.zero;
+            Frame(guideRect);
+            ariaButton = Button(transform, Text("operations.o001.aria_play", "ARIA PLAY"), () =>
+            {
+                if (UiShellRuntimeGateway.ReadAriaPlay().Active) UiShellRuntimeGateway.StopAriaPlay();
+                else UiShellRuntimeGateway.TryStartAriaPlay();
+            });
+            var ariaRect = (RectTransform)ariaButton.transform;
+            ariaRect.anchorMin = new Vector2(.895f, .925f); ariaRect.anchorMax = new Vector2(.985f, .99f);
+            ariaRect.offsetMin = ariaRect.offsetMax = Vector2.zero;
+            Frame(ariaRect);
+            foreach (var button in new[] { guideButton, saveAndExit, ariaButton })
+                button.GetComponentInChildren<TMP_Text>().fontSize = 14;
+            var actionPanel = Panel("MissionGuideDrawer", transform); controls = actionPanel.gameObject;
+            actionPanel.anchorMin = new Vector2(.77f, .20f); actionPanel.anchorMax = new Vector2(.985f, .65f);
             actionPanel.offsetMin = actionPanel.offsetMax = Vector2.zero;
-            Vertical(actionPanel, 4);
-            var row = Row(actionPanel); row.GetComponent<LayoutElement>().preferredHeight = 124; siteLabels = new TMP_Text[3];
+            actionPanel.GetComponent<Image>().color = new Color(.025f, .075f, .095f, .96f);
+            Frame(actionPanel);
+            Vertical(actionPanel, 5);
+            var guideHeader = Row(actionPanel); guideHeader.GetComponent<LayoutElement>().preferredHeight = 40;
+            var guideTitle = Label(guideHeader, Text("operations.o001.guide_title", "MISSION GUIDE"), 22, 40);
+            guideTitle.color = new Color(.08f, .76f, .89f);
+            Button(guideHeader, Text("ui.common.close", "CLOSE"), () => guideOpen = false);
+            var guideHint = Label(actionPanel, Text("operations.o001.guide_hint", "Select infantry, advance to a signal, then scan nearby. Recover the evidence and reach extraction."), 16, 58);
+            guideHint.alignment = TextAlignmentOptions.TopLeft;
+            var signalsTitle = Label(actionPanel, Text("operations.o001.signals_title", "SIGNAL SITES"), 17, 26);
+            signalsTitle.alignment = TextAlignmentOptions.Left;
+            signalsTitle.color = new Color(.08f, .76f, .89f);
+            siteLabels = new TMP_Text[3];
+            scanButtons = new Button[3];
+            focusButtons = new Button[5];
             for (int i = 0; i < 3; i++)
             {
                 int index = i;
-                var column = Panel("Signal" + i, row, false); Vertical(column, 2);
-                var focus = Button(column, string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)), () => Send(UiOperationsMissionAction.FocusSite, index));
+                var signalRow = Row(actionPanel); signalRow.name = "Signal" + i;
+                signalRow.GetComponent<LayoutElement>().preferredHeight = 52;
+                var focus = Button(signalRow, string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)), () => Send(UiOperationsMissionAction.FocusSite, index));
+                focusButtons[i] = focus;
                 siteLabels[i] = focus.GetComponentInChildren<TMP_Text>();
-                Button(column, Text("operations.scan", "SCAN SELECTED"), () => Send(UiOperationsMissionAction.ScanSite, index));
+                scanButtons[i] = Button(signalRow, Text("operations.scan", "SCAN SELECTED"), () => Send(UiOperationsMissionAction.ScanSite, index));
             }
-            var secondRow = Row(actionPanel);
-            secondRow.GetComponent<LayoutElement>().preferredHeight = 64;
-            evidenceButton = Button(secondRow, Text("operations.evidence", "EVIDENCE"), () => Send(UiOperationsMissionAction.FocusEvidence));
-            recoverButton = Button(secondRow, Text("operations.recover", "RECOVER"), () => Send(UiOperationsMissionAction.RecoverEvidence));
-            Button(secondRow, Text("operations.exit", "EXIT"), () => Send(UiOperationsMissionAction.FocusExit));
-            conclude = Button(secondRow, Text("operations.conclude", "CONCLUDE"), () => Send(UiOperationsMissionAction.Conclude));
-            Button(secondRow, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
-            saveAndExit = Button(actionPanel, Text("operations.o001.save_exit", "SAVE & EXIT"), () => Send(UiOperationsMissionAction.SaveAndExit));
+            var evidenceRow = Row(actionPanel); evidenceRow.GetComponent<LayoutElement>().preferredHeight = 50;
+            evidenceButton = Button(evidenceRow, Text("operations.evidence", "EVIDENCE"), () => Send(UiOperationsMissionAction.FocusEvidence));
+            focusButtons[3] = evidenceButton;
+            recoverButton = Button(evidenceRow, Text("operations.recover", "RECOVER"), () => Send(UiOperationsMissionAction.RecoverEvidence));
+            var exitRow = Row(actionPanel); exitRow.GetComponent<LayoutElement>().preferredHeight = 50;
+            focusButtons[4] = Button(exitRow, Text("operations.exit", "EXIT"), () => Send(UiOperationsMissionAction.FocusExit));
+            conclude = Button(exitRow, Text("operations.conclude", "CONCLUDE"), () => Send(UiOperationsMissionAction.Conclude));
+            var withdrawRow = Row(actionPanel); withdrawRow.GetComponent<LayoutElement>().preferredHeight = 42;
+            Button(withdrawRow, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
 
             var resultCard = Modal("MissionResult"); resultPanel = resultCard.parent.gameObject;
             result = Label(resultCard, "", 34, 220);
@@ -101,6 +163,7 @@ namespace Game.UI.Runtime
             Button(confirmCard, Text("ui.common.cancel", "CANCEL"), () => confirmation.SetActive(false));
             confirmation.SetActive(false);
             markers = new RectTransform[5];
+            advanceButtons = new Button[5];
             for (int i = 0; i < markers.Length; i++)
             {
                 markers[i] = Panel("WorldObjective" + i, transform);
@@ -109,6 +172,7 @@ namespace Game.UI.Runtime
                 string label = i < 3 ? string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)) : i == 3 ? Text("operations.evidence", "EVIDENCE") : Text("operations.exit", "EXIT");
                 int markerIndex = i;
                 var advance = markers[i].gameObject.AddComponent<Button>();
+                advanceButtons[i] = advance;
                 advance.targetGraphic = markers[i].GetComponent<Image>();
                 advance.onClick.AddListener(() => Send(markerIndex < 3 ? UiOperationsMissionAction.AdvanceSite :
                     markerIndex == 3 ? UiOperationsMissionAction.AdvanceEvidence : UiOperationsMissionAction.AdvanceExit, markerIndex));
@@ -118,25 +182,38 @@ namespace Game.UI.Runtime
 
         private void Update()
         {
+            if (hud)
+            {
+                if (duplicateAria == null) duplicateAria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
+                if (duplicateAria != null && duplicateAria.gameObject.activeSelf)
+                    duplicateAria.gameObject.SetActive(false);
+            }
             if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model)) return;
             if (!hud)
             {
                 UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Description);
                 UiLocalizedText.Set(status, model.Status); UiLocalizedText.Set(clock, model.Clock);
+                status.gameObject.SetActive(!string.IsNullOrWhiteSpace(model.Status));
                 interruptedAttempt = model.InterruptedAttempt;
                 deploy.interactable = model.CanDeploy && !model.CanResume;
                 UiLocalizedText.Set(deploy.GetComponentInChildren<TMP_Text>(), interruptedAttempt ? Text("operations.o001.restart_attempt", "RESTART ATTEMPT") : Text("operations.deploy", "DEPLOY"));
                 resume.gameObject.SetActive(model.CanResume);
                 withdrawInterrupted.gameObject.SetActive(interruptedAttempt);
-                // Keep the extra recovery choice inside the briefing card at 1080p.
-                description.GetComponent<LayoutElement>().preferredHeight = interruptedAttempt ? 130 : 160;
-                status.GetComponent<LayoutElement>().preferredHeight = interruptedAttempt ? 80 : 100;
                 return;
             }
             bool ready = UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.CurrentMode == UiShellMode.MatchHud &&
                 shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
-            briefing.SetActive(ready && model.InMission && !model.Finished);
-            controls.SetActive(briefing.activeSelf);
+            missionPlaying = ready && model.InMission && !model.Finished;
+            briefing.SetActive(missionPlaying && guideOpen);
+            controls.SetActive(missionPlaying && guideOpen);
+            guideButton.gameObject.SetActive(missionPlaying);
+            UiLocalizedText.Set(guideButton.GetComponentInChildren<TMP_Text>(), guideOpen
+                ? Text("operations.o001.close_guide", "CLOSE GUIDE") : Text("operations.o001.open_guide", "MISSION GUIDE"));
+            ariaButton.gameObject.SetActive(missionPlaying &&
+                UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None);
+            if (ariaButton.gameObject.activeSelf)
+                UiLocalizedText.Set(ariaButton.GetComponentInChildren<TMP_Text>(), UiShellRuntimeGateway.ReadAriaPlay().Active
+                    ? Text("operations.o001.aria_stop", "STOP ARIA") : Text("operations.o001.aria_play", "ARIA PLAY"));
             saveAndExit.interactable = model.InMission && !model.Finished;
             resultPanel.SetActive(ready && model.Finished);
             if (model.Finished) confirmation.SetActive(false);
@@ -152,13 +229,21 @@ namespace Game.UI.Runtime
                 for (int i = 0; i < siteLabels.Length && i < model.SiteStatus.Length; i++) UiLocalizedText.Set(siteLabels[i], model.SiteStatus[i]);
         }
 
+        public Button ScanButton(int index) => scanButtons != null && index >= 0 && index < scanButtons.Length ? scanButtons[index] : null;
+        public Button AdvanceButton(int index) => advanceButtons != null && index >= 0 && index < advanceButtons.Length ? advanceButtons[index] : null;
+        public Button FocusButton(int index) => focusButtons != null && index >= 0 && index < focusButtons.Length ? focusButtons[index] : null;
+        public Button RecoverButton => recoverButton;
+        public Button GuideButton => guideButton;
+        public Button AriaButton => ariaButton;
+        public bool GuideOpen => guideOpen;
+
         public void PresentMarkers(Vector3[] screenPositions)
         {
             if (markers == null) return;
             for (int i = 0; i < markers.Length; i++)
             {
                 Vector3 point = screenPositions[i];
-                bool visible = briefing.activeSelf && (i != 3 || evidenceVisible) && point.z > 0 && point.x >= 0 && point.x <= Screen.width && point.y >= 0 && point.y <= Screen.height;
+                bool visible = missionPlaying && (i != 3 || evidenceVisible) && point.z > 0 && point.x >= 0 && point.x <= Screen.width && point.y >= 0 && point.y <= Screen.height;
                 markers[i].gameObject.SetActive(visible);
                 if (visible && RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, point, null, out Vector2 local))
                     markers[i].anchoredPosition = local + new Vector2(0, 24);
@@ -174,8 +259,9 @@ namespace Game.UI.Runtime
         private static string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get(key, fallback);
         private RectTransform Modal(string name)
         {
-            var shade = Panel(name, transform); Stretch(shade); shade.GetComponent<Image>().color = new Color(0,0,0,.8f);
-            var card = Panel("Card", shade); card.anchorMin = card.anchorMax = new Vector2(.5f,.5f); card.sizeDelta = new Vector2(850,430);
+            var parent = hud ? transform : GetComponentInParent<Canvas>().rootCanvas.transform;
+            var shade = Panel(name, parent); Stretch(shade); shade.GetComponent<Image>().color = new Color(0,0,0,.8f);
+            var card = Panel("Card", shade); card.anchorMin = card.anchorMax = new Vector2(.5f,.5f); card.sizeDelta = hud ? new Vector2(850,430) : new Vector2(670,350);
             Vertical(card, 18); return card;
         }
         private RectTransform Panel(string name, Transform parent, bool background = true)
@@ -183,6 +269,21 @@ namespace Game.UI.Runtime
             var root = new GameObject(name, typeof(RectTransform)); root.transform.SetParent(parent, false);
             if (background) root.AddComponent<Image>().color = new Color(.025f,.07f,.08f,.97f);
             return (RectTransform)root.transform;
+        }
+        private static void Frame(RectTransform rect)
+        {
+            var outline = rect.gameObject.AddComponent<Outline>();
+            outline.effectColor = new Color(.07f, .61f, .68f, .62f);
+            outline.effectDistance = new Vector2(1.5f, -1.5f);
+            var rule = new GameObject("CyanAccentRule", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
+            rule.transform.SetParent(rect, false);
+            rule.GetComponent<LayoutElement>().ignoreLayout = true;
+            var line = (RectTransform)rule.transform;
+            line.anchorMin = new Vector2(0, 1); line.anchorMax = Vector2.one;
+            line.pivot = new Vector2(.5f, 1);
+            line.sizeDelta = new Vector2(0, 3);
+            rule.GetComponent<Image>().color = new Color(.06f, .72f, .82f, .88f);
+            rule.GetComponent<Image>().raycastTarget = false;
         }
         private TMP_Text Label(Transform parent, string value, float size, float height)
         {
@@ -196,7 +297,12 @@ namespace Game.UI.Runtime
             var root = Panel(label, parent); root.gameObject.AddComponent<LayoutElement>().preferredHeight = hud ? 44 : 58;
             root.GetComponent<Image>().color = new Color(.04f,.26f,.29f,1);
             var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = root.GetComponent<Image>(); button.onClick.AddListener(() => clicked());
-            var text = Label(root, label, hud ? 18 : 28, 0); Stretch(text.rectTransform); return button;
+            var colors = button.colors;
+            colors.highlightedColor = new Color(1.25f, 1.25f, 1.25f, 1);
+            colors.pressedColor = new Color(.68f, .9f, .93f, 1);
+            colors.disabledColor = new Color(.46f, .5f, .5f, .72f);
+            button.colors = colors;
+            var text = Label(root, label, hud ? 16 : 20, 0); Stretch(text.rectTransform); return button;
         }
         private RectTransform Row(Transform parent)
         {

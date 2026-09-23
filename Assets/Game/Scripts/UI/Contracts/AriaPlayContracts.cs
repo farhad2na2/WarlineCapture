@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game.UI.Contracts
 {
-    public enum AriaPlayCapability : byte { None, GuidedCampaign, BaseAssault }
+    public enum AriaPlayCapability : byte { None, GuidedCampaign, BaseAssault, ReconOperation }
     public enum AriaPlayPhase : byte { Manual, Starting, Observing, Aiming, Touching, Verifying, Waiting, Blocked }
     public enum AriaPlayObservationKind : byte { Unavailable, Control, WorldTarget, Waiting, Cinematic, Finished }
     public readonly struct AriaPlayObservation

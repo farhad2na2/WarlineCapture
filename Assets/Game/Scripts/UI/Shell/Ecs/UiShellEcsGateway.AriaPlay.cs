@@ -27,6 +27,16 @@ namespace Game.UI.Shell.Ecs
                 return AriaPlayCapability.None;
 #endif
             }
+            using (var operations = em.CreateEntityQuery(ComponentType.ReadOnly<OperationsReconMissionComponent>()))
+                if (operations.CalculateEntityCount() == 1)
+                {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                    return operations.GetSingleton<OperationsReconMissionComponent>().Phase == OperationsReconPhase.Playing
+                        ? AriaPlayCapability.ReconOperation : AriaPlayCapability.None;
+#else
+                    return AriaPlayCapability.None;
+#endif
+                }
             using var missions = em.CreateEntityQuery(ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
             if (missions.CalculateEntityCount() != 1) return AriaPlayCapability.None;
             var mission = missions.GetSingleton<CampaignMissionRuntimeComponent>();

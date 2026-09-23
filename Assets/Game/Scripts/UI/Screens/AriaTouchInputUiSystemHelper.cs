@@ -28,6 +28,7 @@ namespace Game.UI.Runtime
         public uint Generation { get; private set; }
         public uint AcceptedSamples { get; private set; }
         public bool PlayerInterrupted { get; private set; }
+        public byte LastInterruption { get; private set; }
         public int DeviceId => screen != null ? screen.deviceId : 0;
 
         public AriaTouchInputUiSystemHelper()
@@ -41,6 +42,7 @@ namespace Game.UI.Runtime
             if (disposed || IsRunning || AnyPhysicalButtonPressed()) return false;
             Generation++;
             PlayerInterrupted = false;
+            LastInterruption = 0;
             consumedDevice = null;
             screen = InputSystem.AddDevice<Touchscreen>("AriaDemonstrationTouch");
             return true;
@@ -94,7 +96,10 @@ namespace Game.UI.Runtime
             consumedDevice = null;
         }
 
-        private void OnFocusChanged(bool focused) { if (!focused) Stop(); }
+        private void OnFocusChanged(bool focused)
+        {
+            if (!focused) { LastInterruption = 2; Stop(); }
+        }
 
         private void Queue(Vector2 position, TouchPhase phase)
         {
@@ -130,6 +135,7 @@ namespace Game.UI.Runtime
             if (!IsRunning || !down) return;
             // Mouse movement alone is not intervention. A real button/contact is.
             PlayerInterrupted = true;
+            LastInterruption = 7;
             consumedDevice = device;
             input.handled = true;
             Stop();

@@ -120,6 +120,62 @@ namespace Game.Composition
             if (UnityEngine.Time.realtimeSinceStartupAsDouble < nextRefresh) return;
             nextRefresh = UnityEngine.Time.realtimeSinceStartupAsDouble + .2;
             EntityManager.GetComponentObject<UiOperationsMissionReadModel>(boundary).Value = Project(root, mission, live);
+            if (!live)
+            {
+                var dashboard = UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>();
+                if (dashboard != null) dashboard.Present(ProjectDashboard());
+            }
+        }
+
+        private UiOperationsDashboardModel ProjectDashboard()
+        {
+            var profile = saves.LoadProfile();
+            var save = commands.Read();
+            bool hasRun = OperationsSaveMigration.HasActiveRun(save);
+            var result = new UiOperationsDashboardModel
+            {
+                Credits = profile.credits,
+                Command = profile.commandAuthority,
+                HasRun = hasRun,
+                Day = hasRun ? save.activeRun.day : 0,
+                ActionPoints = hasRun ? save.activeRun.actionPoints : 0
+            };
+            if (!hasRun) return result;
+            var districts = save.activeRun.districts;
+            if (districts != null && districts.Length > 0)
+            {
+                var totals = new int[5];
+                foreach (var district in districts)
+                {
+                    totals[0] += district.security;
+                    totals[1] += district.trust;
+                    totals[2] += district.enemyInfluence;
+                    totals[3] += district.heat;
+                    totals[4] += district.supplyReadiness;
+                }
+                result.Readiness = new int[totals.Length];
+                for (int i = 0; i < totals.Length; i++)
+                    result.Readiness[i] = Mathf.RoundToInt((float)totals[i] / districts.Length);
+            }
+            var incidents = save.activeRun.incidents;
+            if (incidents != null && incidents.Length > 0)
+            {
+                var warnings = new System.Collections.Generic.List<string>(3);
+                foreach (var incident in incidents)
+                {
+                    if (warnings.Count == 3) break;
+                    string warning = (OperationsIncidentKind)incident.kind switch
+                    {
+                        OperationsIncidentKind.ServiceDisruption => Copy("dashboard_service", "SERVICE DISRUPTION"),
+                        OperationsIncidentKind.RoadBlockade => Copy("dashboard_road", "ROAD BLOCKADE"),
+                        OperationsIncidentKind.HostilePressure => Copy("dashboard_hostile", "HOSTILE PRESSURE"),
+                        _ => string.Empty
+                    };
+                    if (!string.IsNullOrEmpty(warning)) warnings.Add(warning);
+                }
+                result.Warnings = warnings.ToArray();
+            }
+            return result;
         }
 
         private void Handle(UiOperationsMissionRequest request, Entity root, OperationsReconMissionComponent mission, bool live)
@@ -376,7 +432,7 @@ namespace Game.Composition
             var model = new UiOperationsMissionModel
             {
                 Title = Copy("title", "STREET SIGNALS — OLD QUARTER"),
-                Description = Copy("brief", "Scan three courtyards. Recover the relay evidence. Bring it and at least two original infantry to the secured ground exit.\n\n16 infantry • 12-minute deadline • 1 action point • Regular difficulty\nOptional: complete all scans without losing recon infantry."),
+                Description = Copy("brief_compact", "Scan 3 courtyards • recover relay evidence • extract 2 infantry\n16 infantry • 12 min • 1 AP"),
                 Status = notice,
                 CanDeploy = !live && definition != null && (!OperationsSaveMigration.HasActiveRun(save) || save.activeRun.actionPoints > 0 || save.pendingDeployment?.reserved == true),
                 Clock = !OperationsSaveMigration.HasActiveRun(save) ? Copy("new_city", "A new city operation will begin on deployment.") :
@@ -405,14 +461,26 @@ namespace Game.Composition
                     : Copy("exit_objective", "Bring the evidence and two original infantry to the safe exit");
             model.CanConclude = mission.PartialAvailable != 0;
             var evidence = EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root);
+            model.EvidenceProgress = evidence.ChannelSeconds;
             model.EvidenceAvailable = mission.CompletedScans == 3;
             model.CanRecover = model.EvidenceAvailable && evidence.Carrier == Entity.Null;
+            model.EvidenceCarried = evidence.Carrier != Entity.Null;
+            model.CanRecoverHere = model.CanRecover && HasSelectedInfantryNear(root, evidence.Position, 6f);
             model.EvidenceStatus = evidence.Carrier != Entity.Null ? Copy("carried", "EVIDENCE CARRIED") :
                 string.Format(Copy("recover_progress", "RECOVER {0}/15 s"), Mathf.FloorToInt(evidence.ChannelSeconds));
             var sites = EntityManager.GetBuffer<OperationsReconSiteElement>(root);
             model.SiteStatus = new string[sites.Length];
-            for (int i = 0; i < sites.Length; i++) model.SiteStatus[i] = string.Format(Copy("signal", "SIGNAL {0}"), (char)('A' + i)) + " • " +
-                (sites[i].Completed != 0 ? Copy("done", "DONE") : Mathf.FloorToInt(sites[i].ChannelSeconds) + "/15 s");
+            model.SiteCompleted = new bool[sites.Length];
+            model.CanScanSite = new bool[sites.Length];
+            model.SiteProgress = new float[sites.Length];
+            for (int i = 0; i < sites.Length; i++)
+            {
+                model.SiteCompleted[i] = sites[i].Completed != 0;
+                model.SiteProgress[i] = sites[i].ChannelSeconds;
+                model.CanScanSite[i] = !model.SiteCompleted[i] && HasSelectedInfantryNear(root, sites[i].Position, 8f);
+                model.SiteStatus[i] = string.Format(Copy("signal", "SIGNAL {0}"), (char)('A' + i)) + " • " +
+                    (model.SiteCompleted[i] ? Copy("done", "DONE") : Mathf.FloorToInt(sites[i].ChannelSeconds) + "/15 s");
+            }
             if (EntityManager.HasComponent<OperationsReconWaveComponent>(root))
             {
                 var waves = EntityManager.GetComponentData<OperationsReconWaveComponent>(root);
@@ -432,6 +500,19 @@ namespace Game.Composition
                 mission.CompletedScans, mission.InfantryAtExit,
                 resultSaved ? Copy("saved", "District result and rewards saved.") : Copy("saving", "Saving result…"));
             return model;
+        }
+
+        private bool HasSelectedInfantryNear(Entity root, float3 target, float radius)
+        {
+            float limit = radius * radius;
+            foreach (var member in EntityManager.GetBuffer<OperationsReconRosterElement>(root))
+                if (EntityManager.Exists(member.Unit) && EntityManager.HasComponent<SelectedUnitTag>(member.Unit) &&
+                    EntityManager.HasComponent<UnitHealth>(member.Unit) &&
+                    EntityManager.GetComponentData<UnitHealth>(member.Unit).Current > 0 &&
+                    EntityManager.HasComponent<LocalTransform>(member.Unit) &&
+                    math.distancesq(EntityManager.GetComponentData<LocalTransform>(member.Unit).Position.xz, target.xz) <= limit)
+                    return true;
+            return false;
         }
 
         private void Focus(float3 position)

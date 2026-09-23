@@ -74,6 +74,18 @@ namespace Game.Tests.Editor
             Assert.AreEqual(
                 SkirmishStrategyPriority.RecruitCounter,
                 em.GetComponentData<SkirmishEnemyStrategyComponent>(session).Priority);
+
+            SkirmishStrategyScore second = SkirmishEnemyStrategySystem.Evaluate(
+                em, session, owned, authored.ArmyGround);
+            Assert.AreEqual(SkirmishStrategyPriority.AttackBase, second.Priority);
+            Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(enemyMaterials - 120, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            uint groupId = em.GetComponentData<SkirmishEnemyStrategyComponent>(session).LastGroupId;
+            Assert.AreNotEqual(0u, groupId);
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, groupId, out SkirmishArmyGroupRecord group));
+            Assert.AreEqual(2, group.FactionId);
+            Assert.AreEqual(SkirmishRoleKind.Tank, group.Role);
+            Assert.AreEqual(SkirmishGroupOrderKind.Attack, group.LastOrder);
         }
 
         [Test]
@@ -505,6 +517,7 @@ namespace Game.Tests.Editor
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
                 suite.S003AirMobilePublicControlsDoNotMutateGameplay();
                 suite.S004EstablishedPadReadyDoesNotMutatePlayerStocks();
+                SkirmishS002AriaHarnessTests.RunFocusedValidation();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }
             catch (Exception exception)

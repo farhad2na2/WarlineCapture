@@ -163,13 +163,13 @@ namespace Game.UI.Runtime
                 mask=restrictions.AvailableSquadMask;
             }
 
-            if (_restrictionStateInitialized && lastMissionSquadMask==mask &&
-                _lastCombatVehiclesDisabled == combatVehiclesDisabled &&
-                _lastAirDisabled == airDisabled &&
-                _lastTransportDisabled == transportDisabled &&
-                _lastHideUnrelatedControls == hideUnrelatedControls)
-                return;
-
+            bool restrictionsChanged = !_restrictionStateInitialized || lastMissionSquadMask != mask ||
+                _lastCombatVehiclesDisabled != combatVehiclesDisabled ||
+                _lastAirDisabled != airDisabled ||
+                _lastTransportDisabled != transportDisabled ||
+                _lastHideUnrelatedControls != hideUnrelatedControls;
+            if (restrictionsChanged)
+            {
             lastMissionSquadMask=mask;
             _restrictionStateInitialized = true;
             _lastCombatVehiclesDisabled = combatVehiclesDisabled;
@@ -183,6 +183,36 @@ namespace Game.UI.Runtime
             }
             else ApplyMissionRestrictionVisibility(
                 combatVehiclesDisabled, airDisabled, transportDisabled, hideUnrelatedControls);
+            }
+
+            if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out UiMatchHudSquadTrayModel availability))
+            {
+                bool expandedSkirmish = UiShellRuntimeGateway.TryReadSkirmish(out UiSkirmishModel skirmishModel) &&
+                                        skirmishModel.Expanded;
+                for (int i = 0; i < 5; i++)
+                {
+                    if (!TryGetCard(i, out Card card) || card.Button == null)
+                        continue;
+                    bool visible = availability.GetCard(i).Visible;
+                    if (!visible)
+                    {
+                        card.Button.interactable = false;
+                        continue;
+                    }
+
+                    // Mission transport/air masks were leaving the expanded NEXT
+                    // card and the tank page non-interactable, so ARIA never left
+                    // the rifle page and never pressed Attack on the enemy base.
+                    if (!expandedSkirmish)
+                        continue;
+                    card.Button.interactable = true;
+                    if (_missionDisabled[i])
+                    {
+                        _missionDisabled[i] = false;
+                        ApplyMissionDisabledTreatment(i, false);
+                    }
+                }
+            }
         }
 
         public void ApplyMissionRestrictionVisibility(
@@ -334,6 +364,7 @@ namespace Game.UI.Runtime
         private void OnCardClicked(int index)
         {
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
+            UiShellRuntimeGateway.TrySelectExpandedPresentedSlot(index);
             _cardClicked?.Invoke(ToSlot(index));
             if (_assistantGuidanceActive && index == 0)
             {

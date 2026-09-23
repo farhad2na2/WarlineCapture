@@ -513,6 +513,172 @@ Design commit; that does **not** mark Skirmish mission 4 Playable.
 - Publication: **Playable** on tip `2b5f0f6e9` (flip commit `7f0e1def7`).
 - Game View self-gate: Regular Standard seed `104731` Playing PNG + sidecar under `Design/AgentReports/SkirmishExpansion/S002/_Evidence/`.
 - Visual spawn follow-up: `SkirmishVisualSpawnSystem` snapshots session entities before `AttachMissing` (`2b5f0f6e9`) so live Playing no longer throws structural-change during `AddComponentObject`.
-- Still open (do not treat as ARIA/War certified): counted Regular Standard ARIA matrix (seeds 104731 / 130365 / 155923 x en/fa-IR), edge/recovery placeholders, and device review slots in `acceptance.md` / `runs.csv`.
+- Still open (do not treat as ARIA/War certified): counted Regular Standard ARIA matrix (seeds 104731 / 130365 / 155923 x en/fa-IR), the human slot `S002-manual-rs-104731-en`, edge/recovery placeholders, and device review. `runs.csv` is still header-only. Publication Playable is not an ARIA win.
+
+## S002 ARIA win harness
+
+Expanded attack orders now apply overlay damage. A unit on Attack stops while a
+legal visible combatant is in range, then continues to the ordered structure.
+Rifles still cannot damage a Barracks. Hidden contacts take no damage. ARIA
+pages to the assault cards (tank, car, APC, rocketeer), additive-selects them,
+and presses the visible Attack button. That button calls
+`SkirmishArmyCommandService.TryAttack` on the visible enemy base. No forced
+Victory, injected army, extra resources, or hidden wallet.
+
+Live recorder: `Game.Editor.SkirmishS002AriaRunHarness`.
+
+### Tip `Abort,timeout` / elapsed stuck at 0 (Windows live)
+
+Observed on tip `9d20bb4b`: Playing for the full ~1500s wall budget with
+`match.ElapsedSeconds` frozen at 0. Expanded spawn marks Playing before
+`SimulationActive` is armed; LoadingGate fail-open previously cleared the
+loading pending flag **without** setting `SimulationActive=1`, so the objective
+clock stayed paused and the harness waited until wall-clock timeout.
+
+Fixes on this branch:
+
+1. LoadingGate fail-open now sets `SimulationActive=1`.
+2. Expanded session control projects objective-clock elapsed onto
+   `SkirmishMatchState.ElapsedSeconds` (RulesSystem is skipped for expanded).
+3. Harness waits for `SimulationActive` before starting ARIA, arms simulation
+   after gameplay bootstrap completes/fails, and aborts with
+   `end_reason=simulationNotAdvancing` if elapsed stays 0 for 45s after Playing
+   (instead of burning 1500s).
+4. Validation profile root uses `Path.GetTempPath()` (Windows-safe).
+
+### Outcome stayed None while elapsed rose (Launch104731En)
+
+The ~1470–1500s stop is `SkirmishS002AriaRunHarness.WallClockBudgetSeconds`.
+The harness calls `Finish(abort: true)` when `SkirmishMatchState.Phase` is
+still not `Finished`. Live `en-3` jsonl never left `phase=Playing` /
+`outcome=None`. That is not a `SkirmishPhase.Finished` Draw.
+
+`SkirmishRulesSystem` returns immediately for a non-legacy expanded session, so
+the legacy 900s `MatchDurationSeconds` writer never runs. The expanded
+deadline (Standard 1080s) is evaluated by `SkirmishBaseAssaultObjectiveSystem`.
+`SkirmishOutcomeSystem` is what copies that terminal fact onto
+`SkirmishMatchState`, which is the only phase the harness watches.
+
+That copy called `EntityManager.AddComponentData<SkirmishResultComponent>`
+inside the outcome query, before `session.Phase = Finished`. A structural
+change during iteration throws and does not apply, so the result component
+stayed missing and the match phase stayed `Playing` on every later frame.
+The objective clock kept advancing in an earlier system. `IsDesignatedAlive`
+returning true when no role/health pair exists does not block the deadline;
+it only keeps a missing barracks from counting as destroyed. A barracks at
+0 HP is dead. An unspawned base stays alive so the match does not Draw before
+roster projection.
+
+An idiomatic `foreach (SystemAPI.Query)` keeps structural changes illegal for
+the rest of that `OnUpdate`, so `AddComponent` after the loop still threw.
+Fact projection, the outcome writer, and session control now copy entities
+with `ToEntityArray` and only then add components. Spawn also projects
+`SkirmishMatchState.Phase` to Playing when the expanded session enters Playing.
+A passed deadline is Draw / TimeLimit, not a counted win.
+
+Causes, checked in the expanded Base Assault path:
+
+1. The assault planner treated one NEXT tap as done. The page did not change,
+   the hand then waited with no target, and the fallback Attack used the rifle
+   cards. Rifles cannot damage a Barracks.
+2. Mission HUD masks left the expanded NEXT card and the vehicle page
+   non-interactable, so `AriaTouchTarget.Available` stayed false.
+3. The touch watchdog blocked that constant GoalId after 180s. Blocked made
+   `AriaPlayModel.Active` false, the watch HUD published an empty observation,
+   and the planner never restarted. A stale frame can also drop the driver to
+   Manual. The harness started ARIA once.
+4. A tank that reached the enemy pad set `Engaged` for every in-range
+   combatant and stopped short of Barracks range. A pending `UnitPathRequest`
+   without `UnitPathFollow` also froze the local step on the live grid.
+5. Enemy `Evaluate` runs every tick and `TryProduce` is instant, so one visible
+   tank printed rocketeers until the stock was gone. The assault order is one
+   counter recruit, then the tank. Rifles are not ordered onto the Barracks:
+   they cannot hurt it, and that wave killed the column before either base fell.
+6. Re-issuing the same Attack every tick cleared shot cooldown, so the ordered
+   group fired every frame.
+7. Fact projection advanced the clock, but a 0 deadline or a terminal fact that
+   never reached `SkirmishMatchState` left `outcome=None` past 1080s. The clock
+   system now heals the deadline from the resolved setup and publishes the
+   terminal fact the evaluator already computed. Draw is TimeLimit, not a
+   counted win.
+
+Counted `AriaWon` still requires a finished Victory from
+`SkirmishS002AriaRunHarness` at `normal_speed=1` with `input_violations=0` and
+`human_interventions=0`. These edits do not stamp Victory, inject units, skip
+the match, or add resources. `runs.csv` stays header-only in git.
+
+### Re-run Launch104731En on Windows Skirmish shadow
+
+Keep Hub signed in. Open `D:\Projects\WarlineCapture-Skirmish` on this branch
+tip, focus the Game View, then either:
+
+- Menu: `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en`
+- Or executeMethod (no `-quit` wait for the match — leave the Editor running):
+
+```powershell
+# Prefer the live menu while the shadow Editor is already open.
+# Focused harness proof (does not play the match):
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS002AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+Live watch: run `Launch104731En` or `Launch130365En` from the open Editor
+without `-quit`. Expect rising `elapsed` / `clockElapsed` and
+`simulationActive=1`. The match should reach a real terminal Victory, Defeat,
+or Draw before the 1500s wall Abort. A counted win is Victory with
+`normal_speed=1`, `input_violations=0`, and `human_interventions=0`. A
+stuck-zero clock must Abort with `simulationNotAdvancing`. Do not stamp
+Victory. Also run `Game.Tests.Editor.SkirmishExpandedAriaTests.RunFocusedValidation`
+with the same wrapper and marker style (`[SkirmishExpandedAriaTests] result=Passed`).
+
+Menus:
+
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 104731 fa-IR`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 130365 fa-IR`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 en`
+- `Tools/Warline/Skirmish/Launch S002 ARIA Watch 155923 fa-IR`
+
+Execute methods (same class): `Launch104731En`, `Launch104731Fa`,
+`Launch130365En`, `Launch130365Fa`, `Launch155923En`, `Launch155923Fa`,
+`LaunchFromEnvironment` (`WARLINE_S002_SEED`, `WARLINE_S002_LOCALE`).
+
+Run them from the open Windows Skirmish shadow Editor
+(`D:\Projects\WarlineCapture-Skirmish`) with Hub signed in and the Game View
+focused. `normal_speed` stays 1. The
+`InvokeUnityExecuteMethodValidation.ps1` wrapper passes `-quit` and will not
+wait for the match. On finish or a 1500s abort the harness appends the next
+open `S002-aria-rs-*` row and writes evidence under
+`Design/AgentReports/SkirmishExpansion/S002/_Evidence/`. Census
+`code_hash` / `config_hash` / definition version on that row come from
+`SkirmishAcceptanceCensusCapture.TryCapture` + `FormatLog` for the launched
+seed (same hashes as `Tools/Warline/Skirmish/Capture S002 Regular Standard Census`).
+`AriaPlayEditorValidation.AcceptExpandedPayload` and the watch
+`AcceptExpandedPayload` still only log the selected configuration.
+
+`S002-manual-rs-104731-en` stays empty for a human on
+`Tools/Warline/Skirmish/Launch S002 Regular Standard Game View`.
+
+Focused Editor proof (refuses forced Victory; accepts only a finished match
+outcome; does not write the repo `runs.csv`):
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File Tools/CI/InvokeUnityExecuteMethodValidation.ps1 `
+  -UnityExe "<resolved Editor from ProjectSettings/ProjectVersion.txt>" `
+  -ProjectPath "D:\Projects\WarlineCapture-Skirmish" `
+  -ExecuteMethod Game.Tests.Editor.SkirmishS002AriaHarnessTests.RunFocusedValidation `
+  -LogFile "$env:TEMP\skirmish-s002-aria-harness.log" `
+  -RequiredPassMarker "[SkirmishS002AriaHarnessTests] result=Passed" `
+  -GuiLicensing
+```
+
+This environment has no Unity Editor. Programmer 1 runs that marker on the
+shadow project. Do not mark the ARIA matrix complete from this branch.
 - Focused Editor suites green on Windows Skirmish shadow after Gridlock merge; visual + catalog re-checked on `2b5f0f6e9`.
 

@@ -8,6 +8,7 @@
         "Game.Missions.Contracts",
         "Game.Narrative.Contracts",
         "Game.Runtime",
+        "Game.Skirmish.Contracts",
         "Game.Tactical.Contracts",
         "Game.UI.Contracts",
         "Game.UI.Runtime",

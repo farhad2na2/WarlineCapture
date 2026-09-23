@@ -715,19 +715,15 @@ namespace Game.Runtime
             bool mixedOrders = false;
             SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
 
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
-                        continue;
+                Entity entity = entities[i];
+                if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
+                    continue;
 
-                    unitCount++;
-                    if (SelectionUiReadModelLookup.IsRescueSpecialist(em, entity)) specialistCount++;
+                unitCount++;
+                if (SelectionUiReadModelLookup.IsRescueSpecialist(em, entity)) specialistCount++;
                     if (SelectionUiReadModelLookup.IsGridlockCrew(em, entity)) crewCount++;
                     UnitCategory category = ResolveCategory(em, entity);
                     soldierCount += category == UnitCategory.Soldier ? 1 : 0;
@@ -752,7 +748,6 @@ namespace Game.Runtime
                     {
                         mixedOrders = true;
                     }
-                }
             }
 
             int buildingCount = includeSelectedBuilding ? 1 : 0;
@@ -846,19 +841,15 @@ namespace Game.Runtime
             bool mixedOrders = false;
             SelectionUiReadModelLookup.FocusedUnitUiStatus firstOrder = SelectionUiReadModelLookup.FocusedUnitUiStatus.Idle;
 
-            EntityTypeHandle entityType = em.GetEntityTypeHandle();
-            using NativeArray<ArchetypeChunk> chunks = query.ToArchetypeChunkArray(Allocator.Temp);
-            for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                NativeArray<Entity> entities = chunks[chunkIndex].GetNativeArray(entityType);
-                for (int i = 0; i < entities.Length; i++)
-                {
-                    Entity entity = entities[i];
-                    if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
-                        continue;
+                Entity entity = entities[i];
+                if (!em.Exists(entity) || em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current<=0)
+                    continue;
 
-                    unitCount++;
-                    UnitCategory category = ResolveCategory(em, entity);
+                unitCount++;
+                UnitCategory category = ResolveCategory(em, entity);
                     soldierCount += category == UnitCategory.Soldier ? 1 : 0;
                     vehicleCount += category == UnitCategory.Vehicle ? 1 : 0;
                     aircraftCount += category == UnitCategory.Aircraft ? 1 : 0;
@@ -881,7 +872,6 @@ namespace Game.Runtime
                     {
                         mixedOrders = true;
                     }
-                }
             }
 
             int buildingCount = includeSelectedBuilding ? 1 : 0;

@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -8,9 +9,12 @@ namespace Game.Runtime
     [UpdateAfter(typeof(SkirmishResultSettlementSystem))]
     public partial struct SkirmishExpandedSessionControlSystem : ISystem
     {
+        private EntityQuery sessions;
+
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<SkirmishExpandedSessionComponent>();
+            sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>());
         }
 
         public void OnUpdate(ref SystemState state)
@@ -19,10 +23,12 @@ namespace Game.Runtime
             bool gameplayPaused = SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
                                   gameplay.SimulationActive == 0;
             float dt = SystemAPI.Time.DeltaTime;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using NativeArray<Entity> entities = sessions.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
             {
-                if (session.ValueRO.IsLegacy != 0)
+                Entity entity = entities[i];
+                SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0)
                     continue;
                 bool paused = gameplayPaused;
                 if (em.HasComponent<SkirmishExpandedPauseRequest>(entity))
@@ -55,49 +61,12 @@ namespace Game.Runtime
 
         private static void ProjectMatchPhase(EntityManager em, Entity session)
         {
-            if (!em.HasComponent<SkirmishMatchState>(session) ||
-                !em.HasComponent<SkirmishExpandedSessionComponent>(session))
-                return;
-            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
-            var match = em.GetComponentData<SkirmishMatchState>(session);
-            if (state.Phase == SkirmishSessionPhase.Playing && match.Phase < SkirmishPhase.Playing)
-                match.Phase = SkirmishPhase.Playing;
-            else if (state.Phase == SkirmishSessionPhase.Finished)
-                match.Phase = SkirmishPhase.Finished;
-            else
-                return;
-            em.SetComponentData(session, match);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, session);
         }
 
         private static void ProjectMatchResult(EntityManager em, Entity session)
         {
-            if (!em.HasComponent<SkirmishMatchState>(session) ||
-                !em.HasComponent<SkirmishResultComponent>(session))
-                return;
-            var result = em.GetComponentData<SkirmishResultComponent>(session);
-            if (result.Frozen == 0)
-                return;
-            var match = em.GetComponentData<SkirmishMatchState>(session);
-            match.Phase = SkirmishPhase.Finished;
-            match.Outcome = result.Outcome == SkirmishOutcomeKind.Victory
-                ? SkirmishOutcome.Victory
-                : result.Outcome == SkirmishOutcomeKind.Defeat
-                    ? SkirmishOutcome.Defeat
-                    : result.Outcome == SkirmishOutcomeKind.Draw
-                        ? SkirmishOutcome.Draw
-                        : SkirmishOutcome.None;
-            match.Reason = result.Reason == SkirmishEndReasonKind.Surrender
-                ? SkirmishEndReason.Surrender
-                : result.Reason == SkirmishEndReasonKind.TimeLimit
-                    ? SkirmishEndReason.TimeLimit
-                    : result.Reason == SkirmishEndReasonKind.BothBasesDestroyed
-                        ? SkirmishEndReason.BothBasesDestroyed
-                        : result.Reason == SkirmishEndReasonKind.MainBaseDestroyed
-                            ? SkirmishEndReason.MainBaseDestroyed
-                            : SkirmishEndReason.None;
-            if (result.SaveAcknowledged != 0)
-                match.ResultSaved = 1;
-            em.SetComponentData(session, match);
+            SkirmishExpandedSessionControlService.ProjectTerminalMatch(em, session);
         }
     }
 }

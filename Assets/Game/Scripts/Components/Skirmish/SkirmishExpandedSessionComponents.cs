@@ -262,6 +262,7 @@ namespace Game.Components
         public byte Personality;
         public int FailedAttempts;
         public uint LastGroupId;
+        public byte CounterCommitted;
     }
 
     public struct SkirmishGroundStagingStateComponent : IComponentData
@@ -286,6 +287,9 @@ namespace Game.Components
         public float DestinationZ;
         public byte Active;
         public SkirmishGroupOrderKind Order;
+        public Entity AttackTarget;
+        public float Cooldown;
+        public byte Engaged;
     }
 
     public struct SkirmishObservedHealthComponent : IComponentData

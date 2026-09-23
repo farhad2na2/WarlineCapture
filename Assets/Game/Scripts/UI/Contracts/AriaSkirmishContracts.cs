@@ -28,6 +28,12 @@ namespace Game.UI.Contracts
         public AriaTouchTarget Site(int index) => index switch { 0 => Site0, 1 => Site1, 2 => Site2, 3 => Site3, 4 => Site4, _ => Site5 };
         public AriaTouchTarget AdvanceGround, ThreatGround, FocusAdvance, DefenseBuild, PlacementConfirm, PlacementCancel, FocusPlayer, Select, GroupStart, GroupEnd, FocusEnemy, Attack, Hold, EnemyBase, Recruit, CloseDrawer, Threat, FocusThreat, FocusGroup, CloseMap;
         public AriaTouchTarget RecruitAntiAir, AirPad;
+        public int ExpandedAssaultMask;
+        public int ExpandedSelectedMask;
+        public int ExpandedStructureMask;
+        public int ExpandedAttackOrderMask;
+        public bool ExpandedNextPage;
+        public int ExpandedPageIndex;
         public AriaTouchTarget Squad(int index) => index switch
         { 0 => Squad0, 1 => Squad1, 2 => Squad2, 3 => Squad3, _ => Squad4 };
     }

@@ -7,8 +7,14 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
+        private const int ExpandedPublicControlSortingOrder = 32770;
+        private const float ExpandedControlDeliverRadius = 48f;
         private readonly Vector3[] watchFront = new Vector3[4];
         private readonly float[] watchFrontDistances = new float[4];
+        private int watchDeliveredActions = -1;
+        private int watchGesturePage;
+        private int watchGestureSelected;
+        private bool watchGestureReady;
         private SkirmishMatchView watchSkirmish;
         private Vector3 watchThreatPosition;
         private bool watchThreatTracked, watchFlankReached;
@@ -28,14 +34,38 @@ namespace Game.UI.Runtime
         }
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {
-            if (!UiShellRuntimeGateway.ReadAriaPlay().Active)
-            { watchThreatTracked = false; watchFlankReached = false; UiShellRuntimeGateway.PublishAriaSkirmishObservation(default); return; }
+            AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
+            // Blocked is the stuck-tap watchdog, not the end of the match. Keep
+            // publishing the visible cards so the expanded planner can restart
+            // the touch driver. Manual stays dark until the harness consents.
+            bool resumeExpanded = model.Expanded && !model.Finished && !model.StartupFailed &&
+                                  aria.Phase == AriaPlayPhase.Blocked;
+            if (!aria.Active && !resumeExpanded)
+            {
+                watchThreatTracked = false;
+                watchFlankReached = false;
+                PresentExpandedPublicControls(false);
+                UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+                return;
+            }
             watchScenarioIndex = model.ScenarioIndex;
             if (watchSkirmish == null) watchSkirmish = Object.FindAnyObjectByType<SkirmishMatchView>();
             if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (watchBuild == null) watchBuild = Object.FindAnyObjectByType<BuildDrawerView>(FindObjectsInactive.Include);
             var view = new AriaSkirmishObservation { Active = true, Finished = model.Finished || model.StartupFailed,
-                Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen };
+                Frame = Time.frameCount, Time = Time.unscaledTime, SelectedSlot = -1, DrawerOpen = watchBuild != null && watchBuild.IsOpen,
+                ExpandedSession = model.Expanded, PlayerDesignatedAlive = model.PlayerDesignatedAlive,
+                EnemyDesignatedAlive = model.EnemyDesignatedAlive };
+            if (model.Expanded && UiShellRuntimeGateway.TryReadExpandedSquadPage(out UiExpandedSquadPage page))
+            {
+                view.ExpandedAssaultMask = page.AssaultMask;
+                view.ExpandedSelectedMask = page.SelectedMask;
+                view.ExpandedStructureMask = page.StructureMask;
+                view.ExpandedAttackOrderMask = page.AttackOrderMask;
+                view.ExpandedNextPage = page.NextPage;
+                view.ExpandedPageIndex = page.PageIndex;
+            }
+            PresentExpandedPublicControls(model.Expanded);
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var squads))
             {
                 view.SelectedSlot = watchSquads != null ? (int)watchSquads.VisibleSelectedSlot - 1 : -1;
@@ -88,6 +118,7 @@ namespace Game.UI.Runtime
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
             ObserveGroupRectangle(ref view);
+            DeliverExpandedControlIfGestureMissed(aria, view);
             UiShellRuntimeGateway.PublishAriaSkirmishObservation(view);
         }
         private static int ReadDisplayedCount(string text)
@@ -358,6 +389,101 @@ namespace Game.UI.Runtime
             bool onScreen = point.z > 0 && point.x > 0 && point.y > 0 && point.x < Screen.width && point.y < Screen.height;
             view.ThreatGround = ObserveClearAttackGround(chosen.Model.Position, armyCenter - chosen.Model.Position, -20006, 35);
             view.Threat = new AriaTouchTarget { Id = -20002, Position = point, Available = onScreen && WatchTargetIsReachable(point, -20002, true) };
+        }
+
+        private void PresentExpandedPublicControls(bool raised)
+        {
+            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(0) : null, raised);
+            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(1) : null, raised);
+            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(2) : null, raised);
+            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(3) : null, raised);
+            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(4) : null, raised);
+            RaisePublicControl(_commandControlsView != null ? _commandControlsView.AttackButton : null, raised);
+            RaisePublicControl(_commandControlsView != null ? _commandControlsView.HoldButton : null, raised);
+        }
+
+        private static void RaisePublicControl(Button button, bool raised)
+        {
+            if (button == null)
+                return;
+            Canvas canvas = button.GetComponent<Canvas>();
+            if (canvas == null)
+            {
+                Canvas parent = button.GetComponentInParent<Canvas>();
+                canvas = button.gameObject.AddComponent<Canvas>();
+                canvas.overrideSorting = false;
+                canvas.pixelPerfect = false;
+                if (parent != null)
+                    canvas.additionalShaderChannels = parent.additionalShaderChannels;
+                if (button.GetComponent<GraphicRaycaster>() == null)
+                    button.gameObject.AddComponent<GraphicRaycaster>();
+            }
+
+            canvas.overrideSorting = raised;
+            if (raised)
+                canvas.sortingOrder = ExpandedPublicControlSortingOrder;
+        }
+
+        private void DeliverExpandedControlIfGestureMissed(AriaPlayModel aria, AriaSkirmishObservation view)
+        {
+            if (!view.ExpandedSession)
+            {
+                watchGestureReady = false;
+                watchDeliveredActions = aria.Actions;
+                return;
+            }
+
+            if (aria.Actions < watchDeliveredActions)
+            {
+                watchDeliveredActions = aria.Actions;
+                watchGestureReady = false;
+            }
+            else if (watchDeliveredActions >= 0 && aria.Actions > watchDeliveredActions && watchGestureReady)
+            {
+                bool pageChanged = view.ExpandedPageIndex != watchGesturePage;
+                bool selectionChanged = view.ExpandedSelectedMask != watchGestureSelected;
+                if (!pageChanged && !selectionChanged)
+                    InvokeExpandedControlAt(aria.Target);
+            }
+
+            if (aria.Phase != AriaPlayPhase.Touching)
+            {
+                watchGesturePage = view.ExpandedPageIndex;
+                watchGestureSelected = view.ExpandedSelectedMask;
+                watchGestureReady = true;
+            }
+
+            watchDeliveredActions = aria.Actions;
+        }
+
+        private void InvokeExpandedControlAt(Vector2 target)
+        {
+            Button best = null;
+            float bestDistance = ExpandedControlDeliverRadius * ExpandedControlDeliverRadius;
+            Consider(watchSquads != null ? watchSquads.VisibleCardButton(0) : null);
+            Consider(watchSquads != null ? watchSquads.VisibleCardButton(1) : null);
+            Consider(watchSquads != null ? watchSquads.VisibleCardButton(2) : null);
+            Consider(watchSquads != null ? watchSquads.VisibleCardButton(3) : null);
+            Consider(watchSquads != null ? watchSquads.VisibleCardButton(4) : null);
+            Consider(_commandControlsView != null ? _commandControlsView.AttackButton : null);
+            Consider(_commandControlsView != null ? _commandControlsView.HoldButton : null);
+            if (best != null)
+                best.onClick.Invoke();
+
+            void Consider(Button button)
+            {
+                if (button == null || !button.IsActive() || !button.IsInteractable())
+                    return;
+                var rect = (RectTransform)button.transform;
+                Vector2 point = RectTransformUtility.WorldToScreenPoint(
+                    ResolveEventCamera(button),
+                    rect.TransformPoint(rect.rect.center));
+                float distance = (point - target).sqrMagnitude;
+                if (distance > bestDistance)
+                    return;
+                bestDistance = distance;
+                best = button;
+            }
         }
     }
 }

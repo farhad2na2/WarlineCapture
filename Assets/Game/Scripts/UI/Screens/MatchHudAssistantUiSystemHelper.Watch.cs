@@ -80,9 +80,16 @@ namespace Game.UI.Runtime
             watchRaycast.position = point;
             watchHits.Clear(); EventSystem.current.RaycastAll(watchRaycast, watchHits);
             if (world) return watchHits.Count == 0;
-            if (watchHits.Count == 0) return false;
-            var button = watchHits[0].gameObject.GetComponentInParent<Button>();
-            return button != null && button.GetEntityId().GetHashCode() == targetId;
+            // A label or panel graphic must not hide an interactable control.
+            // The control is reachable when no other interactable button is in front of it.
+            for (int i = 0; i < watchHits.Count; i++)
+            {
+                Button button = watchHits[i].gameObject.GetComponentInParent<Button>();
+                if (button == null || !button.IsActive() || !button.IsInteractable())
+                    continue;
+                return button.GetEntityId().GetHashCode() == targetId;
+            }
+            return false;
         }
 
         private void RenderWatchFinger(AriaPlayModel state)

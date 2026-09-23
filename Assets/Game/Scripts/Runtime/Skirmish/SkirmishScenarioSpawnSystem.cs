@@ -78,6 +78,7 @@ namespace Game.Runtime
             }
 
             em.SetComponentData(entity, session);
+            SkirmishExpandedSessionControlService.ProjectMatchPhase(em, entity);
         }
 
         public static bool TrySpawnLedgers(

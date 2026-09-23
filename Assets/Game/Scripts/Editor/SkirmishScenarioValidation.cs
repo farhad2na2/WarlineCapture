@@ -148,11 +148,16 @@ namespace Game.Editor
             var catalog =
                 AssetDatabase.LoadAssetAtPath<SkirmishBattleCatalogConfig>(SkirmishBattleCatalogBuilder.AssetPath);
             Check(catalog != null && catalog.TryValidate(out _), "Battle catalog asset must validate.");
-            Check(catalog.Entries.Count == 120 && catalog.CountPlayable() == 3,
-                "Catalog must list 120 scenarios with exactly three playable entries.");
+            Check(catalog.Entries.Count == 120 && catalog.CountPlayable() == 4,
+                "Catalog must list 120 scenarios with exactly four playable entries.");
             Check(catalog.TryGet(SkirmishBattleCatalogConfig.IndustrialBasinScenarioId, out var basin) &&
                   basin.PlayableScenarioIndex == 3,
                 "S073 must resolve to playable scenario index 3.");
+            Check(catalog.TryGet(SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId, out var established) &&
+                  established.IsPlayable &&
+                  established.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex &&
+                  established.DefinitionId == SkirmishBattleCatalogConfig.DesertBaseEstablishedDefinitionId,
+                "S002 must resolve to playable scenario index 4 and definition skirmish.s002.");
             return $"[SkirmishScenarioValidation] result=Passed cases={checks}";
         }
     }

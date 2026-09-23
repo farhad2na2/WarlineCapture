@@ -280,6 +280,13 @@ namespace Game.Configs
                         "در محوطه باز شمالی مستقر شو و از مسیر صنعتی به سمت جنوب‌شرق پیش برو. قبل از پیشروی از پایگاهت دفاع کن.";
                     entries[i] = entry;
                 }
+                else if (entry.ScenarioId == SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId)
+                {
+                    entry.Status = SkirmishBattleCatalogStatus.Playable;
+                    entry.PlayableScenarioIndex = SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex;
+                    SkirmishExpandedCopyProjection.ApplyLibraryCopy(ref entry);
+                    entries[i] = entry;
+                }
                 else
                 {
                     entry.Status = SkirmishBattleCatalogStatus.Planned;

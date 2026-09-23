@@ -19,7 +19,9 @@ namespace Game.Runtime
                     ? "industrial_basin"
                     : data.configuration.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex
                         ? "city_crossroads"
-                        : "base_assault";
+                        : data.configuration.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex
+                            ? "desert_base_established"
+                            : "base_assault";
             data.enemyCount = 1;
             data.difficulty = "Normal";
             data.fogOfWar = false;

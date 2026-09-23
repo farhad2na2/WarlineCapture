@@ -129,12 +129,13 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void LegacyPrototypeCompatibilityIsVersionedAndDoesNotPublishS002()
+        public void LegacyPrototypeCompatibilityPublishesS002AtDispatchIndex()
         {
             var entries = new[]
             {
                 new SkirmishBattleCatalogEntry { ScenarioId = "S001", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
                 new SkirmishBattleCatalogEntry { ScenarioId = "S002", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
+                new SkirmishBattleCatalogEntry { ScenarioId = "S003", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
                 new SkirmishBattleCatalogEntry { ScenarioId = "S025", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 },
                 new SkirmishBattleCatalogEntry { ScenarioId = "S073", Status = SkirmishBattleCatalogStatus.Planned, PlayableScenarioIndex = -1 }
             };
@@ -145,11 +146,14 @@ namespace Game.Tests.Editor
                 SkirmishPublicationValidator.LegacyPrototypeCompatibilityVersion);
             Assert.IsTrue(entries[0].IsPlayable);
             Assert.AreEqual(0, entries[0].PlayableScenarioIndex);
-            Assert.IsFalse(entries[1].IsPlayable);
+            Assert.IsTrue(entries[1].IsPlayable);
+            Assert.AreEqual(SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex, entries[1].PlayableScenarioIndex);
             Assert.AreEqual("skirmish.s002.title", entries[1].TitleKey);
-            Assert.AreEqual(-1, entries[1].PlayableScenarioIndex);
-            Assert.IsTrue(entries[2].IsPlayable);
+            Assert.AreEqual(SkirmishBattleCatalogConfig.DesertBaseEstablishedDefinitionId, entries[1].DefinitionId);
+            Assert.IsFalse(entries[2].IsPlayable);
+            Assert.AreEqual(-1, entries[2].PlayableScenarioIndex);
             Assert.IsTrue(entries[3].IsPlayable);
+            Assert.IsTrue(entries[4].IsPlayable);
         }
 
         [Test]
@@ -312,7 +316,7 @@ namespace Game.Tests.Editor
                 suite.WarAndCustomDoNotResolveFirstVisitBriefing();
                 suite.AssetExistenceDoesNotSetPlayable();
                 suite.HashMismatchAndWrongMatrixRejectPlayable();
-                suite.LegacyPrototypeCompatibilityIsVersionedAndDoesNotPublishS002();
+                suite.LegacyPrototypeCompatibilityPublishesS002AtDispatchIndex();
                 suite.S003PublicationStaysInProgressAndS002AssetStaysPlayable();
                 suite.S004PublicationStaysInProgressAndPriorRowsStayPlayable();
                 suite.CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress();

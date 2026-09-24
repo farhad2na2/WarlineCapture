@@ -81,15 +81,47 @@ namespace Game.Editor
         public static void LaunchS003104732En() =>
             LaunchCatalog(SkirmishAcceptanceCensusCapture.S003CatalogId, 104732, GameLocalization.EnglishLocaleCode);
 
+        /// <summary>
+        /// Wrapper entry for mission 5 (S003 Regular Standard). Keeps the Editor
+        /// alive for the match, allows the touch driver while the window is in
+        /// the background, and quits after the row is written. WARLINE_SKIRMISH_CATALOG
+        /// and WARLINE_S002_SEED override the S003 / 104732 default. Do not pass
+        /// -quit; that returns before play mode.
+        /// </summary>
+        public static void RunFocusedAriaAndExit()
+        {
+            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION", "1");
+            Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT", "1");
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG")))
+                Environment.SetEnvironmentVariable(
+                    "WARLINE_SKIRMISH_CATALOG",
+                    SkirmishAcceptanceCensusCapture.S003CatalogId);
+            if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_S002_SEED")))
+            {
+                string catalog = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG");
+                int defaultSeed = catalog == SkirmishAcceptanceCensusCapture.S003CatalogId
+                    ? 104732
+                    : SkirmishAcceptanceCensusCapture.FirstVisitSeed;
+                Environment.SetEnvironmentVariable(
+                    "WARLINE_S002_SEED",
+                    defaultSeed.ToString(CultureInfo.InvariantCulture));
+            }
+
+            LaunchFromEnvironment();
+        }
+
         public static void LaunchFromEnvironment()
         {
             string seedText = Environment.GetEnvironmentVariable("WARLINE_S002_SEED");
             string localeText = Environment.GetEnvironmentVariable("WARLINE_S002_LOCALE");
+            string catalogText = Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG");
             if (!int.TryParse(seedText, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsed))
                 parsed = SkirmishAcceptanceCensusCapture.FirstVisitSeed;
             if (string.IsNullOrEmpty(localeText))
                 localeText = GameLocalization.EnglishLocaleCode;
-            Launch(parsed, localeText);
+            if (string.IsNullOrEmpty(catalogText))
+                catalogText = SkirmishAcceptanceCensusCapture.CatalogId;
+            LaunchCatalog(catalogText, parsed, localeText);
         }
 
         public static void Launch(int requestedSeed, string requestedLocale)

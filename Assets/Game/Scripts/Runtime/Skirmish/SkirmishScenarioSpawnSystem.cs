@@ -22,6 +22,12 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
+            // Streamed map scenery must not join either authored force. In a player
+            // session, wait until the loaded map and baked prefab registry exist so
+            // the ledger is not marked Playing in the menu scene.
+            SkirmishWorldSetup.NormalizeScenery(em);
+            if (Application.isPlaying && !MapAndRegistryReady(em))
+                return;
             using var query = em.CreateEntityQuery(ComponentType.ReadWrite<SkirmishExpandedSessionComponent>());
             NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
             try
@@ -33,6 +39,16 @@ namespace Game.Runtime
             {
                 entities.Dispose();
             }
+        }
+
+        private static bool MapAndRegistryReady(EntityManager em)
+        {
+            using var map = em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+            using var surface = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+            // CustomGameStartup strips UnitPrefabRegistryTag after rebuilding the
+            // buffer. The buffer is the registry; requiring the tag deadlocks spawn.
+            using var prefabs = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
+            return !map.IsEmptyIgnoreFilter && !surface.IsEmptyIgnoreFilter && !prefabs.IsEmptyIgnoreFilter;
         }
 
         private static void TrySpawn(EntityManager em, Entity entity)
@@ -361,7 +377,7 @@ namespace Game.Runtime
         internal static Dictionary<string, Entity> BuildPrefabEntityLookup(EntityManager em)
         {
             var lookup = new Dictionary<string, Entity>(System.StringComparer.OrdinalIgnoreCase);
-            using var query = em.CreateEntityQuery(typeof(UnitPrefabRegistryTag), typeof(UnitPrefabRegistryEntry));
+            using var query = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
             using NativeArray<Entity> registries = query.ToEntityArray(Allocator.Temp);
             for (int i = 0; i < registries.Length; i++)
             {

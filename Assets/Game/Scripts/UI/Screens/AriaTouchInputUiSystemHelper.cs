@@ -31,6 +31,22 @@ namespace Game.UI.Runtime
         public byte LastInterruption { get; private set; }
         public int DeviceId => screen != null ? screen.deviceId : 0;
 
+        /// <summary>
+        /// Editor acceptance only. A wrapper-owned Editor is often not the foreground
+        /// window; the shipping player still stops the hand when focus is lost.
+        /// </summary>
+        public static bool AllowBackgroundValidation
+        {
+            get
+            {
+#if UNITY_EDITOR
+                return Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION") == "1";
+#else
+                return false;
+#endif
+            }
+        }
+
         public AriaTouchInputUiSystemHelper()
         {
             InputSystem.onEvent += OnInputEvent;
@@ -98,7 +114,7 @@ namespace Game.UI.Runtime
 
         private void OnFocusChanged(bool focused)
         {
-            if (!focused) { LastInterruption = 2; Stop(); }
+            if (!focused && !AllowBackgroundValidation) { LastInterruption = 2; Stop(); }
         }
 
         private void Queue(Vector2 position, TouchPhase phase)

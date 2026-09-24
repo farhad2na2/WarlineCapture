@@ -17,6 +17,15 @@ namespace Game.Runtime
 
         public static void AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
         {
+            bool sameDestination = false;
+            if (em.HasComponent<SkirmishMoveIntentComponent>(unit))
+            {
+                SkirmishMoveIntentComponent previous = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
+                sameDestination = previous.Active != 0 && previous.Order == order &&
+                    math.abs(previous.DestinationX - destination.x) < 0.1f &&
+                    math.abs(previous.DestinationZ - destination.z) < 0.1f;
+            }
+
             // A missing anchor is filled from the measured pad before the step.
             // Pinning the unit at the origin here kept that pad from ever applying.
             var intent = new SkirmishMoveIntentComponent
@@ -34,7 +43,9 @@ namespace Game.Runtime
             if (em.HasComponent<HoldPositionOrderTag>(unit) && order != SkirmishGroupOrderKind.Hold)
                 em.RemoveComponent<HoldPositionOrderTag>(unit);
 
-            TryReuseSharedPath(em, unit, destination);
+            // Repeating the same order must not restart a route that is already walking.
+            if (!sameDestination)
+                TryReuseSharedPath(em, unit, destination);
         }
 
         public static void ClearIntent(EntityManager em, Entity unit)
@@ -48,6 +59,7 @@ namespace Game.Runtime
             intent.Engaged = 0;
             intent.Cooldown = 0f;
             em.SetComponentData(unit, intent);
+            ClearSharedPath(em, unit);
         }
 
         public static int Step(EntityManager em, Entity session, float deltaSeconds, bool paused)
@@ -75,6 +87,7 @@ namespace Game.Runtime
                     continue;
                 if (intent.Engaged != 0)
                 {
+                    ClearSharedPath(em, unit);
                     SyncVisual(em, unit);
                     moved++;
                     continue;
@@ -84,6 +97,7 @@ namespace Game.Runtime
                 {
                     intent.Active = 0;
                     em.SetComponentData(unit, intent);
+                    ClearSharedPath(em, unit);
                     continue;
                 }
 
@@ -201,6 +215,45 @@ namespace Game.Runtime
             if (cell.x < 0 || cell.y < 0 || cell.x >= grid.Width || cell.y >= grid.Height)
                 return false;
 
+            // Registry units take the shared manual-order path. A bare automatic
+            // request retries the same short segment around dense city blocks, and
+            // the local step would walk through those blocks.
+            if (IsRegistryUnit(em, unit))
+            {
+                bool hasFollow = em.HasComponent<UnitPathFollow>(unit);
+                bool hasRequest = em.HasComponent<UnitPathRequest>(unit);
+                if (hasRequest && !em.GetComponentData<UnitPathRequest>(unit).Goal.Equals(cell))
+                {
+                    IssueRegistryPath(em, unit, cell);
+                    intent.NoSharedPathSeconds = 0f;
+                }
+                else if (!hasFollow && !hasRequest)
+                {
+                    IssueRegistryPath(em, unit, cell);
+                    intent.NoSharedPathSeconds = 0f;
+                }
+                else if (!hasFollow)
+                {
+                    intent.NoSharedPathSeconds += deltaSeconds;
+                    if (intent.NoSharedPathSeconds >= SharedPathStallSeconds)
+                    {
+                        IssueRegistryPath(em, unit, cell);
+                        intent.NoSharedPathSeconds = 0f;
+                    }
+                }
+                else
+                {
+                    intent.NoSharedPathSeconds = 0f;
+                    float3 followedPosition = em.GetComponentData<LocalTransform>(unit).Position;
+                    float3 remaining = new float3(intent.DestinationX - followedPosition.x, 0f, intent.DestinationZ - followedPosition.z);
+                    if (math.length(remaining) <= ArriveDistance * 2f)
+                        intent.Active = 0;
+                }
+
+                em.SetComponentData(unit, intent);
+                return true;
+            }
+
             // A stalled unit keeps the local step until the shared follower engages or
             // a new order arrives; it does not re-enter the wait every tick.
             if (intent.SharedStalled != 0)
@@ -266,11 +319,37 @@ namespace Game.Runtime
                 return;
             GridConfig grid = grids.GetSingleton<GridConfig>();
             int2 cell = GridUtils.WorldToCell(grid, destination);
+            if (IsRegistryUnit(em, unit))
+            {
+                IssueRegistryPath(em, unit, cell);
+                return;
+            }
+
             var request = new UnitPathRequest { Goal = cell };
             if (em.HasComponent<UnitPathRequest>(unit))
                 em.SetComponentData(unit, request);
             else
                 em.AddComponentData(unit, request);
+        }
+
+        private static bool IsRegistryUnit(EntityManager em, Entity unit)
+        {
+            return em.HasComponent<SkirmishVisualSpawnedComponent>(unit) &&
+                em.GetComponentData<SkirmishVisualSpawnedComponent>(unit).FromRegistry != 0;
+        }
+
+        private static void IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
+        {
+            new UnitMoveOrderSystem().IssueImmediateMoveCommand(em, unit, cell);
+        }
+
+        private static void ClearSharedPath(EntityManager em, Entity unit)
+        {
+            if (em.HasComponent<UnitPathRequest>(unit)) em.RemoveComponent<UnitPathRequest>(unit);
+            if (em.HasComponent<UnitPathFollow>(unit)) em.RemoveComponent<UnitPathFollow>(unit);
+            if (em.HasComponent<UnitPathRange>(unit)) em.RemoveComponent<UnitPathRange>(unit);
+            if (em.HasComponent<UnitTarget>(unit)) em.RemoveComponent<UnitTarget>(unit);
+            if (em.HasComponent<ManualMoveOrderTag>(unit)) em.RemoveComponent<ManualMoveOrderTag>(unit);
         }
 
         private static void SyncVisual(EntityManager em, Entity unit)

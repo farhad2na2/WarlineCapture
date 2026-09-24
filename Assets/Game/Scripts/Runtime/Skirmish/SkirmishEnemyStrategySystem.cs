@@ -238,18 +238,22 @@ namespace Game.Runtime
             if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
                 return 0;
             DynamicBuffer<SkirmishArmyGroupRecord> buffer = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+            uint fallback = 0;
             for (int i = 0; i < buffer.Length; i++)
             {
                 if (buffer[i].FactionId != 2 || buffer[i].AliveCount <= 0)
                     continue;
                 // Rifles cannot damage a Barracks. Ordering them after the tank
                 // died sent a rifle wave that killed the assault column before
-                // either designated base fell.
+                // either designated base fell. Field armies have no tank, so the
+                // same public structure roles (rocketeer, breacher, siege) assault.
                 if (buffer[i].Role == SkirmishRoleKind.Tank)
                     return buffer[i].GroupId;
+                if (fallback == 0 && SkirmishExpandedPresentedOrders.IsStructureAssaultRole(buffer[i].Role))
+                    fallback = buffer[i].GroupId;
             }
 
-            return 0;
+            return fallback;
         }
 
         private static uint FirstEnemyRifleGroup(EntityManager em, Entity session)

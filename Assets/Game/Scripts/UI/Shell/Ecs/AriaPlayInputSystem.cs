@@ -48,12 +48,15 @@ namespace Game.UI.Shell.Ecs
                 ref var current = ref session.ValueRW;
                 if (current.Phase is AriaPlayPhase.Manual or AriaPlayPhase.Blocked)
                 { if (touch.IsRunning) touch.Stop(); current.Pressed = 0; continue; }
-                if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match || !Application.isFocused || UnityEngine.Time.timeScale <= 0 ||
+                if (ended || shell.ValueRO.ActiveRoute != UIRoute.Match ||
+                    (!Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation) || UnityEngine.Time.timeScale <= 0 ||
                     (current.Phase != AriaPlayPhase.Starting && UnityEngine.Time.frameCount - observation.ValueRO.Frame > 5) ||
                     observation.ValueRO.Kind == AriaPlayObservationKind.Finished)
                 {
                     touch.Stop(); current.Phase = AriaPlayPhase.Manual; current.Pressed = current.GestureRequested = 0;
-                    current.StopReason = (byte)(ended ? 5 : !Application.isFocused ? 2 : UnityEngine.Time.timeScale <= 0 ? 3 : shell.ValueRO.ActiveRoute != UIRoute.Match ? 1 : 4);
+                    current.StopReason = (byte)(ended ? 5 :
+                        !Application.isFocused && !AriaTouchInputUiSystemHelper.AllowBackgroundValidation ? 2 :
+                        UnityEngine.Time.timeScale <= 0 ? 3 : shell.ValueRO.ActiveRoute != UIRoute.Match ? 1 : 4);
                     continue;
                 }
                 if (current.Phase == AriaPlayPhase.Starting)

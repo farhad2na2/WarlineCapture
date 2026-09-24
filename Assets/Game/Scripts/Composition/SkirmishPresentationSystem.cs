@@ -109,9 +109,35 @@ namespace Game.Composition
             if(match.Phase>=SkirmishPhase.Playing||match.StartupFailure!=SkirmishStartupFailureCode.None)return;
             if(!UiShellRuntimeGateway.TryReadShellState(out var shell)||shell.CurrentMode!=UiShellMode.Loading||shell.ActiveRoute!=UIRoute.Match)return;
             string id=match.SessionId.ToString();
-            if(startupSession!=id){startupSession=id;startupBeganAt=UnityEngine.Time.realtimeSinceStartupAsDouble;}
-            using var starts=EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
             var scene=UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+            if(scene!=null&&scene.GameplayStartFailed)
+            {
+                SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Content);
+                match=EntityManager.GetComponentData<SkirmishMatchState>(session);
+                return;
+            }
+            // The operation-map import can exceed the startup budget before the
+            // prefab registry exists. Spawn cannot mark Playing until that buffer
+            // is present, so count the budget only after both are ready.
+            double now=UnityEngine.Time.realtimeSinceStartupAsDouble;
+            bool mapReady=scene!=null&&scene.OperationMapSourceSceneLoadComplete&&scene.OperationMapContentReady;
+            bool registryReady=mapReady&&PrefabRegistryReady();
+            string playId=id+"#play";
+            if(!registryReady)
+            {
+                if(!mapReady||startupSession!=id)
+                {
+                    startupSession=id;
+                    startupBeganAt=now;
+                    return;
+                }
+                if(now-startupBeganAt>=300d)
+                    SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Timeout);
+                match=EntityManager.GetComponentData<SkirmishMatchState>(session);
+                return;
+            }
+            if(startupSession!=playId){startupSession=playId;startupBeganAt=now;}
+            using var starts=EntityManager.CreateEntityQuery(typeof(MatchStartQueueComponent));
             bool contentFailed=starts.CalculateEntityCount()==1&&starts.GetSingleton<MatchStartQueueComponent>().LastStatus==MatchStartStatusKind.Failed;
             contentFailed|=scene!=null&&(!string.IsNullOrEmpty(scene.OperationMapContentFailure)||scene.GameplayStartFailed);
             if(contentFailed)SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Content);
@@ -119,6 +145,11 @@ namespace Game.Composition
                     match.ScenarioIndex!=SkirmishPresetConfig.StressScaleProbeScenarioIndex)
                 SkirmishStartupPolicy.Fail(EntityManager,SkirmishStartupFailureCode.Timeout);
             match=EntityManager.GetComponentData<SkirmishMatchState>(session);
+        }
+        private bool PrefabRegistryReady()
+        {
+            using var prefabs=EntityManager.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
+            return !prefabs.IsEmptyIgnoreFilter;
         }
         private bool Focus(Entity entity,bool opening)
         {

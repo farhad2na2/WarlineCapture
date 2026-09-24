@@ -23,7 +23,7 @@ namespace Game.UI.Shell.Ecs
             // Expanded sessions own their objective clock/deadline; the legacy
             // 900-second constant would describe a different rules model.
             float elapsedSeconds = match.ElapsedSeconds;
-            int deadlineSeconds = SkirmishPresetConfig.MatchDurationSeconds;
+            int deadlineSeconds = (int)SkirmishPresetConfig.MatchDurationSeconds;
             if (expanded && em.HasComponent<SkirmishObjectiveClockComponent>(session))
             {
                 var objectiveClock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);

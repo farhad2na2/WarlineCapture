@@ -269,11 +269,18 @@ namespace Game.Composition
                     break;
 
                 case GameplayStartStep.ValidateScenarioRecovery:
-                    // Finite Operations forces have no economy or production recovery loop.
-                    if (sceneView != null && sceneView.IsOperationsSession)
+                    // Finite Operations forces and expanded skirmishes own their
+                    // economy. The legacy Materials recovery expects a legacy
+                    // startup roster, which those modes intentionally omit.
+                    using (var expanded = world.EntityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent)))
                     {
-                        gameplayStartStep = GameplayStartStep.FinalizeRuntimeState;
-                        break;
+                        if ((sceneView != null && sceneView.IsOperationsSession) ||
+                            (expanded.CalculateEntityCount() == 1 &&
+                             expanded.GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy == 0))
+                        {
+                            gameplayStartStep = GameplayStartStep.FinalizeRuntimeState;
+                            break;
+                        }
                     }
                     SetProgress(0.86f, "Validating scenario recovery");
                     if (materialsScenarioValidationStartedAt < 0d)

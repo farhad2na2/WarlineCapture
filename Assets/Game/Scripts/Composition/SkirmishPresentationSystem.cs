@@ -42,13 +42,11 @@ namespace Game.Composition
             if(startupFailed)SkirmishStartupPolicy.StopFailedStartup(EntityManager);
             if(match.Phase<SkirmishPhase.Playing&&!startupFailed)return;
             if(view==null)view=SkirmishMatchView.Create();
+            bool s002Session = EntityManager.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session).CatalogId.ToString() ==
+                SkirmishBattleCatalogConfig.DesertBaseEstablishedScenarioId;
             if(!startupFailed&&UiShellRuntimeGateway.TryReadShellState(out var shell)&&shell.CurrentMode==UiShellMode.MatchHud&&!shell.IsTransitionRunning&&focusedSession!=match.SessionId.ToString())
-            {
-                // Latch only after the focus request is actually written. The base
-                // transform or the camera boundary can lag the shell entry by a frame;
-                // marking focused on an early-out dropped the opening frame forever.
-                if(Focus(match.PlayerMainBase,true))focusedSession=match.SessionId.ToString();
-            }
+            {if(Focus(match.PlayerMainBase,true,match.ScenarioIndex,false,s002Session))focusedSession=match.SessionId.ToString();}
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             var worldCamera = Camera.main;
             bool baseAlive = EntityManager.Exists(match.EnemyMainBase) && EntityManager.HasComponent<UnitHealth>(match.EnemyMainBase) &&
@@ -60,8 +58,8 @@ namespace Game.Composition
             if(requests.Length>0)
             {
                 var action=requests[0].Action;requests.Clear();
-                if(action==SkirmishAction.FocusPlayer)Focus(match.PlayerMainBase,false);
-                else if(action==SkirmishAction.FocusEnemy)Focus(match.EnemyMainBase,false);
+                if(action==SkirmishAction.FocusPlayer)Focus(match.PlayerMainBase,false,match.ScenarioIndex,false,s002Session);
+                else if(action==SkirmishAction.FocusEnemy)Focus(match.EnemyMainBase,false,match.ScenarioIndex,true,s002Session);
                 else if(action==SkirmishAction.Surrender&&match.Phase==SkirmishPhase.Playing)
                 {match.SurrenderRequested=1;EntityManager.SetComponentData(session,match);UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);}
                 else if(action>=SkirmishAction.Replay && (match.Phase==SkirmishPhase.Finished||startupFailed||action==SkirmishAction.Restart))
@@ -151,22 +149,26 @@ namespace Game.Composition
             using var prefabs=EntityManager.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
             return !prefabs.IsEmptyIgnoreFilter;
         }
-        private bool Focus(Entity entity,bool opening)
+        private bool Focus(Entity entity,bool opening,int scenarioIndex,bool enemy,bool s002Session)
         {
             if(!EntityManager.Exists(entity)||!EntityManager.HasComponent<LocalTransform>(entity))return false;
+            if(opening && EntityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
+               (!EntityManager.HasComponent<SkirmishVisualSpawnedComponent>(entity) ||
+                EntityManager.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned==0))return false;
             using var query=EntityManager.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if(query.CalculateEntityCount()!=1)return false;
-            using var matches = EntityManager.CreateEntityQuery(typeof(SkirmishMatchState));
-            bool basinOpening = opening && matches.CalculateEntityCount() == 1 &&
-                matches.GetSingleton<SkirmishMatchState>().ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
+            bool basinOpening = opening && scenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
+            bool s002Focus = s002Session;
+            float s002Offset = enemy ? -30f : 30f;
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
-                // Start close to the troops. An explicit base lookup frames the
-                // whole Barracks and its defenses below the objective strip.
-                Perspective=new Unity.Mathematics.float4(basinOpening ? 60 : opening ? 40 : 55,58,0,60),
+                // S002 frames the Barracks and its deployment pad on every focus,
+                // including ARIA's subsequent public base-focus action.
+                Perspective=new Unity.Mathematics.float4(s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,58,0,60),
                 World=EntityManager.GetComponentData<LocalTransform>(entity).Position+
-                    (opening?new Unity.Mathematics.float3(20,0,6):new Unity.Mathematics.float3(0,0,12))
+                    (s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
+                        opening ? new Unity.Mathematics.float3(20,0,6) : new Unity.Mathematics.float3(0,0,12))
             });
             return true;
         }

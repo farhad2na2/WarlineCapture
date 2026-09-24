@@ -102,14 +102,16 @@ namespace Game.Configs
     {
         public const float DesertBaseWidthMetres = 600f;
         public const float DesertBaseDepthMetres = 420f;
-        public const float DesertBaseOriginX = -300f;
-        public const float DesertBaseOriginZ = -210f;
+        // The compatibility Desert Base map occupies X 0..2048, Z 0..1024.
+        // Align the player base with the map's faction-one deployment anchor.
+        public const float DesertBaseOriginX = 877f;
+        public const float DesertBaseOriginZ = 135f;
         public const float DesertBaseCellSize = 2f;
 
         [SerializeField] private string layoutId = "layout.skirmish.db.ba";
         [SerializeField] private string operationMapId = "opmap.skirmish.desert_base_01";
-        [SerializeField] private int contentVersion = 1;
-        [SerializeField] private string contentHash = "measured.db.ba.v1";
+        [SerializeField] private int contentVersion = 2;
+        [SerializeField] private string contentHash = "measured.db.ba.v2";
         [SerializeField] private float worldWidthMetres = DesertBaseWidthMetres;
         [SerializeField] private float worldDepthMetres = DesertBaseDepthMetres;
         [SerializeField] private float originX = DesertBaseOriginX;

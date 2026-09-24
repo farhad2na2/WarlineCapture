@@ -57,6 +57,20 @@ namespace Game.Configs
 
     public static class SkirmishExpansionCatalogFactory
     {
+        public const string PackagedS002DefinitionPath = "Skirmish/S002Definition";
+
+        public static SkirmishExpansionAuthoredSet CreatePackagedS002()
+        {
+            SkirmishScenarioDefinitionConfig definition =
+                UnityEngine.Resources.Load<SkirmishScenarioDefinitionConfig>(PackagedS002DefinitionPath);
+            if (definition == null)
+                return null;
+            SkirmishExpansionAuthoredSet set = CreateInMemory();
+            set.DefinitionS002 = definition;
+            set.LayoutDbBa = definition.MapLayout;
+            return set;
+        }
+
         public static SkirmishExpansionAuthoredSet CreateInMemory()
         {
             var set = new SkirmishExpansionAuthoredSet

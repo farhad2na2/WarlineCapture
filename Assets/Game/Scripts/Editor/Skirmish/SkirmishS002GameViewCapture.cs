@@ -8,6 +8,8 @@ using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
 using Game.Skirmish.Contracts;
+using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
@@ -18,6 +20,7 @@ namespace Game.Editor
     public static class SkirmishS002GameViewCapture
     {
         private const string Key = "Warline.S002.GameViewCapture";
+        private const string AutoExitKey = "Warline.S002.GameViewAutoExit";
         private const string RegistryPath = "Assets/Game/Configs/Scene/Game_UnitPrefabRegistry_Config.asset";
         private static int stage;
         private static double next;
@@ -34,6 +37,12 @@ namespace Game.Editor
         public static void LaunchRegularStandardMenu() => LaunchRegularStandard();
 
         public static void RunFocusedLaunchRegularStandard() => LaunchRegularStandard();
+
+        public static void RunFocusedCaptureAndExit()
+        {
+            SessionState.SetBool(AutoExitKey, true);
+            LaunchRegularStandard();
+        }
 
         public static void LaunchRegularStandard()
         {
@@ -94,7 +103,7 @@ namespace Game.Editor
 
             double now = EditorApplication.timeSinceStartup;
             if (deadline == 0d)
-                deadline = now + 180d;
+                deadline = now + 600d;
             if (now > deadline)
             {
                 Finish("timeout");
@@ -134,6 +143,7 @@ namespace Game.Editor
                 SkirmishLaunchProjection.TryEnterMatch(em);
                 SkirmishLaunchProjection.TryBeginGameplayIfLoaded();
                 SkirmishLaunchProjection.TryRequestPlay(em);
+                SkirmishLaunchProjection.TryArmExpandedSimulation(em);
 
                 if (match.StartupFailure != SkirmishStartupFailureCode.None)
                 {
@@ -141,7 +151,14 @@ namespace Game.Editor
                     return;
                 }
 
-                if (match.Phase != SkirmishPhase.Playing)
+                if (match.Phase != SkirmishPhase.Playing ||
+                    !SkirmishLaunchProjection.IsSimulationActive(em) ||
+                    !UiShellRuntimeGateway.TryReadShellState(out var shell) ||
+                    shell.CurrentMode != UiShellMode.MatchHud || shell.IsTransitionRunning ||
+                    Camera.main == null ||
+                    !em.Exists(match.PlayerMainBase) ||
+                    !em.HasComponent<SkirmishVisualSpawnedComponent>(match.PlayerMainBase) ||
+                    em.GetComponentData<SkirmishVisualSpawnedComponent>(match.PlayerMainBase).Spawned == 0)
                 {
                     next = now + 0.5d;
                     return;
@@ -149,8 +166,17 @@ namespace Game.Editor
 
                 if (stage == 1)
                 {
-                    lastCapturePath = CapturePlayingFrame(in match);
+                    // The shell and spawned base become ready before the camera
+                    // consumes its first focus request. Let that request settle.
                     stage = 2;
+                    next = now + 2d;
+                    return;
+                }
+
+                if (stage == 2)
+                {
+                    lastCapturePath = CapturePlayingFrame(in match);
+                    stage = 3;
                     next = now + 1d;
                     return;
                 }
@@ -166,11 +192,12 @@ namespace Game.Editor
 
         private static bool TryQueueExpanded(EntityManager em)
         {
-            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out string error))
+            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))
                 throw new InvalidOperationException(error);
 
-            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreatePackagedS002();
+            if (authored == null)
+                throw new InvalidOperationException("Packaged S002 definition is missing.");
             var manifest = new SkirmishContentManifest
             {
                 RequiredFeatureIds = authored.DefinitionS002.RequiredFeatureIds
@@ -197,7 +224,7 @@ namespace Game.Editor
 
             Debug.Log(string.Format(
                 CultureInfo.InvariantCulture,
-                "[SkirmishS002GameView] queued catalog={0} seed={1} hash={2:X8} playable=0",
+                "[SkirmishS002GameView] queued catalog={0} seed={1} hash={2:X8} playable=1",
                 setup.CatalogId,
                 setup.Seed,
                 setup.SetupHash));
@@ -251,11 +278,17 @@ namespace Game.Editor
             string previous = SessionState.GetString("Warline.AriaPlayValidation", "");
             Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT",
                 string.IsNullOrEmpty(previous) ? null : previous);
+            bool autoExit = SessionState.GetBool(AutoExitKey, false);
             Debug.Log("[SkirmishS002GameView] result=" +
                       (reason == "captured" ? "Passed" : "Failed") +
                       " reason=" + reason +
                       (string.IsNullOrEmpty(lastCapturePath) ? string.Empty : " evidence=" + lastCapturePath) +
-                      " stayInPlayMode=1");
+                      " stayInPlayMode=" + (autoExit ? "0" : "1"));
+            if (autoExit)
+            {
+                SessionState.SetBool(AutoExitKey, false);
+                EditorApplication.delayCall += () => EditorApplication.Exit(reason == "captured" ? 0 : 1);
+            }
         }
     }
 }

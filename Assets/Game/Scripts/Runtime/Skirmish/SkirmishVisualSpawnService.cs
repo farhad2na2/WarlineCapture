@@ -54,6 +54,7 @@ namespace Game.Runtime
                 catalog.BindRegistry(registry);
             BindPlacementSpawnables(catalog);
             EnsureAuthoredGroundStaging(catalog);
+            EnsureAuthoredBarracks(catalog);
 
             if (catalog.Count == 0)
             {
@@ -99,6 +100,7 @@ namespace Game.Runtime
                     em.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned != 0)
                     continue;
                 Vector3 position = ResolvePosition(em, session, setup, entity, owned, memberIndex);
+                position = GroundPosition(em, position);
                 if (TryAttach(em, entity, catalog, position))
                     spawned++;
                 memberIndex++;
@@ -139,6 +141,7 @@ namespace Game.Runtime
                 if (em.HasComponent<LocalTransform>(entity))
                     continue;
                 Vector3 position = ResolvePosition(em, session, setup, entity, owned, index);
+                position = GroundPosition(em, position);
                 em.AddComponentData(entity, LocalTransform.FromPosition(new float3(position.x, position.y, position.z)));
                 placed++;
             }
@@ -382,6 +385,17 @@ namespace Game.Runtime
             return new Vector3(centerX + column * 2.2f * side, 0f, centerZ - row * 2.2f);
         }
 
+        private static Vector3 GroundPosition(EntityManager em, Vector3 position)
+        {
+            using var grids = em.CreateEntityQuery(typeof(GridConfig));
+            if (grids.CalculateEntityCount() != 1)
+                return position;
+            GridConfig grid = grids.GetSingleton<GridConfig>();
+            float3 world = new float3(position.x, position.y, position.z);
+            new MapSurfaceSpawnGrounding().TryGroundWorldPosition(em, grid, ref world, out _, out _);
+            return new Vector3(world.x, world.y, world.z);
+        }
+
         private static bool TryFindStructure(
             SkirmishResolvedSetup setup,
             byte factionId,
@@ -476,6 +490,16 @@ namespace Game.Runtime
                 return;
             staging.SetActive(false);
             catalog.Bind(key, staging, owned);
+        }
+
+        private static void EnsureAuthoredBarracks(SkirmishVisualPrefabCatalog catalog)
+        {
+            string key = SkirmishStructureIds.VisualKey(SkirmishStructureIds.Barracks);
+            if (catalog.Contains(key))
+                return;
+            GameObject barracks = Resources.Load<GameObject>("Skirmish/S002Barracks");
+            if (barracks != null)
+                catalog.Bind(key, barracks);
         }
     }
 }

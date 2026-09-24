@@ -10,6 +10,8 @@ namespace Game.UI.Runtime
     {
         private static readonly string[] ReadinessKeys = { "security", "trust", "threat", "heat", "supply" };
         private static readonly string[] ReadinessFallbacks = { "CITY SECURITY", "CIVILIAN TRUST", "THREAT LEVEL", "HEAT LEVEL", "SUPPLY READINESS" };
+        private static readonly string[] DistrictMarkerNames = { "Northgate", "Eastridge", "OldMarket", "ForwardPost", "SouthQuarter" };
+        private static readonly string[] DistrictMarkerFallbacks = { "NORTHGATE", "EASTRIDGE", "OLD MARKET", "FORWARD POST", "SOUTH QUARTER" };
         [SerializeField] private UIShellRouteButtonView backRouteButton;
         [SerializeField] private RectTransform readinessRail;
         [SerializeField] private RectTransform districtMap;
@@ -68,6 +70,9 @@ namespace Game.UI.Runtime
             SetValue(dailyBriefing != null ? dailyBriefing.Find("Time") : null, model.HasRun
                 ? string.Format(UiShellRuntimeGateway.Localization.Get("operations.o001.dashboard_ap", "AP {0}"), model.ActionPoints)
                 : "—");
+            for (int i = 0; i < DistrictMarkerNames.Length; i++)
+                SetValue(districtMap != null ? districtMap.Find("MapClip/" + DistrictMarkerNames[i] + "Marker/Label") : null,
+                    UiShellRuntimeGateway.Localization.Get("operations.o001.map_" + DistrictMarkerNames[i].ToLowerInvariant(), DistrictMarkerFallbacks[i]));
             if (readinessCards != null)
                 for (int i = 0; i < readinessCards.Length; i++)
                 {

@@ -622,6 +622,11 @@
     { "key": "operations.o001.dashboard_supply", "source": "SUPPLY READINESS", "translations": [{ "locale": "fa-IR", "value": "آمادگی تدارکات" }] },
     { "key": "operations.o001.dashboard_service", "source": "SERVICE DISRUPTION", "translations": [{ "locale": "fa-IR", "value": "اختلال خدمات" }] },
     { "key": "operations.o001.dashboard_road", "source": "ROAD BLOCKADE", "translations": [{ "locale": "fa-IR", "value": "انسداد مسیر" }] },
-    { "key": "operations.o001.dashboard_hostile", "source": "HOSTILE PRESSURE", "translations": [{ "locale": "fa-IR", "value": "فشار دشمن" }] }
+    { "key": "operations.o001.dashboard_hostile", "source": "HOSTILE PRESSURE", "translations": [{ "locale": "fa-IR", "value": "فشار دشمن" }] },
+    { "key": "operations.o001.map_northgate", "source": "NORTHGATE", "translations": [{ "locale": "fa-IR", "value": "دروازهٔ شمالی" }] },
+    { "key": "operations.o001.map_eastridge", "source": "EASTRIDGE", "translations": [{ "locale": "fa-IR", "value": "بلندی شرقی" }] },
+    { "key": "operations.o001.map_oldmarket", "source": "OLD MARKET", "translations": [{ "locale": "fa-IR", "value": "بازار قدیمی" }] },
+    { "key": "operations.o001.map_forwardpost", "source": "FORWARD POST", "translations": [{ "locale": "fa-IR", "value": "پایگاه پیشرو" }] },
+    { "key": "operations.o001.map_southquarter", "source": "SOUTH QUARTER", "translations": [{ "locale": "fa-IR", "value": "محلهٔ جنوبی" }] }
   ]
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Game.Skirmish.Contracts;
+using UnityEngine;
 
 namespace Game.Configs
 {

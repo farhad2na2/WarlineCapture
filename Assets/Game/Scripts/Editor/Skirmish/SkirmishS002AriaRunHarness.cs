@@ -12,6 +12,8 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEngine;
 
@@ -31,6 +33,8 @@ namespace Game.Editor
         private const string StartedKey = "Warline.S002.AriaStarted";
         private const string NormalKey = "Warline.S002.AriaNormal";
         private const string PlayingSinceKey = "Warline.S002.AriaPlayingSince";
+        private const string BackgroundPreviousKey = "Warline.S002.AriaBackgroundPrevious";
+        private const string WatchCaptureKey = "Warline.S002.AriaWatchCaptured";
         private const string RegistryPath = "Assets/Game/Configs/Scene/Game_UnitPrefabRegistry_Config.asset";
         private const double WallClockBudgetSeconds = 1500d;
 
@@ -90,6 +94,8 @@ namespace Game.Editor
         /// </summary>
         public static void RunFocusedAriaAndExit()
         {
+            SessionState.SetString(BackgroundPreviousKey,
+                Environment.GetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION") ?? "");
             Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION", "1");
             Environment.SetEnvironmentVariable("WARLINE_ARIA_QUIT", "1");
             if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WARLINE_SKIRMISH_CATALOG")))
@@ -158,6 +164,7 @@ namespace Game.Editor
             SessionState.SetString(CatalogKey, catalogId);
             SessionState.SetString(StartedKey, string.Empty);
             SessionState.SetFloat(PlayingSinceKey, 0f);
+            SessionState.SetBool(WatchCaptureKey, false);
             Directory.CreateDirectory(EvidenceDirectory());
 
             string profileRoot = ValidationProfileRoot();
@@ -333,6 +340,11 @@ namespace Game.Editor
                 }
 
                 AppendTrace(em, session, in match, simulationActive, elapsed);
+                if (elapsed >= 10f && !SessionState.GetBool(WatchCaptureKey, false))
+                {
+                    SessionState.SetBool(WatchCaptureKey, true);
+                    ScreenCapture.CaptureScreenshot(Path.Combine(EvidenceDirectory(), "s002-aria-watch-controls.png"));
+                }
                 // Stale-frame and unfocus drops return the touch driver to Manual.
                 // The shipping start call is legal from Manual; keep it armed until
                 // the match itself finishes. This does not write a result.
@@ -356,8 +368,7 @@ namespace Game.Editor
 
         private static bool TryQueueExpanded(EntityManager em)
         {
-            string root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            if (!SkirmishSetupMatrixTable.TryLoad(root, out List<SkirmishSetupMatrixRow> matrix, out string error))
+            if (!SkirmishSetupMatrixTable.TryLoadPackaged(out List<SkirmishSetupMatrixRow> matrix, out string error))
                 throw new InvalidOperationException(error);
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
             bool airMobile = catalogId == SkirmishAcceptanceCensusCapture.S003CatalogId;
@@ -390,7 +401,7 @@ namespace Game.Editor
 
             Debug.Log(string.Format(
                 CultureInfo.InvariantCulture,
-                "[SkirmishS002AriaRun] queued catalog={0} seed={1} hash={2:X8} playable=0 gatesAssault=0 normal_speed=1",
+                "[SkirmishS002AriaRun] queued catalog={0} seed={1} hash={2:X8} playable=1 gatesAssault=0 normal_speed=1",
                 setup.CatalogId,
                 setup.Seed,
                 setup.SetupHash));
@@ -416,9 +427,33 @@ namespace Game.Editor
 
             int playerBaseHp = DesignatedBaseHp(em, session, 1);
             int enemyBaseHp = DesignatedBaseHp(em, session, 2);
+            int requests = 0;
+            int following = 0;
+            int playerUnits = 0;
+            float leadX = -1f;
+            float leadZ = -1f;
+            using (EntityQuery units = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent), typeof(LocalTransform)))
+            using (NativeArray<Entity> entities = units.ToEntityArray(Allocator.Temp))
+            {
+                for (int i = 0; i < entities.Length; i++)
+                {
+                    Entity unit = entities[i];
+                    if (em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).FactionId != 1)
+                        continue;
+                    playerUnits++;
+                    if (em.HasComponent<UnitPathRequest>(unit)) requests++;
+                    if (em.HasComponent<UnitPathFollow>(unit)) following++;
+                    if (leadX < 0f)
+                    {
+                        float3 position = em.GetComponentData<LocalTransform>(unit).Position;
+                        leadX = position.x;
+                        leadZ = position.z;
+                    }
+                }
+            }
             string line = string.Format(
                 CultureInfo.InvariantCulture,
-                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6},\"playerBaseHp\":{7},\"enemyBaseHp\":{8}}}\n",
+                "{{\"elapsed\":{0},\"phase\":\"{1}\",\"outcome\":\"{2}\",\"reason\":\"{3}\",\"simulationActive\":{4},\"clockElapsed\":{5},\"clockPaused\":{6},\"playerBaseHp\":{7},\"enemyBaseHp\":{8},\"playerUnits\":{9},\"pathRequests\":{10},\"pathFollowing\":{11},\"leadX\":{12},\"leadZ\":{13}}}\n",
                 elapsed.ToString("0.###", CultureInfo.InvariantCulture),
                 match.Phase,
                 match.Outcome,
@@ -427,7 +462,12 @@ namespace Game.Editor
                 clockElapsed.ToString("0.###", CultureInfo.InvariantCulture),
                 clockPaused,
                 playerBaseHp,
-                enemyBaseHp);
+                enemyBaseHp,
+                playerUnits,
+                requests,
+                following,
+                leadX.ToString("0.###", CultureInfo.InvariantCulture),
+                leadZ.ToString("0.###", CultureInfo.InvariantCulture));
             File.AppendAllText(LiveTracePath(), line);
         }
 
@@ -493,6 +533,9 @@ namespace Game.Editor
             Environment.SetEnvironmentVariable(
                 "WARLINE_VALIDATION_SAVE_ROOT",
                 string.IsNullOrEmpty(previous) ? null : previous);
+            string backgroundPrevious = SessionState.GetString(BackgroundPreviousKey, "");
+            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",
+                string.IsNullOrEmpty(backgroundPrevious) ? null : backgroundPrevious);
 
             SkirmishMatchState match = default;
             Entity session = Entity.Null;

@@ -252,13 +252,13 @@ namespace Game.Configs
     {
         public const string CatalogId = "S002";
         public const string DefinitionId = "skirmish.s002";
-        public const int DefinitionVersion = 1;
+        public const int DefinitionVersion = 2;
         public const string S003CatalogId = "S003";
         public const string S003DefinitionId = "skirmish.s003";
-        public const int S003DefinitionVersion = 1;
+        public const int S003DefinitionVersion = 2;
         public const string S004CatalogId = "S004";
         public const string S004DefinitionId = "skirmish.s004";
-        public const int S004DefinitionVersion = 1;
+        public const int S004DefinitionVersion = 2;
         public const int CodeHashSchemaVersion = 1;
         public const int FirstVisitSeed = 104731;
         public const string CodeHashIdentity =

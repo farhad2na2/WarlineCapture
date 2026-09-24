@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Game.Components;
 using Game.Configs;
 using Game.Skirmish.Contracts;
@@ -175,6 +176,7 @@ namespace Game.Runtime
             intent.DestinationZ = live.z;
             intent.Active = active;
             em.SetComponentData(unit, intent);
+            TryReuseSharedPath(em, unit, live);
         }
 
         public static float3 DefaultAdvance(EntityManager em, Entity session)

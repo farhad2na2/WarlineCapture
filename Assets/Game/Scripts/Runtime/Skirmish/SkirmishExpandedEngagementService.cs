@@ -54,7 +54,14 @@ namespace Game.Runtime
                     continue;
                 }
 
-                Entity combatant = FindCombatant(em, sessionId, unit, owned.FactionId, overlay);
+                // Registry-spawned units already acquire and damage combatants
+                // through the shared engagement/attack systems. Applying the
+                // expansion overlay as well made every encounter deal two hits.
+                bool sharedCombat = em.HasComponent<SkirmishVisualSpawnedComponent>(unit) &&
+                    em.GetComponentData<SkirmishVisualSpawnedComponent>(unit).FromRegistry != 0 &&
+                    em.HasComponent<UnitAttack>(unit);
+                Entity combatant = sharedCombat
+                    ? Entity.Null : FindCombatant(em, sessionId, unit, owned.FactionId, overlay);
                 Entity structure = OrderedStructure(em, intent.AttackTarget, owned.FactionId, unit, overlay);
                 // A combatant on the way is fought only until the ordered structure
                 // is itself in range. Stopping for every rifle at the enemy pad

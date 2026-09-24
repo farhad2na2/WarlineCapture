@@ -131,6 +131,13 @@ namespace Game.Components
         public int FuelCapacity;
     }
 
+    // Fractions of a barrel spent by baked vehicles between grid cells.
+    public struct SkirmishVehicleFuelRemainderComponent : IComponentData
+    {
+        public float Player;
+        public float Enemy;
+    }
+
     public struct SkirmishProductionReservation : IBufferElementData
     {
         public uint ReservationId;

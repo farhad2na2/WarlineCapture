@@ -271,8 +271,8 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(600f, layout.WorldWidthMetres);
         Assert.AreEqual(420f, layout.WorldDepthMetres);
         Assert.IsTrue(layout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig staging));
-        Assert.AreEqual(-192f, staging.WorldX, 0.05f);
-        Assert.AreEqual(0f, staging.WorldZ, 0.05f);
+        Assert.AreEqual(985f, staging.WorldX, 0.05f);
+        Assert.AreEqual(345f, staging.WorldZ, 0.05f);
         Assert.IsTrue(layout.TryGetPad(1, SkirmishLegalPadKind.GroundStaging, out _));
         Assert.IsTrue(layout.TryGetPad(1, SkirmishLegalPadKind.InfantrySpawn, out _));
         Assert.IsTrue(layout.TryGetRoute(SkirmishMeasuredRouteKind.MainHighway, out SkirmishLayoutRouteConfig highway));
@@ -546,7 +546,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(shared.WorldWidthMetres, layout.WorldWidthMetres);
         Assert.AreEqual(shared.WorldDepthMetres, layout.WorldDepthMetres);
         Assert.IsTrue(layout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig staging));
-        Assert.AreEqual(-192f, staging.WorldX, 0.05f);
+        Assert.AreEqual(985f, staging.WorldX, 0.05f);
         Assert.AreEqual("scenario.skirmish.s003", scenario.ScenarioId);
         Assert.AreEqual(SkirmishS003FirstVisit.SeedA, scenario.DeterministicSeed);
         Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig s002));
@@ -740,7 +740,7 @@ public sealed class SkirmishExpandedDefinitionTests
     }
 
     [Test]
-    public void S004AssetsReuseDesertBaseLayoutAndStayInProgress()
+    public void S004AssetsReuseDesertBaseLayoutAndRemainPlayable()
     {
         var definition = AssetDatabase.LoadAssetAtPath<SkirmishScenarioDefinitionConfig>(
             "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004/SkirmishScenario_S004.asset");
@@ -767,9 +767,9 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.AreEqual(shared.WorldWidthMetres, layout.WorldWidthMetres);
         Assert.AreEqual(shared.WorldDepthMetres, layout.WorldDepthMetres);
         Assert.IsTrue(layout.TryGetAnchor("staging.player", out SkirmishLayoutAnchorConfig staging));
-        Assert.AreEqual(-192f, staging.WorldX, 0.05f);
+        Assert.AreEqual(985f, staging.WorldX, 0.05f);
         Assert.IsTrue(layout.TryGetAnchor("air.player", out SkirmishLayoutAnchorConfig air));
-        Assert.AreEqual(-258f, air.WorldX, 0.2f);
+        Assert.AreEqual(919f, air.WorldX, 0.2f);
         Assert.AreEqual("scenario.skirmish.s004", scenario.ScenarioId);
         Assert.AreEqual(SkirmishS004FirstVisit.SeedA, scenario.DeterministicSeed);
         Assert.IsTrue(publication.TryGet("S002", out SkirmishPublicationRowConfig s002));
@@ -777,7 +777,7 @@ public sealed class SkirmishExpandedDefinitionTests
         Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig s003));
         Assert.AreEqual(SkirmishPublicationStatus.Playable, s003.Status);
         Assert.IsTrue(publication.TryGet("S004", out SkirmishPublicationRowConfig s004));
-        Assert.AreEqual(SkirmishPublicationStatus.InProgress, s004.Status);
+        Assert.AreEqual(SkirmishPublicationStatus.Playable, s004.Status);
     }
 
     [Test]
@@ -1008,7 +1008,7 @@ public sealed class SkirmishExpandedDefinitionTests
             suite.FieldAndEstablishedBackboneMatchesMatrix();
             suite.S004EstablishedSizesMatchMatrixWithStartingAir();
             suite.S004EstablishedAirRejectsArmorAndKeepsGrantedPad();
-            suite.S004AssetsReuseDesertBaseLayoutAndStayInProgress();
+            suite.S004AssetsReuseDesertBaseLayoutAndRemainPlayable();
             suite.S004CatalogWalkCompilesAirRowsAndLeavesS002OnItsOwnManifest();
             suite.SessionInitializationProjectsRolesOutsideLiveQuery();
             Debug.Log("[SkirmishExpandedDefinitionTests] result=Passed");
@@ -1017,6 +1017,32 @@ public sealed class SkirmishExpandedDefinitionTests
         {
             Debug.LogError("[SkirmishExpandedDefinitionTests] result=Failed\n" + exception);
             throw;
+        }
+    }
+
+    [Test]
+    public void PackagedS002MatchesPlayableMap()
+    {
+        Assert.IsTrue(SkirmishSetupMatrixTable.TryLoadPackaged(out var matrix, out string error), error);
+        Assert.IsTrue(SkirmishSetupMatrixTable.TryFind(matrix, "S002", SkirmishSizeId.Standard, out var row));
+        Assert.AreEqual(1080, row.DeadlineSeconds);
+        Assert.AreEqual(48, row.InfantryCapEach);
+        var authored = SkirmishExpansionCatalogFactory.CreatePackagedS002();
+        Assert.IsNotNull(authored);
+        Assert.IsNotNull(authored.DefinitionS002.MapLayout);
+        var layout = authored.DefinitionS002.MapLayout;
+        Assert.IsTrue(layout.TryGetPad(1, SkirmishLegalPadKind.BaseBarracks, out var player));
+        Assert.IsTrue(layout.TryGetPad(2, SkirmishLegalPadKind.BaseBarracks, out var enemy));
+        Assert.GreaterOrEqual(player.CenterX, 0f);
+        Assert.LessOrEqual(enemy.CenterX, 2048f);
+        Assert.GreaterOrEqual(player.CenterZ, 0f);
+        Assert.LessOrEqual(enemy.CenterZ, 1024f);
+        foreach (var pad in layout.Pads)
+        {
+            Assert.GreaterOrEqual(pad.CenterX - pad.WidthMetres * 0.5f, 0f, pad.PadId);
+            Assert.LessOrEqual(pad.CenterX + pad.WidthMetres * 0.5f, 2048f, pad.PadId);
+            Assert.GreaterOrEqual(pad.CenterZ - pad.DepthMetres * 0.5f, 0f, pad.PadId);
+            Assert.LessOrEqual(pad.CenterZ + pad.DepthMetres * 0.5f, 1024f, pad.PadId);
         }
     }
 

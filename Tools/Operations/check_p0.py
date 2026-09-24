@@ -66,7 +66,7 @@ def numbered(part: str, prefix: str, digits: int, lo: int, hi: int) -> bool:
 
 
 def check_catalog() -> None:
-    rows = list(csv.DictReader(CATALOG.open()))
+    rows = list(csv.DictReader(CATALOG.open(encoding="utf-8-sig")))
     if len(rows) != 60:
         fail(f"catalog_count={len(rows)}")
     seen = set()

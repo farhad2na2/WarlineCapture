@@ -14,6 +14,7 @@ namespace Game.Editor
         public const string ScenarioFolder = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S002";
         public const string ScenarioFolderS003 = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S003";
         public const string ScenarioFolderS004 = "Assets/Game/Configs/SkirmishExpansion/Scenarios/S004";
+        public const string PackagedS002Folder = "Assets/Game/Resources/Skirmish";
         public const string PublicationPath = SharedFolder + "/SkirmishPublicationManifest.asset";
         public const string CatalogCsvPath = "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv";
 
@@ -29,6 +30,7 @@ namespace Game.Editor
             Directory.CreateDirectory(ScenarioFolder);
             Directory.CreateDirectory(ScenarioFolderS003);
             Directory.CreateDirectory(ScenarioFolderS004);
+            Directory.CreateDirectory(PackagedS002Folder);
             SkirmishExpansionAuthoredSet set = SkirmishExpansionCatalogFactory.CreateInMemory();
             bool preserveS002Playable = TryReadPlayable("S002", out string preservedS002Notes);
             bool preserveS003Playable = TryReadPlayable("S003", out string preservedS003Notes);
@@ -53,7 +55,9 @@ namespace Game.Editor
             Persist(set.GroundStaging, SharedFolder + "/SkirmishGroundStaging_V1.asset");
             Persist(set.LayoutDbBa, SharedFolder + "/SkirmishLayout_DB_BA.asset");
             Persist(set.Publication, SharedFolder + "/SkirmishPublicationManifest.asset");
-            Persist(set.DefinitionS002, ScenarioFolder + "/SkirmishScenario_S002.asset");
+            SkirmishScenarioDefinitionConfig savedS002 =
+                Persist(set.DefinitionS002, ScenarioFolder + "/SkirmishScenario_S002.asset");
+            Persist(savedS002, PackagedS002Folder + "/S002Definition.asset");
             Persist(CopyLayout(set.LayoutDbBa), ScenarioFolder + "/SkirmishLayout_S002.asset");
             Persist(set.DefinitionS003, ScenarioFolderS003 + "/SkirmishScenario_S003.asset");
             Persist(CopyLayout(set.LayoutDbBa), ScenarioFolderS003 + "/SkirmishLayout_S003.asset");

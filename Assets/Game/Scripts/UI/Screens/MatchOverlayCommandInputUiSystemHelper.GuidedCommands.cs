@@ -45,6 +45,13 @@ namespace Game.UI.Runtime
             private void OnAttackButtonClicked()
             {
                 CaptureCommandUiClick();
+                if (_selectionUiReadModel != null && !_selectionUiReadModel.HasAnySelectedUnits)
+                {
+                    ApplyCommandResult(TacticalCommandResult.Rejected(
+                        TacticalCommandReasonCode.NoSelection,
+                        _gameTextResolver.Get("tactical.command.unavailable.attack_no_selection", "Select units before attacking.")));
+                    return;
+                }
                 UiShellRuntimeGateway.TryAttackExpandedEnemyBase();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestAttackCommandMode();

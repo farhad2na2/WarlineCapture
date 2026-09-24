@@ -28,13 +28,21 @@ namespace Game.Editor
         private static string capturePath;
         private static int exitCode;
         private static string loadFailure;
-        private static bool lifecycle, checkpointResume, processSave, processRestore, ariaVictory;
+        private static bool lifecycle, checkpointResume, checkpointDuringScan, checkpointDuringCarrier, processSave, processRestore, ariaVictory;
         private static int ariaSeed = 1102;
         private static OperationsDifficultyKind ariaDifficulty = OperationsDifficultyKind.Regular;
         private static string checkpointSession;
         private static float checkpointElapsed;
+        private static float checkpointScanSeconds;
+        private static int checkpointCarrierIndex;
         private const string ProcessCheckpointMarker = "/private/tmp/o001-process-checkpoint.json";
-        [Serializable] private sealed class ProcessCheckpoint { public string root, session; public float elapsed; }
+        [Serializable] private sealed class ProcessCheckpoint
+        {
+            public string root, session;
+            public float elapsed, scan;
+            public bool carrier;
+            public int carrierIndex;
+        }
         private static bool recovery, interrupted;
         private static string interruptedSession;
         private static bool manual, persian;
@@ -47,8 +55,20 @@ namespace Game.Editor
         public static void Run() => Start(false);
         public static void RunLifecycle() => Start(true);
         public static void RunCheckpointResume() { checkpointResume = true; Start(false); }
+        public static void RunCheckpointResumeDuringScan() { checkpointResume = checkpointDuringScan = true; Start(false); }
+        public static void RunCheckpointSaveDuringScanForRestart() { checkpointResume = checkpointDuringScan = processSave = true; Start(false); }
+        public static void RunCheckpointSaveWithCarrierForRestart() { checkpointResume = checkpointDuringCarrier = processSave = true; Start(false); }
         public static void RunCheckpointSaveForRestart() { checkpointResume = processSave = true; Start(false); }
-        public static void RunCheckpointResumeAfterRestart() { processRestore = true; Start(false); }
+        public static void RunCheckpointResumeAfterRestart()
+        {
+            processRestore = true;
+            try { Start(false); }
+            catch (Exception exception)
+            {
+                Debug.LogError("[OperationsReconLaunchSmokeValidation] result=Failed setup=" + exception);
+                EditorApplication.Exit(1);
+            }
+        }
         public static void RunAriaVictory()
         {
             ariaVictory = true;
@@ -101,13 +121,24 @@ namespace Game.Editor
             ProcessCheckpoint prior = processRestore ? JsonUtility.FromJson<ProcessCheckpoint>(File.ReadAllText(ProcessCheckpointMarker)) : null;
             string saveRoot = prior?.root ?? Path.Combine(Path.GetTempPath(), "o001-launch-smoke-" + Guid.NewGuid().ToString("N"));
             Environment.SetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT", saveRoot);
-            if (processRestore) { checkpointSession = prior.session; checkpointElapsed = prior.elapsed; }
+            if (processRestore)
+            {
+                checkpointSession = prior.session;
+                checkpointElapsed = prior.elapsed;
+                checkpointScanSeconds = prior.scan;
+                checkpointDuringScan = prior.scan > 0f;
+                checkpointDuringCarrier = prior.carrier;
+                checkpointCarrierIndex = prior.carrierIndex;
+            }
             var save = SaveService.CreateDefault();
             if (!processRestore)
             {
                 save.SaveProfile(new PlayerProfileSaveData
-                { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = "English" });
+                { firstLaunchStatus = FirstLaunchProfileState.Completed, firstLaunchLanguage = persian ? "Persian" : "English" });
                 save.SaveSettings(new SettingsSaveData { language = persian ? "Persian" : "English" });
+                string locale = persian ? Game.Configs.GameLocalization.PersianLocaleCode : Game.Configs.GameLocalization.EnglishLocaleCode;
+                if (!Game.Configs.GameLocalization.SetLocale(locale))
+                    throw new InvalidOperationException("Could not select O001 validation locale: " + locale);
             }
             ariaSeed = 1102;
             ariaDifficulty = OperationsDifficultyKind.Regular;
@@ -146,6 +177,7 @@ namespace Game.Editor
             if (!manual && File.Exists(capturePath)) File.Delete(capturePath);
             EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
             started = EditorApplication.timeSinceStartup; stage = 0; captureFrames = menuCaptureFrames = menuReturnFrames = 0; ariaTraceBucket = -1; ariaWasActive = false; loadFailure = null;
+            if (!processRestore) { checkpointScanSeconds = 0f; checkpointCarrierIndex = -1; }
             Application.logMessageReceived += ObserveLog;
             EditorApplication.update += Tick;
             EditorApplication.EnterPlaymode();
@@ -158,7 +190,7 @@ namespace Game.Editor
             try
             {
                 if (loadFailure != null) { Complete(false, loadFailure); return; }
-                if (EditorApplication.timeSinceStartup - started > (manual || ariaVictory ? 1200 : 240))
+                if (EditorApplication.timeSinceStartup - started > (manual || ariaVictory || checkpointDuringCarrier ? 1200 : 240))
                 { Complete(false, "timeout stage=" + stage); return; }
                 if (manual) { ObserveManualJourney(); return; }
                 if (recovery && stage == 2)
@@ -194,6 +226,10 @@ namespace Game.Editor
                 }
                 if (stage == 1 && shell.ActiveRoute == UIRoute.Operations && UiShellRuntimeGateway.TryReadOperationsMission(out var model) && model.CanDeploy)
                 {
+                    string expectedLocale = persian ? Game.Configs.GameLocalization.PersianLocaleCode : Game.Configs.GameLocalization.EnglishLocaleCode;
+                    if (UiShellRuntimeGateway.Localization.CurrentLocaleCode != expectedLocale)
+                        throw new InvalidOperationException("O001 validation started in " + UiShellRuntimeGateway.Localization.CurrentLocaleCode +
+                            " instead of " + expectedLocale);
                     var dashboard = UnityEngine.Object.FindAnyObjectByType<OperationsDashboardScreenView>();
                     if (dashboard == null || dashboard.DailyBriefing == null ||
                         dashboard.transform.Find("DistrictMap") == null ||
@@ -237,8 +273,24 @@ namespace Game.Editor
                         if (mission.SessionId.ToString() != checkpointSession || mission.ElapsedSeconds < checkpointElapsed ||
                             SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
                             throw new InvalidOperationException("Process restart changed the session, clock, or AP reservation.");
+                        if (checkpointDuringScan)
+                        {
+                            var sites = world.EntityManager.GetBuffer<OperationsReconSiteElement>(query.GetSingletonEntity());
+                            if (sites.Length == 0 || sites[0].ChannelSeconds < checkpointScanSeconds)
+                                throw new InvalidOperationException("Process restart lost active scan progress: before=" + checkpointScanSeconds +
+                                    " after=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds));
+                        }
+                        if (checkpointDuringCarrier)
+                        {
+                            var evidence = world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(query.GetSingletonEntity());
+                            if (evidence.Recovered == 0 || evidence.Carrier == Entity.Null ||
+                                !world.EntityManager.HasComponent<OperationsReconMemberComponent>(evidence.Carrier) ||
+                                world.EntityManager.GetComponentData<OperationsReconMemberComponent>(evidence.Carrier).StableIndex != checkpointCarrierIndex)
+                                throw new InvalidOperationException("Process restart lost evidence carrier " + checkpointCarrierIndex);
+                        }
                         Complete(true, "journey=process-restart-resume input=button-event-smoke session=" + checkpointSession +
-                            " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + mission.ElapsedSeconds + " ap=2");
+                            " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + mission.ElapsedSeconds +
+                            " scanBefore=" + checkpointScanSeconds + " carrierIndex=" + checkpointCarrierIndex + " ap=2");
                         return;
                     }
                     var root = query.GetSingletonEntity();
@@ -293,6 +345,11 @@ namespace Game.Editor
                     }
                     if (checkpointResume)
                     {
+                        if (checkpointDuringScan || checkpointDuringCarrier)
+                        {
+                            if (Click("ARIA PLAY")) stage = checkpointDuringScan ? 22 : 23;
+                            return;
+                        }
                         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
                         using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
                         var active = roots.GetSingleton<OperationsReconMissionComponent>();
@@ -315,6 +372,69 @@ namespace Game.Editor
                         throw new InvalidOperationException("Mission Guide button is missing.");
                     }
                     if (Click("WITHDRAW")) stage = 4;
+                    return;
+                }
+                if (stage == 22)
+                {
+                    var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                    using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                    if (roots.CalculateEntityCount() != 1) return;
+                    var root = roots.GetSingletonEntity();
+                    var sites = em.GetBuffer<OperationsReconSiteElement>(root);
+                    var active = em.GetComponentData<OperationsReconMissionComponent>(root);
+                    var ariaState = UiShellRuntimeGateway.ReadAriaPlay();
+                    if (ariaState.Active) ariaWasActive = true;
+                    int traceBucket = Mathf.FloorToInt(active.ElapsedSeconds / 30f);
+                    if (traceBucket > ariaTraceBucket)
+                    {
+                        ariaTraceBucket = traceBucket;
+                        Debug.Log("[OperationsReconCheckpointTrace] elapsed=" + active.ElapsedSeconds.ToString("F0") +
+                            " scan=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds) +
+                            " completed=" + active.CompletedScans + " aria=" + ariaState.Phase +
+                            " actions=" + ariaState.Actions + " focused=" + Application.isFocused);
+                    }
+                    if (ariaWasActive && !ariaState.Active)
+                        throw new InvalidOperationException("ARIA stopped before active scan: phase=" + ariaState.Phase +
+                            " elapsed=" + active.ElapsedSeconds + " focused=" + Application.isFocused);
+                    if (sites.Length == 0 || sites[0].ChannelSeconds < 2f) return;
+                    checkpointScanSeconds = sites[0].ChannelSeconds;
+                    if (sites[0].Completed != 0 || checkpointScanSeconds >= active.ScanSeconds)
+                        throw new InvalidOperationException("Active-scan checkpoint missed the interaction window.");
+                    checkpointSession = active.SessionId.ToString();
+                    checkpointElapsed = active.ElapsedSeconds;
+                    UiShellRuntimeGateway.StopAriaPlay();
+                    if (Click("SAVE & EXIT")) stage = 10;
+                    return;
+                }
+                if (stage == 23)
+                {
+                    var world = World.DefaultGameObjectInjectionWorld;
+                    if (world == null || !world.IsCreated ||
+                        !OperationsReconLaunchProjection.TryGet(world.EntityManager, out var root, out var active)) return;
+                    var em = world.EntityManager;
+                    var evidence = em.GetComponentData<OperationsReconEvidenceComponent>(root);
+                    var ariaState = UiShellRuntimeGateway.ReadAriaPlay();
+                    if (ariaState.Active) ariaWasActive = true;
+                    int traceBucket = Mathf.FloorToInt(active.ElapsedSeconds / 30f);
+                    if (traceBucket > ariaTraceBucket)
+                    {
+                        ariaTraceBucket = traceBucket;
+                        Debug.Log("[OperationsReconCheckpointTrace] elapsed=" + active.ElapsedSeconds.ToString("F0") +
+                            " scans=" + active.CompletedScans + " recovered=" + evidence.Recovered +
+                            " carrier=" + (evidence.Carrier != Entity.Null) + " aria=" + ariaState.Phase +
+                            " actions=" + ariaState.Actions + " focused=" + Application.isFocused);
+                    }
+                    if (ariaWasActive && !ariaState.Active && evidence.Recovered == 0)
+                        throw new InvalidOperationException("ARIA stopped before evidence pickup: phase=" + ariaState.Phase +
+                            " elapsed=" + active.ElapsedSeconds + " focused=" + Application.isFocused);
+                    if (evidence.Recovered == 0 || evidence.Carrier == Entity.Null) return;
+                    if (!em.HasComponent<OperationsReconMemberComponent>(evidence.Carrier))
+                        throw new InvalidOperationException("Evidence carrier is not an O001 roster member.");
+                    checkpointCarrierIndex = em.GetComponentData<OperationsReconMemberComponent>(evidence.Carrier).StableIndex;
+                    checkpointSession = active.SessionId.ToString();
+                    checkpointElapsed = active.ElapsedSeconds;
+                    UiShellRuntimeGateway.StopAriaPlay();
+                    if (Click("SAVE & EXIT")) stage = 10;
                     return;
                 }
                 if (stage == 31 && ++captureFrames > 30 &&
@@ -387,9 +507,12 @@ namespace Game.Editor
                     if (processSave)
                     {
                         File.WriteAllText(ProcessCheckpointMarker, JsonUtility.ToJson(new ProcessCheckpoint
-                        { root = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"), session = checkpointSession, elapsed = checkpointElapsed }));
+                        { root = Environment.GetEnvironmentVariable("WARLINE_VALIDATION_SAVE_ROOT"), session = checkpointSession,
+                            elapsed = checkpointElapsed, scan = checkpointScanSeconds,
+                            carrier = checkpointDuringCarrier, carrierIndex = checkpointCarrierIndex }));
                         Complete(true, "journey=process-restart-save input=button-event-smoke session=" + checkpointSession +
-                            " elapsed=" + checkpointElapsed + " ap=2 marker=" + ProcessCheckpointMarker);
+                            " elapsed=" + checkpointElapsed + " scan=" + checkpointScanSeconds +
+                            " ap=2 marker=" + ProcessCheckpointMarker);
                         return;
                     }
                     if (Click("RESUME ATTEMPT")) stage = 11;
@@ -405,8 +528,16 @@ namespace Game.Editor
                     if (resumed.SessionId.ToString() != checkpointSession || resumed.ElapsedSeconds < checkpointElapsed ||
                         SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("Resume changed the session, clock, or AP reservation.");
+                    if (checkpointDuringScan)
+                    {
+                        var sites = em.GetBuffer<OperationsReconSiteElement>(roots.GetSingletonEntity());
+                        if (sites.Length == 0 || sites[0].ChannelSeconds < checkpointScanSeconds)
+                            throw new InvalidOperationException("Resume lost active scan progress: before=" + checkpointScanSeconds +
+                                " after=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds));
+                    }
                     Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
-                        " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds + " ap=2");
+                        " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds +
+                        " scanBefore=" + checkpointScanSeconds + " ap=2");
                 }
                 if (stage == 20)
                 {
@@ -425,6 +556,8 @@ namespace Game.Editor
                         var observation = observations.IsEmptyIgnoreFilter ? default : observations.GetSingleton<AriaPlayObservationComponent>();
                         Debug.Log("[OperationsReconAriaTrace] elapsed=" + operation.ElapsedSeconds.ToString("F0") +
                             " phase=" + ariaState.Phase + " actions=" + ariaState.Actions + " scans=" + operation.CompletedScans +
+                            " surviving=" + operation.SurvivingInfantry + " atExit=" + operation.InfantryAtExit +
+                            " evidenceRecovered=" + world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Recovered +
                             " goal=" + observation.GoalId + " kind=" + observation.Kind + " target=" + observation.TargetId +
                             " stopReason=" + session.StopReason + " focused=" + Application.isFocused + " timeScale=" + Time.timeScale);
                     }
@@ -440,7 +573,12 @@ namespace Game.Editor
                     if (!UiShellRuntimeGateway.TryReadOperationsMission(out var outcome) || !outcome.Saved) return;
                     if (operation.Outcome != OperationsReconOutcome.Victory)
                         throw new InvalidOperationException("ARIA did not win O001: outcome=" + operation.Outcome +
-                            " scans=" + operation.CompletedScans + " actions=" + UiShellRuntimeGateway.ReadAriaPlay().Actions);
+                            " elapsed=" + operation.ElapsedSeconds.ToString("F1") +
+                            " scans=" + operation.CompletedScans +
+                            " surviving=" + operation.SurvivingInfantry +
+                            " atExit=" + operation.InfantryAtExit +
+                            " evidenceRecovered=" + world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Recovered +
+                            " actions=" + UiShellRuntimeGateway.ReadAriaPlay().Actions);
                     if (Click("CONTINUE")) stage = 21;
                     return;
                 }
@@ -448,8 +586,12 @@ namespace Game.Editor
                 {
                     if (SaveService.CreateDefault().LoadProfile().operations.activeRun.actionPoints != 2)
                         throw new InvalidOperationException("ARIA victory did not settle one AP.");
+                    string expectedLocale = persian ? Game.Configs.GameLocalization.PersianLocaleCode : Game.Configs.GameLocalization.EnglishLocaleCode;
+                    if (UiShellRuntimeGateway.Localization.CurrentLocaleCode != expectedLocale)
+                        throw new InvalidOperationException("O001 validation returned in the wrong locale: " +
+                            UiShellRuntimeGateway.Localization.CurrentLocaleCode);
                     Complete(true, "journey=aria-victory-return input=visible-touch seed=" + ariaSeed +
-                        " difficulty=" + ariaDifficulty + " language=" + (persian ? "fa" : "en") + " ap=2");
+                        " difficulty=" + ariaDifficulty + " language=" + UiShellRuntimeGateway.Localization.CurrentLocaleCode + " ap=2");
                 }
             }
             catch (Exception exception) { Complete(false, exception.ToString()); }

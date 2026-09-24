@@ -352,7 +352,11 @@ namespace Game.Runtime
                 ? em.GetComponentData<Faction>(entity).Id
                 : FactionIdentity.NeutralFactionId;
             float requiredFuel = movedCells * fuelPerCell;
-            float usableFuel = CalculateUsableFuel(em, factionId);
+            float usableFuel = em.HasComponent<SkirmishAttemptOwnedComponent>(entity) &&
+                TryGetExpandedFuel(em,
+                    em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId,
+                    factionId, out float expandedFuel)
+                ? expandedFuel : CalculateUsableFuel(em, factionId);
             if (usableFuel + 0.001f >= requiredFuel)
                 return false;
 
@@ -389,6 +393,28 @@ namespace Game.Runtime
             }
 
             return usableFuel;
+        }
+
+        private static bool TryGetExpandedFuel(EntityManager em,
+            Unity.Collections.FixedString64Bytes sessionId, byte factionId, out float fuel)
+        {
+            fuel = 0f;
+            using EntityQuery query = em.CreateEntityQuery(
+                typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
+                typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
+            if (query.CalculateEntityCount() != 1)
+                return false;
+            Entity session = query.GetSingletonEntity();
+            if (!em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(sessionId))
+                return false;
+            SkirmishResolvedSetupComponent setup = em.GetComponentData<SkirmishResolvedSetupComponent>(session);
+            if (factionId == setup.PlayerFaction)
+                fuel = em.GetComponentData<SkirmishEconomyStockComponent>(session).Fuel;
+            else if (factionId == setup.EnemyFaction)
+                fuel = em.GetComponentData<SkirmishEnemyStockComponent>(session).Fuel;
+            else
+                return false;
+            return true;
         }
 
         private static void ClearMovementOrderComponents(EntityManager em, Entity entity)

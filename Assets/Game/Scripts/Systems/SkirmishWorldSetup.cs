@@ -11,12 +11,18 @@ namespace Game.Runtime
         {
             using var session=em.CreateEntityQuery(typeof(SkirmishMatchState));
             if(session.IsEmptyIgnoreFilter)return;
+            using var expanded=em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            bool authoredRoster = expanded.CalculateEntityCount() == 1 &&
+                expanded.GetSingleton<SkirmishExpandedSessionComponent>().IsLegacy == 0;
             // A streamed SubScene may arrive after managed startup has projected
             // the selected preset. Keep its rendering registry, but never let its
             // legacy spawner add a second force, fuel seed, or blocker churn.
+            // Expanded missions author both armies themselves, so the selected
+            // legacy spawn config must also be suppressed.
             using var query=em.CreateEntityQuery(new EntityQueryDesc{
                 All=new[]{ComponentType.ReadOnly<InitialUnitsSpawnConfig>()},
-                None=new[]{ComponentType.ReadOnly<CustomGameStartupStateComponent>()}});
+                None=authoredRoster ? System.Array.Empty<ComponentType>() :
+                    new[]{ComponentType.ReadOnly<CustomGameStartupStateComponent>()}});
             using var entities=query.ToEntityArray(Allocator.Temp);
             foreach(var entity in entities)
             {

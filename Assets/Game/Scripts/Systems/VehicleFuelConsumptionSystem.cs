@@ -1,4 +1,3 @@
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -6,7 +5,6 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(UnitAirMovementSystem))]
     [UpdateAfter(typeof(UnitGridMovementSystem))]
@@ -17,14 +15,22 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<UnitFuelConsumption>();
-            state.RequireForUpdate<BuildingResourceStorageComponent>();
         }
 
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             NativeArray<float> requestedFuelByFaction = new(FactionCapacity, Allocator.Temp);
+            NativeArray<float> requestedExpandedFuelByFaction = new(FactionCapacity, Allocator.Temp);
             ComponentLookup<UnitAirMovement> airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
+            ComponentLookup<SkirmishAttemptOwnedComponent> attemptLookup =
+                SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true);
+            using var expanded = state.EntityManager.CreateEntityQuery(
+                typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
+                typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
+            bool hasExpanded = expanded.CalculateEntityCount() == 1;
+            Entity sessionEntity = hasExpanded ? expanded.GetSingletonEntity() : Entity.Null;
+            SkirmishExpandedSessionComponent session = hasExpanded
+                ? state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity) : default;
 
             foreach (var (unitGrid, faction, movement, consumption, consumptionState, entity) in SystemAPI
                          .Query<RefRO<UnitGrid>, RefRO<Faction>, RefRO<UnitMovementBehavior>, RefRO<UnitFuelConsumption>, RefRW<UnitFuelConsumptionState>>()
@@ -59,13 +65,57 @@ namespace Game.Runtime
                     : math.max(0f, consumption.ValueRO.GroundFuelPerCell);
                 float requestedFuel = movedCells * fuelPerCell;
                 if (requestedFuel > 0f)
-                    requestedFuelByFaction[faction.ValueRO.Id] += requestedFuel;
+                {
+                    bool expandedUnit = hasExpanded && attemptLookup.HasComponent(entity) &&
+                        attemptLookup[entity].SessionId.Equals(session.SessionId);
+                    if (expandedUnit)
+                        requestedExpandedFuelByFaction[faction.ValueRO.Id] += requestedFuel;
+                    else
+                        requestedFuelByFaction[faction.ValueRO.Id] += requestedFuel;
+                }
 
                 stateRw.LastCell = cell;
             }
 
             DrainRequestedFuel(ref state, requestedFuelByFaction);
+            if (hasExpanded)
+                DrainExpandedFuel(ref state, sessionEntity, requestedExpandedFuelByFaction);
             requestedFuelByFaction.Dispose();
+            requestedExpandedFuelByFaction.Dispose();
+        }
+
+        private static void DrainExpandedFuel(ref SystemState state, Entity sessionEntity,
+            NativeArray<float> requested)
+        {
+            EntityManager em = state.EntityManager;
+            SkirmishResolvedSetupComponent setup = em.GetComponentData<SkirmishResolvedSetupComponent>(sessionEntity);
+            SkirmishVehicleFuelRemainderComponent remainder =
+                em.HasComponent<SkirmishVehicleFuelRemainderComponent>(sessionEntity)
+                    ? em.GetComponentData<SkirmishVehicleFuelRemainderComponent>(sessionEntity) : default;
+            SkirmishEconomyStockComponent player = em.GetComponentData<SkirmishEconomyStockComponent>(sessionEntity);
+            SkirmishEnemyStockComponent enemy = em.GetComponentData<SkirmishEnemyStockComponent>(sessionEntity);
+            Drain(ref player.Fuel, ref remainder.Player, requested[(byte)setup.PlayerFaction]);
+            Drain(ref enemy.Fuel, ref remainder.Enemy, requested[(byte)setup.EnemyFaction]);
+            em.SetComponentData(sessionEntity, player);
+            em.SetComponentData(sessionEntity, enemy);
+            if (em.HasComponent<SkirmishVehicleFuelRemainderComponent>(sessionEntity))
+                em.SetComponentData(sessionEntity, remainder);
+            else
+                em.AddComponentData(sessionEntity, remainder);
+        }
+
+        private static void Drain(ref int stock, ref float remainder, float requested)
+        {
+            if (stock <= 0)
+            {
+                remainder = 0f;
+                return;
+            }
+            float total = math.max(0f, remainder + requested);
+            int whole = (int)math.floor(total);
+            int paid = math.min(stock, whole);
+            stock -= paid;
+            remainder = stock > 0 ? total - whole : 0f;
         }
 
         private void DrainRequestedFuel(ref SystemState state, NativeArray<float> requestedFuelByFaction)

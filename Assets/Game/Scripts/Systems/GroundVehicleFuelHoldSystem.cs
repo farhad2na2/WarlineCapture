@@ -1,4 +1,3 @@
-using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -6,7 +5,6 @@ using Game.Components;
 
 namespace Game.Runtime
 {
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateBefore(typeof(UnitGridMovementSystem))]
     public partial struct GroundVehicleFuelHoldSystem : ISystem
@@ -16,13 +14,12 @@ namespace Game.Runtime
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<UnitFuelConsumption>();
-            state.RequireForUpdate<BuildingResourceStorageComponent>();
         }
 
-        [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
             NativeArray<float> usableFuelByFaction = new(FactionCapacity, Allocator.Temp);
+            NativeArray<float> expandedFuelByFaction = new(FactionCapacity, Allocator.Temp);
             foreach (RefRO<BuildingResourceStorageComponent> storageRef in SystemAPI.Query<RefRO<BuildingResourceStorageComponent>>())
             {
                 BuildingResourceStorageComponent storage = storageRef.ValueRO;
@@ -30,6 +27,23 @@ namespace Game.Runtime
                     continue;
 
                 usableFuelByFaction[storage.OwnerFactionId] += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);
+            }
+
+            using var expanded = state.EntityManager.CreateEntityQuery(
+                typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
+                typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
+            bool hasExpanded = expanded.CalculateEntityCount() == 1;
+            SkirmishResolvedSetupComponent setup = default;
+            SkirmishExpandedSessionComponent session = default;
+            if (hasExpanded)
+            {
+                Entity sessionEntity = expanded.GetSingletonEntity();
+                setup = state.EntityManager.GetComponentData<SkirmishResolvedSetupComponent>(sessionEntity);
+                session = state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity);
+                expandedFuelByFaction[(byte)setup.PlayerFaction] = math.max(0,
+                    state.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(sessionEntity).Fuel);
+                expandedFuelByFaction[(byte)setup.EnemyFaction] = math.max(0,
+                    state.EntityManager.GetComponentData<SkirmishEnemyStockComponent>(sessionEntity).Fuel);
             }
 
             EntityCommandBuffer ecb = new(Allocator.Temp);
@@ -41,16 +55,23 @@ namespace Game.Runtime
             ComponentLookup<UnitLongDistanceMove> longDistanceLookup = SystemAPI.GetComponentLookup<UnitLongDistanceMove>(true);
             ComponentLookup<ManualMoveOrderTag> manualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true);
             ComponentLookup<UnitVehicleKinematics> kinematicsLookup = SystemAPI.GetComponentLookup<UnitVehicleKinematics>(true);
+            ComponentLookup<SkirmishAttemptOwnedComponent> attemptLookup =
+                SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true);
 
             foreach (var (faction, movement, consumption, entity) in SystemAPI
                          .Query<RefRO<Faction>, RefRO<UnitMovementBehavior>, RefRO<UnitFuelConsumption>>()
                          .WithNone<UnitAirMovement, UnitResourceHaulOrder>()
                          .WithEntityAccess())
             {
+                bool expandedUnit = hasExpanded && attemptLookup.HasComponent(entity) &&
+                    attemptLookup[entity].SessionId.Equals(session.SessionId);
+                float availableFuel = expandedUnit
+                    ? expandedFuelByFaction[faction.ValueRO.Id]
+                    : usableFuelByFaction[faction.ValueRO.Id];
                 if (movement.ValueRO.UsesVehicleMotion == 0 ||
                     consumption.ValueRO.Enabled == 0 ||
                     math.max(0f, consumption.ValueRO.GroundFuelPerCell) <= 0f ||
-                    usableFuelByFaction[faction.ValueRO.Id] > 0.001f ||
+                    availableFuel > 0.001f ||
                     !HasActiveMovement(entity, targetLookup, pathRequestLookup, pathFollowLookup, manualMoveLookup))
                 {
                     continue;
@@ -77,6 +98,7 @@ namespace Game.Runtime
             ecb.Playback(state.EntityManager);
             ecb.Dispose();
             usableFuelByFaction.Dispose();
+            expandedFuelByFaction.Dispose();
         }
 
         private static bool HasActiveMovement(

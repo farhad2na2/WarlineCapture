@@ -221,7 +221,18 @@ namespace Game.UI.Shell.Ecs
             int resourceFuel = 0;
             bool hasUsableFuelSummaryBuffer =
                 entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
-            if (TryFormatSupplyLineResources(out oilText,out fuelText))
+            using EntityQuery expandedStock = entityManager.CreateEntityQuery(
+                typeof(SkirmishExpandedSessionComponent), typeof(SkirmishEconomyStockComponent));
+            if (expandedStock.CalculateEntityCount() == 1 &&
+                entityManager.GetComponentData<SkirmishExpandedSessionComponent>(expandedStock.GetSingletonEntity()).IsLegacy == 0)
+            {
+                SkirmishEconomyStockComponent stock = expandedStock.GetSingleton<SkirmishEconomyStockComponent>();
+                oilText = math.max(0, stock.Oil).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                fuelText = math.max(0, stock.Fuel).ToString(System.Globalization.CultureInfo.InvariantCulture);
+                showOil = true;
+                oilVisibilityResolved = true;
+            }
+            else if (TryFormatSupplyLineResources(out oilText,out fuelText))
             {
                 showOil=true;oilVisibilityResolved=true;
             }

@@ -533,9 +533,10 @@ namespace Game.UI.Shell.Ecs
         {
             if (!view.EnemyDesignatedAlive || plan.AssaultIssued != 0)
                 return false;
-            // Page 0 is rifles. The Barracks dies only after a structure card
-            // (tank, rocketeer) on a later page is actually on an Attack order.
-            if (view.ExpandedStructureMask != 0 || plan.StructureOrdered != 0)
+            // Rifles screen the structure column against enemy troops. Visit
+            // every assault page, then require a tank or rocketeer Attack order
+            // before treating the Barracks assault as issued.
+            if (view.ExpandedAssaultMask != 0 || plan.StructureOrdered != 0)
                 return TryStructureColumn(view, ref plan, ref output);
             bool pageHasAssault = view.ExpandedAssaultMask != 0;
             if (!pageHasAssault)

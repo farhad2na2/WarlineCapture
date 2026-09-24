@@ -12,8 +12,8 @@ namespace Game.Configs
         [SerializeField] private string scenarioSetupId = "scenario.skirmish.s002";
         [SerializeField] private string operationMapId = "opmap.skirmish.desert_base_01";
         [SerializeField] private string mapLayoutId = "layout.skirmish.db.ba";
-        [SerializeField] private int contentVersion = 1;
-        [SerializeField] private string contentHash = "skirmish.s002.v1";
+        [SerializeField] private int contentVersion = 2;
+        [SerializeField] private string contentHash = "skirmish.s002.v2";
         [SerializeField] private SkirmishObjectiveConfig objectiveConfig;
         [SerializeField] private SkirmishArmyProfileConfig armyProfileConfig;
         [SerializeField] private SkirmishStartPackageConfig startPackageConfig;
@@ -90,8 +90,8 @@ namespace Game.Configs
             scenarioSetupId = "scenario.skirmish.s" + configuredCatalogId.Substring(1);
             operationMapId = layout != null ? layout.OperationMapId : "opmap.skirmish.desert_base_01";
             mapLayoutId = layout != null ? layout.LayoutId : "layout.skirmish.db.ba";
-            contentVersion = 1;
-            contentHash = definitionId + ".v1";
+            contentVersion = 2;
+            contentHash = definitionId + ".v2";
             objectiveConfig = objective;
             armyProfileConfig = army;
             startPackageConfig = start;

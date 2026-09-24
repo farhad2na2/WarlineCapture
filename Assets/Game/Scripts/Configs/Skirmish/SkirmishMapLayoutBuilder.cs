@@ -7,7 +7,7 @@ namespace Game.Configs
     {
         public const string DesertBaseLayoutId = "layout.skirmish.db.ba";
         public const string DesertBaseMapId = "opmap.skirmish.desert_base_01";
-        public const string DesertBaseContentHash = "measured.db.ba.v1";
+        public const string DesertBaseContentHash = "measured.db.ba.v2";
         public const string MainRouteId = "route.skirmish.db.main";
         public const string NorthFlankRouteId = "route.skirmish.db.flank_a";
         public const string SouthSweepRouteId = "route.skirmish.db.flank_b";
@@ -95,8 +95,8 @@ namespace Game.Configs
                 Pad("pad.skirmish.db.staging_enemy", stagingEnemy, "staging.enemy", SkirmishLegalPadKind.GroundStaging, 20f, 14f, 2),
                 OffsetPad("pad.skirmish.db.spawn_infantry_player", stagingPlayer, "spawn.infantry.player", SkirmishLegalPadKind.InfantrySpawn, -14f, -22f, 12f, 10f, 1),
                 OffsetPad("pad.skirmish.db.spawn_infantry_enemy", stagingEnemy, "spawn.infantry.enemy", SkirmishLegalPadKind.InfantrySpawn, 14f, 22f, 12f, 10f, 2),
-                OffsetPad("pad.skirmish.db.spawn_vehicle_player", stagingPlayer, "spawn.vehicle.player", SkirmishLegalPadKind.VehicleSpawn, 24f, 16f, 14f, 12f, 1),
-                OffsetPad("pad.skirmish.db.spawn_vehicle_enemy", stagingEnemy, "spawn.vehicle.enemy", SkirmishLegalPadKind.VehicleSpawn, -24f, -16f, 14f, 12f, 2),
+                OffsetPad("pad.skirmish.db.spawn_vehicle_player", stagingPlayer, "spawn.vehicle.player", SkirmishLegalPadKind.VehicleSpawn, 65f, 0f, 14f, 12f, 1),
+                OffsetPad("pad.skirmish.db.spawn_vehicle_enemy", stagingEnemy, "spawn.vehicle.enemy", SkirmishLegalPadKind.VehicleSpawn, -64f, 0f, 14f, 12f, 2),
                 OffsetPad("pad.skirmish.db.rally_player", stagingPlayer, "rally.player", SkirmishLegalPadKind.Rally, 44f, 0f, 10f, 8f, 1),
                 OffsetPad("pad.skirmish.db.rally_enemy", stagingEnemy, "rally.enemy", SkirmishLegalPadKind.Rally, -44f, 0f, 10f, 8f, 2),
                 Pad("pad.skirmish.db.service_player", servicePlayer, "service.player", SkirmishLegalPadKind.Service, 12f, 10f, 1),
@@ -164,7 +164,7 @@ namespace Game.Configs
             layout.ApplyMeasured(
                 DesertBaseLayoutId,
                 DesertBaseMapId,
-                1,
+                2,
                 DesertBaseContentHash,
                 SkirmishMapLayoutConfig.DesertBaseWidthMetres,
                 SkirmishMapLayoutConfig.DesertBaseDepthMetres,

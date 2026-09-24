@@ -58,6 +58,16 @@ namespace Game.Runtime
                 return;
             if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
                 return;
+            // In a player session, wait for the loaded map and its baked prefab
+            // registry. The ledger must not become Playing in the menu scene.
+            if (Application.isPlaying)
+            {
+                using var map = em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+                using var surface = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                using var prefabs = em.CreateEntityQuery(typeof(UnitPrefabRegistryEntry));
+                if (map.IsEmptyIgnoreFilter || surface.IsEmptyIgnoreFilter || prefabs.IsEmptyIgnoreFilter)
+                    return;
+            }
             if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity))
             {
                 session.FailureCode = SkirmishReasonCode.MissingResolvedSetup;

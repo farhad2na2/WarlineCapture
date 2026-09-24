@@ -168,7 +168,13 @@ namespace Game.Composition
 
         public static void ApplySeed(EntityManager em)
         {
-            if (!TryGet(em, out _, out var state)) return;
+            if (!TryGet(em, out var session, out var state)) return;
+            if (em.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                em.GetComponentData<SkirmishExpandedSessionComponent>(session).IsLegacy == 0)
+            {
+                Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
+                return;
+            }
             Game.Runtime.SkirmishWorldSetup.SuppressUnselectedStartupConfigs(em);
             using var query = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
             if (query.CalculateEntityCount() != 1) throw new InvalidOperationException("Skirmish requires one initial spawn configuration.");

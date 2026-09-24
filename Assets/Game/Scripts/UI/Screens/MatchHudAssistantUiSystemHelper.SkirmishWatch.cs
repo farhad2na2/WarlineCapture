@@ -398,8 +398,9 @@ namespace Game.UI.Runtime
             RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(2) : null, raised);
             RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(3) : null, raised);
             RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(4) : null, raised);
-            RaisePublicControl(_commandControlsView != null ? _commandControlsView.AttackButton : null, raised);
-            RaisePublicControl(_commandControlsView != null ? _commandControlsView.HoldButton : null, raised);
+            // The command rail has its own V3 gradient graphics. A nested
+            // override-sorting Canvas on these buttons flattens their colored
+            // fills to black. The touch fallback below can still deliver them.
         }
 
         private static void RaisePublicControl(Button button, bool raised)
@@ -407,6 +408,8 @@ namespace Game.UI.Runtime
             if (button == null)
                 return;
             Canvas canvas = button.GetComponent<Canvas>();
+            if (canvas == null && !raised)
+                return;
             if (canvas == null)
             {
                 Canvas parent = button.GetComponentInParent<Canvas>();

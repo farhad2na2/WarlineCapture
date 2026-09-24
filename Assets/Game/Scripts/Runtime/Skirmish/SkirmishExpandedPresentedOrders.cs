@@ -26,7 +26,10 @@ namespace Game.Runtime
 
         public static bool IsAssaultRole(SkirmishRoleKind role)
         {
-            return role == SkirmishRoleKind.Tank ||
+            return role == SkirmishRoleKind.Rifle ||
+                   role == SkirmishRoleKind.Gunner ||
+                   role == SkirmishRoleKind.Marksman ||
+                   role == SkirmishRoleKind.Tank ||
                    role == SkirmishRoleKind.Car ||
                    role == SkirmishRoleKind.ApcFast ||
                    role == SkirmishRoleKind.ApcArmored ||

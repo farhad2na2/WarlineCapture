@@ -17,8 +17,8 @@ MonoBehaviour:
   scenarioSetupId: scenario.skirmish.s003
   operationMapId: opmap.skirmish.desert_base_01
   mapLayoutId: layout.skirmish.db.ba
-  contentVersion: 1
-  contentHash: skirmish.s003.v1
+  contentVersion: 2
+  contentHash: skirmish.s003.v2
   objectiveConfig: {fileID: 11400000, guid: c68e97d46042477882a82718ce98061a, type: 2}
   armyProfileConfig: {fileID: 11400000, guid: c4e8a1b27d9f4e6a9c0d5f3b8a217604, type: 2}
   startPackageConfig: {fileID: 11400000, guid: b8548c84df564fc4ab8587d9151b3de0, type: 2}

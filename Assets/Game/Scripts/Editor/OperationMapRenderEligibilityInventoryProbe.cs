@@ -44,10 +44,13 @@ namespace Game.Editor
         internal const int ExpectedUnsupportedAttachmentRenderRowRemoval = 112;
         internal const int ExpectedDetachedElevatedBuildingPropRenderRowRemoval = 319;
         internal const int ExpectedRetainedRooftopSupportRenderRowAddition = 120;
+        // Northern courtyard: removed inherited market rows, plus 23 grounded dressing props.
+        internal const int ExpectedCourtyardNetRenderRowRemoval = 1330;
         internal const int ExpectedCorrectedLayoutRenderRowRemoval =
             ExpectedPreviouslyCorrectedLayoutRenderRowRemoval +
             ExpectedUnsupportedAttachmentRenderRowRemoval +
-            ExpectedDetachedElevatedBuildingPropRenderRowRemoval;
+            ExpectedDetachedElevatedBuildingPropRenderRowRemoval +
+            ExpectedCourtyardNetRenderRowRemoval;
         internal const int ExpectedPackedRenderRowCount =
             HistoricalPackedRenderRowCount -
             ExpectedEmbeddedDestroyedDuplicateRowRemoval -

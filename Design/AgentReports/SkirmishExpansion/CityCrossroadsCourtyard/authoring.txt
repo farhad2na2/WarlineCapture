@@ -1,0 +1,2 @@
+Removed objects=962; buildings=19; dressing=23
+Footprint=(x:938, y:632, width:104, height:86); existing continuous ground grade=0.01; no added ground slabs.

@@ -38,8 +38,8 @@ MonoBehaviour:
     authoredBlockedCellCount: 0
   surfaceMetadata:
     assetGuid: 12f517deb32ab49698acbfdaf7c3eac7
-    contentHash: cf25bb0edf3375531b4a0e3fab1659f5a9e20008b13381be54ba0d17c6e10b5b
-    runtimeBlobHash: bbe23826402ec39b275c405cc946484f
+    contentHash: 5447c779e2b68ba6b7c6f86a1146f6bf570d49b4455a676a2680ea595fa47d1d
+    runtimeBlobHash: 8810a336a366016217a73bf104b45a3a
     surfaceCount: 2097152
     payloadVersion: 3
     payloadEncoding: 1

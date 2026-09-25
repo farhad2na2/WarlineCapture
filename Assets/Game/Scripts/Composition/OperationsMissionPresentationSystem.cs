@@ -36,6 +36,8 @@ namespace Game.Composition
         private int checkpointScans = -1;
         private bool checkpointEvidence, checkpointTerminal;
         private readonly Vector3[] markerScreenPositions = new Vector3[5];
+        private double noticeExpires;
+        private bool viewingObjective;
 
         protected override void OnCreate()
         {
@@ -64,6 +66,7 @@ namespace Game.Composition
                 catch (IOException) { notice = Copy("save_retry", "Could not save. Try again; progress has not been confirmed."); }
                 catch (InvalidOperationException exception) { notice = exception.Message; }
                 nextRefresh = 0;
+                noticeExpires = UnityEngine.Time.realtimeSinceStartupAsDouble + 7;
                 live = OperationsReconLaunchProjection.TryGet(EntityManager, out root, out mission);
             }
             if (live && mission.Phase == OperationsReconPhase.Preparing && shell.CurrentMode == UiShellMode.MatchHud && !shell.IsTransitionRunning)
@@ -72,7 +75,8 @@ namespace Game.Composition
                 {
                     try
                     {
-                        if (pendingResume != null)
+                        bool resumed = pendingResume != null;
+                        if (resumed)
                         {
                             OperationsReconCheckpointCodec.Apply(EntityManager, root, pendingResume);
                             mission = EntityManager.GetComponentData<OperationsReconMissionComponent>(root);
@@ -83,8 +87,12 @@ namespace Game.Composition
                         {
                             mission.Phase = OperationsReconPhase.Playing;
                             EntityManager.SetComponentData(root, mission);
-                            notice = Copy("scan_help", "RIFLE SQUAD selects your force. Click an ADVANCE marker to travel and fight. Within 8 m, SCAN SELECTED for 15 seconds.");
+                            notice = string.Empty;
                         }
+                        if (EntityManager.HasComponent<OperationsReconIntroduction>(root))
+                            EntityManager.SetComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
+                        else EntityManager.AddComponentData(root, new OperationsReconIntroduction { Resumed = resumed ? (byte)1 : (byte)0 });
+                        viewingObjective = false;
                         Focus(definition.exitPosition);
                         checkpointScans = -1;
                         nextCheckpointAt = 0;
@@ -95,11 +103,19 @@ namespace Game.Composition
                 else if (!string.IsNullOrEmpty(error))
                     EntityManager.GetComponentObject<OperationsReconLaunchReference>(root).StartupFailure = error;
             }
-            if (live && view == null) view = OperationsMissionScreenView.CreateHud(TMPro.TMP_Settings.defaultFontAsset);
+            if (live && view == null && shell.CurrentMode == UiShellMode.MatchHud && !shell.IsTransitionRunning &&
+                UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>() != null &&
+                UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>() != null)
+                view = OperationsMissionScreenView.CreateHud(TMPro.TMP_Settings.defaultFontAsset);
+            if (live) AdvanceIntroduction(root, mission);
             if (live && view != null && Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(World, out var camera))
             {
                 var sites = EntityManager.GetBuffer<OperationsReconSiteElement>(root);
-                for (int i = 0; i < sites.Length && i < 3; i++) markerScreenPositions[i] = camera.WorldToScreenPoint(sites[i].Position);
+                for (int i = 0; i < sites.Length && i < 3; i++)
+                {
+                    markerScreenPositions[i] = camera.WorldToScreenPoint(sites[i].Position);
+                    view.PresentScanArea(i, camera, sites[i].Position, sites[i].Radius, sites[i].Completed != 0);
+                }
                 markerScreenPositions[3] = camera.WorldToScreenPoint(EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Position);
                 markerScreenPositions[4] = camera.WorldToScreenPoint(mission.ExitPosition);
                 view.PresentMarkers(markerScreenPositions);
@@ -190,6 +206,7 @@ namespace Game.Composition
                 return;
             }
             if (!live) return;
+            if (HandleExperienceRequest(request, root, mission)) return;
             if (request.Action == UiOperationsMissionAction.Return)
             {
                 if (mission.Phase != OperationsReconPhase.Terminal || !resultSaved) return;
@@ -202,6 +219,18 @@ namespace Game.Composition
                 if (TrySaveCheckpoint(root, mission))
                     BeginReturn(root, Copy("saved_exit", "Mission saved. Resume this attempt from Operations."));
                 return;
+            }
+            if (request.Action == UiOperationsMissionAction.ScanNearby)
+            {
+                if (!CanIssueMissionOrder(root)) { notice = Copy("paused_hint", "Resume the mission before giving an order."); return; }
+                var nearbySites = EntityManager.GetBuffer<OperationsReconSiteElement>(root);
+                int target = -1;
+                for (int i = 0; i < nearbySites.Length; i++)
+                    if (nearbySites[i].Completed == 0 && HasSelectedInfantryNear(root, nearbySites[i].Position, nearbySites[i].Radius))
+                    { target = i; break; }
+                if (target < 0) { notice = Copy("scan_range_hint", "Select infantry inside a signal site's blue ring, then tap SCAN."); return; }
+                request.Action = UiOperationsMissionAction.ScanSite;
+                request.SiteIndex = target;
             }
             if (request.Action is UiOperationsMissionAction.AdvanceSite or UiOperationsMissionAction.AdvanceEvidence or UiOperationsMissionAction.AdvanceExit)
             {
@@ -218,6 +247,8 @@ namespace Game.Composition
             if (request.Action == UiOperationsMissionAction.FocusEvidence)
             { if (mission.CompletedScans == 3) Focus(EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Position); return; }
             if (request.Action == UiOperationsMissionAction.FocusExit) { Focus(mission.ExitPosition); return; }
+            if (request.Action is UiOperationsMissionAction.ScanSite or UiOperationsMissionAction.RecoverEvidence && !CanIssueMissionOrder(root))
+            { notice = Copy("paused_hint", "Resume the mission before giving an order."); return; }
             var action = request.Action switch
             {
                 UiOperationsMissionAction.ScanSite => OperationsReconAction.Scan,
@@ -246,6 +277,12 @@ namespace Game.Composition
                 }
                 if (actor == Entity.Null || best > (action == OperationsReconAction.Scan ? 64f : 36f))
                 { notice = Copy("closer", "Select surviving infantry and move them closer to this location first."); return; }
+                using var surfaces = EntityManager.CreateEntityQuery(typeof(MapSurfaceComponent));
+                var surface = surfaces.CalculateEntityCount() == 1 ? surfaces.GetSingleton<MapSurfaceComponent>() : default;
+                if (!surface.SurfaceBlob.IsCreated || !OperationsReconObjectiveSystem.CanReach(
+                    EntityManager.GetComponentData<LocalTransform>(actor).Position, target,
+                    action == OperationsReconAction.Scan ? 8f : 6f, ref surface))
+                { notice = Copy("blocked_approach", "The approach is blocked. Move your infantry into the marked area."); return; }
             }
             EntityManager.GetBuffer<OperationsReconActionElement>(root).Add(new OperationsReconActionElement
             { SessionId = mission.SessionId, Action = action, Actor = actor, SiteIndex = request.SiteIndex });
@@ -433,7 +470,7 @@ namespace Game.Composition
             {
                 Title = Copy("title", "STREET SIGNALS — OLD QUARTER"),
                 Description = Copy("brief_compact", "Scan 3 courtyards • recover relay evidence • extract 2 infantry\n16 infantry • 12 min • 1 AP"),
-                Status = notice,
+                Status = !live || UnityEngine.Time.realtimeSinceStartupAsDouble < noticeExpires ? notice : string.Empty,
                 CanDeploy = !live && definition != null && (!OperationsSaveMigration.HasActiveRun(save) || save.activeRun.actionPoints > 0 || save.pendingDeployment?.reserved == true),
                 Clock = !OperationsSaveMigration.HasActiveRun(save) ? Copy("new_city", "A new city operation will begin on deployment.") :
                     string.Format(Copy("day_ap", "Day {0} • AP {1}"), save.activeRun.day, save.activeRun.actionPoints),
@@ -481,7 +518,7 @@ namespace Game.Composition
                 model.SiteStatus[i] = string.Format(Copy("signal", "SIGNAL {0}"), (char)('A' + i)) + " • " +
                     (model.SiteCompleted[i] ? Copy("done", "DONE") : Mathf.FloorToInt(sites[i].ChannelSeconds) + "/15 s");
             }
-            if (EntityManager.HasComponent<OperationsReconWaveComponent>(root))
+            if (string.IsNullOrEmpty(model.Status) && EntityManager.HasComponent<OperationsReconWaveComponent>(root))
             {
                 var waves = EntityManager.GetComponentData<OperationsReconWaveComponent>(root);
                 if (waves.WaveBAnnounced != 0 && mission.ElapsedSeconds < waves.WaveBReleaseAt)
@@ -499,6 +536,7 @@ namespace Game.Composition
             model.Result = string.Format(Copy("result", "{0}\n{1}/3 signals • {2} extracted\n{3}"), outcome,
                 mission.CompletedScans, mission.InfantryAtExit,
                 resultSaved ? Copy("saved", "District result and rewards saved.") : Copy("saving", "Saving result…"));
+            ProjectExperience(root, mission, ref model);
             return model;
         }
 
@@ -520,7 +558,8 @@ namespace Game.Composition
             using var query = EntityManager.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if (query.CalculateEntityCount() != 1) return;
             EntityManager.SetComponentData(query.GetSingletonEntity(), new RuntimeCameraFocusRequestComponent
-            { Requested = 1, Smooth = 1, SmoothTimeSeconds = .3f, UseExplicitPerspective = 1, Perspective = new float4(40,58,0,60), World = position });
+            { Requested = 1, Smooth = SettingsService.Load().Accessibility.ReducedMotion ? (byte)0 : (byte)1,
+                SmoothTimeSeconds = .55f, UseExplicitPerspective = 1, Perspective = new float4(40,58,0,60), World = position });
         }
 
         private void Settle(Entity root, OperationsReconMissionComponent mission)

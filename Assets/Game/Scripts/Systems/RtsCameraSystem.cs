@@ -455,7 +455,7 @@ namespace Game.Runtime
             float targetPitch,
             float targetYaw,
             float targetFieldOfView,
-            float smoothTime)
+            float smoothTime, float deltaTime = -1f)
         {
             if (worldCamera == null)
                 return true;
@@ -463,26 +463,27 @@ namespace Game.Runtime
             if (worldCamera.orthographic)
                 worldCamera.orthographic = false;
 
+            if (deltaTime < 0f) deltaTime = UnityEngine.Time.deltaTime;
             float newHeight = Mathf.SmoothDamp(
                 worldCamera.transform.position.y,
                 targetHeight,
                 ref _zoomTransitionVelocity,
-                smoothTime);
+                smoothTime, Mathf.Infinity, deltaTime);
 
             Vector3 position = worldCamera.transform.position;
             position.y = newHeight;
             worldCamera.transform.position = position;
 
             Vector3 euler = worldCamera.transform.rotation.eulerAngles;
-            float newPitch = Mathf.SmoothDampAngle(euler.x, targetPitch, ref _pitchTransitionVelocity, smoothTime);
-            float newYaw = Mathf.SmoothDampAngle(euler.y, targetYaw, ref _yawTransitionVelocity, smoothTime);
+            float newPitch = Mathf.SmoothDampAngle(euler.x, targetPitch, ref _pitchTransitionVelocity, smoothTime, Mathf.Infinity, deltaTime);
+            float newYaw = Mathf.SmoothDampAngle(euler.y, targetYaw, ref _yawTransitionVelocity, smoothTime, Mathf.Infinity, deltaTime);
             worldCamera.transform.rotation = Quaternion.Euler(newPitch, newYaw, 0f);
 
             worldCamera.fieldOfView = Mathf.SmoothDamp(
                 worldCamera.fieldOfView,
                 targetFieldOfView,
                 ref _fieldOfViewTransitionVelocity,
-                smoothTime);
+                smoothTime, Mathf.Infinity, deltaTime);
 
             ClampCameraToGroundBoundary(worldCamera);
 

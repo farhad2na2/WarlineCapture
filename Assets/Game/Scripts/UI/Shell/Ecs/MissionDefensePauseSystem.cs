@@ -37,14 +37,18 @@ namespace Game.UI.Shell.Ecs
             bool finishedSkirmish = hasSkirmish && skirmishMatch.Phase == SkirmishPhase.Finished;
             bool skirmish = finishedSkirmish || (hasSkirmish &&
                 skirmishMatch.Phase == SkirmishPhase.Playing && gameplay.PlayRequested != 0);
-            var activeSession = skirmish ? skirmishMatch.SessionId : runtime.SessionToken;
+            bool operations = SystemAPI.TryGetSingleton(out OperationsReconMissionComponent operation) &&
+                operation.Phase != OperationsReconPhase.Preparing && gameplay.PlayRequested != 0;
+            bool introduction = operations && SystemAPI.TryGetSingleton(out OperationsReconIntroduction intro) && intro.Stage < 6;
+            var activeSession = operations ? operation.SessionId : skirmish ? skirmishMatch.SessionId : runtime.SessionToken;
             int activeAttempt = skirmish ? 0 : runtime.AttemptOrdinal;
-            bool canPause = defense || skirmish;
+            bool canPause = defense || skirmish || operations;
             bool popup=SystemAPI.TryGetSingleton(out UiShellActivePopupComponent active) && active.Visible!=0 &&
                        active.PopupKind is UiShellPopupKind.Pause or UiShellPopupKind.Settings or UiShellPopupKind.MissionFieldGuide;
             // The result overlay is not a shell popup. Keep the completed world
             // frozen until session teardown; replay/menu release this ownership.
             popup |= finishedSkirmish;
+            popup |= introduction || operations && operation.Phase == OperationsReconPhase.Terminal;
             bool same=held && session.Equals(activeSession) && attempt==activeAttempt;
             if(held && (!canPause || !popup || !same))
             {

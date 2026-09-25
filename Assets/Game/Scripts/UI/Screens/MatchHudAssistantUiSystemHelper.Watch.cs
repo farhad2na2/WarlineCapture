@@ -85,74 +85,61 @@ namespace Game.UI.Runtime
         private AriaPlayObservation ObserveOperationsWatch(UiOperationsMissionModel model)
         {
             float now = Time.unscaledTime;
-            int goal = 300;
-            int site = -1;
-            for (int i = 0; i < 3; i++)
-                if (model.SiteCompleted == null || i >= model.SiteCompleted.Length || !model.SiteCompleted[i])
-                { site = i; goal = 100 + i; break; }
-            if (site < 0 && !model.EvidenceCarried) goal = 200;
-            if (model.Finished) return new AriaPlayObservation(AriaPlayObservationKind.Finished, 0, goal,
-                default, Time.frameCount, now);
+            int goal = model.NextSite >= 0 ? 100 + model.NextSite : model.EvidenceCarried ? 300 : 200;
+            if (model.Finished) return new AriaPlayObservation(AriaPlayObservationKind.Finished, 0, goal, default, Time.frameCount, now);
+            if (watchOperations == null)
+                foreach (var candidate in Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    if (candidate.IsHud) { watchOperations = candidate; break; }
+            if (watchOperations == null) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
             var state = UiShellRuntimeGateway.ReadAriaPlay();
             if (state.Actions != operationsWatchActions)
             {
-                if (operationsLastWasTravel) operationsTravelUntil = now + 120f;
+                if (operationsLastWasTravel) operationsTravelUntil = now + 12f;
+                operationsLastWasTravel = false;
                 operationsWatchActions = state.Actions;
             }
             if (!state.Active) operationsTravelUntil = 0;
-            if (watchOperations == null || watchOperations.ScanButton(0) == null)
-            {
-                foreach (var candidate in Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
-                    if (candidate.ScanButton(0) != null) { watchOperations = candidate; break; }
-            }
-            if (watchOperations == null) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
-                default, Time.frameCount, now);
             Button target = null;
-            bool travel = false;
-            if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
-            if (watchSquads == null || (int)watchSquads.VisibleSelectedSlot <= 0)
-                target = watchSquads?.VisibleCardButton(0);
-            else if (site >= 0)
+            if (model.Introduction)
             {
-                if (model.SiteProgress != null && site < model.SiteProgress.Length && model.SiteProgress[site] > 0)
-                    return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
-                if (model.CanScanSite != null && site < model.CanScanSite.Length && model.CanScanSite[site])
-                    target = watchOperations.ScanButton(site);
-                else if (now >= operationsTravelUntil)
-                { target = watchOperations.AdvanceButton(site); travel = true; }
+                if (!model.Touring) target = watchOperations.IntroductionButton;
+                else return new AriaPlayObservation(AriaPlayObservationKind.Cinematic, 0, goal, default, Time.frameCount, now);
             }
-            else if (!model.EvidenceCarried)
+            else if (model.Paused) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
+            else
             {
-                // Reissuing recovery resets its 15-second channel. Wait for the
-                // visible progress before considering another tap.
-                if (model.EvidenceProgress > 0)
-                    return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
-                if (model.CanRecoverHere) target = watchOperations.RecoverButton;
-                else if (now >= operationsTravelUntil)
-                { target = watchOperations.AdvanceButton(3); travel = true; }
+                if (watchSquads == null) watchSquads = Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                if (watchSquads == null || !UiShellRuntimeGateway.TryReadMatchHudSelection(out var selected) || !selected.Visible ||
+                    (int)watchSquads.VisibleSelectedSlot <= 0) target = watchSquads?.VisibleCardButton(0);
+                else
+                {
+                    bool scanning = false, inRange = false;
+                    for (int i = 0; model.SiteProgress != null && i < model.SiteProgress.Length; i++)
+                    {
+                        scanning |= !model.SiteCompleted[i] && model.SiteProgress[i] > 0;
+                        inRange |= model.CanScanSite[i];
+                    }
+                    if (scanning || !model.EvidenceCarried && model.EvidenceProgress > 0)
+                        return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
+                    if (inRange) target = watchOperations.ScanButton(model.NextSite);
+                    else if (model.CanRecoverHere && !model.EvidenceCarried) target = watchOperations.RecoverButton;
+                    else if (now >= operationsTravelUntil)
+                    {
+                        if (!watchOperations.TryObserveObjective(out var point)) target = watchOperations.ObjectiveButton;
+                        else if (!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command) || command.ActiveCommandMode != Game.Tactical.Contracts.TacticalCommandMode.Attack)
+                            target = _commandControlsView?.AttackButton;
+                        else if (WatchTargetIsReachable(point, -31000 - goal, true))
+                        {
+                            operationsLastWasTravel = true;
+                            return new AriaPlayObservation(AriaPlayObservationKind.WorldTarget, -31000 - goal, goal, point, Time.frameCount, now);
+                        }
+                    }
+                }
             }
-            else if (now >= operationsTravelUntil)
-            { target = watchOperations.AdvanceButton(4); travel = true; }
-            if (target == null) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
-                default, Time.frameCount, now);
             var observed = ObserveWatchButton(target);
-            if (!observed.Available && travel)
-            {
-                target = watchOperations.FocusButton(site >= 0 ? site : model.EvidenceCarried ? 4 : 3);
-                observed = ObserveWatchButton(target);
-                travel = false;
-            }
-            if (!observed.Available && !watchOperations.GuideOpen && target != watchSquads?.VisibleCardButton(0))
-            {
-                target = watchOperations.GuideButton;
-                observed = ObserveWatchButton(target);
-                travel = false;
-            }
-            if (!observed.Available) return new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal,
-                default, Time.frameCount, now);
-            operationsLastWasTravel = travel;
-            return new AriaPlayObservation(AriaPlayObservationKind.Control, observed.Id, goal,
-                observed.Position, Time.frameCount, now);
+            return observed.Available
+                ? new AriaPlayObservation(AriaPlayObservationKind.Control, observed.Id, goal, observed.Position, Time.frameCount, now)
+                : new AriaPlayObservation(AriaPlayObservationKind.Waiting, 0, goal, default, Time.frameCount, now);
         }
 
         private bool WatchTargetIsReachable(Vector2 point, int targetId, bool world)

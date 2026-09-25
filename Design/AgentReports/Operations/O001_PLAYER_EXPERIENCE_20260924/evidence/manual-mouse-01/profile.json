@@ -1,0 +1,438 @@
+{
+    "profileCommitRevision": 33,
+    "operations": {
+        "schemaVersion": 1,
+        "profileRevision": 3,
+        "activeRun": {
+            "runId": "run.operations.0000044e",
+            "revision": 3,
+            "day": 1,
+            "actionPoints": 2,
+            "difficulty": 1,
+            "seed": 1102,
+            "phase": 1,
+            "consecutiveStableDays": 0,
+            "directorVersion": 1,
+            "prngState": 1325844573,
+            "cityCompleted": false,
+            "liveVictoriesToday": 0,
+            "districts": [
+                {
+                    "districtId": "district.operations.d01",
+                    "security": 40,
+                    "trust": 45,
+                    "infrastructure": 45,
+                    "enemyInfluence": 49,
+                    "intelConfidence": 29,
+                    "heat": 21,
+                    "supplyReadiness": 45,
+                    "civilianDensity": 1,
+                    "changeVersion": 1,
+                    "publicHintMissionId": ""
+                },
+                {
+                    "districtId": "district.operations.d02",
+                    "security": 35,
+                    "trust": 40,
+                    "infrastructure": 40,
+                    "enemyInfluence": 55,
+                    "intelConfidence": 20,
+                    "heat": 25,
+                    "supplyReadiness": 40,
+                    "civilianDensity": 1,
+                    "changeVersion": 0,
+                    "publicHintMissionId": ""
+                },
+                {
+                    "districtId": "district.operations.d03",
+                    "security": 35,
+                    "trust": 40,
+                    "infrastructure": 35,
+                    "enemyInfluence": 60,
+                    "intelConfidence": 15,
+                    "heat": 25,
+                    "supplyReadiness": 35,
+                    "civilianDensity": 1,
+                    "changeVersion": 0,
+                    "publicHintMissionId": ""
+                },
+                {
+                    "districtId": "district.operations.d04",
+                    "security": 30,
+                    "trust": 45,
+                    "infrastructure": 40,
+                    "enemyInfluence": 55,
+                    "intelConfidence": 15,
+                    "heat": 20,
+                    "supplyReadiness": 35,
+                    "civilianDensity": 1,
+                    "changeVersion": 0,
+                    "publicHintMissionId": ""
+                },
+                {
+                    "districtId": "district.operations.d05",
+                    "security": 30,
+                    "trust": 40,
+                    "infrastructure": 35,
+                    "enemyInfluence": 60,
+                    "intelConfidence": 15,
+                    "heat": 20,
+                    "supplyReadiness": 30,
+                    "civilianDensity": 1,
+                    "changeVersion": 0,
+                    "publicHintMissionId": ""
+                },
+                {
+                    "districtId": "district.operations.d06",
+                    "security": 30,
+                    "trust": 35,
+                    "infrastructure": 40,
+                    "enemyInfluence": 65,
+                    "intelConfidence": 15,
+                    "heat": 30,
+                    "supplyReadiness": 35,
+                    "civilianDensity": 1,
+                    "changeVersion": 0,
+                    "publicHintMissionId": ""
+                }
+            ],
+            "milestones": [
+                {
+                    "missionId": "operation.o001",
+                    "attempted": true,
+                    "victory": false,
+                    "attemptCount": 1
+                }
+            ],
+            "offers": [
+                {
+                    "offerId": "offer.operations.a86d7896o001",
+                    "missionId": "operation.o001",
+                    "districtId": "district.operations.d01",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.d06ff625o002",
+                    "missionId": "operation.o002",
+                    "districtId": "district.operations.d01",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.de3d2195o011",
+                    "missionId": "operation.o011",
+                    "districtId": "district.operations.d02",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.b63aa406o012",
+                    "missionId": "operation.o012",
+                    "districtId": "district.operations.d02",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.a6d9796co021",
+                    "missionId": "operation.o021",
+                    "districtId": "district.operations.d03",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.36d20d57o022",
+                    "missionId": "operation.o022",
+                    "districtId": "district.operations.d03",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.db6bedebo031",
+                    "missionId": "operation.o031",
+                    "districtId": "district.operations.d04",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.4b735a00o032",
+                    "missionId": "operation.o032",
+                    "districtId": "district.operations.d04",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.a40845c2o041",
+                    "missionId": "operation.o041",
+                    "districtId": "district.operations.d05",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.cc0ac351o042",
+                    "missionId": "operation.o042",
+                    "districtId": "district.operations.d05",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.d9d7eec1o051",
+                    "missionId": "operation.o051",
+                    "districtId": "district.operations.d06",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                },
+                {
+                    "offerId": "offer.operations.b1d57132o052",
+                    "missionId": "operation.o052",
+                    "districtId": "district.operations.d06",
+                    "day": 1,
+                    "deployable": true,
+                    "urgent": false
+                }
+            ],
+            "incidents": [],
+            "sites": [
+                {
+                    "siteId": "anchor.operations.d01.service",
+                    "districtId": "district.operations.d01",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d01.backup",
+                    "districtId": "district.operations.d01",
+                    "state": 0
+                },
+                {
+                    "siteId": "anchor.operations.d02.service",
+                    "districtId": "district.operations.d02",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d02.backup",
+                    "districtId": "district.operations.d02",
+                    "state": 0
+                },
+                {
+                    "siteId": "anchor.operations.d03.service",
+                    "districtId": "district.operations.d03",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d03.backup",
+                    "districtId": "district.operations.d03",
+                    "state": 0
+                },
+                {
+                    "siteId": "anchor.operations.d04.service",
+                    "districtId": "district.operations.d04",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d04.backup",
+                    "districtId": "district.operations.d04",
+                    "state": 0
+                },
+                {
+                    "siteId": "anchor.operations.d05.service",
+                    "districtId": "district.operations.d05",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d05.backup",
+                    "districtId": "district.operations.d05",
+                    "state": 0
+                },
+                {
+                    "siteId": "anchor.operations.d06.service",
+                    "districtId": "district.operations.d06",
+                    "state": 1
+                },
+                {
+                    "siteId": "anchor.operations.d06.backup",
+                    "districtId": "district.operations.d06",
+                    "state": 0
+                }
+            ],
+            "routes": [
+                {
+                    "routeId": "route.operations.d01.main",
+                    "districtId": "district.operations.d01",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d02.main",
+                    "districtId": "district.operations.d02",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d03.main",
+                    "districtId": "district.operations.d03",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d04.main",
+                    "districtId": "district.operations.d04",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d04.south",
+                    "districtId": "district.operations.d04",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d05.main",
+                    "districtId": "district.operations.d05",
+                    "state": 0
+                },
+                {
+                    "routeId": "route.operations.d06.main",
+                    "districtId": "district.operations.d06",
+                    "state": 0
+                }
+            ],
+            "actionUses": [],
+            "attempts": [
+                {
+                    "sessionId": "session.operations.8306241c",
+                    "offerId": "offer.operations.a86d7896o001",
+                    "missionId": "operation.o001",
+                    "districtId": "district.operations.d01",
+                    "attemptOrdinal": 1,
+                    "transactionId": "txn.operations.206ba7ed",
+                    "snapshotHash": "snap6d7337aaf760a231",
+                    "resultHash": "D4XzhT--0zyOXkSJcu2VNvk_6aeOPeZlxJ6FPEfS-lY",
+                    "phase": 3,
+                    "practice": false,
+                    "apRefunded": false
+                }
+            ],
+            "cooldowns": [],
+            "citywidePriorityOfferIds": [
+                "offer.operations.a86d7896o001",
+                "offer.operations.d06ff625o002",
+                "offer.operations.de3d2195o011"
+            ],
+            "evidenceFlags": []
+        },
+        "runSummaries": [],
+        "firstClearRewardIds": [],
+        "practiceMissionIds": [
+            "operation.o001"
+        ],
+        "receipts": [
+            {
+                "transactionId": "txn.operations.1d6ba334",
+                "settlementKey": "",
+                "resultHash": "",
+                "commandId": "cmd.operations.f7b13e807f954232826a66d55afbe935",
+                "grantKind": "new-run",
+                "rewardCredits": 0,
+                "rewardCommanderXp": 0
+            },
+            {
+                "transactionId": "txn.operations.206ba7ed",
+                "settlementKey": "",
+                "resultHash": "",
+                "commandId": "cmd.operations.d340c72908cf4cbb81f9aad4b8a41bbb",
+                "grantKind": "deploy",
+                "rewardCredits": 0,
+                "rewardCommanderXp": 0
+            },
+            {
+                "transactionId": "txn.operations.206ba7ed",
+                "settlementKey": "run.operations.0000044e|offer.operations.a86d7896o001|session.operations.8306241c|1",
+                "resultHash": "D4XzhT--0zyOXkSJcu2VNvk_6aeOPeZlxJ6FPEfS-lY",
+                "commandId": "cmd.operations.b1369c4def474c1e92a566c8d9893ac1",
+                "grantKind": "Partial",
+                "rewardCredits": 0,
+                "rewardCommanderXp": 0
+            }
+        ],
+        "committedReports": [],
+        "pendingDeployment": {
+            "reserved": false,
+            "offerId": "",
+            "sessionId": "",
+            "transactionId": "",
+            "snapshotHash": ""
+        },
+        "checkpointReference": "",
+        "idSequence": 3,
+        "operationsRewardCredits": 0,
+        "operationsRewardCommanderXp": 0,
+        "repeatCreditsGrantedOnDay": 0,
+        "commandJournal": [
+            {
+                "commandId": "cmd.operations.f7b13e807f954232826a66d55afbe935",
+                "accepted": true,
+                "reasonCode": 0,
+                "newRevision": 1,
+                "transactionId": "txn.operations.1d6ba334"
+            },
+            {
+                "commandId": "cmd.operations.d340c72908cf4cbb81f9aad4b8a41bbb",
+                "accepted": true,
+                "reasonCode": 0,
+                "newRevision": 2,
+                "transactionId": "txn.operations.206ba7ed"
+            },
+            {
+                "commandId": "cmd.operations.b1369c4def474c1e92a566c8d9893ac1",
+                "accepted": true,
+                "reasonCode": 0,
+                "newRevision": 3,
+                "transactionId": "txn.operations.206ba7ed"
+            }
+        ],
+        "rewardLedger": []
+    },
+    "operationsAttemptJson": "{\"sessionId\":\"session.operations.8306241c\",\"outcome\":\"Partial\",\"elapsedSeconds\":720,\"scans\":3,\"survivors\":16,\"extracted\":2,\"mastery\":true}",
+    "profileSchemaVersion": 3,
+    "commanderName": "Commander",
+    "commanderLevel": 1,
+    "commanderXp": 0,
+    "credits": 0,
+    "materials": 0,
+    "fuel": 0,
+    "intel": 0,
+    "commandAuthority": 0,
+    "rushTickets": 0,
+    "victories": 0,
+    "defeats": 0,
+    "missionsCompleted": 0,
+    "starsEarned": 0,
+    "enemiesDefeated": 0,
+    "unitsLost": 0,
+    "buildingsBuilt": 0,
+    "resourcesEarned": 0,
+    "blueprintParts": [],
+    "ownedUnitUnlocks": [],
+    "ownedBuildingUnlocks": [],
+    "ownedSupportAbilityUnlocks": [],
+    "ownedCosmetics": [],
+    "firstLaunchStatus": "Completed",
+    "firstLaunchLastCompletedStateId": "",
+    "firstLaunchCommanderCallsign": "COMMANDER",
+    "firstLaunchCommanderDisplayName": "Commander",
+    "firstLaunchCommanderPortraitIndex": 0,
+    "firstLaunchGuidance": "Full",
+    "firstLaunchLanguage": "English",
+    "firstLaunchWatched": false,
+    "firstLaunchSkipped": false,
+    "firstLaunchMissionTransitionToken": 0,
+    "firstLaunchMissionSessionToken": "",
+    "firstLaunchMissionAttemptOrdinal": 0,
+    "campaignMissionProgress": []
+}

@@ -799,7 +799,15 @@ namespace Game.Runtime
                 return true;
 
             if (TryGetClickedUnitEntityFromBoundary(context, screenPosition, em, out bestEntity))
-                return true;
+            {
+                // The shared focus lookup also contains neutral city scenery.
+                // It may be inspected, but must not swallow an Attack-ground tap
+                // as an invalid attack on a civilian building.
+                bool neutralScenery = em.HasComponent<OperationMapBuildingComponent>(bestEntity) &&
+                    em.HasComponent<Faction>(bestEntity) && em.GetComponentData<Faction>(bestEntity).Id == 0;
+                if (!neutralScenery) return true;
+                bestEntity = Entity.Null;
+            }
 
             bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
             if (hasFlatClickedCell &&

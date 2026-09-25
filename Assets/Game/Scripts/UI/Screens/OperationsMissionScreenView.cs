@@ -6,315 +6,259 @@ using UnityEngine.UI;
 
 namespace Game.UI.Runtime
 {
-    /// <summary>Presentation and visible input only. Mission rules live in the shared ECS world.</summary>
-    public sealed class OperationsMissionScreenView : MonoBehaviour
+    /// <summary>Native presentation. Checklist and markers never issue troop orders.</summary>
+    public sealed partial class OperationsMissionScreenView : MonoBehaviour
     {
-        private bool hud;
+        private bool hud, interruptedAttempt;
         private TMP_FontAsset font;
         private TMP_Text title, description, status, clock, result;
-        private TMP_Text[] siteLabels;
-        private Button deploy, resume, saveAndExit, conclude, continueButton, evidenceButton, recoverButton, ariaButton, guideButton;
-        private Button[] scanButtons, focusButtons, advanceButtons;
-        private bool evidenceVisible, interruptedAttempt;
-        private Button withdrawInterrupted;
-        private GameObject briefing, controls, resultPanel, confirmation;
-        private bool guideOpen;
-        private bool missionPlaying;
-        private AriaTutorialBriefingView duplicateAria;
-        private RectTransform[] markers;
+        private Button deploy, resume, withdrawInterrupted, continueButton;
+        private GameObject confirmation, resultPanel;
+        private RectTransform safeRoot, tracker, introduction, tour;
+        private readonly TMP_Text[] objectiveRows = new TMP_Text[3];
+        private readonly V3GradientGraphic[] objectiveFrames = new V3GradientGraphic[3];
+        private TMP_Text guidance, progress, tourCaption, introObjective, introFacts, introActionText, focusText, recoverText;
+        private Button focusButton, introButton, skipButton, recoverButton, ariaPlayButton;
+        private TMP_Text ariaPlayText;
+        private bool ariaWasPlaying;
+        private readonly RectTransform[] markers = new RectTransform[5];
+        private readonly TMP_Text[] markerLabels = new TMP_Text[5];
+        private readonly Vector3[] markerPositions = new Vector3[5];
+        private UiOperationsMissionModel current;
+        private AriaTutorialBriefingView sharedAria;
+        private Sprite portrait;
+        private bool sharedAriaWasActive;
+        private bool startAriaWhenResumed;
+        private MatchOverlayCommandControlsView commandControls;
+        private OperationsScanAreaGraphic scanAreas;
+        private Camera worldCamera;
+        private static readonly Color Gold = new Color32(255,192,43,255), Cyan = new Color32(0,190,230,255),
+            Green = new Color32(74,188,77,255), Muted = new Color32(175,186,188,255);
+        public bool IsHud => hud;
+        public Button IntroductionButton => introButton;
+        public Button SkipButton => skipButton;
+        public Button ObjectiveButton => focusButton;
+        public Button RecoverButton => recoverButton;
+        public Button ScanButton(int index) => commandControls != null ? commandControls.ScanButton : null;
+        public Button GuideButton => focusButton;
+        public bool GuideOpen => tracker != null && tracker.gameObject.activeInHierarchy;
+        public Button AriaButton => ariaPlayButton;
+        public void StartAriaWhenResumed() => startAriaWhenResumed = true;
 
         public static void Install(GameObject body)
         {
             if (body == null) return;
-            var existing = body.GetComponentInChildren<TMP_Text>(true);
-            var font = existing != null ? existing.font : TMP_Settings.defaultFontAsset;
             var dashboard = body.GetComponentInChildren<OperationsDashboardScreenView>(true);
-            Transform parent = dashboard != null && dashboard.DailyBriefing != null
-                ? dashboard.DailyBriefing : body.transform;
+            Transform parent = dashboard != null && dashboard.DailyBriefing != null ? dashboard.DailyBriefing : body.transform;
             if (dashboard != null && dashboard.DailyBriefing != null)
                 foreach (Transform child in dashboard.DailyBriefing)
                     if (child.name is "AriaPortraitClip" or "Briefing") child.gameObject.SetActive(false);
-            var root = new GameObject("StreetSignalsMissionCard", typeof(RectTransform));
-            root.transform.SetParent(parent, false);
-            var rect = (RectTransform)root.transform;
-            rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
-            rect.offsetMin = dashboard != null ? new Vector2(12, 8) : Vector2.zero;
-            rect.offsetMax = dashboard != null ? new Vector2(-12, -102) : Vector2.zero;
-            var view = root.AddComponent<OperationsMissionScreenView>(); view.font = font; view.Build(false);
+            var root = Node("StreetSignalsMissionCard", parent); Stretch(root);
+            root.offsetMin = new Vector2(12,8); root.offsetMax = new Vector2(-12,-102);
+            var view = root.gameObject.AddComponent<OperationsMissionScreenView>();
+            view.font = body.GetComponentInChildren<TMP_Text>(true)?.font ?? TMP_Settings.defaultFontAsset;
+            view.BuildMenu();
         }
-
         public static OperationsMissionScreenView CreateHud(TMP_FontAsset font)
         {
             var root = new GameObject("OperationsMissionCanvas", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
             var canvas = root.GetComponent<Canvas>(); canvas.renderMode = RenderMode.ScreenSpaceOverlay; canvas.sortingOrder = 32600;
             var scaler = root.GetComponent<CanvasScaler>(); scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920, 1080); scaler.matchWidthOrHeight = 1;
-            var squad = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
-            var styledFont = squad != null ? squad.GetComponentInChildren<TMP_Text>(true)?.font : null;
-            var view = root.AddComponent<OperationsMissionScreenView>(); view.font = styledFont != null ? styledFont : font;
-            view.Build(true); return view;
+            scaler.referenceResolution = new Vector2(1920,1080); scaler.matchWidthOrHeight = 1;
+            var view = root.AddComponent<OperationsMissionScreenView>(); view.hud = true;
+            view.commandControls = UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();
+            if (UiShellRuntimeGateway.TryReadMatchHudSelection(out var selection) && !selection.Visible)
+                UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>()?.ClearActiveSlot();
+            view.font = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>()?.GetComponentInChildren<TMP_Text>(true)?.font ?? font;
+            view.sharedAria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>(FindObjectsInactive.Include);
+            if (view.sharedAria != null)
+            { view.portrait = view.sharedAria.PortraitImage?.sprite; view.sharedAriaWasActive = view.sharedAria.gameObject.activeSelf; }
+            view.BuildHud(); return view;
         }
-
-        private void Build(bool isHud)
+        private void BuildMenu()
         {
-            hud = isHud;
-            var card = Panel("MissionCard", transform);
-            if (hud)
-            { card.anchorMin = new Vector2(.77f, .66f); card.anchorMax = new Vector2(.985f, .91f); card.offsetMin = card.offsetMax = Vector2.zero; }
-            else
-            { card.anchorMin = Vector2.zero; card.anchorMax = Vector2.one; card.offsetMin = card.offsetMax = Vector2.zero; }
-            card.GetComponent<Image>().color = new Color(.025f, .06f, .075f, .94f);
-            Frame(card);
-            Vertical(card, hud ? 5 : 6);
-            card.GetComponent<VerticalLayoutGroup>().padding = new RectOffset(12,12,9,9);
-            title = Label(card, "STREET SIGNALS", 24, 32);
-            title.color = new Color(.08f, .76f, .89f);
-            title.alignment = TextAlignmentOptions.Left;
-            description = Label(card, "", hud ? 17 : 18, hud ? 69 : 60);
-            description.alignment = TextAlignmentOptions.TopLeft;
-            status = Label(card, "", hud ? 16 : 15, hud ? 46 : 42);
-            status.alignment = TextAlignmentOptions.TopLeft;
-            status.color = new Color(.94f, .74f, .36f);
-            if (!hud)
-            {
-                var spacer = Panel("BriefingSpacer", card, false);
-                var layout = spacer.gameObject.AddComponent<LayoutElement>();
-                layout.minHeight = 0; layout.flexibleHeight = 1;
-            }
-            clock = Label(card, "", 19, 28);
-            clock.alignment = TextAlignmentOptions.Left;
-            briefing = card.gameObject;
-            if (!hud)
-            {
-                var menuActions = Row(card); menuActions.GetComponent<LayoutElement>().preferredHeight = 43;
-                deploy = Button(menuActions, Text("operations.deploy", "DEPLOY"), () => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy));
-                resume = Button(menuActions, Text("operations.o001.resume_attempt", "RESUME ATTEMPT"), () => Send(UiOperationsMissionAction.ResumeAttempt));
-                withdrawInterrupted = Button(menuActions, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
-                var interruptedCard = Modal("ConfirmInterruptedWithdraw"); confirmation = interruptedCard.parent.gameObject;
-                Label(interruptedCard, Text("operations.o001.interrupted_withdraw_confirm", "Withdraw from the interrupted attempt? This spends the reserved action point and applies withdrawal consequences."), 23, 135);
-                Button(interruptedCard, Text("operations.withdraw", "WITHDRAW"), () => { confirmation.SetActive(false); Send(UiOperationsMissionAction.WithdrawInterrupted); });
-                Button(interruptedCard, Text("ui.common.cancel", "CANCEL"), () => confirmation.SetActive(false));
-                confirmation.SetActive(false);
-                return;
-            }
-            var trackerActions = Row(card); trackerActions.GetComponent<LayoutElement>().preferredHeight = 44;
-            saveAndExit = Button(trackerActions, Text("operations.o001.save_exit", "SAVE & EXIT"), () => Send(UiOperationsMissionAction.SaveAndExit));
-            guideButton = Button(transform, Text("operations.o001.open_guide", "MISSION GUIDE"), () => guideOpen = !guideOpen);
-            var guideRect = (RectTransform)guideButton.transform;
-            guideRect.anchorMin = new Vector2(.77f, .925f); guideRect.anchorMax = new Vector2(.89f, .99f);
-            guideRect.offsetMin = guideRect.offsetMax = Vector2.zero;
-            Frame(guideRect);
-            ariaButton = Button(transform, Text("operations.o001.aria_play", "ARIA PLAY"), () =>
-            {
-                if (UiShellRuntimeGateway.ReadAriaPlay().Active) UiShellRuntimeGateway.StopAriaPlay();
-                else UiShellRuntimeGateway.TryStartAriaPlay();
-            });
-            var ariaRect = (RectTransform)ariaButton.transform;
-            ariaRect.anchorMin = new Vector2(.895f, .925f); ariaRect.anchorMax = new Vector2(.985f, .99f);
-            ariaRect.offsetMin = ariaRect.offsetMax = Vector2.zero;
-            Frame(ariaRect);
-            foreach (var button in new[] { guideButton, saveAndExit, ariaButton })
-                button.GetComponentInChildren<TMP_Text>().fontSize = 14;
-            var actionPanel = Panel("MissionGuideDrawer", transform); controls = actionPanel.gameObject;
-            actionPanel.anchorMin = new Vector2(.77f, .20f); actionPanel.anchorMax = new Vector2(.985f, .65f);
-            actionPanel.offsetMin = actionPanel.offsetMax = Vector2.zero;
-            actionPanel.GetComponent<Image>().color = new Color(.025f, .075f, .095f, .96f);
-            Frame(actionPanel);
-            Vertical(actionPanel, 5);
-            var guideHeader = Row(actionPanel); guideHeader.GetComponent<LayoutElement>().preferredHeight = 40;
-            var guideTitle = Label(guideHeader, Text("operations.o001.guide_title", "MISSION GUIDE"), 22, 40);
-            guideTitle.color = new Color(.08f, .76f, .89f);
-            Button(guideHeader, Text("ui.common.close", "CLOSE"), () => guideOpen = false);
-            var guideHint = Label(actionPanel, Text("operations.o001.guide_hint", "Select infantry, advance to a signal, then scan nearby. Recover the evidence and reach extraction."), 16, 58);
-            guideHint.alignment = TextAlignmentOptions.TopLeft;
-            var signalsTitle = Label(actionPanel, Text("operations.o001.signals_title", "SIGNAL SITES"), 17, 26);
-            signalsTitle.alignment = TextAlignmentOptions.Left;
-            signalsTitle.color = new Color(.08f, .76f, .89f);
-            siteLabels = new TMP_Text[3];
-            scanButtons = new Button[3];
-            focusButtons = new Button[5];
-            for (int i = 0; i < 3; i++)
-            {
-                int index = i;
-                var signalRow = Row(actionPanel); signalRow.name = "Signal" + i;
-                signalRow.GetComponent<LayoutElement>().preferredHeight = 52;
-                var focus = Button(signalRow, string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)), () => Send(UiOperationsMissionAction.FocusSite, index));
-                focusButtons[i] = focus;
-                siteLabels[i] = focus.GetComponentInChildren<TMP_Text>();
-                scanButtons[i] = Button(signalRow, Text("operations.scan", "SCAN SELECTED"), () => Send(UiOperationsMissionAction.ScanSite, index));
-            }
-            var evidenceRow = Row(actionPanel); evidenceRow.GetComponent<LayoutElement>().preferredHeight = 50;
-            evidenceButton = Button(evidenceRow, Text("operations.evidence", "EVIDENCE"), () => Send(UiOperationsMissionAction.FocusEvidence));
-            focusButtons[3] = evidenceButton;
-            recoverButton = Button(evidenceRow, Text("operations.recover", "RECOVER"), () => Send(UiOperationsMissionAction.RecoverEvidence));
-            var exitRow = Row(actionPanel); exitRow.GetComponent<LayoutElement>().preferredHeight = 50;
-            focusButtons[4] = Button(exitRow, Text("operations.exit", "EXIT"), () => Send(UiOperationsMissionAction.FocusExit));
-            conclude = Button(exitRow, Text("operations.conclude", "CONCLUDE"), () => Send(UiOperationsMissionAction.Conclude));
-            var withdrawRow = Row(actionPanel); withdrawRow.GetComponent<LayoutElement>().preferredHeight = 42;
-            Button(withdrawRow, Text("operations.withdraw", "WITHDRAW"), () => confirmation.SetActive(true));
-
-            var resultCard = Modal("MissionResult"); resultPanel = resultCard.parent.gameObject;
-            result = Label(resultCard, "", 34, 220);
-            continueButton = Button(resultCard, Text("ui.common.continue", "CONTINUE"), () => Send(UiOperationsMissionAction.Return));
-            resultPanel.SetActive(false);
-            var confirmCard = Modal("ConfirmWithdraw"); confirmation = confirmCard.parent.gameObject;
-            Label(confirmCard, Text("operations.withdraw.confirm", "Withdraw from Street Signals? This records a withdrawal and applies its district consequences. The mission continues until you confirm."), 28, 180);
-            Button(confirmCard, Text("operations.withdraw", "WITHDRAW"), () => { confirmation.SetActive(false); Send(UiOperationsMissionAction.Withdraw); });
-            Button(confirmCard, Text("ui.common.cancel", "CANCEL"), () => confirmation.SetActive(false));
-            confirmation.SetActive(false);
-            markers = new RectTransform[5];
-            advanceButtons = new Button[5];
-            for (int i = 0; i < markers.Length; i++)
-            {
-                markers[i] = Panel("WorldObjective" + i, transform);
-                markers[i].SetAsFirstSibling(); markers[i].anchorMin = markers[i].anchorMax = new Vector2(.5f,.5f);
-                markers[i].sizeDelta = new Vector2(240,48);
-                string label = i < 3 ? string.Format(Text("operations.o001.signal", "SIGNAL {0}"), (char)('A' + i)) : i == 3 ? Text("operations.evidence", "EVIDENCE") : Text("operations.exit", "EXIT");
-                int markerIndex = i;
-                var advance = markers[i].gameObject.AddComponent<Button>();
-                advanceButtons[i] = advance;
-                advance.targetGraphic = markers[i].GetComponent<Image>();
-                advance.onClick.AddListener(() => Send(markerIndex < 3 ? UiOperationsMissionAction.AdvanceSite :
-                    markerIndex == 3 ? UiOperationsMissionAction.AdvanceEvidence : UiOperationsMissionAction.AdvanceExit, markerIndex));
-                var text = Label(markers[i], string.Format(Text("operations.o001.advance_marker", "ADVANCE: {0}"), label), 18, 0); Stretch(text.rectTransform);
-            }
+            // DailyBriefing leaves 252 points below its existing theater/day header.
+            // Keep every action inside that space, above the warnings panel.
+            var card = Surface("MissionCard", transform); Stretch(card); Vertical(card,6,8);
+            title = Label(card,"",24,48); description = Label(card,"",20,76);
+            status = Label(card,"",18,40);
+            var actions = Row(card,54);
+            actions.GetComponent<HorizontalLayoutGroup>().childForceExpandWidth = true;
+            deploy = Button(actions,Text("operations.deploy","DEPLOY"),() => Send(interruptedAttempt ? UiOperationsMissionAction.RestartAttempt : UiOperationsMissionAction.Deploy),Green);
+            resume = Button(actions,T("resume_attempt","RESUME ATTEMPT"),() => Send(UiOperationsMissionAction.ResumeAttempt),Green);
+            withdrawInterrupted = Button(actions,Text("operations.withdraw","WITHDRAW"),() => confirmation.SetActive(true),Muted);
+            BuildConfirmation();
         }
+        private void BuildHud()
+        {
+            safeRoot = Node("SafeArea",transform); Stretch(safeRoot);
+            var rings = Node("SignalScanAreas", safeRoot); Stretch(rings);
+            scanAreas = rings.gameObject.AddComponent<OperationsScanAreaGraphic>(); scanAreas.raycastTarget = false;
+            tracker = Surface("ObjectiveTracker",safeRoot); TopRight(tracker,500,800,20,20); Vertical(tracker,8,20);
+            tracker.gameObject.AddComponent<ContentSizeFitter>().verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+            title = Label(tracker,T("short_title","STREET SIGNALS"),38,42); title.color = Gold;
+            Label(tracker,T("district","OLD QUARTER"),27,30); clock = Label(tracker,"",27,36); Rule(tracker);
+            for (int i=0;i<3;i++)
+            {
+                var row = Surface("Objective"+i,tracker); Height(row,i==2 ? 108 : 64);
+                objectiveFrames[i] = row.GetComponent<V3GradientGraphic>();
+                objectiveRows[i] = Label(row,"",28,0); Stretch(objectiveRows[i].rectTransform,16);
+            }
+            Rule(tracker); progress = Label(tracker,"",25,34); progress.color = Cyan;
+            var aria = Row(tracker,172); Portrait(aria,112,128);
+            var copy = Node("AriaGuidance",aria); copy.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1; Vertical(copy,6,0);
+            Label(copy,"ARIA",29,38).color = Cyan; guidance = Label(copy,"",25,128);
+            focusButton = Button(tracker,T("show_objective","SHOW OBJECTIVE"),() => Send(current.ViewingObjective ? UiOperationsMissionAction.FocusSquad : UiOperationsMissionAction.FocusObjective),Cyan);
+            focusText = focusButton.GetComponentInChildren<TMP_Text>();
+            ariaPlayButton = Button(tracker,T("aria_play","ARIA PLAY"),() =>
+            {
+                if (UiShellRuntimeGateway.ReadAriaPlay().Active)
+                { startAriaWhenResumed = false; UiShellRuntimeGateway.StopAriaPlay(); }
+                else startAriaWhenResumed = true;
+            },Green);
+            ariaPlayText = ariaPlayButton.GetComponentInChildren<TMP_Text>();
 
+            introduction = Surface("DeploymentBriefing",safeRoot,new Color(0,0,0,.65f)); Stretch(introduction);
+            var card = Surface("BriefingCard",introduction); Center(card,1460,890); Vertical(card,20,36);
+            Label(card,T("short_title","STREET SIGNALS"),54,70).color = Gold;
+            Label(card,T("intro_subtitle","OLD QUARTER  •  OPERATION 01  •  MISSION PAUSED"),28,46);
+            var content = Row(card,455);
+            var portraitColumn = Node("Aria",content); Height(portraitColumn,455); Width(portraitColumn,310); Vertical(portraitColumn,12,8);
+            Portrait(portraitColumn,270,290);
+            Label(portraitColumn,T("purpose","Find the active relay. Recover its evidence and bring your squad home."),29,138);
+            var objectives = Node("Plan",content); objectives.gameObject.AddComponent<LayoutElement>().flexibleWidth = 1; Vertical(objectives,18,16);
+            Label(objectives,T("your_objectives","YOUR OBJECTIVES"),34,50); introObjective = Label(objectives,"",33,280);
+            introFacts = Label(objectives,T("force_deadline","16 INFANTRY  •  12 MINUTES"),30,44);
+            Label(card,T("optional_recon","Optional: finish all scans without losing recon infantry."),27,46);
+            introButton = Button(card,T("show_plan","SHOW THE PLAN"),() => Send(UiOperationsMissionAction.StartIntroduction),Green);
+            Height((RectTransform)introButton.transform,90); introActionText = introButton.GetComponentInChildren<TMP_Text>(); introduction.gameObject.SetActive(false);
+
+            tour = Surface("CameraIntroduction",safeRoot); TopRight(tour,500,620,20,20); Vertical(tour,16,26);
+            Label(tour,"ARIA",36,48).color = Cyan; Portrait(tour,150,125); tourCaption = Label(tour,"",29,150);
+            skipButton = Button(tour,T("skip_tour","RETURN TO SQUAD"),() => Send(UiOperationsMissionAction.SkipIntroduction),Green); tour.gameObject.SetActive(false);
+            for (int i=0;i<5;i++)
+            {
+                markers[i] = Surface("ObjectiveMarker"+i,safeRoot); markers[i].SetAsFirstSibling(); markers[i].sizeDelta = new Vector2(270,56);
+                markers[i].GetComponent<V3GradientGraphic>().raycastTarget = false;
+                markerLabels[i] = Label(markers[i],"",26,0,TextAlignmentOptions.Center); Stretch(markerLabels[i].rectTransform,8);
+                markerLabels[i].alignment = TextAlignmentOptions.Center; markerLabels[i].color = Gold;
+            }
+            recoverButton = Button(safeRoot,T("recover_action","RECOVER EVIDENCE"),() => Send(UiOperationsMissionAction.RecoverEvidence),Green);
+            ((RectTransform)recoverButton.transform).sizeDelta = new Vector2(340,78); recoverText = recoverButton.GetComponentInChildren<TMP_Text>(); recoverButton.gameObject.SetActive(false);
+            var resultCard = Modal("MissionResult",out resultPanel); result = Label(resultCard,"",38,280);
+            continueButton = Button(resultCard,Text("ui.common.continue","CONTINUE"),() => Send(UiOperationsMissionAction.Return),Green); resultPanel.SetActive(false);
+            BuildConfirmation();
+        }
+        private void BuildConfirmation()
+        {
+            var card = Modal("ConfirmWithdraw",out confirmation);
+            Label(card,Text("operations.withdraw.confirm","Withdraw from Street Signals? This ends the attempt and applies its district consequences."),30,185);
+            Button(card,Text("operations.withdraw","WITHDRAW"),() =>
+            {
+                confirmation.SetActive(false);
+                Send(hud ? UiOperationsMissionAction.Withdraw : UiOperationsMissionAction.WithdrawInterrupted);
+                if (hud) UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
+            },Gold);
+            Button(card,Text("ui.common.cancel","CANCEL"),() => confirmation.SetActive(false),Muted); confirmation.SetActive(false);
+        }
         private void Update()
         {
-            if (hud)
-            {
-                if (duplicateAria == null) duplicateAria = UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-                if (duplicateAria != null && duplicateAria.gameObject.activeSelf)
-                    duplicateAria.gameObject.SetActive(false);
-            }
-            if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model)) return;
+            RefreshLocaleTypography();
+            if (!UiShellRuntimeGateway.TryReadOperationsMission(out current)) return;
             if (!hud)
             {
-                UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Description);
-                UiLocalizedText.Set(status, model.Status); UiLocalizedText.Set(clock, model.Clock);
-                status.gameObject.SetActive(!string.IsNullOrWhiteSpace(model.Status));
-                interruptedAttempt = model.InterruptedAttempt;
-                deploy.interactable = model.CanDeploy && !model.CanResume;
-                UiLocalizedText.Set(deploy.GetComponentInChildren<TMP_Text>(), interruptedAttempt ? Text("operations.o001.restart_attempt", "RESTART ATTEMPT") : Text("operations.deploy", "DEPLOY"));
-                resume.gameObject.SetActive(model.CanResume);
-                withdrawInterrupted.gameObject.SetActive(interruptedAttempt);
-                return;
+                Set(title,current.Title); Set(description,current.Description);
+                Set(status,string.IsNullOrEmpty(current.Status) ? current.Clock : current.Status);
+                interruptedAttempt = current.InterruptedAttempt; deploy.interactable = current.CanDeploy && !current.CanResume;
+                deploy.gameObject.SetActive(!current.CanResume);
+                Set(deploy.GetComponentInChildren<TMP_Text>(),interruptedAttempt ? T("restart_attempt","RESTART ATTEMPT") : Text("operations.deploy","DEPLOY"));
+                resume.gameObject.SetActive(current.CanResume); withdrawInterrupted.gameObject.SetActive(interruptedAttempt); return;
             }
-            bool ready = UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.CurrentMode == UiShellMode.MatchHud &&
-                shell.Phase is UiShellTransitionPhase.MatchHudReady or UiShellTransitionPhase.Idle && !shell.IsTransitionRunning;
-            missionPlaying = ready && model.InMission && !model.Finished;
-            briefing.SetActive(missionPlaying && guideOpen);
-            controls.SetActive(missionPlaying && guideOpen);
-            guideButton.gameObject.SetActive(missionPlaying);
-            UiLocalizedText.Set(guideButton.GetComponentInChildren<TMP_Text>(), guideOpen
-                ? Text("operations.o001.close_guide", "CLOSE GUIDE") : Text("operations.o001.open_guide", "MISSION GUIDE"));
-            ariaButton.gameObject.SetActive(missionPlaying &&
-                UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None);
-            if (ariaButton.gameObject.activeSelf)
-                UiLocalizedText.Set(ariaButton.GetComponentInChildren<TMP_Text>(), UiShellRuntimeGateway.ReadAriaPlay().Active
-                    ? Text("operations.o001.aria_stop", "STOP ARIA") : Text("operations.o001.aria_play", "ARIA PLAY"));
-            saveAndExit.interactable = model.InMission && !model.Finished;
-            resultPanel.SetActive(ready && model.Finished);
-            if (model.Finished) confirmation.SetActive(false);
-            UiLocalizedText.Set(title, model.Title); UiLocalizedText.Set(description, model.Objective);
-            UiLocalizedText.Set(status, model.Status); UiLocalizedText.Set(clock, model.Clock);
-            UiLocalizedText.Set(result, model.Result); continueButton.interactable = model.Saved;
-            conclude.interactable = model.CanConclude;
-            evidenceVisible = model.EvidenceAvailable;
-            evidenceButton.interactable = evidenceVisible;
-            recoverButton.interactable = model.CanRecover;
-            UiLocalizedText.Set(recoverButton.GetComponentInChildren<TMP_Text>(), model.EvidenceStatus);
-            if (model.SiteStatus != null)
-                for (int i = 0; i < siteLabels.Length && i < model.SiteStatus.Length; i++) UiLocalizedText.Set(siteLabels[i], model.SiteStatus[i]);
-        }
-
-        public Button ScanButton(int index) => scanButtons != null && index >= 0 && index < scanButtons.Length ? scanButtons[index] : null;
-        public Button AdvanceButton(int index) => advanceButtons != null && index >= 0 && index < advanceButtons.Length ? advanceButtons[index] : null;
-        public Button FocusButton(int index) => focusButtons != null && index >= 0 && index < focusButtons.Length ? focusButtons[index] : null;
-        public Button RecoverButton => recoverButton;
-        public Button GuideButton => guideButton;
-        public Button AriaButton => ariaButton;
-        public bool GuideOpen => guideOpen;
-
-        public void PresentMarkers(Vector3[] screenPositions)
-        {
-            if (markers == null) return;
-            for (int i = 0; i < markers.Length; i++)
+            var safe = Screen.safeArea;
+            safeRoot.anchorMin = new Vector2(safe.xMin/Screen.width,safe.yMin/Screen.height); safeRoot.anchorMax = new Vector2(safe.xMax/Screen.width,safe.yMax/Screen.height);
+            bool ready = UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.CurrentMode == UiShellMode.MatchHud && !shell.IsTransitionRunning;
+            bool live = ready && current.InMission && !current.Finished;
+            bool touringSite = current.Touring && current.IntroductionStage is >= 1 and <= 3;
+            scanAreas.gameObject.SetActive(live && (touringSite || !current.Introduction && !current.Paused));
+            if (startAriaWhenResumed && live && !current.Paused && Time.timeScale > 0)
+                startAriaWhenResumed = !UiShellRuntimeGateway.TryStartAriaPlay();
+            if (sharedAria != null && live) sharedAria.gameObject.SetActive(false);
+            tracker.gameObject.SetActive(live && !current.Introduction && !current.Paused);
+            introduction.gameObject.SetActive(live && current.Introduction && !current.Touring); tour.gameObject.SetActive(live && current.Touring);
+            resultPanel.SetActive(ready && current.Finished); if (current.Finished) confirmation.SetActive(false);
+            bool ariaPlaying = UiShellRuntimeGateway.ReadAriaPlay().Active;
+            Set(ariaPlayText,ariaPlaying ? T("aria_stop","STOP ARIA") : T("aria_play","ARIA PLAY"));
+            if (ariaPlaying != ariaWasPlaying)
             {
-                Vector3 point = screenPositions[i];
-                bool visible = missionPlaying && (i != 3 || evidenceVisible) && point.z > 0 && point.x >= 0 && point.x <= Screen.width && point.y >= 0 && point.y <= Screen.height;
-                markers[i].gameObject.SetActive(visible);
-                if (visible && RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)transform, point, null, out Vector2 local))
-                    markers[i].anchoredPosition = local + new Vector2(0, 24);
+                var accent = ariaPlaying ? new Color(1,.22f,.08f) : Green;
+                Color upper = accent*.65f, lower = accent*.25f; upper.a = lower.a = 1;
+                ariaPlayButton.GetComponent<V3GradientGraphic>().Configure(upper,lower,accent,3);
+                ariaWasPlaying = ariaPlaying;
+            }
+            Set(clock,current.Clock);
+            Set(objectiveRows[0],string.Format(T("check_scans","1   Scan signal sites   {0}/3"),current.CompletedScans));
+            Set(objectiveRows[1],T("check_evidence","2   Recover relay evidence"));
+            Set(objectiveRows[2],T("check_extract","3   Extract with 2+ infantry\nBring the evidence carrier."));
+            int active = current.CompletedScans < 3 ? 0 : current.EvidenceCarried ? 2 : 1;
+            for (int i=0;i<3;i++)
+            {
+                objectiveRows[i].color = i > active ? Muted : Color.white;
+                objectiveFrames[i].Configure(new Color(.1f,.14f,.16f),new Color(.03f,.06f,.075f),i<active ? Green : i==active ? Gold : Muted,i==active ? 3 : 1);
+            }
+            Set(progress,current.Progress); progress.gameObject.SetActive(!string.IsNullOrEmpty(current.Progress)); Set(guidance,current.Guidance);
+            Set(focusText,current.ViewingObjective ? T("return_squad","RETURN TO SQUAD") : T("show_objective","SHOW OBJECTIVE")); Set(tourCaption,current.Guidance);
+            Set(introObjective,current.Resumed ? current.Objective : T("intro_objectives","1   Scan all 3 signal sites\n\n2   Recover the relay evidence\n\n3   Extract with evidence and 2+ infantry"));
+            Set(introFacts,current.Resumed ? current.Clock : T("force_deadline","16 INFANTRY  •  12 MINUTES"));
+            Set(introActionText,current.Resumed ? T("resume_mission","RESUME MISSION") : T("show_plan","SHOW THE PLAN"));
+            Set(result,current.Result); continueButton.interactable = current.Saved;
+            for (int i=0;i<5;i++)
+            {
+                bool complete = i<3 && current.SiteCompleted != null && current.SiteCompleted[i];
+                Set(markerLabels[i],i<3 ? complete ? (i+1)+"  •  "+T("done","DONE") : string.Format(T("site_marker","{0}  •  SIGNAL SITE"),i+1) : i==3 ? Text("operations.evidence","EVIDENCE") : T("extraction_marker","EXTRACTION"));
+                bool channeling = i < 3 && !complete && current.SiteProgress != null && current.SiteProgress[i] > 0;
+                markers[i].sizeDelta = new Vector2(270,channeling ? 84 : 56);
+                if (channeling)
+                    Set(markerLabels[i], string.Format(T("scanning_site", "Scanning site {0}   {1}/15 s"), i+1, Mathf.FloorToInt(current.SiteProgress[i])));
+                markerLabels[i].color = complete ? Green : Gold;
+                bool tourTarget = current.Touring && (i < 3 && current.IntroductionStage == i + 1 || i == 4 && current.IntroductionStage == 4);
+                bool gameplayTarget = !current.Introduction && !current.Paused && (i!=4 || current.EvidenceCarried) && (i!=3 || current.EvidenceAvailable && !current.EvidenceCarried);
+                bool visible = live && (tourTarget || gameplayTarget) && InWorldViewport(markerPositions[i]);
+                markers[i].gameObject.SetActive(visible); if (visible) PlaceMarker(markers[i],markerPositions[i],new Vector2(0,42));
+            }
+            bool recover = live && !current.Introduction && !current.Paused && current.CanRecoverHere && InWorldViewport(markerPositions[3]);
+            recoverButton.gameObject.SetActive(recover);
+            if (recover)
+            {
+                recoverButton.interactable = current.EvidenceProgress <= 0;
+                Set(recoverText,current.EvidenceProgress > 0 ? current.EvidenceStatus : T("recover_action","RECOVER EVIDENCE"));
+                PlaceMarker((RectTransform)recoverButton.transform,markerPositions[3],new Vector2(0,-44));
             }
         }
-
-        public void ShowWithdrawConfirmation()
+        public void PresentMarkers(Vector3[] positions) => Array.Copy(positions,markerPositions,Math.Min(5,positions.Length));
+        public void PresentScanArea(int index, Camera camera, Vector3 center, float radius, bool complete)
+        { worldCamera = camera; if (scanAreas != null) scanAreas.Present(index, camera, center, radius, complete); }
+        public void ShowWithdrawConfirmation() { if (confirmation != null) confirmation.SetActive(true); }
+        public bool TryObserveObjective(out Vector2 point)
         {
-            if (hud && confirmation != null) confirmation.SetActive(true);
+            int i = current.NextSite >= 0 ? current.NextSite : current.EvidenceCarried ? 4 : 3;
+            Vector3 projected = markerPositions[i];
+            if (worldCamera != null && !current.EvidenceCarried)
+            {
+                // A signal is attached to a building. The public range ring also
+                // includes its approach; tap that ground instead of attacking the facade.
+                Vector3 approach = worldCamera.transform.position - current.ObjectivePosition; approach.y = 0;
+                float radius = current.NextSite >= 0 ? 8f : 6f;
+                projected = worldCamera.WorldToScreenPoint(current.ObjectivePosition + approach.normalized * (radius * .75f));
+            }
+            point = projected; return InWorldViewport(projected);
         }
-
-        private static void Send(UiOperationsMissionAction action, int index = 0) => UiShellRuntimeGateway.TryRequestOperationsMission(action, index);
-        private static string Text(string key, string fallback) => UiShellRuntimeGateway.Localization.Get(key, fallback);
-        private RectTransform Modal(string name)
-        {
-            var parent = hud ? transform : GetComponentInParent<Canvas>().rootCanvas.transform;
-            var shade = Panel(name, parent); Stretch(shade); shade.GetComponent<Image>().color = new Color(0,0,0,.8f);
-            var card = Panel("Card", shade); card.anchorMin = card.anchorMax = new Vector2(.5f,.5f); card.sizeDelta = hud ? new Vector2(850,430) : new Vector2(670,350);
-            Vertical(card, 18); return card;
-        }
-        private RectTransform Panel(string name, Transform parent, bool background = true)
-        {
-            var root = new GameObject(name, typeof(RectTransform)); root.transform.SetParent(parent, false);
-            if (background) root.AddComponent<Image>().color = new Color(.025f,.07f,.08f,.97f);
-            return (RectTransform)root.transform;
-        }
-        private static void Frame(RectTransform rect)
-        {
-            var outline = rect.gameObject.AddComponent<Outline>();
-            outline.effectColor = new Color(.07f, .61f, .68f, .62f);
-            outline.effectDistance = new Vector2(1.5f, -1.5f);
-            var rule = new GameObject("CyanAccentRule", typeof(RectTransform), typeof(Image), typeof(LayoutElement));
-            rule.transform.SetParent(rect, false);
-            rule.GetComponent<LayoutElement>().ignoreLayout = true;
-            var line = (RectTransform)rule.transform;
-            line.anchorMin = new Vector2(0, 1); line.anchorMax = Vector2.one;
-            line.pivot = new Vector2(.5f, 1);
-            line.sizeDelta = new Vector2(0, 3);
-            rule.GetComponent<Image>().color = new Color(.06f, .72f, .82f, .88f);
-            rule.GetComponent<Image>().raycastTarget = false;
-        }
-        private TMP_Text Label(Transform parent, string value, float size, float height)
-        {
-            var root = new GameObject("Label", typeof(RectTransform), typeof(TextMeshProUGUI), typeof(LayoutElement)); root.transform.SetParent(parent, false);
-            var label = root.GetComponent<TMP_Text>(); label.font = font != null ? font : TMP_Settings.defaultFontAsset;
-            label.fontSize = size; label.color = Color.white; label.alignment = TextAlignmentOptions.Center; label.raycastTarget = false;
-            root.GetComponent<LayoutElement>().preferredHeight = height; UiLocalizedText.Set(label, value); return label;
-        }
-        private Button Button(Transform parent, string label, Action clicked)
-        {
-            var root = Panel(label, parent); root.gameObject.AddComponent<LayoutElement>().preferredHeight = hud ? 44 : 58;
-            root.GetComponent<Image>().color = new Color(.04f,.26f,.29f,1);
-            var button = root.gameObject.AddComponent<Button>(); button.targetGraphic = root.GetComponent<Image>(); button.onClick.AddListener(() => clicked());
-            var colors = button.colors;
-            colors.highlightedColor = new Color(1.25f, 1.25f, 1.25f, 1);
-            colors.pressedColor = new Color(.68f, .9f, .93f, 1);
-            colors.disabledColor = new Color(.46f, .5f, .5f, .72f);
-            button.colors = colors;
-            var text = Label(root, label, hud ? 16 : 20, 0); Stretch(text.rectTransform); return button;
-        }
-        private RectTransform Row(Transform parent)
-        {
-            var row = Panel("Row", parent, false); row.gameObject.AddComponent<LayoutElement>().preferredHeight = 88;
-            var layout = row.gameObject.AddComponent<HorizontalLayoutGroup>(); layout.spacing = 5; layout.childControlWidth = layout.childControlHeight = true; layout.childForceExpandWidth = true; return row;
-        }
-        private static void Vertical(RectTransform rect, int spacing)
-        {
-            var layout = rect.gameObject.AddComponent<VerticalLayoutGroup>(); layout.padding = new RectOffset(12,12,10,10); layout.spacing = spacing;
-            layout.childControlHeight = layout.childControlWidth = true; layout.childForceExpandHeight = false; layout.childForceExpandWidth = true;
-        }
-        private static void Stretch(RectTransform rect)
-        { rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = rect.offsetMax = Vector2.zero; }
+        private bool InWorldViewport(Vector3 p) => p.z>0 && Screen.safeArea.Contains(p) && p.y>Screen.height*.25f && p.y<Screen.height*.88f && !RectTransformUtility.RectangleContainsScreenPoint(tracker,p,null);
+        private void PlaceMarker(RectTransform rect,Vector3 screen,Vector2 offset)
+        { if (RectTransformUtility.ScreenPointToLocalPointInRectangle(safeRoot,screen,null,out var local)) rect.anchoredPosition = local+offset; }
+        private void OnDestroy() { if (sharedAria != null) sharedAria.gameObject.SetActive(sharedAriaWasActive); }
+        private static void Send(UiOperationsMissionAction action,int index=0) => UiShellRuntimeGateway.TryRequestOperationsMission(action,index);
+        private static string Text(string key,string fallback) => UiShellRuntimeGateway.Localization.Get(key,fallback);
+        private static string T(string key,string fallback) => Text("operations.o001."+key,fallback);
+        private static void Set(TMP_Text label,string value) { if (label != null) UiLocalizedText.Set(label,value); }
     }
 }

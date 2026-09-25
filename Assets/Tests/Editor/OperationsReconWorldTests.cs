@@ -126,6 +126,15 @@ public sealed class OperationsReconWorldTests
     }
 
     [Test]
+    public void RepeatedScanInputDoesNotRestartTheActiveChannel()
+    {
+        Request(OperationsReconAction.Scan, 0); Tick(8);
+        Assert.That(em.GetBuffer<OperationsReconSiteElement>(root)[0].ChannelSeconds, Is.EqualTo(8));
+        Request(OperationsReconAction.Scan, 0); Tick(7);
+        Assert.That(State.CompletedScans, Is.EqualTo(1));
+    }
+
+    [Test]
     public void LeavingRangeResetsChannel_AndRequiresNewAction()
     {
         Request(OperationsReconAction.Scan, 0); Tick(10);

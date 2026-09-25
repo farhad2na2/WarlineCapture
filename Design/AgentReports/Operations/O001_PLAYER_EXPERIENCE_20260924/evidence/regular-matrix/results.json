@@ -1,0 +1,32 @@
+[
+  {
+    "seed": 1102,
+    "passed": true,
+    "exitCode": 0,
+    "wallSeconds": 409.4
+  },
+  {
+    "seed": 2102,
+    "passed": true,
+    "exitCode": 0,
+    "wallSeconds": 478.5
+  },
+  {
+    "seed": 3102,
+    "passed": true,
+    "exitCode": 0,
+    "wallSeconds": 531.7
+  },
+  {
+    "seed": 4102,
+    "passed": true,
+    "exitCode": 0,
+    "wallSeconds": 637.5
+  },
+  {
+    "seed": 5102,
+    "passed": true,
+    "exitCode": 0,
+    "wallSeconds": 522.6
+  }
+]

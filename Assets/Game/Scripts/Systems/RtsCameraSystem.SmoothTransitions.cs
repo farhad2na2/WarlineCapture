@@ -59,7 +59,7 @@ namespace Game.Runtime
                 reachableTarget,
                 ref _smoothFocusVelocity,
                 Mathf.Max(0.01f,
-                    _smoothFocusTimeSeconds > 0f ? _smoothFocusTimeSeconds : smoothTime));
+                    _smoothFocusTimeSeconds > 0f ? _smoothFocusTimeSeconds : smoothTime), Mathf.Infinity, UnityEngine.Time.unscaledDeltaTime);
 
             Vector2 remaining = new(
                 reachableTarget.x - smoothedCenter.x,
@@ -123,7 +123,7 @@ namespace Game.Runtime
                 _smoothPerspectivePitch,
                 _smoothPerspectiveYaw,
                 _smoothPerspectiveFieldOfView,
-                _smoothPerspectiveTimeSeconds > 0f ? _smoothPerspectiveTimeSeconds : fallbackSmoothTime);
+                _smoothPerspectiveTimeSeconds > 0f ? _smoothPerspectiveTimeSeconds : fallbackSmoothTime, UnityEngine.Time.unscaledDeltaTime);
             if (arrived)
                 ClearSmoothPerspectiveTarget();
         }

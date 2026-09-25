@@ -262,11 +262,11 @@
     },
     {
       "key": "operations.withdraw.confirm",
-      "source": "Withdraw from Street Signals? This records a withdrawal and applies its district consequences. The mission continues until you confirm.",
+      "source": "Withdraw from Street Signals? This ends the attempt and applies its district consequences.",
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "از سیگنال‌های خیابان عقب‌نشینی می‌کنید؟ عقب‌نشینی ثبت می‌شود و پیامدهای آن بر منطقه اعمال خواهد شد. مأموریت تا زمان تأیید شما ادامه دارد."
+          "value": "از مأموریت «نشانه‌های خیابان» عقب‌نشینی می‌کنید؟ این تلاش پایان می‌یابد و پیامدهای آن بر محله اعمال می‌شود."
         }
       ]
     },
@@ -610,23 +610,595 @@
         }
       ]
     },
-    { "key": "operations.o001.dashboard_day", "source": "DAY {0}", "translations": [{ "locale": "fa-IR", "value": "روز {0}" }] },
-    { "key": "operations.o001.dashboard_ap", "source": "AP {0}", "translations": [{ "locale": "fa-IR", "value": "اقدام {0}" }] },
-    { "key": "operations.o001.dashboard_new_city", "source": "NEW CITY", "translations": [{ "locale": "fa-IR", "value": "شهر جدید" }] },
-    { "key": "operations.o001.dashboard_no_warnings", "source": "NO ACTIVE WARNINGS", "translations": [{ "locale": "fa-IR", "value": "هشدار فعالی وجود ندارد" }] },
-    { "key": "operations.o001.dashboard_start", "source": "DEPLOY TO BEGIN", "translations": [{ "locale": "fa-IR", "value": "برای شروع اعزام کنید" }] },
-    { "key": "operations.o001.dashboard_security", "source": "CITY SECURITY", "translations": [{ "locale": "fa-IR", "value": "امنیت شهر" }] },
-    { "key": "operations.o001.dashboard_trust", "source": "CIVILIAN TRUST", "translations": [{ "locale": "fa-IR", "value": "اعتماد غیرنظامیان" }] },
-    { "key": "operations.o001.dashboard_threat", "source": "THREAT LEVEL", "translations": [{ "locale": "fa-IR", "value": "سطح تهدید" }] },
-    { "key": "operations.o001.dashboard_heat", "source": "HEAT LEVEL", "translations": [{ "locale": "fa-IR", "value": "تنش سطح" }] },
-    { "key": "operations.o001.dashboard_supply", "source": "SUPPLY READINESS", "translations": [{ "locale": "fa-IR", "value": "آمادگی تدارکات" }] },
-    { "key": "operations.o001.dashboard_service", "source": "SERVICE DISRUPTION", "translations": [{ "locale": "fa-IR", "value": "اختلال خدمات" }] },
-    { "key": "operations.o001.dashboard_road", "source": "ROAD BLOCKADE", "translations": [{ "locale": "fa-IR", "value": "انسداد مسیر" }] },
-    { "key": "operations.o001.dashboard_hostile", "source": "HOSTILE PRESSURE", "translations": [{ "locale": "fa-IR", "value": "فشار دشمن" }] },
-    { "key": "operations.o001.map_northgate", "source": "NORTHGATE", "translations": [{ "locale": "fa-IR", "value": "دروازهٔ شمالی" }] },
-    { "key": "operations.o001.map_eastridge", "source": "EASTRIDGE", "translations": [{ "locale": "fa-IR", "value": "بلندی شرقی" }] },
-    { "key": "operations.o001.map_oldmarket", "source": "OLD MARKET", "translations": [{ "locale": "fa-IR", "value": "بازار قدیمی" }] },
-    { "key": "operations.o001.map_forwardpost", "source": "FORWARD POST", "translations": [{ "locale": "fa-IR", "value": "پایگاه پیشرو" }] },
-    { "key": "operations.o001.map_southquarter", "source": "SOUTH QUARTER", "translations": [{ "locale": "fa-IR", "value": "محلهٔ جنوبی" }] }
+    {
+      "key": "operations.o001.dashboard_day",
+      "source": "DAY {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "روز {0}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_ap",
+      "source": "AP {0}",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اقدام {0}"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_new_city",
+      "source": "NEW CITY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "شهر جدید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_no_warnings",
+      "source": "NO ACTIVE WARNINGS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هشدار فعالی وجود ندارد"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_start",
+      "source": "DEPLOY TO BEGIN",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای شروع اعزام کنید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_security",
+      "source": "CITY SECURITY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "امنیت شهر"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_trust",
+      "source": "CIVILIAN TRUST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اعتماد غیرنظامیان"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_threat",
+      "source": "THREAT LEVEL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "سطح تهدید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_heat",
+      "source": "HEAT LEVEL",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تنش سطح"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_supply",
+      "source": "SUPPLY READINESS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "آمادگی تدارکات"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_service",
+      "source": "SERVICE DISRUPTION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اختلال خدمات"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_road",
+      "source": "ROAD BLOCKADE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "انسداد مسیر"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.dashboard_hostile",
+      "source": "HOSTILE PRESSURE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "فشار دشمن"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.map_northgate",
+      "source": "NORTHGATE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "دروازهٔ شمالی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.map_eastridge",
+      "source": "EASTRIDGE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بلندی شرقی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.map_oldmarket",
+      "source": "OLD MARKET",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازار قدیمی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.map_forwardpost",
+      "source": "FORWARD POST",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پایگاه پیشرو"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.map_southquarter",
+      "source": "SOUTH QUARTER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محلهٔ جنوبی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.short_title",
+      "source": "STREET SIGNALS",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نشانه‌های خیابان"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.district",
+      "source": "OLD QUARTER",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محلهٔ قدیمی"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.show_objective",
+      "source": "SHOW OBJECTIVE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نمایش هدف"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.intro_subtitle",
+      "source": "OLD QUARTER  •  OPERATION 01  •  MISSION PAUSED",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محلهٔ قدیمی  •  عملیات ۰۱  •  مأموریت متوقف است"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.purpose",
+      "source": "Find the active relay. Recover its evidence and bring your squad home.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "رلهٔ فعال را پیدا کنید. مدارک آن را بازیابی کنید و گروه را سالم برگردانید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.your_objectives",
+      "source": "YOUR OBJECTIVES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اهداف شما"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.force_deadline",
+      "source": "16 INFANTRY  •  12 MINUTES",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۱۶ پیاده‌نظام  •  ۱۲ دقیقه"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.optional_recon",
+      "source": "Optional: finish all scans without losing recon infantry.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "هدف اختیاری: همهٔ اسکن‌ها را بدون از دست دادن نیروی شناسایی کامل کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.show_plan",
+      "source": "SHOW THE PLAN",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نمایش نقشهٔ مأموریت"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.skip_tour",
+      "source": "RETURN TO SQUAD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازگشت به گروه"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recover_action",
+      "source": "RECOVER EVIDENCE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازیابی مدارک"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.check_scans",
+      "source": "1   Scan signal sites   {0}/3",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۱   اسکن سیگنال‌ها   {0} از ۳"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.check_evidence",
+      "source": "2   Recover relay evidence",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۲   بازیابی مدارک رله"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.check_extract",
+      "source": "3   Extract with 2+ infantry\nBring the evidence carrier.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۳   خروج با حداقل ۲ پیاده‌نظام\nحامل مدارک را همراه ببرید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.return_squad",
+      "source": "RETURN TO SQUAD",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازگشت به گروه"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.intro_objectives",
+      "source": "1   Scan all 3 signal sites\n\n2   Recover the relay evidence\n\n3   Extract with evidence and 2+ infantry",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "۱   هر سه محل سیگنال را اسکن کنید\n\n۲   مدارک رله را بازیابی کنید\n\n۳   با مدارک و حداقل ۲ پیاده‌نظام خارج شوید"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.resume_mission",
+      "source": "RESUME MISSION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "ادامهٔ مأموریت"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.site_marker",
+      "source": "{0}  •  SIGNAL SITE",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "{0}  •  محل سیگنال"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.extraction_marker",
+      "source": "EXTRACTION",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محل خروج"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.move_hint",
+      "source": "Move into a blue ring on open ground. Scan sites in any order.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "به فضای باز داخل حلقهٔ آبی بروید. محل‌ها را به هر ترتیبی اسکن کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.extract_hint",
+      "source": "Bring the carrier and 2+ infantry to extraction. Clear nearby enemies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حامل مدارک و حداقل دو نیروی پیاده را به محل خروج برسانید. دشمنان نزدیک را از بین ببرید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recover_hint",
+      "source": "Move to the evidence. Secure the area, then recover it.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "به محل مدارک بروید. منطقه را امن کنید، سپس مدارک را بازیابی کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scanning_site",
+      "source": "Scanning site {0}   {1}/15 s",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اسکن محل {0}   {1}/15 ثانیه"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_hold_hint",
+      "source": "Keep your scanning unit inside the blue ring.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "نیروی اسکن‌کننده را داخل حلقهٔ آبی نگه دارید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_ready_hint",
+      "source": "Your infantry are in range. Tap SCAN on the command bar.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام در محدوده است. «اسکن» را در نوار فرمان بزنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recovering",
+      "source": "Recovering evidence   {0}/15 s",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازیابی مدارک   {0}/15 ثانیه"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recover_hold_hint",
+      "source": "Keep the area secure while your infantry recover the evidence.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "تا پایان بازیابی مدارک، امنیت منطقه را حفظ کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.tour_site",
+      "source": "Signal site {0}. Scan all three courtyards to locate the relay. You choose the route.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "محل سیگنال {0}. برای یافتن رله هر سه حیاط را اسکن کنید. مسیر را شما انتخاب می‌کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.tour_exit",
+      "source": "Return here with the relay evidence and at least two infantry. Keep extraction clear of enemies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "با مدارک رله و حداقل دو پیاده‌نظام به اینجا برگردید. دشمنان را از محل خروج دور نگه دارید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.tour_squad",
+      "source": "Your squad is ready. Keep together for protection, or split scouts to search faster.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "گروه آماده است. برای محافظت کنار هم بمانید یا برای جست‌وجوی سریع‌تر نیروهای شناسایی را تقسیم کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.paused_hint",
+      "source": "Resume the mission before giving an order.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "برای صدور فرمان، مأموریت را ادامه دهید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_range_hint",
+      "source": "Select infantry inside a signal site's blue ring, then tap SCAN.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "پیاده‌نظام داخل حلقهٔ آبیِ محل سیگنال را انتخاب کنید، سپس «اسکن» را بزنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.partial_confirm",
+      "source": "End the mission with partial success? You will forgo full mission rewards.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مأموریت با موفقیت جزئی پایان یابد؟ پاداش کامل مأموریت را دریافت نخواهید کرد."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.partial_action",
+      "source": "EXTRACT EARLY",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خروج زودهنگام"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.pause_note",
+      "source": "Save & Exit keeps this attempt. Withdraw ends it.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "«ذخیره و خروج» پیشرفت این تلاش را نگه می‌دارد. «عقب‌نشینی» آن را پایان می‌دهد."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.blocked_approach",
+      "source": "The approach is blocked. Move your infantry into the marked area.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "مسیر مسدود است. نیروهای پیاده را به محدودهٔ مشخص‌شده ببرید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.scan_interrupted",
+      "source": "Scan interrupted. Select infantry inside the blue ring and tap SCAN again.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "اسکن متوقف شد. نیروهای داخل حلقهٔ آبی را انتخاب کنید و دوباره اسکن را بزنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.recovery_interrupted",
+      "source": "Recovery stopped. Clear nearby enemies, then return and recover the evidence.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "بازیابی متوقف شد. دشمنان نزدیک را از بین ببرید، سپس برگردید و مدارک را بازیابی کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.carrier_lost",
+      "source": "The carrier is down. Recover the dropped evidence before extracting.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حامل مدارک از دست رفت. پیش از خروج، مدارک افتاده را بازیابی کنید."
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.extraction_progress",
+      "source": "Safe extraction: {0}/2 infantry",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "خروج امن: {0}/2 نیروی پیاده"
+        }
+      ]
+    },
+    {
+      "key": "operations.o001.extraction_hold",
+      "source": "Bring at least two infantry into extraction and clear nearby enemies.",
+      "translations": [
+        {
+          "locale": "fa-IR",
+          "value": "حداقل دو نیروی پیاده را به محل خروج برسانید و دشمنان نزدیک را از بین ببرید."
+        }
+      ]
+    }
   ]
 }

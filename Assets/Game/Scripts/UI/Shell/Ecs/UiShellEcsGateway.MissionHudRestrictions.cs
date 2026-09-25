@@ -17,8 +17,10 @@ namespace Game.UI.Shell.Ecs
                 if (operations.CalculateEntityCount() == 1)
                 {
                     var mission = operations.GetSingleton<OperationsReconMissionComponent>();
+                    bool introduction = operationsWorld.EntityManager.HasComponent<OperationsReconIntroduction>(operations.GetSingletonEntity()) &&
+                        operationsWorld.EntityManager.GetComponentData<OperationsReconIntroduction>(operations.GetSingletonEntity()).Stage < 6;
                     restrictions = new UiMissionHudRestrictionsModel("operation.o001", true, true, true, true, true,
-                        mission.Phase != OperationsReconPhase.Playing, hideLogisticsResources: true,
+                        mission.Phase != OperationsReconPhase.Playing || introduction, hideLogisticsResources: true,
                         hideUnrelatedControls: true, availableSquadMask: 1);
                     return true;
                 }

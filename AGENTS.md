@@ -5,6 +5,14 @@
 - Keep all Unity execution rules below: RTK must wrap the required repository wrapper, never replace it. Preserve full validation logs and check required pass markers against those logs.
 - Use `rtk gain` to inspect measured token savings.
 
+# Mission UI and readiness evidence
+
+- For a new mission screen or substantial mission UI redesign, create ImageGen mockups using actual Campaign UI references and obtain the user's visual-direction review before implementation. An approval already given in the task remains valid; do not ask again for routine implementation choices.
+- Reuse the game's existing typography, portrait assets, colorful command controls and mobile spacing. Do not ship developer controls or prototype labels as player guidance.
+- Keep mission purpose, objectives and the next player action visible. Camera guidance must not silently issue troop orders. Preserve a visible ARIA Play / Stop control when redesigning a mission HUD.
+- Validate the implemented native screens and the complete normal-input mission, including ARIA, result and return. Mockups, compilation, injected simulation outcomes and old-candidate wins do not establish player readiness.
+- Report visual review, automated checks, normal-input playthroughs and real player/device acceptance separately. Keep failed evidence and state any pending gate explicitly.
+
 # Unity Execution Contract
 
 - Keep Unity Hub open and signed in while any Unity Editor or validation runs.

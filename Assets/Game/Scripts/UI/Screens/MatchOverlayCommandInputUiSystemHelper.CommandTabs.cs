@@ -68,6 +68,13 @@ namespace Game.UI.Runtime
 
             private bool TryRequestMissionScan()
             {
+                if (UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
+                {
+                    CaptureCommandUiClick();
+                    CloseBuildDrawerIfOpen();
+                    UiShellRuntimeGateway.TryRequestOperationsMission(UiOperationsMissionAction.ScanNearby);
+                    return true;
+                }
                 if (!UiShellRuntimeGateway.TryReadMissionDefense(out var defense)) return false;
                 CaptureCommandUiClick();
                 CloseBuildDrawerIfOpen();

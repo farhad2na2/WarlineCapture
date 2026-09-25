@@ -1,0 +1,6 @@
+[UnityInvokeMac] LicensingMode: gui (batchmode disabled on macOS)
+[UnityInvokeMac] UnityExe: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+[UnityInvokeMac] ProjectPath: /private/tmp/warline-o001-experience-validation
+[UnityInvokeMac] LogFile: /Users/farhad/Projects/WarlineCapture/Design/AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/evidence/final-wide-fa-03/validation.log
+[UnityInvokeMac] TimeoutSeconds: 900
+[UnityInvokeMac] Arguments: -projectPath /private/tmp/warline-o001-experience-validation -logFile /Users/farhad/Projects/WarlineCapture/Design/AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/evidence/final-wide-fa-03/validation.log -executeMethod Game.Editor.OperationsReconLaunchSmokeValidation.RunWideLayoutPersian

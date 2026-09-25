@@ -39,7 +39,10 @@ namespace Game.UI.Shell.Ecs
                     {
                         UiShellRuntimeGateway.TryRequestOperationsMission(operation.Finished
                             ? UiOperationsMissionAction.Return : UiOperationsMissionAction.PromptWithdraw);
-                        EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
+                        // Keep the paused world frozen while withdrawal is being
+                        // confirmed. The confirmation closes Pause on acceptance.
+                        if (operation.Finished)
+                            EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
                         break;
                     }
                     if (UiShellRuntimeGateway.TryReadSkirmish(out var skirmish) && !skirmish.Finished)

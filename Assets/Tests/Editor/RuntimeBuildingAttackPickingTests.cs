@@ -12,6 +12,39 @@ namespace Game.Tests.Editor
     public sealed class RuntimeBuildingAttackPickingTests
     {
         [Test]
+        public void NeutralCityFocusFootprintDoesNotConsumeAttackGroundTap()
+        {
+            using var world = new World("Neutral city attack-ground picking");
+            var em = world.EntityManager;
+            var grid = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(grid, new GridConfig { Width = 256, Height = 256, CellSize = 1 });
+            var building = em.CreateEntity(typeof(OperationMapBuildingComponent), typeof(Faction), typeof(UnitHealth),
+                typeof(UnitGrid), typeof(UnitFootprint), typeof(LocalToWorld), typeof(LocalTransform));
+            em.SetComponentData(building, new Faction { Id = 0 });
+            em.SetComponentData(building, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(building, new UnitGrid { Cell = new int2(100,100) });
+            em.SetComponentData(building, new UnitFootprint { Size = new int2(8,8) });
+            em.SetComponentData(building, LocalTransform.FromPosition(new float3(104,0,104)));
+            em.SetComponentData(building, new LocalToWorld { Value = float4x4.Translate(new float3(104,0,104)) });
+            var go = new GameObject("Neutral city picking camera");
+            try
+            {
+                var camera = go.AddComponent<Camera>();
+                camera.pixelRect = new Rect(0,0,1920,1080);
+                camera.transform.position = new Vector3(104,40,79);
+                camera.transform.LookAt(new Vector3(104,0,104));
+                var picker = new RtsSelectionPointerTargetCommandCompositionSystemHelper();
+                var context = PickingContext(camera);
+                Vector2 point = camera.WorldToScreenPoint(new Vector3(104,0,104));
+                Assert.That(picker.TryGetClickedUnitEntity(context,point,em,out var focus),Is.True);
+                Assert.That(focus,Is.EqualTo(building),"The regression fixture must reproduce the scenery focus hit.");
+                Assert.That(picker.TryGetClickedAttackTargetEntity(context,point,em,out var attack),Is.False);
+                Assert.That(attack,Is.EqualTo(Entity.Null),"Explicit Attack may now issue its ordinary ground advance.");
+            }
+            finally { UnityEngine.Object.DestroyImmediate(go); }
+        }
+
+        [Test]
         public void VisibleGateFaceIsTappableAtMobileAspectsAndCameraAngles()
         {
             using var world = new World("GateScreenPickingTest");

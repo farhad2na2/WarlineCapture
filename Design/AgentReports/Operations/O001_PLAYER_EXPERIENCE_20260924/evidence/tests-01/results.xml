@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="76" result="Passed" total="76" passed="76" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:10Z" duration="1.1377445">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="4931" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:10Z" duration="1.137745" total="76" passed="76" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="6597" name="Game.Tests.Editor.dll" fullname="/private/tmp/warline-o001-experience-validation/Library/ScriptAssemblies/Game.Tests.Editor.dll" runstate="Runnable" testcasecount="4867" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:10Z" duration="0.991020" total="76" passed="76" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="47248" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestFixture" id="1467" name="AutomaticCombatFactionTargetingTests" fullname="AutomaticCombatFactionTargetingTests" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:10Z" duration="0.251839" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="1468" name="AttackMove_AcquiresHostileBuildingButIgnoresNeutralDeadAndSuppressedBuildings" fullname="AutomaticCombatFactionTargetingTests.AttackMove_AcquiresHostileBuildingButIgnoresNeutralDeadAndSuppressedBuildings" methodname="AttackMove_AcquiresHostileBuildingButIgnoresNeutralDeadAndSuppressedBuildings" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="1492772036" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:09Z" duration="0.214120" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1469" name="AttackMove_InterruptsCommandedPathForHostileButPlainMoveDoesNot" fullname="AutomaticCombatFactionTargetingTests.AttackMove_InterruptsCommandedPathForHostileButPlainMoveDoesNot" methodname="AttackMove_InterruptsCommandedPathForHostileButPlainMoveDoesNot" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="137296884" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:09Z" duration="0.001513" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1472" name="BuildingDefenseAttackSystem_IgnoresNeutralCitizenTargetsAndAttacksHostileTargets" fullname="AutomaticCombatFactionTargetingTests.BuildingDefenseAttackSystem_IgnoresNeutralCitizenTargetsAndAttacksHostileTargets" methodname="BuildingDefenseAttackSystem_IgnoresNeutralCitizenTargetsAndAttacksHostileTargets" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="737207281" result="Passed" start-time="2026-09-24 11:42:09Z" end-time="2026-09-24 11:42:10Z" duration="0.021092" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1473" name="FactionIdentity_CanAutoTargetForCombat_ExcludesNeutralAndAlliedFactions" fullname="AutomaticCombatFactionTargetingTests.FactionIdentity_CanAutoTargetForCombat_ExcludesNeutralAndAlliedFactions" methodname="FactionIdentity_CanAutoTargetForCombat_ExcludesNeutralAndAlliedFactions" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="1195802955" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000150" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1471" name="UnitEngagementSystem_HoldAcquiresHostileAndHonorsSuppressionWithRealEcbSingleton" fullname="AutomaticCombatFactionTargetingTests.UnitEngagementSystem_HoldAcquiresHostileAndHonorsSuppressionWithRealEcbSingleton" methodname="UnitEngagementSystem_HoldAcquiresHostileAndHonorsSuppressionWithRealEcbSingleton" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="768768701" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001672" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="1470" name="UnitEngagementSystem_IgnoresNeutralCitizenTargets" fullname="AutomaticCombatFactionTargetingTests.UnitEngagementSystem_IgnoresNeutralCitizenTargets" methodname="UnitEngagementSystem_IgnoresNeutralCitizenTargets" classname="AutomaticCombatFactionTargetingTests" runstate="Runnable" seed="415053940" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000588" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestSuite" id="6598" name="Game" fullname="Game" runstate="Runnable" testcasecount="347" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.081154" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="6599" name="Tests" fullname="Game.Tests" runstate="Runnable" testcasecount="347" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.068402" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="6600" name="Editor" fullname="Game.Tests.Editor" runstate="Runnable" testcasecount="347" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.057781" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="6451" name="RuntimeBuildingAttackPickingTests" fullname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests" classname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.037624" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="6452" name="NeutralCityFocusFootprintDoesNotConsumeAttackGroundTap" fullname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests.NeutralCityFocusFootprintDoesNotConsumeAttackGroundTap" methodname="NeutralCityFocusFootprintDoesNotConsumeAttackGroundTap" classname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests" runstate="Runnable" seed="1568924976" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.024867" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="6453" name="VisibleGateFaceIsTappableAtMobileAspectsAndCameraAngles" fullname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests.VisibleGateFaceIsTappableAtMobileAspectsAndCameraAngles" methodname="VisibleGateFaceIsTappableAtMobileAspectsAndCameraAngles" classname="Game.Tests.Editor.RuntimeBuildingAttackPickingTests" runstate="Runnable" seed="758082399" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.011455" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+      <test-suite type="TestFixture" id="4478" name="OperationsIntroductionPauseTests" fullname="OperationsIntroductionPauseTests" classname="OperationsIntroductionPauseTests" runstate="Runnable" testcasecount="1" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.010927" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4479" name="BriefingFreezesSimulationAndHandoffRestoresItsPriorState" fullname="OperationsIntroductionPauseTests.BriefingFreezesSimulationAndHandoffRestoresItsPriorState" methodname="BriefingFreezesSimulationAndHandoffRestoresItsPriorState" classname="OperationsIntroductionPauseTests" runstate="Runnable" seed="1933349633" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.007458" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4480" name="OperationsReconCheckpointTests" fullname="OperationsReconCheckpointTests" classname="OperationsReconCheckpointTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.045880" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4484" name="CorruptOrIncompatibleImageIsRejected" fullname="OperationsReconCheckpointTests.CorruptOrIncompatibleImageIsRejected" methodname="CorruptOrIncompatibleImageIsRejected" classname="OperationsReconCheckpointTests" runstate="Runnable" seed="1718349862" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.020452" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4482" name="MissingLastDestinationActorRejectsBeforeChangingEarlierActors" fullname="OperationsReconCheckpointTests.MissingLastDestinationActorRejectsBeforeChangingEarlierActors" methodname="MissingLastDestinationActorRejectsBeforeChangingEarlierActors" classname="OperationsReconCheckpointTests" runstate="Runnable" seed="303365160" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.007491" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4481" name="RoundTripRemapsCarrierAndChannel_PreservesCasualtyOrdersClocksAndRandomState" fullname="OperationsReconCheckpointTests.RoundTripRemapsCarrierAndChannel_PreservesCasualtyOrdersClocksAndRandomState" methodname="RoundTripRemapsCarrierAndChannel_PreservesCasualtyOrdersClocksAndRandomState" classname="OperationsReconCheckpointTests" runstate="Runnable" seed="310148638" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.011141" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4483" name="ValidEnvelopeWithInvalidReferenceOrNonFiniteClockIsRejected" fullname="OperationsReconCheckpointTests.ValidEnvelopeWithInvalidReferenceOrNonFiniteClockIsRejected" methodname="ValidEnvelopeWithInvalidReferenceOrNonFiniteClockIsRejected" classname="OperationsReconCheckpointTests" runstate="Runnable" seed="1440198787" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002082" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4485" name="OperationsReconWorldTests" fullname="OperationsReconWorldTests" classname="OperationsReconWorldTests" runstate="Runnable" testcasecount="17" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.084838" total="17" passed="17" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4495" name="ConcludeRequiresTwoScansAndTwoOriginalInfantryAtExit" fullname="OperationsReconWorldTests.ConcludeRequiresTwoScansAndTwoOriginalInfantryAtExit" methodname="ConcludeRequiresTwoScansAndTwoOriginalInfantryAtExit" classname="OperationsReconWorldTests" runstate="Runnable" seed="1857010857" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.017814" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4494" name="DeadCarrierDropsRecoverableEvidence_ReplacementDoesNotCountAsOriginal" fullname="OperationsReconWorldTests.DeadCarrierDropsRecoverableEvidence_ReplacementDoesNotCountAsOriginal" methodname="DeadCarrierDropsRecoverableEvidence_ReplacementDoesNotCountAsOriginal" classname="OperationsReconWorldTests" runstate="Runnable" seed="130478022" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003157" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4499" name="FirstScanLocationRemainsLatchedWhenEarlierIndexedSiteCompletesLater" fullname="OperationsReconWorldTests.FirstScanLocationRemainsLatchedWhenEarlierIndexedSiteCompletesLater" methodname="FirstScanLocationRemainsLatchedWhenEarlierIndexedSiteCompletesLater" classname="OperationsReconWorldTests" runstate="Runnable" seed="1218555695" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002718" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4497" name="FirstScanReserveWaitsForWarning_ThenReleasesOnceThroughSharedMoveQueue" fullname="OperationsReconWorldTests.FirstScanReserveWaitsForWarning_ThenReleasesOnceThroughSharedMoveQueue" methodname="FirstScanReserveWaitsForWarning_ThenReleasesOnceThroughSharedMoveQueue" classname="OperationsReconWorldTests" runstate="Runnable" seed="1263573566" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.006791" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4491" name="FrameCrossingDeadlineCannotFinishInteractionAfterTimeExpires" fullname="OperationsReconWorldTests.FrameCrossingDeadlineCannotFinishInteractionAfterTimeExpires" methodname="FrameCrossingDeadlineCannotFinishInteractionAfterTimeExpires" classname="OperationsReconWorldTests" runstate="Runnable" seed="812889188" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002687" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4496" name="HostileAtExitPreventsExtractionAndPartial" fullname="OperationsReconWorldTests.HostileAtExitPreventsExtractionAndPartial" methodname="HostileAtExitPreventsExtractionAndPartial" classname="OperationsReconWorldTests" runstate="Runnable" seed="581036865" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002790" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4490" name="LeavingRangeResetsChannel_AndRequiresNewAction" fullname="OperationsReconWorldTests.LeavingRangeResetsChannel_AndRequiresNewAction" methodname="LeavingRangeResetsChannel_AndRequiresNewAction" classname="OperationsReconWorldTests" runstate="Runnable" seed="312573735" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002620" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4487" name="ObjectiveAdvanceQueuesSharedAttackMoveWithoutCompletingOrTeleporting" fullname="OperationsReconWorldTests.ObjectiveAdvanceQueuesSharedAttackMoveWithoutCompletingOrTeleporting" methodname="ObjectiveAdvanceQueuesSharedAttackMoveWithoutCompletingOrTeleporting" classname="OperationsReconWorldTests" runstate="Runnable" seed="43540328" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.006634" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4498" name="PatrolUsesSharedOrdersAndYieldsToCombatPauseAndTerminal" fullname="OperationsReconWorldTests.PatrolUsesSharedOrdersAndYieldsToCombatPauseAndTerminal" methodname="PatrolUsesSharedOrdersAndYieldsToCombatPauseAndTerminal" classname="OperationsReconWorldTests" runstate="Runnable" seed="444612691" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.006200" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4492" name="PausedSimulationDoesNotAdvanceChannelOrDeadline" fullname="OperationsReconWorldTests.PausedSimulationDoesNotAdvanceChannelOrDeadline" methodname="PausedSimulationDoesNotAdvanceChannelOrDeadline" classname="OperationsReconWorldTests" runstate="Runnable" seed="1017821777" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002627" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4489" name="RepeatedScanInputDoesNotRestartTheActiveChannel" fullname="OperationsReconWorldTests.RepeatedScanInputDoesNotRestartTheActiveChannel" methodname="RepeatedScanInputDoesNotRestartTheActiveChannel" classname="OperationsReconWorldTests" runstate="Runnable" seed="1670888185" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002318" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4486" name="RuntimeNavigationRejectsBlockedAndDisconnectedObjectives" fullname="OperationsReconWorldTests.RuntimeNavigationRejectsBlockedAndDisconnectedObjectives" methodname="RuntimeNavigationRejectsBlockedAndDisconnectedObjectives" classname="OperationsReconWorldTests" runstate="Runnable" seed="1037087234" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.007107" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4502" name="ScanRequestSynchronizesPendingSharedTransformWriter" fullname="OperationsReconWorldTests.ScanRequestSynchronizesPendingSharedTransformWriter" methodname="ScanRequestSynchronizesPendingSharedTransformWriter" classname="OperationsReconWorldTests" runstate="Runnable" seed="758522145" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.005131" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4488" name="ScanRequiresExplicitActionAndFifteenSeconds_ThenTriggersFirstWaveOnlyOnce" fullname="OperationsReconWorldTests.ScanRequiresExplicitActionAndFifteenSeconds_ThenTriggersFirstWaveOnlyOnce" methodname="ScanRequiresExplicitActionAndFifteenSeconds_ThenTriggersFirstWaveOnlyOnce" classname="OperationsReconWorldTests" runstate="Runnable" seed="1454489590" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003832" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4501" name="StaleSessionAndEmbarkedInfantryCannotScan" fullname="OperationsReconWorldTests.StaleSessionAndEmbarkedInfantryCannotScan" methodname="StaleSessionAndEmbarkedInfantryCannotScan" classname="OperationsReconWorldTests" runstate="Runnable" seed="1161456263" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002726" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4500" name="StartupSuppressesStreamedLegacyForcesWithoutRemovingSelectedStartup" fullname="OperationsReconWorldTests.StartupSuppressesStreamedLegacyForcesWithoutRemovingSelectedStartup" methodname="StartupSuppressesStreamedLegacyForcesWithoutRemovingSelectedStartup" classname="OperationsReconWorldTests" runstate="Runnable" seed="1289474259" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003488" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4493" name="ThreeScansEvidenceAndTwoOriginalInfantryAtSafeExitWin_TerminalCannotChange" fullname="OperationsReconWorldTests.ThreeScansEvidenceAndTwoOriginalInfantryAtSafeExitWin_TerminalCannotChange" methodname="ThreeScansEvidenceAndTwoOriginalInfantryAtSafeExitWin_TerminalCannotChange" classname="OperationsReconWorldTests" runstate="Runnable" seed="279387804" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.002568" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4511" name="PauseOptionsV3PrefabTests" fullname="PauseOptionsV3PrefabTests" classname="PauseOptionsV3PrefabTests" runstate="Runnable" testcasecount="5" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.156346" total="5" passed="5" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4516" name="PauseOptions_AllButtonsExposePointerTargets" fullname="PauseOptionsV3PrefabTests.PauseOptions_AllButtonsExposePointerTargets" methodname="PauseOptions_AllButtonsExposePointerTargets" classname="PauseOptionsV3PrefabTests" runstate="Runnable" seed="1958834357" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.016487" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4514" name="PauseOptions_PreservesRealShellActionsAndRuntimeOverlays" fullname="PauseOptionsV3PrefabTests.PauseOptions_PreservesRealShellActionsAndRuntimeOverlays" methodname="PauseOptions_PreservesRealShellActionsAndRuntimeOverlays" classname="PauseOptionsV3PrefabTests" runstate="Runnable" seed="1617788910" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000596" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4515" name="PauseOptions_UsesOnlySharedV3AtlasArt" fullname="PauseOptionsV3PrefabTests.PauseOptions_UsesOnlySharedV3AtlasArt" methodname="PauseOptions_UsesOnlySharedV3AtlasArt" classname="PauseOptionsV3PrefabTests" runstate="Runnable" seed="1509154074" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.085290" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4513" name="PauseOptions_UsesTargetHierarchyAndConstantBorders" fullname="PauseOptionsV3PrefabTests.PauseOptions_UsesTargetHierarchyAndConstantBorders" methodname="PauseOptions_UsesTargetHierarchyAndConstantBorders" classname="PauseOptionsV3PrefabTests" runstate="Runnable" seed="1682779791" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003013" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4512" name="SkirmishPauseUsesLiveStatusWithoutCampaignOrAutosavePlaceholders" fullname="PauseOptionsV3PrefabTests.SkirmishPauseUsesLiveStatusWithoutCampaignOrAutosavePlaceholders" methodname="SkirmishPauseUsesLiveStatusWithoutCampaignOrAutosavePlaceholders" classname="PauseOptionsV3PrefabTests" runstate="Runnable" seed="651839482" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.046818" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="4834" name="RtsCameraSystemTests" fullname="RtsCameraSystemTests" classname="RtsCameraSystemTests" runstate="Runnable" testcasecount="39" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.064336" total="39" passed="39" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="4854" name="ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera" fullname="RtsCameraSystemTests.ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera" methodname="ApplyPerspectiveCameraModeInstant_ConfiguresPerspectiveCamera" classname="RtsCameraSystemTests" runstate="Runnable" seed="1736612042" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003330" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4835" name="Dragging_CanBeSetAndCleared" fullname="RtsCameraSystemTests.Dragging_CanBeSetAndCleared" methodname="Dragging_CanBeSetAndCleared" classname="RtsCameraSystemTests" runstate="Runnable" seed="25178757" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000315" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4857" name="FocusProductionDelivery_ManualPanReleasesFocusAndZoomWithoutReturningAfterRelease" fullname="RtsCameraSystemTests.FocusProductionDelivery_ManualPanReleasesFocusAndZoomWithoutReturningAfterRelease" methodname="FocusProductionDelivery_ManualPanReleasesFocusAndZoomWithoutReturningAfterRelease" classname="RtsCameraSystemTests" runstate="Runnable" seed="1066715061" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.007452" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4858" name="FocusProductionDelivery_ManualZoomCancelsFocusButIdleInputDoesNot" fullname="RtsCameraSystemTests.FocusProductionDelivery_ManualZoomCancelsFocusButIdleInputDoesNot" methodname="FocusProductionDelivery_ManualZoomCancelsFocusButIdleInputDoesNot" classname="RtsCameraSystemTests" runstate="Runnable" seed="1068000395" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000875" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4856" name="FocusProductionDelivery_UsesSmoothPanWithoutImmediateSnap" fullname="RtsCameraSystemTests.FocusProductionDelivery_UsesSmoothPanWithoutImmediateSnap" methodname="FocusProductionDelivery_UsesSmoothPanWithoutImmediateSnap" classname="RtsCameraSystemTests" runstate="Runnable" seed="2077576976" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001186" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4860" name="MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights" fullname="RtsCameraSystemTests.MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights" methodname="MatchHudZoomButtonsStepBetweenMinDefaultAndMaxHeights" classname="RtsCameraSystemTests" runstate="Runnable" seed="1468576365" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001720" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4859" name="MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation" fullname="RtsCameraSystemTests.MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation" methodname="MatchHudZoomControlState_ReusesTacticalFollowPoseQueryWithoutManagedAllocation" classname="RtsCameraSystemTests" runstate="Runnable" seed="129942699" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001224" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4873" name="MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes" fullname="RtsCameraSystemTests.MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes" methodname="MatchIntroFirstPlay_HoldsZoomedOutUntilIntroCompletes" classname="RtsCameraSystemTests" runstate="Runnable" seed="883843523" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.004110" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4872" name="MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests" fullname="RtsCameraSystemTests.MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests" methodname="MatchIntroFirstPlay_StartsZoomedOutAndTransitionsToNormalThroughRequests" classname="RtsCameraSystemTests" runstate="Runnable" seed="277893486" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000833" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4843" name="MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight" fullname="RtsCameraSystemTests.MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight" methodname="MobileRuntimeCameraLimits_CapZoomOutAtFullscreenOverviewHeight" classname="RtsCameraSystemTests" runstate="Runnable" seed="2071458441" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000507" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4861" name="MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter" fullname="RtsCameraSystemTests.MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter" methodname="MoveCameraGroundCenterTo_PreservesHeightAndMovesGroundCenter" classname="RtsCameraSystemTests" runstate="Runnable" seed="1487638694" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000381" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4841" name="PanCamera_ClampsViewportInsideGroundBoundary" fullname="RtsCameraSystemTests.PanCamera_ClampsViewportInsideGroundBoundary" methodname="PanCamera_ClampsViewportInsideGroundBoundary" classname="RtsCameraSystemTests" runstate="Runnable" seed="2091894087" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001124" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4840" name="PanCamera_MovesAlongFlattenedCameraAxes" fullname="RtsCameraSystemTests.PanCamera_MovesAlongFlattenedCameraAxes" methodname="PanCamera_MovesAlongFlattenedCameraAxes" classname="RtsCameraSystemTests" runstate="Runnable" seed="712246056" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000366" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4844" name="ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid" fullname="RtsCameraSystemTests.ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid" methodname="ProcessPendingRequests_ClampsInitialCameraViewportInsideGrid" classname="RtsCameraSystemTests" runstate="Runnable" seed="814539455" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000603" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4845" name="ProcessPendingRequests_PrefersActiveOperationMapCameraBounds" fullname="RtsCameraSystemTests.ProcessPendingRequests_PrefersActiveOperationMapCameraBounds" methodname="ProcessPendingRequests_PrefersActiveOperationMapCameraBounds" classname="RtsCameraSystemTests" runstate="Runnable" seed="1648464452" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001237" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4855" name="ProductionDeliveryZoom_KeepsElevatedTransportInsideCloseFraming" fullname="RtsCameraSystemTests.ProductionDeliveryZoom_KeepsElevatedTransportInsideCloseFraming" methodname="ProductionDeliveryZoom_KeepsElevatedTransportInsideCloseFraming" classname="RtsCameraSystemTests" runstate="Runnable" seed="1261246931" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000262" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4839" name="ResetCameraModeSession_ClearsModeTransitionState" fullname="RtsCameraSystemTests.ResetCameraModeSession_ClearsModeTransitionState" methodname="ResetCameraModeSession_ClearsModeTransitionState" classname="RtsCameraSystemTests" runstate="Runnable" seed="495019486" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000298" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4838" name="ResetSession_ClearsDragAndSmoothFocus" fullname="RtsCameraSystemTests.ResetSession_ClearsDragAndSmoothFocus" methodname="ResetSession_ClearsDragAndSmoothFocus" classname="RtsCameraSystemTests" runstate="Runnable" seed="1567308705" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000276" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4842" name="ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom" fullname="RtsCameraSystemTests.ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom" methodname="ResolveClampSafePerspectiveHeight_LeavesPanRoomAtMaxZoom" classname="RtsCameraSystemTests" runstate="Runnable" seed="1339952428" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000539" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4851" name="RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid" fullname="RtsCameraSystemTests.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid" methodname="RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowPoseValid" classname="RtsCameraSystemTests" runstate="Runnable" seed="486442351" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001385" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4852" name="RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid" fullname="RtsCameraSystemTests.RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid" methodname="RuntimeCameraTick_DoesNotApplyNormalCameraMotionWhileTacticalFollowRestorePoseValid" classname="RtsCameraSystemTests" runstate="Runnable" seed="826590200" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000828" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4871" name="RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete" fullname="RtsCameraSystemTests.RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete" methodname="RuntimeCameraTick_DoesNotAutoSettleManualZoomOutAfterIntroComplete" classname="RtsCameraSystemTests" runstate="Runnable" seed="695041560" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000885" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4853" name="RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid" fullname="RtsCameraSystemTests.RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid" methodname="RuntimeCameraTick_RemovesQueuedNormalCameraMotionWhileTacticalFollowPoseValid" classname="RtsCameraSystemTests" runstate="Runnable" seed="864670550" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000983" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4847" name="RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation" fullname="RtsCameraSystemTests.RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation" methodname="RuntimeCameraTick_ReusesTacticalFollowQueriesWithoutManagedAllocation" classname="RtsCameraSystemTests" runstate="Runnable" seed="655343547" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.006658" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4849" name="RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked" fullname="RtsCameraSystemTests.RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked" methodname="RuntimePanCamera_IgnoresBuildModeDragPanWhenTacticalFollowLocked" classname="RtsCameraSystemTests" runstate="Runnable" seed="1931823043" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001077" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4846" name="RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked" fullname="RtsCameraSystemTests.RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked" methodname="RuntimePanCamera_IgnoresDirectPanAndDragWhenTacticalFollowLocked" classname="RtsCameraSystemTests" runstate="Runnable" seed="1436226394" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000752" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4850" name="RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked" fullname="RtsCameraSystemTests.RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked" methodname="RuntimePanCamera_IgnoresFullscreenIsoDragPanWhenTacticalFollowLocked" classname="RtsCameraSystemTests" runstate="Runnable" seed="1335285520" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000764" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4836" name="SetSmoothFocusTarget_StoresGroundTarget" fullname="RtsCameraSystemTests.SetSmoothFocusTarget_StoresGroundTarget" methodname="SetSmoothFocusTarget_StoresGroundTarget" classname="RtsCameraSystemTests" runstate="Runnable" seed="983071608" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000267" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4864" name="TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue" methodname="TacticalFollowPoseRequest_CanRestoreOrthographicCameraThroughRequestQueue" classname="RtsCameraSystemTests" runstate="Runnable" seed="724924302" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001200" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4867" name="TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming" methodname="TacticalFollowPoseRequest_DistantTransitionPreservesBoundedDownwardFraming" classname="RtsCameraSystemTests" runstate="Runnable" seed="861068704" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.003229" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4868" name="TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary" methodname="TacticalFollowPoseRequest_DoesNotClampToRtsGroundBoundary" classname="RtsCameraSystemTests" runstate="Runnable" seed="866138174" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000616" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4866" name="TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot" methodname="TacticalFollowPoseRequest_ResetVelocityPreventsCarryOverOvershoot" classname="RtsCameraSystemTests" runstate="Runnable" seed="2010654497" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000568" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4865" name="TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping" methodname="TacticalFollowPoseRequest_SmoothlyApproachesTargetWithoutSnapping" classname="RtsCameraSystemTests" runstate="Runnable" seed="161398701" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001219" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4869" name="TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid" methodname="TacticalFollowPoseRequest_SuppressesNormalRequestsAndBoundaryClampWhilePoseValid" classname="RtsCameraSystemTests" runstate="Runnable" seed="1017593543" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000743" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4863" name="TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue" methodname="TacticalFollowPoseRequest_UpdatesCameraThroughRequestQueue" classname="RtsCameraSystemTests" runstate="Runnable" seed="487291428" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000633" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4870" name="TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt" fullname="RtsCameraSystemTests.TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt" methodname="TacticalFollowPoseRequest_UsesExplicitRestoreRotationInsteadOfLookAt" classname="RtsCameraSystemTests" runstate="Runnable" seed="737066395" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000707" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4848" name="TacticalFollowQueryCache_RebindsWhenWorldChanges" fullname="RtsCameraSystemTests.TacticalFollowQueryCache_RebindsWhenWorldChanges" methodname="TacticalFollowQueryCache_RebindsWhenWorldChanges" classname="RtsCameraSystemTests" runstate="Runnable" seed="641605302" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001243" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4862" name="UpdateFullscreenIsoZoom_ClampsTargets" fullname="RtsCameraSystemTests.UpdateFullscreenIsoZoom_ClampsTargets" methodname="UpdateFullscreenIsoZoom_ClampsTargets" classname="RtsCameraSystemTests" runstate="Runnable" seed="2018894057" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000370" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="4837" name="UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget" fullname="RtsCameraSystemTests.UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget" methodname="UpdateSmoothFocus_WhenAlreadyAtTargetClearsTarget" classname="RtsCameraSystemTests" runstate="Runnable" seed="1617583874" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.000562" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+      </test-suite>
+      <test-suite type="TestFixture" id="5074" name="ScanIntelCommandSystemTests" fullname="ScanIntelCommandSystemTests" classname="ScanIntelCommandSystemTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.018723" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-case id="5076" name="TryIssueScan_RejectsWhenClickedCellCannotResolve" fullname="ScanIntelCommandSystemTests.TryIssueScan_RejectsWhenClickedCellCannotResolve" methodname="TryIssueScan_RejectsWhenClickedCellCannotResolve" classname="ScanIntelCommandSystemTests" runstate="Runnable" seed="463519345" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.001924" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+        </test-case>
+        <test-case id="5075" name="TryIssueScan_RevealsHostileTargetsAndWritesIntelFeed" fullname="ScanIntelCommandSystemTests.TryIssueScan_RevealsHostileTargetsAndWritesIntelFeed" methodname="TryIssueScan_RevealsHostileTargetsAndWritesIntelFeed" classname="ScanIntelCommandSystemTests" runstate="Runnable" seed="108865450" result="Passed" start-time="2026-09-24 11:42:10Z" end-time="2026-09-24 11:42:10Z" duration="0.012505" asserts="0">
+          <properties>
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[Saving results to: /Users/farhad/Library/Application Support/WarlineCapture/WarlineCapture/TestResults.xml
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

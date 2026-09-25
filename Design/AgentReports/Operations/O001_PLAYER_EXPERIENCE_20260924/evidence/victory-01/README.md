@@ -1,0 +1,1 @@
+Failed full visible-input ARIA run before attack-ground targeting repair. Outcome: Defeat at 166.5 mission seconds, two scans, one survivor. Uses normal Move, which does not fight while advancing. It does not include the later stop/resume check. Captures are native; the first-scan completion and objective-focus images from earlier runs were excluded.

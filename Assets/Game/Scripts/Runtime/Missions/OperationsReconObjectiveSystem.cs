@@ -63,6 +63,7 @@ namespace Game.Runtime
                     if (request.Action == OperationsReconAction.Scan && request.SiteIndex >= 0 && request.SiteIndex < sites.Length)
                     {
                         var site = sites[request.SiteIndex];
+                        if (site.Actor != Entity.Null) continue; // repeated input must not restart an active scan
                         if (site.Completed != 0 || !hasSurface ||
                             !CanReach(positions[request.Actor].Position, site.Position, site.Radius, ref surface)) continue;
                         Cancel(request.Actor, sites, ref evidence);
@@ -71,7 +72,7 @@ namespace Game.Runtime
                         sites[request.SiteIndex] = site;
                     }
                     if (request.Action == OperationsReconAction.RecoverEvidence && mission.CompletedScans == sites.Length &&
-                        evidence.Carrier == Entity.Null && hasSurface &&
+                        evidence.Carrier == Entity.Null && evidence.Actor == Entity.Null && hasSurface &&
                         CanReach(positions[request.Actor].Position, evidence.Position, 6f, ref surface))
                     {
                         Cancel(request.Actor, sites, ref evidence);
@@ -195,7 +196,7 @@ namespace Game.Runtime
             if (evidence.Actor == actor) { evidence.Actor = Entity.Null; evidence.ChannelSeconds = 0f; }
         }
 
-        private static bool CanReach(float3 from, float3 to, float radius, ref MapSurfaceComponent surface)
+        public static bool CanReach(float3 from, float3 to, float radius, ref MapSurfaceComponent surface)
         {
             if (math.distancesq(from.xz, to.xz) > radius * radius || surface.CellSize <= 0f) return false;
             // O001 ground interactions cannot see through an impassable footprint. The

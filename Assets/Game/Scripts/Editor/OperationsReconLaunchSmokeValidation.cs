@@ -12,6 +12,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 namespace Game.Editor
 {
@@ -20,7 +21,25 @@ namespace Game.Editor
     {
         private static double started;
         private static int stage;
-        private static int captureFrames;
+        private static bool renderingTick;
+        private static int lastRenderingFrame = -1;
+        private static int captureFrames, capturedTourStage, capturedTourMask;
+        private static double introductionObservedAt, guidanceRequestedAt, ariaRequestedAt;
+        private static bool firstScanOnly, activeScanCaptured, selectionDiagnosticsAttached;
+        private static bool stopResumeVerified;
+        private static double stoppedAt;
+        private static float stoppedElapsed;
+        private static int stoppedActions;
+        private static int resultCaptureFrames;
+        private static double resumeRecapAt;
+        private static bool wideLayout;
+        private static bool withdrawalCancelChecked;
+        private static double withdrawalPromptAt;
+        private static float withdrawalElapsed;
+        private static double checkpointPauseAt;
+        private static InputSettings originalInputSettings, validationInputSettings;
+        private static readonly System.Collections.Generic.List<InputDevice> isolatedNativeDevices = new();
+        public static void RunFirstScan() { firstScanOnly = true; RunAriaVictory(); }
         private static int menuCaptureFrames;
         private static int menuReturnFrames;
         private static int ariaTraceBucket;
@@ -53,6 +72,8 @@ namespace Game.Editor
         private static int manualCaptureIndex;
 
         public static void Run() => Start(false);
+        public static void RunWideLayout() { wideLayout = true; Start(false); }
+        public static void RunWideLayoutPersian() { persian = true; RunWideLayout(); }
         public static void RunLifecycle() => Start(true);
         public static void RunCheckpointResume() { checkpointResume = true; Start(false); }
         public static void RunCheckpointResumeDuringScan() { checkpointResume = checkpointDuringScan = true; Start(false); }
@@ -116,6 +137,9 @@ namespace Game.Editor
 
         private static void Start(bool validateLifecycle)
         {
+            MainMenuV3PrefabBuilder.SetGameViewResolution(wideLayout ? 4800 : 1920, wideLayout ? 2160 : 1080);
+            V3UiLocalizationCatalogBuilder.ApplyConfiguredUiTables();
+
             lifecycle = validateLifecycle;
             if (processSave && File.Exists(ProcessCheckpointMarker)) File.Delete(ProcessCheckpointMarker);
             ProcessCheckpoint prior = processRestore ? JsonUtility.FromJson<ProcessCheckpoint>(File.ReadAllText(ProcessCheckpointMarker)) : null;
@@ -179,14 +203,39 @@ namespace Game.Editor
             started = EditorApplication.timeSinceStartup; stage = 0; captureFrames = menuCaptureFrames = menuReturnFrames = 0; ariaTraceBucket = -1; ariaWasActive = false; loadFailure = null;
             if (!processRestore) { checkpointScanSeconds = 0f; checkpointCarrierIndex = -1; }
             Application.logMessageReceived += ObserveLog;
-            EditorApplication.update += Tick;
+            lastRenderingFrame = -1;
+            Canvas.willRenderCanvases += TickInGameView;
             EditorApplication.EnterPlaymode();
+        }
+
+        private static void TickInGameView()
+        {
+            // GraphicRaycaster uses Screen dimensions internally. Run in the
+            // rendering context, not an Editor window's update context.
+            if (renderingTick || !EditorApplication.isPlaying || lastRenderingFrame == Time.frameCount) return;
+            lastRenderingFrame = Time.frameCount;
+            renderingTick = true;
+            try { Tick(); }
+            finally { renderingTick = false; }
         }
 
         private static void Tick()
         {
             if (!EditorApplication.isPlaying) return;
             Application.runInBackground = true;
+            if (ariaVictory) SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = true;
+            if (AriaTouchInputUiSystemHelper.AllowBackgroundValidation && validationInputSettings == null)
+            {
+                originalInputSettings = InputSystem.settings;
+                validationInputSettings = UnityEngine.Object.Instantiate(originalInputSettings);
+                validationInputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+                validationInputSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+                InputSystem.settings = validationInputSettings;
+                foreach (var device in InputSystem.devices)
+                    if (device.native && device.enabled && (device is Pointer || device is Keyboard))
+                    { InputSystem.ResetDevice(device); InputSystem.DisableDevice(device); isolatedNativeDevices.Add(device); }
+                Debug.Log("[OperationsReconLaunchSmokeValidation] inputFixture=background-game-view-only runtimeSettingsClone=1 nativeInputIsolated=" + isolatedNativeDevices.Count);
+            }
             try
             {
                 if (loadFailure != null) { Complete(false, loadFailure); return; }
@@ -254,7 +303,7 @@ namespace Game.Editor
                     foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                         if (button.name == Visible("DEPLOY") && button.interactable && button.GetComponentInParent<OperationsMissionScreenView>() != null &&
                             (!interrupted || button.GetComponentInChildren<TMPro.TMP_Text>().text == Visible("RESTART ATTEMPT")))
-                        { button.onClick.Invoke(); stage = 2; Debug.Log("[OperationsReconLaunchSmokeValidation] deployButtonInvoked=1 input=button-event-smoke"); break; }
+                        { AssertButtonReachable(button); button.onClick.Invoke(); stage = 2; Debug.Log("[OperationsReconLaunchSmokeValidation] deployButtonInvoked=1 reachable=1 input=button-event-smoke"); break; }
                     return;
                 }
                 if (stage == 2)
@@ -268,6 +317,41 @@ namespace Game.Editor
                     if (query.CalculateEntityCount() != 1) return;
                     var mission = query.GetSingleton<OperationsReconMissionComponent>();
                     if (mission.Phase != OperationsReconPhase.Playing) return;
+                    if (launchModel.Introduction && !processRestore)
+                    {
+                        if (introductionObservedAt == 0)
+                        {
+                            introductionObservedAt = EditorApplication.timeSinceStartup;
+                            ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001DeploymentBriefing.png"));
+                        }
+                        if (!launchModel.Resumed && mission.ElapsedSeconds > .1f)
+                            throw new InvalidOperationException("The briefing/tour consumed mission time.");
+                        if (launchModel.Touring && capturedTourStage != launchModel.IntroductionStage)
+                        {
+                            var introState = world.EntityManager.GetComponentData<OperationsReconIntroduction>(query.GetSingletonEntity());
+                            if (UnityEngine.Time.realtimeSinceStartupAsDouble >= introState.NextStageAt - 1.5 &&
+                                Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(world, out var tourCamera))
+                            {
+                                var target = launchModel.IntroductionStage < 4
+                                    ? world.EntityManager.GetBuffer<OperationsReconSiteElement>(query.GetSingletonEntity())[launchModel.IntroductionStage-1].Position
+                                    : mission.ExitPosition;
+                                var framed = tourCamera.WorldToViewportPoint(target);
+                                if (framed.z > 0 && framed.x >= .1f && framed.x <= .73f && framed.y >= .2f && framed.y <= .85f)
+                                {
+                                    capturedTourStage = launchModel.IntroductionStage; capturedTourMask |= 1 << capturedTourStage;
+                                    ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001Tour" + capturedTourStage + ".png"));
+                                }
+                            }
+                        }
+                        if (!launchModel.Touring && EditorApplication.timeSinceStartup - introductionObservedAt > 2)
+                        {
+                            AssertMissionTextFits();
+                            foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                                if (view.IsHud && view.IntroductionButton.IsActive()) { AssertButtonReachable(view.IntroductionButton); view.IntroductionButton.onClick.Invoke(); }
+                        }
+                        return;
+                    }
+
                     if (processRestore)
                     {
                         if (mission.SessionId.ToString() != checkpointSession || mission.ElapsedSeconds < checkpointElapsed ||
@@ -288,6 +372,7 @@ namespace Game.Editor
                                 world.EntityManager.GetComponentData<OperationsReconMemberComponent>(evidence.Carrier).StableIndex != checkpointCarrierIndex)
                                 throw new InvalidOperationException("Process restart lost evidence carrier " + checkpointCarrierIndex);
                         }
+                        if (!ResumeRecapHasHandedBackControl()) return;
                         Complete(true, "journey=process-restart-resume input=button-event-smoke session=" + checkpointSession +
                             " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + mission.ElapsedSeconds +
                             " scanBefore=" + checkpointScanSeconds + " carrierIndex=" + checkpointCarrierIndex + " ap=2");
@@ -314,14 +399,14 @@ namespace Game.Editor
                     foreach (var candidate in operationHud)
                     {
                         if (candidate.ScanButton(0) == null) continue;
-                        var tracker = candidate.transform.Find("MissionCard") as RectTransform;
-                        compactHud = tracker != null && tracker.anchorMin.x >= .75f &&
-                            !candidate.GuideOpen && !tracker.gameObject.activeSelf &&
-                            candidate.GuideButton.gameObject.activeSelf &&
-                            candidate.transform.Find("MissionGuideDrawer") is Transform drawer && !drawer.gameObject.activeSelf;
+                        var tracker = candidate.transform.Find("SafeArea/ObjectiveTracker") as RectTransform;
+                        compactHud = tracker != null && candidate.GuideOpen && tracker.gameObject.activeSelf &&
+                            candidate.ObjectiveButton.gameObject.activeInHierarchy && candidate.transform.Find("WorldObjective0") == null;
                         break;
                     }
-                    if (!compactHud) throw new InvalidOperationException("Operation HUD did not preserve a compact, closed guide at launch.");
+                    if (!launchModel.Resumed && capturedTourMask != 62)
+                        throw new InvalidOperationException("Tour did not visibly frame all five stages: mask=" + capturedTourMask);
+                    if (!compactHud) throw new InvalidOperationException("Operation HUD did not expose the persistent objective tracker at handoff.");
                     if (!Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(world, out var camera))
                         throw new InvalidOperationException("Missing shared world camera.");
                     var first = world.EntityManager.GetBuffer<OperationsReconRosterElement>(root)[0].Unit;
@@ -338,9 +423,17 @@ namespace Game.Editor
                 }
                 if (stage == 3 && ++captureFrames > 30 && File.Exists(capturePath))
                 {
+                    AssertMissionTextFits();
                     if (ariaVictory)
                     {
-                        if (Click("ARIA PLAY")) stage = 20;
+                        if (!selectionDiagnosticsAttached)
+                        {
+                            var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
+                            foreach (var button in tray.GetComponentsInChildren<Button>(true))
+                            { var observedButton = button; observedButton.onClick.AddListener(() => Debug.Log("[OperationsInputTrace] squadCardClick=" + observedButton.name)); }
+                            selectionDiagnosticsAttached = true;
+                        }
+                        if (Click("ARIA PLAY")) { stage = 20; ariaRequestedAt = EditorApplication.timeSinceStartup; }
                         return;
                     }
                     if (checkpointResume)
@@ -364,12 +457,12 @@ namespace Game.Editor
                         foreach (var candidate in operationView)
                         {
                             if (candidate.GuideButton == null) continue;
-                            candidate.GuideButton.onClick.Invoke();
-                            if (!candidate.GuideOpen) throw new InvalidOperationException("Mission Guide did not open from its button.");
-                            ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001MissionGuidePopup.png"));
+                            AssertButtonReachable(candidate.GuideButton); candidate.GuideButton.onClick.Invoke();
+                            if (!candidate.GuideOpen) throw new InvalidOperationException("Objective tracker disappeared while focusing the objective.");
+                            guidanceRequestedAt = EditorApplication.timeSinceStartup;
                             stage = 31; captureFrames = 0; return;
                         }
-                        throw new InvalidOperationException("Mission Guide button is missing.");
+                        throw new InvalidOperationException("Show objective button is missing.");
                     }
                     if (Click("WITHDRAW")) stage = 4;
                     return;
@@ -388,6 +481,7 @@ namespace Game.Editor
                     if (traceBucket > ariaTraceBucket)
                     {
                         ariaTraceBucket = traceBucket;
+                        AssertMissionTextFits();
                         Debug.Log("[OperationsReconCheckpointTrace] elapsed=" + active.ElapsedSeconds.ToString("F0") +
                             " scan=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds) +
                             " completed=" + active.CompletedScans + " aria=" + ariaState.Phase +
@@ -403,7 +497,7 @@ namespace Game.Editor
                     checkpointSession = active.SessionId.ToString();
                     checkpointElapsed = active.ElapsedSeconds;
                     UiShellRuntimeGateway.StopAriaPlay();
-                    if (Click("SAVE & EXIT")) stage = 10;
+                    stage = 24;
                     return;
                 }
                 if (stage == 23)
@@ -434,23 +528,75 @@ namespace Game.Editor
                     checkpointSession = active.SessionId.ToString();
                     checkpointElapsed = active.ElapsedSeconds;
                     UiShellRuntimeGateway.StopAriaPlay();
+                    stage = 24;
+                    return;
+                }
+                if (stage == 24)
+                {
+                    if (UiShellRuntimeGateway.TryReadOperationsMission(out var checkpointModel) && checkpointModel.Paused)
+                    {
+                        if (checkpointPauseAt == 0)
+                        {
+                            checkpointPauseAt = EditorApplication.timeSinceStartup;
+                            ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001Pause.png"));
+                            return;
+                        }
+                        if (EditorApplication.timeSinceStartup - checkpointPauseAt < 2) return;
+                    }
                     if (Click("SAVE & EXIT")) stage = 10;
                     return;
                 }
-                if (stage == 31 && ++captureFrames > 30 &&
-                    File.Exists(Path.GetFullPath("Build/EditorEvidence/O001MissionGuidePopup.png")))
+                if (stage == 31 && EditorApplication.timeSinceStartup - guidanceRequestedAt > 3)
                 {
                     foreach (var candidate in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
                     {
                         if (candidate.GuideButton == null) continue;
-                        candidate.GuideButton.onClick.Invoke();
-                        if (candidate.GuideOpen) throw new InvalidOperationException("Mission Guide did not close from its button.");
-                        Complete(true, "route=Operations phase=Playing clockAdvanced=5s original=16 total=36 guide=open-closed capture=" + capturePath);
+                        if (!UiShellRuntimeGateway.TryReadOperationsMission(out var focused) || !focused.ViewingObjective || !candidate.GuideOpen)
+                            throw new InvalidOperationException("Show objective did not focus the objective with the tracker visible.");
+                        if (!Game.Rendering.RuntimeCameraReferenceSystem.TryGetWorldCamera(World.DefaultGameObjectInjectionWorld, out var objectiveCamera))
+                            throw new InvalidOperationException("Missing camera during objective focus.");
+                        var targetViewport = objectiveCamera.WorldToViewportPoint(focused.ObjectivePosition);
+                        if (targetViewport.z <= 0 || targetViewport.x < .1f || targetViewport.x > .73f || targetViewport.y < .25f || targetViewport.y > .85f)
+                            throw new InvalidOperationException("Show objective did not frame its world target: " + targetViewport);
+                        ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001ObjectiveFocus.png"));
+                        stage = 34; captureFrames = 0;
                         return;
                     }
                 }
+                if (stage == 34 && ++captureFrames > 30)
+                {
+                    UiShellRuntimeGateway.TryRequestOperationsMission(UiOperationsMissionAction.FocusSquad);
+                    stage = 32; guidanceRequestedAt = EditorApplication.timeSinceStartup;
+                }
+                if (stage == 32 && EditorApplication.timeSinceStartup - guidanceRequestedAt > 3)
+                {
+                    if (!UiShellRuntimeGateway.TryReadOperationsMission(out var returned) || returned.ViewingObjective)
+                        throw new InvalidOperationException("Return to squad did not release objective focus.");
+                    Complete(true, "route=Operations phase=Playing clockAdvanced=5s original=16 total=36 briefing=tour-handoff tracker=persistent camera=objective-squad capture=" + capturePath);
+                    return;
+                }
                 if (stage == 4)
                 {
+                    if (!withdrawalCancelChecked)
+                    {
+                        if (GameObject.Find("ConfirmWithdraw") == null) return;
+                        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                        using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                        float elapsed = roots.GetSingleton<OperationsReconMissionComponent>().ElapsedSeconds;
+                        if (withdrawalPromptAt == 0)
+                        {
+                            withdrawalPromptAt = EditorApplication.timeSinceStartup; withdrawalElapsed = elapsed;
+                            ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001WithdrawConfirmation.png"));
+                            return;
+                        }
+                        if (EditorApplication.timeSinceStartup - withdrawalPromptAt < 2) return;
+                        if (elapsed != withdrawalElapsed || Time.timeScale != 0)
+                            throw new InvalidOperationException("Withdrawal confirmation resumed the mission underneath the modal.");
+                        if (!Click("CANCEL", "ConfirmWithdraw")) throw new InvalidOperationException("Withdrawal confirmation has no usable Cancel.");
+                        withdrawalCancelChecked = true; stage = 3;
+                        Debug.Log("[OperationsReconLaunchSmokeValidation] withdrawCancel=Passed missionRemainedPaused=1");
+                        return;
+                    }
                     if (Click("WITHDRAW", "ConfirmWithdraw")) stage = 5;
                     return;
                 }
@@ -485,6 +631,8 @@ namespace Game.Editor
                     using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
                     if (roots.CalculateEntityCount() != 1) return;
                     var mission = roots.GetSingleton<OperationsReconMissionComponent>();
+                    if (UiShellRuntimeGateway.TryReadOperationsMission(out var redeploy) && redeploy.Introduction)
+                    { UiShellRuntimeGateway.TryRequestOperationsMission(UiOperationsMissionAction.SkipIntroduction); return; }
                     if (mission.Phase != OperationsReconPhase.Playing || mission.ElapsedSeconds < 2) return;
                     using var owned = em.CreateEntityQuery(new EntityQueryDesc
                     { All = new[] { ComponentType.ReadOnly<OperationsReconMemberComponent>() }, Options = EntityQueryOptions.IncludeDisabledEntities });
@@ -535,15 +683,68 @@ namespace Game.Editor
                             throw new InvalidOperationException("Resume lost active scan progress: before=" + checkpointScanSeconds +
                                 " after=" + (sites.Length == 0 ? -1f : sites[0].ChannelSeconds));
                     }
+                    if (!ResumeRecapHasHandedBackControl()) return;
                     Complete(true, "journey=save-exit-resume input=button-event-smoke session=" + checkpointSession +
                         " elapsedBefore=" + checkpointElapsed + " elapsedAfter=" + resumed.ElapsedSeconds +
                         " scanBefore=" + checkpointScanSeconds + " ap=2");
+                }
+                if (stage == 33 && ++captureFrames > 30 && File.Exists(Path.GetFullPath("Build/EditorEvidence/O001FirstScanComplete.png")))
+                { Complete(true, "journey=first-scan input=visible-touch scans=1"); return; }
+                if (stage == 40)
+                {
+                    var state = UiShellRuntimeGateway.ReadAriaPlay();
+                    if (state.Active)
+                    {
+                        if (EditorApplication.timeSinceStartup - stoppedAt > 3)
+                            throw new InvalidOperationException("Visible STOP ARIA did not stop the session.");
+                        return;
+                    }
+                    stoppedActions = state.Actions;
+                    stoppedAt = EditorApplication.timeSinceStartup;
+                    ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001AriaStopped.png"));
+                    stage = 41;
+                    return;
+                }
+                if (stage == 41)
+                {
+                    var state = UiShellRuntimeGateway.ReadAriaPlay();
+                    if (state.Active || state.Actions != stoppedActions)
+                        throw new InvalidOperationException("ARIA continued issuing input after STOP ARIA.");
+                    if (EditorApplication.timeSinceStartup - stoppedAt < 4) return;
+                    if (!UiShellRuntimeGateway.TryReadOperationsMission(out var stoppedModel) || stoppedModel.Paused || stoppedModel.Finished)
+                        throw new InvalidOperationException("Stopping ARIA paused or ended the mission.");
+                    var em = World.DefaultGameObjectInjectionWorld.EntityManager;
+                    using var roots = em.CreateEntityQuery(typeof(OperationsReconMissionComponent));
+                    if (roots.GetSingleton<OperationsReconMissionComponent>().ElapsedSeconds <= stoppedElapsed + 1)
+                        throw new InvalidOperationException("The mission clock stopped with ARIA.");
+                    if (!Click("ARIA PLAY")) throw new InvalidOperationException("Visible ARIA PLAY was not restored after stopping.");
+                    stopResumeVerified = true; ariaWasActive = false;
+                    ariaRequestedAt = EditorApplication.timeSinceStartup; stage = 20;
+                    Debug.Log("[OperationsReconLaunchSmokeValidation] ariaStopResume=Passed input=visible-button-events missionContinued=1");
+                    return;
                 }
                 if (stage == 20)
                 {
                     var world = World.DefaultGameObjectInjectionWorld;
                     if (world == null || !world.IsCreated ||
                         !OperationsReconLaunchProjection.TryGet(world.EntityManager, out var root, out var operation)) return;
+                    if (firstScanOnly && stopResumeVerified && operation.CompletedScans >= 1)
+                    {
+                        ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001FirstScanComplete.png"));
+                        stage = 33; captureFrames = 0;
+                        return;
+                    }
+                    if (!stopResumeVerified && operation.CompletedScans >= 1 && UiShellRuntimeGateway.ReadAriaPlay().Active)
+                    {
+                        if (!Click("STOP ARIA")) throw new InvalidOperationException("Visible STOP ARIA is missing while ARIA is active.");
+                        stoppedAt = EditorApplication.timeSinceStartup; stoppedElapsed = operation.ElapsedSeconds;
+                        stage = 40;
+                        return;
+                    }
+                    if (!activeScanCaptured)
+                        foreach (var site in world.EntityManager.GetBuffer<OperationsReconSiteElement>(root))
+                            if (site.ChannelSeconds >= 5 && site.Completed == 0)
+                            { ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001ActiveScan.png")); activeScanCaptured = true; break; }
                     int traceBucket = Mathf.FloorToInt(operation.ElapsedSeconds / 30f);
                     var ariaState = UiShellRuntimeGateway.ReadAriaPlay();
                     if (ariaState.Active) ariaWasActive = true;
@@ -553,14 +754,19 @@ namespace Game.Editor
                     {
                         ariaTraceBucket = traceBucket;
                         using var observations = world.EntityManager.CreateEntityQuery(typeof(AriaPlayObservationComponent));
+                        AssertMissionTextFits();
                         var observation = observations.IsEmptyIgnoreFilter ? default : observations.GetSingleton<AriaPlayObservationComponent>();
-                        Debug.Log("[OperationsReconAriaTrace] elapsed=" + operation.ElapsedSeconds.ToString("F0") +
+                        using var selectedUnits = world.EntityManager.CreateEntityQuery(typeof(SelectedUnitTag));
+                        ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001AriaLatest.png"));
+                        Debug.Log("[OperationsReconAriaTrace] selected=" + selectedUnits.CalculateEntityCount() + " elapsed=" + operation.ElapsedSeconds.ToString("F0") +
                             " phase=" + ariaState.Phase + " actions=" + ariaState.Actions + " scans=" + operation.CompletedScans +
                             " surviving=" + operation.SurvivingInfantry + " atExit=" + operation.InfantryAtExit +
                             " evidenceRecovered=" + world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Recovered +
                             " goal=" + observation.GoalId + " kind=" + observation.Kind + " target=" + observation.TargetId +
                             " stopReason=" + session.StopReason + " focused=" + Application.isFocused + " timeScale=" + Time.timeScale);
                     }
+                    if (!ariaWasActive && EditorApplication.timeSinceStartup - ariaRequestedAt > 20)
+                        throw new InvalidOperationException("ARIA failed to start: stopReason=" + session.StopReason + " focused=" + Application.isFocused);
                     if (ariaWasActive && !ariaState.Active && operation.Phase != OperationsReconPhase.Terminal)
                         throw new InvalidOperationException("ARIA stopped before O001 finished: elapsed=" + operation.ElapsedSeconds.ToString("F0") +
                             " phase=" + ariaState.Phase + " actions=" + ariaState.Actions +
@@ -579,6 +785,14 @@ namespace Game.Editor
                             " atExit=" + operation.InfantryAtExit +
                             " evidenceRecovered=" + world.EntityManager.GetComponentData<OperationsReconEvidenceComponent>(root).Recovered +
                             " actions=" + UiShellRuntimeGateway.ReadAriaPlay().Actions);
+                    if (resultCaptureFrames++ == 0)
+                    {
+                        ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001MissionResult.png"));
+                        Debug.Log("[OperationsReconAriaVictory] elapsed=" + operation.ElapsedSeconds.ToString("F1") +
+                            " scans=" + operation.CompletedScans + " survivors=" + operation.SurvivingInfantry +
+                            " extracted=" + operation.InfantryAtExit + " saved=1");
+                    }
+                    if (resultCaptureFrames < 30) return;
                     if (Click("CONTINUE")) stage = 21;
                     return;
                 }
@@ -655,11 +869,59 @@ namespace Game.Editor
             public bool recovered, carried;
         }
 
+        private static bool ResumeRecapHasHandedBackControl()
+        {
+            if (!UiShellRuntimeGateway.TryReadOperationsMission(out var model) || !model.Resumed) return false;
+            if (resumeRecapAt == 0)
+            {
+                if (!model.Introduction) throw new InvalidOperationException("Saved mission skipped its resume recap.");
+                resumeRecapAt = EditorApplication.timeSinceStartup;
+                ScreenCapture.CaptureScreenshot(Path.GetFullPath("Build/EditorEvidence/O001ResumeRecap.png"));
+                return false;
+            }
+            if (model.Introduction)
+            {
+                if (!model.Touring && EditorApplication.timeSinceStartup - resumeRecapAt > 2)
+                {
+                    AssertMissionTextFits();
+                    foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                        if (view.IsHud && view.IntroductionButton.IsActive()) { AssertButtonReachable(view.IntroductionButton); view.IntroductionButton.onClick.Invoke(); }
+                }
+                return false;
+            }
+            return !model.Paused;
+        }
+
+        private static void AssertMissionTextFits()
+        {
+            Canvas.ForceUpdateCanvases();
+            foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (!view.IsHud) continue;
+                foreach (var label in view.GetComponentsInChildren<TMPro.TMP_Text>())
+                {
+                    label.ForceMeshUpdate();
+                    if (label.isTextOverflowing)
+                        throw new InvalidOperationException("Mission text overflows its native box: " + label.text + " rect=" + label.rectTransform.rect);
+                }
+            }
+        }
+
         private static bool Click(string name, string ancestor = null)
         {
+            if (name is "ARIA PLAY" or "STOP ARIA")
+            {
+                bool stopping = name == "STOP ARIA";
+                foreach (var view in UnityEngine.Object.FindObjectsByType<OperationsMissionScreenView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    if (view.IsHud && view.AriaButton != null && view.AriaButton.IsActive() && view.AriaButton.interactable &&
+                        UiShellRuntimeGateway.ReadAriaPlay().Active == stopping)
+                    { AssertButtonReachable(view.AriaButton); view.AriaButton.onClick.Invoke(); return true; }
+            }
             foreach (var button in UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
             {
-                if (button.name != Visible(name) || !button.interactable || button.GetComponentInParent<OperationsMissionScreenView>() == null) continue;
+                bool matching = button.name == Visible(name) || button.GetComponentInChildren<TMPro.TMP_Text>()?.text == Visible(name);
+                bool owner = button.GetComponentInParent<OperationsMissionScreenView>() != null || button.GetComponentInParent<PauseOptionsV3PopupView>() != null;
+                if (!matching || !button.interactable || !owner) continue;
                 if (ancestor != null)
                 {
                     bool found = false;
@@ -667,9 +929,39 @@ namespace Game.Editor
                         if (parent.name == ancestor) { found = true; break; }
                     if (!found) continue;
                 }
-                button.onClick.Invoke(); return true;
+                AssertButtonReachable(button); button.onClick.Invoke(); return true;
             }
+            if (name is "ARIA PLAY" or "SAVE & EXIT" or "WITHDRAW")
+                UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.Pause);
             return false;
+        }
+
+        private static void AssertButtonReachable(Button button)
+        {
+            Canvas.ForceUpdateCanvases();
+            var rect = (RectTransform)button.transform;
+            var canvas = button.GetComponentInParent<Canvas>().rootCanvas;
+            var camera = canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : canvas.worldCamera;
+            // Use the same pixel coordinates as the Canvas camera and Game view.
+            var gameSize = Handles.GetMainGameViewSize();
+            var screenBounds = camera != null ? camera.pixelRect : new Rect(Vector2.zero, gameSize);
+            var corners = new Vector3[4]; rect.GetWorldCorners(corners);
+            foreach (var corner in corners)
+            {
+                var point = RectTransformUtility.WorldToScreenPoint(camera, corner);
+                if (point.x < screenBounds.xMin || point.x > screenBounds.xMax ||
+                    point.y < screenBounds.yMin || point.y > screenBounds.yMax)
+                    throw new InvalidOperationException("Visible button extends outside the screen: " + button.name +
+                        " point=" + point + " viewport=" + screenBounds + " canvas=" + canvas.renderMode);
+            }
+            var center = RectTransformUtility.WorldToScreenPoint(camera, rect.TransformPoint(rect.rect.center));
+            var hits = new System.Collections.Generic.List<UnityEngine.EventSystems.RaycastResult>();
+            var events = UnityEngine.EventSystems.EventSystem.current;
+            if (events == null) throw new InvalidOperationException("No EventSystem for visible button: " + button.name);
+            events.RaycastAll(new UnityEngine.EventSystems.PointerEventData(events) { position = center }, hits);
+            if (hits.Count == 0 || !hits[0].gameObject.transform.IsChildOf(button.transform))
+                throw new InvalidOperationException("Visible button is covered or clipped: " + button.name + " hit=" +
+                    (hits.Count == 0 ? "none" : hits[0].gameObject.name));
         }
 
         private static string Visible(string name) => name switch
@@ -679,6 +971,7 @@ namespace Game.Editor
             "SAVE & EXIT" => UiShellRuntimeGateway.Localization.Get("operations.o001.save_exit", name),
             "RESUME ATTEMPT" => UiShellRuntimeGateway.Localization.Get("operations.o001.resume_attempt", name),
             "ARIA PLAY" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_play", name),
+            "STOP ARIA" => UiShellRuntimeGateway.Localization.Get("operations.o001.aria_stop", name),
             "WITHDRAW" => UiShellRuntimeGateway.Localization.Get("operations.withdraw", name),
             "CONTINUE" => UiShellRuntimeGateway.Localization.Get("ui.common.continue", name),
             _ => name
@@ -686,8 +979,12 @@ namespace Game.Editor
 
         private static void Complete(bool passed, string detail)
         {
-            EditorApplication.update -= Tick;
+            Canvas.willRenderCanvases -= TickInGameView;
             Application.logMessageReceived -= ObserveLog;
+            foreach (var device in isolatedNativeDevices) if (device.added) InputSystem.EnableDevice(device);
+            isolatedNativeDevices.Clear();
+            if (validationInputSettings != null)
+            { InputSystem.settings = originalInputSettings; UnityEngine.Object.Destroy(validationInputSettings); validationInputSettings = null; }
             exitCode = passed ? 0 : 1;
             Debug.Log("[OperationsReconLaunchSmokeValidation] result=" + (passed ? "Passed" : "Failed") + " " + detail);
             EditorApplication.playModeStateChanged += Exit;

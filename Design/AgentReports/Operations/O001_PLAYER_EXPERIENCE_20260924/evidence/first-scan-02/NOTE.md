@@ -1,0 +1,1 @@
+Failed diagnostic run. Initially ARIA stopped due to Editor focus loss before any action. A live CLI diagnostic then enabled WARLINE_ARIA_BACKGROUND_VALIDATION and re-requested ARIA start; it blocked after 3 squad-card attempts. This interrupted run is not acceptance evidence. No gameplay state, troop orders or progress were injected.

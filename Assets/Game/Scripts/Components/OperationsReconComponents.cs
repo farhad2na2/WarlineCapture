@@ -8,6 +8,15 @@ namespace Game.Components
     public enum OperationsReconOutcome : byte { None, Victory, Partial, Defeat, Withdraw }
     public enum OperationsReconAction : byte { Scan, RecoverEvidence, CancelInteraction, Conclude, Withdraw }
 
+    // Session-owned presentation state. Checkpoints resume into a fresh recap, never
+    // replay a saved half-tour or advance the mission clock during introduction.
+    public struct OperationsReconIntroduction : IComponentData
+    {
+        public byte Stage; // 0 briefing, 1..5 public-objective tour, 6 player control
+        public byte Resumed;
+        public double NextStageAt;
+    }
+
     public struct OperationsReconMemberComponent : IComponentData
     {
         public Entity Session;

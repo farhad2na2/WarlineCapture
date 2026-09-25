@@ -27,9 +27,18 @@ namespace Game.UI.Runtime
             current is IUiExpandedSkirmishCommandGateway gateway &&
             gateway.TrySelectExpandedPresentedSlot(slotIndex);
 
+        public static bool TrySelectExpandedGroup(uint groupId) =>
+            current is IUiExpandedSkirmishCommandGateway gateway && gateway.TrySelectExpandedGroup(groupId);
+
         public static bool TryHoldExpandedSelection() =>
             current is IUiExpandedSkirmishCommandGateway gateway &&
             gateway.TryHoldExpandedSelection();
+
+        public static bool TryChangeExpandedSquadPage(int delta) =>
+            current is IUiExpandedSkirmishCommandGateway gateway && gateway.TryChangeExpandedSquadPage(delta);
+
+        public static bool TryClearExpandedSquadSelection() =>
+            current is IUiExpandedSkirmishCommandGateway gateway && gateway.TryClearExpandedSquadSelection();
 
 
     }

@@ -17,7 +17,7 @@ namespace Game.Skirmish.Contracts
 
     public static class SkirmishArmyPaging
     {
-        public const int StandardPageSize = 4;
+        public const int StandardPageSize = 5;
     }
 
     public struct SkirmishCommandDecision

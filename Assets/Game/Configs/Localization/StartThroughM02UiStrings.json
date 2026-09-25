@@ -1811,6 +1811,56 @@
       ]
     },
     {
+      "key": "ui.skirmish.squads.range",
+      "source": "SQUADS {0}–{1} OF {2}",
+      "translations": [{ "locale": "fa-IR", "value": "گروه‌های {0} تا {1} از {2}" }]
+    },
+    {
+      "key": "ui.skirmish.squads.previous",
+      "source": "Previous squads",
+      "translations": [{ "locale": "fa-IR", "value": "گروه‌های قبلی" }]
+    },
+    {
+      "key": "ui.skirmish.squads.next",
+      "source": "Next squads",
+      "translations": [{ "locale": "fa-IR", "value": "گروه‌های بعدی" }]
+    },
+    {
+      "key": "ui.skirmish.squads.clear",
+      "source": "CLEAR",
+      "translations": [{ "locale": "fa-IR", "value": "پاک کردن" }]
+    },
+    {
+      "key": "ui.skirmish.squads.none_selected",
+      "source": "Tap squads to select",
+      "translations": [{ "locale": "fa-IR", "value": "برای انتخاب، روی گروه‌ها بزنید" }]
+    },
+    {
+      "key": "ui.skirmish.squads.selected",
+      "source": "{0} selected",
+      "translations": [{ "locale": "fa-IR", "value": "{0} انتخاب" }]
+    },
+    {
+      "key": "ui.skirmish.squads.selected_off_page",
+      "source": "{0} selected • {1} off page",
+      "translations": [{ "locale": "fa-IR", "value": "{0} انتخاب • {1} صفحه دیگر" }]
+    },
+    {
+      "key": "ui.skirmish.squads.empty",
+      "source": "NO SQUADS AVAILABLE",
+      "translations": [{ "locale": "fa-IR", "value": "هیچ گروهی در دسترس نیست" }]
+    },
+    {
+      "key": "ui.skirmish.squads.unit",
+      "source": "{0} unit",
+      "translations": [{ "locale": "fa-IR", "value": "{0} نفر" }]
+    },
+    {
+      "key": "ui.skirmish.squads.units",
+      "source": "{0} units",
+      "translations": [{ "locale": "fa-IR", "value": "{0} نفر" }]
+    },
+    {
       "key": "ui.skirmish.infantry",
       "source": "Infantry",
       "translations": [

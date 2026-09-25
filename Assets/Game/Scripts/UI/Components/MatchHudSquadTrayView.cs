@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView, IMatchHudSquadTrayPortraitBinding
+    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView, IMatchHudSquadTrayPortraitBinding, IMatchHudSquadTrayPaginationBinding
     {
         // UiAssistantHighlightModel deliberately carries the ECS target kind as a byte so
         // Game.UI.Runtime does not depend on the gameplay-components assembly.
@@ -22,6 +22,10 @@ namespace Game.UI.Runtime
             public RectTransform NameStrip;
             public TMP_Text NameLabel;
             public Image DisabledWash;
+            public TMP_Text OrdinalBadge;
+            public GameObject SelectedCheck;
+            public TMP_Text AliveCountLabel;
+            public Image HealthFillImage;
         }
 
         [SerializeField] private Sprite normalFrameSprite;
@@ -46,6 +50,8 @@ namespace Game.UI.Runtime
         private readonly Color[] _frameBaseColors = new Color[5];
         private readonly Color[] _portraitBaseColors = new Color[5];
         private readonly bool[] _missionDisabled = new bool[5];
+        private readonly uint[] _displayedGroupIds = new uint[5];
+        private readonly uint[] _pressedGroupIds = new uint[5];
         private Action<MatchHudSquadTraySlot> _cardClicked;
         private Canvas _cachedCanvas;
         private RectTransform _assistantGuidanceCue;
@@ -79,6 +85,7 @@ namespace Game.UI.Runtime
             MatchHudCanvasBatchingUtility.EnsureLocalCanvas(gameObject, needsRaycaster: true);
             CacheBaseFrameColors();
             CreateCardLabels();
+            CaptureCardLayouts();
             CreateAssistantGuidanceCue();
             SetSelectedSlot(MatchHudSquadTraySlot.Soldiers);
         }
@@ -111,6 +118,7 @@ namespace Game.UI.Runtime
         public void Bind(Action<MatchHudSquadTraySlot> cardClicked)
         {
             Unbind();
+            BindPagination();
             _cardClicked = cardClicked;
             RefreshMissionRestrictions();
 
@@ -120,6 +128,9 @@ namespace Game.UI.Runtime
                     continue;
 
                 int index = i;
+                var press = card.Button.GetComponent<MatchHudSquadCardPressRelay>();
+                if (press == null) press = card.Button.gameObject.AddComponent<MatchHudSquadCardPressRelay>();
+                press.Bind(eventData => CapturePressedGroup(index, eventData));
                 card.Button.onClick.AddListener(() => OnCardClicked(index));
             }
         }
@@ -128,7 +139,6 @@ namespace Game.UI.Runtime
         private bool skirmishPortraitsApplied;
         private Sprite[] campaignPortraits;
         private Func<int, Sprite> resolvePresentedPortrait;
-        private TMP_Text nextPageArrow;
 
         public void ConfigurePortraitResolver(Func<int, Sprite> resolver) => resolvePresentedPortrait = resolver;
 
@@ -136,6 +146,7 @@ namespace Game.UI.Runtime
         {
             if(UiShellRuntimeGateway.TryReadSkirmish(out var portraitMission) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var skirmishCards))
             {
+                ApplyExpandedCardLayout(portraitMission.Expanded);
                 if(!skirmishPortraitsApplied && cards.Length>=5)
                 {
                     campaignPortraits=new Sprite[cards.Length];
@@ -151,18 +162,38 @@ namespace Game.UI.Runtime
                     if (!TryGetCard(i, out var card)) continue;
                     UiLocalizedText.Set(card.NameLabel, skirmishCards.GetCard(i).Title);
                     if (!portraitMission.Expanded || card.PortraitImage == null) continue;
-                    Sprite portrait = i < 4 ? resolvePresentedPortrait?.Invoke(i) : null;
+                    Sprite portrait = resolvePresentedPortrait?.Invoke(i);
                     card.PortraitImage.enabled = portrait != null;
                     if (portrait != null) card.PortraitImage.sprite = portrait;
+                    else card.PortraitImage.sprite = null;
+                    var model = skirmishCards.GetCard(i);
+                    _displayedGroupIds[i] = model.GroupId;
+                    SetExpandedSelected(i, model.Selected);
+                    if (card.OrdinalBadge != null)
+                    { card.OrdinalBadge.text = model.Visible ? model.Ordinal.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty; card.OrdinalBadge.gameObject.SetActive(portraitMission.Expanded && model.Visible); }
+                    if (card.SelectedCheck != null) card.SelectedCheck.SetActive(portraitMission.Expanded && model.Visible && model.Selected);
+                    if (card.AliveCountLabel != null)
+                    { UiLocalizedText.Set(card.AliveCountLabel, model.Visible ? UiShellRuntimeGateway.Localization.Format(
+                        model.AliveCount == 1 ? "ui.skirmish.squads.unit" : "ui.skirmish.squads.units",
+                        model.AliveCount == 1 ? "{0} unit" : "{0} units", model.AliveCount) : string.Empty);
+                      card.AliveCountLabel.gameObject.SetActive(portraitMission.Expanded && model.Visible); }
+                    if (card.HealthFillImage != null && card.HealthFillImage.type == Image.Type.Filled)
+                    { card.HealthFillImage.enabled = model.Visible; card.HealthFillImage.fillAmount = model.Visible ? Mathf.Clamp01(model.Health01) : 0f; }
                 }
-                SetNextPageArrow(portraitMission.Expanded && skirmishCards.GetCard(4).Visible);
+                if (portraitMission.Expanded && UiShellRuntimeGateway.TryReadExpandedSquadPage(out var expandedPage))
+                    RefreshPagination(expandedPage, !portraitMission.Paused && !portraitMission.Finished && !portraitMission.StartupFailed);
+                else HidePagination();
             }
             else if(skirmishPortraitsApplied)
             {
+                ApplyExpandedCardLayout(false);
                 for(int i=0;i<cards.Length && i<campaignPortraits.Length;i++)
                     if(cards[i].PortraitImage!=null)
                     { cards[i].PortraitImage.sprite=campaignPortraits[i]; cards[i].PortraitImage.enabled=true; }
-                SetNextPageArrow(false);
+                foreach (var card in cards) if (card != null)
+                { if (card.OrdinalBadge != null) card.OrdinalBadge.gameObject.SetActive(false); if (card.SelectedCheck != null) card.SelectedCheck.SetActive(false); if (card.AliveCountLabel != null) card.AliveCountLabel.gameObject.SetActive(false); }
+                Array.Clear(_displayedGroupIds, 0, _displayedGroupIds.Length);
+                HidePagination();
                 skirmishPortraitsApplied=false;
             }
             int mask=-1;
@@ -247,13 +278,18 @@ namespace Game.UI.Runtime
 
         public void Unbind()
         {
+            UnbindPagination();
             for (int i = 0; i < cards.Length; i++)
             {
                 if (TryGetCard(i, out Card card) && card.Button != null)
+                {
                     card.Button.onClick.RemoveAllListeners();
+                    card.Button.GetComponent<MatchHudSquadCardPressRelay>()?.Bind(null);
+                }
             }
 
             _cardClicked = null;
+            Array.Clear(_pressedGroupIds, 0, _pressedGroupIds.Length);
         }
 
         public void SetSelectedSlot(MatchHudSquadTraySlot selectedSlot)
@@ -265,6 +301,8 @@ namespace Game.UI.Runtime
                     continue;
 
                 bool selected = ToSlot(i) == selectedSlot;
+                if (IsExpandedRosterCard(i) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var expandedTray))
+                    selected = expandedTray.GetCard(i).Selected;
                 SetImageSprite(card.FrameImage, selected ? selectedFrameSprite : normalFrameSprite);
                 SetImageColor(card.FrameImage, _frameBaseColors[i]);
                 V3GradientGraphic v3Frame = card.Button.GetComponentInChildren<V3GradientGraphic>(true);
@@ -381,6 +419,16 @@ namespace Game.UI.Runtime
         private void OnCardClicked(int index)
         {
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
+            if (UiShellRuntimeGateway.TryReadSkirmish(out var mission) && mission.Expanded)
+            {
+                uint captured = _pressedGroupIds[index];
+                _pressedGroupIds[index] = 0;
+                if (captured == 0 || captured != _displayedGroupIds[index]) return;
+                if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var displayed) &&
+                    displayed.GetCard(index).GroupId == captured)
+                    _selectGroup?.Invoke(captured);
+                return;
+            }
             _cardClicked?.Invoke(ToSlot(index));
             if (_assistantGuidanceActive && index == 0)
             {
@@ -389,6 +437,9 @@ namespace Game.UI.Runtime
                 SetAssistantGuidanceCueVisible(false);
             }
         }
+
+        private bool IsExpandedRosterCard(int index) => UiShellRuntimeGateway.TryReadSkirmish(out var mission) && mission.Expanded &&
+            UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var tray) && tray.GetCard(index).GroupId != 0;
 
         internal void ApplyAssistantGuidance(UiAssistantHighlightModel model)
         {

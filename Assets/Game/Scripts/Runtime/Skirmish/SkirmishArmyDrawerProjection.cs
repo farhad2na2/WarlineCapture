@@ -43,7 +43,10 @@ namespace Game.Runtime
                 }
 
                 var selection = em.GetComponentData<SkirmishArmySelectionComponent>(session);
-                int pageSize = selection.PageSize < 1 ? SkirmishArmyPaging.StandardPageSize : selection.PageSize;
+                // Normalize surviving expanded sessions at the projection owner boundary.
+                // Selection is GroupId based, so the selected set survives this page-size migration.
+                int pageSize = SkirmishArmyPaging.StandardPageSize;
+                selection.PageSize = pageSize;
                 int liveGroups = 0;
                 for (int i = 0; i < groups.Length; i++)
                     if (groups[i].FactionId == 1 && groups[i].AliveCount > 0) liveGroups++;

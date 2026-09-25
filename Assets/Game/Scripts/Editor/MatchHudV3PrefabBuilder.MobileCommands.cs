@@ -19,6 +19,7 @@ namespace Game.Editor
             var rail = FindDeepChild(root.transform, "CommandRail") as RectTransform;
             if (tray == null || rail == null) return;
             SetTopLeft(tray, 10, 731, 707, 201);
+            ApplySquadPagination(root, tray);
             SetTopLeft(rail, 719, 765, 943, 167);
             var frame = RequireRect(rail, "Frame");
             var legacyStop = FindDeepChild(frame, "StopCommand");

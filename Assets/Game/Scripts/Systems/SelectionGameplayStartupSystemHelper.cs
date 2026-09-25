@@ -357,6 +357,39 @@ namespace Game.Runtime
                         return resolveSelectionCardPortraitSprite?.Invoke(entityManager, member);
                     });
 
+                if (view is IMatchHudSquadTrayPaginationBinding pagination)
+                {
+                    bool TryGetExpandedSession(out Entity session)
+                    {
+                        using var sessions = entityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                        session = sessions.CalculateEntityCount() == 1 ? sessions.GetSingletonEntity() : Entity.Null;
+                        return session != Entity.Null &&
+                            SkirmishExpandedSessionControlService.IsExpanded(entityManager, session);
+                    }
+
+                    pagination.ConfigureExpandedPagination(delta =>
+                    {
+                        selectionUiCommand.CaptureUiClickSequence();
+                        runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                        if (TryGetExpandedSession(out Entity session))
+                            SkirmishExpandedPresentedOrders.TryChangePage(entityManager, session, delta);
+                    }, () =>
+                    {
+                        selectionUiCommand.CaptureUiClickSequence();
+                        runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                        if (TryGetExpandedSession(out Entity session) &&
+                            SkirmishExpandedPresentedOrders.TryClearSelection(entityManager, session))
+                            matchHudSquadTraySelectionSystem.ClearActiveSlot(view);
+                    });
+                    pagination.ConfigureExpandedGroupSelection(groupId =>
+                    {
+                        selectionUiCommand.CaptureUiClickSequence();
+                        runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                        if (TryGetExpandedSession(out Entity session))
+                            SkirmishExpandedPresentedOrders.TryPresentedGroup(entityManager, session, groupId);
+                    });
+                }
+
                 view.Bind(slot =>
                 {
                     selectionUiCommand.CaptureUiClickSequence();

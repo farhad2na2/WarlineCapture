@@ -44,7 +44,8 @@
         "Unity.InputSystem",
         "Game.UI.ScenarioLab.Runtime",
         "Unity.2D.Sprite.Editor",
-        "Game.Operations.Strategic"
+        "Game.Operations.Strategic",
+        "UnityEditor.TestRunner"
     ],
     "includePlatforms": [
         "Editor"

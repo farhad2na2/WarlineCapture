@@ -12,6 +12,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte PagedToAssault, AssaultSelecting, AssaultIssued, StructureOrdered;
         public int AssaultPageSeen;
         public int PagesOrdered;
+        public uint SweepRosterRevision;
         public int EconomicMilestones, MaterialsHighWater;
         public int ObservedPageIndex;
         // Separate from the legacy two-tower opening. A legal preview alone never

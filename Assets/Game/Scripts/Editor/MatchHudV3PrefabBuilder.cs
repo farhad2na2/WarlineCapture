@@ -699,7 +699,7 @@ namespace Game.Editor
             guidance.gameObject.SetActive(false);
 
             RectTransform minimap = RequireRect(header.parent, "MinimapPanel");
-            minimap.SetParent(header, false);
+            minimap.SetParent(aria, false);
             minimap.anchorMin = minimap.anchorMax = minimap.pivot = new Vector2(1, 0);
             minimap.anchoredPosition = new Vector2(-15, 175);
             minimap.sizeDelta = new Vector2(320, 220);

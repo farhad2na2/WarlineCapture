@@ -8,6 +8,12 @@ namespace Game.UI.Contracts
         void ConfigurePortraitResolver(Func<int, Sprite> resolvePresentedPortrait);
     }
 
+    public interface IMatchHudSquadTrayPaginationBinding
+    {
+        void ConfigureExpandedPagination(Action<int> changePage, Action clearSelection);
+        void ConfigureExpandedGroupSelection(Action<uint> selectGroup);
+    }
+
     public interface IMatchHudSquadTrayView
     {
         void Bind(Action<MatchHudSquadTraySlot> cardClicked);

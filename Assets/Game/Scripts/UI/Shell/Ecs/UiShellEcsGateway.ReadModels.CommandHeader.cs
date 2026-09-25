@@ -159,23 +159,23 @@ namespace Game.UI.Shell.Ecs
                 if (SkirmishExpandedPresentedOrders.TryReadPage(
                         skirmishEm,
                         skirmishSession,
+                        out int expandedPageIndex,
                         out _,
-                        out bool nextPage,
+                        out _,
+                        out _, out _, out _, out _, out _,
                         out SkirmishPresentedSlot expanded0,
                         out SkirmishPresentedSlot expanded1,
                         out SkirmishPresentedSlot expanded2,
-                        out SkirmishPresentedSlot expanded3))
+                        out SkirmishPresentedSlot expanded3,
+                        out SkirmishPresentedSlot expanded4))
                 {
-                    UiMatchHudSquadTrayCardModel next = nextPage
-                        ? new UiMatchHudSquadTrayCardModel(true, "NEXT", "", 1f)
-                        : new UiMatchHudSquadTrayCardModel(false, "", "", 0f);
                     squadTray = new UiMatchHudSquadTrayModel(
                         selectedSlot,
-                        ExpandedCard(expanded0),
-                        ExpandedCard(expanded1),
-                        ExpandedCard(expanded2),
-                        ExpandedCard(expanded3),
-                        next);
+                        ExpandedCard(expanded0, expandedPageIndex * 5 + 1),
+                        ExpandedCard(expanded1, expandedPageIndex * 5 + 2),
+                        ExpandedCard(expanded2, expandedPageIndex * 5 + 3),
+                        ExpandedCard(expanded3, expandedPageIndex * 5 + 4),
+                        ExpandedCard(expanded4, expandedPageIndex * 5 + 5));
                     return true;
                 }
 
@@ -466,13 +466,13 @@ namespace Game.UI.Shell.Ecs
                    left.CivilianRiskText.Equals(right.CivilianRiskText);
         }
 
-        private static UiMatchHudSquadTrayCardModel ExpandedCard(in SkirmishPresentedSlot slot)
+        private static UiMatchHudSquadTrayCardModel ExpandedCard(in SkirmishPresentedSlot slot, int ordinal)
         {
             if (!slot.Occupied)
-                return new UiMatchHudSquadTrayCardModel(false, string.Empty, string.Empty, 0f);
+                return new UiMatchHudSquadTrayCardModel(false, string.Empty, string.Empty, 0f, 0, 0, ordinal, false);
             string title = Game.Configs.SkirmishSetupBriefing.RoleLabel(slot.Role, GameLocalization.IsRightToLeft)
                 + " (" + slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
-            return new UiMatchHudSquadTrayCardModel(true, title, slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture), slot.Health01);
+            return new UiMatchHudSquadTrayCardModel(true, title, slot.Alive + " units", slot.Health01, slot.GroupId, slot.Alive, ordinal, slot.Selected);
         }
 
         }

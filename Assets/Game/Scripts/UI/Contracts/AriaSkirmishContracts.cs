@@ -31,6 +31,7 @@ namespace Game.UI.Contracts
         public int SelectedSlot, SelectedCount, AvailableSquads, Infantry, Frame, VisibleHostileCombat, OwnMaterials, ExpandedRetries, VisibleHostileAir;
         public float Time, PlayerHealth, EnemyHealth, ForceHealth;
         public AriaTouchTarget Squad0, Squad1, Squad2, Squad3, Squad4;
+        public AriaTouchTarget PreviousSquadPage, NextSquadPage, ClearSquadSelection;
         public AriaTouchTarget Site0, Site1, Site2, Site3, Site4, Site5;
         public AriaTouchTarget PadSite0, PadSite1, PadSite2, PadSite3;
         public AriaTouchTarget PadSite(int index) => index switch
@@ -44,9 +45,11 @@ namespace Game.UI.Contracts
         public int ExpandedStructureMask;
         public int ExpandedAttackOrderMask;
         public int ExpandedAirMask;
-        public bool ExpandedNextPage;
+        public bool ExpandedCanPreviousPage, ExpandedCanNextPage;
         public int ExpandedPageIndex;
+        public int ExpandedPageCount, ExpandedTotalGroups, ExpandedSelectedGroups, ExpandedSelectedOffPage;
+        public uint ExpandedRosterRevision;
         public AriaTouchTarget Squad(int index) => index switch
-        { 0 => Squad0, 1 => Squad1, 2 => Squad2, 3 => Squad3, _ => Squad4 };
+        { 0 => Squad0, 1 => Squad1, 2 => Squad2, 3 => Squad3, 4 => Squad4, _ => default };
     }
 }

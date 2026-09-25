@@ -21,6 +21,9 @@ namespace Game.UI.Contracts
     {
         public bool Expanded;
         public int PageIndex;
+        public int PageCount, TotalGroups, SelectedGroups, SelectedOffPage;
+        public uint RosterRevision;
+        public bool PreviousPage;
         public int AssaultMask;
         public int SelectedMask;
         public int StructureMask;
@@ -54,6 +57,9 @@ namespace Game.UI.Contracts
     {
         bool TryReadExpandedSquadPage(out UiExpandedSquadPage page);
         bool TrySelectExpandedPresentedSlot(int slotIndex);
+        bool TrySelectExpandedGroup(uint groupId);
+        bool TryChangeExpandedSquadPage(int delta);
+        bool TryClearExpandedSquadSelection();
         bool TryHoldExpandedSelection();
     }
 }

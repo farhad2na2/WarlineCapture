@@ -106,15 +106,11 @@ namespace Game.Runtime
                     var session = skirmish.GetSingletonEntity();
                     if (SkirmishExpandedSessionControlService.IsExpanded(em, session))
                     {
-                        // One selection owner per click: expanded page selection must
-                        // not be followed by the legacy fixed-slot selection path.
+                        // The fifth enum slot is a real expanded group. Paging has its own buttons.
                         int index = (int)slot - 1;
                         if (!SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, index))
                         { view.FlashDisabled(slot); return; }
-                        if (index == SkirmishExpandedPresentedOrders.PresentedSlots)
-                            ClearActiveSlot(view);
-                        else
-                        { _activeSlot = slot; view.SetSelectedSlot(slot); }
+                        _activeSlot = slot; view.SetSelectedSlot(slot);
                         return;
                     }
                     _selected.Clear();

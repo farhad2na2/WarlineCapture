@@ -39,6 +39,7 @@ namespace Game.Editor
         {
             LoadAssets();
             ApplyMobileCommandLayout(root);
+            ApplySquadPagination(root, FindDeepChild(root.transform, "SquadTray") as RectTransform);
             var controller = root.GetComponentInChildren<CommandWheelPanelView>(true);
             var selection = root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
             if (controller == null || selection == null) return;

@@ -15,21 +15,32 @@ namespace Game.UI.Shell.Ecs
                     em,
                     session,
                     out int pageIndex,
+                    out bool previousPage,
                     out bool nextPage,
+                    out int pageCount,
+                    out int totalGroups,
+                    out int selectedGroups,
+                    out int selectedOffPage,
+                    out uint rosterRevision,
                     out SkirmishPresentedSlot slot0,
                     out SkirmishPresentedSlot slot1,
                     out SkirmishPresentedSlot slot2,
-                    out SkirmishPresentedSlot slot3))
+                    out SkirmishPresentedSlot slot3,
+                    out SkirmishPresentedSlot slot4))
                 return false;
 
             page.Expanded = true;
             page.PageIndex = pageIndex;
+            page.PageCount = pageCount; page.TotalGroups = totalGroups;
+            page.SelectedGroups = selectedGroups; page.SelectedOffPage = selectedOffPage;
+            page.RosterRevision = rosterRevision;
+            page.PreviousPage = previousPage;
             page.NextPage = nextPage;
-            page.AssaultMask = Mask(slot0, 0, true) | Mask(slot1, 1, true) | Mask(slot2, 2, true) | Mask(slot3, 3, true);
-            page.SelectedMask = Mask(slot0, 0, false) | Mask(slot1, 1, false) | Mask(slot2, 2, false) | Mask(slot3, 3, false);
-            page.StructureMask = StructureBit(slot0, 0) | StructureBit(slot1, 1) | StructureBit(slot2, 2) | StructureBit(slot3, 3);
-            page.AttackOrderMask = OrderBit(slot0, 0) | OrderBit(slot1, 1) | OrderBit(slot2, 2) | OrderBit(slot3, 3);
-            page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3);
+            page.AssaultMask = Mask(slot0, 0, true) | Mask(slot1, 1, true) | Mask(slot2, 2, true) | Mask(slot3, 3, true) | Mask(slot4, 4, true);
+            page.SelectedMask = Mask(slot0, 0, false) | Mask(slot1, 1, false) | Mask(slot2, 2, false) | Mask(slot3, 3, false) | Mask(slot4, 4, false);
+            page.StructureMask = StructureBit(slot0, 0) | StructureBit(slot1, 1) | StructureBit(slot2, 2) | StructureBit(slot3, 3) | StructureBit(slot4, 4);
+            page.AttackOrderMask = OrderBit(slot0, 0) | OrderBit(slot1, 1) | OrderBit(slot2, 2) | OrderBit(slot3, 3) | OrderBit(slot4, 4);
+            page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3) | AirBit(slot4, 4);
             return true;
         }
 
@@ -39,6 +50,15 @@ namespace Game.UI.Shell.Ecs
                 return false;
             return SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, slotIndex);
         }
+
+        bool IUiExpandedSkirmishCommandGateway.TrySelectExpandedGroup(uint groupId) =>
+            TrySkirmish(out EntityManager em, out Entity session, out _) && SkirmishExpandedPresentedOrders.TryPresentedGroup(em, session, groupId);
+
+        bool IUiExpandedSkirmishCommandGateway.TryChangeExpandedSquadPage(int delta)
+        { return TrySkirmish(out EntityManager em, out Entity session, out _) && SkirmishExpandedPresentedOrders.TryChangePage(em, session, delta); }
+
+        bool IUiExpandedSkirmishCommandGateway.TryClearExpandedSquadSelection()
+        { return TrySkirmish(out EntityManager em, out Entity session, out _) && SkirmishExpandedPresentedOrders.TryClearSelection(em, session); }
 
         bool IUiExpandedSkirmishCommandGateway.TryHoldExpandedSelection()
         {

@@ -81,8 +81,17 @@ namespace Game.UI.Runtime
                 view.ExpandedStructureMask = page.StructureMask;
                 view.ExpandedAttackOrderMask = page.AttackOrderMask;
                 view.ExpandedAirMask = page.AirMask;
-                view.ExpandedNextPage = page.NextPage;
+                view.ExpandedCanPreviousPage = page.PreviousPage;
+                view.ExpandedCanNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
+                view.ExpandedPageCount = page.PageCount;
+                view.ExpandedTotalGroups = page.TotalGroups;
+                view.ExpandedSelectedGroups = page.SelectedGroups;
+                view.ExpandedSelectedOffPage = page.SelectedOffPage;
+                view.ExpandedRosterRevision = page.RosterRevision;
+                view.PreviousSquadPage = ObserveWatchButton(watchSquads?.PreviousPageButton);
+                view.NextSquadPage = ObserveWatchButton(watchSquads?.NextPageButton);
+                view.ClearSquadSelection = ObserveWatchButton(watchSquads?.ClearSelectionButton);
             }
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var squads))
             {

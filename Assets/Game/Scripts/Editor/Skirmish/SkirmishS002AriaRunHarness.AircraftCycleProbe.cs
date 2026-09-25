@@ -155,11 +155,11 @@ namespace Game.Editor
             if (!UiShellRuntimeGateway.TryReadExpandedSquadPage(out var page)) return false;
             var tray = UnityEngine.Object.FindAnyObjectByType<MatchHudSquadTrayView>();
             if (tray == null) return false;
-            for (int slot = 0; slot < 4; slot++)
+            for (int slot = 0; slot < 5; slot++)
                 if ((page.AirMask & (1 << slot)) != 0)
                 { TapHelipadButton(tray.VisibleCardButton(slot), now); return false; }
             if (page.NextPage && airProbePageTurns++ < 12)
-                TapHelipadButton(tray.VisibleCardButton(4), now);
+                TapHelipadButton(tray.NextPageButton, now);
             return false;
         }
 

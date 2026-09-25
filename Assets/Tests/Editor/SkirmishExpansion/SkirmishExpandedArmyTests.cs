@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Game.Components;
 using Game.Composition;
 using Game.Configs;
@@ -59,10 +60,10 @@ namespace Game.Tests.Editor
                 em, session, 0, 0, false, out SkirmishCommandDecision pageZero));
             Assert.AreEqual(rifle, pageZero.GroupId);
             Assert.IsTrue(SkirmishArmyGroupSystem.TryGetPagedGroup(
-                em, session, 1, 1, 3, out SkirmishArmyGroupRecord tankSlot));
+                em, session, 1, 1, 2, out SkirmishArmyGroupRecord tankSlot));
             Assert.AreEqual(SkirmishRoleKind.Tank, tankSlot.Role);
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectPageSlot(
-                em, session, 1, 3, false, out SkirmishCommandDecision pageTank));
+                em, session, 1, 2, false, out SkirmishCommandDecision pageTank));
             Assert.AreEqual(tankSlot.GroupId, pageTank.GroupId);
             Assert.AreEqual(1, SkirmishArmySelectionService.SelectedLivingCount(em, session));
 
@@ -97,12 +98,16 @@ namespace Game.Tests.Editor
             var selection = new MatchHudSquadTraySelectionUiSystemHelper();
             selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Soldiers);
             Assert.AreEqual(4, SkirmishArmySelectionService.SelectedLivingCount(em, session));
-            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Transport); // NEXT
-            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
-            Assert.AreEqual(0, SkirmishArmySelectionService.SelectedLivingCount(em, session));
-            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Jet); // Tank on page two
-            Assert.AreEqual(1, SkirmishArmySelectionService.SelectedLivingCount(em, session));
-            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, 3, out var representative));
+            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Transport); // Fifth real group
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            Assert.AreEqual(8, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            int selectedBeforePaging = SkirmishArmySelectionService.SelectedLivingCount(em, session);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            Assert.AreEqual(selectedBeforePaging, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.AttackHelicopter); // Tank on page two
+            Assert.Greater(SkirmishArmySelectionService.SelectedLivingCount(em, session), selectedBeforePaging);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, 2, out var representative));
             Assert.AreEqual(SkirmishRoleKind.Tank, em.GetComponentData<SkirmishUnitRoleComponent>(representative).Role);
             Assert.IsTrue(em.HasComponent<SelectedUnitTag>(representative));
             Assert.AreEqual(0, tray.Rejections);
@@ -268,7 +273,7 @@ namespace Game.Tests.Editor
             CompileAndSpawn(em, out Entity session, out _);
             uint rifle = FirstPlayerGroup(em, session, SkirmishRoleKind.Rifle).GroupId;
             Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session, rifle, false, out _));
-            Assert.AreEqual(4, SkirmishArmyDrawerProjection.Project(em, session));
+            Assert.AreEqual(5, SkirmishArmyDrawerProjection.Project(em, session));
             DynamicBuffer<SkirmishArmyDrawerSlot> slots = em.GetBuffer<SkirmishArmyDrawerSlot>(session);
             bool found = false;
             for (int i = 0; i < slots.Length; i++)
@@ -300,9 +305,49 @@ namespace Game.Tests.Editor
             health.Current = 1;
             em.SetComponentData(foreign, health);
             Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
-                out _, out _, out var first, out _, out _, out _));
+                out _, out _, out _, out _, out _, out _, out _, out _, out var first, out _, out _, out _, out _));
             Assert.AreEqual(4, first.Alive);
             Assert.That(first.Health01, Is.EqualTo(0.875f).Within(0.001f));
+        }
+
+        [Test]
+        public void FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders()
+        {
+            using var world = new World(nameof(FiveSlotPageSelectsFifthGroupAndPagingPreservesSelectionAndOrders));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
+                out int page, out bool previous, out bool next, out int pageCount,
+                out int total, out int selected, out int offPage, out uint revision,
+                out var a, out var b, out var c, out var d, out var fifth));
+            Assert.AreEqual(0, page); Assert.IsFalse(previous); Assert.IsTrue(next);
+            Assert.AreEqual(2, pageCount); Assert.AreEqual(8, total); Assert.AreEqual(0, selected);
+            var ids = new[] { a.GroupId, b.GroupId, c.GroupId, d.GroupId, fifth.GroupId };
+            Assert.AreEqual(5, ids.Length);
+            for (int i = 0; i < ids.Length; i++) Assert.AreNotEqual(0u, ids[i]);
+            Assert.AreEqual(5, System.Linq.Enumerable.Distinct(ids).Count());
+            uint fifthId = fifth.GroupId;
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, 4));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            var records = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+            bool foundSelected = false;
+            for (int i = 0; i < records.Length; i++) if (records[i].GroupId == fifthId) foundSelected = records[i].Selected != 0;
+            Assert.IsTrue(foundSelected, "slot 4 selects its stable GroupId");
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthBefore));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1));
+            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthAfterPaging));
+            Assert.AreEqual(fifthBefore.LastOrder, fifthAfterPaging.LastOrder);
+            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1), "last page does not wrap");
+            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 0));
+            Assert.IsFalse(SkirmishExpandedPresentedOrders.TryChangePage(em, session, 2));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryClearSelection(em, session));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).SelectedGroupCount);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            Assert.IsTrue(SkirmishArmyGroupSystem.TryGet(em, session, fifthId, out var fifthAfterClear));
+            Assert.AreEqual(fifthBefore.LastOrder, fifthAfterClear.LastOrder);
         }
 
         [Test]
@@ -319,11 +364,15 @@ namespace Game.Tests.Editor
             Assert.AreEqual(4, SkirmishArmyDrawerProjection.Project(em, session));
             Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
             var slots = em.GetBuffer<SkirmishArmyDrawerSlot>(session);
-            for (int slot = 0; slot < 4; slot++)
+            for (int slot = 0; slot < 5; slot++)
             {
-                Assert.IsTrue(SkirmishArmyGroupSystem.TryGetPagedGroup(em, session, 1, 0, slot, out var group));
-                Assert.AreEqual((uint)(slot + 2), group.GroupId);
-                Assert.AreEqual(group.GroupId, slots[slot].GroupId);
+                if (slot < 4)
+                {
+                    Assert.IsTrue(SkirmishArmyGroupSystem.TryGetPagedGroup(em, session, 1, 0, slot, out var group));
+                    Assert.AreEqual((uint)(slot + 2), group.GroupId);
+                    Assert.AreEqual(group.GroupId, slots[slot].GroupId);
+                }
+                else Assert.IsFalse(SkirmishArmyGroupSystem.TryGetPagedGroup(em, session, 1, 0, slot, out _));
             }
         }
 

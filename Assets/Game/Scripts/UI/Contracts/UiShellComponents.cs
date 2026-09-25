@@ -1699,6 +1699,10 @@ namespace Game.UI.Contracts
         public readonly string Title;
         public readonly string HealthText;
         public readonly float Health01;
+        public readonly uint GroupId;
+        public readonly int AliveCount;
+        public readonly int Ordinal;
+        public readonly bool Selected;
 
         public UiMatchHudSquadTrayCardModel(bool visible, string title, string healthText, float health01)
         {
@@ -1706,6 +1710,23 @@ namespace Game.UI.Contracts
             Title = title;
             HealthText = healthText;
             Health01 = health01;
+            GroupId = 0;
+            AliveCount = 0;
+            Ordinal = 0;
+            Selected = false;
+        }
+
+        public UiMatchHudSquadTrayCardModel(bool visible, string title, string healthText, float health01,
+            uint groupId, int aliveCount, int ordinal, bool selected)
+        {
+            Visible = visible;
+            Title = title;
+            HealthText = healthText;
+            Health01 = health01;
+            GroupId = groupId;
+            AliveCount = aliveCount;
+            Ordinal = ordinal;
+            Selected = selected;
         }
     }
 

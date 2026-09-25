@@ -7,6 +7,8 @@ namespace Game.Editor
 {
     public static class AriaSkirmishPlanValidation
     {
+        public static void RunFocusedValidation() => UnityEngine.Debug.Log(Run());
+
         public static string Run()
         {
             int checks = 0;

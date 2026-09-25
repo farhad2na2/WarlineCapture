@@ -27,6 +27,19 @@ namespace Game.UI.Shell.Ecs
                 // for the touch driver. Touching is held inside StepExpanded.
                 if (!view.Finished && touch.Phase is AriaPlayPhase.Blocked or AriaPlayPhase.Starting)
                     return;
+                if (view.ExpandedRosterRevision != 0 && touch.Phase != AriaPlayPhase.Touching)
+                {
+                    if (plan.SweepRosterRevision != 0 && plan.SweepRosterRevision != view.ExpandedRosterRevision)
+                    {
+                        plan.PagedToAssault = 0;
+                        plan.AssaultSelecting = 0;
+                        plan.AssaultIssued = 0;
+                        plan.StructureOrdered = 0;
+                        plan.AssaultPageSeen = 0;
+                        plan.PagesOrdered = 0;
+                    }
+                    plan.SweepRosterRevision = view.ExpandedRosterRevision;
+                }
                 StepExpandedBaseAssault(view, ref plan, ref touch, ref output);
                 return;
             }
@@ -708,13 +721,13 @@ namespace Game.UI.Shell.Ecs
                     plan.MapNavigationStage = 0;
                     plan.ObserveUntil = view.Time + 12f;
                 }
-                if (view.ExpandedNextPage && view.Squad4.Available &&
+                if (view.NextSquadPage.Available &&
                     (plan.MapNavigationStage == 1 || view.Time >= plan.ObserveUntil))
                 {
                     if (plan.MapNavigationStage == 0)
                     { plan.MapNavigationStage = 1; plan.AssaultPageSeen = view.ExpandedPageIndex; }
                     plan.Intent = AriaSkirmishIntent.Inspect;
-                    Target(view.Squad4, false, ref output);
+                    Target(view.NextSquadPage, false, ref output);
                     return;
                 }
                 plan.Intent = AriaSkirmishIntent.ObserveBattle;
@@ -724,7 +737,7 @@ namespace Game.UI.Shell.Ecs
             // Rifles cannot hurt a Barracks. Do not spend the attack button on them
             // while a later page still holds the tank and rocketeers.
             if (view.EnemyDesignatedAlive && plan.AssaultIssued == 0 &&
-                view.ExpandedAssaultMask == 0 && view.ExpandedNextPage)
+                view.ExpandedAssaultMask == 0 && view.NextSquadPage.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Inspect;
                 output.Kind = AriaPlayObservationKind.Waiting;
@@ -790,11 +803,13 @@ namespace Game.UI.Shell.Ecs
                 if (view.SelectedAircraft) { plan.AirCycleStage = 2; }
                 else
                 {
-                    for (int slot = 0; slot < 4; slot++)
+                    for (int slot = 0; slot < 5; slot++)
                         if ((view.ExpandedAirMask & (1 << slot)) != 0 && view.Squad(slot).Available)
                         { Target(view.Squad(slot), false, ref output); return true; }
-                    if (view.ExpandedNextPage && view.Squad4.Available)
-                        Target(view.Squad4, false, ref output);
+                    if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
+                        Target(view.ClearSquadSelection, false, ref output);
+                    else if (view.NextSquadPage.Available)
+                        Target(view.NextSquadPage, false, ref output);
                     else output.Kind = AriaPlayObservationKind.Waiting;
                     return true;
                 }
@@ -845,7 +860,7 @@ namespace Game.UI.Shell.Ecs
             in AriaSkirmishObservation view,
             bool squad0WithoutSelection)
         {
-            bool pageModel = view.ExpandedNextPage || view.ExpandedStructureMask != 0 || view.ExpandedAssaultMask != 0;
+            bool pageModel = view.ExpandedTotalGroups > 0 || view.ExpandedStructureMask != 0 || view.ExpandedAssaultMask != 0;
             if (!pageModel)
                 return true;
             if (squad0WithoutSelection)
@@ -860,51 +875,27 @@ namespace Game.UI.Shell.Ecs
         {
             if (!view.EnemyDesignatedAlive || plan.AssaultIssued != 0)
                 return false;
+            // Older public-control observations have no page projection. Keep
+            // their existing Attack/Hold path; a live expanded roster always
+            // reports at least one page, including when it has zero groups.
+            if (view.ExpandedPageCount <= 0 && view.ExpandedTotalGroups == 0 &&
+                view.ExpandedAssaultMask == 0 && view.ExpandedStructureMask == 0 &&
+                !view.ExpandedCanPreviousPage && !view.ExpandedCanNextPage)
+                return false;
+            // Begin every bounded sweep at page zero. Page changes are acknowledged only
+            // when a later observation reports a different PageIndex.
+            if (plan.PagedToAssault == 0 && view.ExpandedPageIndex > 0)
+            {
+                if (view.PreviousSquadPage.Available)
+                { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.PreviousSquadPage, false, ref output); }
+                else output.Kind = AriaPlayObservationKind.Waiting;
+                return true;
+            }
+            if (plan.PagedToAssault == 0) plan.PagedToAssault = 1;
             // Rifles screen the structure column against enemy troops. Visit
             // every assault page, then require a tank or rocketeer Attack order
             // before treating the Barracks assault as issued.
-            if (view.ExpandedAssaultMask != 0 || plan.StructureOrdered != 0)
-                return TryStructureColumn(view, ref plan, ref output);
-            bool pageHasAssault = view.ExpandedAssaultMask != 0;
-            if (!pageHasAssault)
-            {
-                if (view.ExpandedNextPage && view.Squad4.Available)
-                {
-                    // Keep pressing the visible next card until the page changes.
-                    // Treating the first tap as done left the tank off-screen and
-                    // the hand waiting with no target.
-                    plan.PagedToAssault = 1;
-                    plan.AssaultPageSeen = view.ExpandedPageIndex;
-                    plan.Intent = AriaSkirmishIntent.SelectSquad;
-                    Target(view.Squad4, false, ref output);
-                    return true;
-                }
-
-                return false;
-            }
-
-            int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
-            if (pending != 0)
-            {
-                int slot = LowestSetBit(pending);
-                AriaTouchTarget card = view.Squad(slot);
-                if (!card.Available)
-                    return false;
-                plan.AssaultSelecting = 1;
-                plan.Intent = AriaSkirmishIntent.SelectSquad;
-                Target(card, false, ref output);
-                return true;
-            }
-
-            if (plan.AssaultSelecting != 0 && view.Attack.Available)
-            {
-                plan.AssaultIssued = 1;
-                plan.Intent = AriaSkirmishIntent.Attack;
-                Target(view.Attack, false, ref output);
-                return true;
-            }
-
-            return false;
+            return TryStructureColumn(view, ref plan, ref output);
         }
 
         private static bool TryStructureColumn(
@@ -912,6 +903,18 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan,
             ref AriaPlayObservationComponent output)
         {
+            if (plan.AssaultSelecting == 0 && view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
+            {
+                plan.AssaultSelecting = 2;
+                Target(view.ClearSquadSelection, false, ref output);
+                return true;
+            }
+            if (plan.AssaultSelecting == 2)
+            {
+                if (view.ExpandedSelectedGroups > 0 && view.ClearSquadSelection.Available)
+                { Target(view.ClearSquadSelection, false, ref output); return true; }
+                plan.AssaultSelecting = 0;
+            }
             int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
             if (pending != 0)
             {
@@ -949,34 +952,46 @@ namespace Game.UI.Shell.Ecs
                 return true;
             }
 
-            int pageBit = 1 << (view.ExpandedPageIndex & 31);
-            if (assaultOrdered)
-                plan.PagesOrdered |= pageBit;
-
-            bool columnReady = plan.StructureOrdered != 0 && (plan.PagesOrdered & pageBit) != 0;
-            bool backAtStart = plan.PagedToAssault != 0 && view.ExpandedPageIndex == plan.AssaultPageSeen &&
-                (plan.PagesOrdered & ~pageBit) != 0;
-            if (view.ExpandedNextPage && !view.Squad4.Available)
+            bool pageInspected = assaultOrdered;
+            if (pageInspected && plan.AssaultPageSeen != view.ExpandedPageIndex + 1)
             {
+                plan.PagesOrdered++;
+                plan.AssaultPageSeen = view.ExpandedPageIndex + 1;
+            }
+            if (plan.PagedToAssault == 2)
+            {
+                if (view.ExpandedPageIndex > 0 && view.PreviousSquadPage.Available)
+                { plan.Intent = AriaSkirmishIntent.Inspect; Target(view.PreviousSquadPage, false, ref output); return true; }
+                if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 &&
+                    plan.PagesOrdered >= (view.ExpandedPageCount > 0 ? view.ExpandedPageCount : 1))
+                { plan.AssaultIssued = 1; return false; }
+            }
+            if (view.NextSquadPage.Available)
+            {
+                plan.PagedToAssault = 1;
+                plan.AssaultSelecting = 0;
+                plan.Intent = AriaSkirmishIntent.SelectSquad;
+                Target(view.NextSquadPage, false, ref output);
+                return true;
+            }
+            if (view.PreviousSquadPage.Available)
+            {
+                plan.PagedToAssault = 2;
+                plan.AssaultSelecting = 0;
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                Target(view.PreviousSquadPage, false, ref output);
+                return true;
+            }
+            // A one-page roster completes in place. Multi-page sweeps complete only
+            // after the observed Previous actions have returned the tray to page zero.
+            if (view.ExpandedPageIndex == 0 && plan.StructureOrdered != 0 && plan.PagesOrdered >= view.ExpandedPageCount)
+            { plan.AssaultIssued = 1; return false; }
+            if (!pageInspected || plan.StructureOrdered == 0)
+            {
+                plan.Intent = AriaSkirmishIntent.Inspect;
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return true;
             }
-            if (view.ExpandedNextPage && view.Squad4.Available && !(columnReady && backAtStart))
-            {
-                if (plan.PagedToAssault == 0)
-                    plan.AssaultPageSeen = view.ExpandedPageIndex;
-                plan.PagedToAssault = 1;
-                plan.Intent = AriaSkirmishIntent.SelectSquad;
-                Target(view.Squad4, false, ref output);
-                return true;
-            }
-
-            if (columnReady || (plan.StructureOrdered != 0 && !view.ExpandedNextPage))
-            {
-                plan.AssaultIssued = 1;
-                return false;
-            }
-
             return false;
         }
 

@@ -49,10 +49,12 @@ namespace Game.UI.Runtime
             if(placement!=null && placement.HasPendingPlacement && placement.Root.gameObject.activeInHierarchy)
                 bottom=Mathf.Max(bottom,TopInHeader(placement.Root)-header.rect.yMin+DockGap);
             commandDockBottom=bottom;
+            bool expanded = UiShellRuntimeGateway.TryReadSkirmish(out var mission) && mission.Expanded;
+            // Keep the established left dock. Expanded skirmish raises it above
+            // the slim squad pager, leaving both controls readable and tappable.
+            bottom=Mathf.Max(bottom,expanded ? 300 : 230);
             minimap.anchorMin=minimap.anchorMax=Vector2.zero;
             minimap.pivot=Vector2.zero;
-            // Squad cards are taller than the command buttons on the left rail.
-            bottom=Mathf.Max(bottom,230);
             minimap.anchoredPosition=new Vector2(15,bottom);
             minimap.sizeDelta=new Vector2(320,220);
             if(selection!=null) selection.FitAboveMinimap(minimap);

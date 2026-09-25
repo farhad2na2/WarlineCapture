@@ -398,11 +398,12 @@ namespace Game.Tests.Editor
                 EnemyDesignatedAlive = true,
                 PlayerDesignatedAlive = true,
                 Infantry = 20,
-                ExpandedNextPage = true,
+                ExpandedCanNextPage = true,
                 ExpandedPageIndex = 0,
                 Squad0 = new AriaTouchTarget { Id = 10, Available = true },
                 Squad3 = new AriaTouchTarget { Id = 13, Available = true },
-                Squad4 = new AriaTouchTarget { Id = 14, Available = true },
+                Squad4 = new AriaTouchTarget { Id = 104, Available = true },
+                NextSquadPage = new AriaTouchTarget { Id = 200, Available = true },
                 Attack = new AriaTouchTarget { Id = 42, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
@@ -410,7 +411,7 @@ namespace Game.Tests.Editor
             var output = new AriaPlayObservationComponent();
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
-            Assert.AreEqual(14, output.TargetId);
+            Assert.AreEqual(200, output.TargetId);
             Assert.AreEqual(1, plan.PagedToAssault);
             Assert.AreEqual(0, plan.AssaultIssued);
 
@@ -418,9 +419,10 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0, plan.AssaultIssued);
             Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
             Assert.AreEqual(AriaPlayObservationKind.Control, output.Kind);
-            Assert.AreEqual(14, output.TargetId);
+            Assert.AreEqual(200, output.TargetId, "page action remains pending until PageIndex changes");
 
             view.ExpandedPageIndex = 1;
+            view.NextSquadPage = default;
             view.ExpandedAssaultMask = 1 << 3;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaSkirmishIntent.SelectSquad, plan.Intent);
@@ -448,11 +450,12 @@ namespace Game.Tests.Editor
                 PlayerDesignatedAlive = true,
                 Infantry = 20,
                 SelectionVisible = true,
-                ExpandedNextPage = true,
+                ExpandedCanNextPage = true,
                 ExpandedPageIndex = 0,
                 ExpandedAssaultMask = 0,
                 Squad0 = new AriaTouchTarget { Id = 10, Available = true },
-                Squad4 = new AriaTouchTarget { Id = 14, Available = false },
+                Squad4 = new AriaTouchTarget { Id = 104, Available = true },
+                NextSquadPage = new AriaTouchTarget { Id = 200, Available = false },
                 Attack = new AriaTouchTarget { Id = 42, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
@@ -479,9 +482,10 @@ namespace Game.Tests.Editor
                 EnemyHealth = 800f,
                 PlayerHealth = 800f,
                 ForceHealth = 20f,
-                ExpandedNextPage = true,
+                ExpandedCanNextPage = true,
                 ExpandedPageIndex = 0,
-                Squad4 = new AriaTouchTarget { Id = 14, Available = true },
+                Squad4 = new AriaTouchTarget { Id = 104, Available = true },
+                NextSquadPage = new AriaTouchTarget { Id = 14, Available = true },
                 Attack = new AriaTouchTarget { Id = 42, Available = true },
                 Squad0 = new AriaTouchTarget { Id = 10, Available = true }
             };
@@ -531,8 +535,9 @@ namespace Game.Tests.Editor
                 EnemyDesignatedAlive = true,
                 PlayerDesignatedAlive = true,
                 Time = 400f,
-                ExpandedNextPage = true,
-                Squad4 = new AriaTouchTarget { Id = 14, Available = true }
+                ExpandedCanNextPage = true,
+                Squad4 = new AriaTouchTarget { Id = 104, Available = true },
+                NextSquadPage = new AriaTouchTarget { Id = 14, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
             var touch = new AriaPlaySessionComponent
@@ -715,9 +720,11 @@ namespace Game.Tests.Editor
                 Active = true,
                 ExpandedSession = true,
                 EnemyDesignatedAlive = true,
-                ExpandedNextPage = true,
+                ExpandedCanNextPage = true,
+                ExpandedPageCount = 2,
                 ExpandedPageIndex = 0,
-                Squad4 = new AriaTouchTarget { Id = 200, Available = true },
+                Squad4 = new AriaTouchTarget { Id = 104, Available = true },
+                NextSquadPage = new AriaTouchTarget { Id = 200, Available = true },
                 Attack = new AriaTouchTarget { Id = 42, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
@@ -730,12 +737,13 @@ namespace Game.Tests.Editor
 
             view.ExpandedPageIndex = 1;
             view.ExpandedStructureMask = (1 << 0) | (1 << 3);
-            view.ExpandedAssaultMask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3);
+            view.ExpandedAssaultMask = (1 << 0) | (1 << 1) | (1 << 2) | (1 << 3) | (1 << 4);
             view.Squad0 = new AriaTouchTarget { Id = 100, Available = true };
             view.Squad1 = new AriaTouchTarget { Id = 101, Available = true };
             view.Squad2 = new AriaTouchTarget { Id = 102, Available = true };
             view.Squad3 = new AriaTouchTarget { Id = 103, Available = true };
-            for (int slot = 0; slot < 4; slot++)
+            view.Squad4 = new AriaTouchTarget { Id = 104, Available = true };
+            for (int slot = 0; slot < 5; slot++)
             {
                 AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
                 Assert.AreEqual(0, plan.AssaultIssued);
@@ -757,10 +765,12 @@ namespace Game.Tests.Editor
 
             view.Attack = new AriaTouchTarget { Id = 42, Available = true };
             view.ExpandedAttackOrderMask = view.ExpandedAssaultMask;
+            view.NextSquadPage = default;
+            view.PreviousSquadPage = new AriaTouchTarget { Id = 201, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(0, plan.AssaultIssued);
             Assert.AreEqual(1, plan.StructureOrdered);
-            Assert.AreEqual(200, output.TargetId);
+            Assert.AreEqual(201, output.TargetId);
 
             view.ExpandedPageIndex = 0;
             view.ExpandedAssaultMask = 0;
@@ -883,12 +893,15 @@ namespace Game.Tests.Editor
                 em,
                 session,
                 out int pageIndex,
+                out bool previousPage,
                 out bool nextPage,
+                out int pageCount, out int totalGroups, out int selectedGroups, out int selectedOffPage, out uint rosterRevision,
                 out SkirmishPresentedSlot slot0,
                 out SkirmishPresentedSlot slot1,
                 out SkirmishPresentedSlot slot2,
-                out SkirmishPresentedSlot slot3));
-            var slots = new[] { slot0, slot1, slot2, slot3 };
+                out SkirmishPresentedSlot slot3,
+                out SkirmishPresentedSlot slot4));
+            var slots = new[] { slot0, slot1, slot2, slot3, slot4 };
             int assault = 0;
             int selected = 0;
             int structure = 0;
@@ -915,7 +928,15 @@ namespace Game.Tests.Editor
                 PlayerDesignatedAlive = em.GetComponentData<UnitHealth>(playerBase).Current > 0,
                 Infantry = 20,
                 ExpandedPageIndex = pageIndex,
-                ExpandedNextPage = nextPage,
+                ExpandedPageCount = pageCount,
+                ExpandedTotalGroups = totalGroups,
+                ExpandedSelectedGroups = selectedGroups,
+                ExpandedSelectedOffPage = selectedOffPage,
+                ExpandedRosterRevision = rosterRevision,
+                ExpandedCanNextPage = nextPage,
+                PreviousSquadPage = new AriaTouchTarget { Id = 201, Available = previousPage },
+                NextSquadPage = new AriaTouchTarget { Id = 200, Available = nextPage },
+                ClearSquadSelection = new AriaTouchTarget { Id = 202, Available = selectedGroups > 0 },
                 ExpandedAssaultMask = assault,
                 ExpandedSelectedMask = selected,
                 ExpandedStructureMask = structure,
@@ -924,7 +945,7 @@ namespace Game.Tests.Editor
                 Squad1 = PresentedCard(slot1, 101),
                 Squad2 = PresentedCard(slot2, 102),
                 Squad3 = PresentedCard(slot3, 103),
-                Squad4 = new AriaTouchTarget { Id = 200, Available = nextPage },
+                Squad4 = PresentedCard(slot4, 104),
                 Attack = new AriaTouchTarget { Id = 42, Available = true }
             };
         }
@@ -939,8 +960,12 @@ namespace Game.Tests.Editor
             if (output.Kind != AriaPlayObservationKind.Control)
                 return;
             if (output.TargetId == 200)
-                SkirmishExpandedPresentedOrders.TryAdvancePage(em, session);
-            else if (output.TargetId >= 100 && output.TargetId <= 103)
+                SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1);
+            else if (output.TargetId == 201)
+                SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1);
+            else if (output.TargetId == 202)
+                SkirmishExpandedPresentedOrders.TryClearSelection(em, session);
+            else if (output.TargetId >= 100 && output.TargetId <= 104)
                 SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, output.TargetId - 100);
             else if (output.TargetId == 42)
                 FixtureAttackEnemyBase(em, session);
@@ -1303,10 +1328,10 @@ namespace Game.Tests.Editor
             for (int pages = 0; pages < 32; pages++)
             {
                 Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
-                    out int page, out bool next, out var a, out var b, out var c, out var d));
-                if (page == initialPage) break;
+                    out int page, out bool previous, out bool next, out int pageCount, out _, out _, out _, out _, out var a, out var b, out var c, out var d, out var e));
                 if (initialPage < 0) initialPage = page;
-                var slots = new[] { a, b, c, d };
+                if (page >= pageCount) break;
+                var slots = new[] { a, b, c, d, e };
                 bool selected = false;
                 for (int i = 0; i < slots.Length; i++)
                     if (slots[i].Occupied && slots[i].Structure)
@@ -1315,7 +1340,9 @@ namespace Game.Tests.Editor
                         selected = true;
                     }
                 if (selected) Assert.IsTrue(FixtureAttackEnemyBase(em, session));
-                if (!next || !SkirmishExpandedPresentedOrders.TryAdvancePage(em, session)) break;
+                if (next) SkirmishExpandedPresentedOrders.TryChangePage(em, session, 1);
+                else if (page > 0 && previous) SkirmishExpandedPresentedOrders.TryChangePage(em, session, -1);
+                else break;
             }
         }
 

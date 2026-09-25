@@ -211,6 +211,15 @@ namespace Game.Editor
             string prefix = "/private/tmp/s003-native-" + GameLocalization.CurrentLocaleCode + "-" + width + "x" + height;
             if (nativeReviewStage == 0)
             {
+                foreach (var mapView in UnityEngine.Object.FindObjectsByType<MatchHudMinimapView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                {
+                    var mapRect = mapView.transform as RectTransform;
+                    var corners = new Vector3[4];
+                    mapRect?.GetWorldCorners(corners);
+                    Debug.Log("[SkirmishNativeOpening] minimap=" + mapView.name + " parent=" + mapView.transform.parent?.name +
+                        " anchors=" + mapRect?.anchorMin + "/" + mapRect?.anchorMax +
+                        " position=" + mapRect?.anchoredPosition + " worldCorners=" + corners[0] + "/" + corners[2]);
+                }
                 // Screen.width inside EditorApplication.update can describe the
                 // Editor window. Validate the written PNG, which is the real render.
                 ScreenCapture.CaptureScreenshot(prefix + "-opening.png");
@@ -225,7 +234,30 @@ namespace Game.Editor
                 }
                 nativeReviewStage = 1;
                 next = now + 1d;
+                if (Environment.GetEnvironmentVariable("WARLINE_PAGINATION_OPENING_ONLY") == "1")
+                {
+                    if (Environment.GetEnvironmentVariable("WARLINE_PAGINATION_SELECTED_CAPTURE") == "1")
+                    {
+                        nativeReviewStage = 90;
+                        return false;
+                    }
+                    Debug.Log("[SkirmishSquadPaginationOpening] result=Captured input=UiRequest visualReview=Pending path=" + prefix + "-opening.png");
+                    return true;
+                }
                 return false;
+            }
+            if (nativeReviewStage == 90)
+            {
+                if (!UiShellRuntimeGateway.TrySelectExpandedPresentedSlot(0)) return false;
+                nativeReviewStage = 91;
+                next = now + 2d;
+                return false;
+            }
+            if (nativeReviewStage == 91)
+            {
+                ScreenCapture.CaptureScreenshot(prefix + "-selected-fixture.png");
+                Debug.Log("[SkirmishSquadPaginationSelected] result=Captured input=FixtureDirectSelection visualReview=Pending path=" + prefix + "-selected-fixture.png");
+                return true;
             }
             if (nativeReviewStage == 1)
             {
@@ -385,10 +417,19 @@ namespace Game.Editor
                 if (EditorApplication.timeSinceStartup > terminalDeadline) EndTerminalProbe(false, "playerFrameTimeout");
                 return;
             }
-            speedLatch = SkirmishS002AriaRunLog.ObserveTimeScale(speedLatch, Time.timeScale);
-            if (!speedLatch.Normal)
-                SessionState.SetBool(NormalKey, false);
-            normalSpeed = speedLatch.Normal;
+            // The result screen intentionally freezes timeScale before the next
+            // scheduled harness tick. Audit only Playing frames, never the
+            // frozen terminal UI or startup before simulation begins.
+            World speedWorld = World.DefaultGameObjectInjectionWorld;
+            if (speedWorld != null && speedWorld.IsCreated &&
+                SkirmishLaunchProjection.TryGet(speedWorld.EntityManager, out _, out var speedMatch) &&
+                speedMatch.Phase == SkirmishPhase.Playing)
+            {
+                speedLatch = SkirmishS002AriaRunLog.ObserveTimeScale(speedLatch, Time.timeScale);
+                if (!speedLatch.Normal)
+                    SessionState.SetBool(NormalKey, false);
+                normalSpeed = speedLatch.Normal;
+            }
 
             double now = EditorApplication.timeSinceStartup;
             if (deadline == 0d)
@@ -990,6 +1031,10 @@ namespace Game.Editor
                 terminalSnapshotValid ? terminalTimeScale : Time.timeScale, duration,
                 terminalSnapshotValid ? terminalWall : wall,
                 terminalSnapshotValid && terminalMatch.Phase == SkirmishPhase.Finished);
+            Debug.Log("[SkirmishNormalSpeed] latch=" + speedLatch.Normal +
+                " terminalScale=" + (terminalSnapshotValid ? terminalTimeScale : Time.timeScale) +
+                " matchSeconds=" + duration + " wallSeconds=" +
+                (terminalSnapshotValid ? terminalWall : wall) + " counted=" + normalSpeed);
             if (!normalSpeed)
                 SessionState.SetBool(NormalKey, false);
             string outcome = haveMatch ? match.Outcome.ToString() : string.Empty;

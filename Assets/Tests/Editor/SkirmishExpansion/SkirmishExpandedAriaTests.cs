@@ -734,7 +734,7 @@ namespace Game.Tests.Editor
             var view = new AriaSkirmishObservation
             {
                 Active = true, ExpandedSession = true, Time = 1,
-                EnemyDesignatedAlive = true, ExpandedNextPage = true,
+                EnemyDesignatedAlive = true, ExpandedCanNextPage = true, ExpandedPageCount = 2,
                 ExpandedAssaultMask = 15, ExpandedAttackOrderMask = 15,
                 ExpandedSelectedMask = 15, ExpandedStructureMask = 4,
                 CanUpgradeReadiness = true,
@@ -752,7 +752,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(11, output.TargetId);
             Assert.AreEqual(0, plan.AssaultIssued);
             view.DrawerOpen = false;
-            view.Squad4 = new AriaTouchTarget { Id = 12, Available = true };
+            view.NextSquadPage = new AriaTouchTarget { Id = 12, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(12, output.TargetId);
             Assert.AreEqual(0, plan.AssaultIssued);

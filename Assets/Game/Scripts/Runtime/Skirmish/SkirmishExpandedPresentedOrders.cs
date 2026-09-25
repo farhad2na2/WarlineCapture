@@ -16,6 +16,7 @@ namespace Game.Runtime
         public bool Structure;
         public bool AttackOrdered;
         public bool Rifle;
+        public uint GroupId;
     }
 
     /// <summary>
@@ -23,7 +24,7 @@ namespace Game.Runtime
     /// </summary>
     public static class SkirmishExpandedPresentedOrders
     {
-        public const int PresentedSlots = 4;
+        public const int PresentedSlots = SkirmishArmyPaging.StandardPageSize;
 
         public static bool IsAssaultRole(SkirmishRoleKind role)
         {
@@ -57,25 +58,46 @@ namespace Game.Runtime
             EntityManager em,
             Entity session,
             out int pageIndex,
+            out bool previousPage,
             out bool nextPage,
+            out int pageCount,
+            out int totalGroups,
+            out int selectedGroups,
+            out int selectedOffPage,
+            out uint rosterRevision,
             out SkirmishPresentedSlot slot0,
             out SkirmishPresentedSlot slot1,
             out SkirmishPresentedSlot slot2,
-            out SkirmishPresentedSlot slot3)
+            out SkirmishPresentedSlot slot3,
+            out SkirmishPresentedSlot slot4)
         {
             pageIndex = 0;
             nextPage = false;
+            previousPage = false;
+            pageCount = 1;
+            totalGroups = selectedGroups = selectedOffPage = 0;
+            rosterRevision = 2166136261u;
             slot0 = default;
             slot1 = default;
             slot2 = default;
             slot3 = default;
+            slot4 = default;
             if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
                 return false;
 
+            if (!em.HasComponent<SkirmishArmySelectionComponent>(session)) return false;
+            var currentSelection = em.GetComponentData<SkirmishArmySelectionComponent>(session);
+            if (currentSelection.PageSize != PresentedSlots)
+            {
+                currentSelection.PageSize = PresentedSlots;
+                em.SetComponentData(session, currentSelection);
+            }
             SkirmishArmyDrawerProjection.Project(em, session);
-            if (em.HasComponent<SkirmishArmySelectionComponent>(session))
-                pageIndex = em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex;
-            nextPage = PlayerGroupCount(em, session) > PresentedSlots;
+            pageIndex = em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex;
+            totalGroups = PlayerGroupCount(em, session);
+            pageCount = totalGroups <= 0 ? 1 : (totalGroups + PresentedSlots - 1) / PresentedSlots;
+            previousPage = pageIndex > 0;
+            nextPage = pageIndex + 1 < pageCount;
             if (!em.HasBuffer<SkirmishArmyDrawerSlot>(session))
                 return true;
 
@@ -88,6 +110,23 @@ namespace Game.Runtime
                 slot2 = FromDrawer(slots[2]);
             if (slots.Length > 3)
                 slot3 = FromDrawer(slots[3]);
+            if (slots.Length > 4)
+                slot4 = FromDrawer(slots[4]);
+            if (em.HasBuffer<SkirmishArmyGroupRecord>(session))
+            {
+                var groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+                for (int i = 0; i < groups.Length; i++)
+                    if (groups[i].FactionId == 1 && groups[i].AliveCount > 0)
+                    {
+                        rosterRevision = (rosterRevision ^ groups[i].GroupId) * 16777619u;
+                        rosterRevision = (rosterRevision ^ (uint)groups[i].AliveCount) * 16777619u;
+                        if (groups[i].Selected == 0) continue;
+                        selectedGroups++;
+                        uint id = groups[i].GroupId;
+                        bool visible = slot0.GroupId == id || slot1.GroupId == id || slot2.GroupId == id || slot3.GroupId == id || slot4.GroupId == id;
+                        if (!visible) selectedOffPage++;
+                    }
+            }
             return true;
         }
 
@@ -116,8 +155,6 @@ namespace Game.Runtime
         {
             if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
                 return false;
-            if (index == PresentedSlots)
-                return TryAdvancePage(em, session);
             if (index < 0 || index >= PresentedSlots)
                 return false;
             int page = em.HasComponent<SkirmishArmySelectionComponent>(session)
@@ -125,6 +162,17 @@ namespace Game.Runtime
                 : 0;
             bool add = AnyPlayerSelected(em, session);
             return SkirmishArmySelectionService.TrySelectPageSlot(em, session, page, index, add, out _);
+        }
+
+        public static bool TryPresentedGroup(EntityManager em, Entity session, uint groupId)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) || groupId == 0 || !em.HasBuffer<SkirmishArmyGroupRecord>(session)) return false;
+            var groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
+            bool add = AnyPlayerSelected(em, session);
+            for (int i = 0; i < groups.Length; i++)
+                if (groups[i].FactionId == 1 && groups[i].GroupId == groupId && groups[i].AliveCount > 0)
+                    return SkirmishArmySelectionService.TrySelectGroup(em, session, groupId, add, out _);
+            return false;
         }
 
         public static bool TryHoldSelection(EntityManager em, Entity session)
@@ -137,18 +185,29 @@ namespace Game.Runtime
 
 
 
-        public static bool TryAdvancePage(EntityManager em, Entity session)
+        public static bool TryChangePage(EntityManager em, Entity session, int delta)
         {
+            if ((delta != -1 && delta != 1) || !SkirmishExpandedSessionControlService.IsExpanded(em, session))
+                return false;
             if (!em.HasComponent<SkirmishArmySelectionComponent>(session))
                 return false;
             int groups = PlayerGroupCount(em, session);
             var selection = em.GetComponentData<SkirmishArmySelectionComponent>(session);
-            int pageSize = selection.PageSize < 1 ? PresentedSlots : selection.PageSize;
+            int pageSize = PresentedSlots;
+            selection.PageSize = pageSize;
             int pages = groups <= 0 ? 1 : (groups + pageSize - 1) / pageSize;
-            if (pages <= 1)
+            int destination = selection.PageIndex + delta;
+            if (destination < 0 || destination >= pages)
                 return false;
-            selection.PageIndex = (selection.PageIndex + 1) % pages;
+            selection.PageIndex = destination;
             em.SetComponentData(session, selection);
+            SkirmishArmyDrawerProjection.Project(em, session);
+            return true;
+        }
+
+        public static bool TryClearSelection(EntityManager em, Entity session)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) || !AnyPlayerSelected(em, session)) return false;
             SkirmishArmySelectionService.Clear(em, session);
             SkirmishArmyDrawerProjection.Project(em, session);
             return true;
@@ -166,7 +225,8 @@ namespace Game.Runtime
                 Assault = slot.AliveCount > 0 && IsAssaultRole(slot.Role),
                 Structure = slot.AliveCount > 0 && IsStructureAssaultRole(slot.Role),
                 AttackOrdered = slot.AliveCount > 0 && slot.LastOrder == SkirmishGroupOrderKind.Attack,
-                Rifle = slot.AliveCount > 0 && slot.Role == SkirmishRoleKind.Rifle
+                Rifle = slot.AliveCount > 0 && slot.Role == SkirmishRoleKind.Rifle,
+                GroupId = slot.GroupId
             };
         }
 

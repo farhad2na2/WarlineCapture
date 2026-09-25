@@ -36,6 +36,21 @@ namespace Game.UI.Runtime
             return fallback;
         }
 
+        public Button ResolveCatalogTarget(BuildDrawerCategory category, string prefabKey)
+        {
+            if (view == null || !view.IsOpen) return null;
+            if (_activeCategory != category) return ResolveCategoryButton(category);
+            if (_hasSelectedItem && _selectedItem.Prefab != null && _selectedItem.Prefab.name == prefabKey)
+                return _primaryActionButton;
+            for (int i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].Prefab == null || _items[i].Prefab.name != prefabKey) continue;
+                var item = i == 0 ? view.ItemTemplate : i - 1 < _runtimeItems.Count ? _runtimeItems[i - 1] : null;
+                return item?.SelectionButton;
+            }
+            return null;
+        }
+
         private static bool IsTutorialBuilding(GameObject prefab, bool defense) => prefab != null &&
             (defense ? prefab.name is "Building_Road_Barrier" or "Building_GuardTower" : prefab.name == BarracksPrefabName);
 

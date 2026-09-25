@@ -16,7 +16,7 @@ namespace Game.Runtime
         public const float GroundMetersPerSecond = 8f;
         public const float ArriveDistance = 0.35f;
 
-        public static void AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
+        public static bool AssignIntent(EntityManager em, Entity unit, float3 destination, SkirmishGroupOrderKind order)
         {
             bool sameDestination = false;
             if (em.HasComponent<SkirmishMoveIntentComponent>(unit))
@@ -45,14 +45,23 @@ namespace Game.Runtime
                 em.RemoveComponent<HoldPositionOrderTag>(unit);
 
             // Repeating the same order must not restart a route that is already walking.
-            if (!sameDestination)
-                TryReuseSharedPath(em, unit, destination);
+            bool accepted = sameDestination || TryReuseSharedPath(em, unit, destination);
+            if (!accepted)
+            {
+                intent.Active = 0;
+                em.SetComponentData(unit, intent);
+            }
+            return accepted;
         }
 
         public static void ClearIntent(EntityManager em, Entity unit)
         {
             if (!em.HasComponent<SkirmishMoveIntentComponent>(unit))
+            {
+                if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+                    UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, unit);
                 return;
+            }
             var intent = em.GetComponentData<SkirmishMoveIntentComponent>(unit);
             intent.Active = 0;
             intent.Order = SkirmishGroupOrderKind.Hold;
@@ -60,6 +69,11 @@ namespace Game.Runtime
             intent.Engaged = 0;
             intent.Cooldown = 0f;
             em.SetComponentData(unit, intent);
+            if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+            {
+                UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em, unit);
+                return;
+            }
             ClearSharedPath(em, unit);
         }
 
@@ -86,6 +100,9 @@ namespace Game.Runtime
                 HomeAttackDestination(em, unit, ref intent);
                 if (intent.Active == 0)
                     continue;
+                // Accepted production commands are owned by the shared Move/AttackMove
+                // systems, including interruption, retries and aircraft travel.
+                if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit)) continue;
                 if (intent.Engaged != 0)
                 {
                     ClearSharedPath(em, unit);
@@ -105,12 +122,17 @@ namespace Game.Runtime
                 // Shared navigation owns movement whenever the unit carries real
                 // movement data and the destination resolves inside the loaded grid.
                 // The direct step remains only for worlds without a grid (Editor
-                // fixtures) and as a bounded stall recovery, never as the default.
+                // fixtures), never as production stall recovery.
                 if (TrySharedPathStep(em, unit, ref intent, deltaSeconds, hasGrid, in grid))
                 {
                     moved++;
                     continue;
                 }
+
+                // Production units must wait for a valid shared route. Stepping their
+                // transforms when the grid/route is unavailable bypasses obstacles.
+                if (em.HasComponent<SkirmishSharedActorTag>(unit))
+                    continue;
 
                 // Fallback integration: no shared follower can exist without a grid,
                 // and a stalled follower is cleared so it cannot double-integrate.
@@ -312,19 +334,18 @@ namespace Game.Runtime
                 : InfantryMetersPerSecond;
         }
 
-        private static void TryReuseSharedPath(EntityManager em, Entity unit, float3 destination)
+        private static bool TryReuseSharedPath(EntityManager em, Entity unit, float3 destination)
         {
             if (!em.HasComponent<UnitMove>(unit))
-                return;
+                return !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if (grids.IsEmptyIgnoreFilter)
-                return;
+                return !SkirmishSharedCombatBinding.UsesSharedCommands(em, unit);
             GridConfig grid = grids.GetSingleton<GridConfig>();
             int2 cell = GridUtils.WorldToCell(grid, destination);
             if (IsRegistryUnit(em, unit))
             {
-                IssueRegistryPath(em, unit, cell);
-                return;
+                return IssueRegistryPath(em, unit, cell);
             }
 
             var request = new UnitPathRequest { Goal = cell };
@@ -332,17 +353,31 @@ namespace Game.Runtime
                 em.SetComponentData(unit, request);
             else
                 em.AddComponentData(unit, request);
+            return true;
         }
 
         private static bool IsRegistryUnit(EntityManager em, Entity unit)
         {
-            return em.HasComponent<SkirmishVisualSpawnedComponent>(unit) &&
-                em.GetComponentData<SkirmishVisualSpawnedComponent>(unit).FromRegistry != 0;
+            return em.HasComponent<SkirmishSharedActorTag>(unit);
         }
 
-        private static void IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
+        private static bool IssueRegistryPath(EntityManager em, Entity unit, int2 cell)
         {
+            if (SkirmishSharedCombatBinding.UsesSharedCommands(em, unit))
+            {
+                if (em.GetComponentData<SkirmishMoveIntentComponent>(unit).Order == SkirmishGroupOrderKind.Attack)
+                {
+                    using var grids = em.CreateEntityQuery(typeof(GridConfig));
+                    if (grids.CalculateEntityCount() != 1) return false;
+                    using var units = new NativeList<Entity>(1, Allocator.Temp);
+                    units.Add(unit);
+                    return AttackMoveSystem.IssueUnits(em, units.AsArray(), em.GetComponentData<Faction>(unit).Id,
+                        cell, GridUtils.CellToWorldCenter(grids.GetSingleton<GridConfig>(), cell), Time.frameCount).Accepted;
+                }
+                return UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em, unit, cell);
+            }
             new UnitMoveOrderSystem().IssueImmediateMoveCommand(em, unit, cell);
+            return true;
         }
 
         private static void ClearSharedPath(EntityManager em, Entity unit)

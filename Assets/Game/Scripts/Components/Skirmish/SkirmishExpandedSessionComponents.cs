@@ -145,6 +145,9 @@ namespace Game.Components
         public SkirmishPopulationCategory Category;
         public int MemberCount;
         public int RemainingMembers;
+        public int DeliveredMembers;
+        public uint ProductionGroupId;
+        public int ProducerRuntimeId;
         public int MaterialsPaid;
         public int SupplyCost;
         public SkirmishReservationPhase Phase;
@@ -282,6 +285,17 @@ namespace Game.Components
         public float RallyPadZ;
     }
 
+    // Gameplay was instantiated by the shared baked-unit/building pipeline.
+    // A registry-sourced presentation GameObject alone does not confer simulation ownership.
+    public struct SkirmishSharedActorTag : IComponentData { }
+
+    public struct SkirmishReadinessRequest : IBufferElementData
+    {
+        public uint InputReceipt;
+        // Zero queues the next stage; a nonzero ID cancels that exact queued research.
+        public uint CancelResearchId;
+    }
+
     public struct SkirmishVisualSpawnedComponent : IComponentData
     {
         public byte Spawned;
@@ -317,6 +331,7 @@ namespace Game.Components
 
     public struct SkirmishArmyDrawerSlot : IBufferElementData
     {
+        public float Health01;
         public uint GroupId;
         public SkirmishRoleKind Role;
         public int AliveCount;
@@ -328,6 +343,8 @@ namespace Game.Components
     {
         public byte Requested;
     }
+
+    public struct SkirmishExpandedReplayStartPending : IComponentData { }
 
     public struct SkirmishExpandedPauseRequest : IComponentData
     {

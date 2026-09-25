@@ -41,8 +41,7 @@ namespace Game.Runtime
                 {
                     ComponentType.ReadOnly<UnitGrid>(),
                     ComponentType.ReadOnly<Faction>(),
-                    ComponentType.ReadOnly<UnitCombat>(),
-                    ComponentType.ReadOnly<UnitAttack>(),
+                    ComponentType.ReadOnly<UnitHealth>(),
                     ComponentType.ReadOnly<LocalTransform>()
                 },
                 None = new[]
@@ -153,6 +152,11 @@ namespace Game.Runtime
                 PathRequestLookup = pathRequestLookup,
                 HoldPositionLookup = holdPositionLookup,
                 ScanOrderLookup = scanOrderLookup,
+                TargetPolicyLookup = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
+                TargetBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                TargetBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
+                TargetAirLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
+                TargetMovementLookup = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
                 Ecb = ecb
             }.ScheduleParallel(buildHandle);
 
@@ -167,8 +171,9 @@ namespace Game.Runtime
             public GridConfig Grid;
             public NativeParallelMultiHashMap<int, Entity>.ParallelWriter Writer;
 
-            public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in LocalTransform transform, in UnitGrid unitGrid, in Faction faction, in UnitCombat combat, in UnitAttack attack)
+            public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in LocalTransform transform, in UnitGrid unitGrid, in Faction faction, in UnitHealth health)
             {
+                if (health.Current <= 0) return;
                 int2 cell = GridUtils.WorldToCell(Grid, transform.Position);
                 if (!GridUtils.InBounds(cell, Grid.Width, Grid.Height))
                     cell = unitGrid.Cell;
@@ -199,6 +204,11 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
             [ReadOnly] public ComponentLookup<HoldPositionOrderTag> HoldPositionLookup;
             [ReadOnly] public ComponentLookup<UnitScanOrder> ScanOrderLookup;
+            [ReadOnly] public ComponentLookup<CombatTargetPolicy> TargetPolicyLookup;
+            [ReadOnly] public ComponentLookup<RuntimeBuildingCombatInfo> TargetBuildingLookup;
+            [ReadOnly] public ComponentLookup<StaticGridBlocker> TargetBlockerLookup;
+            [ReadOnly] public ComponentLookup<UnitAirMovement> TargetAirLookup;
+            [ReadOnly] public ComponentLookup<UnitMovementBehavior> TargetMovementLookup;
             public EntityCommandBuffer.ParallelWriter Ecb;
 
             public void Execute([EntityIndexInQuery] int sortKey, Entity entity, in UnitGrid selfGrid, in Faction selfFaction, in UnitCombat combat, in UnitAttack attack, in LocalTransform selfTransform)
@@ -245,7 +255,7 @@ namespace Game.Runtime
                     RecentAttacker recent = RecentAttackerLookup[entity];
                     bool movementBlocksCombat = hasActiveManualMove && !scanning;
                     if (!movementBlocksCombat &&
-                        IsValidRetaliationTarget(recent.Attacker, selfFaction.Id) &&
+                        AllowsPolicy(entity, recent.Attacker) && IsValidRetaliationTarget(recent.Attacker, selfFaction.Id) &&
                         (!scanning || IsTargetInsideScanArea(recent.Attacker, scanOrder)))
                     {
                         float3 recentPos = TransformLookup[recent.Attacker].Position;
@@ -314,13 +324,13 @@ namespace Game.Runtime
                                     var allyEngage = EngageLookup[candidate];
                                     if (allyEngage.Target != Entity.Null)
                                     {
-                                        EvaluateEnemyCandidate(allyEngage.Target, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
+                                        EvaluateEnemyCandidate(entity, allyEngage.Target, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                                     }
                                 }
                                 continue;
                             }
 
-                            EvaluateEnemyCandidate(candidate, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
+                            EvaluateEnemyCandidate(entity, candidate, selfFaction.Id, selfTransform.Position, maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                         } while (SpatialMap.TryGetNextValue(out candidate, ref it));
                     }
                 }
@@ -329,7 +339,7 @@ namespace Game.Runtime
                 // mobile threats first and preserve ordinary Move/Hold acquisition.
                 if (best == Entity.Null && AttackMoveLookup.HasComponent(entity))
                     foreach (var building in BuildingTargets)
-                        EvaluateEnemyCandidate(building, selfFaction.Id, selfTransform.Position,
+                        EvaluateEnemyCandidate(entity, building, selfFaction.Id, selfTransform.Position,
                             maxDistSq, scanning, scanOrder, ref bestScore, ref best);
                 if (best == Entity.Null)
                     return;
@@ -346,6 +356,7 @@ namespace Game.Runtime
             }
 
             private void EvaluateEnemyCandidate(
+                Entity source,
                 Entity candidate,
                 byte selfFactionId,
                 float3 selfPos,
@@ -355,6 +366,7 @@ namespace Game.Runtime
                 ref float bestScore,
                 ref Entity best)
             {
+                if (!AllowsPolicy(source, candidate)) return;
                 if (!FactionLookup.HasComponent(candidate) || !TransformLookup.HasComponent(candidate))
                     return;
 
@@ -418,6 +430,20 @@ namespace Game.Runtime
             {
                 int2 delta = math.abs(a - b);
                 return math.max(delta.x, delta.y);
+            }
+
+            private bool AllowsPolicy(Entity source, Entity target)
+            {
+                bool hasSource = TargetPolicyLookup.HasComponent(source);
+                bool hasTarget = TargetPolicyLookup.HasComponent(target);
+                var sourcePolicy = hasSource ? TargetPolicyLookup[source] : default;
+                var targetPolicy = hasTarget ? TargetPolicyLookup[target] : new CombatTargetPolicy
+                {
+                    Visible = 1,
+                    Domain = CombatTargetPolicyUtility.InferDomain(TargetBuildingLookup.HasComponent(target) || TargetBlockerLookup.HasComponent(target),
+                        TargetAirLookup.HasComponent(target), TargetMovementLookup.HasComponent(target) && TargetMovementLookup[target].UsesVehicleMotion != 0)
+                };
+                return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
             }
 
             private bool IsValidRetaliationTarget(Entity candidate, byte selfFactionId)

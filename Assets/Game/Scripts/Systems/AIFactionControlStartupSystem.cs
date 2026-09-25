@@ -139,6 +139,24 @@ namespace Game.Runtime
                 });
             }
 
+            using var strategyQuery = em.CreateEntityQuery(typeof(ExternalFactionStrategy));
+            using var strategyEntities = strategyQuery.ToEntityArray(Allocator.Temp);
+            foreach (Entity owner in strategyEntities)
+            {
+                var strategies = em.GetBuffer<ExternalFactionStrategy>(owner);
+                for (int i = 0; i < entries.Length; i++)
+                {
+                    var entry = entries[i];
+                    for (int j = 0; j < strategies.Length; j++)
+                    {
+                        if (strategies[j].FactionId != entry.FactionId) continue;
+                        entry.AIControlled = 0;
+                        entries[i] = entry;
+                        if (entry.IsPlayerFaction != 0) playerAutoModeEnabled = false;
+                        break;
+                    }
+                }
+            }
             return new Result(true, playerAutoModeEnabled);
         }
 

@@ -193,7 +193,7 @@ namespace Game.Runtime
                     return false;
 
                 int2 airCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
-                if (TrySpawnPlayerUnitNearBuilding(context, building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell, ref randomState))
+                if (TrySpawnPlayerUnitNearBuilding(context, building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell, ref randomState, readyAirPending))
                 {
                     bool removedPending = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending);
                     if (removedPending)
@@ -225,7 +225,7 @@ namespace Game.Runtime
                 readySelfArrivalPending.ReservedProductionSlotIndex,
                 runwaySpawnPosition,
                 runwayCell,
-                ref randomState))
+                ref randomState, readySelfArrivalPending))
             {
                 bool removedPending = context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending);
                 if (removedPending)
@@ -773,7 +773,7 @@ namespace Game.Runtime
             if (transport.Mode == ProductionTransportMode.Plane)
             {
                 int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
-                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState);
+                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState, production);
                 if (spawned)
                 {
                     AlignNewestProducedUnitRotation(context, building, -transport.Transform.forward);
@@ -783,11 +783,11 @@ namespace Game.Runtime
             else if (transport.Mode == ProductionTransportMode.Helicopter)
             {
                 int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
-                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState);
+                spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState, production);
                 if (spawned)
                     MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
-            else if ((spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState)))
+            else if ((spawned = TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState, production)))
             {
                 MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
@@ -841,7 +841,8 @@ namespace Game.Runtime
             int reservedProductionSlotIndex,
             Vector3? overrideWorldPosition,
             int2? overrideCell,
-            ref uint randomState)
+            ref uint randomState,
+            RuntimeBuildingEntity.PendingProduction pending = null)
         {
             if (context.TransportBridgeSystem == null)
                 return false;
@@ -853,7 +854,7 @@ namespace Game.Runtime
                 reservedProductionSlotIndex,
                 overrideWorldPosition,
                 overrideCell,
-                ref randomState);
+                ref randomState, pending);
         }
 
         private static Vector3 ResolveTransportVisualCenterWorld(RuntimeBuildingEntity.ActiveProductionTransport transport)

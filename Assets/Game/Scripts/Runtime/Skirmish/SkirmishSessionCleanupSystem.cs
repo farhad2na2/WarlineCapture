@@ -29,11 +29,14 @@ namespace Game.Runtime
                     continue;
                 SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
                 bool requested = em.HasComponent<SkirmishExpandedCleanupRequest>(entity);
-                if (!requested &&
-                    session.Phase != SkirmishSessionPhase.Failed &&
-                    session.Phase != SkirmishSessionPhase.Finished)
+                // A finished match remains visible behind its result and keeps
+                // the compiled setup needed by Replay. Release only on exit.
+                if (!requested && session.Phase != SkirmishSessionPhase.Failed)
                     continue;
 
+                if (em.HasBuffer<ExternalFactionStrategy>(entity))
+                    em.RemoveComponent<ExternalFactionStrategy>(entity);
+                SkirmishStartingBuildingsService.Cancel(em, entity);
                 FixedString64Bytes sessionId = session.SessionId;
                 SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, sessionId);
                 if (!em.Exists(entity))

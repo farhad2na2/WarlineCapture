@@ -92,6 +92,13 @@ namespace Game.Components
     {
     }
 
+    // Session-scoped strategy ownership. Native movement/combat remain enabled,
+    // but the generic autonomous economy/squad planners must not issue orders.
+    public struct ExternalFactionStrategy : IBufferElementData
+    {
+        public byte FactionId;
+    }
+
     public struct FactionControlEntry : IBufferElementData
     {
         public byte FactionId;

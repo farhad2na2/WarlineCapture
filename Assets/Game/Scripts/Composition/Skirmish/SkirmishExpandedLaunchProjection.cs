@@ -64,6 +64,12 @@ namespace Game.Composition
             else
                 em.AddComponentData(entity, sessionComponent);
 
+            var strategyOwners = em.HasBuffer<ExternalFactionStrategy>(entity)
+                ? em.GetBuffer<ExternalFactionStrategy>(entity) : em.AddBuffer<ExternalFactionStrategy>(entity);
+            strategyOwners.Clear();
+            strategyOwners.Add(new ExternalFactionStrategy { FactionId = 1 });
+            strategyOwners.Add(new ExternalFactionStrategy { FactionId = 2 });
+
             var setupComponent = new SkirmishResolvedSetupComponent
             {
                 SetupHash = setup.SetupHash,

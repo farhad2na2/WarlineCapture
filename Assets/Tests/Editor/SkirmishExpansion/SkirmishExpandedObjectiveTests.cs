@@ -13,6 +13,54 @@ namespace Game.Tests.Editor
     public sealed class SkirmishExpandedObjectiveTests
     {
         [Test]
+        public void ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup()
+        {
+            using var world = new World(nameof(ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup));
+            var em = world.EntityManager;
+            var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent),
+                typeof(SkirmishObjectiveStateComponent), typeof(SkirmishMatchState));
+            em.AddBuffer<SkirmishTrackedUnit>(session);
+            em.SetComponentData(session, new SkirmishExpandedSessionComponent
+                { SessionId = "loss-test", Phase = SkirmishSessionPhase.Playing });
+            em.SetComponentData(session, new SkirmishMatchState { Phase = SkirmishPhase.Playing });
+            Entity Actor(byte faction, bool building, string attempt)
+            {
+                var entity = em.CreateEntity(typeof(Faction), typeof(UnitHealth), typeof(SkirmishAttemptOwnedComponent));
+                em.SetComponentData(entity, new Faction { Id = faction });
+                em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
+                em.SetComponentData(entity, new SkirmishAttemptOwnedComponent
+                    { SessionId = attempt, FactionId = faction, IsStructure = (byte)(building ? 1 : 0) });
+                if (building) em.AddComponent<RuntimeBuildingCombatTag>(entity);
+                return entity;
+            }
+            var player = Actor(1, false, "loss-test");
+            var enemy = Actor(2, false, "loss-test");
+            var barracks = Actor(2, true, "loss-test");
+            var survivor = Actor(1, false, "loss-test");
+            var otherAttempt = Actor(1, false, "another-attempt");
+            var system = world.GetOrCreateSystem<SkirmishOutcomeSystem>();
+            system.Update(world.Unmanaged);
+            em.DestroyEntity(player);
+            em.DestroyEntity(otherAttempt);
+            em.SetComponentData(enemy, new UnitHealth { Current = 0, Max = 100 });
+            em.SetComponentData(barracks, new UnitHealth { Current = 0, Max = 100 });
+            em.SetComponentData(session, new SkirmishObjectiveStateComponent
+                { Terminal = 1, Outcome = SkirmishOutcomeKind.Victory, Reason = SkirmishEndReasonKind.MainBaseDestroyed });
+            system.Update(world.Unmanaged);
+            var result = em.GetComponentData<SkirmishMatchState>(session);
+            Assert.AreEqual(SkirmishPhase.Finished, result.Phase);
+            Assert.AreEqual(1, result.PlayerUnitsLost);
+            Assert.AreEqual(1, result.EnemyUnitsLost);
+            Assert.AreEqual(0, result.PlayerBuildingsLost);
+            Assert.AreEqual(1, result.EnemyBuildingsLost);
+            em.DestroyEntity(survivor);
+            system.Update(world.Unmanaged);
+            Assert.AreEqual(1, em.GetComponentData<SkirmishMatchState>(session).PlayerUnitsLost,
+                "Post-result teardown must not count as a casualty.");
+            Assert.AreEqual(1, em.GetComponentData<SkirmishMatchState>(session).EnemyBuildingsLost);
+        }
+
+        [Test]
         public void ReplacementBarracksAndArmyWipeAreNonTerminal()
         {
             var facts = new SkirmishBaseAssaultFacts
@@ -217,6 +265,7 @@ namespace Game.Tests.Editor
             try
             {
                 var suite = new SkirmishExpandedObjectiveTests();
+                suite.ExpandedResultCountsAttemptLossesOnceAndFreezesBeforeCleanup();
                 suite.ReplacementBarracksAndArmyWipeAreNonTerminal();
                 suite.PausedDeadlineDoesNotFreeze();
                 suite.BothDesignatedDeadIsDrawRegardlessOfReplacement();

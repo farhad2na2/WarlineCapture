@@ -27,6 +27,14 @@ namespace Game.UI.Runtime
         public Vector2 ContactPosition { get; private set; }
         public uint Generation { get; private set; }
         public uint AcceptedSamples { get; private set; }
+        public uint StartedRuns { get; private set; }
+        public uint DispatchedGestures { get; private set; }
+        public uint CompletedGestures { get; private set; }
+        public uint UnexpectedSamples { get; private set; }
+        public uint PhysicalInterventions { get; private set; }
+        // Optional observation only: no subscriber can authorize or execute input.
+        public static event Action<AriaTouchInputUiSystemHelper, string, Vector2> Evidence;
+
         public bool PlayerInterrupted { get; private set; }
         public byte LastInterruption { get; private set; }
         public int DeviceId => screen != null ? screen.deviceId : 0;
@@ -57,6 +65,7 @@ namespace Game.UI.Runtime
         {
             if (disposed || IsRunning || AnyPhysicalButtonPressed()) return false;
             Generation++;
+            StartedRuns++;
             PlayerInterrupted = false;
             LastInterruption = 0;
             consumedDevice = null;
@@ -74,6 +83,8 @@ namespace Game.UI.Runtime
             touchId = ++nextTouchId;
             if (touchId <= 0) touchId = nextTouchId = 1;
             activeGesture = true;
+            DispatchedGestures++;
+            Evidence?.Invoke(this, "Dispatched", from);
             Queue(from, TouchPhase.Began);
             return true;
         }
@@ -93,6 +104,7 @@ namespace Game.UI.Runtime
 
         public void Stop()
         {
+            if (activeGesture || queued) Evidence?.Invoke(this, "Canceled", ContactPosition);
             Generation++;
             activeGesture = queued = pressed = false;
             // A Canceled TouchState is interpreted as a release by some UI handlers.
@@ -129,15 +141,25 @@ namespace Game.UI.Runtime
 
         private void OnInputEvent(InputEventPtr input, InputDevice device)
         {
+            // Disabled devices can still have queued events when ownership changes.
+            // They cannot deliver player input and must not cancel a fresh gesture.
+            if (!device.enabled) return;
             if (!input.IsA<StateEvent>() && !input.IsA<DeltaStateEvent>()) return;
             if (device == screen)
             {
-                if (!IsRunning || !queued) { input.handled = true; return; }
+                if (!IsRunning || !queued)
+                {
+                    UnexpectedSamples++;
+                    Evidence?.Invoke(this, "UnexpectedSample", ContactPosition);
+                    input.handled = true;
+                    return;
+                }
                 // The trajectory supplies the same point to the touch device and visual.
                 ContactPosition = pendingPosition;
                 AcceptedSamples++;
                 pressed = queuedPhase != TouchPhase.Ended;
-                if (!pressed) activeGesture = false;
+                if (!pressed) { activeGesture = false; CompletedGestures++; }
+                Evidence?.Invoke(this, queuedPhase.ToString(), ContactPosition);
                 queued = false;
                 return;
             }
@@ -150,6 +172,8 @@ namespace Game.UI.Runtime
             }
             if (!IsRunning || !down) return;
             // Mouse movement alone is not intervention. A real button/contact is.
+            PhysicalInterventions++;
+            Evidence?.Invoke(this, "PhysicalTakeover", ContactPosition);
             PlayerInterrupted = true;
             LastInterruption = 7;
             consumedDevice = device;
@@ -178,6 +202,7 @@ namespace Game.UI.Runtime
         {
             foreach (var device in InputSystem.devices)
             {
+                if (!device.enabled) continue;
                 if (device is Touchscreen touch)
                 {
                     foreach (var contact in touch.touches) if (contact.press.isPressed) return true;

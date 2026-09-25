@@ -26,7 +26,7 @@ namespace Game.Skirmish.Contracts
     [Serializable]
     public sealed class SkirmishCheckpointHeader
     {
-        public int SchemaVersion = 1;
+        public int SchemaVersion = 2;
         public SkirmishCheckpointSchemaKind Kind = SkirmishCheckpointSchemaKind.ExpandedV1;
         public string SessionId = string.Empty;
         public string CatalogId = string.Empty;
@@ -57,10 +57,29 @@ namespace Game.Skirmish.Contracts
         public int Category;
         public int MemberCount;
         public int RemainingMembers;
+            public int DeliveredMembers;
+            public uint ProductionGroupId;
+            public int ProducerRuntimeId;
         public int MaterialsPaid;
         public int SupplyCost;
         public int Phase;
         public byte FactionId;
+    }
+
+    [Serializable]
+    public sealed class SkirmishCheckpointSupplyStore
+    {
+        public byte FactionId;
+        public string PrefabKey = string.Empty;
+        public int OriginX;
+        public int OriginZ;
+        public float Oil;
+        public float Fuel;
+        public float OilInbound;
+        public float OilOutbound;
+        public float FuelInbound;
+        public float FuelOutbound;
+        public float CivilianReserve;
     }
 
     [Serializable]
@@ -101,6 +120,8 @@ namespace Game.Skirmish.Contracts
         public string EnemyBaseObjectId = string.Empty;
         public SkirmishOutcomeKind Outcome;
         public SkirmishEndReasonKind EndReason;
+        public byte PhysicalSupplyInitialized;
+        public SkirmishCheckpointSupplyStore[] SupplyStores = Array.Empty<SkirmishCheckpointSupplyStore>();
         public SkirmishCheckpointActor[] Actors = Array.Empty<SkirmishCheckpointActor>();
         public SkirmishCheckpointReservation[] Reservations = Array.Empty<SkirmishCheckpointReservation>();
     }

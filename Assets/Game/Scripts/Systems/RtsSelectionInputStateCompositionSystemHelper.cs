@@ -92,6 +92,8 @@ namespace Game.Runtime
 
         public bool TryEnqueueCommandRequest(RtsSelectionCommandIntentRequestElement request)
         {
+            request.InputReceipt = AriaCommandEvidence.ClaimRelease(UnityEngine.Time.frameCount,
+                request.HasScreenPosition != 0 ? new UnityEngine.Vector2(request.ScreenPosition.x, request.ScreenPosition.y) : null);
             if (!TryResolve(out EntityManager em, out Entity entity))
                 return false;
 

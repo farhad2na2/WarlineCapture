@@ -74,6 +74,9 @@ namespace Game.Runtime
             // portion, never units already delivered or unpaid scripted queues.
             public int RefundableMaterials { get; set; }
             public int PaidQuantity { get; set; }
+            public Entity ReceiptOwner { get; set; }
+            public uint ReceiptId { get; set; }
+            public FixedString64Bytes ReceiptAttempt { get; set; }
             public int TransportClearDropSearchStartRadius { get; set; }
             public ProductionTransportMode TransportMode { get; set; }
             public bool TransportRequiresAirportRunway { get; set; }

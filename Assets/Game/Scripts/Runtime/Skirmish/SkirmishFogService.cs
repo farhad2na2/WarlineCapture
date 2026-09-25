@@ -62,6 +62,12 @@ namespace Game.Runtime
 
         private static void WriteSight(EntityManager em, Entity entity, SkirmishContactSight sight)
         {
+            if (em.HasComponent<CombatTargetPolicy>(entity))
+            {
+                var policy = em.GetComponentData<CombatTargetPolicy>(entity);
+                policy.Visible = (byte)(sight == SkirmishContactSight.Visible ? 1 : 0);
+                em.SetComponentData(entity, policy);
+            }
             var component = new SkirmishContactSightComponent { Sight = sight };
             if (em.HasComponent<SkirmishContactSightComponent>(entity))
                 em.SetComponentData(entity, component);

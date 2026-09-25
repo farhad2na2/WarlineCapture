@@ -44,6 +44,7 @@ namespace Game.Composition
 
         public BuildingUiCommandFailure TryRequestCampItem(GameObject prefab, int materialsCost, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
         {
+            using var evidence = AriaCommandEvidence.Enter(AriaCommandEvidence.ClaimRelease(Time.frameCount));
             requiredBuildingDisplayName = string.Empty;
             return boundary != null
                 ? Map(boundary.TryRequestCampItem(context, prefab, materialsCost, out requiredBuildingDisplayName, focusProducerOnSuccess))
@@ -52,7 +53,13 @@ namespace Game.Composition
 
         public bool CancelProduction(int buildingId, int pendingProductionIndex) =>
             boundary != null && boundary.CancelProduction(context, buildingId, pendingProductionIndex);
-        public bool ConfirmBuildingPlacement() => boundary != null && boundary.ConfirmBuildingPlacement(context);
+        public bool ConfirmBuildingPlacement()
+        {
+            using var evidence = AriaCommandEvidence.Enter(AriaCommandEvidence.ClaimRelease(Time.frameCount));
+            bool accepted = boundary != null && boundary.ConfirmBuildingPlacement(context);
+            if (accepted) AriaCommandEvidence.Accepted("Placement", 1);
+            return accepted;
+        }
         public void CancelBuildingPlacement() => boundary?.CancelBuildingPlacement(context);
         public bool RotateBuildingPlacement() => boundary != null && boundary.RotateBuildingPlacement(context);
 
@@ -71,6 +78,10 @@ namespace Game.Composition
                 BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCredits => BuildingUiCommandFailure.InsufficientCredits,
                 BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientMaterials => BuildingUiCommandFailure.InsufficientMaterials,
                 BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCreditsAndMaterials => BuildingUiCommandFailure.InsufficientCreditsAndMaterials,
+                BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessEstablishedRequired => BuildingUiCommandFailure.ReadinessEstablishedRequired,
+                BuildingUiCommandSystemHelper.CampRequestFailure.ReadinessFullArsenalRequired => BuildingUiCommandFailure.ReadinessFullArsenalRequired,
+                BuildingUiCommandSystemHelper.CampRequestFailure.ArmyCapacityReached => BuildingUiCommandFailure.ArmyCapacityReached,
+                BuildingUiCommandSystemHelper.CampRequestFailure.ResearchInProgress => BuildingUiCommandFailure.ResearchInProgress,
                 _ => BuildingUiCommandFailure.InvalidSelection
             };
         }

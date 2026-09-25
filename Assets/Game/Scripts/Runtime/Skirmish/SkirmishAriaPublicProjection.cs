@@ -26,7 +26,7 @@ namespace Game.Runtime
             }
 
             if (em.HasComponent<SkirmishEconomyStockComponent>(session))
-                view.OwnMaterials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+                view.OwnMaterials = SkirmishMaterialsService.Read(em, session, 1);
             if (em.HasComponent<SkirmishCapacityComponent>(session))
                 view.OwnInfantry = em.GetComponentData<SkirmishCapacityComponent>(session).InfantryLive;
             if (em.HasComponent<SkirmishBaseAssaultFactComponent>(session))
@@ -39,12 +39,16 @@ namespace Game.Runtime
             if (em.HasComponent<SkirmishResolvedSetupRecord>(session))
             {
                 SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                view.AirProfile = army != null && army.AllowsOffensiveAir;
+                view.CanAffordLogisticsTruck = SkirmishProductionService.EvaluateQueue(em, session,
+                    SkirmishRoleIds.LogisticsTruck, 1, army, 1).Accepted;
+                view.RifleRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.Rifle);
+                view.LogisticsTruckCommitted = HasPendingRecruit(em, session, SkirmishRoleKind.LogisticsTruck) ||
+                    HasLivingRole(em, session, SkirmishRoleKind.LogisticsTruck);
                 var perception = new SkirmishPublicPerception
                 {
                     OwnMaterials = view.OwnMaterials,
-                    OwnFuel = em.HasComponent<SkirmishEconomyStockComponent>(session)
-                        ? em.GetComponentData<SkirmishEconomyStockComponent>(session).Fuel
-                        : 0,
+                    OwnFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 1),
                     OwnInfantryLive = view.OwnInfantry,
                     OwnGroundLive = em.HasComponent<SkirmishCapacityComponent>(session)
                         ? em.GetComponentData<SkirmishCapacityComponent>(session).GroundLive
@@ -68,27 +72,30 @@ namespace Game.Runtime
                     Playing = view.Playing
                 };
                 view.CanAffordRifle = SkirmishStrategyScoring.TryAfford(
-                    army, setup.Readiness, setup.RoleOverlays, perception,
+                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Rifle, SkirmishRoleKind.Rifle);
                 view.CanAffordRocketeer = SkirmishStrategyScoring.TryAfford(
-                    army, setup.Readiness, setup.RoleOverlays, perception,
+                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Rocketeer, SkirmishRoleKind.Rocketeer);
                 view.CanAffordTank = SkirmishStrategyScoring.TryAfford(
-                    army, setup.Readiness, setup.RoleOverlays, perception,
+                    army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.Tank, SkirmishRoleKind.Tank);
                 view.CanAffordAntiAir = SkirmishStrategyScoring.TryAfford(
                     army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays, perception,
                     SkirmishRoleIds.AntiAir, SkirmishRoleKind.AntiAir);
-                view.PadReady = perception.HelipadPresent &&
-                    (int)LiveReadiness(em, session, setup.Readiness) >= (int)SkirmishReadinessStage.Established;
+                view.PadPresent = perception.HelipadPresent;
+                view.ReadinessEligible = LiveReadiness(em, session, setup.Readiness) >= SkirmishReadinessStage.Established;
+                view.CanBuildAirPad = view.Playing && view.AirProfile && view.ReadinessEligible &&
+                    CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad), view.OwnMaterials);
+                view.PadReady = view.PadPresent && view.ReadinessEligible;
                 view.AirQueueOffered = view.PadReady &&
                     SkirmishStrategyScoring.TryAfford(
                         army,
                         LiveReadiness(em, session, setup.Readiness),
                         setup.RoleOverlays,
                         perception,
-                        SkirmishRoleIds.AttackHeli,
-                        SkirmishRoleKind.AttackHeli);
+                        SkirmishRoleIds.AttackHeliLight,
+                        SkirmishRoleKind.AttackHeliLight);
             }
 
             view.VisibleHostileCombat = CountVisibleHostileCombat(em, session);
@@ -98,6 +105,45 @@ namespace Game.Runtime
             view.HoldControlAvailable = true;
             view.GroupControlAvailable = true;
             return view;
+        }
+
+        private static bool CanAffordBuilding(EntityManager em, string prefabKey, int materials)
+        {
+            // The shared catalog read model survives the drawer's destruction.
+            // Use its authored price; never duplicate a price in the planner.
+            using var query = em.CreateEntityQuery(typeof(BuildingRuntimeStateTag), typeof(BuildingConfiguredSpawnableReadModel));
+            if (query.CalculateEntityCount() != 1) return false;
+            string key = BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(prefabKey);
+            foreach (var item in em.GetBuffer<BuildingConfiguredSpawnableReadModel>(query.GetSingletonEntity(), true))
+                if (BuildingDefinitionPrefabSystemHelper.NormalizeSpawnableKey(item.BuildingId.ToString()) == key)
+                    return item.CanRequest != 0 && materials >= item.MaterialsCost;
+            return false;
+        }
+
+        private static bool HasPendingRecruit(EntityManager em, Entity session, SkirmishRoleKind role)
+        {
+            if (!em.HasBuffer<SkirmishProductionReservation>(session)) return false;
+            foreach (var item in em.GetBuffer<SkirmishProductionReservation>(session))
+                if (item.FactionId == 1 && item.Role == role &&
+                    item.DeliveredMembers < item.MemberCount &&
+                    item.Phase is SkirmishReservationPhase.Reserved or SkirmishReservationPhase.Producing)
+                    return true;
+            return false;
+        }
+
+        private static bool HasLivingRole(EntityManager em, Entity session, SkirmishRoleKind role)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var unit in entities)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId == 1 && owned.SessionId.Equals(id) &&
+                    em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role == role &&
+                    SkirmishArmyGroupSystem.IsAlive(em, unit)) return true;
+            }
+            return false;
         }
 
         private static int CountVisibleHostileCombat(EntityManager em, Entity session)

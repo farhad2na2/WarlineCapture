@@ -12,6 +12,8 @@ namespace Game.UI.Shell.Ecs
     {
         private static EntityQuery factionEconomyQuery;
         private static bool hasFactionEconomyQuery;
+        private static EntityQuery expandedSupplyQuery;
+        private static World expandedSupplyWorld;
 
         public static bool TryReadMatchHudResourceValues(out UiMatchHudResourceValuesModel values) =>
             UiShellReadModelAdapter.TryReadMatchHudResourceValues(out values);
@@ -28,6 +30,23 @@ namespace Game.UI.Shell.Ecs
                 int credits = TryReadPlayerCredits(entityManager, out int resolvedCredits)
                     ? resolvedCredits
                     : 0;
+                if (expandedSupplyWorld != entityManager.World)
+                {
+                    expandedSupplyQuery = entityManager.CreateEntityQuery(
+                        ComponentType.ReadOnly<SkirmishExpandedSessionComponent>(),
+                        ComponentType.ReadOnly<SkirmishSharedSupplyInitialized>());
+                    expandedSupplyWorld = entityManager.World;
+                }
+                if (expandedSupplyQuery.CalculateEntityCount() == 1)
+                {
+                    Entity session = expandedSupplyQuery.GetSingletonEntity();
+                    values = UiMatchHudResourceValuesModel.FromValues(
+                        SkirmishStartingSupplyService.ReadOil(entityManager, session, FactionIdentity.PlayerFactionId),
+                        SkirmishStartingSupplyService.ReadFuel(entityManager, session, FactionIdentity.PlayerFactionId),
+                        true, credits);
+                    return true;
+                }
+
                 bool hasUsableFuelSummaryBuffer =
                     entityManager.HasBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary);
                 if (TryReadPlayerUsableFuelSummary(

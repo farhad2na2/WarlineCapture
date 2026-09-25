@@ -58,6 +58,10 @@ namespace Game.Runtime
                 CampRequestFailure.ProductionQueueFull => BuildingUiCampItemCommandResultElement.ProductionQueueFull,
                 CampRequestFailure.GlobalProductionQueueFull =>
                     BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull,
+                CampRequestFailure.ReadinessEstablishedRequired => BuildingUiCampItemCommandResultElement.ReadinessEstablishedRequired,
+                CampRequestFailure.ReadinessFullArsenalRequired => BuildingUiCampItemCommandResultElement.ReadinessFullArsenalRequired,
+                CampRequestFailure.ArmyCapacityReached => BuildingUiCampItemCommandResultElement.ArmyCapacityReached,
+                CampRequestFailure.ResearchInProgress => BuildingUiCampItemCommandResultElement.ResearchInProgress,
                 _ => BuildingUiCampItemCommandResultElement.InvalidSelection
             };
         }
@@ -74,6 +78,10 @@ namespace Game.Runtime
                 BuildingUiCampItemCommandResultElement.ProductionQueueFull => CampRequestFailure.ProductionQueueFull,
                 BuildingUiCampItemCommandResultElement.GlobalProductionQueueFull =>
                     CampRequestFailure.GlobalProductionQueueFull,
+                BuildingUiCampItemCommandResultElement.ReadinessEstablishedRequired => CampRequestFailure.ReadinessEstablishedRequired,
+                BuildingUiCampItemCommandResultElement.ReadinessFullArsenalRequired => CampRequestFailure.ReadinessFullArsenalRequired,
+                BuildingUiCampItemCommandResultElement.ArmyCapacityReached => CampRequestFailure.ArmyCapacityReached,
+                BuildingUiCampItemCommandResultElement.ResearchInProgress => CampRequestFailure.ResearchInProgress,
                 _ => CampRequestFailure.InvalidSelection
             };
         }

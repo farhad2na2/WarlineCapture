@@ -405,6 +405,7 @@ namespace Game.Runtime
             if (query.CalculateEntityCount() != 1)
                 return false;
             Entity session = query.GetSingletonEntity();
+            if (em.HasComponent<SkirmishSharedSupplyInitialized>(session)) return false;
             if (!em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(sessionId))
                 return false;
             SkirmishResolvedSetupComponent setup = em.GetComponentData<SkirmishResolvedSetupComponent>(session);

@@ -86,8 +86,13 @@ namespace Game.Configs
                 return Prefer(current, score);
             }
 
-            int reserveFloor = perception.OwnSupplyCap * ReserveSupplyPercent / 100;
-            if (perception.OwnSupplyLive > reserveFloor && VisibleHostileCombat(perception) >= 0)
+            // Reserve part of the authored force, not unfilled capacity. A Field
+            // force starts below 25% of its cap and otherwise never leaves home.
+            int reserveBasis = perception.OwnStartingSupply > 0
+                ? System.Math.Min(perception.OwnSupplyCap, perception.OwnStartingSupply)
+                : perception.OwnSupplyCap;
+            int reserveFloor = reserveBasis * ReserveSupplyPercent / 100;
+            if (perception.OwnSupplyLive > reserveFloor)
             {
                 score.Priority = SkirmishStrategyPriority.AttackBase;
                 score.ObjectiveGain = ObjectiveGainWeight;

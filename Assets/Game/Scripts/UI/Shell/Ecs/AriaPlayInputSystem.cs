@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Runtime;
 using Game.Missions.Contracts;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
@@ -17,12 +18,35 @@ namespace Game.UI.Shell.Ecs
         protected override void OnCreate()
         {
             touch = new AriaTouchInputUiSystemHelper();
+            AriaTouchInputUiSystemHelper.Evidence += ObserveTouchEvidence;
             skirmishQuery = GetEntityQuery(ComponentType.ReadOnly<SkirmishMatchState>());
             missionQuery = GetEntityQuery(ComponentType.ReadOnly<CampaignMissionRuntimeComponent>());
             operationsQuery = GetEntityQuery(ComponentType.ReadOnly<OperationsReconMissionComponent>());
         }
-        protected override void OnDestroy() { touch?.Dispose(); }
-        public void Cancel() => touch?.Stop();
+        protected override void OnDestroy()
+        {
+            AriaTouchInputUiSystemHelper.Evidence -= ObserveTouchEvidence;
+            touch?.Dispose();
+        }
+        private void ObserveTouchEvidence(AriaTouchInputUiSystemHelper source, string kind, Vector2 position)
+        {
+            if (ReferenceEquals(source, touch) && kind == "Ended")
+                AriaCommandEvidence.ObserveRelease(UnityEngine.Time.frameCount, position);
+        }
+        public int ExplicitStops { get; private set; }
+        public int MeasuredHumanInterventions => touch == null || touch.StartedRuns == 0 ? -1 :
+            (int)touch.PhysicalInterventions + ExplicitStops;
+        public uint DispatchedGestures => touch?.DispatchedGestures ?? 0;
+        public uint CompletedGestures => touch?.CompletedGestures ?? 0;
+        public uint AcceptedSamples => touch?.AcceptedSamples ?? 0;
+        public uint UnexpectedSamples => touch?.UnexpectedSamples ?? 0;
+        public void Cancel()
+        {
+            bool finished = skirmishQuery.CalculateEntityCount() == 1 &&
+                skirmishQuery.GetSingleton<SkirmishMatchState>().Phase == SkirmishPhase.Finished;
+            if (touch != null && touch.IsRunning && !finished) ExplicitStops++;
+            touch?.Stop();
+        }
 
         // A completed campaign component can remain when the player starts Skirmish.
         // The current Skirmish owns its own terminal state.

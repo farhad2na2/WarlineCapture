@@ -184,6 +184,14 @@ namespace Game.UI.Runtime
         {
             return failure switch
             {
+                BuildingUiCommandFailure.ReadinessEstablishedRequired => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "قفل است: آمادگی را به تثبیت‌شده ارتقا بده." : "Locked: upgrade readiness to Established.",
+                BuildingUiCommandFailure.ReadinessFullArsenalRequired => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "قفل است: آمادگی کامل لازم است." : "Locked: Full Arsenal readiness required.",
+                BuildingUiCommandFailure.ArmyCapacityReached => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "ظرفیت نیرو یا تدارکات پر است؛ صف‌ها هم حساب می‌شوند." : "Army or supply capacity reached, including queued units.",
+                BuildingUiCommandFailure.ResearchInProgress => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "تا پایان پژوهش صبر کن." : "Wait for research to finish.",
                 BuildingUiCommandFailure.InfantryLimit => textResolver.Get("ui.skirmish.population_full.short", "Infantry limit reached."),
                 BuildingUiCommandFailure.LogisticsLimit => textResolver.Get("ui.skirmish.logistics_full.short", "Supply vehicle limit reached."),
                 BuildingUiCommandFailure.NotEnoughMoney => textResolver.Get("build.drawer.failure.short.not_enough_money", "Insufficient credits."),
@@ -216,6 +224,14 @@ namespace Game.UI.Runtime
             string verb = FormatActionVerb(textResolver, selectedItem.Category).ToLowerInvariant();
             return failure switch
             {
+                BuildingUiCommandFailure.ReadinessEstablishedRequired => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "قفل است: آمادگی را به تثبیت‌شده ارتقا بده." : "Locked: upgrade readiness to Established.",
+                BuildingUiCommandFailure.ReadinessFullArsenalRequired => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "قفل است: آمادگی کامل لازم است." : "Locked: Full Arsenal readiness required.",
+                BuildingUiCommandFailure.ArmyCapacityReached => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "ظرفیت نیرو یا تدارکات پر است؛ صف‌ها هم حساب می‌شوند." : "Army or supply capacity reached, including queued units.",
+                BuildingUiCommandFailure.ResearchInProgress => UiShellRuntimeGateway.Localization.IsRightToLeft
+                    ? "تا پایان پژوهش صبر کن." : "Wait for research to finish.",
                 BuildingUiCommandFailure.InfantryLimit => textResolver.Get("ui.skirmish.population_full", "Infantry limit reached (24, including queued soldiers)."),
                 BuildingUiCommandFailure.LogisticsLimit => textResolver.Get("ui.skirmish.logistics_full", "Supply vehicle limit reached (2 cargo trucks and 1 tanker, including queued vehicles)."),
                 BuildingUiCommandFailure.NotEnoughMoney =>
@@ -335,7 +351,27 @@ namespace Game.UI.Runtime
                 context.RuntimeItems.Add(item);
             }
 
+            ResizeCatalogContent(context.View);
             return true;
+        }
+
+        private static void ResizeCatalogContent(BuildDrawerView view)
+        {
+            RectTransform content = view.ItemContentRoot;
+            if (content == null)
+                return;
+            ScrollRect scroll = content.GetComponentInParent<ScrollRect>();
+            if (scroll == null || scroll.content != content)
+                return;
+
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            float viewportHeight = scroll.viewport != null
+                ? scroll.viewport.rect.height : ((RectTransform)scroll.transform).rect.height;
+            content.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+                Mathf.Max(viewportHeight, LayoutUtility.GetPreferredHeight(content)));
+            LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            scroll.StopMovement();
+            scroll.verticalNormalizedPosition = 1f;
         }
 
         private static void BindItem(Context context, BuildDrawerItemView item, BuildDrawerCatalogItem model)

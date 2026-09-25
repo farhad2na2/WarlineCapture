@@ -19,10 +19,19 @@ namespace Game.Runtime
             using var selected = em.CreateEntityQuery(typeof(SelectedUnitTag), typeof(UnitMove), typeof(UnitGrid),
                 typeof(UnitAttack), typeof(UnitCombat), typeof(UnitHealth), typeof(LocalTransform), typeof(Faction));
             using var entities = selected.ToEntityArray(Allocator.Temp);
+            return IssueUnits(em, entities, FactionIdentity.PlayerFactionId, cell, position, frame);
+        }
+
+        public static TacticalCommandResult IssueUnits(EntityManager em, NativeArray<Entity> entities,
+            byte actingFaction, int2 cell, float3 position, int frame)
+        {
             using var fighters = new NativeList<Entity>(Allocator.Temp);
             foreach (var unit in entities)
-                if (em.GetComponentData<Faction>(unit).Id == FactionIdentity.PlayerFactionId &&
-                    new UnitTargetOrderSystem().ValidateAttackSource(em, unit).Accepted &&
+                if (em.Exists(unit) && em.HasComponent<Faction>(unit) &&
+                    em.GetComponentData<Faction>(unit).Id == actingFaction &&
+                    em.HasComponent<UnitMove>(unit) && em.HasComponent<UnitGrid>(unit) &&
+                    em.HasComponent<UnitAttack>(unit) && em.HasComponent<UnitCombat>(unit) &&
+                    em.HasComponent<UnitHealth>(unit) && em.HasComponent<LocalTransform>(unit) &&
                     !em.HasComponent<StaticGridBlocker>(unit) && !em.HasComponent<RuntimeBuildingCombatTag>(unit) &&
                     em.GetComponentData<UnitHealth>(unit).Current > 0 && em.GetComponentData<UnitCombat>(unit).CanAttack != 0 &&
                     em.GetComponentData<UnitAttack>(unit).Damage > 0 && !em.HasComponent<UnitTransportPassenger>(unit)) fighters.Add(unit);
@@ -34,6 +43,7 @@ namespace Game.Runtime
             var result = SelectedMoveOrderCommandSystem.TryIssueMoveOrderToCell(em, fighters.AsArray(), grids, surfaces,
                 default, cell, position, frame, faction, false, accepted);
             if (!result.CommandResult.Accepted) return result.CommandResult;
+            AriaCommandEvidence.Accepted("AttackMove", actingFaction);
             foreach (var unit in accepted)
             {
                 if (!em.HasComponent<UnitTarget>(unit)) continue;

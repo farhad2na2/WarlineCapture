@@ -63,6 +63,7 @@ namespace Game.Runtime
                 tryGetBuildingDefinitionMetadata,
                 tryGetUnitDefinitionMetadata);
             childSystems.BuildingProductionQueueCompositionSystemHelper.ConfigureUnitProductionMetadataResolver(tryGetUnitProductionMetadata);
+            childSystems.BuildingProductionQueueCompositionSystemHelper.ConfigureProductionRecipes(buildingPlacementConfig?.RuntimeProductionRecipes);
             childSystems.BuildingProductionTransportPresentationSystemHelper.SetRuntimeRoot(runtimeTransportsRoot);
             childSystems.PrepareTransportDropVisual = prepareTransportDropVisual;
             _startupCompositionHelper.Initialize(
@@ -179,6 +180,9 @@ namespace Game.Runtime
                         createBuildingSelectionContext);
             BuildingPlacementCommandCompositionSystemHelper.ValidateActivePlacementForConfirmDelegate validateActivePlacementForConfirm =
                 (source, placementInteractionContext, placementMarkerPropertyBlock, placement) =>
+                    queries.tryGetEntityManager(out var eligibilityWorld) &&
+                    SkirmishNativeProduction.RequestFailure(eligibilityWorld, placement?.Definition?.Prefab, true) ==
+                        BuildingUiCommandSystemHelper.CampRequestFailure.None &&
                     source.BuildingPlacementVisualCompositionPresentationSystemHelper != null &&
                     source.BuildingPlacementVisualCompositionPresentationSystemHelper.ValidateActivePlacementForConfirm(
                         source,

@@ -376,6 +376,7 @@ namespace Game.Runtime
                 null,
                 null,
                 null);
+            productionSlots = ResolveProductionRecipes(prefab, productionSlots);
 
             return new BuildingDefinition
             {
@@ -458,6 +459,7 @@ namespace Game.Runtime
                 fallbackPrimarySpawnUnitPrefab,
                 fallbackSecondarySpawnUnitPrefab,
                 fallbackTertiarySpawnUnitPrefab);
+            productionSlots = ResolveProductionRecipes(prefab, productionSlots);
 
             bool hasVisualFootprint = TryGetFootprintFromVisualBounds(prefab, out Vector2Int visualFootprint);
             Vector2Int configuredFootprint = hasMetadata ? NormalizeFootprint(metadata.FootprintCells) : Vector2Int.one;
@@ -682,9 +684,15 @@ namespace Game.Runtime
         private bool TryGetUnitDefinitionMetadata(GameObject prefab, out UnitDefinitionMetadata metadata)
         {
             metadata = default;
-            return prefab != null &&
-                   _tryGetUnitDefinitionMetadata != null &&
-                   _tryGetUnitDefinitionMetadata(prefab, out metadata);
+            if (prefab == null || _tryGetUnitDefinitionMetadata == null ||
+                !_tryGetUnitDefinitionMetadata(prefab, out metadata)) return false;
+            if (unitRecipes.TryGetValue(prefab, out var recipe))
+            {
+                metadata.Price = recipe.MaterialsCost;
+                metadata.CreditsCost = recipe.CreditsCost;
+                metadata.CanRequest = true;
+            }
+            return true;
         }
 
         private string ResolveConfiguredSpawnableLookupKey(GameObject prefab)

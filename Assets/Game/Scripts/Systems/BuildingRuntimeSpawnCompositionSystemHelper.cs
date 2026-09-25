@@ -38,6 +38,12 @@ namespace Game.Runtime
 
         public readonly struct Context
         {
+            public Context WithPlacementValidation(IsPlacementValidDelegate validate) => new Context(
+                BuildingRoot, DefinitionSystem, RunwaySystem, PlacementValidationSystem, WallValidationContext,
+                TryGetGridData, GetPlacementFootprint, GetEffectivePlacementRect, validate,
+                HasCachedInvalidCellInFootprint, CreateBuildingVisualInstance, PositionBuildingObject,
+                RegisterRuntimeBuilding, SetRuntimeBuildingOwnerFaction);
+
             public readonly Transform BuildingRoot;
             public readonly BuildingDefinitionPrefabSystemHelper DefinitionSystem;
             public readonly BuildingRunwaySystem RunwaySystem;

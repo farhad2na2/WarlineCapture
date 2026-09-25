@@ -3,6 +3,7 @@ using Game.Components;
 using Game.Composition;
 using Game.Configs;
 using Game.Runtime;
+using Game.UI.Contracts;
 using Game.Skirmish.Contracts;
 using NUnit.Framework;
 using Unity.Collections;
@@ -69,6 +70,67 @@ namespace Game.Tests.Editor
             Assert.IsFalse(SkirmishArmySelectionService.TrySelectGroup(
                 em, session, enemyRifle, false, out SkirmishCommandDecision enemy));
             Assert.AreEqual(SkirmishReasonCode.InvalidSelection, enemy.Reason);
+        }
+
+        private sealed class PresentedTray : IMatchHudSquadTrayView
+        {
+            public int Rejections;
+            public void Bind(Action<MatchHudSquadTraySlot> action) { }
+            public void ClearActiveSlot() { }
+            public bool ContainsScreenPoint(Vector2 point) => false;
+            public void FlashDisabled(MatchHudSquadTraySlot slot) => Rejections++;
+            public void SetSelectedSlot(MatchHudSquadTraySlot slot) { }
+            public bool TryGetPortraitSprite(MatchHudSquadTraySlot slot, out Sprite sprite) { sprite = null; return false; }
+            public void Unbind() { }
+        }
+
+        [Test]
+        public void PresentedTrayClickUsesPageGroupWithoutLegacyReselection()
+        {
+            using var world = new World(nameof(PresentedTrayClickUsesPageGroupWithoutLegacyReselection));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            bool GetManager(out EntityManager manager) { manager = em; return true; }
+            var context = new MatchHudSquadTraySelectionUiSystemHelper.Context(null, GetManager,
+                null, null, null, null, null, null, null, null);
+            var tray = new PresentedTray();
+            var selection = new MatchHudSquadTraySelectionUiSystemHelper();
+            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Soldiers);
+            Assert.AreEqual(4, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Transport); // NEXT
+            Assert.AreEqual(1, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            Assert.AreEqual(0, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            selection.SelectSlot(context, tray, MatchHudSquadTraySlot.Jet); // Tank on page two
+            Assert.AreEqual(1, SkirmishArmySelectionService.SelectedLivingCount(em, session));
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, 3, out var representative));
+            Assert.AreEqual(SkirmishRoleKind.Tank, em.GetComponentData<SkirmishUnitRoleComponent>(representative).Role);
+            Assert.IsTrue(em.HasComponent<SelectedUnitTag>(representative));
+            Assert.AreEqual(0, tray.Rejections);
+        }
+
+        [Test]
+        public void AcceptedArmyOrdersRequireInputEvidence()
+        {
+            using var world = new World(nameof(AcceptedArmyOrdersRequireInputEvidence));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            Assert.IsTrue(SkirmishArmySelectionService.TrySelectGroup(em, session,
+                FirstPlayerGroup(em, session, SkirmishRoleKind.Tank).GroupId, false, out _));
+            Entity target = FirstFactionUnit(em, 2, SkirmishRoleKind.Tank);
+            try
+            {
+                AriaCommandEvidence.Begin();
+                Assert.IsTrue(SkirmishArmyCommandService.TryAttack(em, session, target, out _));
+                Assert.Greater(AriaCommandEvidence.AcceptedCommands, 0);
+                Assert.AreEqual(AriaCommandEvidence.AcceptedCommands, AriaCommandEvidence.Violations);
+                int unproven = AriaCommandEvidence.Violations;
+                AriaCommandEvidence.ObserveRelease(10, Vector2.zero);
+                using (AriaCommandEvidence.Enter(AriaCommandEvidence.ClaimRelease(10)))
+                    Assert.IsTrue(SkirmishArmyCommandService.TryAttack(em, session, target, out _));
+                Assert.AreEqual(unproven, AriaCommandEvidence.Violations);
+                Assert.Greater(AriaCommandEvidence.AcceptedCommands, unproven);
+            }
+            finally { AriaCommandEvidence.End(); }
         }
 
         [Test]
@@ -221,6 +283,50 @@ namespace Game.Tests.Editor
             Assert.IsTrue(found);
         }
 
+        [Test]
+        public void PresentedHealthTracksDamageAndExcludesOtherAttempts()
+        {
+            using var world = new World(nameof(PresentedHealthTracksDamageAndExcludesOtherAttempts));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryGetPresentedMember(em, session, 0, out var member));
+            var health = em.GetComponentData<UnitHealth>(member);
+            health.Current = health.Max / 2;
+            em.SetComponentData(member, health);
+            var foreign = em.Instantiate(member);
+            var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(foreign);
+            owned.SessionId = new FixedString64Bytes("different-attempt");
+            em.SetComponentData(foreign, owned);
+            health.Current = 1;
+            em.SetComponentData(foreign, health);
+            Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
+                out _, out _, out var first, out _, out _, out _));
+            Assert.AreEqual(4, first.Alive);
+            Assert.That(first.Health01, Is.EqualTo(0.875f).Within(0.001f));
+        }
+
+        [Test]
+        public void DeadGroupsDoNotHideSurvivorsOrLeaveAnInvalidPage()
+        {
+            using var world = new World(nameof(DeadGroupsDoNotHideSurvivorsOrLeaveAnInvalidPage));
+            var em = world.EntityManager;
+            var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishArmySelectionComponent));
+            em.SetComponentData(session, new SkirmishArmySelectionComponent { PageSize = 4, PageIndex = 1 });
+            var groups = em.AddBuffer<SkirmishArmyGroupRecord>(session);
+            for (uint i = 1; i <= 5; i++)
+                groups.Add(new SkirmishArmyGroupRecord { GroupId = i, FactionId = 1,
+                    Role = SkirmishRoleKind.Rifle, AliveCount = i == 1 ? 0 : 1 });
+            Assert.AreEqual(4, SkirmishArmyDrawerProjection.Project(em, session));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex);
+            var slots = em.GetBuffer<SkirmishArmyDrawerSlot>(session);
+            for (int slot = 0; slot < 4; slot++)
+            {
+                Assert.IsTrue(SkirmishArmyGroupSystem.TryGetPagedGroup(em, session, 1, 0, slot, out var group));
+                Assert.AreEqual((uint)(slot + 2), group.GroupId);
+                Assert.AreEqual(group.GroupId, slots[slot].GroupId);
+            }
+        }
+
         public static void RunFocusedValidation()
         {
             try
@@ -228,11 +334,14 @@ namespace Game.Tests.Editor
                 var suite = new SkirmishExpandedArmyTests();
                 suite.S002StartingForcesFormStablePlayerGroups();
                 suite.LegalSelectionAndPagingUseSharedSelectionTags();
+                suite.PresentedTrayClickUsesPageGroupWithoutLegacyReselection();
                 suite.SharedFogGatesAttackEligibility();
                 suite.GroundMoveExcludesAirAndHoldStampsGroup();
                 suite.ProducedTankJoinsNewGroupAndDeathKeepsIdentity();
                 suite.StandardGroundUnitsAdvanceWorldTransformOnMove();
                 suite.ArmyDrawerProjectsCurrentPlayerPage();
+                suite.PresentedHealthTracksDamageAndExcludesOtherAttempts();
+                suite.DeadGroupsDoNotHideSurvivorsOrLeaveAnInvalidPage();
                 Debug.Log("[SkirmishExpandedArmyTests] result=Passed");
             }
             catch (Exception exception)

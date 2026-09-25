@@ -79,6 +79,19 @@ namespace Game.Configs
             };
         }
 
+        // Ground defense shares the mission's combat scale. Rocketeers can outrange it;
+        // infantry needs cover. Both factions receive the same overlay.
+        public static SkirmishRoleOverlay WatchtowerStructure() =>
+            new SkirmishRoleOverlay
+            {
+                RoleId = SkirmishStructureIds.Watchtower,
+                MaxHealth = 700,
+                Damage = 10,
+                RangeWorld = 22f,
+                TargetDomains = SkirmishTargetDomain.Infantry | SkirmishTargetDomain.Ground,
+                SquadMembers = 1
+            };
+
         public static SkirmishRoleOverlay BarracksStructure() =>
             new SkirmishRoleOverlay
             {

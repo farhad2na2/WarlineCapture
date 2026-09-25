@@ -43,7 +43,10 @@ namespace Game.Composition
 
             payload = new SkirmishLaunchPayload
             {
-                SessionId = "expanded-" + catalogId.ToLowerInvariant() + "-" + seed,
+                // Seed identifies the reproducible setup, not a play attempt.
+                // Result receipts and checkpoint ownership require a fresh identity.
+                SessionId = "expanded-" + catalogId.ToLowerInvariant() + "-" + seed + "-" +
+                    System.Guid.NewGuid().ToString("N"),
                 CatalogId = setup.CatalogId,
                 DefinitionId = setup.DefinitionId,
                 ContentVersion = setup.ContentVersion,

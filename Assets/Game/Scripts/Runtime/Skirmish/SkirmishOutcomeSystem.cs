@@ -32,6 +32,13 @@ namespace Game.Runtime
                 Entity entity = sessions[i];
                 SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
                 SkirmishObjectiveStateComponent objective = em.GetComponentData<SkirmishObjectiveStateComponent>(entity);
+                if (session.IsLegacy == 0 && session.Phase == SkirmishSessionPhase.Playing &&
+                    em.HasComponent<SkirmishMatchState>(entity) && em.HasBuffer<SkirmishTrackedUnit>(entity))
+                {
+                    var match = em.GetComponentData<SkirmishMatchState>(entity);
+                    SkirmishRulesSystem.TrackLosses(em, entity, ref match, session.SessionId);
+                    em.SetComponentData(entity, match);
+                }
                 if (session.IsLegacy != 0 || objective.Terminal == 0)
                     continue;
                 if (em.HasComponent<SkirmishResultComponent>(entity) &&

@@ -151,7 +151,7 @@ namespace Game.Configs
             return true;
         }
 
-        private static SkirmishReadinessStage RequiredReadiness(SkirmishRoleKind kind)
+        public static SkirmishReadinessStage RequiredReadiness(SkirmishRoleKind kind)
         {
             switch (kind)
             {

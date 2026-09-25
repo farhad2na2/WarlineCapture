@@ -3,6 +3,11 @@ using UnityEngine;
 
 namespace Game.UI.Contracts
 {
+    public interface IMatchHudSquadTrayPortraitBinding
+    {
+        void ConfigurePortraitResolver(Func<int, Sprite> resolvePresentedPortrait);
+    }
+
     public interface IMatchHudSquadTrayView
     {
         void Bind(Action<MatchHudSquadTraySlot> cardClicked);

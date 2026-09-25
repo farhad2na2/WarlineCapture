@@ -199,16 +199,16 @@ namespace Game.Runtime
 
             Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
             {
-                return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                    ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab)
-                    : null;
+                return (building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab) ||
+                        SkirmishVisualSpawnService.TryResolveBoundUnitPrefab(em, entity, out prefab))
+                    ? resolveSelectionPortraitSpriteFromPrefab?.Invoke(prefab) : null;
             }
 
             Sprite ResolveSelectionCardPortraitSprite(EntityManager em, Entity entity)
             {
-                return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
-                    ? resolveSelectionCardPortraitSpriteFromPrefab?.Invoke(prefab)
-                    : null;
+                return (building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab) ||
+                        SkirmishVisualSpawnService.TryResolveBoundUnitPrefab(em, entity, out prefab))
+                    ? resolveSelectionCardPortraitSpriteFromPrefab?.Invoke(prefab) : null;
             }
 
             Sprite ResolveSelectedBuildingPortraitSprite()

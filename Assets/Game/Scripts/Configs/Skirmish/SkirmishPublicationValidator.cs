@@ -31,6 +31,7 @@ namespace Game.Configs
         public string EvidenceDirectory;
         public string[] RequiredRelativeFiles;
         public bool ConfirmWrite;
+        public SkirmishPublicationEvidence Acceptance;
     }
 
     public static class SkirmishPublicationValidator
@@ -219,8 +220,28 @@ namespace Game.Configs
                 }
             }
 
-            status = SkirmishPublicationStatus.Playable;
-            return true;
+            // Captures prove that a screen was written, not that the candidate
+            // completed the human, ARIA, recovery and device acceptance gates.
+            if (!HasCompleteEvidence(in request.Acceptance))
+            {
+                status = SkirmishPublicationStatus.InProgress;
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingReadiness, "acceptance",
+                    "Game View files alone do not establish completed human, ARIA, edge, recovery and device acceptance."));
+                return true;
+            }
+            if (request.Acceptance.CatalogId != request.CatalogId ||
+                request.Acceptance.DefinitionId != request.DefinitionId ||
+                request.Acceptance.ContentHash != request.ContentHash ||
+                request.Acceptance.SetupHash != request.SetupHash ||
+                request.Acceptance.SizeId != request.SizeId ||
+                request.Acceptance.DifficultyId != request.DifficultyId)
+            {
+                status = SkirmishPublicationStatus.InProgress;
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MatrixMismatch, "acceptance",
+                    "Acceptance must describe this exact compiled setup."));
+                return false;
+            }
+            return TryEvaluate(row, definition, setup, in request.Acceptance, out status, out reasons);
         }
 
         public static string CombineEvidencePath(string directory, string relativeFile)

@@ -31,6 +31,33 @@ public sealed class UnitCombatFocusedEditModeTests
     }
 
     [Test]
+    public void StandardAttack_RespectsAuthoredDomainAndVisibilityPolicy()
+    {
+        foreach (var targetPolicy in new[]
+        {
+            new CombatTargetPolicy { Domain = CombatTargetDomain.Air, Visible = 1 },
+            new CombatTargetPolicy { Domain = CombatTargetDomain.Ground, Visible = 0 },
+            new CombatTargetPolicy { Domain = CombatTargetDomain.Ground, Visible = 1 }
+        })
+        {
+            using var world = new World(nameof(StandardAttack_RespectsAuthoredDomainAndVisibilityPolicy));
+            var em = world.EntityManager;
+            CreateGrid(em);
+            Entity target = CreateTarget(em, new int2(4, 4), new float3(4f, 0f, 4f), 100);
+            Entity attacker = CreateAttacker(em, new int2(4, 5), new float3(4f, 0f, 5f), target, 35);
+            em.AddComponentData(attacker, new CombatTargetPolicy
+            { AllowedTargets = CombatTargetDomain.Ground, Domain = CombatTargetDomain.Infantry, Visible = 1 });
+            em.AddComponentData(target, targetPolicy);
+            var attack = world.CreateSystem<UnitAttackSystem>();
+            world.SetTime(new TimeData(0.1d, 0.1f));
+            attack.Update(world.Unmanaged);
+            bool legal = targetPolicy.Domain == CombatTargetDomain.Ground && targetPolicy.Visible != 0;
+            Assert.AreEqual(legal ? 65 : 100, em.GetComponentData<UnitHealth>(target).Current);
+            Assert.AreEqual(legal ? 1 : 0, em.GetComponentData<UnitAttackTraceComponent>(attacker).ShotCounter);
+        }
+    }
+
+    [Test]
     public void StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState()
     {
         using var world = new World("StandardAttack_NonLethalHitDamagesTargetAndRecordsFeedbackState");

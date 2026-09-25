@@ -356,6 +356,11 @@ namespace Game.Components
         public const byte InvalidSelection = 4;
         public const byte ProductionQueueFull = 5;
         public const byte GlobalProductionQueueFull = 6;
+        public const byte ReadinessEstablishedRequired = 7;
+        public const byte ReadinessFullArsenalRequired = 8;
+        public const byte ArmyCapacityReached = 9;
+        public const byte ResearchInProgress = 10;
+
 
         public int RequestId;
         public FixedString128Bytes ItemId;
@@ -434,6 +439,8 @@ namespace Game.Components
         public const byte ProducerUnavailable = 3;
 
         public int RequestId;
+        public Entity RequestOwner;
+        public FixedString64Bytes RequestAttempt;
         public byte FactionId;
         public FixedString128Bytes UnitId;
         public byte Status;
@@ -464,6 +471,8 @@ namespace Game.Components
         public float SoldFuelBarrels;
     }
 
+    public struct BuildingStartingGrantOwner : IComponentData { }
+
     public struct BuildingRuntimeSpawnRequest : IBufferElementData
     {
         public const byte Pending = 0;
@@ -482,6 +491,7 @@ namespace Game.Components
         public byte HasOwnerFaction;
         // Authored mission enemies may use prefabs excluded from the player build catalogue.
         public byte AllowNonBuildableEnemy;
+        public byte AuthoredStartingGrant;
         // Authored objectives must keep their wall/mission layout rather than relocate.
         public byte RequirePreferredOrigin;
         public FixedString128Bytes BuildingId;

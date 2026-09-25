@@ -18,7 +18,7 @@ namespace Game.Runtime
                 return false;
 
             SkirmishExpandedSessionComponent state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
-            if (state.IsLegacy != 0)
+            if (state.IsLegacy != 0 || HasNativeActors(em, state.SessionId))
                 return false;
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             if (setup == null)
@@ -55,17 +55,17 @@ namespace Game.Runtime
             if (em.HasComponent<SkirmishEconomyStockComponent>(session))
             {
                 var stock = em.GetComponentData<SkirmishEconomyStockComponent>(session);
-                payload.PlayerMaterials = stock.Materials;
-                payload.PlayerOil = stock.Oil;
-                payload.PlayerFuel = stock.Fuel;
+                payload.PlayerMaterials = SkirmishMaterialsService.Read(em, session, 1);
+                payload.PlayerOil = SkirmishStartingSupplyService.ReadOil(em, session, 1);
+                payload.PlayerFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 1);
             }
 
             if (em.HasComponent<SkirmishEnemyStockComponent>(session))
             {
                 var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
-                payload.EnemyMaterials = stock.Materials;
-                payload.EnemyOil = stock.Oil;
-                payload.EnemyFuel = stock.Fuel;
+                payload.EnemyMaterials = SkirmishMaterialsService.Read(em, session, 2);
+                payload.EnemyOil = SkirmishStartingSupplyService.ReadOil(em, session, 2);
+                payload.EnemyFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 2);
             }
 
             if (em.HasComponent<SkirmishCapacityComponent>(session))
@@ -102,6 +102,12 @@ namespace Game.Runtime
                 payload.EndReason = result.Reason;
             }
 
+            if (em.HasComponent<SkirmishSharedSupplyInitialized>(session))
+            {
+                payload.PhysicalSupplyInitialized = 1;
+                payload.SupplyStores = SkirmishCheckpointSupplyService.Capture(em);
+                if (!SkirmishCheckpointSupplyService.CanApply(em, payload.SupplyStores)) return false;
+            }
             payload.Actors = CaptureActors(em, state.SessionId);
             payload.Reservations = CaptureReservations(em, session);
             document = new SkirmishCheckpointDocument
@@ -139,6 +145,20 @@ namespace Game.Runtime
             if (!state.SessionId.ToString().Equals(payload.SessionId))
                 return false;
 
+            // This schema stores fixture actor health, not native queue/cargo/air
+            // state. Never mutate a live match with an incomplete reconstruction.
+            if (HasNativeActors(em, state.SessionId))
+            {
+                reason = SkirmishReasonCode.UnsupportedCapability;
+                return false;
+            }
+            bool physicalSupply = em.HasComponent<SkirmishSharedSupplyInitialized>(session);
+            if (physicalSupply != (payload.PhysicalSupplyInitialized != 0) ||
+                (physicalSupply && !SkirmishCheckpointSupplyService.CanApply(em, payload.SupplyStores)))
+                return false;
+            if (physicalSupply && !SkirmishCheckpointSupplyService.TryApply(em, payload.SupplyStores))
+                return false;
+
             state.TickClock = payload.SimulationTick;
             state.Phase = payload.Phase == SkirmishSessionPhase.None ? state.Phase : payload.Phase;
             em.SetComponentData(session, state);
@@ -157,6 +177,7 @@ namespace Game.Runtime
             {
                 var stock = em.GetComponentData<SkirmishEconomyStockComponent>(session);
                 stock.Materials = payload.PlayerMaterials;
+                SkirmishMaterialsService.Write(em, session, 1, payload.PlayerMaterials);
                 stock.Oil = payload.PlayerOil;
                 stock.Fuel = payload.PlayerFuel;
                 em.SetComponentData(session, stock);
@@ -166,6 +187,7 @@ namespace Game.Runtime
             {
                 var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
                 stock.Materials = payload.EnemyMaterials;
+                SkirmishMaterialsService.Write(em, session, 2, payload.EnemyMaterials);
                 stock.Oil = payload.EnemyOil;
                 stock.Fuel = payload.EnemyFuel;
                 em.SetComponentData(session, stock);
@@ -235,8 +257,13 @@ namespace Game.Runtime
             if (payload == null || !em.HasComponent<SkirmishEconomyStockComponent>(session))
                 return false;
             var stock = em.GetComponentData<SkirmishEconomyStockComponent>(session);
-            if (stock.Materials != payload.PlayerMaterials || stock.Fuel != payload.PlayerFuel)
+            if (SkirmishMaterialsService.Read(em, session, 1) != payload.PlayerMaterials ||
+                SkirmishStartingSupplyService.ReadFuel(em, session, 1) != payload.PlayerFuel ||
+                SkirmishStartingSupplyService.ReadOil(em, session, 1) != payload.PlayerOil)
                 return false;
+            if (payload.PhysicalSupplyInitialized != 0 &&
+                (!em.HasComponent<SkirmishSharedSupplyInitialized>(session) ||
+                 !SkirmishCheckpointSupplyService.Conserved(em, payload.SupplyStores))) return false;
             if (em.HasComponent<SkirmishObjectiveClockComponent>(session))
             {
                 var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
@@ -338,6 +365,9 @@ namespace Game.Runtime
                     Category = (int)item.Category,
                     MemberCount = item.MemberCount,
                     RemainingMembers = item.RemainingMembers,
+                    DeliveredMembers = item.DeliveredMembers,
+                    ProductionGroupId = item.ProductionGroupId,
+                    ProducerRuntimeId = item.ProducerRuntimeId,
                     MaterialsPaid = item.MaterialsPaid,
                     SupplyCost = item.SupplyCost,
                     Phase = (int)item.Phase,
@@ -346,6 +376,15 @@ namespace Game.Runtime
             }
 
             return reservations;
+        }
+
+        private static bool HasNativeActors(EntityManager em, FixedString64Bytes sessionId)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishSharedActorTag), typeof(SkirmishAttemptOwnedComponent));
+            using var owners = query.ToComponentDataArray<SkirmishAttemptOwnedComponent>(Allocator.Temp);
+            foreach (var owner in owners)
+                if (owner.SessionId.Equals(sessionId)) return true;
+            return false;
         }
 
         private static void ReconstructMissing(
@@ -462,6 +501,9 @@ namespace Game.Runtime
                     Category = (SkirmishPopulationCategory)item.Category,
                     MemberCount = item.MemberCount,
                     RemainingMembers = item.RemainingMembers,
+                    DeliveredMembers = item.DeliveredMembers,
+                    ProductionGroupId = item.ProductionGroupId,
+                    ProducerRuntimeId = item.ProducerRuntimeId,
                     MaterialsPaid = item.MaterialsPaid,
                     SupplyCost = item.SupplyCost,
                     Phase = (SkirmishReservationPhase)item.Phase,

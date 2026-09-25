@@ -76,6 +76,7 @@ namespace Game.UI.Runtime
             RefreshSkirmishAvailability();
             RefreshQueue();
             view.RefreshResources();
+            view.RefreshReadiness();
         }
 
         private void OnDisable()

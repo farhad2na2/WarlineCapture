@@ -255,7 +255,7 @@ namespace Game.Runtime
             int seen = 0;
             for (int i = 0; i < buffer.Length; i++)
             {
-                if (buffer[i].FactionId != factionId)
+                if (buffer[i].FactionId != factionId || buffer[i].AliveCount <= 0)
                     continue;
                 if (seen == target)
                 {

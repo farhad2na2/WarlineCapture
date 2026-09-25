@@ -43,15 +43,11 @@ namespace Game.UI.Shell.Ecs
         {
             if (!TrySkirmish(out EntityManager em, out Entity session, out _))
                 return false;
+            using var inputEvidence = AriaCommandEvidence.Enter(AriaCommandEvidence.ClaimRelease(UnityEngine.Time.frameCount));
             return SkirmishExpandedPresentedOrders.TryHoldSelection(em, session);
         }
 
-        bool IUiExpandedSkirmishCommandGateway.TryAttackExpandedEnemyBase()
-        {
-            if (!TrySkirmish(out EntityManager em, out Entity session, out _))
-                return false;
-            return SkirmishExpandedPresentedOrders.TryAttackEnemyBase(em, session);
-        }
+
 
         private static int Mask(in SkirmishPresentedSlot slot, int index, bool assault)
         {

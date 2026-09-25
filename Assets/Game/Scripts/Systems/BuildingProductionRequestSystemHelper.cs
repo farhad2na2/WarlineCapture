@@ -583,7 +583,17 @@ namespace Game.Runtime
             }
 
             var pending = building.PendingProductions[pendingProductionIndex];
-            int refund = pending.PaidQuantity > 0
+            if (pending.ReceiptId != 0 &&
+                (context.TryGetEntityManager == null || !context.TryGetEntityManager(out var receiptWorld) ||
+                 !receiptWorld.Exists(pending.ReceiptOwner) ||
+                 !receiptWorld.HasComponent<SkirmishExpandedSessionComponent>(pending.ReceiptOwner) ||
+                 !receiptWorld.GetComponentData<SkirmishExpandedSessionComponent>(pending.ReceiptOwner).SessionId.Equals(pending.ReceiptAttempt) ||
+                 !SkirmishProductionService.TryCancel(receiptWorld, pending.ReceiptOwner, pending.ReceiptId, out _)))
+            {
+                resultCode = BuildingUiProductionCommandResultElement.CancelRejected;
+                return false;
+            }
+            int refund = pending.ReceiptId == 0 && pending.PaidQuantity > 0
                 ? (int)((long)pending.RefundableMaterials * Mathf.Clamp(pending.RemainingQuantity, 0, pending.PaidQuantity) / pending.PaidQuantity)
                 : 0;
             if (!context.ProductionSystem.RemovePendingAt(building.PendingProductions, pendingProductionIndex))
@@ -926,6 +936,11 @@ namespace Game.Runtime
             ref BuildingFactionUnitProductionRequest request,
             bool unitIdIsNormalized = false)
         {
+            if (!SkirmishNativeProduction.RequestAttemptActive(entityManager, request))
+            {
+                request.ResultCode = BuildingFactionUnitProductionRequest.ProducerUnavailable;
+                return false;
+            }
             if (!TryResolveConfiguredUnit(context, unitId, unitIdIsNormalized, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
                 unitPrefab == null ||
                 !canRequest)

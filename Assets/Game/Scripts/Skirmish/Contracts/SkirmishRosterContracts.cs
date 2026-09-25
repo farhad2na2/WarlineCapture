@@ -306,8 +306,25 @@ namespace Game.Skirmish.Contracts
             return string.Empty;
         }
 
+        public static string FromVisualKey(string key) => key switch
+        {
+            "Building_Barrack" => Barracks,
+            "Building_GroundStaging" => GroundStaging,
+            "Building_Helipad" => Helipad,
+            "Building_Airport" => Airport,
+            "Building_OilPump" => OilPump,
+            "Building_Refinery" => Refinery,
+            "Building_Fuel_Bladder" => FuelBladder,
+            "Building_Ammunition_Depot" => FabricationDepot,
+            "Building_GuardTower" => Watchtower,
+            "Building_Satelite_Dish" => SatelliteDish,
+            _ => string.Empty
+        };
+
         public static SkirmishProducerKind ProducerFor(string structureId)
         {
+            if (structureId == SatelliteDish)
+                return SkirmishProducerKind.IntelStation;
             if (structureId == GroundStaging)
                 return SkirmishProducerKind.GroundStaging;
             if (structureId == Helipad)

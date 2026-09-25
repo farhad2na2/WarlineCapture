@@ -90,6 +90,13 @@ namespace Game.Runtime
         internal static bool ReleasesProductionSlot(EntityManager em, Entity unit)
         {
             if (!em.Exists(unit) || !em.HasComponent<UnitSourcePrefabKey>(unit)) return false;
+            if (em.HasComponent<SkirmishUnitRoleComponent>(unit) && em.HasComponent<SkirmishSharedActorTag>(unit))
+            {
+                var category = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Category;
+                return category == Game.Skirmish.Contracts.SkirmishPopulationCategory.Infantry ||
+                    category == Game.Skirmish.Contracts.SkirmishPopulationCategory.Ground ||
+                    category == Game.Skirmish.Contracts.SkirmishPopulationCategory.LogisticsSupport;
+            }
             using var session = em.CreateEntityQuery(typeof(SkirmishMatchState));
             return !session.IsEmptyIgnoreFilter &&
                 PopulationKey(em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString()) == "soldier";
@@ -106,6 +113,8 @@ namespace Game.Runtime
             if(session.IsEmptyIgnoreFilter)return true;
             if(session.GetSingleton<SkirmishMatchState>().Phase!=SkirmishPhase.Playing||producer==null||prefab==null)return false;
             if(!SkirmishCatalogPolicy.Allows(em,prefab,false))return false;
+            if (SkirmishNativeProduction.TrySession(em, out var expanded))
+                return SkirmishNativeProduction.CanQueue(em, expanded, producer, prefab);
             string key=PopulationKey(prefab.name);
             int limit=key.Contains("soldier")?SkirmishPresetConfig.InfantryLimitPerFaction:key.Contains("truck_tray")?2:key.Contains("truck_tanker")?1:0;
             if(limit==0)return false;

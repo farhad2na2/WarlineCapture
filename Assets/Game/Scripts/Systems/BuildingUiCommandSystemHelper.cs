@@ -55,7 +55,11 @@ namespace Game.Runtime
             InsufficientMaterials = 7,
             InsufficientCreditsAndMaterials = 8,
             InfantryLimit = 9,
-            LogisticsLimit = 10
+            LogisticsLimit = 10,
+            ReadinessEstablishedRequired = 11,
+            ReadinessFullArsenalRequired = 12,
+            ArmyCapacityReached = 13,
+            ResearchInProgress = 14
         }
 
         public delegate bool TryGetConfiguredSpawnableDelegate(int index, out ConfiguredSpawnableEntry entry);

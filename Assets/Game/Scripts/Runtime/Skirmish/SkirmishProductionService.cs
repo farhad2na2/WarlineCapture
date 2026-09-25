@@ -6,7 +6,7 @@ using Unity.Entities;
 
 namespace Game.Runtime
 {
-    public static class SkirmishProductionService
+    public static partial class SkirmishProductionService
     {
         public static bool TryProduce(
             EntityManager em,
@@ -40,39 +40,9 @@ namespace Game.Runtime
                 return false;
             }
 
-            bool barracks = HasLivingProducer(em, session, SkirmishProducerKind.Barracks, factionId);
-            bool staging = HasLivingProducer(em, session, SkirmishProducerKind.GroundStaging, factionId);
+            decision = EvaluateQueue(em, session, roleId, squadCount, army, factionId);
+            if (!decision.Accepted) return false;
             ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint nextReservation);
-            var request = new SkirmishProductionRequest
-            {
-                RoleId = roleId,
-                RoleKind = roleKind,
-                SquadCount = squadCount,
-                BarracksPresent = barracks,
-                GroundStagingPresent = staging,
-                HelipadPresent = HasLivingProducer(em, session, SkirmishProducerKind.Helipad, factionId),
-                AirportPresent = HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId),
-                IntelStationPresent = HasLivingProducer(em, session, SkirmishProducerKind.IntelStation, factionId),
-                EnforceStocks = true,
-                MaterialsAvailable = materials,
-                FuelAvailable = fuel,
-                InfantryLive = snapshot.InfantryLive,
-                GroundLive = snapshot.GroundLive,
-                AirLive = snapshot.AirLive,
-                SupplyLive = snapshot.SupplyLive,
-                InfantryReserved = snapshot.InfantryReserved,
-                GroundReserved = snapshot.GroundReserved,
-                AirReserved = snapshot.AirReserved,
-                SupplyReserved = snapshot.SupplyReserved,
-                InfantryCap = snapshot.InfantryCap,
-                GroundCap = snapshot.GroundCap,
-                AirCap = snapshot.AirCap,
-                SupplyCap = snapshot.SupplyCap
-            };
-            decision = SkirmishProductionEligibility.Evaluate(
-                request, army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays);
-            if (!decision.Accepted)
-                return false;
             if (IsProducerLocked(em, session, decision.Producer, factionId))
             {
                 decision.Accepted = false;
@@ -110,9 +80,7 @@ namespace Game.Runtime
                 Producer = decision.Producer
             });
 
-            SkirmishCapacityLedger.PromoteLive(ref snapshot, category, decision.MemberCount, decision.SupplyCost);
             WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
-            MarkReservation(em, session, reservationId, SkirmishReservationPhase.Live);
 
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             string prefabKey = PrefabKey(setup, roleKind);
@@ -132,10 +100,22 @@ namespace Game.Runtime
             {
                 Entity member = SkirmishScenarioSpawnSystem.CreateForceMember(
                     em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey, prefabLookup, setup);
+                if (member == Entity.Null)
+                {
+                    DestroyUndispatchedMembers(em, sessionId, reservationId);
+                    TryRefundFailedDispatch(em, session, reservationId, out decision);
+                    decision.Accepted = false;
+                    decision.Reason = SkirmishReasonCode.BlockedSpawn;
+                    return false;
+                }
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);
             }
+
+            SkirmishCapacityLedger.PromoteLive(ref snapshot, category, decision.MemberCount, decision.SupplyCost);
+            WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
+            MarkReservation(em, session, reservationId, SkirmishReservationPhase.Live);
 
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
@@ -166,18 +146,58 @@ namespace Game.Runtime
             byte factionId,
             out SkirmishProductionDecision decision)
         {
-            decision = default;
+            decision = EvaluateQueue(em, session, roleId, squadCount, army, factionId);
+            if (!decision.Accepted) return false;
+            SkirmishRoleIds.TryParse(roleId, out SkirmishRoleKind roleKind);
+            ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint nextReservation);
+
+            SkirmishPopulationCategory category = SkirmishRoleIds.Category(roleKind);
+            if (!SkirmishCapacityLedger.TryReserve(ref snapshot, category, decision.MemberCount, decision.SupplyCost))
+            {
+                decision.Accepted = false;
+                decision.Reason = SkirmishReasonCode.InsufficientCapacity;
+                return false;
+            }
+
+            materials -= decision.MaterialsCost;
+            fuel -= decision.FuelCost;
+            nextReservation++;
+            decision.ReservationId = nextReservation;
+            if (!em.HasBuffer<SkirmishProductionReservation>(session))
+                em.AddBuffer<SkirmishProductionReservation>(session);
+            em.GetBuffer<SkirmishProductionReservation>(session).Add(new SkirmishProductionReservation
+            {
+                ReservationId = nextReservation,
+                Role = roleKind,
+                Category = category,
+                MemberCount = decision.MemberCount,
+                RemainingMembers = decision.MemberCount,
+                MaterialsPaid = decision.MaterialsCost,
+                SupplyCost = decision.SupplyCost,
+                Phase = SkirmishReservationPhase.Reserved,
+                FactionId = factionId,
+                Producer = decision.Producer
+            });
+            WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
+            AriaCommandEvidence.Accepted("Production", factionId);
+            return true;
+        }
+
+        public static SkirmishProductionDecision EvaluateQueue(EntityManager em, Entity session,
+            string roleId, int squadCount, SkirmishArmyProfileConfig army, byte factionId)
+        {
+            SkirmishProductionDecision decision = default;
             if (em == default || !em.HasComponent<SkirmishResolvedSetupRecord>(session))
             {
                 decision.Reason = SkirmishReasonCode.MissingResolvedSetup;
-                return false;
+                return decision;
             }
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             if (setup == null || !SkirmishRoleIds.TryParse(roleId, out SkirmishRoleKind roleKind))
             {
                 decision.Reason = SkirmishReasonCode.UnsupportedRole;
-                return false;
+                return decision;
             }
 
             ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint nextReservation);
@@ -208,39 +228,15 @@ namespace Game.Runtime
                 SupplyCap = snapshot.SupplyCap
             };
             decision = SkirmishProductionEligibility.Evaluate(
-                request, army, LiveReadiness(em, session, setup.Readiness), setup.RoleOverlays);
-            if (!decision.Accepted)
-                return false;
-
-            SkirmishPopulationCategory category = SkirmishRoleIds.Category(roleKind);
-            if (!SkirmishCapacityLedger.TryReserve(ref snapshot, category, decision.MemberCount, decision.SupplyCost))
+                request, army, LiveReadiness(em, session, setup.Readiness, factionId), setup.RoleOverlays);
+            if (decision.Accepted && SkirmishRoleIds.Category(roleKind) == SkirmishPopulationCategory.LogisticsSupport &&
+                CountLogisticsSupport(em, session, factionId) + decision.MemberCount > setup.LogisticsSupportCapEach)
             {
                 decision.Accepted = false;
                 decision.Reason = SkirmishReasonCode.InsufficientCapacity;
-                return false;
+                decision.Field = "capacity.logistics";
             }
-
-            materials -= decision.MaterialsCost;
-            fuel -= decision.FuelCost;
-            nextReservation++;
-            decision.ReservationId = nextReservation;
-            if (!em.HasBuffer<SkirmishProductionReservation>(session))
-                em.AddBuffer<SkirmishProductionReservation>(session);
-            em.GetBuffer<SkirmishProductionReservation>(session).Add(new SkirmishProductionReservation
-            {
-                ReservationId = nextReservation,
-                Role = roleKind,
-                Category = category,
-                MemberCount = decision.MemberCount,
-                RemainingMembers = decision.MemberCount,
-                MaterialsPaid = decision.MaterialsCost,
-                SupplyCost = decision.SupplyCost,
-                Phase = SkirmishReservationPhase.Reserved,
-                FactionId = factionId,
-                Producer = decision.Producer
-            });
-            WriteStocks(em, session, factionId, materials, fuel, snapshot, nextReservation);
-            return true;
+            return decision;
         }
 
         public static bool TryStartQueued(
@@ -320,12 +316,6 @@ namespace Game.Runtime
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
             ReadStocks(em, session, reservation.FactionId, out int materials, out int fuel, out var snapshot, out uint next);
-            SkirmishCapacityLedger.PromoteLive(
-                ref snapshot, reservation.Category, reservation.MemberCount, reservation.SupplyCost);
-            WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
-            reservation.Phase = SkirmishReservationPhase.Live;
-            DynamicBuffer<SkirmishProductionReservation> dispatched = em.GetBuffer<SkirmishProductionReservation>(session);
-            dispatched[index] = reservation;
 
             FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
             string roleId = RoleIdOf(reservation.Role);
@@ -346,10 +336,22 @@ namespace Game.Runtime
             {
                 Entity member = SkirmishScenarioSpawnSystem.CreateForceMember(
                     em, sessionId, force, (int)reservationId, i, perMemberSupply, prefabKey, prefabLookup, setup);
+                if (member == Entity.Null)
+                {
+                    DestroyUndispatchedMembers(em, sessionId, reservationId);
+                    TryRefundFailedDispatch(em, session, reservationId, out decision);
+                    decision.Accepted = false;
+                    decision.Reason = SkirmishReasonCode.BlockedSpawn;
+                    return false;
+                }
                 var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
                 owned.ReservationId = reservationId;
                 em.SetComponentData(member, owned);
             }
+
+            SkirmishCapacityLedger.PromoteLive(ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation));
+            WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
+            MarkReservation(em, session, reservationId, SkirmishReservationPhase.Live);
 
             using var ownedQuery = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             SkirmishRosterProjectionSystem.Apply(em, ownedQuery, sessionId, setup);
@@ -395,10 +397,10 @@ namespace Game.Runtime
                 return false;
             }
 
-            int refund = SkirmishResearchCosts.RefundProduce(reservation.MaterialsPaid, reservation.Phase);
+            int refund = SkirmishResearchCosts.RefundProduce(UndeliveredPayment(reservation), reservation.Phase);
             ReadStocks(em, session, reservation.FactionId, out int materials, out int fuel, out var snapshot, out uint next);
             if (!SkirmishCapacityLedger.TryReleaseReserved(
-                    ref snapshot, reservation.Category, reservation.MemberCount, reservation.SupplyCost))
+                    ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation)))
             {
                 decision.Reason = SkirmishReasonCode.StaleCommand;
                 return false;
@@ -407,6 +409,7 @@ namespace Game.Runtime
             materials += refund;
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
+            reservation.RemainingMembers = System.Math.Max(0, reservation.RemainingMembers - UndeliveredMembers(reservation));
             DynamicBuffer<SkirmishProductionReservation> cancelled = em.GetBuffer<SkirmishProductionReservation>(session);
             cancelled[index] = reservation;
             decision.Accepted = true;
@@ -437,22 +440,23 @@ namespace Game.Runtime
 
             ReadStocks(em, session, reservation.FactionId, out int materials, out int fuel, out var snapshot, out uint next);
             if (!SkirmishCapacityLedger.TryReleaseReserved(
-                    ref snapshot, reservation.Category, reservation.MemberCount, reservation.SupplyCost))
+                    ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation)))
             {
                 decision.Reason = SkirmishReasonCode.StaleCommand;
                 return false;
             }
 
-            materials += reservation.MaterialsPaid;
+            materials += UndeliveredPayment(reservation);
             WriteStocks(em, session, reservation.FactionId, materials, fuel, snapshot, next);
             reservation.Phase = SkirmishReservationPhase.Cancelled;
+            reservation.RemainingMembers = System.Math.Max(0, reservation.RemainingMembers - UndeliveredMembers(reservation));
             DynamicBuffer<SkirmishProductionReservation> failed = em.GetBuffer<SkirmishProductionReservation>(session);
             failed[index] = reservation;
             decision.Accepted = true;
             decision.Reason = SkirmishReasonCode.None;
             decision.ReservationId = reservationId;
             decision.MaterialsCost = reservation.MaterialsPaid;
-            decision.RefundedMaterials = reservation.MaterialsPaid;
+            decision.RefundedMaterials = UndeliveredPayment(reservation);
             return true;
         }
 
@@ -460,7 +464,8 @@ namespace Game.Runtime
             EntityManager em,
             Entity session,
             SkirmishProducerKind producer,
-            byte factionId)
+            byte factionId,
+            int runtimeProducerId = 0)
         {
             if (!em.HasBuffer<SkirmishProductionReservation>(session))
                 return 0;
@@ -469,7 +474,8 @@ namespace Game.Runtime
             for (int i = 0; i < buffer.Length; i++)
             {
                 SkirmishProductionReservation reservation = buffer[i];
-                if (reservation.FactionId != factionId || reservation.Producer != producer)
+                if (reservation.FactionId != factionId || reservation.Producer != producer ||
+                    reservation.ProducerRuntimeId != runtimeProducerId)
                     continue;
                 if (reservation.Phase == SkirmishReservationPhase.Reserved)
                 {
@@ -482,9 +488,10 @@ namespace Game.Runtime
                     continue;
                 ReadStocks(em, session, factionId, out int materials, out int fuel, out var snapshot, out uint next);
                 SkirmishCapacityLedger.TryReleaseReserved(
-                    ref snapshot, reservation.Category, reservation.MemberCount, reservation.SupplyCost);
+                    ref snapshot, reservation.Category, UndeliveredMembers(reservation), UndeliveredSupply(reservation));
                 WriteStocks(em, session, factionId, materials, fuel, snapshot, next);
                 reservation.Phase = SkirmishReservationPhase.Lost;
+                reservation.RemainingMembers = System.Math.Max(0, reservation.RemainingMembers - UndeliveredMembers(reservation));
                 buffer = em.GetBuffer<SkirmishProductionReservation>(session);
                 buffer[i] = reservation;
                 changed++;
@@ -543,7 +550,9 @@ namespace Game.Runtime
                 return false;
 
             var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
-            if (owned.CapacityReleased != 0 || owned.IsStructure != 0)
+            if (owned.CapacityReleased != 0 || owned.IsStructure != 0 ||
+                !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
+                !owned.SessionId.Equals(em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId))
                 return false;
 
             SkirmishUnitRoleComponent role = em.GetComponentData<SkirmishUnitRoleComponent>(unit);
@@ -589,6 +598,18 @@ namespace Game.Runtime
             return false;
         }
 
+        private static void DestroyUndispatchedMembers(EntityManager em, FixedString64Bytes sessionId, uint reservationId)
+        {
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]);
+                if (owned.SessionId.Equals(sessionId) && owned.ReservationId == reservationId)
+                    em.DestroyEntity(entities[i]);
+            }
+        }
+
         private static void ReadStocks(
             EntityManager em,
             Entity session,
@@ -604,10 +625,12 @@ namespace Game.Runtime
                     ? em.GetComponentData<SkirmishEnemyStockComponent>(session)
                     : default;
                 var enemyCap = em.GetComponentData<SkirmishEnemyCapacityComponent>(session);
-                materials = enemyStock.Materials;
-                fuel = enemyStock.Fuel;
+                materials = SkirmishMaterialsService.Read(em, session, factionId);
+                fuel = SkirmishStartingSupplyService.ReadFuel(em, session, factionId);
                 snapshot = ToEnemySnapshot(enemyCap);
-                nextReservation = enemyCap.NextReservationId;
+                nextReservation = System.Math.Max(enemyCap.NextReservationId,
+                    em.HasComponent<SkirmishCapacityComponent>(session)
+                        ? em.GetComponentData<SkirmishCapacityComponent>(session).NextReservationId : 0u);
                 return;
             }
 
@@ -617,10 +640,14 @@ namespace Game.Runtime
             var capacity = em.HasComponent<SkirmishCapacityComponent>(session)
                 ? em.GetComponentData<SkirmishCapacityComponent>(session)
                 : default;
-            materials = stock.Materials;
-            fuel = stock.Fuel;
+            materials = SkirmishMaterialsService.Read(em, session, factionId);
+            fuel = SkirmishStartingSupplyService.ReadFuel(em, session, factionId);
             snapshot = SkirmishCapacityLedger.ToSnapshot(capacity);
-            nextReservation = capacity.NextReservationId;
+            // Both factions share the reservation buffer and lookup key.
+            // Allocate from one monotonic sequence even though capacity is stored per faction.
+            nextReservation = System.Math.Max(capacity.NextReservationId,
+                em.HasComponent<SkirmishEnemyCapacityComponent>(session)
+                    ? em.GetComponentData<SkirmishEnemyCapacityComponent>(session).NextReservationId : 0u);
         }
 
         private static void WriteStocks(
@@ -632,13 +659,18 @@ namespace Game.Runtime
             SkirmishCapacitySnapshot snapshot,
             uint nextReservation)
         {
+            if (em.HasComponent<SkirmishSharedSupplyInitialized>(session) &&
+                !SkirmishStartingSupplyService.TryWriteFuel(em, session, factionId, fuel))
+                throw new System.InvalidOperationException("Accepted production transaction cannot update physical fuel stores.");
+            SkirmishMaterialsService.WriteTransaction(em, session, factionId, materials, FactionTacticalMaterialsSpendKind.Production);
             if (factionId == 2)
             {
                 var enemyStock = em.HasComponent<SkirmishEnemyStockComponent>(session)
                     ? em.GetComponentData<SkirmishEnemyStockComponent>(session)
                     : new SkirmishEnemyStockComponent();
-                enemyStock.Materials = materials;
-                enemyStock.Fuel = fuel;
+                if (!em.HasComponent<SkirmishSharedMaterialsInitialized>(session))
+                    enemyStock.Materials = materials;
+                if (!em.HasComponent<SkirmishSharedSupplyInitialized>(session)) enemyStock.Fuel = fuel;
                 if (em.HasComponent<SkirmishEnemyStockComponent>(session))
                     em.SetComponentData(session, enemyStock);
                 else
@@ -659,8 +691,9 @@ namespace Game.Runtime
             var stock = em.HasComponent<SkirmishEconomyStockComponent>(session)
                 ? em.GetComponentData<SkirmishEconomyStockComponent>(session)
                 : new SkirmishEconomyStockComponent();
-            stock.Materials = materials;
-            stock.Fuel = fuel;
+            if (!em.HasComponent<SkirmishSharedMaterialsInitialized>(session))
+                stock.Materials = materials;
+            if (!em.HasComponent<SkirmishSharedSupplyInitialized>(session)) stock.Fuel = fuel;
             em.SetComponentData(session, stock);
             var capacity = em.HasComponent<SkirmishCapacityComponent>(session)
                 ? em.GetComponentData<SkirmishCapacityComponent>(session)
@@ -704,11 +737,13 @@ namespace Game.Runtime
         private static SkirmishReadinessStage LiveReadiness(
             EntityManager em,
             Entity session,
-            SkirmishReadinessStage compiled)
+            SkirmishReadinessStage compiled, byte factionId = 1)
         {
             if (!em.HasComponent<SkirmishResearchStateComponent>(session))
                 return compiled;
-            SkirmishReadinessStage live = em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness;
+            var research = em.GetComponentData<SkirmishResearchStateComponent>(session);
+            if (research.FactionId != factionId) return compiled;
+            SkirmishReadinessStage live = research.Readiness;
             return live > compiled ? live : compiled;
         }
 
@@ -784,7 +819,7 @@ namespace Game.Runtime
                     compiled = setup.Readiness;
             }
 
-            if ((int)LiveReadiness(em, session, compiled) < (int)required)
+            if ((int)LiveReadiness(em, session, compiled, reservation.FactionId) < (int)required)
             {
                 reason = SkirmishReasonCode.MissingReadiness;
                 field = "readiness";

@@ -20,6 +20,71 @@ namespace Game.Tests.Editor
 {
     public sealed class SkirmishS002AriaHarnessTests
     {
+        // Fixture-only service exercise. Never used for normal-input acceptance.
+        private static bool FixtureAttackEnemyBase(EntityManager em, Entity session)
+        {
+            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+                SkirmishArmySelectionService.SelectedLivingCount(em, session) == 0)
+                return false;
+            Entity target = FindVisibleEnemyBase(em, session);
+            if (target == Entity.Null)
+                return false;
+            return SkirmishArmyCommandService.TryAttack(em, session, target, out _);
+        }
+
+        private static Entity FindVisibleEnemyBase(EntityManager em, Entity session)
+        {
+            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return Entity.Null;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(
+                typeof(SkirmishObjectiveRoleComponent),
+                typeof(SkirmishAttemptOwnedComponent));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                if (!owned.SessionId.Equals(sessionId) || owned.FactionId == 1)
+                    continue;
+                if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role !=
+                    SkirmishObjectiveRoleKind.EnemyBase)
+                    continue;
+                if (!SkirmishFogService.IsVisible(em, entity) || !SkirmishArmyGroupSystem.IsAlive(em, entity))
+                    continue;
+                return entity;
+            }
+
+            return Entity.Null;
+        }
+
+        [Test]
+        public void CandidateHashChangesForSourceEditsRenamesAndDeletesButNotEvidence()
+        {
+            string root = Path.Combine(Path.GetTempPath(), "warline-candidate-hash-" + Guid.NewGuid().ToString("N"));
+            try
+            {
+                foreach (string directory in new[] { "Assets", "Packages", "ProjectSettings", "Evidence" })
+                    Directory.CreateDirectory(Path.Combine(root, directory));
+                string source = Path.Combine(root, "Assets", "Rules.cs");
+                File.WriteAllText(source, "class Rules { const int Damage = 10; }");
+                File.WriteAllText(Path.Combine(root, "Packages", "manifest.json"), "{}");
+                string original = SkirmishCandidateSourceHash.Compute(root);
+                File.WriteAllText(Path.Combine(root, "Evidence", "run.json"), "new evidence");
+                Assert.AreEqual(original, SkirmishCandidateSourceHash.Compute(root));
+                File.WriteAllText(source, "class Rules { const int Damage = 20; }");
+                string edited = SkirmishCandidateSourceHash.Compute(root);
+                Assert.AreNotEqual(original, edited);
+                string renamed = Path.Combine(root, "Assets", "ChangedRules.cs");
+                File.Move(source, renamed);
+                string moved = SkirmishCandidateSourceHash.Compute(root);
+                Assert.AreNotEqual(edited, moved);
+                File.Delete(renamed);
+                Assert.AreNotEqual(moved, SkirmishCandidateSourceHash.Compute(root));
+            }
+            finally { if (Directory.Exists(root)) Directory.Delete(root, true); }
+        }
+
         [Test]
         public void ExpandedMissionSuppressesSelectedLegacyRoster()
         {
@@ -239,7 +304,7 @@ namespace Game.Tests.Editor
             using var world = new World(nameof(AttackOrdersDamageOnlyLegalVisibleTargets));
             EntityManager em = world.EntityManager;
             CompileAndSpawn(em, out Entity session);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity barracks = DesignatedBase(em, 2);
             Entity rifle = FirstGroupMember(em, FirstFactionGroup(em, session, 1, SkirmishRoleKind.Rifle).GroupId);
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -269,7 +334,7 @@ namespace Game.Tests.Editor
             SkirmishFogService.Hide(em, enemyTank);
             SkirmishExpandedEngagementService.Step(em, session, 1f, false);
             Assert.AreEqual(before, em.GetComponentData<UnitHealth>(enemyTank).Current);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
         }
 
         [Test]
@@ -278,7 +343,7 @@ namespace Game.Tests.Editor
             using var world = new World(nameof(AssaultColumnKillsTheEnemyTankAndLeavesThePlayerBarracks));
             EntityManager em = world.EntityManager;
             CompileAndSpawn(em, out Entity session);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -316,7 +381,7 @@ namespace Game.Tests.Editor
             Assert.AreEqual(800, em.GetComponentData<UnitHealth>(playerBase).Current);
             Assert.Less(em.GetComponentData<UnitHealth>(enemyBase).Current, 800);
             Assert.Greater(em.GetComponentData<UnitHealth>(tank).Current, 0);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
         }
 
         [Test]
@@ -325,7 +390,7 @@ namespace Game.Tests.Editor
             using var world = new World(nameof(ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks));
             EntityManager em = world.EntityManager;
             CompileAndSpawn(em, out Entity session);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
             var view = new AriaSkirmishObservation
             {
                 Active = true,
@@ -369,7 +434,7 @@ namespace Game.Tests.Editor
             // A tap is not the confirmed order; ARIA waits for the public
             // card state and then continues through the remaining pages.
             Assert.AreEqual(0, plan.AssaultIssued);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
         }
 
         [Test]
@@ -457,7 +522,7 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void BlockedExpandedPlanRestartsTheTouchDriver()
+        public void BlockedExpandedPlanRequiresExplicitRetry()
         {
             var view = new AriaSkirmishObservation
             {
@@ -477,18 +542,18 @@ namespace Game.Tests.Editor
             };
             var output = new AriaPlayObservationComponent();
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
-            Assert.AreEqual(AriaPlayPhase.Starting, touch.Phase);
-            Assert.AreEqual(0, touch.Attempts);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
+            Assert.AreEqual(3, touch.Attempts);
             Assert.AreEqual(0, touch.GestureRequested);
-            Assert.AreEqual(400f, touch.DueAt, 0.001f);
-            Assert.AreEqual(400f, touch.LastProgressAt, 0.001f);
-            Assert.AreEqual(400f, touch.LastObjectiveProgressAt, 0.001f);
+            Assert.AreEqual(0, output.TargetId);
+            Assert.AreEqual(0f, touch.LastProgressAt);
+            Assert.AreEqual(0f, touch.LastObjectiveProgressAt);
         }
 
         [Test]
-        public void PendingPathRequestDoesNotFreezeLocalStep()
+        public void GridlessFixtureClearsFollowerBeforeLocalStep()
         {
-            using var world = new World(nameof(PendingPathRequestDoesNotFreezeLocalStep));
+            using var world = new World(nameof(GridlessFixtureClearsFollowerBeforeLocalStep));
             EntityManager em = world.EntityManager;
             CompileAndSpawn(em, out Entity session);
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -505,7 +570,7 @@ namespace Game.Tests.Editor
             float held = em.GetComponentData<LocalTransform>(tank).Position.x;
             Assert.Greater(SkirmishWorldMovementService.Step(em, session, 1f, false), 0);
             Assert.Greater(em.GetComponentData<LocalTransform>(tank).Position.x, held + 1f);
-            Assert.IsTrue(em.HasComponent<UnitPathFollow>(tank));
+            Assert.IsFalse(em.HasComponent<UnitPathFollow>(tank), "A gridless fixture must not keep a second movement owner.");
         }
 
         [Test]
@@ -594,8 +659,8 @@ namespace Game.Tests.Editor
             BootPlayingSession(world, out Entity session);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
-            int enemyMaterials = em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
+            int enemyMaterials = SkirmishMaterialsService.Read(em, session, 2);
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -625,8 +690,8 @@ namespace Game.Tests.Editor
 
             Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
             Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
-            Assert.AreEqual(enemyMaterials - 120, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
+            Assert.AreEqual(enemyMaterials - 120, SkirmishMaterialsService.Read(em, session, 2));
             Assert.AreNotEqual(
                 SkirmishGroupOrderKind.Attack,
                 FirstFactionGroup(em, session, 2, SkirmishRoleKind.Rifle).LastOrder);
@@ -750,7 +815,7 @@ namespace Game.Tests.Editor
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             RevealAll(em);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -778,7 +843,7 @@ namespace Game.Tests.Editor
             Assert.Less(steps, 1080, "seed " + seed + " enemyHp=" + enemyHp + " playerHp=" + playerHp);
             Assert.AreEqual(0, enemyHp, "seed " + seed);
             Assert.Greater(playerHp, 0, "seed " + seed);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials, "seed " + seed);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1), "seed " + seed);
             Assert.AreEqual(1, plan.AssaultIssued, "seed " + seed);
             Assert.AreEqual(
                 SkirmishGroupOrderKind.Attack,
@@ -874,7 +939,7 @@ namespace Game.Tests.Editor
             else if (output.TargetId >= 100 && output.TargetId <= 103)
                 SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, output.TargetId - 100);
             else if (output.TargetId == 42)
-                SkirmishExpandedPresentedOrders.TryAttackEnemyBase(em, session);
+                FixtureAttackEnemyBase(em, session);
         }
 
         [Test]
@@ -992,9 +1057,9 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery()
+        public void FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup()
         {
-            using var world = new World(nameof(FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery));
+            using var world = new World(nameof(FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup));
             BootPlayingSession(world, out Entity session);
             EntityManager em = world.EntityManager;
             Entity tank = FirstFactionUnit(em, 1, SkirmishRoleKind.Tank);
@@ -1002,6 +1067,11 @@ namespace Game.Tests.Editor
             expanded.Phase = SkirmishSessionPhase.Finished;
             em.SetComponentData(session, expanded);
 
+            world.GetOrCreateSystem<SkirmishSessionCleanupSystem>().Update(world.Unmanaged);
+            Assert.IsTrue(em.Exists(tank), "Result review must preserve the frozen battlefield.");
+            Assert.IsTrue(em.HasComponent<SkirmishResolvedSetupRecord>(session), "Replay still needs the compiled setup.");
+            Assert.AreEqual(SkirmishSessionPhase.Finished, em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase);
+            em.AddComponent<SkirmishExpandedCleanupRequest>(session);
             world.GetOrCreateSystem<SkirmishSessionCleanupSystem>().Update(world.Unmanaged);
 
             Assert.IsFalse(em.Exists(tank));
@@ -1012,39 +1082,38 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void AriaSessionOrdersStructureColumnAndDestroysEnemyBase()
+        public void PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase()
         {
-            using var world = new World(nameof(AriaSessionOrdersStructureColumnAndDestroysEnemyBase));
+            using var world = new World(nameof(PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase));
             BootPlayingSession(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             PlaceOnAuthoredPads(em, session);
             RevealAll(em);
-            int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
             Entity playerBase = DesignatedBase(em, 1);
             Entity enemyBase = DesignatedBase(em, 2);
             Entity shell = em.CreateEntity();
             em.AddComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Manual });
-            world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+            Assert.IsFalse(FixtureAttackEnemyBase(em, session));
             Assert.AreNotEqual(
                 SkirmishGroupOrderKind.Attack,
                 FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
 
             em.SetComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing });
-            world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+            SelectPresentedStructureColumn(em, session);
             Assert.AreEqual(
                 SkirmishGroupOrderKind.Attack,
                 FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
             Assert.AreEqual(
                 SkirmishGroupOrderKind.Attack,
                 FirstFactionGroup(em, session, 1, SkirmishRoleKind.Rocketeer).LastOrder);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
 
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
             using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
             int steps = 0;
             while (steps < 1080 && em.GetComponentData<UnitHealth>(enemyBase).Current > 0)
             {
-                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
                 SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
                 SkirmishExpandedEngagementService.Step(em, session, 1f, false);
                 SkirmishWorldMovementService.Step(em, session, 1f, false);
@@ -1054,7 +1123,7 @@ namespace Game.Tests.Editor
             Assert.Less(steps, 1080, "enemyHp=" + em.GetComponentData<UnitHealth>(enemyBase).Current);
             Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
             Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
-            Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+            Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
             PublishProjectedMatch(world, session);
             Assert.AreEqual(SkirmishOutcomeKind.Victory, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Outcome);
             Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Reason);
@@ -1066,9 +1135,9 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt()
+        public void MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders()
         {
-            using var world = new World(nameof(MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt));
+            using var world = new World(nameof(MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders));
             BootPlayingSession(world, out Entity session, 130365);
             EntityManager em = world.EntityManager;
             Entity playerBase = DesignatedBase(em, 1);
@@ -1112,16 +1181,16 @@ namespace Game.Tests.Editor
                 Assert.Greater(math.distance(enemyPos, standIn), 40f);
                 Assert.Greater(math.distance(em.GetComponentData<LocalTransform>(tank).Position, float3.zero), 50f);
 
-                int materials = em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials;
+                int materials = SkirmishMaterialsService.Read(em, session, 1);
                 Entity shell = em.CreateEntity();
                 em.AddComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Manual });
-                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                Assert.IsFalse(FixtureAttackEnemyBase(em, session));
                 Assert.AreNotEqual(
                     SkirmishGroupOrderKind.Attack,
                     FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
 
                 em.SetComponentData(shell, new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing });
-                world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
+                SelectPresentedStructureColumn(em, session);
                 Assert.AreEqual(
                     SkirmishGroupOrderKind.Attack,
                     FirstFactionGroup(em, session, 1, SkirmishRoleKind.Tank).LastOrder);
@@ -1132,7 +1201,7 @@ namespace Game.Tests.Editor
                 Assert.AreEqual(enemyPos.x, ordered.DestinationX, 0.05f);
                 Assert.AreEqual(enemyPos.z, ordered.DestinationZ, 0.05f);
                 Assert.AreEqual(enemyBase, ordered.AttackTarget);
-                Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
 
                 ordered.DestinationX = standIn.x;
                 ordered.DestinationZ = standIn.z;
@@ -1149,7 +1218,6 @@ namespace Game.Tests.Editor
                 int steps = 0;
                 while (steps < 1080 && em.GetComponentData<UnitHealth>(enemyBase).Current > 0)
                 {
-                    world.GetOrCreateSystem<AriaSkirmishStructureOrderSystem>().Update(world.Unmanaged);
                     SkirmishEnemyStrategySystem.Evaluate(em, session, owned, authored.ArmyGround);
                     SkirmishVisualSpawnService.EnsureMissingCombatTransforms(em, session);
                     SkirmishExpandedEngagementService.Step(em, session, 1f, false);
@@ -1160,7 +1228,7 @@ namespace Game.Tests.Editor
                 Assert.Less(steps, 1080, "enemyHp=" + em.GetComponentData<UnitHealth>(enemyBase).Current);
                 Assert.AreEqual(0, em.GetComponentData<UnitHealth>(enemyBase).Current);
                 Assert.Greater(em.GetComponentData<UnitHealth>(playerBase).Current, 0);
-                Assert.AreEqual(materials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
+                Assert.AreEqual(materials, SkirmishMaterialsService.Read(em, session, 1));
                 PublishProjectedMatch(world, session);
                 Assert.AreEqual(SkirmishOutcomeKind.Victory, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Outcome);
                 Assert.AreEqual(SkirmishEndReasonKind.MainBaseDestroyed, em.GetComponentData<SkirmishObjectiveStateComponent>(session).Reason);
@@ -1224,16 +1292,50 @@ namespace Game.Tests.Editor
             }
         }
 
+        // Fixture-level control dispatch; this is not normal-input acceptance evidence.
+        private static void SelectPresentedStructureColumn(EntityManager em, Entity session)
+        {
+            int initialPage = -1;
+            for (int pages = 0; pages < 32; pages++)
+            {
+                Assert.IsTrue(SkirmishExpandedPresentedOrders.TryReadPage(em, session,
+                    out int page, out bool next, out var a, out var b, out var c, out var d));
+                if (page == initialPage) break;
+                if (initialPage < 0) initialPage = page;
+                var slots = new[] { a, b, c, d };
+                bool selected = false;
+                for (int i = 0; i < slots.Length; i++)
+                    if (slots[i].Occupied && slots[i].Structure)
+                    {
+                        Assert.IsTrue(SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, i));
+                        selected = true;
+                    }
+                if (selected) Assert.IsTrue(FixtureAttackEnemyBase(em, session));
+                if (!next || !SkirmishExpandedPresentedOrders.TryAdvancePage(em, session)) break;
+            }
+        }
+
+        [Test]
+        public void UnknownInputEvidenceCannotCountAsAriaWin()
+        {
+            var facts = Finished("Victory");
+            facts.InputViolations = -1;
+            facts.HumanInterventions = -1;
+            Assert.IsFalse(SkirmishS002AriaRunLog.IsCountedAriaWin(in facts, "Victory"));
+        }
+
         public static void RunFocusedValidation()
         {
             try
             {
                 var suite = new SkirmishS002AriaHarnessTests();
+                suite.CandidateHashChangesForSourceEditsRenamesAndDeletesButNotEvidence();
                 suite.ExpandedMissionSuppressesSelectedLegacyRoster();
                 suite.SpawnedForceMemberKeepsBakedPrefabComponents();
                 suite.SpawnedVehiclesAvoidBlockedAndOccupiedCells();
                 suite.CheckedInRunsCsvHasExpectedHeader();
                 suite.ForcedVictoryDoesNotAppend();
+                suite.UnknownInputEvidenceCannotCountAsAriaWin();
                 suite.UnfinishedOutcomeIsRefusedUntilTheMatchEnds();
                 suite.FinishedOutcomesAppendAndOnlyUnguidedVictoryCounts();
                 suite.AttackOrdersDamageOnlyLegalVisibleTargets();
@@ -1241,8 +1343,8 @@ namespace Game.Tests.Editor
                 suite.ExpandedAssaultPlanUsesVisibleCardsWithoutMutatingStocks();
                 suite.ExpandedAssaultDoesNotAttackWithRiflesWhileNextPageExists();
                 suite.ExpandedAssaultStartsImmediatelyAndDoesNotBlockOnFlatHealth();
-                suite.BlockedExpandedPlanRestartsTheTouchDriver();
-                suite.PendingPathRequestDoesNotFreezeLocalStep();
+                suite.BlockedExpandedPlanRequiresExplicitRetry();
+                suite.GridlessFixtureClearsFollowerBeforeLocalStep();
                 suite.StructureInRangeIsDamagedWhileACombatantIsAlsoInRange();
                 suite.DeadlineDrawPublishesFinishedMatchWithoutStampingVictory();
                 suite.DeadEnemyBarracksFinishesVictoryWithoutRulesSystem();
@@ -1254,9 +1356,9 @@ namespace Game.Tests.Editor
                 suite.SimulationStallFailsFastAfterGrace();
                 suite.ExpandedObjectiveClockProjectsOntoMatchElapsed();
                 suite.RosterProjectionOnUpdateAppliesStructureDamageWithoutIterating();
-                suite.FinishedCleanupDestroysOwnedUnitsOutsideTheSessionQuery();
-                suite.AriaSessionOrdersStructureColumnAndDestroysEnemyBase();
-                suite.MissingBarracksPrefabStillAnchorsTheMeasuredBaseAndAriaDestroysIt();
+                suite.FinishedMatchRetainsActorsAndSetupUntilExplicitCleanup();
+                suite.PresentedSelectionOrdersStructureColumnAndDestroysEnemyBase();
+                suite.MissingBarracksPrefabStillAnchorsTheMeasuredBaseForPresentedOrders();
                 suite.LaunchResetsLiveTraceSoVictoryEvidenceOmitsPriorDraws();
                 Debug.Log("[SkirmishS002AriaHarnessTests] result=Passed");
             }

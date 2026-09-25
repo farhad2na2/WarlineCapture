@@ -224,7 +224,8 @@ namespace Game.UI.Shell.Ecs
             using EntityQuery expandedStock = entityManager.CreateEntityQuery(
                 typeof(SkirmishExpandedSessionComponent), typeof(SkirmishEconomyStockComponent));
             if (expandedStock.CalculateEntityCount() == 1 &&
-                entityManager.GetComponentData<SkirmishExpandedSessionComponent>(expandedStock.GetSingletonEntity()).IsLegacy == 0)
+                entityManager.GetComponentData<SkirmishExpandedSessionComponent>(expandedStock.GetSingletonEntity()).IsLegacy == 0 &&
+                !entityManager.HasComponent<SkirmishSharedSupplyInitialized>(expandedStock.GetSingletonEntity()))
             {
                 SkirmishEconomyStockComponent stock = expandedStock.GetSingleton<SkirmishEconomyStockComponent>();
                 oilText = math.max(0, stock.Oil).ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -469,8 +470,9 @@ namespace Game.UI.Shell.Ecs
         {
             if (!slot.Occupied)
                 return new UiMatchHudSquadTrayCardModel(false, string.Empty, string.Empty, 0f);
-            string title = slot.Role.ToString().ToUpperInvariant() + " (" + slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
-            return new UiMatchHudSquadTrayCardModel(true, title, slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture), 1f);
+            string title = Game.Configs.SkirmishSetupBriefing.RoleLabel(slot.Role, GameLocalization.IsRightToLeft)
+                + " (" + slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture) + ")";
+            return new UiMatchHudSquadTrayCardModel(true, title, slot.Alive.ToString(System.Globalization.CultureInfo.InvariantCulture), slot.Health01);
         }
 
         }

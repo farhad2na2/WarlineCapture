@@ -15,7 +15,8 @@ namespace Game.Components
         Repair = 1,
         Infrastructure = 2,
         Upgrade = 3,
-        Export = 4
+        Export = 4,
+        Production = 5
     }
 
     public enum FactionTacticalMaterialsMutationResult : byte
@@ -52,6 +53,7 @@ namespace Game.Components
         public int LifetimeRepairSpent;
         public int LifetimeInfrastructureSpent;
         public int LifetimeUpgradeSpent;
+        public int LifetimeProductionSpent;
         public uint Version;
     }
 

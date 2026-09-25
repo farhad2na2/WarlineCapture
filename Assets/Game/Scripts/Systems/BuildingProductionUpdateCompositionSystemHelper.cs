@@ -162,6 +162,11 @@ namespace Game.Runtime
                     continue;
                 }
 
+                if (pending.ReceiptId != 0 && now >= pending.StartedAt &&
+                    context.TransportContext.TransportBridgeContext.TryGetEntityManager != null &&
+                    context.TransportContext.TransportBridgeContext.TryGetEntityManager(out var receiptWorld))
+                    SkirmishProductionService.StartNativeQueue(receiptWorld, pending.ReceiptOwner, pending.ReceiptId, pending.ReceiptAttempt);
+
                 BuildingProductionQueueCompositionSystemHelper.PendingProductionProgress progress = context.ProductionSystem.GetProgress(
                     pending,
                     now,
@@ -203,7 +208,7 @@ namespace Game.Runtime
                         pending.ReservedProductionSlotIndex,
                         null,
                         null,
-                        ref randomState))
+                        ref randomState, pending))
                 {
                     remainingSpawns--;
                     if (pending.ConsumeUnit() && context.ProductionSystem.RemovePendingAt(building.PendingProductions, i))

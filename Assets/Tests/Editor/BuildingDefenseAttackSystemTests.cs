@@ -25,6 +25,10 @@ public sealed partial class BuildingDefenseAttackSystemTests
         try
         {
             var tests = new BuildingDefenseAttackSystemTests();
+            tests.GuardTowerDefense_MissionOverlayBindsBothFactionsAndPreservesLegacy();
+            passed++;
+            tests.GuardTowerDefense_PolicyAppliesAtAcquisitionAndBeforeCachedShot();
+            passed++;
             tests.GuardTowerDefense_IgnoresNeutralTargetsAndFiresAtHostileTarget();
             passed++;
             tests.GuardTowerDefense_IgnoresAircraftAndFiresAtGroundTarget();
@@ -63,6 +67,102 @@ public sealed partial class BuildingDefenseAttackSystemTests
             Debug.LogError($"[BuildingDefenseAttackSystemValidation] result=Failed passed={passed}");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void ConstructedStructuresUseAttemptPolicyAndCleanupWithoutReplacingTheObjective()
+    {
+        using var world = new World(nameof(ConstructedStructuresUseAttemptPolicyAndCleanupWithoutReplacingTheObjective));
+        var em = world.EntityManager;
+        var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+        var attempt = new FixedString64Bytes("constructed-policy");
+        em.SetComponentData(session, new SkirmishExpandedSessionComponent
+            { SessionId = attempt, Phase = Game.Skirmish.Contracts.SkirmishSessionPhase.Playing });
+        Entity tower = CreateGuardTower(em, float3.zero, 1, 4);
+        em.AddComponentData(tower, new RuntimeBuildingCombatInfo { RuntimeBuildingId = 101, OwnerFactionId = 1 });
+        Assert.IsTrue(SkirmishScenarioSpawnSystem.AdoptConstructedBuilding(em, tower, "Building_GuardTower"));
+        Assert.IsFalse(SkirmishScenarioSpawnSystem.AdoptConstructedBuilding(em, tower, "Building_GuardTower"));
+        Entity replacement = em.CreateEntity(typeof(RuntimeBuildingCombatInfo), typeof(UnitHealth), typeof(Faction));
+        em.SetComponentData(replacement, new RuntimeBuildingCombatInfo { RuntimeBuildingId = 102, OwnerFactionId = 1 });
+        em.SetComponentData(replacement, new UnitHealth { Current = 100, Max = 100 });
+        Assert.IsTrue(SkirmishScenarioSpawnSystem.AdoptConstructedBuilding(em, replacement, "Building_Barrack"));
+        Assert.AreEqual(0, em.GetComponentData<SkirmishStructureIdentityComponent>(replacement).DesignatedBase);
+        Assert.IsFalse(em.HasComponent<SkirmishObjectiveRoleComponent>(replacement));
+        Assert.AreNotEqual(em.GetComponentData<SkirmishAttemptOwnedComponent>(tower).StableObjectId,
+            em.GetComponentData<SkirmishAttemptOwnedComponent>(replacement).StableObjectId);
+        Entity scenery = CreateGuardTower(em, float3.zero, 1, 4);
+        em.AddComponentData(scenery, new RuntimeBuildingCombatInfo { RuntimeBuildingId = 103, OwnerFactionId = 1 });
+        em.AddComponent<OperationMapBuildingComponent>(scenery);
+        Assert.IsFalse(SkirmishScenarioSpawnSystem.AdoptConstructedBuilding(em, scenery, "Building_GuardTower"));
+        using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+        SkirmishRosterProjectionSystem.Apply(em, owned, attempt, new SkirmishResolvedSetup());
+        Assert.AreEqual(22f, em.GetComponentData<BuildingDefenseWeapon>(tower).Range);
+        Assert.AreEqual(1f, em.GetComponentData<BuildingDefenseWeapon>(tower).CooldownSeconds);
+        Assert.AreEqual(100f, em.GetComponentData<BuildingDefenseWeapon>(scenery).Range);
+        SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, attempt);
+        Assert.AreEqual(0, GetHealth(em, tower));
+        Assert.AreEqual(0, GetHealth(em, replacement));
+        Assert.AreEqual(700, GetHealth(em, scenery));
+    }
+
+    [Test]
+    public void GuardTowerDefense_MissionOverlayBindsBothFactionsAndPreservesLegacy()
+    {
+        using World world = new(nameof(GuardTowerDefense_MissionOverlayBindsBothFactionsAndPreservesLegacy));
+        var em = world.EntityManager;
+        var sessionId = new FixedString64Bytes("tower-overlay");
+        foreach (byte faction in new byte[] { 1, 2 })
+        {
+            Entity tower = CreateGuardTower(em, float3.zero, faction, 4);
+            em.AddComponentData(tower, new SkirmishAttemptOwnedComponent { SessionId = sessionId });
+            em.AddComponentData(tower, new SkirmishStructureIdentityComponent
+            { StructureId = faction == 1 ? Game.Skirmish.Contracts.SkirmishStructureIds.Watchtower :
+                Game.Skirmish.Contracts.SkirmishStructureIds.WatchtowerApproach });
+        }
+        Entity legacy = CreateGuardTower(em, float3.zero, 1, 4);
+        using var owned = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent));
+        Assert.AreEqual(2, SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, new SkirmishResolvedSetup()));
+        using var entities = owned.ToEntityArray(Allocator.Temp);
+        foreach (var tower in entities)
+        {
+            var weapon = em.GetComponentData<BuildingDefenseWeapon>(tower);
+            Assert.AreEqual(22f, weapon.Range);
+            Assert.AreEqual(10, weapon.Damage);
+            Assert.AreEqual(1f, weapon.CooldownSeconds);
+            Assert.AreEqual(4, weapon.MaxConcurrentAttacks);
+            em.SetComponentData(tower, new UnitHealth { Current = 200, Max = 700 });
+        }
+        Assert.AreEqual(0, SkirmishRosterProjectionSystem.Apply(em, owned, sessionId, new SkirmishResolvedSetup()));
+        foreach (var tower in entities) Assert.AreEqual(200, GetHealth(em, tower), "Projection must not heal existing damage.");
+        Assert.AreEqual(100f, em.GetComponentData<BuildingDefenseWeapon>(legacy).Range);
+        Assert.AreEqual(.3f, em.GetComponentData<BuildingDefenseWeapon>(legacy).CooldownSeconds);
+    }
+
+    [Test]
+    public void GuardTowerDefense_PolicyAppliesAtAcquisitionAndBeforeCachedShot()
+    {
+        using World world = new(nameof(GuardTowerDefense_PolicyAppliesAtAcquisitionAndBeforeCachedShot));
+        var em = world.EntityManager;
+        var tower = CreateGuardTower(em, float3.zero, 1, 1);
+        em.AddComponentData(tower, new CombatTargetPolicy
+        { AllowedTargets = CombatTargetDomain.Infantry, Domain = CombatTargetDomain.Structure, Visible = 1 });
+        var wrongDomain = CreateTarget(em, new float3(1, 0, 0), 100, 2);
+        em.AddComponentData(wrongDomain, new CombatTargetPolicy { Domain = CombatTargetDomain.Ground, Visible = 1 });
+        var hidden = CreateTarget(em, new float3(2, 0, 0), 100, 2);
+        em.AddComponentData(hidden, new CombatTargetPolicy { Domain = CombatTargetDomain.Infantry, Visible = 0 });
+        var eligible = CreateTarget(em, new float3(3, 0, 0), 100, 2);
+        em.AddComponentData(eligible, new CombatTargetPolicy { Domain = CombatTargetDomain.Infantry, Visible = 1 });
+        var attack = world.CreateSystem<BuildingDefenseAttackSystem>();
+        Update(world, attack, 1, .1f);
+        Assert.AreEqual(100, GetHealth(em, wrongDomain));
+        Assert.AreEqual(100, GetHealth(em, hidden));
+        Assert.AreEqual(90, GetHealth(em, eligible));
+        em.SetComponentData(eligible, new CombatTargetPolicy { Domain = CombatTargetDomain.Infantry, Visible = 0 });
+        var slots = em.GetBuffer<BuildingDefenseAttackSlot>(tower);
+        var slot = slots[0]; slot.CooldownRemaining = 0; slots[0] = slot;
+        Update(world, attack, 1.05, .05f); // Before the next acquisition pass.
+        Assert.AreEqual(90, GetHealth(em, eligible));
+        Assert.AreEqual(Entity.Null, em.GetBuffer<BuildingDefenseAttackSlot>(tower)[0].Target);
     }
 
     [Test]

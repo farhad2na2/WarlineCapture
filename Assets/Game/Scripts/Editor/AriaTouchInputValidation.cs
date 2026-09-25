@@ -20,16 +20,23 @@ namespace Game.Editor
             if (Application.isPlaying) throw new InvalidOperationException("Run the isolated input fixture in Edit mode.");
             var previousScene = SceneManager.GetActiveScene();
             var previousEvents = EventSystem.current;
-            var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Additive);
+            // Preview scenes do not require saving an unrelated untitled Editor scene.
+            var scene = EditorSceneManager.NewPreviewScene();
             AriaTouchInputUiSystemHelper driver = null;
             Mouse physical = null;
             Touchscreen physicalTouch = null;
             GameObject canvas = null, events = null;
             int clicks = 0;
+            var suspendedDevices = new System.Collections.Generic.List<InputDevice>();
             var oldSettings = InputSystem.settings;
             var fixtureSettings = UnityEngine.Object.Instantiate(oldSettings);
             try
             {
+                // The isolated fixture owns its synthetic devices. Real Editor
+                // input can arrive between Start and PumpInput and would correctly
+                // interrupt the shipping driver, making this fixture nondeterministic.
+                foreach (var device in InputSystem.devices)
+                    if (device.enabled) { suspendedDevices.Add(device); InputSystem.DisableDevice(device); }
                 InputSystem.settings = fixtureSettings;
                 fixtureSettings.SetInternalFeatureFlag("RUN_PLAYER_UPDATES_IN_EDIT_MODE", true);
                 InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
@@ -37,6 +44,7 @@ namespace Game.Editor
                 // panel focus after returning from a real Play-mode session.
                 fixtureSettings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
                 events = new GameObject("AriaInputFixtureEvents", typeof(EventSystem), typeof(InputSystemUIInputModule));
+                SceneManager.MoveGameObjectToScene(events, scene);
                 typeof(EventSystem).GetMethod("OnEnable", System.Reflection.BindingFlags.Instance |
                     System.Reflection.BindingFlags.NonPublic).Invoke(events.GetComponent<EventSystem>(), null);
                 EventSystem.current = events.GetComponent<EventSystem>();
@@ -50,17 +58,18 @@ namespace Game.Editor
                 module.AssignDefaultActions();
                 module.actionsAsset.Enable();
                 canvas = new GameObject("AriaInputFixtureCanvas", typeof(Canvas), typeof(AriaInputFixtureRaycaster));
+                SceneManager.MoveGameObjectToScene(canvas, scene);
                 canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
                 var raycaster = canvas.GetComponent<AriaInputFixtureRaycaster>();
-                raycaster.SendMessage("OnEnable");
+                InvokeFixtureLifecycle(raycaster, "OnEnable");
                 var target = new GameObject("TouchTarget", typeof(RectTransform), typeof(Image), typeof(Button), typeof(AriaInputFixtureClicks));
                 target.transform.SetParent(canvas.transform, false);
                 var rect = (RectTransform)target.transform;
                 rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
                 rect.offsetMin = rect.offsetMax = Vector2.zero;
                 target.GetComponent<Button>().onClick.AddListener(() => clicks++);
-                target.GetComponent<Image>().SendMessage("OnEnable");
-                target.GetComponent<Button>().SendMessage("OnEnable");
+                InvokeFixtureLifecycle(target.GetComponent<Image>(), "OnEnable");
+                InvokeFixtureLifecycle(target.GetComponent<Button>(), "OnEnable");
                 raycaster.Target = target;
                 Canvas.ForceUpdateCanvases();
                 Vector2 point = new(Screen.width * .5f, Screen.height * .5f);
@@ -68,27 +77,34 @@ namespace Game.Editor
                 EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current) { position = point }, hits);
                 Require(hits.Count > 0, "fixture must have a raycast target at " + point);
                 driver = new AriaTouchInputUiSystemHelper();
+                physical = InputSystem.AddDevice<Mouse>("AriaInputFixturePhysicalMouse");
+                InputSystem.DisableDevice(physical);
+                InputSystem.QueueStateEvent(physical, new MouseState { position = point }.WithButton(MouseButton.Left));
                 Require(driver.Start(), "start");
                 Require(driver.TryGesture(point, point, .15f, 0, 0), "tap enqueue");
                 PumpInput(); module.Process();
-                Require(clicks == 0 && driver.IsPressed, "press must not click");
+                Require(clicks == 0 && driver.IsPressed, "press must not click; clicks=" + clicks + " pressed=" + driver.IsPressed + " running=" + driver.IsRunning + " samples=" + driver.AcceptedSamples + " interruption=" + driver.LastInterruption);
                 Require(Vector2.Distance(driver.ContactPosition, point) < .01f, "contact alignment");
                 driver.Tick(.2f); PumpInput(); module.Process();
                 Require(clicks == 1 && !driver.IsBusy, "normal touch must click once; clicks=" + clicks + " samples=" + driver.AcceptedSamples + " busy=" + driver.IsBusy + " pointers=" + target.GetComponent<AriaInputFixtureClicks>().Trace);
 
+                Require(driver.DispatchedGestures == 1 && driver.CompletedGestures == 1 && driver.AcceptedSamples == 2,
+                    "completed tap has measured dispatch and two input samples");
+                Require(driver.PhysicalInterventions == 0 && driver.UnexpectedSamples == 0, "clean tap counters");
                 Require(driver.TryGesture(point, point, .15f, 0, 1), "cancel enqueue");
                 PumpInput(); module.Process();
                 driver.Stop(); PumpInput(); module.Process();
                 Require(clicks == 1 && !driver.IsPressed && !driver.IsRunning, "cancel must not click");
                 driver.Tick(5); PumpInput(); module.Process();
                 Require(clicks == 1, "no delayed release after stop");
+                Require(driver.CompletedGestures == 1, "cancel cannot count a completed gesture");
 
                 Require(driver.Start(), "restart");
                 Require(driver.TryGesture(point, point, .15f, 0, 6), "race enqueue");
                 driver.Stop(); PumpInput(); module.Process();
                 Require(clicks == 1, "queued press discarded on stop");
 
-                physical = InputSystem.AddDevice<Mouse>("AriaInputFixturePhysicalMouse");
+                InputSystem.EnableDevice(physical);
                 Require(driver.Start(), "physical override start");
                 InputSystem.QueueStateEvent(physical, new MouseState { position = point }.WithButton(MouseButton.Left));
                 PumpInput(); module.Process();
@@ -101,8 +117,8 @@ namespace Game.Editor
                 // The first press only hands back; the next press must work normally.
                 var second = new GameObject("ManualTarget", typeof(RectTransform), typeof(Image), typeof(Button));
                 second.transform.SetParent(canvas.transform, false);
-                second.GetComponent<Image>().SendMessage("OnEnable");
-                second.GetComponent<Button>().SendMessage("OnEnable");
+                InvokeFixtureLifecycle(second.GetComponent<Image>(), "OnEnable");
+                InvokeFixtureLifecycle(second.GetComponent<Button>(), "OnEnable");
                 int secondClicks = 0;
                 second.GetComponent<Button>().onClick.AddListener(() => secondClicks++);
                 Require(driver.Start(), "distinct-target handover start");
@@ -129,11 +145,12 @@ namespace Game.Editor
                 InputSystem.QueueStateEvent(physicalTouch, new TouchState { touchId = 91, phase = UnityEngine.InputSystem.TouchPhase.Ended, position = point });
                 PumpInput(); module.Process();
                 Require(clicks == 1, "physical finger handover consumed");
+                Require(driver.PhysicalInterventions == 3, "mouse and finger interventions persist across restarts");
 
                 var handObject = new GameObject("AriaHandFixture", typeof(RectTransform), typeof(AriaHolographicFingerGraphic));
                 handObject.transform.SetParent(canvas.transform, false);
                 var hand = handObject.GetComponent<AriaHolographicFingerGraphic>();
-                hand.SendMessage("OnEnable");
+                InvokeFixtureLifecycle(hand, "OnEnable");
                 Require(hand.canvasRenderer != null, "hand must create its renderer");
                 Require(!hand.raycastTarget, "hand must not intercept its own touches");
                 Require(driver.Start(), "drag start");
@@ -141,16 +158,16 @@ namespace Game.Editor
                 Require(!driver.TryGesture(point, point, .1f, 0, 10), "overlapping gesture rejected");
                 PumpInput(); module.Process();
                 hand.Present(new AriaPlayModel(AriaPlayPhase.Touching, driver.ContactPosition, true, 0));
-                hand.SendMessage("LateUpdate");
+                InvokeFixtureLifecycle(hand, "LateUpdate");
                 Require(Vector2.Distance(hand.rectTransform.position, driver.ContactPosition) < .01f, "hand fingertip matches press");
                 driver.Tick(10.6f); PumpInput(); module.Process();
                 hand.Present(new AriaPlayModel(AriaPlayPhase.Touching, driver.ContactPosition, true, 0));
-                hand.SendMessage("LateUpdate");
+                InvokeFixtureLifecycle(hand, "LateUpdate");
                 Require(Vector2.Distance(hand.rectTransform.position, driver.ContactPosition) < .01f, "hand fingertip tracks drag without lag");
                 Require(driver.IsPressed && Vector2.Distance(driver.ContactPosition, point + Vector2.right * 40) < .1f, "drag contact follows accepted event");
                 driver.Stop(); PumpInput(); module.Process();
                 Require(clicks == 1, "cancelled drag does not click");
-                string result = "[AriaTouchInputValidation] result=Passed cases=18";
+                string result = "[AriaTouchInputValidation] result=Passed cases=22";
                 Debug.Log(result);
                 return result;
             }
@@ -158,6 +175,8 @@ namespace Game.Editor
             {
                 driver?.Dispose();
                 InputSystem.settings = oldSettings;
+                foreach (var device in suspendedDevices)
+                    if (device.added) InputSystem.EnableDevice(device);
                 UnityEngine.Object.DestroyImmediate(fixtureSettings);
                 if (physicalTouch != null && physicalTouch.added) InputSystem.RemoveDevice(physicalTouch);
                 if (physical != null && physical.added) InputSystem.RemoveDevice(physical);
@@ -172,9 +191,18 @@ namespace Game.Editor
                 }
                 if (previousEvents != null) EventSystem.current = previousEvents;
                 SceneManager.SetActiveScene(previousScene);
-                EditorSceneManager.CloseScene(scene, true);
+                EditorSceneManager.ClosePreviewScene(scene);
                 Require(ReferenceEquals(EventSystem.current, previousEvents), "fixture restores EventSystem registration");
             }
+        }
+
+        private static void InvokeFixtureLifecycle(Component component, string method)
+        {
+            // These Edit-mode fixtures explicitly drive UI callbacks. SendMessage
+            // goes through the native play-mode guard and logs ShouldRunBehaviour.
+            component.GetType().GetMethod(method, System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic)
+                ?.Invoke(component, null);
         }
 
         private static void PumpInput()

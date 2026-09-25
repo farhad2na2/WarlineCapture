@@ -19,16 +19,34 @@ namespace Game.Runtime
             bool paused = SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) &&
                           gameplay.SimulationActive == 0;
             float dt = SystemAPI.Time.DeltaTime;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session, Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            using var entities = sessions.ToEntityArray(Unity.Collections.Allocator.Temp);
+            foreach (Entity entity in entities)
             {
-                if (session.ValueRO.IsLegacy != 0 || session.ValueRO.Phase != SkirmishSessionPhase.Playing)
+                var session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
+                if (session.IsLegacy != 0 || session.Phase != SkirmishSessionPhase.Playing)
                     continue;
+                bool sessionPaused = paused;
                 if (em.HasComponent<SkirmishObjectiveClockComponent>(entity) &&
                     em.GetComponentData<SkirmishObjectiveClockComponent>(entity).Paused != 0)
-                    paused = true;
-                SkirmishResearchService.Tick(em, entity, dt, paused);
-                NotifyDeadProducers(em, entity, session.ValueRO.SessionId);
+                    sessionPaused = true;
+                if (em.HasBuffer<SkirmishReadinessRequest>(entity))
+                {
+                    var requests = em.GetBuffer<SkirmishReadinessRequest>(entity);
+                    using var snapshot = requests.ToNativeArray(Unity.Collections.Allocator.Temp);
+                    requests.Clear();
+                    if (!sessionPaused)
+                        foreach (var request in snapshot)
+                        {
+                            using var evidence = AriaCommandEvidence.Enter(request.InputReceipt);
+                            if (request.CancelResearchId != 0)
+                                SkirmishResearchService.TryCancel(em, entity, request.CancelResearchId, out _);
+                            else
+                                SkirmishResearchService.TryQueue(em, entity, SkirmishResearchKind.Readiness, 1, out _);
+                        }
+                }
+                SkirmishResearchService.Tick(em, entity, dt, sessionPaused);
+                NotifyDeadProducers(em, entity, session.SessionId);
             }
         }
 

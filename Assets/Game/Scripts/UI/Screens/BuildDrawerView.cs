@@ -95,6 +95,24 @@ namespace Game.UI.Runtime
         public Image InstructionIcon => instructionIcon;
         public bool IsOpen => drawerRoot != null ? drawerRoot.activeInHierarchy : gameObject.activeInHierarchy;
 
+        // Expanded matches use Materials only, leaving the authored Credits slot
+        // available for the modal's persistent ARIA stop control.
+        public bool TryGetAriaStopBounds(out Rect bounds)
+        {
+            bounds = default;
+            if (!IsOpen || closeButton == null ||
+                !UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness) || !readiness.Visible)
+                return false;
+            var slot = closeButton.transform.parent.Find("Header/CreditsResource") as RectTransform;
+            if (slot == null || slot.gameObject.activeInHierarchy) return false;
+            var canvas = GetComponentInParent<Canvas>();
+            var camera = canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
+            Vector2 min = RectTransformUtility.WorldToScreenPoint(camera, slot.TransformPoint(slot.rect.min));
+            Vector2 max = RectTransformUtility.WorldToScreenPoint(camera, slot.TransformPoint(slot.rect.max));
+            bounds = Rect.MinMaxRect(min.x + 8, min.y + 8, max.x - 8, max.y - 8);
+            return bounds.width >= 100 && bounds.height >= 40;
+        }
+
         public bool ContainsScreenPoint(Vector2 screenPosition)
         {
             RectTransform rect = drawerRoot != null

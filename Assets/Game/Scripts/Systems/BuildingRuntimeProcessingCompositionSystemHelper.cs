@@ -286,6 +286,7 @@ namespace Game.Runtime
                     request.QueueCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, request.FactionId, unitId);
                     request.ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, request.FactionId, unitId);
                 }
+                productionRequests = em.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
                 productionRequests[i] = request;
             }
 
@@ -360,14 +361,47 @@ namespace Game.Runtime
                 }
                 if (!definitionSystem.TryGetConfiguredSpawnable(definition.Prefab, out var spawnable))
                     spawnable = BuildingDefinitionPrefabSystemHelper.BuildConfiguredSpawnableEntry(definition);
+                bool startingGrant = request.AuthoredStartingGrant != 0 &&
+                    request.PlanEntity != Entity.Null && em.Exists(request.PlanEntity) &&
+                    em.HasComponent<BuildingStartingGrantOwner>(request.PlanEntity);
+                if (request.AuthoredStartingGrant != 0 && !startingGrant)
+                {
+                    request.Status = BuildingRuntimeSpawnRequest.Failed;
+                    request.ResultCode = BuildingRuntimeSpawnRequest.Blocked;
+                    WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
+                    continue;
+                }
                 bool authoredEnemy = request.AllowNonBuildableEnemy != 0 && request.HasOwnerFaction != 0 &&
                     request.FactionId != FactionIdentity.PlayerFactionId;
-                if (spawnable.Prefab == null || (!spawnable.CanRequest && !authoredEnemy))
+                if (spawnable.Prefab == null || (!spawnable.CanRequest && !authoredEnemy && !startingGrant))
                 {
                     request.Status = BuildingRuntimeSpawnRequest.Failed;
                     request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
                     WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                     continue;
+                }
+
+                var requestSpawnContext = runtimeSpawnContext;
+                if (startingGrant && runtimeSpawnContext.TryGetGridData(out _, out var grantGrid, out _, out _))
+                {
+                    using var grantSurfaces = em.CreateEntityQuery(typeof(MapSurfaceComponent));
+                    if (grantSurfaces.CalculateEntityCount() != 1) continue;
+                    _skirmishRoads.Ensure(em, grantSurfaces, grantGrid);
+                    // Apply authored road/water/sidewalk rules to every relocation candidate,
+                    // even before the Build drawer has initialized its own cache.
+                    var originalContext = runtimeSpawnContext;
+                    requestSpawnContext = runtimeSpawnContext.WithPlacementValidation((d, origin, footprint, rotated, g, roads, blockers) =>
+                    {
+                        var rect = originalContext.GetEffectivePlacementRect(d, origin, g, rotated);
+                        if (_skirmishRoads.Overlaps(g, rect.position, rect.size) ||
+                            _skirmishRoads.OverlapsWater(g, rect.position, rect.size)) return false;
+                        var sidewalks = _skirmishRoads.GetSidewalks();
+                        for (int y = rect.yMin; y < rect.yMax; y++)
+                            for (int x = rect.xMin; x < rect.xMax; x++)
+                                if (x < 0 || y < 0 || x >= g.Width || y >= g.Height ||
+                                    sidewalks != null && sidewalks[y * g.Width + x]) return false;
+                        return originalContext.IsPlacementValid(d, origin, footprint, rotated, g, roads, blockers);
+                    });
                 }
 
                 // Initial scenario requests can arrive before the Build drawer has
@@ -436,7 +470,7 @@ namespace Game.Runtime
                 else
                 {
                     placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
-                        runtimeSpawnContext,
+                        requestSpawnContext,
                         spawnable.Prefab,
                         new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
                         spawnable.DisplayName,

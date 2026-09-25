@@ -171,6 +171,7 @@ namespace Game.Runtime
                 }
 
                 commandRequests.RemoveAt(i);
+                using var inputEvidence = AriaCommandEvidence.Enter(request.InputReceipt);
                 handledAny = true;
                 Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
                 Result result = TryRequestAttackOrderToClickedUnit(
@@ -293,6 +294,7 @@ namespace Game.Runtime
                 }
 
                 commandRequests.RemoveAt(i);
+                using var inputEvidence = AriaCommandEvidence.Enter(request.InputReceipt);
                 handledAny = true;
                 Result result;
                 if (request.HasTargetCell != 0 && request.HasTargetEntity == 0)

@@ -39,6 +39,10 @@ namespace Game.Runtime
             public ComponentLookup<Faction> Factions;
             public ComponentLookup<LocalTransform> Transforms;
             public ComponentLookup<UnitAirMovement> AirMovement;
+            public ComponentLookup<CombatTargetPolicy> TargetPolicies;
+            public ComponentLookup<RuntimeBuildingCombatInfo> Buildings;
+            public ComponentLookup<StaticGridBlocker> StaticBlockers;
+            public ComponentLookup<UnitMovementBehavior> MovementBehaviors;
             public ComponentLookup<DebugFireTargetTag> DebugFireTargets;
             public ComponentLookup<EngageTarget> EngageTargets;
             public ComponentLookup<RecentAttacker> RecentAttackers;
@@ -75,6 +79,10 @@ namespace Game.Runtime
                 Factions = SystemAPI.GetComponentLookup<Faction>(true),
                 Transforms = SystemAPI.GetComponentLookup<LocalTransform>(true),
                 AirMovement = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
+                TargetPolicies = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
+                Buildings = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                StaticBlockers = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
+                MovementBehaviors = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
                 DebugFireTargets = SystemAPI.GetComponentLookup<DebugFireTargetTag>(true),
                 EngageTargets = SystemAPI.GetComponentLookup<EngageTarget>(),
                 RecentAttackers = SystemAPI.GetComponentLookup<RecentAttacker>(),
@@ -133,6 +141,7 @@ namespace Game.Runtime
                     using (TargetSelectionMarker.Auto())
                     {
                         FindBestTargets(
+                            ref directAccess,
                             targetCandidates,
                             entity,
                             factionRef.ValueRO.Id,
@@ -157,7 +166,7 @@ namespace Game.Runtime
                         continue;
                     }
 
-                    if (!IsLiveEnemyTarget(ref directAccess, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
+                    if (!IsLiveEnemyTarget(ref directAccess, entity, target, factionRef.ValueRO.Id, transformRef.ValueRO.Position, weapon.Range))
                     {
                         slot.Target = Entity.Null;
                         slotBuffer[i] = slot;
@@ -381,6 +390,7 @@ namespace Game.Runtime
         }
 
         private static void FindBestTargets(
+            ref DirectComponentAccess directAccess,
             NativeArray<TargetCandidate> targets,
             Entity source,
             byte sourceFaction,
@@ -407,6 +417,7 @@ namespace Game.Runtime
                 Entity candidate = target.Entity;
                 if (candidate == source ||
                     target.Health.Current <= 0 ||
+                    !AllowsTarget(ref directAccess, source, candidate) ||
                     !FactionIdentity.CanAutoTargetForCombat(sourceFaction, target.Faction.Id))
                     continue;
 
@@ -431,15 +442,32 @@ namespace Game.Runtime
             }
         }
 
-        private static bool IsLiveEnemyTarget(ref DirectComponentAccess directAccess, Entity target, byte sourceFaction, float3 sourcePosition, float range)
+        private static bool IsLiveEnemyTarget(ref DirectComponentAccess directAccess, Entity source, Entity target, byte sourceFaction, float3 sourcePosition, float range)
         {
-            if (!TryGetLiveEnemyPosition(ref directAccess, target, sourceFaction, out float3 targetPosition))
+            if (!TryGetLiveEnemyPosition(ref directAccess, target, sourceFaction, out float3 targetPosition) ||
+                !AllowsTarget(ref directAccess, source, target))
                 return false;
 
             float3 delta = targetPosition - sourcePosition;
             delta.y = 0f;
             float rangeSq = math.max(0f, range) * math.max(0f, range);
             return math.lengthsq(delta) <= rangeSq;
+        }
+
+        private static bool AllowsTarget(ref DirectComponentAccess access, Entity source, Entity target)
+        {
+            bool hasSource = access.TargetPolicies.HasComponent(source);
+            bool hasTarget = access.TargetPolicies.HasComponent(target);
+            var sourcePolicy = hasSource ? access.TargetPolicies[source] : default;
+            var targetPolicy = hasTarget ? access.TargetPolicies[target] : new CombatTargetPolicy
+            {
+                Visible = 1,
+                Domain = CombatTargetPolicyUtility.InferDomain(
+                    access.Buildings.HasComponent(target) || access.StaticBlockers.HasComponent(target),
+                    access.AirMovement.HasComponent(target),
+                    access.MovementBehaviors.HasComponent(target) && access.MovementBehaviors[target].UsesVehicleMotion != 0)
+            };
+            return CombatTargetPolicyUtility.Allows(hasSource, sourcePolicy, true, targetPolicy);
         }
 
         private static bool TryGetLiveEnemyPosition(ref DirectComponentAccess directAccess, Entity candidate, byte sourceFaction, out float3 position)

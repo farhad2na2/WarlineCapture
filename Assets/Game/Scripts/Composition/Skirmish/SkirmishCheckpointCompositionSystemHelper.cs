@@ -23,6 +23,12 @@ namespace Game.Composition
             if (document?.Header == null || document.Payload == null || authored == null)
                 return false;
 
+            if (document.Payload.PhysicalSupplyInitialized != 0)
+            {
+                reason = SkirmishReasonCode.UnsupportedCapability;
+                return false;
+            }
+
             if (!SkirmishExpandedLaunchResolver.TryCompileAndQueue(
                     em,
                     document.Header.CatalogId,
@@ -143,6 +149,7 @@ namespace Game.Composition
                 Mode = SkirmishReplayMode.FreshStart
             };
             SkirmishLaunchPayload payload = SkirmishReplayService.CreateFreshLaunch(replay, setup);
+            SkirmishStartingBuildingsService.Cancel(em, session);
             SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, state.SessionId);
             ResetExpandedSessionOwned(em, session);
             if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))
@@ -156,6 +163,8 @@ namespace Game.Composition
 
             if (!SkirmishExpandedLaunchProjection.TryQueue(em, payload, setup))
                 return false;
+            em.AddComponent<SkirmishExpandedReplayStartPending>(session);
+            SkirmishLaunchProjection.TryRequestPlay(em);
             newSessionId = payload.SessionId;
             return newSessionId != replay.SourceSessionId;
         }
@@ -199,6 +208,18 @@ namespace Game.Composition
 
         private static void ResetExpandedSessionOwned(EntityManager em, Entity session)
         {
+            RemoveIfPresent<SkirmishExpandedReplayStartPending>(em, session);
+            if (em.HasBuffer<SkirmishTrackedUnit>(session))
+                em.GetBuffer<SkirmishTrackedUnit>(session).Clear();
+            RemoveIfPresent<SkirmishSharedMaterialsInitialized>(em, session);
+            RemoveIfPresent<SkirmishSharedSupplyInitialized>(em, session);
+            RemoveIfPresent<SkirmishVehicleFuelRemainderComponent>(em, session);
+            RemoveIfPresent<SkirmishSharedBuildingsReady>(em, session);
+            RemoveIfPresent<BuildingStartingGrantOwner>(em, session);
+            if (em.HasBuffer<SkirmishStartingBuildingRequest>(session))
+                em.RemoveComponent<SkirmishStartingBuildingRequest>(session);
+            if (em.HasBuffer<SkirmishReadinessRequest>(session))
+                em.GetBuffer<SkirmishReadinessRequest>(session).Clear();
             RemoveIfPresent<SkirmishEconomyStockComponent>(em, session);
             RemoveIfPresent<SkirmishCapacityComponent>(em, session);
             RemoveIfPresent<SkirmishEnemyStockComponent>(em, session);

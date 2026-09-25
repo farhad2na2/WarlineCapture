@@ -31,6 +31,10 @@ namespace Game.Runtime
                 return false;
             }
 
+            // Expanded missions have explicit attempt-owned production facilities.
+            // Neutral map scenery cannot substitute for a missing or blocked one.
+            if (SkirmishNativeProduction.TrySession(em, out _)) return false;
+
             FixedString64Bytes unitSourceKey = new(unitPrefab.name);
             using EntityQuery query = em.CreateEntityQuery(
                 ComponentType.ReadOnly<OperationMapBuildingComponent>(),

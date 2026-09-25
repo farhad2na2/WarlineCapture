@@ -37,7 +37,8 @@ namespace Game.Runtime
                 return;
             if (session.InitializationComplete != 0)
                 return;
-            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
+            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished ||
+                session.Phase == SkirmishSessionPhase.Cleaning)
                 return;
             if (!em.HasComponent<SkirmishResolvedSetupRecord>(entity) ||
                 em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup == null)
@@ -98,6 +99,7 @@ namespace Game.Runtime
 
             SkirmishArmyGroupSystem.EnsureSession(em, session, setup);
             SkirmishResearchService.EnsureSession(em, session, setup);
+            if (!em.HasBuffer<SkirmishReadinessRequest>(session)) em.AddBuffer<SkirmishReadinessRequest>(session);
         }
 
         private static void Fail(ref SkirmishExpandedSessionComponent session, SkirmishReasonCode code)

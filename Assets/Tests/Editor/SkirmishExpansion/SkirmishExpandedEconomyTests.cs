@@ -14,6 +14,107 @@ namespace Game.Tests.Editor
     public sealed class SkirmishExpandedEconomyTests
     {
         [Test]
+        public void NativeDeliveryRejectsStaleAttemptPauseAndTerminalState()
+        {
+            using var world = new World(nameof(NativeDeliveryRejectsStaleAttemptPauseAndTerminalState));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            var nativeState = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            nativeState.Phase = SkirmishSessionPhase.Playing;
+            em.SetComponentData(session, nativeState);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var state = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            var key = new FixedString64Bytes(SkirmishRoleCatalogConfig.RuntimePrefabKey(SkirmishRoleKind.Rifle));
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyGround, out var receipt));
+            Assert.IsTrue(SkirmishProductionService.BindNativeQueue(em, session, receipt.ReservationId, 42));
+            Assert.IsFalse(SkirmishProductionService.CanDeliverNative(em, session, receipt.ReservationId, 42, 1, key, new FixedString64Bytes("previous-attempt")));
+            Assert.IsTrue(SkirmishProductionService.CanDeliverNative(em, session, receipt.ReservationId, 42, 1, key, state.SessionId));
+            em.AddComponent<SkirmishObjectiveClockComponent>(session);
+            var clock = em.GetComponentData<SkirmishObjectiveClockComponent>(session);
+            clock.Paused = 1; em.SetComponentData(session, clock);
+            Assert.IsFalse(SkirmishProductionService.CanDeliverNative(em, session, receipt.ReservationId, 42, 1, key, state.SessionId));
+            clock.Paused = 0; em.SetComponentData(session, clock);
+            state.Phase = SkirmishSessionPhase.Finished; em.SetComponentData(session, state);
+            Assert.IsFalse(SkirmishProductionService.CanDeliverNative(em, session, receipt.ReservationId, 42, 1, key, state.SessionId));
+            Assert.AreEqual(SkirmishReservationPhase.Reserved, ReservationPhase(em, session, receipt.ReservationId));
+        }
+
+        [Test]
+        public void NativeProducerLossReleasesOnlyItsOwnQueue()
+        {
+            using var world = new World(nameof(NativeProducerLossReleasesOnlyItsOwnQueue));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            var nativeState = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            nativeState.Phase = SkirmishSessionPhase.Playing;
+            em.SetComponentData(session, nativeState);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyGround, out var first));
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyGround, out var second));
+            Assert.IsTrue(SkirmishProductionService.BindNativeQueue(em, session, first.ReservationId, 42));
+            Assert.IsTrue(SkirmishProductionService.BindNativeQueue(em, session, second.ReservationId, 43));
+            SkirmishProductionService.StartNativeQueue(em, session, first.ReservationId, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+            Assert.AreEqual(1, SkirmishProductionService.NotifyProducerDestroyed(em, session, SkirmishProducerKind.Barracks, 1, 42));
+            Assert.AreEqual(SkirmishReservationPhase.Lost, ReservationPhase(em, session, first.ReservationId));
+            Assert.AreEqual(SkirmishReservationPhase.Reserved, ReservationPhase(em, session, second.ReservationId));
+            Assert.AreEqual(4, em.GetComponentData<SkirmishCapacityComponent>(session).InfantryReserved);
+            Assert.AreEqual(materials - 160, SkirmishMaterialsService.Read(em, session, 1));
+            Assert.AreEqual(0, SkirmishProductionService.NotifyProducerDestroyed(em, session, SkirmishProducerKind.Barracks, 1, 42));
+            Assert.AreEqual(1, SkirmishProductionService.NotifyProducerDestroyed(em, session, SkirmishProducerKind.Barracks, 1, 43));
+            Assert.AreEqual(0, em.GetComponentData<SkirmishCapacityComponent>(session).InfantryReserved);
+            Assert.AreEqual(materials - 80, SkirmishMaterialsService.Read(em, session, 1), "The unstarted queue is refunded once.");
+        }
+
+        [Test]
+        public void NativePacketDeliveryKeepsOneGroupAndRefundsOnlyUndeliveredMembers()
+        {
+            using var world = new World(nameof(NativePacketDeliveryKeepsOneGroupAndRefundsOnlyUndeliveredMembers));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out var session, out _);
+            var nativeState = em.GetComponentData<SkirmishExpandedSessionComponent>(session);
+            nativeState.Phase = SkirmishSessionPhase.Playing;
+            em.SetComponentData(session, nativeState);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var before = em.GetComponentData<SkirmishCapacityComponent>(session);
+            int materials = SkirmishMaterialsService.Read(em, session, 1);
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Rifle, 1,
+                authored.ArmyGround, out var decision));
+            Assert.IsTrue(SkirmishProductionService.BindNativeQueue(em, session, decision.ReservationId, 42));
+            uint group = 0;
+            Entity first = Entity.Null;
+            for (int i = 0; i < 2; i++)
+            {
+                var member = em.CreateEntity(typeof(Faction), typeof(UnitSourcePrefabKey), typeof(UnitHealth));
+                em.SetComponentData(member, new Faction { Id = 1 });
+                em.SetComponentData(member, new UnitSourcePrefabKey {
+                    Value = new FixedString64Bytes(SkirmishRoleCatalogConfig.RuntimePrefabKey(SkirmishRoleKind.Rifle)) });
+                Assert.IsFalse(SkirmishProductionService.AdoptNativeMember(em, session, decision.ReservationId, 99, member, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId));
+                Assert.IsTrue(SkirmishProductionService.AdoptNativeMember(em, session, decision.ReservationId, 42, member, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId));
+                Assert.IsFalse(SkirmishProductionService.AdoptNativeMember(em, session, decision.ReservationId, 42, member, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId));
+                var receipt = em.GetBuffer<SkirmishProductionReservation>(session)[0];
+                if (i == 0) { group = receipt.ProductionGroupId; first = member; }
+                Assert.AreEqual(group, receipt.ProductionGroupId);
+                Assert.Greater(em.GetComponentData<UnitHealth>(member).Current, 0);
+                Assert.IsTrue(em.HasComponent<SkirmishSharedActorTag>(member));
+            }
+            var halfway = em.GetComponentData<SkirmishCapacityComponent>(session);
+            Assert.AreEqual(before.InfantryLive + 2, halfway.InfantryLive);
+            Assert.AreEqual(2, halfway.InfantryReserved);
+            Assert.IsTrue(SkirmishProductionService.TryCancel(em, session, decision.ReservationId, out var cancel));
+            Assert.AreEqual(30, cancel.RefundedMaterials, "75% of the two unspawned recruits, never the two delivered recruits.");
+            Assert.AreEqual(materials - 80 + 30, SkirmishMaterialsService.Read(em, session, 1));
+            var after = em.GetComponentData<SkirmishCapacityComponent>(session);
+            Assert.AreEqual(before.InfantryLive + 2, after.InfantryLive);
+            Assert.AreEqual(0, after.InfantryReserved);
+            Assert.AreEqual(0, after.SupplyReserved);
+            Assert.AreEqual(2, em.GetBuffer<SkirmishProductionReservation>(session)[0].RemainingMembers);
+            Assert.IsFalse(SkirmishProductionService.TryCancel(em, session, decision.ReservationId, out _));
+            Assert.IsTrue(SkirmishProductionService.TryReleaseDeath(em, session, first));
+            Assert.AreEqual(before.InfantryLive + 1, em.GetComponentData<SkirmishCapacityComponent>(session).InfantryLive);
+        }
+
+        [Test]
         public void S002StartingStocksAndCapsSeedFromMatrix()
         {
             using var world = new World(nameof(S002StartingStocksAndCapsSeedFromMatrix));
@@ -210,6 +311,26 @@ namespace Game.Tests.Editor
         }
 
         [Test]
+        public void PlayerAndEnemyProductionReceiptsNeverShareAnIdOrRefundTheOtherFaction()
+        {
+            using var world = new World(nameof(PlayerAndEnemyProductionReceiptsNeverShareAnIdOrRefundTheOtherFaction));
+            var em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out _);
+            var army = SkirmishArmyProfileConfig.ResolveCached(SkirmishArmyProfileId.GroundManeuver);
+            int playerBefore = SkirmishMaterialsService.Read(em, session, 1);
+            int enemyBefore = SkirmishMaterialsService.Read(em, session, 2);
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Tank, 1, army, 1, out var player));
+            Assert.IsTrue(SkirmishProductionService.TryQueue(em, session, SkirmishRoleIds.Car, 1, army, 2, out var enemy));
+            Assert.AreNotEqual(player.ReservationId, enemy.ReservationId);
+            Assert.IsTrue(SkirmishProductionService.TryCancel(em, session, enemy.ReservationId, out _));
+            Assert.AreEqual(playerBefore - player.MaterialsCost, SkirmishMaterialsService.Read(em, session, 1));
+            Assert.AreEqual(enemyBefore, SkirmishMaterialsService.Read(em, session, 2));
+            Assert.AreEqual(SkirmishReservationPhase.Reserved, ReservationPhase(em, session, player.ReservationId));
+            Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).GroundReserved);
+            Assert.AreEqual(0, em.GetComponentData<SkirmishEnemyCapacityComponent>(session).GroundReserved);
+        }
+
+        [Test]
         public void MidProduceCancelRefundsReservedThenSeventyFivePercent()
         {
             using var world = new World(nameof(MidProduceCancelRefundsReservedThenSeventyFivePercent));
@@ -324,6 +445,11 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishResearchService.TryQueue(
                 em, session, SkirmishResearchKind.Readiness, 1, out SkirmishResearchDecision r3));
             Assert.AreEqual(480, r3.MaterialsCost);
+            int afterReadinessPurchase = SkirmishMaterialsService.Read(em, session, 1);
+            Assert.IsFalse(SkirmishResearchService.TryQueue(
+                em, session, SkirmishResearchKind.Readiness, 1, out SkirmishResearchDecision duplicateReadiness));
+            Assert.AreEqual(SkirmishReasonCode.QueueLocked, duplicateReadiness.Reason);
+            Assert.AreEqual(afterReadinessPurchase, SkirmishMaterialsService.Read(em, session, 1));
             Assert.IsTrue(SkirmishResearchService.TryStart(em, session, r3.ResearchId, out _));
             Assert.IsTrue(SkirmishResearchService.TryComplete(em, session, r3.ResearchId, out SkirmishResearchDecision arsenal));
             Assert.AreEqual(SkirmishReadinessStage.FullArsenal, arsenal.ReadinessAfter);
@@ -700,11 +826,71 @@ namespace Game.Tests.Editor
             Assert.AreEqual(0u, em.GetComponentData<SkirmishAttemptOwnedComponent>(grantAa).ReservationId);
         }
 
+        [Test]
+        public void BlockedRegistryDispatchRefundsOnceWithoutPromotingPopulation()
+        {
+            using var world = new World(nameof(BlockedRegistryDispatchRefundsOnceWithoutPromotingPopulation));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out Entity session, out var setup);
+            SkirmishMaterialsService.Initialize(em, session, setup);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            string rifleKey = null;
+            foreach (var force in setup.Forces)
+                if (force.RoleKind == SkirmishRoleKind.Rifle) { rifleKey = force.RuntimePrefabKey; break; }
+            Assert.IsNotEmpty(rifleKey);
+            Entity prefab = em.CreateEntity(typeof(Prefab), typeof(UnitSourcePrefabKey), typeof(UnitFootprint));
+            em.SetComponentData(prefab, new UnitSourcePrefabKey { Value = new FixedString64Bytes(rifleKey) });
+            Entity registry = em.CreateEntity();
+            em.AddBuffer<UnitPrefabRegistryEntry>(registry).Add(new UnitPrefabRegistryEntry { Prefab = prefab });
+            var blocked = new NativeBitArray(64, Allocator.Temp, NativeArrayOptions.ClearMemory);
+            var occupied = new NativeBitArray(64, Allocator.Temp, NativeArrayOptions.ClearMemory);
+            try
+            {
+                Entity grid = em.CreateEntity(typeof(GridConfig), typeof(DynamicBlockerComponent), typeof(DynamicOccupancyComponent));
+                em.SetComponentData(grid, new GridConfig { Width = 8, Height = 8, CellSize = 1f });
+                em.SetComponentData(grid, new DynamicBlockerComponent { GridSize = 64, Blocked = blocked });
+                em.SetComponentData(grid, new DynamicOccupancyComponent { GridSize = 64, Occupied = occupied });
+                var walkable = em.AddBuffer<GridWalkable>(grid);
+                walkable.ResizeUninitialized(64);
+                for (int i = 0; i < 64; i++) walkable[i] = new GridWalkable { Value = 0 };
+                var before = em.GetComponentData<SkirmishCapacityComponent>(session);
+                Assert.IsFalse(SkirmishProductionService.TryProduce(em, session, SkirmishRoleIds.Rifle, 1, authored.ArmyAir, out var decision));
+                Assert.AreEqual(SkirmishReasonCode.BlockedSpawn, decision.Reason);
+                Assert.AreEqual(450, SkirmishMaterialsService.Read(em, session, 1));
+                var after = em.GetComponentData<SkirmishCapacityComponent>(session);
+                Assert.AreEqual(before.InfantryLive, after.InfantryLive);
+                Assert.AreEqual(0, after.InfantryReserved);
+                Assert.IsFalse(SkirmishProductionService.TryRefundFailedDispatch(em, session, decision.ReservationId, out _));
+                Assert.AreEqual(450, SkirmishMaterialsService.Read(em, session, 1));
+            }
+            finally { blocked.Dispose(); occupied.Dispose(); }
+        }
+
+        [Test]
+        public void QueuedReadinessStartsAndCompletesThroughTickWithoutManualStart()
+        {
+            using var world = new World(nameof(QueuedReadinessStartsAndCompletesThroughTickWithoutManualStart));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out Entity session, out _);
+            int before = SkirmishMaterialsService.Read(em, session, 1);
+            Assert.IsTrue(SkirmishResearchService.TryQueue(em, session, SkirmishResearchKind.Readiness, 1, out var queued));
+            Assert.AreEqual(before - 240, SkirmishMaterialsService.Read(em, session, 1));
+            Assert.AreEqual(0, SkirmishResearchService.Tick(em, session, 100, true));
+            Assert.AreEqual(SkirmishReadinessStage.Field, em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness);
+            Assert.AreEqual(0, SkirmishResearchService.Tick(em, session, 44, false));
+            Assert.AreEqual(SkirmishReadinessStage.Field, em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness);
+            Assert.AreEqual(1, SkirmishResearchService.Tick(em, session, 1, false));
+            Assert.AreEqual(SkirmishReadinessStage.Established, em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness);
+            Assert.AreEqual(0, SkirmishResearchService.Tick(em, session, 100, false));
+            Assert.AreEqual(before - 240, SkirmishMaterialsService.Read(em, session, 1));
+        }
+
         public static void RunFocusedValidation()
         {
             try
             {
                 var suite = new SkirmishExpandedEconomyTests();
+                suite.BlockedRegistryDispatchRefundsOnceWithoutPromotingPopulation();
                 suite.S002StartingStocksAndCapsSeedFromMatrix();
                 suite.CapacityLedgerReservePromoteReleaseOnce();
                 suite.GroundStagingProducesTankThenDeathReleasesOnce();
@@ -713,9 +899,14 @@ namespace Game.Tests.Editor
                 suite.MissingMaterialsAndCapsRejectWithoutMutation();
                 suite.FuelGateRejectsWithoutStockMutation();
                 suite.RecruitmentFuelCostStaysZeroOnS002Overlays();
+                suite.PlayerAndEnemyProductionReceiptsNeverShareAnIdOrRefundTheOtherFaction();
+                suite.NativePacketDeliveryKeepsOneGroupAndRefundsOnlyUndeliveredMembers();
+                suite.NativeProducerLossReleasesOnlyItsOwnQueue();
+                suite.NativeDeliveryRejectsStaleAttemptPauseAndTerminalState();
                 suite.MidProduceCancelRefundsReservedThenSeventyFivePercent();
                 suite.FailedDispatchAndProducerDestructionUseSpecifiedRefunds();
                 suite.CategoryResearchFromStagingAndHqAppliesOnce();
+                suite.QueuedReadinessStartsAndCompletesThroughTickWithoutManualStart();
                 suite.ReplacementHqCanResearchWithoutBecomingVictoryBase();
                 suite.S003AirMobileAaGatePadReadinessAndMissingPadRefund();
                 suite.S004EstablishedGrantsDoNotDebitAndPadStartsLive();

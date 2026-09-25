@@ -442,6 +442,7 @@ namespace Game.Runtime
             for (int i = 0; i < pendingRequestArray.Length; i++)
             {
                 RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
+                using var inputEvidence = AriaCommandEvidence.Enter(request.InputReceipt);
                 Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
                 if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
                 {
@@ -480,6 +481,7 @@ namespace Game.Runtime
                         $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
                 }
 
+                if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }
 
@@ -532,6 +534,7 @@ namespace Game.Runtime
             for (int i = 0; i < pendingRequestArray.Length; i++)
             {
                 RtsSelectionCommandIntentRequestElement request = pendingRequestArray[i];
+                using var inputEvidence = AriaCommandEvidence.Enter(request.InputReceipt);
                 using NativeList<Entity> selectedEntities = new(Allocator.Temp);
                 CollectSelectedMoveEntities(em, selectedMoveQuery, entityType, null, selectedEntities);
                 NativeArray<Entity> entities = selectedEntities.AsArray();
@@ -548,6 +551,7 @@ namespace Game.Runtime
                         worldPoint,
                         request.Frame,
                         ResolveMarkerFaction(em, entities));
+                if (result.CommandResult.Accepted) AriaCommandEvidence.Accepted("Move", FactionIdentity.PlayerFactionId);
                 AddCommandResult(em, commandEntity, ToCommandResultElement(request, result));
             }
 

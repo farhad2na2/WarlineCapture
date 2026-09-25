@@ -13,6 +13,24 @@ namespace Game.Runtime
     {
         public const float WorldExtent = 40f;
 
+        public static bool TryResolveBoundUnitPrefab(EntityManager em, Entity unit, out GameObject prefab)
+        {
+            prefab = null;
+            if (!em.Exists(unit) || !em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
+                !em.HasComponent<UnitSourcePrefabKey>(unit)) return false;
+            var id = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).SessionId;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent), typeof(SkirmishVisualPrefabCatalogRecord));
+            using var entities = sessions.ToEntityArray(Allocator.Temp);
+            foreach (var session in entities)
+            {
+                if (!em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId.Equals(id)) continue;
+                var catalog = em.GetComponentObject<SkirmishVisualPrefabCatalogRecord>(session).Catalog;
+                return catalog != null && catalog.BoundFromRegistry &&
+                    catalog.TryGet(em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString(), out prefab);
+            }
+            return false;
+        }
+
         public static SkirmishVisualPrefabCatalog EnsureCatalog(EntityManager em, Entity session)
         {
             if (em.HasComponent<SkirmishVisualPrefabCatalogRecord>(session))

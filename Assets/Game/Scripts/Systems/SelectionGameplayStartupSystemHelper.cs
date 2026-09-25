@@ -346,6 +346,17 @@ namespace Game.Runtime
                 if (view == null)
                     return;
 
+                if (view is IMatchHudSquadTrayPortraitBinding portraits)
+                    portraits.ConfigurePortraitResolver(index =>
+                    {
+                        using var sessions = entityManager.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+                        if (sessions.CalculateEntityCount() != 1) return null;
+                        var session = sessions.GetSingletonEntity();
+                        if (!SkirmishExpandedSessionControlService.IsExpanded(entityManager, session) ||
+                            !SkirmishExpandedPresentedOrders.TryGetPresentedMember(entityManager, session, index, out var member)) return null;
+                        return resolveSelectionCardPortraitSprite?.Invoke(entityManager, member);
+                    });
+
                 view.Bind(slot =>
                 {
                     selectionUiCommand.CaptureUiClickSequence();

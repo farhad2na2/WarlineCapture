@@ -71,11 +71,19 @@ namespace Game.Runtime
                 KnowsHostileMaterials = false,
                 HostileMaterialsIfKnown = 0
             };
+            if (em.HasComponent<SkirmishResolvedSetupRecord>(session))
+            {
+                var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                if (setup?.Forces != null)
+                    foreach (var force in setup.Forces)
+                        if (force.FactionId == setup.EnemyFaction)
+                            perception.OwnStartingSupply += force.SupplyCost;
+            }
             if (em.HasComponent<SkirmishEnemyStockComponent>(session))
             {
                 var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
-                perception.OwnMaterials = stock.Materials;
-                perception.OwnFuel = stock.Fuel;
+                perception.OwnMaterials = SkirmishMaterialsService.Read(em, session, 2);
+                perception.OwnFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 2);
             }
 
             if (em.HasComponent<SkirmishEnemyCapacityComponent>(session))
@@ -164,9 +172,15 @@ namespace Game.Runtime
                  score.RecruitRole == SkirmishRoleKind.AntiAir))
             {
                 string roleId = SkirmishRoleIds.ToId(score.RecruitRole);
-                if (!SkirmishProductionService.TryProduce(em, session, roleId, 1, army, 2, out _))
-                    state.FailedAttempts++;
+                int result;
+                if (SkirmishNativeProduction.TrySession(em, out _))
+                    result = SkirmishNativeProduction.RequestEnemyCounter(em, session,
+                        SkirmishRoleCatalogConfig.RuntimePrefabKey(score.RecruitRole));
                 else
+                    result = UnityEngine.Application.isPlaying ? 0 :
+                        SkirmishProductionService.TryProduce(em, session, roleId, 1, army, 2, out _) ? 1 : -1;
+                if (result < 0) state.FailedAttempts++;
+                else if (result > 0)
                 {
                     state.FailedAttempts = 0;
                     state.CounterCommitted = 1;

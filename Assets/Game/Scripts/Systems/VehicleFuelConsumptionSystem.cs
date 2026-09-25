@@ -29,6 +29,8 @@ namespace Game.Runtime
                 typeof(SkirmishEconomyStockComponent), typeof(SkirmishEnemyStockComponent));
             bool hasExpanded = expanded.CalculateEntityCount() == 1;
             Entity sessionEntity = hasExpanded ? expanded.GetSingletonEntity() : Entity.Null;
+            // Migrated sessions use the same physical drain as every other mode.
+            hasExpanded = hasExpanded && !state.EntityManager.HasComponent<SkirmishSharedSupplyInitialized>(sessionEntity);
             SkirmishExpandedSessionComponent session = hasExpanded
                 ? state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(sessionEntity) : default;
 

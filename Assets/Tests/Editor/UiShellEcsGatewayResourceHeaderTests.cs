@@ -48,6 +48,40 @@ public sealed class UiShellEcsGatewayResourceHeaderTests
     }
 
     [Test]
+    public void ExpandedResourceHeaderShowsAllOilAndOnlyUnreservedUsableFuel()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using World world = new(nameof(ExpandedResourceHeaderShowsAllOilAndOnlyUnreservedUsableFuel));
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = world;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+            var em = world.EntityManager;
+            Entity boundary = em.CreateEntity(typeof(UiShellRootComponent));
+            em.AddBuffer<BuildingRuntimeFactionUsableFuelSummary>(boundary).Add(
+                new BuildingRuntimeFactionUsableFuelSummary { FactionId = 1, StoredOilBarrels = 24, StoredFuelBarrels = 350 });
+            em.CreateEntity(typeof(SkirmishExpandedSessionComponent), typeof(Game.Runtime.SkirmishSharedSupplyInitialized));
+            Entity pump = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(pump, new BuildingResourceStorageComponent {
+                OwnerFactionId = 1, OilStorageCapacity = 200, OilBarrelsPerDay = 10, StoredOilBarrels = 96.75f });
+            Entity depot = em.CreateEntity(typeof(BuildingResourceStorageComponent));
+            em.SetComponentData(depot, new BuildingResourceStorageComponent {
+                OwnerFactionId = 1, OilStorageCapacity = 24, StoredOilBarrels = 24,
+                FuelStorageCapacity = 500, StoredFuelBarrels = 350.75f,
+                ReservedFuelOutboundBarrels = 20, CivilianFuelReserveBarrels = 10 });
+            Assert.IsTrue(UiShellRuntimeGateway.TryReadMatchHudResourceValues(out var values));
+            Assert.AreEqual(120, values.Oil);
+            Assert.AreEqual(320, values.Fuel);
+            Assert.IsFalse(values.RequiresTextFallback);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    [Test]
     public void MatchHudResourceValues_SignalsLegacyTextFallbackWhenNumericSourceIsUnavailable()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;

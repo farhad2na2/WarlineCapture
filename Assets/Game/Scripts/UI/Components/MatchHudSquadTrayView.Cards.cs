@@ -8,6 +8,28 @@ namespace Game.UI.Runtime
 {
     public sealed partial class MatchHudSquadTrayView
     {
+        private void SetNextPageArrow(bool visible)
+        {
+            if (visible && nextPageArrow == null && TryGetCard(4, out var card) && card.Button != null)
+            {
+                var arrow = new GameObject("NextPageArrow", typeof(RectTransform), typeof(TextMeshProUGUI));
+                arrow.layer = card.Button.gameObject.layer;
+                arrow.transform.SetParent(card.Button.transform, false);
+                nextPageArrow = arrow.GetComponent<TextMeshProUGUI>();
+                nextPageArrow.font = card.NameLabel.font;
+                nextPageArrow.text = ">>";
+                nextPageArrow.fontSize = 56;
+                nextPageArrow.alignment = TextAlignmentOptions.Center;
+                nextPageArrow.color = CardLabelColor;
+                nextPageArrow.raycastTarget = false;
+                var rect = nextPageArrow.rectTransform;
+                rect.anchorMin = new Vector2(0, 0.3f);
+                rect.anchorMax = new Vector2(1, 0.8f);
+                rect.offsetMin = rect.offsetMax = Vector2.zero;
+            }
+            if (nextPageArrow != null) nextPageArrow.gameObject.SetActive(visible);
+        }
+
         private void CreateCardLabels()
         {
             for (int i = 0; i < cards.Length && i < CardLabels.Length; i++)

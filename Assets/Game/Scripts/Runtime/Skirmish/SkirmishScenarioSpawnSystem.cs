@@ -56,7 +56,8 @@ namespace Game.Runtime
             SkirmishExpandedSessionComponent session = em.GetComponentData<SkirmishExpandedSessionComponent>(entity);
             if (session.IsLegacy != 0 || session.InitializationComplete == 0 || session.SpawnComplete != 0)
                 return;
-            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished)
+            if (session.Phase == SkirmishSessionPhase.Failed || session.Phase == SkirmishSessionPhase.Finished ||
+                session.Phase == SkirmishSessionPhase.Cleaning)
                 return;
             // In a player session, wait for the loaded map and its baked prefab
             // registry. The ledger must not become Playing in the menu scene.
@@ -77,6 +78,18 @@ namespace Game.Runtime
             }
 
             SkirmishResolvedSetup setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(entity).Setup;
+            if (Application.isPlaying && !SkirmishStartingBuildingsService.Step(em, entity, setup, out var buildingReason))
+            {
+                if (buildingReason != SkirmishReasonCode.None)
+                {
+                    SkirmishStartingBuildingsService.Cancel(em, entity);
+                    DestroyAttemptOwned(em, session.SessionId);
+                    session.FailureCode = buildingReason;
+                    session.Phase = SkirmishSessionPhase.Failed;
+                    em.SetComponentData(entity, session);
+                }
+                return;
+            }
             if (!TrySpawnLedgers(em, entity, setup, out SkirmishReasonCode reason, out byte visualPending))
             {
                 DestroyAttemptOwned(em, session.SessionId);
@@ -125,6 +138,11 @@ namespace Game.Runtime
                 reason = SkirmishReasonCode.MissingResolvedSetup;
                 return false;
             }
+
+            // Wait until the loaded map has published its faction entities. Seeding
+            // in the menu creates a duplicate bank when the baked economy streams in.
+            if (Application.isPlaying)
+                SkirmishMaterialsService.Initialize(em, session, setup);
 
             if (!em.HasComponent<SkirmishCapacityComponent>(session))
             {
@@ -198,6 +216,12 @@ namespace Game.Runtime
                         prefabKey,
                         prefabLookup,
                         setup);
+                    if (spawned == Entity.Null)
+                    {
+                        DestroyAttemptOwned(em, sessionId);
+                        reason = SkirmishReasonCode.BlockedSpawn;
+                        return false;
+                    }
                     bool infantry = category == SkirmishPopulationCategory.Infantry;
                     bool needNew = openGroupId == 0 ||
                                    force.FactionId != openFaction ||
@@ -243,7 +267,7 @@ namespace Game.Runtime
                 }
             }
 
-            if (setup.Structures != null)
+            if (setup.Structures != null && !em.HasComponent<SkirmishSharedBuildingsReady>(session))
             {
                 for (int i = 0; i < setup.Structures.Length; i++)
                 {
@@ -306,6 +330,11 @@ namespace Game.Runtime
                 });
             }
 
+            if (Application.isPlaying && !SkirmishStartingSupplyService.Initialize(em, session, setup))
+            {
+                reason = SkirmishReasonCode.MissingReference;
+                return false;
+            }
             SkirmishFogService.Project(em, session);
             return true;
         }
@@ -319,7 +348,7 @@ namespace Game.Runtime
             int perMemberSupply,
             string prefabKey)
         {
-            return CreateForceMember(em, sessionId, force, forceIndex, member, perMemberSupply, prefabKey, null, null);
+            return CreateForceMember(em, sessionId, force, forceIndex, member, perMemberSupply, prefabKey, BuildPrefabEntityLookup(em), null);
         }
 
         internal static Entity CreateForceMember(
@@ -334,9 +363,12 @@ namespace Game.Runtime
             SkirmishResolvedSetup setup)
         {
             bool fromPrefab = TryResolvePrefabEntity(prefabLookup, prefabKey, out Entity prefabEntity);
+            if (!fromPrefab && Application.isPlaying)
+                return Entity.Null;
             Entity owned = fromPrefab
                 ? em.Instantiate(prefabEntity)
                 : em.CreateEntity();
+            if (fromPrefab) SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, owned);
             SetOrAdd(em, owned, new SkirmishAttemptOwnedComponent
             {
                 SessionId = sessionId,
@@ -358,13 +390,20 @@ namespace Game.Runtime
                 Vector3 position = setup != null &&
                     SkirmishVisualSpawnService.TryResolveUnitSpawnWorld(setup, force.FactionId, force.RoleKind, member, out Vector3 measured)
                         ? measured
-                        : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
-                PlaceOnMap(em, owned, position);
+                        : force.SpawnWorldX != 0f || force.SpawnWorldZ != 0f
+                            ? new Vector3(force.SpawnWorldX, 0f, force.SpawnWorldZ)
+                            : SkirmishVisualSpawnService.ResolveUnitFallbackWorld(force.FactionId, member);
+                if (!TryPlaceOnMap(em, owned, position))
+                {
+                    em.DestroyEntity(owned);
+                    return Entity.Null;
+                }
                 // Rendered by the shared impostor/model presentation, not a per-unit
                 // GameObject; the visual attach pass must skip prefab instances.
                 SetOrAdd(em, owned, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
-                // The session keeps its fog-aware objective combat rules; shared
-                // auto-engagement must not open a second combat path on these units.
+                SetOrAdd(em, owned, new SkirmishSharedActorTag());
+                // Keep the unit inert until roster projection has applied its shared
+                // weapon stats and target policy; that owner then removes this tag.
                 if (!em.HasComponent<CampaignMissionCombatSuppressedTag>(owned))
                     em.AddComponentData(owned, new CampaignMissionCombatSuppressedTag());
             }
@@ -409,15 +448,48 @@ namespace Game.Runtime
             return lookup;
         }
 
-        private static void PlaceOnMap(EntityManager em, Entity entity, Vector3 position)
+        private static bool TryPlaceOnMap(EntityManager em, Entity entity, Vector3 position)
         {
             var pos = new float3(position.x, position.y, position.z);
             using var grids = em.CreateEntityQuery(typeof(GridConfig));
             if (!grids.IsEmptyIgnoreFilter)
             {
+                Entity gridEntity = grids.GetSingletonEntity();
                 GridConfig grid = grids.GetSingleton<GridConfig>();
                 int2 cell = GridUtils.WorldToCell(grid, pos);
-                if (cell.x >= 0 && cell.y >= 0 && cell.x < grid.Width && cell.y < grid.Height)
+                if (em.HasBuffer<GridWalkable>(gridEntity) &&
+                    em.HasComponent<DynamicBlockerComponent>(gridEntity) &&
+                    em.HasComponent<DynamicOccupancyComponent>(gridEntity))
+                {
+                    var blocked = em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+                    var occupied = em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+                    var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+                    var reserved = new NativeBitArray(grid.Width * grid.Height, Allocator.Temp, NativeArrayOptions.ClearMemory);
+                    try
+                    {
+                        using var units = em.CreateEntityQuery(typeof(UnitGrid), typeof(UnitFootprint));
+                        using var existing = units.ToEntityArray(Allocator.Temp);
+                        for (int i = 0; i < existing.Length; i++)
+                        {
+                            if (existing[i] == entity) continue;
+                            int2 size = UnitFootprintUtility.ClampSize(em.GetComponentData<UnitFootprint>(existing[i]).Size);
+                            int2 min = UnitFootprintUtility.GetMinCell(em.GetComponentData<UnitGrid>(existing[i]).Cell, size);
+                            for (int y = min.y; y < min.y + size.y; y++)
+                                for (int x = min.x; x < min.x + size.x; x++)
+                                    if (GridUtils.InBounds(new int2(x, y), grid.Width, grid.Height))
+                                        reserved.Set(y * grid.Width + x, true);
+                        }
+                        var rng = new Unity.Mathematics.Random(math.max(1u, math.hash(new int3(cell, entity.Index))));
+                        int2 footprint = em.HasComponent<UnitFootprint>(entity)
+                            ? em.GetComponentData<UnitFootprint>(entity).Size : new int2(1, 1);
+                        if (!InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(ref rng, grid, walkable,
+                            blocked, occupied, ref reserved, cell, 12, footprint,
+                            em.HasComponent<UnitAirMovement>(entity), out cell)) return false;
+                        pos = GridUtils.CellToWorldCenter(grid, cell);
+                    }
+                    finally { reserved.Dispose(); }
+                }
+                if (GridUtils.InBounds(cell, grid.Width, grid.Height))
                 {
                     default(MapSurfaceSpawnGrounding).TryGroundCellCenter(em, grid, cell, ref pos, out _);
                     SetOrAdd(em, entity, new UnitGrid { Cell = cell });
@@ -425,6 +497,7 @@ namespace Game.Runtime
             }
 
             SetOrAdd(em, entity, LocalTransform.FromPosition(pos));
+            return true;
         }
 
         private static void SetOrAdd<T>(EntityManager em, Entity entity, T component) where T : unmanaged, IComponentData
@@ -441,14 +514,21 @@ namespace Game.Runtime
             SkirmishResolvedStructureEntry structure)
         {
             var owned = em.CreateEntity();
-            em.AddComponentData(owned, new SkirmishAttemptOwnedComponent
+            BindStructure(em, owned, sessionId, structure);
+            return owned;
+        }
+
+        public static void BindStructure(EntityManager em, Entity owned, FixedString64Bytes sessionId,
+            SkirmishResolvedStructureEntry structure)
+        {
+            SetOrAdd(em, owned, new SkirmishAttemptOwnedComponent
             {
                 SessionId = sessionId,
                 StableObjectId = new FixedString64Bytes(structure.StructureId + "." + structure.FactionId),
                 FactionId = structure.FactionId,
                 IsStructure = 1
             });
-            em.AddComponentData(owned, new SkirmishStructureIdentityComponent
+            SetOrAdd(em, owned, new SkirmishStructureIdentityComponent
             {
                 StructureId = new FixedString64Bytes(structure.StructureId ?? string.Empty),
                 Producer = SkirmishStructureIds.ProducerFor(structure.StructureId),
@@ -456,7 +536,7 @@ namespace Game.Runtime
             });
             if (structure.DesignatedBase)
             {
-                em.AddComponentData(owned, new SkirmishObjectiveRoleComponent
+                SetOrAdd(em, owned, new SkirmishObjectiveRoleComponent
                 {
                     Role = structure.FactionId == 1
                         ? SkirmishObjectiveRoleKind.PlayerBase
@@ -466,20 +546,49 @@ namespace Game.Runtime
                 });
             }
 
-            em.AddComponentData(owned, new Faction { Id = structure.FactionId });
+            SetOrAdd(em, owned, new Faction { Id = structure.FactionId });
+            SetOrAdd(em, owned, new CombatTargetPolicy
+            { Domain = CombatTargetDomain.Structure, AllowedTargets = CombatTargetDomain.None, Visible = 0 });
             string visual = SkirmishStructureIds.VisualKey(structure.StructureId);
             if (!string.IsNullOrEmpty(visual))
-                em.AddComponentData(owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(visual) });
+                SetOrAdd(em, owned, new UnitSourcePrefabKey { Value = new FixedString64Bytes(visual) });
             if (structure.StructureId == SkirmishStructureIds.GroundStaging)
             {
-                em.AddComponentData(owned, new SkirmishGroundStagingStateComponent
+                SetOrAdd(em, owned, new SkirmishGroundStagingStateComponent
                 {
                     VehicleQueues = 1,
                     LogisticsQueues = 1
                 });
             }
 
-            return owned;
+        }
+
+        // Called only by the player construction commit, never by a census of
+        // existing scenery. Replacements belong to the attempt but never inherit
+        // the designated objective identity of the original Barracks.
+        internal static bool AdoptConstructedBuilding(EntityManager em, Entity building, string prefabKey)
+        {
+            if (building == Entity.Null || !em.Exists(building) ||
+                !em.HasComponent<RuntimeBuildingCombatInfo>(building) ||
+                em.HasComponent<OperationMapBuildingComponent>(building) ||
+                em.HasComponent<SkirmishAttemptOwnedComponent>(building)) return false;
+            using var sessions = em.CreateEntityQuery(typeof(SkirmishExpandedSessionComponent));
+            if (sessions.CalculateEntityCount() != 1) return false;
+            var state = sessions.GetSingleton<SkirmishExpandedSessionComponent>();
+            if (state.IsLegacy != 0 || state.Phase != SkirmishSessionPhase.Playing) return false;
+            var info = em.GetComponentData<RuntimeBuildingCombatInfo>(building);
+            if (info.OwnerFactionId != 1) return false;
+            BindStructure(em, building, state.SessionId, new SkirmishResolvedStructureEntry
+            {
+                FactionId = info.OwnerFactionId,
+                StructureId = SkirmishStructureIds.FromVisualKey(prefabKey),
+                DesignatedBase = false
+            });
+            var owner = em.GetComponentData<SkirmishAttemptOwnedComponent>(building);
+            owner.StableObjectId = new FixedString64Bytes("constructed." + info.RuntimeBuildingId);
+            em.SetComponentData(building, owner);
+            SkirmishRuntimeActorOwnership.DetachFromSourceScene(em, building);
+            return true;
         }
 
         public static void DestroyAttemptOwned(EntityManager em, FixedString64Bytes sessionId)
@@ -490,6 +599,14 @@ namespace Game.Runtime
             {
                 if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entities[i]).SessionId.Equals(sessionId))
                     continue;
+                if (em.HasComponent<RuntimeBuildingCombatInfo>(entities[i]) && em.HasComponent<UnitHealth>(entities[i]))
+                {
+                    var health = em.GetComponentData<UnitHealth>(entities[i]);
+                    health.Current = 0;
+                    em.SetComponentData(entities[i], health);
+                    // The shared building owner removes its visual, blocker and storage.
+                    continue;
+                }
                 SkirmishVisualSpawnService.DestroyVisual(em, entities[i]);
                 em.DestroyEntity(entities[i]);
             }

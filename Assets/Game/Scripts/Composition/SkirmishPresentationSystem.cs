@@ -32,6 +32,17 @@ namespace Game.Composition
             }
             if(!SkirmishLaunchProjection.TryGet(EntityManager,out var session,out var match))
             {if(view!=null)UnityEngine.Object.Destroy(view.gameObject);view=null;focusedSession=null;return;}
+            // Replay keeps the loaded scene, whose one-time loading gate has
+            // already completed. Arm only this pending fresh attempt after spawn;
+            // an ordinary pause or terminal state must never be resumed here.
+            if (EntityManager.HasComponent<SkirmishExpandedReplayStartPending>(session) &&
+                match.Phase == SkirmishPhase.Playing && match.StartupFailure == SkirmishStartupFailureCode.None)
+            {
+                var replayScene = UnityEngine.Object.FindAnyObjectByType<MatchSceneView>();
+                if (replayScene != null && replayScene.GameplayStartComplete &&
+                    SkirmishLaunchProjection.TryArmExpandedSimulation(EntityManager))
+                    EntityManager.RemoveComponent<SkirmishExpandedReplayStartPending>(session);
+            }
             if(match.ScenarioIndex==SkirmishPresetConfig.StressScaleProbeScenarioIndex &&
                match.Phase<SkirmishPhase.Playing && match.StartupFailure!=SkirmishStartupFailureCode.Content)
                 SkirmishLaunchProjection.DriveStressLaunch(EntityManager);
@@ -160,14 +171,43 @@ namespace Game.Composition
             bool basinOpening = opening && scenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex;
             bool s002Focus = s002Session;
             float s002Offset = enemy ? -30f : 30f;
+            var focusPosition = EntityManager.GetComponentData<LocalTransform>(entity).Position;
+            float openingDistance = 40f;
+            bool authoredOpening = opening && EntityManager.HasComponent<SkirmishAttemptOwnedComponent>(entity);
+            if (authoredOpening)
+            {
+                // Frame the actual base and nearby deployment. Distant vehicles
+                // remain selectable in the tray; they must not shrink the opening
+                // army into unreadable dots. Include legal placement offsets.
+                // This only computes a camera request and never changes troop orders.
+                var owner = EntityManager.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                var minimum = focusPosition;
+                var maximum = focusPosition;
+                using var army = EntityManager.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
+                    typeof(SkirmishUnitRoleComponent), typeof(UnitHealth), typeof(LocalTransform));
+                using var actors = army.ToEntityArray(Unity.Collections.Allocator.Temp);
+                foreach (var actor in actors)
+                {
+                    var candidate = EntityManager.GetComponentData<SkirmishAttemptOwnedComponent>(actor);
+                    if (!candidate.SessionId.Equals(owner.SessionId) || candidate.FactionId != owner.FactionId ||
+                        EntityManager.GetComponentData<UnitHealth>(actor).Current <= 0) continue;
+                    var position = EntityManager.GetComponentData<LocalTransform>(actor).Position;
+                    if (Unity.Mathematics.math.distancesq(position.xz, focusPosition.xz) > 80f * 80f) continue;
+                    minimum = Unity.Mathematics.math.min(minimum, position);
+                    maximum = Unity.Mathematics.math.max(maximum, position);
+                }
+                focusPosition = (minimum + maximum) * .5f;
+                float extent = Unity.Mathematics.math.max(maximum.x - minimum.x, maximum.z - minimum.z);
+                openingDistance = Unity.Mathematics.math.clamp(extent * 1.3f + 30f, 60f, 180f);
+            }
             EntityManager.SetComponentData(query.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent
             {
                 Requested=1,UseExplicitPerspective=1,
                 // S002 frames the Barracks and its deployment pad on every focus,
                 // including ARIA's subsequent public base-focus action.
-                Perspective=new Unity.Mathematics.float4(s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,58,0,60),
-                World=EntityManager.GetComponentData<LocalTransform>(entity).Position+
-                    (s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
+                Perspective=new Unity.Mathematics.float4(authoredOpening ? openingDistance : s002Focus ? 100 : basinOpening ? 60 : opening ? 40 : 55,58,0,60),
+                World=focusPosition+
+                    (authoredOpening ? Unity.Mathematics.float3.zero : s002Focus ? new Unity.Mathematics.float3(s002Offset,0,0) :
                         opening ? new Unity.Mathematics.float3(20,0,6) : new Unity.Mathematics.float3(0,0,12))
             });
             return true;
@@ -179,6 +219,10 @@ namespace Game.Composition
             var request=EntityManager.GetComponentData<SkirmishReturnRequest>(entity);
             if(returnStage==0)
             {
+                if(SkirmishLaunchProjection.TryGet(EntityManager,out var session,out _) &&
+                    EntityManager.HasComponent<SkirmishExpandedSessionComponent>(session) &&
+                    !EntityManager.HasComponent<SkirmishExpandedCleanupRequest>(session))
+                    EntityManager.AddComponent<SkirmishExpandedCleanupRequest>(session);
                 UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);returnStage=1;return;
             }
             if(returnStage==1)

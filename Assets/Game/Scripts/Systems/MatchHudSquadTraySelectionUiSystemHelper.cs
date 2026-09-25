@@ -103,6 +103,20 @@ namespace Game.Runtime
             {
                 if(!skirmish.IsEmptyIgnoreFilter)
                 {
+                    var session = skirmish.GetSingletonEntity();
+                    if (SkirmishExpandedSessionControlService.IsExpanded(em, session))
+                    {
+                        // One selection owner per click: expanded page selection must
+                        // not be followed by the legacy fixed-slot selection path.
+                        int index = (int)slot - 1;
+                        if (!SkirmishExpandedPresentedOrders.TryPresentedSlot(em, session, index))
+                        { view.FlashDisabled(slot); return; }
+                        if (index == SkirmishExpandedPresentedOrders.PresentedSlots)
+                            ClearActiveSlot(view);
+                        else
+                        { _activeSlot = slot; view.SetSelectedSlot(slot); }
+                        return;
+                    }
                     _selected.Clear();
                     using var group=em.CreateEntityQuery(typeof(SkirmishSquadMember),typeof(UnitHealth));
                     using var members=group.ToEntityArray(Allocator.Temp);

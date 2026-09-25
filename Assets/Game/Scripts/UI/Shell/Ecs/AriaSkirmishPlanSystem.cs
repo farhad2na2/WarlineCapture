@@ -20,20 +20,8 @@ namespace Game.UI.Shell.Ecs
             output = new AriaPlayObservationComponent { Kind = view.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting, Time = view.Time, Frame = view.Frame, GoalId = 10000 + plan.Cycle * 10 + plan.Slot };
             if (view.ExpandedSession)
             {
-                // A blocked expanded hand is the 180s watchdog or three taps on one
-                // control, not consent withdrawn. Restart the shipping touch driver
-                // so Base Assault can keep using the visible cards for the match.
-                if (!view.Finished && touch.Phase == AriaPlayPhase.Blocked &&
-                    (view.EnemyDesignatedAlive || view.PlayerDesignatedAlive))
-                {
-                    touch.Phase = AriaPlayPhase.Starting;
-                    touch.Attempts = 0;
-                    touch.GestureRequested = 0;
-                    touch.DueAt = view.Time;
-                    touch.LastProgressAt = view.Time;
-                    touch.LastObjectiveProgressAt = view.Time;
-                }
-
+                // Blocked remains stopped until the player explicitly retries ARIA.
+                // Repeated failed taps must not erase the watchdog's evidence.
                 // Manual is idle / pre-consent: still publish the presented control so
                 // the cyan hand and DecisionSystem can see TargetId. Starting waits
                 // for the touch driver. Touching is held inside StepExpanded.
@@ -429,15 +417,78 @@ namespace Game.UI.Shell.Ecs
                 return;
             }
             if (touch.Phase == AriaPlayPhase.Touching) return;
-            // Campaign opening (OpeningUntil = Time+180, AssaultStarted only after
-            // infantry 24, or 16 at that deadline, or OpeningUntil+60) is not this
-            // skill. The starting tank and rocketeers are already on the field.
-            // Flat EnemyHealth/PlayerHealth/ForceHealth/Infantry for 150s is the
-            // campaign stall. It must not set Blocked here: the column is in
-            // transit, and Blocked stops the hand while the match clock runs to
-            // TimeLimit. Refresh the public watchdog so that march is not a stall.
-            touch.LastProgressAt = view.Time;
-            touch.LastObjectiveProgressAt = view.Time;
+            // NEXT reuses its button identity across pages. A changed visible
+            // page proves the tap succeeded; do not count later inspections as
+            // retries of that completed action. Paging is not battle progress.
+            if (plan.ObservedPageIndex != view.ExpandedPageIndex)
+            {
+                plan.ObservedPageIndex = view.ExpandedPageIndex;
+                touch.Attempts = 0;
+            }
+            // Supply and construction are public progress, but each milestone
+            // counts once. Repeated taps and spending/earning loops cannot
+            // indefinitely refresh the watchdog.
+            int milestones = (view.LogisticsTruckCommitted ? 1 : 0) |
+                (view.ReadinessEligible ? 2 : 0) | (view.PadPresent ? 4 : 0);
+            bool newMilestone = view.AirProfile && (milestones & ~plan.EconomicMilestones) != 0;
+            if (newMilestone) plan.MaterialsHighWater = view.OwnMaterials;
+            bool savingForAir = view.AirProfile && view.LogisticsTruckCommitted && !view.AirQueueOffered;
+            int savedMaterials = UnityEngine.Mathf.Min(view.OwnMaterials, 300);
+            bool supplyProgress = savingForAir && savedMaterials > plan.MaterialsHighWater;
+            plan.EconomicMilestones |= milestones;
+            if (supplyProgress) plan.MaterialsHighWater = savedMaterials;
+            if (plan.LastProgressAt == 0 || plan.EnemyHealth != view.EnemyHealth ||
+                plan.PlayerHealth != view.PlayerHealth || plan.Infantry != view.Infantry ||
+                newMilestone || supplyProgress)
+            {
+                plan.LastProgressAt = view.Time;
+                plan.EnemyHealth = view.EnemyHealth; plan.PlayerHealth = view.PlayerHealth; plan.Infantry = view.Infantry;
+                touch.LastProgressAt = view.Time;
+                touch.LastObjectiveProgressAt = view.Time;
+            }
+            if (view.Time - plan.LastProgressAt > 180f)
+            {
+                touch.Phase = AriaPlayPhase.Blocked;
+                touch.GestureRequested = 0;
+                return;
+            }
+            // Air Mobile's starting force cannot leave the Barracks undefended.
+            // Reuse the visible, bounded construction sequence used by legacy
+            // skirmishes after the first reinforcement squad arrives.
+            if (view.AirProfile && plan.AssaultStarted == 0 &&
+                OpeningDefense(view, ref plan, ref touch, ref output)) return;
+            if (view.PlacementOpen)
+            {
+                if (plan.DefenseDeadline == 0) { plan.DefenseDeadline = view.Time + 25f; plan.DefenseSite = 0; }
+                if (view.Time > plan.DefenseDeadline)
+                { Target(view.PlacementCancel, false, ref output); return; }
+                if (view.PlacementConfirm.Available)
+                { Target(view.PlacementConfirm, false, ref output); return; }
+                if (plan.DefenseSite == 0 && !view.Site0.Available && !view.Site1.Available &&
+                    !view.Site2.Available && !view.Site3.Available && !view.Site4.Available && !view.Site5.Available &&
+                    view.FocusPlayer.Available)
+                {
+                    Target(view.FocusPlayer, false, ref output);
+                    return;
+                }
+                if (plan.DefenseSitePending != 0 && touch.Actions > plan.DefenseSiteAction)
+                { plan.DefenseSitePending = 0; plan.DefenseSite++; }
+                while (plan.DefenseSite < 6 && !view.Site(plan.DefenseSite).Available) plan.DefenseSite++;
+                if (plan.DefenseSite < 6)
+                {
+                    if (plan.DefenseSitePending == 0) { plan.DefenseSitePending = 1; plan.DefenseSiteAction = touch.Actions; }
+                    Target(view.Site(plan.DefenseSite), true, ref output);
+                }
+                else Target(view.PlacementCancel, false, ref output);
+                return;
+            }
+            plan.DefenseDeadline = 0; plan.DefenseSitePending = 0;
+            if (view.AttackMode && view.SelectionVisible)
+            {
+                plan.Intent = view.EnemyBase.Available ? AriaSkirmishIntent.TargetBase : AriaSkirmishIntent.FindBase;
+                Target(view.EnemyBase.Available ? view.EnemyBase : view.FocusEnemy, view.EnemyBase.Available, ref output);
+                return;
+            }
             if (view.ExpandedRetries >= 3)
             {
                 if (view.Hold.Available && plan.Intent == AriaSkirmishIntent.Attack)
@@ -456,11 +507,78 @@ namespace Game.UI.Shell.Ecs
                 Target(view.RecruitAntiAir, false, ref output);
                 return;
             }
-            if (view.AirQueueOffered && !view.PadReady && view.AirPad.Available)
+            if (view.AirProfile && plan.AssaultStarted == 0)
+            {
+                if (plan.OpeningUntil == 0) plan.OpeningUntil = view.Time + 75f;
+                if (view.Infantry < 20 && view.Time < plan.OpeningUntil)
+                {
+                    if (view.RifleRecruitPending)
+                    {
+                        plan.Intent = AriaSkirmishIntent.ObserveBattle;
+                        if (view.DrawerOpen) Target(view.CloseDrawer, false, ref output);
+                        else output.Kind = AriaPlayObservationKind.Waiting;
+                        return;
+                    }
+                    if (view.CanAffordRifle)
+                    {
+                        plan.Intent = AriaSkirmishIntent.Recruit;
+                        // Drawer/category transitions can briefly hide their next
+                        // control. Keep the bounded opening instead of treating
+                        // one unavailable frame as an unaffordable reinforcement.
+                        if (view.Recruit.Available) Target(view.Recruit, false, ref output);
+                        else output.Kind = AriaPlayObservationKind.Waiting;
+                        return;
+                    }
+                }
+                plan.AssaultStarted = 1;
+            }
+            if (view.AirProfile && !view.LogisticsTruckCommitted && view.CanAffordLogisticsTruck &&
+                view.RecruitLogisticsTruck.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.RecruitLogisticsTruck, false, ref output);
+                return;
+            }
+            if (!view.ReadinessEligible && view.CanUpgradeReadiness && view.UpgradeReadiness.Available &&
+                plan.AssaultIssued != 0)
+            {
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                Target(view.UpgradeReadiness, false, ref output);
+                return;
+            }
+            if (view.ReadinessEligible && !view.PadPresent && view.CanBuildAirPad && view.AirPad.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Inspect;
                 Target(view.AirPad, false, ref output);
                 return;
+            }
+            if (view.AirQueueOffered && view.RecruitAir.Available)
+            {
+                plan.Intent = AriaSkirmishIntent.Recruit;
+                Target(view.RecruitAir, false, ref output);
+                return;
+            }
+            if (view.DrawerOpen)
+            {
+                if (!view.AirProfile && !view.RifleRecruitPending && plan.Intent == AriaSkirmishIntent.Recruit && view.Infantry < 16 &&
+                    view.CanAffordRifle && view.Recruit.Available &&
+                    view.VisibleHostileAir == 0 && !view.AirQueueOffered)
+                {
+                    Target(view.Recruit, false, ref output);
+                    return;
+                }
+                // Once a purchase/research action is accepted, return to the
+                // visible army controls before interpreting their page state.
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                Target(view.CloseDrawer, false, ref output);
+                return;
+            }
+            if (plan.AssaultIssued != 0 &&
+                (view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask) != 0)
+            {
+                plan.AssaultIssued = 0;
+                plan.PagesOrdered = 0;
+                plan.PagedToAssault = 0;
             }
             if (TryExpandedGroundAssault(view, ref plan, ref output))
                 return;
@@ -468,6 +586,22 @@ namespace Game.UI.Shell.Ecs
             // column with the rifle card on page 0.
             if (plan.AssaultIssued != 0 && plan.StructureOrdered != 0)
             {
+                // New reinforcements can arrive on another page. Inspect the
+                // public tray periodically without replacing existing orders.
+                if (plan.MapNavigationStage == 1 && view.ExpandedPageIndex != plan.AssaultPageSeen)
+                {
+                    plan.MapNavigationStage = 0;
+                    plan.ObserveUntil = view.Time + 12f;
+                }
+                if (view.ExpandedNextPage && view.Squad4.Available &&
+                    (plan.MapNavigationStage == 1 || view.Time >= plan.ObserveUntil))
+                {
+                    if (plan.MapNavigationStage == 0)
+                    { plan.MapNavigationStage = 1; plan.AssaultPageSeen = view.ExpandedPageIndex; }
+                    plan.Intent = AriaSkirmishIntent.Inspect;
+                    Target(view.Squad4, false, ref output);
+                    return;
+                }
                 plan.Intent = AriaSkirmishIntent.ObserveBattle;
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
@@ -481,7 +615,7 @@ namespace Game.UI.Shell.Ecs
                 output.Kind = AriaPlayObservationKind.Waiting;
                 return;
             }
-            if (view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
+            if (!view.AirProfile && !view.RifleRecruitPending && view.Infantry < 16 && view.CanAffordRifle && view.Recruit.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.Recruit, false, ref output);
@@ -585,7 +719,7 @@ namespace Game.UI.Shell.Ecs
             ref AriaSkirmishPlanComponent plan,
             ref AriaPlayObservationComponent output)
         {
-            int pending = view.ExpandedAssaultMask & ~view.ExpandedSelectedMask;
+            int pending = view.ExpandedAssaultMask & ~view.ExpandedAttackOrderMask & ~view.ExpandedSelectedMask;
             if (pending != 0)
             {
                 int slot = LowestSetBit(pending);
@@ -627,7 +761,13 @@ namespace Game.UI.Shell.Ecs
                 plan.PagesOrdered |= pageBit;
 
             bool columnReady = plan.StructureOrdered != 0 && (plan.PagesOrdered & pageBit) != 0;
-            bool backAtStart = plan.PagedToAssault != 0 && view.ExpandedPageIndex == plan.AssaultPageSeen;
+            bool backAtStart = plan.PagedToAssault != 0 && view.ExpandedPageIndex == plan.AssaultPageSeen &&
+                (plan.PagesOrdered & ~pageBit) != 0;
+            if (view.ExpandedNextPage && !view.Squad4.Available)
+            {
+                output.Kind = AriaPlayObservationKind.Waiting;
+                return true;
+            }
             if (view.ExpandedNextPage && view.Squad4.Available && !(columnReady && backAtStart))
             {
                 if (plan.PagedToAssault == 0)
@@ -665,6 +805,8 @@ namespace Game.UI.Shell.Ecs
             if (!target.Available) { output.Kind = AriaPlayObservationKind.Unavailable; return; }
             output.Kind = world ? AriaPlayObservationKind.WorldTarget : AriaPlayObservationKind.Control;
             output.TargetId = target.Id; output.Position = target.Position;
+            output.Drag = target.Drag ? (byte)1 : (byte)0;
+            output.DragEnd = target.DragEnd;
         }
     }
 }

@@ -31,7 +31,8 @@ namespace Game.Runtime
             if (!SkirmishExpandedCopyProjection.TryResolveHud(setup, outcome, reason, locale, out SkirmishHudCopy copy))
                 return false;
             objective = copy.Objective;
-            resultTitle = copy.Result;
+            // Keep the shared localized Victory/Defeat/Draw heading; this copy
+            // explains the mission-specific reason beneath it.
             resultDetail = copy.Result;
             return true;
         }

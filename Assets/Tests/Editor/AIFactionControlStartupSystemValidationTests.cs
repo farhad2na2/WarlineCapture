@@ -15,7 +15,8 @@ public sealed class AIFactionControlStartupSystemValidationTests
             RunCase(test => test.Initialize_ProjectsAiControlConfigsIntoFactionControlEntries());
             RunCase(test => test.Initialize_AddsDefaultPlayerAndEnemyEntriesWhenConfigListIsEmpty());
             RunCase(test => test.Initialize_ReusesExistingConfigEntityAndAddsMissingBuffer());
-            UnityEngine.Debug.Log("[AIFactionControlStartupValidation] result=Passed tests=3");
+            RunCase(test => test.Initialize_RespectsExternalStrategyOwnershipAndReleasesItForTheNextMatch());
+            UnityEngine.Debug.Log("[AIFactionControlStartupValidation] result=Passed tests=4");
         }
         catch (System.Exception exception)
         {
@@ -86,6 +87,29 @@ public sealed class AIFactionControlStartupSystemValidationTests
         Assert.AreEqual(2, entries.Length);
         Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
         Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, false, true));
+    }
+
+    [Test]
+    public void Initialize_RespectsExternalStrategyOwnershipAndReleasesItForTheNextMatch()
+    {
+        using var world = new World("ExternalFactionStrategyTests");
+        var em = world.EntityManager;
+        var owner = em.CreateEntity();
+        var strategies = em.AddBuffer<ExternalFactionStrategy>(owner);
+        strategies.Add(new ExternalFactionStrategy { FactionId = FactionIdentity.PlayerFactionId });
+        strategies.Add(new ExternalFactionStrategy { FactionId = FactionIdentity.EnemyFactionId });
+        var configs = new[] { new AIFactionControlStartupEntry(true, AIControllerRole.PlayerAuto, FactionIdentity.PlayerFactionId) };
+        var system = new AIFactionControlStartupSystem();
+        var result = system.Initialize(em, configs, CreateSettings(true));
+        Assert.IsFalse(result.PlayerAutoModeEnabled);
+        var entries = GetFactionControlEntries(em);
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.PlayerFactionId, false, true));
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, false, false));
+        em.DestroyEntity(owner);
+        result = system.Initialize(em, configs, CreateSettings(true));
+        Assert.IsTrue(result.PlayerAutoModeEnabled);
+        entries = GetFactionControlEntries(em);
+        Assert.IsTrue(ContainsFactionControl(entries, FactionIdentity.EnemyFactionId, true, false));
     }
 
     private static AIControllerConfig LoadAIConfig(string path)

@@ -7,20 +7,15 @@ namespace Game.UI.Runtime
 {
     internal sealed partial class MatchHudAssistantUiSystemHelper
     {
-        private const int ExpandedPublicControlSortingOrder = 32770;
-        private const float ExpandedControlDeliverRadius = 48f;
         private readonly Vector3[] watchFront = new Vector3[4];
         private readonly float[] watchFrontDistances = new float[4];
-        private int watchDeliveredActions = -1;
-        private int watchGesturePage;
-        private int watchGestureSelected;
-        private bool watchGestureReady;
         private SkirmishMatchView watchSkirmish;
         private Vector3 watchThreatPosition;
         private bool watchThreatTracked, watchFlankReached;
         private int watchScenarioIndex;
         private MatchHudSquadTrayView watchSquads;
         private BuildDrawerView watchBuild;
+        private BuildDrawerCatalogRuntimeView watchCatalog;
         private BuildPlacementConfirmationBarView watchPlacement;
         private MatchHudMinimapView watchMap;
         private MatchHudFullMapPopupView watchFullMap;
@@ -32,19 +27,38 @@ namespace Game.UI.Runtime
             int id = button.GetEntityId().GetHashCode();
             return new AriaTouchTarget { Id = id, Position = point, Available = WatchTargetIsReachable(point, id, false) };
         }
+        private AriaTouchTarget ObserveCatalogTarget(BuildDrawerCategory category, string prefabKey)
+        {
+            var button = watchCatalog?.ResolveCatalogTarget(category, prefabKey);
+            var target = ObserveWatchButton(button);
+            if (target.Available || button == null || !button.IsActive() || !button.IsInteractable()) return target;
+            var scroll = button.GetComponentInParent<ScrollRect>();
+            if (scroll == null || !scroll.vertical || scroll.viewport == null) return default;
+            var viewport = scroll.viewport;
+            var rect = (RectTransform)button.transform;
+            var local = viewport.InverseTransformPoint(rect.TransformPoint(rect.rect.center));
+            if (viewport.rect.Contains(local)) return default; // Occluded, not off-screen.
+            bool up = local.y < viewport.rect.yMin;
+            var bounds = viewport.rect;
+            var camera = ResolveEventCamera(button);
+            var from = RectTransformUtility.WorldToScreenPoint(camera, viewport.TransformPoint(
+                new Vector3(bounds.xMin + bounds.width * .25f, bounds.yMin + bounds.height * (up ? .25f : .75f), 0)));
+            var to = RectTransformUtility.WorldToScreenPoint(camera, viewport.TransformPoint(
+                new Vector3(bounds.xMin + bounds.width * .25f, bounds.yMin + bounds.height * (up ? .75f : .25f), 0)));
+            if (!Screen.safeArea.Contains(from) || !Screen.safeArea.Contains(to) || watchRaycast == null) return default;
+            watchRaycast.position = from; watchHits.Clear();
+            UnityEngine.EventSystems.EventSystem.current.RaycastAll(watchRaycast, watchHits);
+            if (watchHits.Count == 0 || watchHits[0].gameObject.GetComponentInParent<ScrollRect>() != scroll) return default;
+            return new AriaTouchTarget { Id = scroll.GetEntityId().GetHashCode() ^ (up ? 1 : 2),
+                Position = from, DragEnd = to, Drag = true, Available = true };
+        }
         private void ObserveSkirmishWatch(UiSkirmishModel model)
         {
             AriaPlayModel aria = UiShellRuntimeGateway.ReadAriaPlay();
-            // Blocked is the stuck-tap watchdog, not the end of the match. Keep
-            // publishing the visible cards so the expanded planner can restart
-            // the touch driver. Manual stays dark until the harness consents.
-            bool resumeExpanded = model.Expanded && !model.Finished && !model.StartupFailed &&
-                                  aria.Phase == AriaPlayPhase.Blocked;
-            if (!aria.Active && !resumeExpanded)
+            if (!aria.Active)
             {
                 watchThreatTracked = false;
                 watchFlankReached = false;
-                PresentExpandedPublicControls(false);
                 UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
                 return;
             }
@@ -65,7 +79,6 @@ namespace Game.UI.Runtime
                 view.ExpandedNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
             }
-            PresentExpandedPublicControls(model.Expanded);
             if (UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var squads))
             {
                 view.SelectedSlot = watchSquads != null ? (int)watchSquads.VisibleSelectedSlot - 1 : -1;
@@ -98,6 +111,35 @@ namespace Game.UI.Runtime
             view.Hold = ObserveWatchButton(_commandControlsView?.HoldButton);
             view.Recruit = ObserveWatchButton(_highlightPresentationSystem.ResolveProductionTutorialControl(out _));
             view.CloseDrawer = ObserveWatchButton(watchBuild?.CloseButton);
+            if (model.Expanded)
+            {
+                view.OwnMaterials = model.OwnMaterials;
+                view.CanAffordRifle = model.CanAffordRifle;
+                view.CanAffordAntiAir = model.CanAffordAntiAir;
+                view.CanAffordLogisticsTruck = model.CanAffordLogisticsTruck;
+                view.LogisticsTruckCommitted = model.LogisticsTruckCommitted;
+                view.RifleRecruitPending = model.RifleRecruitPending;
+                view.AirProfile = model.AirProfile;
+                view.PadPresent = model.PadPresent;
+                view.ReadinessEligible = model.ReadinessEligible;
+                view.PadReady = model.PadPresent && model.ReadinessEligible;
+                view.AirQueueOffered = model.CanQueueAir;
+                view.VisibleHostileCombat = model.VisibleHostileCombat;
+                view.VisibleHostileAir = model.VisibleHostileAir;
+                if (watchCatalog == null) watchCatalog = Object.FindAnyObjectByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include);
+                view.CanBuildAirPad = model.CanBuildAirPad;
+                var openBuild = ObserveWatchButton(_commandControlsView?.BuildButton);
+                view.Recruit = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Soldiers, "Unit_Chr_Soldier_Male_02_Alt_04") : openBuild;
+                view.RecruitAntiAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Missle_Launcher_Air") : openBuild;
+                view.AirPad = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Buildings, "Building_Helipad") : openBuild;
+                view.RecruitAir = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Aircrafts, "Unit_Veh_Helicopter_Attack_Small") : openBuild;
+                view.RecruitLogisticsTruck = view.DrawerOpen ? ObserveCatalogTarget(BuildDrawerCategory.Vehicles, "Unit_Veh_Truck_Tray") : openBuild;
+                if (UiShellRuntimeGateway.TryReadSkirmishReadiness(out var readiness))
+                {
+                    view.CanUpgradeReadiness = readiness.CanUpgrade;
+                    view.UpgradeReadiness = view.DrawerOpen ? ObserveWatchButton(watchBuild?.ReadinessButton) : openBuild;
+                }
+            }
             view.DefenseBuild = ObserveWatchButton(_highlightPresentationSystem.ResolveBuildTutorialControl(true, true, out _));
             if (watchPlacement == null) watchPlacement = Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             view.PlacementOpen = watchPlacement != null && watchPlacement.HasPendingPlacement;
@@ -118,7 +160,6 @@ namespace Game.UI.Runtime
             ObserveGroupMap(ref view);
             ObserveAdvanceGround(ref view);
             ObserveGroupRectangle(ref view);
-            DeliverExpandedControlIfGestureMissed(aria, view);
             UiShellRuntimeGateway.PublishAriaSkirmishObservation(view);
         }
         private static int ReadDisplayedCount(string text)
@@ -391,102 +432,6 @@ namespace Game.UI.Runtime
             view.Threat = new AriaTouchTarget { Id = -20002, Position = point, Available = onScreen && WatchTargetIsReachable(point, -20002, true) };
         }
 
-        private void PresentExpandedPublicControls(bool raised)
-        {
-            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(0) : null, raised);
-            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(1) : null, raised);
-            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(2) : null, raised);
-            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(3) : null, raised);
-            RaisePublicControl(watchSquads != null ? watchSquads.VisibleCardButton(4) : null, raised);
-            // The command rail has its own V3 gradient graphics. A nested
-            // override-sorting Canvas on these buttons flattens their colored
-            // fills to black. The touch fallback below can still deliver them.
-        }
 
-        private static void RaisePublicControl(Button button, bool raised)
-        {
-            if (button == null)
-                return;
-            Canvas canvas = button.GetComponent<Canvas>();
-            if (canvas == null && !raised)
-                return;
-            if (canvas == null)
-            {
-                Canvas parent = button.GetComponentInParent<Canvas>();
-                canvas = button.gameObject.AddComponent<Canvas>();
-                canvas.overrideSorting = false;
-                canvas.pixelPerfect = false;
-                if (parent != null)
-                    canvas.additionalShaderChannels = parent.additionalShaderChannels;
-                if (button.GetComponent<GraphicRaycaster>() == null)
-                    button.gameObject.AddComponent<GraphicRaycaster>();
-            }
-
-            canvas.overrideSorting = raised;
-            if (raised)
-                canvas.sortingOrder = ExpandedPublicControlSortingOrder;
-        }
-
-        private void DeliverExpandedControlIfGestureMissed(AriaPlayModel aria, AriaSkirmishObservation view)
-        {
-            if (!view.ExpandedSession)
-            {
-                watchGestureReady = false;
-                watchDeliveredActions = aria.Actions;
-                return;
-            }
-
-            if (aria.Actions < watchDeliveredActions)
-            {
-                watchDeliveredActions = aria.Actions;
-                watchGestureReady = false;
-            }
-            else if (watchDeliveredActions >= 0 && aria.Actions > watchDeliveredActions && watchGestureReady)
-            {
-                bool pageChanged = view.ExpandedPageIndex != watchGesturePage;
-                bool selectionChanged = view.ExpandedSelectedMask != watchGestureSelected;
-                if (!pageChanged && !selectionChanged)
-                    InvokeExpandedControlAt(aria.Target);
-            }
-
-            if (aria.Phase != AriaPlayPhase.Touching)
-            {
-                watchGesturePage = view.ExpandedPageIndex;
-                watchGestureSelected = view.ExpandedSelectedMask;
-                watchGestureReady = true;
-            }
-
-            watchDeliveredActions = aria.Actions;
-        }
-
-        private void InvokeExpandedControlAt(Vector2 target)
-        {
-            Button best = null;
-            float bestDistance = ExpandedControlDeliverRadius * ExpandedControlDeliverRadius;
-            Consider(watchSquads != null ? watchSquads.VisibleCardButton(0) : null);
-            Consider(watchSquads != null ? watchSquads.VisibleCardButton(1) : null);
-            Consider(watchSquads != null ? watchSquads.VisibleCardButton(2) : null);
-            Consider(watchSquads != null ? watchSquads.VisibleCardButton(3) : null);
-            Consider(watchSquads != null ? watchSquads.VisibleCardButton(4) : null);
-            Consider(_commandControlsView != null ? _commandControlsView.AttackButton : null);
-            Consider(_commandControlsView != null ? _commandControlsView.HoldButton : null);
-            if (best != null)
-                best.onClick.Invoke();
-
-            void Consider(Button button)
-            {
-                if (button == null || !button.IsActive() || !button.IsInteractable())
-                    return;
-                var rect = (RectTransform)button.transform;
-                Vector2 point = RectTransformUtility.WorldToScreenPoint(
-                    ResolveEventCamera(button),
-                    rect.TransformPoint(rect.rect.center));
-                float distance = (point - target).sqrMagnitude;
-                if (distance > bestDistance)
-                    return;
-                bestDistance = distance;
-                best = button;
-            }
-        }
     }
 }

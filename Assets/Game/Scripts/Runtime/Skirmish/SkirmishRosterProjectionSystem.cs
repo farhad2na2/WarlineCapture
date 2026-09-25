@@ -81,6 +81,12 @@ namespace Game.Runtime
                         WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.BarracksStructure());
                         applied++;
                     }
+                    else if (structureId == SkirmishStructureIds.Watchtower ||
+                             structureId == SkirmishStructureIds.WatchtowerApproach)
+                    {
+                        WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.WatchtowerStructure());
+                        applied++;
+                    }
                     else if (structureId == SkirmishStructureIds.GroundStaging)
                     {
                         WriteOverlay(em, entity, SkirmishRoleOverlayCatalog.GroundStagingStructure());
@@ -97,7 +103,7 @@ namespace Game.Runtime
             return applied;
         }
 
-        private static void WriteOverlay(EntityManager em, Entity entity, SkirmishRoleOverlay overlay)
+        internal static void WriteOverlay(EntityManager em, Entity entity, SkirmishRoleOverlay overlay)
         {
             var component = new SkirmishRoleOverlayComponent
             {
@@ -119,6 +125,7 @@ namespace Game.Runtime
                 em.SetComponentData(entity, health);
             else
                 em.AddComponentData(entity, health);
+            SkirmishSharedCombatBinding.Bind(em, entity, overlay);
         }
     }
 }

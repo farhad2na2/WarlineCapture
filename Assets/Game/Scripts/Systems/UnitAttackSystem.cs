@@ -166,7 +166,7 @@ namespace Game.Runtime
                 {
                     Entity target = engageRw.Target;
                     bool hasTarget = target != Entity.Null;
-                    bool targetExists = hasTarget && IsTargetAvailableForCombat(em, target);
+                    bool targetExists = hasTarget && IsTargetAvailableForCombat(em, entity, target);
                     bool targetHasHealth = targetExists && em.HasComponent<UnitHealth>(target);
                     bool targetHasTransform = targetExists && em.HasComponent<LocalTransform>(target);
                     bool targetIsStaticGridBlocker = targetExists && em.HasComponent<StaticGridBlocker>(target);
@@ -221,7 +221,7 @@ namespace Game.Runtime
                 if (engageRw.Target == Entity.Null)
                     continue;
 
-                if (!IsTargetAvailableForCombat(em, engageRw.Target) || !em.HasComponent<UnitHealth>(engageRw.Target) || !em.HasComponent<LocalTransform>(engageRw.Target))
+                if (!IsTargetAvailableForCombat(em, entity, engageRw.Target) || !em.HasComponent<UnitHealth>(engageRw.Target) || !em.HasComponent<LocalTransform>(engageRw.Target))
                 {
                     engageRw.Target = Entity.Null;
                     continue;

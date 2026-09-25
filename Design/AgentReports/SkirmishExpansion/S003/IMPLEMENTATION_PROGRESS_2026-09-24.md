@@ -1,0 +1,301 @@
+# S003 repair candidate — implementation in progress
+
+Base: 09003236c. Branch: codex/s003-player-ready. Isolated checkout: /private/tmp/warline-s003-player-ready. Active main checkout and unrelated Editors are preserved.
+
+**Not player-ready or accepted.** This records partial implementation, not completed plan gates.
+
+## Approved design
+
+User approved visual-direction-v1.png in this task on 2026-09-24. The approved proposal uses existing Campaign/Skirmish UI references. Native redesign is still pending. Do not ask again for this direction or routine implementation choices.
+
+## Implemented foundation changes
+
+- Live expanded sessions initialize a shared faction Materials bank once. Production/research, ARIA and checkpoint reads use it. Construction and HUD share that bank. Old session fields remain compatibility-only; no per-frame bank synchronization. Full physical Oil/Fuel integration and transaction telemetry/refund-capacity review remain pending.
+- Removed AriaSkirmishStructureOrderSystem and the background group-assault bypass. Tests now dispatch explicit presented selection/Attack controls. These remain fixtures, not real touch acceptance runs.
+- Harness records unmeasured input/intervention counts as -1, preventing counted wins until complete provenance instrumentation exists.
+- Public force creation now resolves registry prefabs. Ground spawning uses shared footprint/walkability/blocker/occupancy checks. Production promotes reserved capacity only after all members spawn; a failed group dispatch cleans its members and refunds.
+- Registry units no longer receive direct transform stepping when shared navigation cannot supply a route.
+- Setup briefing numeric facts are compiled from packaged launch definitions. Native layout, text fit and full EN/FA review remain pending.
+
+## Building integration under validation
+
+Starting-building request bridge waits for shared runtime spawn results, binds original objective identity to actual combat/storage entities, and cancels grants on cleanup. Starting grants have an explicit owner capability. Ground Staging authoring/registration builder added. Actual map startup passed (startup-04 below). Tactical placement, cleanup timing, restore and physical resource grants still need follow-through.
+
+## Evidence
+
+- /private/tmp/s003-materials-01.log: wrapper exit 0; Materials/economy/checkpoint pass markers.
+- /private/tmp/s003-aria-01.log: failed registry-backed public spawn test; fixed.
+- /private/tmp/s003-aria-02.log: failed blocked/overlapping spawn test; fixed using shared spawn-cell utility.
+- /private/tmp/s003-aria-03.log: stale gridless-fixture follower assertion; corrected to prohibit a second movement owner.
+- /private/tmp/s003-aria-04.log: stale compatibility-stock read in combat fixture; migrated to authoritative bank.
+- /private/tmp/s003-foundations-05.log: wrapper exit 0; combined Materials, economy, checkpoint and ARIA harness pass markers.
+- /private/tmp/s003-foundations-06.log: wrapper exit 0; same combined suites plus compiled EN/FA briefing facts pass. This predates building integration.
+- /private/tmp/s003-building-definition-01.log: compile failure CS1612 on buffer index assignment; corrected in source. Wrapper timed out (124); failed evidence retained.
+- /private/tmp/s003-building-definition-02.log: wrapper exit 0 and shared Ground Staging definition pass marker; native definition/prefab/Construction registration saved through Unity.
+- /private/tmp/s003-foundations-07.log: wrapper exit 0 and all four combined suite pass markers, including real-building binding fixture and blocked registry-spawn refund assertions.
+- /private/tmp/s003-startup-01.log: real-map diagnostic failed: four preferred footprints rejected (player Barracks, player Refinery, enemy Fabrication Depot, player Watchtower). Expanded failure was cleaned before the old harness recognized it; wrapper timed out (124). No acceptance row or win. Shared placement now searches legal nearby footprints with authored road/water/sidewalk checks on every candidate, and the harness directly checks expanded failure codes.
+- /private/tmp/s003-startup-02.log: wrapper timeout (124), blocked before project load by Unity's dangling-scene-backup recovery dialog. Read-only process stack confirms HandleDanglingSceneBackups/NSAlert; scene backup preserved as /private/tmp/s003-startup-02-preserved-scene.backup.
+- /private/tmp/s003-startup-03.log: same recovery dialog and wrapper timeout (124), even with an empty backup directory. Entire empty directory subsequently preserved outside the checkout at /private/tmp/s003-startup-03-preserved-backup-directory. No Editor, Hub, licensing client or IPC reset was performed manually; only wrapper-owned timeouts closed their own Editor.
+- /private/tmp/s003-startup-04.log: wrapper exit 0; [SkirmishS003Startup] result=Passed. Actual loaded S003 seed104732 EN: 14/14 shared runtime starting buildings, 28/28 authored units, one ready session, two unique faction Materials banks; simulation elapsed at least two seconds. Startup integration evidence only, not a normal-input playthrough or visual acceptance. Log also retains an unrelated Editor QuickSearch index exception and shutdown allocation-leak warning; these are not silently omitted.
+
+Physical-supply grant service and atomic/no-refill test passed in foundations-08. Fraction-preserving fuel transaction handling and conditional shared movement drain/HUD/ARIA/production routing passed in foundations-09. The service is deliberately not wired into live startup until checkpoint ownership is migrated too.
+
+- /private/tmp/s003-foundations-08.log: wrapper exit 0, all four combined markers passed, including physical supply atomic/no-refill test.
+- /private/tmp/s003-foundations-09.log: wrapper exit 0, all four combined markers passed, including preservation of fractional fuel and outbound/civilian reserves and rejected capacity-overflow mutation.
+- /private/tmp/s003-foundations-10.log: wrapper exit 0, all four combined markers passed, including first-checkpoint system managed-component attachment and an old cleaned session not suppressing the next mission's Materials grant.
+- /private/tmp/s003-combat-policy-01.log: wrapper exit 0, all four combined markers passed, including actual shared UnitAttack damage/trace checks for legal, hidden and out-of-domain targets. This run predates live binding; the subsequent shared-combat checks below cover the binding migration.
+- /private/tmp/s003-combat-policy-02.log: wrapper exit 0, combined markers passed, including acquisition/retaliation and shared attack-move checks.
+
+Shared AttackMove now has an explicit unit-array/faction entry point. S003 Move/Attack/Hold adapters use shared command owners, leave accepted travel and combat to them, and stop repeated movement submission during engagement. Role overlays bind shared weapon stats and generic target/fog policies; acquisition includes unarmed hostile logistics. Real shared actors no longer receive expansion direct damage. An explicit SkirmishSharedActorTag distinguishes baked gameplay actors from presentation-only registry GameObjects; only the former lose combat suppression and enter shared ownership.
+
+- /private/tmp/s003-shared-combat-01.log: CS1654 compile error on temporary NativeArray index assignment, fixed using NativeList. Wrapper timeout 124 retained.
+- /private/tmp/s003-shared-combat-02.log and -03.log: wrapper exits 0 but combined suite FAILED because a presentation-only cube was classified as a shared gameplay actor. The first attempted fixture correction did not address ownership and also failed. Fixed with the explicit shared-actor marker; takeOwnership semantics of the catalog remain intact.
+- /private/tmp/s003-shared-combat-04.log: wrapper exit 0, all combined markers passed, including 21 shared movement tests and the presentation fixture regression. Native gameplay playthrough still pending.
+- /private/tmp/s003-strategy-owner-01.log: wrapper exit 0 but no validation markers, so FAILED. Launched before the previous Editor shutdown completed; no result accepted. Subsequent runs must wait for wrapper completion.
+- /private/tmp/s003-strategy-owner-02.log: wrapper exit 0; all combined pass markers passed, including four generic AI startup cases.
+
+Expanded launch now declares session-scoped ExternalFactionStrategy ownership. Generic faction-control startup respects that data, preventing its autonomous economy/squad planners from competing with S003's own strategy. Cleanup releases the declaration; regression checks the next normal match regains its default AI. No scenario-ID branch was added to shared AI systems.
+
+Removed a second ARIA bypass in MatchHudAssistantUiSystemHelper.SkirmishWatch: missed gestures no longer directly invoke Button.onClick. This change requires native touch-delivery validation. The current native startup diagnostic additionally checks all 28 shared combat bindings, absence of suppression and absence of competing generic faction controllers. Its new assertions have not yet run.
+
+Aircraft Move eligibility now depends on real shared air capability rather than always excluding the Air population category. Shared commands remain responsible for legality and flight; air lifecycle validation remains pending.
+
+Failed logs must remain preserved. No new normal-input human win, ARIA win, native visual acceptance or device/player acceptance has been recorded. Historical wins do not certify this candidate.
+
+## Outstanding plan scope
+
+Complete shared buildings/Oil/Fuel/logistics/paid production and checkpoint migration; shared combat/domain/fog ownership and air movement; measured gesture-to-command ARIA provenance and public AA/readiness/air controls; complete helicopter/advanced-air/transport lifecycle; approved native UI with correct opening camera/artwork; complete exact-candidate human/ARIA/regression and device acceptance gates. No finding is marked fully closed yet.
+
+## Readiness and public observation continuation
+
+- /private/tmp/s003-startup-05.log: wrapper exit 0; loaded-map startup passed: 14/14 real buildings, 28/28 authored units, 28 shared combat policies, zero suppressed shared actors and zero generic strategy controllers for the two participating factions. No touch playthrough or win.
+- /private/tmp/s003-readiness-01.log: wrapper exit 0; combined Materials, economy, checkpoint, army, 21 movement, four AI startup, and ARIA harness markers passed. Includes rejection of duplicate readiness charges and the read-only readiness eligibility/request boundary. Research system now snapshots session entities so upgrade stamp additions are legal; per-session pause state no longer leaks to following sessions.
+- /private/tmp/s003-readiness-ui-01.log: wrapper exit 0, compile passed, combined suite FAILED on an old S004 fixture asserting PadReady=false and AirQueueOffered=true. Updated the fixture to carry actual post-destruction PadPresent/ReadinessEligible/AirQueueOffered state. Rerun pending.
+- /private/tmp/s003-native-review-01.log: in progress; captures actual opening and Build via a UI request, explicitly visual-only evidence (not normal touch acceptance).
+
+Opening camera bounds now come from the actual spawned player base/army. Readiness has a typed UI gateway and request buffer processed by the research owner. The native drawer's empty production area presents upgrade cost/time, progress/cancel and EN/FA copy, reusing its font and V3 gradient control. This is an initial native implementation, not the full approved screen redesign or accepted layout.
+
+Additional audit finding: SkirmishAriaPublicProjection was referenced only by tests, leaving the live observer's affordability/air values at defaults. It now feeds the live shared HUD model and observer; AA, readiness, pad and helicopter controls resolve actual visible drawer/category/item/action buttons. Removed the contradictory planner predicate by separating PadPresent and ReadinessEligible. Full paid production/facility gates, air lifecycle and gesture provenance remain pending. The first attempted native capture is pending inspection.
+
+
+## Native review and ownership corrections
+
+Visual direction remains approved by the user. The implementation is still under repair, not accepted as player ready.
+
+- native-review-01: wrapper exit 0 with Captured/Startup markers; visual FAILED. Readiness was parented into a small empty-label rectangle and overlapped. All squad cards were gray, their role art was wrong, Oil/Fuel were zero, and an untouched enemy base had already lost health. Failed screenshots preserved.
+- native-review-02: wrapper exit 0 with Captured/Startup markers. Readiness panel now fits the full production panel, with readable cost/time and Upgrade button. ARIA caption no longer says preview. Other failures remained.
+- readiness-ui-02: wrapper exit 0; ARIA suite passed after fixture correction; combined validation FAILED in checkpoint settlement. The shared result journal already contained a conflicting outcome for the deterministic test session. This test now uses its own journal; production duplicate protection is unchanged.
+- building-binding-01: wrapper exit 0 and all combined markers passed (movement 21, generic AI startup 4, ARIA, army, economy, checkpoint, Materials).
+- native-review-03: wrapper exit 0 with Captured/Startup markers. Both bases remain 800/800 at the opening capture. Squad colors are restored. 14 shared buildings, 28 shared units, zero claimed scenery, zero mismatched building owners, zero competing generic AI controllers. Existing Editor QuickSearch index exception and shutdown leak warnings remain in the full log. This is visual/startup evidence only.
+
+The initial building census was insufficient: baked map buildings use placementIndex + 1, while the managed construction owner uses a separate numeric runtime-ID sequence. Starting-grant resolution matched the first numeric ID and claimed map Guard Towers as supply buildings. Resolution now excludes OperationMapBuildingComponent. Regression creates colliding map/runtime IDs and verifies only the runtime building is bound and cleaned; the map building retains ownership and health. Startup census now explicitly rejects claimed scenery and mismatched runtime ownership. Earlier startup pass markers do not establish correct binding.
+
+Clearing an expanded squad's restriction now clears the corresponding shared grayscale reason, preserving unrelated disable reasons. Infantry catalog titles use actual metadata instead of labeling every soldier entry Rifle squad.
+
+Work in progress: shared selection owner for paged squad clicks, live unit-derived squad portraits, replay resetting one-time shared startup markers, physical stock/checkpoint/production completion. No normal-input human/ARIA win has been recorded on this candidate. Oil/Fuel zero remains an explicit failure while supply initialization is not wired live.
+
+
+## Public controls and replay continuation
+
+- tray-replay-01: wrapper exit 0, combined markers passed. Replay clears shared Materials/supply/building readiness markers and old starting-grant bindings before reseeding. Readiness requests also clear. Initial attempts to add the new selection test did not write that test file because the edit script assertion failed; it was subsequently added and run in tray-replay-02.
+- tray-replay-02: wrapper exit 0, combined markers passed, including selection through the shared squad tray handler: select page one, NEXT clears selection, page-two tank is selected, representative portrait entity matches that group. Removes double dispatch (the view previously selected the expanded group and then invoked legacy fixed-slot selection).
+- native-review-04: wrapper exit 0 with Captured/Startup markers. Rifle and car art correct, NEXT is a navigation arrow; Rocketeer image was missing. The bound mission registry now supplies missing preview metadata without turning starting troops into recruitable catalog entries.
+- public-controls-01: wrapper exit 0, combined markers passed. ARIA no longer gets private high-sorting card canvases. The harness no longer auto-restarts Manual/Blocked input.
+- input-diagnostic-01: wrapper exit 0, [SkirmishS003InputDiagnostic] result=Captured reason=diagnosticWindowComplete acceptance=Unmeasured. Sixty simulation seconds at normal speed, native touch driver selected 12 infantry + 1 vehicle and issued Attack via the visible control. Both bases remained 800/800. Rocketeer portrait displays correctly. No acceptance row or win created. Per-unit path progress, complete result/return, measured input/intervention provenance still pending; the existing trace's first-unit coordinate is insufficient to prove the whole selected army is travelling.
+
+Removed expanded planner auto-restart of Blocked as well: watchdog failure persists until explicit retry. Updated the corresponding test to require Blocked/attempt counters to remain unchanged. This last assertion change compiled in the native diagnostic but still needs the combined suite run.
+
+Further shared-production audit: S003 currently loads the S001 construction preset. Its registry and SkirmishCatalogPolicy hide the expanded air/vehicle roles; SkirmishPopulationPolicy rejects every non-infantry/non-hauler role, and native producers lack the expanded production slots. Adding public targets alone cannot fix this. Complete a profile-aware shared production/catalog projection, including facility/readiness gates, queue/refund/capacity ownership and roster adoption. Preserve S001's preset and behavior. These remain open, not newly claimed as repaired.
+
+### Attempt identity and physical supply follow-through
+
+Fresh attempts now receive unique session IDs while retaining deterministic seed/setup hashes. A regression verifies two same-seed attempts can settle different outcomes independently. Expanded checkpoint schema 2 captures physical store identity, fractional Oil/Fuel, inbound/outbound reservations and civilian reserves; invalid/missing stores reject restoration before mutation. This does not yet establish complete fresh-session checkpoint restoration (actors, queues, cargo, fabrication progress and air lifecycle remain pending).
+
+Physical starting supply is now activated after actual building grants complete. Oil allocation prioritizes fabrication (24 barrels) and the Oil Pump (96) before refinery overflow, avoiding query-order-dependent stranded supply. Focused validation `s003-live-supply-01.log` exited 0 and contains all required suite pass markers. Native activation remains pending verification.
+
+`public-controls-02`, `attempt-identity-01`, and `physical-checkpoint-01` also exited 0 with all required suite markers; full logs are retained in RepairEvidence. Native capture attempt 05 used an incorrect executeMethod namespace and failed to invoke the harness; it is failed evidence, not a readiness pass. The corrected namespace is `Game.Editor.SkirmishS002AriaRunHarness`.
+
+The shared production audit confirms that the expanded mission still inherits the legacy preset's restricted catalog and population gates. Expanded vehicles/aircraft require shared producer recipes, role-aware gating, and production completion ownership. No complete human or ARIA mission win, exact-candidate acceptance, or device acceptance is claimed.
+
+### Native supply capture 06 and public read models
+
+Native capture 06 reached S003 and recorded physicalSupply=True, Oil 121–122 as extraction advanced, Fuel 350, 14/14 actual buildings, 28/28 shared units, no claimed scenery and no mismatched building owners. Opening/Build screenshots are retained. The run emitted capture/startup markers but timed out during exit (124): **overall validation failed**, not a clean native pass. Capture 05 also timed out (124) after the wrong executeMethod namespace. Both full logs remain available.
+
+Visual inspection found Oil displayed as 24 (only the fabrication depot) although the physical mission total included the Pump. The expanded HUD/Build numeric resource adapter now reads the same total Oil and unreserved usable Fuel as the mission model. Legacy behavior remains under its existing allocation regression. Squad cards now project health from actual surviving members, excluding other attempts. These public-model changes and the persisted post-play-mode quit request are pending focused validation in `s003-public-resource-health-01.log`.
+
+`public-resource-health-01` failed compilation (CS1654) and timed out (124); retained unchanged. After fixing native-array lifetime handling, `public-resource-health-02` completed with exit 0 and every focused suite pass marker. It covers real squad health (including foreign-attempt exclusion), all Oil versus usable/reserved Fuel, unchanged legacy resource summary and zero-allocation warmed reads, and source fingerprint changes on edits/renames/deletions.
+
+S003 native/ARIA census now uses the actual source/configuration fingerprint captured before launch, replacing the fixed-string code identity. Run completion rejects a changed fingerprint. This fingerprint covers textual source, authored configuration and metadata; it is not a substitute for visual/device acceptance or a complete packaged-build artifact identity. Native rerun 07 is pending.
+
+Native review 07 completed cleanly (exit 0), retained source/configuration hash `1db933f10d78b8207a3eddfa60f7a7c60ec7003f0f0b1091dec059275e9aadb3`, emitted startup/capture markers and `[SkirmishValidationExit] result=Requested code=0`. Visual inspection confirms Build displays Oil 122 (physical extraction advanced) and Fuel 350. This verifies corrected resource display and native startup only; capture was a UI request, not a normal-input mission playthrough.
+
+Shared production recipe support is under implementation. Runtime catalog overlays preserve authored configuration, and shared producer definitions/resource costs can consume explicit match recipes. Focused `production-recipes-01` validation is pending. S003 has not yet been switched to this catalog; shared production admission, completion ownership, AI routing and checkpoint integration still need completion before recruitment is ready.
+
+`production-recipes-01` passed every focused suite and exited 0. Shared runtime recipe tests verify packet size, charged/displayed prices, atomic rejection of conflicting recipes, clearing overrides and immutable authored catalogs. The new `SkirmishProductionCatalog` compiler resolves actual scene unit/producer assets for the selected army profile. `production-catalog-01` resolved all assets but failed the test's incorrect expected count (18 rather than the actual 19 Air Mobile recipes); this remains failed evidence despite exit 0. The assertion is corrected and `production-catalog-02` is pending. The catalog compiler is not yet activated in the native scene.
+
+
+### Production receipt integration (2026-09-24, ongoing)
+
+- `s003-production-catalog-02.log`: wrapper exit 0 and all focused pass markers. All 19 Air Mobile recipes resolve against actual authored producers and units. Catalog activation is still pending.
+- `s003-production-receipt-identity-01.log`: wrapper exit 0 and all focused pass markers. Player/enemy receipt IDs share one monotonic sequence; cancelling an enemy receipt preserves player payment and capacity.
+- Native queue now carries a receipt owner/id through ground, helicopter, transport and aircraft spawn callbacks. Delivery adoption is intended to preserve native placement and timing, apply mission roles/combat policy, and promote capacity one member at a time. Partial-packet cancellation accounts only for undelivered members. These changes are under validation and are not readiness evidence yet.
+- `s003-production-native-receipt-01.log`: FAILED, C# buffer assignment and namespace errors; no required pass marker. Errors corrected for the next run. Full failed log retained.
+- Native gameplay catalog activation, producer destruction/restore lifecycle, enemy queue routing, full UI implementation and complete normal-input acceptance remain open. Visual direction is approved; player/device acceptance is pending.
+
+
+### Live native production wiring and catalog review
+
+- `s003-production-native-receipt-02.log`: exit 0, all focused pass markers. Native per-member delivery preserves one group, rejects duplicate/wrong-producer adoption, promotes reserved capacity once and refunds only undelivered members on cancellation.
+- `s003-production-live-integration-01.log`: FAILED, missing `Game.Configs` import for `SkirmishResolvedStructureEntry`; wrapper timeout 124. Corrected and retained.
+- `s003-production-live-integration-02.log`: exit 0 and all focused pass markers, including exact producer-loss isolation. The runtime catalog is now installed through `MatchSceneView`, with no authored source mutation. Player and enemy queue submissions reach shared timed production; receipts follow native ground/air/transport delivery callbacks. A maintenance system adopts newly constructed real buildings and releases receipts when their actual producer is lost. These code paths still need full live delivery/return acceptance.
+- Native supply/ownership review 08: exit 0, startup/capture/exit markers; 14/14 shared buildings, 28/28 native units, no suppressed shared combat, competing generic strategy controllers, claimed map scenery or mismatched owners. Source/config fingerprint `6e70efa339065724354899045496df522645362782a38a147d720ed41fe80dc3`. Full log and EN opening/Build images retained. Reviewed Build visibly includes the expanded Airport catalog but incorrectly offered Airport at Field readiness. This is a failed UX/admission finding, not a mission-ready pass.
+- Readiness gating, typed EN/FA locked reasons and mission-specific briefing corrections are now implemented but under validation. `s003-production-readiness-01.log` failed C# compilation because result-code arms were accidentally included in the resource mutation switch; corrected before the next run.
+- Candidate traces now use a unique launch identifier across domain reloads. The tracked historical `s003-aria-live-104732-en.jsonl` was restored byte-for-byte from HEAD after preserving the newer diagnostic in RepairEvidence. No old-candidate trace is used as acceptance for this repair.
+
+Still required: real native paid delivery and cancellation, complete normal-input human/ARIA runs and provenance, full air/supply loop, native queue/actor checkpoint restore and replay/return, UI at supported EN/FA aspect ratios, baseline mission regressions and separate real-device/player acceptance. In particular, production receipt owner identity should also guard same-entity replay scopes, cancellation should normalize surviving-member counts, and terminal/pause delivery should be explicitly rejected. Readiness currently occupies the production panel only while no unit queue is shown; approved UI work must keep that action discoverable during recruitment.
+
+
+### Readiness navigation and normal-touch production validation
+
+- `s003-production-readiness-02.log`: exit 0 with all required focused markers. Authored Field/Established facility gates and typed rejection round-trips pass.
+- Visual direction approval persists. Readiness now has its own fifth navigation tab, accessible while production is active; legacy four-tab geometry is restored outside expanded missions. Native EN/FA/aspect review remains pending.
+- `s003-native-production-probe-01.log`: FAILED timeout; the probe read ARIA observations while ARIA was manual, so no control target was published. Corrected to inspect visible buttons independently.
+- `s003-native-production-probe-02.log`: FAILED compilation, catalog target lookup inaccessible to Editor harness; corrected public read-only lookup. No pass.
+- `s003-native-production-probe-03.log`: exit 2, FAILED deliveryTimeout, two touch samples and no purchase. Startup census passed (14 buildings, 28 units); this is not recruitment acceptance. The probe queued touches in EditorApplication.update, which can process input separately from the game UI. The next probe runs the same touch actuator from a runtime Update component. No button invocation or gameplay state injection is used.
+- `s003-native-production-probe-04.log` is running. Full mission, ARIA, native visual and device gates remain open.
+
+`native-production-probe-04` exited 2 with deliveryTimeout. Runtime-frame touches successfully reached Build → Vehicles → Produce; the actual Materials balance fell twice by 220, but the expanded receipt buffer remained empty. Read-only Pipeline inspection verified the isolated project, Playing session and installed catalog. This exposed the legacy operation-map producer fallback, which could spend through neutral scenery when a runtime producer failed transport eligibility. Expanded missions now reject that fallback. Ground Staging recipes explicitly use shared ground-exit delivery instead of automatic transport selection requiring an Airport; `native-production-probe-05` is validating this repair. Build also displayed legacy unit pricing (AA 1,500 rather than 220); metadata presentation correction remains pending.
+
+`native-production-probe-05`: **exit 0**, `[SkirmishS003ProductionProbe] result=Passed reason=nativeAaDelivered input=Touch samples=6 acceptance=RecruitmentOnly`. Three normal-frame taps (Build, Vehicles, Produce), exact 220-Materials debit to 230, receipt 1001, one native AA with mission ownership/combat policy/group. Fingerprint `5ddb530a9e6ba6e352e10187b8ccd003c379a3817c42064fac890bb27ef03af5`. Screens retained and inspected: the paid screenshot catches a stale header presentation frame (450) and legacy card cost 92; delivered screenshot shows authoritative 230. This is a recruitment-only pass, not a mission win.
+
+Current follow-up binds catalog price/role stats into metadata, AA overlay damage/range into the real missile weapon, and scopes native callbacks to their originating attempt. Delivery rejects paused/terminal state; partial cancellation/loss now subtract unspawned members from the surviving count. `production-scope-and-aa-01` failed an old delivery fixture that had never entered Playing; the native fixtures now explicitly enter Playing. `production-scope-and-aa-02` is running. New faction guard prevents player research being applied to enemy deliveries. These changes still require complete native and lifecycle acceptance.
+
+Further command finding: the visible Attack handler both directly ordered the enemy base and entered target mode. This is inconsistent with the reviewed Attack → target guidance; removal and shared accepted-order projection are pending.
+
+
+### Public target commands and catalog navigation
+
+- `production-scope-and-aa-02`: failed a pause fixture missing its objective clock; retained.
+- `public-attack-and-scope-01`: exit 0, all combined suite markers passed. Actual AA missile damage/range binding, stale-attempt delivery, paused/terminal rejection and partial cancellation accounting are covered. Attack now enters shared target mode and the accepted world target updates expanded group orders.
+- `catalog-and-aria-01`: exit 0, all combined suite markers passed. Expanded public Attack selects the visible world target (or camera focus if unavailable); stagnant battle progress blocks after 180 seconds; placement has a bounded deadline; catalog swipes preserve gesture endpoints. Catalog content now grows for all rows. Offscreen unit controls use ordinary ScrollRect drag; blocking overlays remain blockers.
+- Air assault roles include attack helicopters and strike aircraft. Native catalog price/stat metadata now uses the compiled recipe. Native verification and complete air mission flow are pending.
+- `aria-public-target-01` is running as a 60-second diagnostic, not mission acceptance.
+
+
+`aria-public-target-01` and `aria-movement-01` both exited 0 with diagnostic Captured/acceptance=Unmeasured markers. Per-unit traces prove 12 infantry and the Car received shared paths and advanced; the Car fought and died. The APC remained idle. Both bases still had 800 HP at the 180-second diagnostic boundary. This exposed ARIA opening Readiness before visiting all assault pages, then interpreting covered NEXT as completion. The revised planner finishes the column first, closes Build after an accepted transaction and periodically inspects the tray for reinforcements. A focused hidden-NEXT test is under validation in `aria-page-handoff-01`. Enemy request envelopes now also carry their originating attempt, so a pending request cannot be accepted into a fresh replay. Full mission wins and provenance measurement are still pending.
+
+`aria-page-handoff-01`: exit 0 with all required combined markers. `aria-full-ground-01`: exit 0 but no harness or acceptance marker; FAILED launch overlapped the preceding Editor shutdown. Both processes fully exited before `aria-full-ground-02` was started. Two follow-up planner changes (home-camera focus for offscreen placement sites and continuing an open Rifle purchase) are compiled by the full run; dedicated assertions remain pending.
+
+
+### Full-run findings and follow-up — 2026-09-25
+
+`aria-full-ground-02`: exit 2, FAILED. Public-touch attack moved the infantry and Car into actual combat; the assault lost its units while the APC remained idle. The operator then called the public Stop ARIA gateway to end this diagnosed failure (one explicit intervention; no outcome or resource injection). This run cannot count toward ARIA acceptance. Native inspection showed Readiness paid 240 but stayed Queued at 45 seconds, and dead groups still occupied drawer slots while NEXT counted living groups. Fixes now auto-start eligible research through Tick, compact living groups consistently in both display and selection, and require an observed page transition before marking the circuit complete. Periodic page inspection also holds its target until the page actually changes. `readiness-start-and-pages-01` validates these changes.
+
+Release review also confirms that Skirmish ARIA capability and its objective marker are currently development-gated. The coverage matrix must pass before release availability is enabled. There is no shipping Skirmish checkpoint request/resume UI: the partial checkpoint API is only called by fixtures/composition helper, and full native restoration remains unsupported/pending rather than accepted.
+
+`readiness-start-and-pages-01`: FAILED, research completion invalidated the cached research buffer by adding actor upgrade stamps. The completion loop now reacquires that buffer. `readiness-start-and-pages-02` has all combined pass markers (wrapper exit still pending at this note). Natural research timing, pause and single completion now pass. Terminal evidence is written beneath a source-fingerprint candidate directory so historical runs stay immutable and do not consume a new candidate’s three attempt slots. The previous full run could not append a canonical row because historical slots were full; its unique live trace and full wrapper log remain retained.
+
+
+### Opening and physical supply — 2026-09-25
+
+`readiness-start-and-pages-02` completed with exit 0 and all combined markers. `aria-full-ground-03` exited 2, FAILED: the APC now joined the column and actual paid Readiness completed; public touches constructed a Helipad. The unsupported attack still lost its force. One operator call to the public Stop ARIA gateway ended the diagnosed failure; no outcome was injected. Its Abort row is retained under candidate `2d495057325712f8629ee1851a24329a0d3289ede6f0023c7bcbe0254c48c6c1`, with full log in RepairEvidence. No counted win.
+
+The Air Mobile opening now waits for paid Rifle packets to arrive (up to 20 infantry / a 75-second deadline), commits one actual logistics truck, and targets the lighter 300-Materials helicopter. Public observations distinguish live/pending logistics and queued Rifle delivery, and affordability uses current Readiness. The watchdog counts new public supply/build milestones and bounded saving toward the aircraft, without refreshing on repeated taps or spending/earning loops.
+
+`opening-supply-01`: FAILED despite wrapper exit 0: the generic opening changed S002 state. Restricted the opening to the air profile. `opening-supply-02`: exit 0 with all nine combined markers, including movement 21 tests, AI startup 4 tests, harness, expanded ARIA/army/economy/checkpoint, and shared Materials. `aria-supply-04` is now a full native attempt, with its source frozen for the run. Actual haul/air combat and complete mission acceptance remain pending.
+
+`aria-supply-04`: FAILED before mission launch. The wrapper entry used `Game.Tests.Editor.SkirmishS002AriaRunHarness`, but the verified class is `Game.Editor.SkirmishS002AriaRunHarness`. No mission began and there is no acceptance row. The wrapper-owned Editor remained open; permission to close only that failed validation Editor (PID 39082) was requested under AGENTS.md. Main-project Editor and Hub were not touched. Corrected rerun command is `Tools/CI/invoke_unity_macos.sh --project /private/tmp/warline-s003-player-ready --timeout 1500 --log /private/tmp/s003-aria-supply-05.log -- -executeMethod Game.Editor.SkirmishS002AriaRunHarness.RunFocusedAriaAndExit`. Never run it against the occupied project.
+
+User authorized closing the failed validation Editor. Before recovery, wrapper session 51647 had already exited 124 at its configured 1500-second timeout and stopped its owned PID 39082. Process inspection confirmed no active Editor owned the validation project; Hub remained running. No manual process termination was performed. The full log was recopied, and the corrected `aria-supply-05` wrapper run started.
+
+`aria-supply-05`: exit 2; startup census passed, then native ARIA stopped itself as Blocked after 74.641 simulated seconds. Candidate `656ed0d50c84bc0be44412e1fe3f5548b1a841d9d74e917212ab509b52b614d5`, both bases 800 HP. No operator Stop or gameplay mutation was used. Native read-only observations confirmed a paid/delivered logistics truck and queued Readiness, but no extra Rifle packet. The opening treated a hidden recruitment control as grounds to depart. `opening-transition-01`: exit 0, all combined pass markers; affordable recruitment now waits through temporary missing controls until its existing deadline. `aria-supply-06` includes detailed read-only input/planner and truck haul/cargo traces to diagnose the early Blocked state and physical supply. These are diagnostics, not a measured input-provenance acceptance pass.
+
+`aria-supply-06`: exit 2, native Abort/Blocked at 134.653 seconds, candidate `42505003d70930b2e77b262120f012c60a739a17a9764bf1f8f98f925247c84f`. Public recruitment delivered two four-member Rifle packets, increasing infantry from 12 to 20; exactly one logistics truck was committed. Read-only Pipeline inspection verified a real truck haul order (source 5, destination 7, phase 4), eight Oil barrels aboard, status 2/reason 0. This proves an active cargo route, not yet delivery to fabrication or the full air loop. Readiness was paid. No operator intervention or injected outcome.
+
+Successful periodic NEXT taps accumulated retry attempts because the same UI button identity persisted across pages. A page transition now clears tap retries without changing the battle-progress timestamp; unchanged pages retain retries, and page cycling still hits the 180-second watchdog. ARIA also reads the building card's authoritative eligibility before entering the Helipad purchase flow. `page-retries-pad-01` validates those changes. Input trace nested ECS structs did not serialize in run 06; the trace now explicitly emits scalar phase/attempt/target/planner fields and truck route/cargo fields. Missing nested fields from run 06 remain missing evidence, not assumed clean input.
+
+`page-retries-pad-01`: FAILED an S004 fixture that did not supply the new public pad-affordability field. Updated that affordable replacement-pad fixture; `page-retries-pad-02`: exit 0 with all required markers.
+
+`aria-supply-07`: FAILED, candidate `34e4f75800be531ffc850f0593e850f9626ff4872299bd9a35e136046b6b274f`. Paging no longer exhausted retries, Readiness completed, and Materials increased beyond the original fabrication oil grant. The reinforced attack still lost its force; fast vehicles arrived before infantry. The new pad-affordability check was incorrectly tied to the Build catalog object, which is destroyed when the drawer closes; it never opened an affordable pad purchase. One operator public Stop ended this diagnosed failure. Full log and unique main/input/actor traces remain retained; no counted win.
+
+Pad affordability now reads the persistent shared building catalog read model (authored Materials cost and CanRequest), current player bank, air-profile eligibility and current Readiness. It does not need the drawer to exist. A focused test varies the authored cost and requestability with no drawer. Persian Readiness/failure labels now use the existing localization RTL property rather than incorrectly comparing fa-IR with fa. Native Persian screen review remains pending. `persistent-pad-01` validates the follow-up.
+
+`persistent-pad-01`: exit 0 with all required combined markers. `aria-supply-08` is running, candidate `ea0c0e276a22b1d9811dbfeb167a720c5d6a824d8eb678ee01b3942e544494b5`. The persistent read-model check enabled actual normal-control Helipad construction. Read-only native inspection around 300 seconds: fabrication depot held 8 Oil, player Materials bank reported LifetimeFabricated=200; enemy without a truck remained at LifetimeFabricated=120. The starting fabrication depot had only 24 Oil (120 Materials worth), so this verifies physical resupply beyond the starting grant. Truck cargo/route samples are retained. The ground assault was lost; the air purchase/flight/outcome is still pending.
+
+
+### 2026-09-25 tower owner and native air diagnostic
+- Native supply-08 completed at normal speed with actual Victory/MainBaseDestroyed at 819.762 seconds (candidate ea0c0e2). It is **not counted**: input violations and interventions remain unmeasured (-1). No operator stopped this run. Physical oil haul, fabrication beyond the initial oil grant, paid readiness, Helipad, aircraft recruitment, public attack and base damage occurred. This does not prove landing/refuelling/second sortie or full human acceptance.
+- Ground losses exposed an actual stat-owner gap: native towers retained range 100 and cooldown 0.3 while mission ground weapons use range 18–24 and cooldown 1. Added symmetric typed tower overlay (700 HP, 10 damage, 22 range, shared 1-second interval) to both tower identities and bind BuildingDefenseWeapon, retaining authored concurrency. Shared building targeting now checks the optional domain/visibility policy at acquisition and firing, using lookup access without per-frame allocation.
+- tower-policy-01 exited 0 with all combined focused pass markers. tower-owner-regression-01 passed all 16 shared defense tests; launch omitted -quit, so the completed worktree Editor was closed through Pipeline using the user's existing permission. No active match or unrelated Editor was terminated.
+- Native Build screenshot review found Stop ARIA over card titles. The floating control now uses the unused Credits header slot only in Materials-only expanded matches. Native reinspection pending. Added selectable native review resolutions; no mockup counts as implemented visual acceptance.
+
+
+### 2026-09-25 ground victory, input counters, and remaining save gate
+- Native tower-native-09 (candidate 4c66d63, seed 104732 EN) completed Victory/MainBaseDestroyed at 275.268 seconds using the normal ARIA touch driver. No outcome/health/resource injections and no operator Stop. Input violations/interventions were still -1 on that candidate, so countedWin=0 and wrapper exit2 are retained. This is a diagnostic ground-route victory, not release certification.
+- Read-only Pipeline inspection confirmed both faction towers at range22/damage10/cooldown1; neutral map scenery retained100/10/0.3. The updated Stop ARIA header screenshot was inspected at1920×1080 and no longer obscures card titles.
+- Added dispatch/completion/sample/unexpected-sample/physical-takeover counters at the touch driver; gateway cancellation counts explicit stops separately. Harness copies input/actor/touch traces into each candidate evidence directory. Human interventions can now be measured; accepted-command coverage remains pending and InputViolations remains-1. No run is promoted by assuming missing evidence is zero.
+- input-save-fuel-01: exit0, all combined pass markers and22 input cases passed, along with shared aircraft/ground fuel safety checks. The fixture emitted a ShouldRunBehaviour assertion through manual SendMessage; changed fixture callbacks to direct managed reflection. Revalidation of that cleanup is pending.
+- Existing checkpoint schema only records actor health plus partial stock/receipt data and cannot reconstruct native actors, flight, transport, or managed production. Native capture/apply now rejects before mutation; fresh physical-supply restore rejects before creating a new session. Added rejection/atomicity regression. Full native save/resume remains an unfinished requirement, not a passed fixture claim.
+- Native mobile capture attempts requested1280×720 but produced1797×1016. Attempts02/03 explicitly failed the new size assertion. They are retained as failed resolution evidence. Investigating active Game View sizing; no1280 mobile review has passed yet.
+
+
+### Capture correction and receipt checks — 2026-09-25
+- Correction to the prior capture note: the actual PNG files were 1280×720. Screen.width/height inside the Editor update callback described the Editor window (1797×1016). Attempts02/03 remain failed measurement checks; the harness now validates PNG IHDR dimensions. visual-en-1280-04 exited0 with Captured/pngDimensions=Verified and StartupPassed. New opening-camera framing still needs visual inspection.
+- command-receipts-01 failed compilation because SystemBase.Time shadowed UnityEngine.Time; wrapper timed out124 and stopped only its own Editor. Fixed the qualified frame counter. command-receipts-02 exited0 with all nine required suite markers, 22 input cases and no ShouldRunBehaviour assertion. Receipt tests reject direct, stale, reused and previous-attempt command evidence. Native accepted-command coverage remains pending; InputViolations stays unknown until coverage is demonstrated.
+
+- receipts-native-10: natural Victory/MainBaseDestroyed at274.95s; 51 dispatched/completed gestures,335 samples,49 accepted-command records,0 receipt violations,0 unexpected samples and0 measured interventions. Coverage remains Pending and countedWin0/exit2. No operator Stop or outcome injection. terminal-receipts-01: exit0/all nine markers, including a real accepted army-service request with no input proof being recorded as a violation.
+- Result review uncovered immediate finished-session cleanup destroying owned actors and removing the compiled setup before Replay. Preserve finished actors/setup until explicit exit cleanup; failed startup still cleans up. Native result/freeze/return probe now uses an actual touch on the visible Main Menu button and keeps pre-return outcome facts. Validation in progress.
+
+- result-retention-01: wrapper0 but FAILED the final touch fixture's initial-press assertion; preceding cleanup/army/economy/checkpoint markers passed. Added detailed assertion state and isolated the fixture's synthetic input from pre-existing physical Editor devices, restoring every enabled device afterward. This failure is retained, not counted as a green combined suite.
+- terminal-native-11 (1280×720, candidate5d54dae9): FAILED at349.754s, operator public Stop counted as1 intervention. Native Build image inspected and readable; no result test reached. Around209s Unity refreshed assets with0 changed source files, reloaded its ECS subscene and deleted all35 healthy mission actors. Read-only entity census confirmed role count0 while base buildings survived. Preserved traces/log. The wrapper exited2; a subsequent scoped close found no Editor and did nothing.
+- Scene lifetime repair: detach SceneTag/SceneSection on instantiated starting actors and adopted paid actors, including linked visuals, while preserving prefab tags. A source-scene unload regression verifies surviving runtime actors and eventual linked cleanup. The unused direct enemy-base attack gateway was removed from production; its service exercise now lives only in the Edit-mode fixture. Validation pending.
+
+- scene-ownership-01: exit0, all required combined markers, including linked-actor source-scene unload and cleanup.
+- terminal-native-12: native Abort/Blocked at8.198s after3 completed taps on Build had no effect;0 commands,0 interventions. Opening capture showed HUD before the world rendered. Kept as FAILED evidence. Harness now waits for settled MatchHud and4 seconds of simulation before starting, and configures a temporary InputSettings clone for its explicitly enabled Editor background-validation mode. It restores settings afterward; shipping focus-loss behavior is unchanged. Revalidation pending.
+- Production/readiness now route material deltas through shared spend/refund accounting, including a Production category; checkpoint state restoration remains separate. Added transaction tests for category totals, partial refund, no-op version stability and rejected extra refund. Broader S002/S003/S004 definitions/catalog/objective/visual/evidence and Campaign/Skirmish UI checks are running.
+
+- broader-regressions-01: wrapper0 but FAILED in a stale S004 catalog assertion after all shared gameplay/input/material and definition markers passed. The evaluator correctly returned InProgress; the stale final assertion expected its input row (already Playable at test start) to change. Updated the test to assert non-mutation while keeping the evaluator readiness assertion. The broader runner now collects suite failures and runs all independent groups, with an aggregate pass marker only when every group succeeds.
+
+### Broader regression follow-up (2026-09-25)
+
+Broader runs 02 and 03 remain failed evidence despite wrapper exit 0. Run 02 found an obsolete header-only assumption in the historical S002 acceptance ledger; it now validates recorded rows without accepting them. Run 03 found an input fixture dependency on a saved active Editor scene and a census assertion hardcoded to content version 1. The fixture now owns a preview scene; census validation compares the actual authored version. Independent definition, catalog, objective, visual, materials and source-binding checks passed in run 03. The aggregate did not pass.
+
+Publication now requires complete matching acceptance evidence, in addition to file/hash presence, before evaluating a Playable flip. Existing S003/S004 capability gates remain closed. Historical evidence and file-only flip menus cannot certify this candidate. The next native run will also test settled HUD startup and explicit validation-only background input routing. Full native checkpoint reconstruction, air lifecycle, current-candidate normal-input acceptance and real player/device acceptance remain pending.
+
+### Broader regression 05 passed
+
+Checked-wrapper exit 0 and all constituent markers, including `[SkirmishPlayerReadyRegressions] result=Passed`, verified in `RepairEvidence/s003-broader-regressions-05.log`. Run 04 remains failed evidence: its input fixture exposed stale queued events from disabled devices causing a false physical takeover, and its final S004 asset assertion predated the already-published status. The input boundary now ignores disabled devices (including the initial held-button scan); the fixture explicitly queues a disabled-device press before its normal touch. The S004 dry evaluator still must leave the published asset unchanged while returning InProgress for insufficient evidence. No publication asset was promoted.
+
+This pass is automated coverage only. Native run 13 starts on the unchanged source candidate with settled HUD startup, validation-only background input routing, result freeze and normal-touch Main Menu validation. Real player/device acceptance and full native checkpoint restore remain pending.
+
+### Native run 13 — natural victory and terminal return; acceptance still pending
+
+Candidate `54b22995839762c3a12ed78af0e3cbbf5b9647731a2e1c373b96e7bcc25d25b0`, seed 104732, EN, 1280×720: natural MainBaseDestroyed victory at 280.051 seconds. The result retained 22 player actors, froze the simulation and base health for three seconds, and one normal touch returned to Main Menu with session cleanup. `[SkirmishTerminalProbe] result=Passed reason=frozenResultAnd:MAIN MENU completed=1 interventions=0`. Input recorder: 51 gestures/51 completed, 176 samples, 49 accepted command records, zero unexpected samples, receipt violations or measured interventions. Coverage is still recorded Pending (`InputViolations=-1`), so countedWin remains 0 and wrapper exit 2 is not an acceptance pass.
+
+Native opening and Build screenshots were inspected: rendered battlefield, readable mission clock/resources/readiness, visible Stop ARIA. Result and destination screenshots confirm the actual menu route. The result review found duplicate title/detail and zero casualty statistics despite combat deaths; those are being repaired. Read-only live inspection also confirmed enemy Hold with 20 supply against a 32-supply reserve floor. The reserve basis now uses the authored starting force, with regression cases for assault, depletion and recovery. Expanded outcomes reuse the shared loss tracker with attempt filtering and freeze before cleanup. These newer source changes require new automated/native validation; the run-13 victory is diagnostic, not final-candidate certification.
+
+### Broader regression 06 passed
+
+All constituent pass markers and aggregate `[SkirmishPlayerReadyRegressions] result=Passed` verified with wrapper exit 0. This includes the authored-force reserve threshold and attempt-scoped casualty tracking through terminal freeze and cleanup. The next native run uses seed 130366, fa-IR, 2400×1080, and the normal-touch Replay terminal action.
+
+### Native run 14 — real defeat, corrected statistics, failed Replay
+
+Candidate `afe7ff5257019d07a6edd73492815254101b1b86ea91761387831d2842f5c6e8`, seed 130366, fa-IR, 2400×1080. Read-only live strategy inspection showed AttackBase, LastScore 40, FailedAttempts 0: the enemy now acts instead of holding indefinitely below an impossible reserve threshold. ARIA lost its original Barracks naturally at 187.033 seconds after committing its force forward. The native result correctly shows Defeat, one own unit lost, two enemy units defeated, one own building lost and zero enemy buildings destroyed. Result title/detail are no longer duplicated.
+
+Frozen-result check passed; the Replay tap completed with zero interventions, but a fresh playable attempt did not start within the 45-second check. `[SkirmishTerminalProbe] result=Failed reason=returnTimeout`. Wrapper exit 2. Input diagnostics: 40 completed gestures, 111 samples, 48 command records, zero unexpected samples/receipt violations/interventions; overall coverage remains Pending and no counted win. Failed evidence is retained.
+
+Native Persian Build/readiness is readable at the wide aspect ratio. Opening help incorrectly used an exact `fa` comparison despite the configured `fa-IR`, and squad cards exposed raw enum names. Those have now been corrected using the canonical RTL property and short localized role labels. Replay now requests Play again and uses a one-time pending marker to arm only after healthy spawn/bootstrap, then removes the marker so ordinary pauses cannot be rearmed. Replay clears the previous casualty tracker. ARIA Air Mobile now reuses the existing visible two-tower opening after reinforcements, instead of abandoning its original Barracks. Broader regression 07 is checking these newer changes; this run is a legitimate loss and is not replaced by a forced outcome.
+
+### Broader regression 07 passed; input evidence measurement revision
+
+All constituent/aggregate markers passed and wrapper exited 0 for the Replay request/one-time arming marker, old casualty reset, localized help/cards and visible opening-defense sequence. The supported ARIA control call graph was then audited (see INPUT_EVIDENCE_AUDIT_2026-09-25.md). New terminal ledgers derive a measured violation total only when the recorder is active and its completed release count exactly matches the live driver; otherwise -1 remains. Direct-command and unexpected-sample counts remain violations, and terminal input intervention counts are included. Historical runs are unchanged. Broader run 08 and new native validation are required for this measurement revision.
+
+### Broader regression 08 passed; construction ownership correction
+
+Checked wrapper exited 0; all aggregate/constituent markers passed, including the new measured input-audit rules. Static review of the newly reused defensive construction path then found that normal player-built structures were not tagged as attempt-owned. They therefore missed mission tower overlays and were outside in-place Replay cleanup. The normal placement registration callback now explicitly adopts each successfully registered player structure into the active expanded attempt. It does not scan or adopt scenery, does not designate rebuilt Barracks as victory objectives, and supplies a unique runtime-building identity. The existing roster overlay and shared building teardown remain the execution owners. Added regression coverage proves tower policy, unique identities, no replacement objective, scenery exclusion and cleanup. Broader/Campaign run 09 is validating this correction before native play resumes.
+
+### Safe pause requested by user — 2026-09-25
+
+Broader/Campaign run 09 completed with checked-wrapper exit 0. All broader constituent markers and `[SkirmishPlayerReadyRegressions] result=Passed` verified, plus `[M01FirstContactCampaignUiValidation] result=Passed tests=10 captures=3`. This validates the latest construction ownership correction in automated coverage. Full log preserved in RepairEvidence/s003-broader-campaign-09.log.
+
+Paused after the validation process completed; no new native run was started. Changes remain uncommitted in /private/tmp/warline-s003-player-ready on codex/s003-player-ready. Next step on resume: unchanged-candidate native run 15, FA seed 130366 at 2400×1080 with Replay, verifying visible tower defense, attempt ownership/cleanup, localized help/cards, fresh playable Replay and measured input evidence. Native run 14 remains failed evidence. Current-candidate native acceptance, full native checkpoint restoration, air lifecycle and real player/device acceptance remain pending. Mission is not yet certified player-ready.

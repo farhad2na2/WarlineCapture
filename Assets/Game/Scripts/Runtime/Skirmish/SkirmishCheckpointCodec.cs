@@ -9,7 +9,7 @@ namespace Game.Runtime
 {
     public static class SkirmishCheckpointCodec
     {
-        public const int SchemaVersion = 1;
+        public const int SchemaVersion = 2;
 
         public static string Encode(SkirmishCheckpointDocument document)
         {
@@ -175,6 +175,8 @@ namespace Game.Runtime
             public string EnemyBaseObjectId;
             public byte Outcome;
             public byte EndReason;
+            public byte PhysicalSupplyInitialized;
+            public SkirmishCheckpointSupplyStore[] SupplyStores;
             public WireActor[] Actors;
             public WireReservation[] Reservations;
 
@@ -222,6 +224,8 @@ namespace Game.Runtime
                     EnemyBaseObjectId = payload.EnemyBaseObjectId ?? string.Empty,
                     Outcome = (byte)payload.Outcome,
                     EndReason = (byte)payload.EndReason,
+                    PhysicalSupplyInitialized = payload.PhysicalSupplyInitialized,
+                    SupplyStores = payload.SupplyStores,
                     Actors = ToWire(payload.Actors),
                     Reservations = ToWire(payload.Reservations)
                 };
@@ -279,6 +283,8 @@ namespace Game.Runtime
                     EnemyBaseObjectId = EnemyBaseObjectId ?? string.Empty,
                     Outcome = (SkirmishOutcomeKind)Outcome,
                     EndReason = (SkirmishEndReasonKind)EndReason,
+                    PhysicalSupplyInitialized = PhysicalSupplyInitialized,
+                    SupplyStores = SupplyStores ?? Array.Empty<SkirmishCheckpointSupplyStore>(),
                     Actors = FromWire(Actors),
                     Reservations = FromWire(Reservations)
                 };
@@ -323,6 +329,9 @@ namespace Game.Runtime
                         Category = reservation.Category,
                         MemberCount = reservation.MemberCount,
                         RemainingMembers = reservation.RemainingMembers,
+                        DeliveredMembers = reservation.DeliveredMembers,
+                        ProductionGroupId = reservation.ProductionGroupId,
+                        ProducerRuntimeId = reservation.ProducerRuntimeId,
                         MaterialsPaid = reservation.MaterialsPaid,
                         SupplyCost = reservation.SupplyCost,
                         Phase = reservation.Phase,
@@ -371,6 +380,9 @@ namespace Game.Runtime
                         Category = reservation.Category,
                         MemberCount = reservation.MemberCount,
                         RemainingMembers = reservation.RemainingMembers,
+                        DeliveredMembers = reservation.DeliveredMembers,
+                        ProductionGroupId = reservation.ProductionGroupId,
+                        ProducerRuntimeId = reservation.ProducerRuntimeId,
                         MaterialsPaid = reservation.MaterialsPaid,
                         SupplyCost = reservation.SupplyCost,
                         Phase = reservation.Phase,
@@ -402,6 +414,9 @@ namespace Game.Runtime
             public int Category;
             public int MemberCount;
             public int RemainingMembers;
+            public int DeliveredMembers;
+            public uint ProductionGroupId;
+            public int ProducerRuntimeId;
             public int MaterialsPaid;
             public int SupplyCost;
             public int Phase;

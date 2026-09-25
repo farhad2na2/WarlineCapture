@@ -17,6 +17,66 @@ namespace Game.Tests.Editor
     public sealed class SkirmishExpandedAriaTests
     {
         [Test]
+        public void AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true,
+                Infantry = 16, Time = 10, PlayerHealth = 800, EnemyHealth = 800,
+                DefenseBuild = new AriaTouchTarget { Id = 50, Available = true },
+                FocusPlayer = new AriaTouchTarget { Id = 51, Available = true },
+                PlacementConfirm = new AriaTouchTarget { Id = 52, Available = true },
+                Site0 = new AriaTouchTarget { Id = 53, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(51, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultStarted);
+            touch.Actions++;
+            view.Time = 11;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            view.Time = 14;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(50, output.TargetId, "Construction must begin through the presented Build control.");
+            plan.DefenseStage = 2;
+            plan.DefensePositioned = 1;
+            view.PlacementOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(52, output.TargetId);
+            Assert.AreEqual(0, plan.DefensesPlaced, "A proposed confirm is not a completed purchase.");
+            touch.Actions++;
+            view.PlacementOpen = false;
+            view.Time = 15;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(1, plan.DefensesPlaced);
+            Assert.AreEqual(0, plan.AssaultStarted);
+        }
+
+        [Test]
+        public void FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity()
+        {
+            var perception = new SkirmishPublicPerception
+            {
+                Playing = true, PlayerDesignatedAlive = true, EnemyDesignatedAlive = true,
+                OwnInfantryLive = 12, OwnGroundLive = 2, OwnSupplyLive = 20,
+                OwnStartingSupply = 20, OwnSupplyCap = 128
+            };
+            Assert.AreEqual(SkirmishStrategyPriority.AttackBase,
+                SkirmishStrategyScoring.ScoreBaseAssault(perception, null,
+                    SkirmishReadinessStage.Field, null, SkirmishStrategyPriority.None).Priority);
+            perception.OwnSupplyLive = 5;
+            Assert.AreEqual(SkirmishStrategyPriority.Hold,
+                SkirmishStrategyScoring.ScoreBaseAssault(perception, null,
+                    SkirmishReadinessStage.Field, null, SkirmishStrategyPriority.AttackBase).Priority);
+            perception.OwnSupplyLive = 10;
+            Assert.AreEqual(SkirmishStrategyPriority.AttackBase,
+                SkirmishStrategyScoring.ScoreBaseAssault(perception, null,
+                    SkirmishReadinessStage.Field, null, SkirmishStrategyPriority.Hold).Priority);
+        }
+
+        [Test]
         public void SharedScoringUsesEligibilityAndHidesHostileCash()
         {
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
@@ -345,8 +405,12 @@ namespace Game.Tests.Editor
             Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
 
             view.CanAffordAntiAir = false;
+            view.Infantry = 20;
             view.RecruitAntiAir = new AriaTouchTarget { Id = 51, Available = false };
-            view.AirQueueOffered = true;
+            view.AirQueueOffered = false;
+            view.ReadinessEligible = true;
+            view.CanBuildAirPad = true;
+            view.PadPresent = false;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
             Assert.AreEqual(52, output.TargetId);
@@ -491,8 +555,11 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishAriaSkillKind.Inspect, padSkill.Skill);
             Assert.AreEqual("pad.not_ready", padSkill.Field);
 
-            view.PadReady = false;
-            view.AirQueueOffered = true;
+            view.PadReady = afterPad.PadReady;
+            view.PadPresent = afterPad.PadPresent;
+            view.ReadinessEligible = afterPad.ReadinessEligible;
+            view.CanBuildAirPad = true;
+            view.AirQueueOffered = afterPad.AirQueueOffered;
             view.AirPad = new AriaTouchTarget { Id = 52, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
@@ -504,11 +571,245 @@ namespace Game.Tests.Editor
             Assert.AreEqual(enemyGround, em.GetComponentData<SkirmishEnemyCapacityComponent>(session).GroundLive);
         }
 
+        [Test]
+        public void ExpandedAttackWaitsForVisibleWorldTargetAndStalledBattleHandsBack()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, Time = 1,
+                AttackMode = true, SelectionVisible = true, Infantry = 12,
+                EnemyHealth = 800, PlayerHealth = 800,
+                Attack = new AriaTouchTarget { Id = 1, Available = true },
+                FocusEnemy = new AriaTouchTarget { Id = 2, Available = true },
+                EnemyBase = new AriaTouchTarget { Id = 3, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(3, output.TargetId);
+            Assert.AreEqual(AriaSkirmishIntent.TargetBase, plan.Intent);
+
+            view.EnemyBase.Available = false;
+            view.Time = 10;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(2, output.TargetId);
+            Assert.AreEqual(AriaSkirmishIntent.FindBase, plan.Intent);
+            Assert.AreEqual(1, touch.LastObjectiveProgressAt);
+
+            view.Time = 182;
+            touch.GestureRequested = 1;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase);
+            Assert.AreEqual(0, touch.GestureRequested);
+        }
+
+        [Test]
+        public void ExpandedCatalogSwipePreservesGestureAndPlacementHasDeadline()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, Time = 1,
+                Infantry = 8, CanAffordRifle = true,
+                Recruit = new AriaTouchTarget { Id = 4, Available = true,
+                    Drag = true, Position = new Vector2(100, 100), DragEnd = new Vector2(100, 400) }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(4, output.TargetId);
+            Assert.AreEqual(1, output.Drag);
+            Assert.AreEqual(view.Recruit.DragEnd, output.DragEnd);
+
+            view.PlacementOpen = true;
+            view.PlacementConfirm = new AriaTouchTarget { Id = 5, Available = true };
+            view.PlacementCancel = new AriaTouchTarget { Id = 6, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(5, output.TargetId);
+            view.Time = 27;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(6, output.TargetId);
+        }
+
+        [Test]
+        public void ExpandedAssaultDoesNotFinishWhenNextPageIsCovered()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, Time = 1,
+                EnemyDesignatedAlive = true, ExpandedNextPage = true,
+                ExpandedAssaultMask = 15, ExpandedAttackOrderMask = 15,
+                ExpandedSelectedMask = 15, ExpandedStructureMask = 4,
+                CanUpgradeReadiness = true,
+                UpgradeReadiness = new AriaTouchTarget { Id = 10, Available = true },
+                CloseDrawer = new AriaTouchTarget { Id = 11, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            view.DrawerOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(11, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            view.DrawerOpen = false;
+            view.Squad4 = new AriaTouchTarget { Id = 12, Available = true };
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(12, output.TargetId);
+            Assert.AreEqual(0, plan.AssaultIssued);
+            // A request is not a completed page transition. Keep the target
+            // stable while the touch actuator aims and releases.
+            for (int frame = 0; frame < 4; frame++)
+            {
+                view.Time += .2f;
+                AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+                Assert.AreEqual(12, output.TargetId);
+                Assert.AreEqual(0, plan.AssaultIssued);
+            }
+        }
+
+        [Test]
+        public void AirOpeningWaitsForDeliveryAndCommitsOneSupplyTruck()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, Time = 1,
+                Infantry = 12, CanAffordRifle = true, CanAffordLogisticsTruck = true,
+                Recruit = new AriaTouchTarget { Id = 71, Available = true },
+                RecruitLogisticsTruck = new AriaTouchTarget { Id = 72, Available = true },
+                CloseDrawer = new AriaTouchTarget { Id = 73, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(71, output.TargetId);
+            view.Recruit = default;
+            view.Time = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            Assert.AreEqual(0, plan.AssaultStarted, "A transiently hidden control must not abandon recruitment.");
+            view.Recruit = new AriaTouchTarget { Id = 71, Available = true };
+            view.RifleRecruitPending = true;
+            view.DrawerOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(73, output.TargetId, "Close Build while the paid packet arrives.");
+            view.DrawerOpen = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            Assert.AreEqual(0, plan.AssaultStarted);
+            view.Infantry = 20;
+            view.RifleRecruitPending = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(72, output.TargetId);
+            Assert.AreEqual(1, plan.AssaultStarted);
+            view.LogisticsTruckCommitted = true;
+            view.DrawerOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(73, output.TargetId, "A pending truck is already committed.");
+        }
+
+        [Test]
+        public void AirSupplyProgressIsBoundedAndRepeatedMilestonesDoNotMaskAStall()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, Time = 1,
+                Infantry = 20, LogisticsTruckCommitted = true, OwnMaterials = 100
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            view.Time = 150; view.OwnMaterials = 120;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(150, plan.LastProgressAt);
+            view.Time = 200; view.OwnMaterials = 100;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            view.Time = 220; view.OwnMaterials = 120;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(150, plan.LastProgressAt, "Earning previously spent stock is not new progress.");
+            view.Time = 250; view.OwnMaterials = 300;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(250, plan.LastProgressAt);
+            view.Time = 431; view.OwnMaterials = 400;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase, "Saving beyond the aircraft goal must not hide a stall.");
+        }
+
+        [Test]
+        public void SuccessfulPagingClearsTapRetriesWithoutExtendingBattleWatchdog()
+        {
+            var view = new AriaSkirmishObservation
+            { Active = true, ExpandedSession = true, Infantry = 20, Time = 10, ExpandedPageIndex = 1 };
+            var plan = new AriaSkirmishPlanComponent { LastProgressAt = 1, Infantry = 20 };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing, Attempts = 3 };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(0, touch.Attempts);
+            Assert.AreEqual(1, plan.LastProgressAt);
+            touch.Attempts = 2;
+            view.Time = 11;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(2, touch.Attempts, "An unchanged page cannot erase failed taps.");
+            view.ExpandedPageIndex = 0; view.Time = 182;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayPhase.Blocked, touch.Phase, "Paging must not keep a stagnant battle alive.");
+        }
+
+        [Test]
+        public void AirPadPlanningWaitsUntilThePublicCardIsAffordable()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, Infantry = 20,
+                ReadinessEligible = true, AirPad = new AriaTouchTarget { Id = 82, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
+            view.CanBuildAirPad = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(82, output.TargetId);
+        }
+
+        [Test]
+        public void PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer()
+        {
+            using var world = new World(nameof(PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer));
+            var em = world.EntityManager;
+            CompileAndSpawnS003(em, out var session, out _);
+            var authored = SkirmishExpansionCatalogFactory.CreateInMemory();
+            var readiness = new SkirmishResearchStateComponent { Readiness = SkirmishReadinessStage.Established };
+            if (em.HasComponent<SkirmishResearchStateComponent>(session)) em.SetComponentData(session, readiness);
+            else em.AddComponentData(session, readiness);
+            var boundary = em.CreateEntity(typeof(BuildingRuntimeStateTag));
+            var catalog = em.AddBuffer<BuildingConfiguredSpawnableReadModel>(boundary);
+            int balance = SkirmishMaterialsService.Read(em, session, 1);
+            var item = new BuildingConfiguredSpawnableReadModel
+            { BuildingId = "Building_Helipad", MaterialsCost = balance + 1, CanRequest = 1 };
+            catalog.Add(item);
+            Assert.IsFalse(SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).CanBuildAirPad);
+            item.MaterialsCost = balance; catalog[0] = item;
+            Assert.IsTrue(SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).CanBuildAirPad);
+            item.CanRequest = 0; catalog[0] = item;
+            Assert.IsFalse(SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).CanBuildAirPad);
+            em.DestroyEntity(boundary);
+            Assert.IsFalse(SkirmishAriaPublicProjection.FromSession(em, session, authored.ArmyAir).CanBuildAirPad);
+        }
+
         public static void RunFocusedValidation()
         {
             try
             {
                 var suite = new SkirmishExpandedAriaTests();
+                suite.AirOpeningUsesVisibleDefenseControlsBeforeCommittingTheAssault();
+                suite.FieldArmyReservesPartOfItsStartingForceInsteadOfUnfilledCapacity();
                 suite.SharedScoringUsesEligibilityAndHidesHostileCash();
                 suite.EnemyStrategyRecruitsThroughSharedProduceAndLeavesPlayerStocks();
                 suite.EnemyAttackRequiresVisibleTargetAndUsesLegalGroupOrder();
@@ -517,6 +818,14 @@ namespace Game.Tests.Editor
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
                 suite.S003AirMobilePublicControlsDoNotMutateGameplay();
                 suite.S004EstablishedPadReadyDoesNotMutatePlayerStocks();
+                suite.ExpandedAttackWaitsForVisibleWorldTargetAndStalledBattleHandsBack();
+                suite.ExpandedCatalogSwipePreservesGestureAndPlacementHasDeadline();
+                suite.ExpandedAssaultDoesNotFinishWhenNextPageIsCovered();
+                suite.AirOpeningWaitsForDeliveryAndCommitsOneSupplyTruck();
+                suite.AirSupplyProgressIsBoundedAndRepeatedMilestonesDoNotMaskAStall();
+                suite.SuccessfulPagingClearsTapRetriesWithoutExtendingBattleWatchdog();
+                suite.AirPadPlanningWaitsUntilThePublicCardIsAffordable();
+                suite.PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer();
                 SkirmishS002AriaHarnessTests.RunFocusedValidation();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");
             }

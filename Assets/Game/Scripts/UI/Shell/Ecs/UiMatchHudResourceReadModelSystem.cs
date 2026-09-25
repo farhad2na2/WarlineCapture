@@ -38,15 +38,15 @@ namespace Game.UI.Shell.Ecs
             uint materialsVersion = 0u;
             bool foundPlayer = false;
 
-            // An expanded skirmish session keeps its ledger on the session entity;
-            // the faction tactical component either does not exist or belongs to the
-            // legacy economy and would misreport the match as 0/0.
+            // Old standalone fixtures may have a session stock without the shared bank.
+            // Live sessions project the same tactical materials used by construction.
             if (!_expandedStockQuery.IsEmptyIgnoreFilter)
             {
                 Entity session = _expandedStockQuery.GetSingletonEntity();
                 SkirmishExpandedSessionComponent expanded =
                     state.EntityManager.GetComponentData<SkirmishExpandedSessionComponent>(session);
-                if (expanded.IsLegacy == 0)
+                if (expanded.IsLegacy == 0 &&
+                    !state.EntityManager.HasComponent<Game.Runtime.SkirmishSharedMaterialsInitialized>(session))
                 {
                     SkirmishEconomyStockComponent stock =
                         state.EntityManager.GetComponentData<SkirmishEconomyStockComponent>(session);

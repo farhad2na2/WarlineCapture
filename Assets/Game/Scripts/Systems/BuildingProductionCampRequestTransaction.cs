@@ -22,6 +22,13 @@ namespace Game.Runtime
                 !SkirmishCatalogPolicy.Allows(catalogEm, prefab, context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab)))
                 return CampRequestFailure.InvalidSelection;
 
+            if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var readinessWorld))
+            {
+                var readinessFailure = SkirmishNativeProduction.RequestFailure(readinessWorld, prefab,
+                    context.ConfiguredDefinitionsByPrefab != null && context.ConfiguredDefinitionsByPrefab.ContainsKey(prefab));
+                if (readinessFailure != CampRequestFailure.None) return readinessFailure;
+            }
+
             if (context.ConfiguredDefinitionsByPrefab != null &&
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
             {
@@ -90,7 +97,8 @@ namespace Game.Runtime
             if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var populationEm) &&
                 context.RuntimeBuildings != null && context.RuntimeBuildings.TryGetValue(populationProducerId, out var populationProducer) &&
                 !SkirmishPopulationPolicy.CanQueue(populationEm, context.RuntimeBuildings, populationProducer, prefab, populationProductionIndex))
-                return prefab.name.ToLowerInvariant().Contains("soldier") ? CampRequestFailure.InfantryLimit : CampRequestFailure.LogisticsLimit;
+                return SkirmishNativeProduction.TrySession(populationEm, out _) ? CampRequestFailure.ArmyCapacityReached :
+                    prefab.name.ToLowerInvariant().Contains("soldier") ? CampRequestFailure.InfantryLimit : CampRequestFailure.LogisticsLimit;
 
             if (!HasGlobalQueueCapacity(context))
                 return CampRequestFailure.GlobalProductionQueueFull;
@@ -191,7 +199,9 @@ namespace Game.Runtime
                 return CampRequestFailure.MissingProducerBuilding;
             }
 
-            CampRequestFailure buildingSpendFailure = TrySpendUnitProductionResources(
+            bool missionReceipt = context.TryGetEntityManager != null && context.TryGetEntityManager(out var receiptWorld) &&
+                SkirmishNativeProduction.TrySession(receiptWorld, out _);
+            CampRequestFailure buildingSpendFailure = missionReceipt ? CampRequestFailure.None : TrySpendUnitProductionResources(
                 context,
                 creditsCost,
                 materialsCost);
@@ -202,7 +212,7 @@ namespace Game.Runtime
                 !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingEntity producerBuilding) ||
                 producerBuilding == null)
             {
-                RestoreUnitProductionResources(context, creditsCost, materialsCost);
+                if (!missionReceipt) RestoreUnitProductionResources(context, creditsCost, materialsCost);
                 return CampRequestFailure.InvalidSelection;
             }
 
@@ -217,7 +227,7 @@ namespace Game.Runtime
                     frameCount,
                     out byte resultCode))
             {
-                RestoreUnitProductionResources(context, creditsCost, materialsCost);
+                if (!missionReceipt) RestoreUnitProductionResources(context, creditsCost, materialsCost);
                 return resultCode switch
                 {
                     BuildingUiProductionCommandResultElement.GlobalQueueFull => CampRequestFailure.GlobalProductionQueueFull,
@@ -229,7 +239,7 @@ namespace Game.Runtime
             if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var paidWorld))
             {
                 using var skirmish = paidWorld.CreateEntityQuery(typeof(SkirmishMatchState));
-                if (!skirmish.IsEmptyIgnoreFilter && producerBuilding.PendingProductions.Count > 0)
+                if (!missionReceipt && !skirmish.IsEmptyIgnoreFilter && producerBuilding.PendingProductions.Count > 0)
                 {
                     var paid = producerBuilding.PendingProductions[producerBuilding.PendingProductions.Count - 1];
                     paid.RefundableMaterials = materialsCost;

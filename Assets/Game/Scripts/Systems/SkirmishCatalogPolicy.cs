@@ -11,6 +11,8 @@ namespace Game.Runtime
         {
             using var session = em.CreateEntityQuery(typeof(SkirmishMatchState));
             if (session.IsEmptyIgnoreFilter) return true;
+            if (SkirmishNativeProduction.TrySession(em, out var expanded))
+                return em.GetComponentObject<SkirmishProductionCatalogRecord>(expanded).Catalog?.Allows(prefab, building) == true;
             var preset = SkirmishPresetResolver.Load(em);
             if (prefab == null || preset == null || preset.buildingPlacement == null) return false;
             var allowed = building ? preset.buildingPlacement.Spawnables :

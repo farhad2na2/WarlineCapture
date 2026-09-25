@@ -62,6 +62,26 @@ namespace Game.Configs
     public class BuildingPlacementSystemConfig : ScriptableObject, ICatalogPrefabSource
     { [SerializeField] private Camera worldCamera; [SerializeField] private GameObject roadPreviewPrefab; [SerializeField] private GameObject buildingSelectionMarkerPrefab; [Min(0.1f), SerializeField] private float buildButtonPreviewDistanceMultiplier = 1f; [Min(0.1f), SerializeField] private float unitCommandButtonPreviewDistanceMultiplier = 1f; [Min(0), SerializeField] private int maxQueuedUnitProductions = 25; [SerializeField] private List<GameObject> spawnables = new(); [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig; [SerializeField] private InitialUnitsSpawnerAuthoringConfig initialUnitsConfig; [SerializeField] private float buildPlaneY; [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
+        [System.NonSerialized] private BuildingProductionRecipe[] runtimeProductionRecipes;
+        public IReadOnlyList<BuildingProductionRecipe> RuntimeProductionRecipes => runtimeProductionRecipes;
+
+        public static BuildingPlacementSystemConfig CreateRuntimeCatalogOverlay(
+            BuildingPlacementSystemConfig source,
+            UnitPrefabRegistryAuthoringConfig registry,
+            IReadOnlyList<GameObject> buildings,
+            BuildingProductionRecipe[] recipes)
+        {
+            if (source == null || registry == null || buildings == null || recipes == null)
+                throw new System.ArgumentNullException("Runtime catalog requires source, registry, buildings and recipes.");
+            var overlay = Instantiate(source);
+            overlay.name = source.name + " (Match Catalog)";
+            overlay.hideFlags = HideFlags.HideAndDontSave;
+            overlay.unitPrefabRegistryConfig = registry;
+            overlay.spawnables = new List<GameObject>(buildings);
+            overlay.runtimeProductionRecipes = (BuildingProductionRecipe[])recipes.Clone();
+            return overlay;
+        }
+
         public Camera WorldCamera => worldCamera;
         public GameObject RoadPreviewPrefab => roadPreviewPrefab;
         public GameObject BuildingSelectionMarkerPrefab => buildingSelectionMarkerPrefab;

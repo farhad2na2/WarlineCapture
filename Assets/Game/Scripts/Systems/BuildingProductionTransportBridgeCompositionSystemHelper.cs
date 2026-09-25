@@ -165,7 +165,8 @@ namespace Game.Runtime
             int reservedProductionSlotIndex,
             Vector3? overrideWorldPosition,
             int2? overrideCell,
-            ref uint randomState)
+            ref uint randomState,
+            RuntimeBuildingEntity.PendingProduction pending = null)
         {
             if (context.SpawnSystem == null)
                 return false;
@@ -186,7 +187,7 @@ namespace Game.Runtime
                 gridEntity,
                 grid,
                 blockerData,
-                ref randomState);
+                ref randomState, pending);
             if (spawned)
                 FocusNewestPlayerProducedUnit(context, building, em);
 

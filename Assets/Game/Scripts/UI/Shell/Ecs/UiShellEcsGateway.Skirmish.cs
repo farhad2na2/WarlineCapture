@@ -6,8 +6,51 @@ using Unity.Entities;
 using UnityEngine;
 namespace Game.UI.Shell.Ecs
 {
-    public sealed partial class UiShellEcsGateway : IUiSkirmishGateway
+    public sealed partial class UiShellEcsGateway : IUiSkirmishGateway, IUiSkirmishReadinessGateway
     {
+        bool IUiSkirmishReadinessGateway.TryReadSkirmishReadiness(out UiSkirmishReadinessModel model)
+        {
+            model = default;
+            if (!TrySkirmish(out var em, out var session, out var match) || match.Phase != SkirmishPhase.Playing ||
+                !SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
+                !em.HasComponent<SkirmishResearchStateComponent>(session)) return false;
+            model.Visible = true;
+            model.Stage = (byte)em.GetComponentData<SkirmishResearchStateComponent>(session).Readiness;
+            model.CanUpgrade = SkirmishResearchService.CanQueue(em, session,
+                Game.Skirmish.Contracts.SkirmishResearchKind.Readiness, 1, out var decision, out var seconds);
+            model.MaterialsCost = decision.MaterialsCost;
+            model.RemainingSeconds = seconds;
+            model.Reason = decision.Reason.ToString();
+            if (em.HasBuffer<SkirmishResearchQueueItem>(session))
+                foreach (var item in em.GetBuffer<SkirmishResearchQueueItem>(session))
+                    if (item.FactionId == 1 && item.Kind == Game.Skirmish.Contracts.SkirmishResearchKind.Readiness &&
+                        item.Phase is Game.Skirmish.Contracts.SkirmishResearchPhase.Queued or Game.Skirmish.Contracts.SkirmishResearchPhase.Researching)
+                    {
+                        model.InProgress = model.CanCancel = true;
+                        model.CanUpgrade = false;
+                        model.ResearchId = item.ResearchId;
+                        model.MaterialsCost = item.MaterialsPaid;
+                        model.RemainingSeconds = item.RemainingSeconds;
+                        break;
+                    }
+            using var gameplay = em.CreateEntityQuery(typeof(RuntimeGameplayStateComponent));
+            if (gameplay.CalculateEntityCount() == 1 && gameplay.GetSingleton<RuntimeGameplayStateComponent>().SimulationActive == 0)
+                model.CanUpgrade = model.CanCancel = false;
+            return true;
+        }
+
+        bool IUiSkirmishReadinessGateway.TryRequestSkirmishReadiness(uint cancelResearchId)
+        {
+            if (!((IUiSkirmishReadinessGateway)this).TryReadSkirmishReadiness(out var model) ||
+                (cancelResearchId == 0 ? !model.CanUpgrade : !model.CanCancel || cancelResearchId != model.ResearchId) ||
+                !TrySkirmish(out var em, out var session, out _) || !em.HasBuffer<SkirmishReadinessRequest>(session)) return false;
+            var requests = em.GetBuffer<SkirmishReadinessRequest>(session);
+            if (requests.Length != 0) return false;
+            requests.Add(new SkirmishReadinessRequest { CancelResearchId = cancelResearchId,
+                InputReceipt = AriaCommandEvidence.ClaimRelease(UnityEngine.Time.frameCount) });
+            return true;
+        }
+
         bool IUiSkirmishGateway.TryReadSkirmish(out UiSkirmishModel model)
         {
             model=default;
@@ -102,6 +145,28 @@ namespace Game.UI.Shell.Ecs
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };
+            if (expanded && em.HasComponent<SkirmishResolvedSetupRecord>(session))
+            {
+                var setup = em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup;
+                if (setup != null)
+                {
+                    var publicView = SkirmishAriaPublicProjection.FromSession(em, session,
+                        SkirmishArmyProfileConfig.ResolveCached(setup.ArmyProfileId));
+                    model.OwnMaterials = publicView.OwnMaterials;
+                    model.CanAffordRifle = publicView.CanAffordRifle;
+                    model.CanAffordAntiAir = publicView.CanAffordAntiAir;
+                    model.CanAffordLogisticsTruck = publicView.CanAffordLogisticsTruck;
+                    model.CanBuildAirPad = publicView.CanBuildAirPad;
+                    model.LogisticsTruckCommitted = publicView.LogisticsTruckCommitted;
+                    model.RifleRecruitPending = publicView.RifleRecruitPending;
+                    model.AirProfile = publicView.AirProfile;
+                    model.PadPresent = publicView.PadPresent;
+                    model.ReadinessEligible = publicView.ReadinessEligible;
+                    model.CanQueueAir = publicView.AirQueueOffered;
+                    model.VisibleHostileCombat = publicView.VisibleHostileCombat;
+                    model.VisibleHostileAir = publicView.VisibleHostileAir;
+                }
+            }
             return true;
         }
         bool IUiSkirmishGateway.TryRequestSkirmish(UiSkirmishAction action)

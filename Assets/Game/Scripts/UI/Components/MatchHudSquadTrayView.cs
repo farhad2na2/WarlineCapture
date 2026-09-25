@@ -7,7 +7,7 @@ using Game.UI.Contracts;
 namespace Game.UI.Runtime
 {
     [DisallowMultipleComponent]
-    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView
+    public sealed partial class MatchHudSquadTrayView : MonoBehaviour, IMatchHudSquadTrayView, IMatchHudSquadTrayPortraitBinding
     {
         // UiAssistantHighlightModel deliberately carries the ECS target kind as a byte so
         // Game.UI.Runtime does not depend on the gameplay-components assembly.
@@ -127,10 +127,14 @@ namespace Game.UI.Runtime
         private int lastMissionSquadMask=-1;
         private bool skirmishPortraitsApplied;
         private Sprite[] campaignPortraits;
+        private Func<int, Sprite> resolvePresentedPortrait;
+        private TMP_Text nextPageArrow;
+
+        public void ConfigurePortraitResolver(Func<int, Sprite> resolver) => resolvePresentedPortrait = resolver;
 
         internal void RefreshMissionRestrictions()
         {
-            if(UiShellRuntimeGateway.TryReadSkirmish(out _) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var skirmishCards))
+            if(UiShellRuntimeGateway.TryReadSkirmish(out var portraitMission) && UiShellRuntimeGateway.TryReadMatchHudSquadTray(out var skirmishCards))
             {
                 if(!skirmishPortraitsApplied && cards.Length>=5)
                 {
@@ -138,15 +142,27 @@ namespace Game.UI.Runtime
                     for(int i=0;i<cards.Length;i++)campaignPortraits[i]=cards[i].PortraitImage!=null?cards[i].PortraitImage.sprite:null;
                     var rifle=cards[0].PortraitImage!=null?cards[0].PortraitImage.sprite:null;
                     var armor=cards[1].PortraitImage!=null?cards[1].PortraitImage.sprite:null;
-                    for(int i=0;i<5;i++)if(cards[i].PortraitImage!=null)cards[i].PortraitImage.sprite=i==4?armor:rifle;
+                    if (!portraitMission.Expanded)
+                        for(int i=0;i<5;i++)if(cards[i].PortraitImage!=null)cards[i].PortraitImage.sprite=i==4?armor:rifle;
                     skirmishPortraitsApplied=true;
                 }
-                for(int i=0;i<5;i++)if(TryGetCard(i,out var card))UiLocalizedText.Set(card.NameLabel,skirmishCards.GetCard(i).Title);
+                for (int i = 0; i < 5; i++)
+                {
+                    if (!TryGetCard(i, out var card)) continue;
+                    UiLocalizedText.Set(card.NameLabel, skirmishCards.GetCard(i).Title);
+                    if (!portraitMission.Expanded || card.PortraitImage == null) continue;
+                    Sprite portrait = i < 4 ? resolvePresentedPortrait?.Invoke(i) : null;
+                    card.PortraitImage.enabled = portrait != null;
+                    if (portrait != null) card.PortraitImage.sprite = portrait;
+                }
+                SetNextPageArrow(portraitMission.Expanded && skirmishCards.GetCard(4).Visible);
             }
             else if(skirmishPortraitsApplied)
             {
                 for(int i=0;i<cards.Length && i<campaignPortraits.Length;i++)
-                    if(cards[i].PortraitImage!=null)cards[i].PortraitImage.sprite=campaignPortraits[i];
+                    if(cards[i].PortraitImage!=null)
+                    { cards[i].PortraitImage.sprite=campaignPortraits[i]; cards[i].PortraitImage.enabled=true; }
+                SetNextPageArrow(false);
                 skirmishPortraitsApplied=false;
             }
             int mask=-1;
@@ -208,8 +224,9 @@ namespace Game.UI.Runtime
                     card.Button.interactable = true;
                     if (_missionDisabled[i])
                     {
-                        _missionDisabled[i] = false;
-                        ApplyMissionDisabledTreatment(i, false);
+                        // Clear the same restriction reason that applied the gray material.
+                        // Other reasons (for example a cinematic lock) remain owned by their caller.
+                        SetCardDisabled(i, false, false);
                     }
                 }
             }
@@ -364,7 +381,6 @@ namespace Game.UI.Runtime
         private void OnCardClicked(int index)
         {
             UIAudioEventGateway.Raise(UIAudioEventKind.ButtonPrimaryClick);
-            UiShellRuntimeGateway.TrySelectExpandedPresentedSlot(index);
             _cardClicked?.Invoke(ToSlot(index));
             if (_assistantGuidanceActive && index == 0)
             {

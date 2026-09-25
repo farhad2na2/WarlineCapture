@@ -173,6 +173,11 @@ namespace Game.Runtime
                         continue;
                     }
                     bool isGroundMissileLauncher = entityManager.HasComponent<GroundMissileLauncherComponent>(entity);
+                    if (SkirmishSharedCombatBinding.UsesSharedCommands(entityManager, entity))
+                    {
+                        if (SkirmishArmyCommandService.TryAttackMember(entityManager, entity, targetEntity)) issuedCount++;
+                        continue;
+                    }
                     if (!ValidateGroundMissileLauncherRange(entityManager, entity, targetTransform.Position, out TacticalCommandResult missileRangeResult))
                     {
                         missileRangeRejection = missileRangeResult;

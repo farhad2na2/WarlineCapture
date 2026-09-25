@@ -181,6 +181,9 @@ namespace Game.Runtime
                             source.BuildingRuntimeContextFactoryCompositionSystemHelper.CreateOwnershipContext(runtimeContextSource),
                             building,
                             FactionIdentity.PlayerFactionId);
+                        if (runtimeContextSource.TryGetEntityManager(out var em))
+                            SkirmishScenarioSpawnSystem.AdoptConstructedBuilding(em, building.CombatEntity,
+                                building.Definition?.Prefab != null ? building.Definition.Prefab.name : string.Empty);
                     }
 
                     return building;

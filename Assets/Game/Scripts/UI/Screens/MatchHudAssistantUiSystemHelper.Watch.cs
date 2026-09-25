@@ -153,16 +153,12 @@ namespace Game.UI.Runtime
             watchRaycast.position = point;
             watchHits.Clear(); EventSystem.current.RaycastAll(watchRaycast, watchHits);
             if (world) return watchHits.Count == 0;
-            // A label or panel graphic must not hide an interactable control.
-            // The control is reachable when no other interactable button is in front of it.
-            for (int i = 0; i < watchHits.Count; i++)
-            {
-                Button button = watchHits[i].gameObject.GetComponentInParent<Button>();
-                if (button == null || !button.IsActive() || !button.IsInteractable())
-                    continue;
-                return button.GetEntityId().GetHashCode() == targetId;
-            }
-            return false;
+            // Unity dispatches the first raycast hit. A modal/non-button graphic
+            // can block a button even when that button is otherwise interactable.
+            if (watchHits.Count == 0) return false;
+            Button button = watchHits[0].gameObject.GetComponentInParent<Button>();
+            return button != null && button.IsActive() && button.IsInteractable() &&
+                button.GetEntityId().GetHashCode() == targetId;
         }
 
         private void RenderWatchFinger(AriaPlayModel state)
@@ -218,6 +214,11 @@ namespace Game.UI.Runtime
             stopRect.anchorMin = stopRect.anchorMax = stopRect.pivot = new Vector2(.5f, 1f);
             stopRect.sizeDelta = new Vector2(Mathf.Max(180, Screen.width * .14f), Mathf.Max(60, Screen.height * .065f));
             stopRect.position = new Vector3(safe.center.x, safe.yMax - Mathf.Max(84, Screen.height * .13f));
+            if (watchBuild != null && watchBuild.TryGetAriaStopBounds(out Rect headerStop))
+            {
+                stopRect.sizeDelta = headerStop.size;
+                stopRect.position = new Vector3(headerStop.center.x, headerStop.yMax);
+            }
             watchFinger.Present(state);
         }
 

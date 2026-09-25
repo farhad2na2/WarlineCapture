@@ -38,8 +38,7 @@ namespace Game.UI.Runtime
             return new BuildDrawerCatalogItem(
                 category,
                 prefab,
-                category == BuildDrawerCategory.Soldiers && UiShellRuntimeGateway.TryReadSkirmish(out _)
-                    ? "Rifle squad (4)" : ResolveUnitDisplayName(prefab, metadata),
+                ResolveUnitDisplayName(prefab, metadata),
                 ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
                 ResolveUnitDescription(prefab, metadata),
                 metadata.MaterialsCost,

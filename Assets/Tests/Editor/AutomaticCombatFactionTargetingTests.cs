@@ -9,6 +9,33 @@ using Game.Runtime;
 public sealed class AutomaticCombatFactionTargetingTests
 {
     [Test]
+    public void AcquisitionAndRetaliationRespectAuthoredDomainsAndVisibility()
+    {
+        using var world = new World(nameof(AcquisitionAndRetaliationRespectAuthoredDomainsAndVisibility));
+        var em = world.EntityManager; CreateGrid(em);
+        var attacker = CreateCombatUnit(em, 1, new int2(10, 10), 8);
+        var aircraft = CreateCombatUnit(em, 2, new int2(11, 10), 8);
+        var ground = CreateCombatUnit(em, 2, new int2(13, 10), 8);
+        em.AddComponentData(attacker, new CombatTargetPolicy
+        { AllowedTargets = CombatTargetDomain.Ground, Domain = CombatTargetDomain.Infantry, Visible = 1 });
+        em.AddComponentData(aircraft, new CombatTargetPolicy { Domain = CombatTargetDomain.Air, Visible = 1 });
+        em.AddComponentData(ground, new CombatTargetPolicy { Domain = CombatTargetDomain.Ground, Visible = 1 });
+        em.RemoveComponent<UnitAttack>(ground);
+        em.RemoveComponent<UnitCombat>(ground); // An unarmed logistics vehicle remains a valid hostile target.
+        var end = world.CreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        var engagement = world.CreateSystem<UnitEngagementSystem>();
+        world.SetTime(new TimeData(1, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.AreEqual(ground, em.GetComponentData<EngageTarget>(attacker).Target);
+        em.RemoveComponent<EngageTarget>(attacker);
+        em.SetComponentData(ground, new CombatTargetPolicy { Domain = CombatTargetDomain.Ground, Visible = 0 });
+        em.AddComponentData(attacker, new RecentAttacker { Attacker = aircraft });
+        world.SetTime(new TimeData(2, .2f)); engagement.Update(world.Unmanaged);
+        em.CompleteAllTrackedJobs(); end.Update();
+        Assert.IsFalse(em.HasComponent<EngageTarget>(attacker));
+    }
+
+    [Test]
     public void AttackMove_AcquiresHostileBuildingButIgnoresNeutralDeadAndSuppressedBuildings()
     {
         using var world = new World("AttackMove building acquisition");

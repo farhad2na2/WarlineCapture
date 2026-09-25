@@ -9,6 +9,12 @@ namespace Game.Runtime
     {
         internal static void ApplyInitialResourceTotals(EntityManager em, InitialUnitsSpawnConfig config)
         {
+            // An expanded session owns its one-time grant, including during map streaming.
+            using (var expanded = em.CreateEntityQuery(typeof(SkirmishSharedMaterialsInitialized), typeof(SkirmishExpandedSessionComponent)))
+            using (var sessions = expanded.ToComponentDataArray<SkirmishExpandedSessionComponent>(Allocator.Temp))
+                foreach (var session in sessions)
+                    if (session.Phase != Game.Skirmish.Contracts.SkirmishSessionPhase.Cleaning &&
+                        session.Phase != Game.Skirmish.Contracts.SkirmishSessionPhase.Failed) return;
             // Streamed map authoring may publish an additional legacy seed after the
             // mode config. It must neither overwrite this preset nor refill a live match.
             using (var skirmish=em.CreateEntityQuery(typeof(SkirmishMatchState)))

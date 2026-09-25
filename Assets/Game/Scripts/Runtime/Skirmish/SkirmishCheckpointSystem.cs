@@ -1,5 +1,6 @@
 using Game.Components;
 using Game.Skirmish.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -17,11 +18,13 @@ namespace Game.Runtime
         public void OnUpdate(ref SystemState state)
         {
             EntityManager em = state.EntityManager;
-            foreach ((RefRO<SkirmishExpandedSessionComponent> session,
-                      Entity entity) in
-                     SystemAPI.Query<RefRO<SkirmishExpandedSessionComponent>>().WithEntityAccess())
+            // The first capture attaches a managed document component. Iterate a
+            // snapshot so that structural change is legal on the first save too.
+            using var sessions = state.GetEntityQuery(ComponentType.ReadOnly<SkirmishExpandedSessionComponent>())
+                .ToEntityArray(Allocator.Temp);
+            foreach (Entity entity in sessions)
             {
-                if (session.ValueRO.IsLegacy != 0)
+                if (em.GetComponentData<SkirmishExpandedSessionComponent>(entity).IsLegacy != 0)
                     continue;
                 if (!em.HasComponent<SkirmishCheckpointRequestComponent>(entity))
                     continue;

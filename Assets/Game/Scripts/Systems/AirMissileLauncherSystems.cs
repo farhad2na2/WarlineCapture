@@ -132,6 +132,7 @@ namespace Game.Runtime
                 {
                     if (missile.ValueRO.FactionId == faction.ValueRO.Id)
                         continue;
+                    if (!CombatTargetPolicyUtility.Allows(em, entity, missileTargetEntity)) continue;
 
                     float3 targetPosition = missileTransform.ValueRO.Position;
                     if (!IsInRange(transform.ValueRO.Position, targetPosition, minRange, effectiveRange))
@@ -158,6 +159,7 @@ namespace Game.Runtime
                     {
                         continue;
                     }
+                    if (!CombatTargetPolicyUtility.Allows(em, entity, targetEntity)) continue;
 
                     float3 targetPosition = targetTransform.ValueRO.Position;
                     if (!IsInRange(transform.ValueRO.Position, targetPosition, minRange, effectiveRange))
@@ -338,7 +340,7 @@ namespace Game.Runtime
                 }
 
                 AirMissileLauncherTargetComponent target = em.GetComponentData<AirMissileLauncherTargetComponent>(entity);
-                if (!IsTargetStillValid(em, target))
+                if (!IsTargetStillValid(em, target) || !CombatTargetPolicyUtility.Allows(em, entity, target.Target))
                 {
                     ResetLauncherState(ref stateRw, launcher.ValueRO);
                     continue;

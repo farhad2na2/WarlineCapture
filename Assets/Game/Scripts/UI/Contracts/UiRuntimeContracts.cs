@@ -15,7 +15,11 @@ namespace Game.UI.Contracts
         InsufficientMaterials = 7,
         InsufficientCreditsAndMaterials = 8,
             InfantryLimit = 9,
-            LogisticsLimit = 10
+            LogisticsLimit = 10,
+            ReadinessEstablishedRequired = 11,
+            ReadinessFullArsenalRequired = 12,
+            ArmyCapacityReached = 13,
+            ResearchInProgress = 14
     }
 
     public readonly struct BuildingPendingProductionUiEntry

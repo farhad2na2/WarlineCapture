@@ -9,6 +9,10 @@ namespace Game.UI.Contracts
         public int ScenarioIndex;
         public int InfantryCount, PlayerHealth, EnemyHealth;
         public bool Expanded, PlayerDesignatedAlive, EnemyDesignatedAlive;
+        public bool CanAffordRifle, CanAffordAntiAir, PadPresent, ReadinessEligible, CanQueueAir;
+        public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
+        public bool CanBuildAirPad;
+        public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
     }
     public struct UiExpandedSquadPage
@@ -22,6 +26,21 @@ namespace Game.UI.Contracts
         public bool NextPage;
     }
 
+    public struct UiSkirmishReadinessModel
+    {
+        public bool Visible, CanUpgrade, InProgress, CanCancel;
+        public byte Stage;
+        public int MaterialsCost;
+        public float RemainingSeconds;
+        public uint ResearchId;
+        public string Reason;
+    }
+    public interface IUiSkirmishReadinessGateway
+    {
+        bool TryReadSkirmishReadiness(out UiSkirmishReadinessModel model);
+        bool TryRequestSkirmishReadiness(uint cancelResearchId);
+    }
+
     public interface IUiSkirmishGateway
     {
         bool TryReadSkirmish(out UiSkirmishModel model);
@@ -33,6 +52,5 @@ namespace Game.UI.Contracts
         bool TryReadExpandedSquadPage(out UiExpandedSquadPage page);
         bool TrySelectExpandedPresentedSlot(int slotIndex);
         bool TryHoldExpandedSelection();
-        bool TryAttackExpandedEnemyBase();
     }
 }

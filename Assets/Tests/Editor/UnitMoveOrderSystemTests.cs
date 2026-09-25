@@ -26,6 +26,7 @@ public sealed class UnitMoveOrderSystemTests
         try
         {
             RunCase(test => test.AttackMove_ResumesAfterCombatAndExplicitMoveCancelsDestination());
+            RunCase(test => test.RegistryAttackIntentLeavesTravelAndCombatToSharedOwners());
             RunCase(test => test.GetManualMoveFormationOffset_UsesPaddedFootprintStride());
             RunCase(test => test.BuildSelectedCurrentFootprintCells_UsesClampedFootprintsWithinGrid());
             RunCase(test => test.IssueImmediateMoveCommand_GroundUnitWritesTargetPathRequestAndManualTag());
@@ -45,7 +46,7 @@ public sealed class UnitMoveOrderSystemTests
             RunCase(test => test.SelectedMoveOrderCommand_PreResolvedRequestPathfindsAndMovesSelectedUnit());
             RunCase(test => test.SelectedMoveOrderCommand_RefreshesCommandBuffersAfterStructuralMoveOrder());
             RunCase(test => test.BuildingTargetMoveOrder_IssuesApproachCellMoveOrderForSelectedUnit());
-            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=20");
+            UnityEngine.Debug.Log("[UnitMoveOrderFocusedValidation] result=Passed tests=21");
         }
         catch (System.Exception ex)
         {
@@ -482,6 +483,45 @@ public sealed class UnitMoveOrderSystemTests
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportBoardingTarget>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitTransportRopeDisembarkRequest>(unit));
         Assert.IsFalse(_entityManager.HasComponent<UnitResourceHaulOrder>(unit));
+    }
+
+    [Test]
+    public void RegistryAttackIntentLeavesTravelAndCombatToSharedOwners()
+    {
+        CreateGrid(32, 32);
+        var em = _entityManager;
+        var unit = em.CreateEntity(typeof(Faction), typeof(UnitMove), typeof(UnitGrid), typeof(UnitFootprint),
+            typeof(UnitAttack), typeof(UnitCombat), typeof(UnitHealth), typeof(LocalTransform),
+            typeof(SkirmishVisualSpawnedComponent), typeof(SkirmishAttemptOwnedComponent), typeof(SkirmishUnitRoleComponent));
+        em.SetComponentData(unit, new Faction { Id = 1 });
+        em.SetComponentData(unit, new UnitMove { Speed = 5, WalkSpeed = 5, RoadSpeedMultiplier = 1 });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 2) });
+        em.SetComponentData(unit, new UnitFootprint { Size = new int2(1) });
+        em.SetComponentData(unit, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(unit, LocalTransform.FromPosition(new float3(2.5f, 0, 2.5f)));
+        em.SetComponentData(unit, new SkirmishVisualSpawnedComponent { Spawned = 1, FromRegistry = 1 });
+        em.AddComponent<SkirmishSharedActorTag>(unit);
+        var id = new FixedString64Bytes("command-owner-test");
+        em.SetComponentData(unit, new SkirmishAttemptOwnedComponent { SessionId = id, FactionId = 1 });
+        em.SetComponentData(unit, new SkirmishUnitRoleComponent { Category = Game.Skirmish.Contracts.SkirmishPopulationCategory.Infantry });
+        em.AddComponent<CampaignMissionCombatSuppressedTag>(unit);
+        SkirmishSharedCombatBinding.Bind(em, unit, new Game.Skirmish.Contracts.SkirmishRoleOverlay
+        { Damage = 10, RangeWorld = 3, TargetDomains = Game.Skirmish.Contracts.SkirmishTargetDomain.Infantry });
+        Assert.IsFalse(em.HasComponent<CampaignMissionCombatSuppressedTag>(unit));
+        Assert.IsTrue(SkirmishWorldMovementService.AssignIntent(em, unit, new float3(20, 0, 20),
+            Game.Skirmish.Contracts.SkirmishGroupOrderKind.Attack));
+        Assert.IsTrue(em.HasComponent<AttackMoveOrder>(unit));
+        var session = em.CreateEntity(typeof(SkirmishExpandedSessionComponent));
+        em.SetComponentData(session, new SkirmishExpandedSessionComponent { SessionId = id });
+        em.RemoveComponent<UnitPathRequest>(unit);
+        var enemy = em.CreateEntity();
+        em.AddComponentData(unit, new EngageTarget { Target = enemy });
+        SkirmishWorldMovementService.Step(em, session, .2f, false);
+        Assert.IsTrue(em.HasComponent<EngageTarget>(unit));
+        Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit), "The expansion must not resubmit a plain Move while shared combat is active.");
+        SkirmishWorldMovementService.ClearIntent(em, unit);
+        Assert.IsFalse(em.HasComponent<AttackMoveOrder>(unit));
+        Assert.IsFalse(em.HasComponent<EngageTarget>(unit));
     }
 
     [Test]

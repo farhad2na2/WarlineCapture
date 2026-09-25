@@ -91,7 +91,8 @@ namespace Game.Runtime
                 em.SetComponentData(SystemAPI.GetSingletonEntity<RuntimeGameplayStateComponent>(),gameplay);
             }
         }
-        private static void TrackLosses(EntityManager em,Entity session,ref SkirmishMatchState match)
+        internal static void TrackLosses(EntityManager em,Entity session,ref SkirmishMatchState match,
+            FixedString64Bytes attempt = default)
         {
             var tracked=em.GetBuffer<SkirmishTrackedUnit>(session);
             for(int i=tracked.Length-1;i>=0;i--)
@@ -110,6 +111,8 @@ namespace Game.Runtime
             using var units=query.ToEntityArray(Allocator.Temp);
             foreach(var unit in units)
             {
+                if (!attempt.IsEmpty && (!em.HasComponent<SkirmishAttemptOwnedComponent>(unit) ||
+                    !em.GetComponentData<SkirmishAttemptOwnedComponent>(unit).SessionId.Equals(attempt))) continue;
                 byte faction=em.GetComponentData<Faction>(unit).Id;
                 if(faction is not (1 or 2)||!Alive(em,unit))continue;
                 bool found=false;for(int i=0;i<tracked.Length;i++)if(tracked[i].Entity==unit){found=true;break;}

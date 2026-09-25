@@ -181,8 +181,46 @@ namespace Game.UI.Runtime
                 }
             }
 
+            PresentCompiledBriefing(selected, fa);
             if (launchButton != null)
                 launchButton.interactable = selected.IsPlayable;
+        }
+
+        private readonly Dictionary<TMP_Text, (string key, string fallback)> _authoredRuleCopy = new();
+        private string _briefingCatalogId;
+        private int _briefingSeed;
+        private SkirmishResolvedSetup _briefingSetup;
+
+        private void PresentCompiledBriefing(SkirmishBattleCatalogEntry selected, bool fa)
+        {
+            if (_briefingCatalogId != selected.ScenarioId || _briefingSeed != _config.MapSeed)
+            {
+                _briefingCatalogId = selected.ScenarioId;
+                _briefingSeed = _config.MapSeed;
+                _briefingSetup = null;
+                if (selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ||
+                    selected.PlayableScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex)
+                    SkirmishSetupBriefing.TryLoad(selected.ScenarioId, _config.MapSeed, out _briefingSetup);
+            }
+            string[] names = { "Opponent", "Objective", "Roster", "Economy", "Intel" };
+            var copy = _briefingSetup != null ? new SkirmishSetupBriefing(_briefingSetup, fa) : default;
+            string[] values = { copy.Summary, copy.Objective, copy.Roster, copy.Economy, copy.Intel };
+            for (int i = 0; i < names.Length; i++)
+            {
+                var label = transform.Find("SkirmishSetupComposition/BaseAssaultRules/" + names[i])?.GetComponent<TMP_Text>();
+                if (label == null) continue;
+                var binding = label.GetComponent<V3LocalizedTextBindingView>();
+                if (binding == null) continue;
+                if (!_authoredRuleCopy.ContainsKey(label))
+                    _authoredRuleCopy.Add(label, (binding.LocalizationKey, binding.EnglishFallback));
+                if (_briefingSetup != null) binding.SetLocalizedValue(values[i]);
+                else
+                {
+                    var original = _authoredRuleCopy[label];
+                    binding.Configure(original.key, original.fallback);
+                    binding.ApplyLocalization();
+                }
+            }
         }
 
         private void WireLibrarySearch()

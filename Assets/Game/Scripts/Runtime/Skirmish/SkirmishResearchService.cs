@@ -23,6 +23,17 @@ namespace Game.Runtime
                 em.AddBuffer<SkirmishResearchQueueItem>(session);
         }
 
+        // Read-only eligibility used by the visible readiness control and ARIA.
+        public static bool CanQueue(EntityManager em, Entity session, SkirmishResearchKind kind,
+            byte factionId, out SkirmishResearchDecision decision, out float seconds)
+        {
+            seconds = 0;
+            decision = new SkirmishResearchDecision { Reason = SkirmishReasonCode.MissingReference };
+            if (!em.HasComponent<SkirmishResearchStateComponent>(session) ||
+                !em.HasBuffer<SkirmishResearchQueueItem>(session)) return false;
+            return TryPrepare(em, session, kind, factionId, out decision, out _, out _, out seconds);
+        }
+
         public static bool TryQueue(
             EntityManager em,
             Entity session,
@@ -30,6 +41,8 @@ namespace Game.Runtime
             byte factionId,
             out SkirmishResearchDecision decision)
         {
+            EnsureSession(em, session, em.HasComponent<SkirmishResolvedSetupRecord>(session)
+                ? em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup : null);
             decision = new SkirmishResearchDecision { Kind = kind, Field = "research" };
             if (!TryPrepare(em, session, kind, factionId, out decision, out SkirmishProducerKind producer, out int cost, out float seconds))
                 return false;
@@ -60,6 +73,7 @@ namespace Game.Runtime
             decision.MaterialsCost = cost;
             decision.ResearchId = id;
             decision.Phase = SkirmishResearchPhase.Queued;
+            AriaCommandEvidence.Accepted("Research", factionId);
             return true;
         }
 
@@ -209,6 +223,12 @@ namespace Game.Runtime
             for (int i = 0; i < buffer.Length; i++)
             {
                 SkirmishResearchQueueItem item = buffer[i];
+                if (item.Phase == SkirmishResearchPhase.Queued)
+                {
+                    if (!SkirmishProductionService.HasLivingProducer(em, session, item.Producer, item.FactionId) ||
+                        !TryStart(em, session, item.ResearchId, out _)) continue;
+                    item = buffer[i];
+                }
                 if (item.Phase != SkirmishResearchPhase.Researching)
                     continue;
                 item.RemainingSeconds -= deltaSeconds;
@@ -217,6 +237,9 @@ namespace Game.Runtime
                     continue;
                 if (TryComplete(em, session, item.ResearchId, out _))
                     completed++;
+                // Completion can add upgrade stamps to actors and invalidate
+                // every cached DynamicBuffer handle in the world.
+                buffer = em.GetBuffer<SkirmishResearchQueueItem>(session);
             }
 
             return completed;
@@ -244,9 +267,6 @@ namespace Game.Runtime
             producer = SkirmishProducerKind.None;
             cost = 0;
             seconds = 0f;
-            EnsureSession(em, session, em.HasComponent<SkirmishResolvedSetupRecord>(session)
-                ? em.GetComponentObject<SkirmishResolvedSetupRecord>(session).Setup
-                : null);
             if (kind == SkirmishResearchKind.None)
             {
                 decision.Reason = SkirmishReasonCode.UnsupportedCapability;
@@ -263,6 +283,12 @@ namespace Game.Runtime
 
             if (kind == SkirmishResearchKind.Readiness)
             {
+                if (HasOpen(em, session, kind, factionId))
+                {
+                    decision.Reason = SkirmishReasonCode.QueueLocked;
+                    decision.Field = "queue";
+                    return false;
+                }
                 if (state.Readiness >= SkirmishReadinessStage.FullArsenal)
                 {
                     decision.Reason = SkirmishReasonCode.AlreadyCompleted;
@@ -295,6 +321,11 @@ namespace Game.Runtime
                         : SkirmishProducerKind.Barracks;
             }
 
+            decision.MaterialsCost = cost;
+            if (kind == SkirmishResearchKind.AircraftEfficiency &&
+                !SkirmishProductionService.HasLivingProducer(em, session, producer, factionId) &&
+                SkirmishProductionService.HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId))
+                producer = SkirmishProducerKind.Airport;
             if (!SkirmishProductionService.HasLivingProducer(em, session, producer, factionId) &&
                 !(kind == SkirmishResearchKind.AircraftEfficiency &&
                   SkirmishProductionService.HasLivingProducer(em, session, SkirmishProducerKind.Airport, factionId)))
@@ -406,54 +437,21 @@ namespace Game.Runtime
             return false;
         }
 
-        private static int ReadMaterials(EntityManager em, Entity session, byte factionId)
-        {
-            if (factionId == 2 && em.HasComponent<SkirmishEnemyStockComponent>(session))
-                return em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials;
-            return em.HasComponent<SkirmishEconomyStockComponent>(session)
-                ? em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials
-                : 0;
-        }
+        private static int ReadMaterials(EntityManager em, Entity session, byte factionId) =>
+            SkirmishMaterialsService.Read(em, session, factionId);
 
         private static bool TryDebitMaterials(EntityManager em, Entity session, byte factionId, int cost)
         {
-            if (factionId == 2 && em.HasComponent<SkirmishEnemyStockComponent>(session))
-            {
-                var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
-                if (stock.Materials < cost)
-                    return false;
-                stock.Materials -= cost;
-                em.SetComponentData(session, stock);
-                return true;
-            }
-
-            if (!em.HasComponent<SkirmishEconomyStockComponent>(session))
-                return false;
-            var player = em.GetComponentData<SkirmishEconomyStockComponent>(session);
-            if (player.Materials < cost)
-                return false;
-            player.Materials -= cost;
-            em.SetComponentData(session, player);
+            int available = ReadMaterials(em, session, factionId);
+            if (cost < 0 || available < cost) return false;
+            SkirmishMaterialsService.WriteTransaction(em, session, factionId, available - cost, FactionTacticalMaterialsSpendKind.Upgrade);
             return true;
         }
 
         private static void CreditMaterials(EntityManager em, Entity session, byte factionId, int amount)
         {
-            if (amount <= 0)
-                return;
-            if (factionId == 2 && em.HasComponent<SkirmishEnemyStockComponent>(session))
-            {
-                var stock = em.GetComponentData<SkirmishEnemyStockComponent>(session);
-                stock.Materials += amount;
-                em.SetComponentData(session, stock);
-                return;
-            }
-
-            if (!em.HasComponent<SkirmishEconomyStockComponent>(session))
-                return;
-            var player = em.GetComponentData<SkirmishEconomyStockComponent>(session);
-            player.Materials += amount;
-            em.SetComponentData(session, player);
+            if (amount > 0)
+                SkirmishMaterialsService.WriteTransaction(em, session, factionId, ReadMaterials(em, session, factionId) + amount, FactionTacticalMaterialsSpendKind.Upgrade);
         }
     }
 }

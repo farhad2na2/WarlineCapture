@@ -22,7 +22,18 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishAcceptanceScaffold.RequiredHeader, header);
             Assert.AreEqual(20, SkirmishAcceptanceScaffold.RequiredHeaderFields.Length);
             string[] lines = File.ReadAllLines(Path.Combine(root, SkirmishAcceptanceScaffold.RelativeRunsPath));
-            Assert.AreEqual(1, lines.Length, "runs.csv must stay header-only until a real match is recorded.");
+            var ids = new HashSet<string>();
+            for (int i = 1; i < lines.Length; i++)
+            {
+                if (string.IsNullOrWhiteSpace(lines[i])) continue;
+                string[] fields = lines[i].Split(',');
+                Assert.AreEqual(20, fields.Length, "Recorded row " + i + " must retain the evidence schema.");
+                Assert.IsTrue(ids.Add(fields[0]), "Duplicate run id: " + fields[0]);
+                Assert.IsNotEmpty(fields[3], "Recorded code identity is required.");
+                Assert.IsNotEmpty(fields[4], "Recorded config identity is required.");
+                Assert.IsNotEmpty(fields[18], "Trace reference is required.");
+                Assert.IsNotEmpty(fields[19], "Log reference is required.");
+            }
         }
 
         [Test]
@@ -64,7 +75,7 @@ namespace Game.Tests.Editor
 
             Assert.AreEqual("S002", first.CatalogId);
             Assert.AreEqual("skirmish.s002", first.DefinitionId);
-            Assert.AreEqual(1, first.DefinitionVersion);
+            Assert.AreEqual(authored.DefinitionS002.ContentVersion, first.DefinitionVersion);
             Assert.AreEqual("Standard", first.Size);
             Assert.AreEqual("Regular", first.Difficulty);
             Assert.AreEqual(104731, first.Seed);
@@ -243,8 +254,23 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
                 row, authored.DefinitionS002, setup, in ready, path => true,
                 out SkirmishPublicationStatus readyStatus, out _));
-            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, readyStatus, "Existing files alone cannot certify acceptance.");
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
+
+            ready.Acceptance = new SkirmishPublicationEvidence
+            {
+                CatalogId = ready.CatalogId, DefinitionId = ready.DefinitionId,
+                ContentHash = ready.ContentHash, SetupHash = ready.SetupHash,
+                DifficultyId = ready.DifficultyId, SizeId = ready.SizeId,
+                ManualWin = true, AriaMatrix = true, EdgeFixtures = true,
+                RecoveryEvidence = true, DeviceEvidence = true, AssetExists = true
+            };
+            Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS002, setup, in ready, path => true, out readyStatus, out _));
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            ready.Acceptance.ContentHash = "another-candidate";
+            Assert.IsFalse(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
+                row, authored.DefinitionS002, setup, in ready, path => true, out _, out _));
 
             string dryRun = SkirmishPublicationFlipMenu.EvaluateS002PlayableFlip();
             Assert.IsTrue(dryRun.IndexOf("playable=0", StringComparison.Ordinal) >= 0);
@@ -369,7 +395,7 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
                 row, authored.DefinitionS003, setup, in ready, path => true,
                 out SkirmishPublicationStatus readyStatus, out _));
-            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, readyStatus, "Existing files alone cannot certify acceptance.");
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
 
             string dryRun = SkirmishPublicationFlipMenu.EvaluateS003PlayableFlip();
@@ -489,7 +515,7 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishPublicationValidator.TryEvaluatePlayableFlip(
                 row, authored.DefinitionS004, setup, in ready, path => true,
                 out SkirmishPublicationStatus readyStatus, out _));
-            Assert.AreEqual(SkirmishPublicationStatus.Playable, readyStatus);
+            Assert.AreEqual(SkirmishPublicationStatus.InProgress, readyStatus, "Existing files alone cannot certify acceptance.");
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, row.Status);
 
             string dryRun = SkirmishPublicationFlipMenu.EvaluateS004PlayableFlip();
@@ -505,7 +531,8 @@ namespace Game.Tests.Editor
             Assert.IsTrue(publication.TryGet("S003", out SkirmishPublicationRowConfig assetS003));
             Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS003.Status);
             Assert.IsTrue(publication.TryGet("S004", out SkirmishPublicationRowConfig assetS004));
-            Assert.AreEqual(SkirmishPublicationStatus.InProgress, assetS004.Status);
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, assetS004.Status,
+                "The dry evaluator must not mutate the existing published asset.");
         }
 
         public static void RunFocusedValidation()

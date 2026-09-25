@@ -75,6 +75,7 @@ namespace Game.Runtime
                 configuredUnitPrefabRegistry != null && configuredUnitPrefabRegistry.UnitSpawnPrefabs != null
                     ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
                     : new List<GameObject>();
+            definitionSystem.ConfigureProductionRecipes(_config.RuntimeProductionRecipes);
             definitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
             if (_config.InitialUnitsConfig?.Factions != null)
                 foreach (var faction in _config.InitialUnitsConfig.Factions)
@@ -95,6 +96,7 @@ namespace Game.Runtime
         {
             definitionSystem.ClearConfiguredSpawnableDefinitions(target => destroyRuntimeObject?.Invoke(target));
             definitionSystem.ClearConfiguredPrefabLookups();
+            definitionSystem.ConfigureProductionRecipes(null);
             _soldierBaseDefinition = null;
             _soldierTentDefinition = null;
             _factoryDefinition = null;

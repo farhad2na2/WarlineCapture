@@ -12,5 +12,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte PagedToAssault, AssaultSelecting, AssaultIssued, StructureOrdered;
         public int AssaultPageSeen;
         public int PagesOrdered;
+        public int EconomicMilestones, MaterialsHighWater;
+        public int ObservedPageIndex;
     }
 }

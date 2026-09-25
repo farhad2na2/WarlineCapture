@@ -85,12 +85,17 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudAssistantPanel(out UiAssistantPanelModel assistantPanel)
         {
             assistantPanel = UiAssistantPanelModel.Empty;
-            if(TrySkirmish(out _,out _,out var skirmish))
+            if(TrySkirmish(out var skirmishWorld,out var skirmishSession,out var skirmish))
             {
                 if(skirmish.Phase!=SkirmishPhase.Playing)return true;
+                string help = GameText.Get("ui.skirmish.match_help", "Destroy the enemy base. Defend yours with Watchtowers and rifle squads. Tap a squad card, then Move or Attack.");
+                if (skirmishWorld.HasComponent<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession))
+                    help = Game.Configs.SkirmishSetupBriefing.MatchHelp(
+                        skirmishWorld.GetComponentObject<Game.Runtime.SkirmishResolvedSetupRecord>(skirmishSession).Setup,
+                        GameLocalization.IsRightToLeft);
                 assistantPanel=new UiAssistantPanelModel(1,"","","",false,false,true,
                     GameText.Get("ui.skirmish.base_assault","BASE ASSAULT"),
-                    GameText.Get("ui.skirmish.match_help","Destroy the enemy base. Defend yours with Watchtowers and rifle squads. Tap a squad card, then Move or Attack."),
+                    help,
                     "","",false,false,false,false,"","");
                 return true;
             }

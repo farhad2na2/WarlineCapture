@@ -202,7 +202,7 @@ namespace Game.Tests.Editor
         }
 
         [Test]
-        public void S004PublicationStaysInProgressAndPriorRowsStayPlayable()
+        public void S004EvaluatorStaysInProgressWithoutMutatingPublishedRows()
         {
             SkirmishExpansionAuthoredSet authored = SkirmishExpansionCatalogFactory.CreateInMemory();
             Assert.IsTrue(authored.Publication.TryGet("S004", out SkirmishPublicationRowConfig memory));
@@ -257,7 +257,8 @@ namespace Game.Tests.Editor
             Assert.AreEqual(SkirmishPublicationStatus.InProgress, status);
             Assert.AreEqual(SkirmishPublicationStatus.Playable, s002.Status);
             Assert.AreEqual(SkirmishPublicationStatus.Playable, s003.Status);
-            Assert.AreEqual(SkirmishPublicationStatus.InProgress, s004.Status);
+            Assert.AreEqual(SkirmishPublicationStatus.Playable, s004.Status,
+                "Evaluation must not mutate the existing authored publication row.");
         }
 
         [Test]
@@ -323,7 +324,7 @@ namespace Game.Tests.Editor
                 suite.HashMismatchAndWrongMatrixRejectPlayable();
                 suite.LegacyPrototypeCompatibilityPublishesS002AtDispatchIndex();
                 suite.S003PublicationStaysInProgressAndS002AssetStaysPlayable();
-                suite.S004PublicationStaysInProgressAndPriorRowsStayPlayable();
+                suite.S004EvaluatorStaysInProgressWithoutMutatingPublishedRows();
                 suite.CompleteEvidenceWouldAllowPlayableButAuthoredRowStaysInProgress();
                 Debug.Log("[SkirmishExpandedCatalogTests] result=Passed");
             }

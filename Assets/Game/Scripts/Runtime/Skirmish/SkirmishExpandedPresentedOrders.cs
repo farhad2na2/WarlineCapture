@@ -10,6 +10,7 @@ namespace Game.Runtime
         public bool Occupied;
         public SkirmishRoleKind Role;
         public int Alive;
+        public float Health01;
         public bool Selected;
         public bool Assault;
         public bool Structure;
@@ -36,7 +37,9 @@ namespace Game.Runtime
                    role == SkirmishRoleKind.ApcHeavy ||
                    role == SkirmishRoleKind.Rocketeer ||
                    role == SkirmishRoleKind.Breacher ||
-                   role == SkirmishRoleKind.Siege;
+                   role == SkirmishRoleKind.Siege ||
+                   role == SkirmishRoleKind.AttackHeliLight || role == SkirmishRoleKind.AttackHeli ||
+                   role == SkirmishRoleKind.Strike;
         }
 
         /// <summary>Roles whose public overlay can damage a Barracks. Cars and APCs cannot.</summary>
@@ -45,7 +48,9 @@ namespace Game.Runtime
             return role == SkirmishRoleKind.Tank ||
                    role == SkirmishRoleKind.Rocketeer ||
                    role == SkirmishRoleKind.Breacher ||
-                   role == SkirmishRoleKind.Siege;
+                   role == SkirmishRoleKind.Siege ||
+                   role == SkirmishRoleKind.AttackHeliLight || role == SkirmishRoleKind.AttackHeli ||
+                   role == SkirmishRoleKind.Strike;
         }
 
         public static bool TryReadPage(
@@ -86,6 +91,27 @@ namespace Game.Runtime
             return true;
         }
 
+        public static bool TryGetPresentedMember(EntityManager em, Entity session, int index, out Entity member)
+        {
+            member = Entity.Null;
+            if (index < 0 || index >= PresentedSlots ||
+                !em.HasComponent<SkirmishArmySelectionComponent>(session)) return false;
+            int page = em.GetComponentData<SkirmishArmySelectionComponent>(session).PageIndex;
+            if (!SkirmishArmyGroupSystem.TryGetPagedGroup(em, session, 1, page, index, out var group)) return false;
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishArmyGroupMembershipComponent), typeof(SkirmishAttemptOwnedComponent), typeof(UnitHealth));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var entity in entities)
+            {
+                if (!em.GetComponentData<SkirmishAttemptOwnedComponent>(entity).SessionId.Equals(id) ||
+                    em.GetComponentData<SkirmishArmyGroupMembershipComponent>(entity).GroupId != group.GroupId ||
+                    em.GetComponentData<UnitHealth>(entity).Current <= 0) continue;
+                member = entity;
+                return true;
+            }
+            return false;
+        }
+
         public static bool TryPresentedSlot(EntityManager em, Entity session, int index)
         {
             if (!SkirmishExpandedSessionControlService.IsExpanded(em, session))
@@ -109,70 +135,7 @@ namespace Game.Runtime
             return SkirmishArmyCommandService.TryHold(em, session, out _);
         }
 
-        public static bool TryAttackEnemyBase(EntityManager em, Entity session)
-        {
-            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
-                !AnyPlayerSelected(em, session))
-                return false;
-            Entity target = FindVisibleEnemyBase(em, session);
-            if (target == Entity.Null)
-                return false;
-            return SkirmishArmyCommandService.TryAttack(em, session, target, out _);
-        }
 
-        /// <summary>
-        /// Orders every living player group that can damage a Barracks onto the
-        /// designated enemy base. Same command as the public Attack button, without
-        /// requiring the squad page or a raycast. Does not add units or materials.
-        /// </summary>
-        public static int TryOrderStructureAssault(EntityManager em, Entity session)
-        {
-            if (!SkirmishExpandedSessionControlService.IsExpanded(em, session) ||
-                !em.HasComponent<SkirmishExpandedSessionComponent>(session) ||
-                em.GetComponentData<SkirmishExpandedSessionComponent>(session).Phase != SkirmishSessionPhase.Playing)
-                return 0;
-            if (!em.HasBuffer<SkirmishArmyGroupRecord>(session))
-                return 0;
-
-            Entity target = FindVisibleEnemyBase(em, session);
-            if (target == Entity.Null && em.HasComponent<SkirmishFogStateComponent>(session))
-            {
-                SkirmishFogService.Project(em, session);
-                target = FindVisibleEnemyBase(em, session);
-            }
-
-            if (target == Entity.Null)
-                return 0;
-
-            DynamicBuffer<SkirmishArmyGroupRecord> groups = em.GetBuffer<SkirmishArmyGroupRecord>(session);
-            var groupIds = new NativeList<uint>(groups.Length, Allocator.Temp);
-            for (int i = 0; i < groups.Length; i++)
-            {
-                SkirmishArmyGroupRecord group = groups[i];
-                if (group.FactionId != 1 || group.AliveCount <= 0)
-                    continue;
-                if (!IsStructureAssaultRole(group.Role))
-                    continue;
-                groupIds.Add(group.GroupId);
-            }
-
-            int issued = 0;
-            for (int i = 0; i < groupIds.Length; i++)
-            {
-                if (SkirmishArmyCommandService.TryIssueGroupOrder(
-                        em,
-                        session,
-                        groupIds[i],
-                        1,
-                        SkirmishGroupOrderKind.Attack,
-                        target,
-                        out _))
-                    issued++;
-            }
-
-            groupIds.Dispose();
-            return issued;
-        }
 
         public static bool TryAdvancePage(EntityManager em, Entity session)
         {
@@ -198,6 +161,7 @@ namespace Game.Runtime
                 Occupied = slot.AliveCount > 0,
                 Role = slot.Role,
                 Alive = slot.AliveCount,
+                Health01 = slot.Health01,
                 Selected = slot.Selected != 0,
                 Assault = slot.AliveCount > 0 && IsAssaultRole(slot.Role),
                 Structure = slot.AliveCount > 0 && IsStructureAssaultRole(slot.Role),
@@ -235,30 +199,6 @@ namespace Game.Runtime
             return false;
         }
 
-        private static Entity FindVisibleEnemyBase(EntityManager em, Entity session)
-        {
-            if (!em.HasComponent<SkirmishExpandedSessionComponent>(session))
-                return Entity.Null;
-            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
-            using var query = em.CreateEntityQuery(
-                typeof(SkirmishObjectiveRoleComponent),
-                typeof(SkirmishAttemptOwnedComponent));
-            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-            for (int i = 0; i < entities.Length; i++)
-            {
-                Entity entity = entities[i];
-                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
-                if (!owned.SessionId.Equals(sessionId) || owned.FactionId == 1)
-                    continue;
-                if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role !=
-                    SkirmishObjectiveRoleKind.EnemyBase)
-                    continue;
-                if (!SkirmishFogService.IsVisible(em, entity) || !SkirmishArmyGroupSystem.IsAlive(em, entity))
-                    continue;
-                return entity;
-            }
 
-            return Entity.Null;
-        }
     }
 }

@@ -125,6 +125,7 @@ namespace Game.Components
 
     public struct RtsSelectionCommandIntentRequestElement : IBufferElementData
     {
+        public uint InputReceipt;
         public RtsSelectionCommandIntentKind Kind;
         public int RequestId;
         public int Frame;

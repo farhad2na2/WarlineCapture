@@ -1,0 +1,1037 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-09-24T22:29:35Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-09-24T22:29:35.793776Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/private/tmp/warline-s003-player-ready
+-logFile
+/private/tmp/s003-aria-supply-04.log
+-executeMethod
+Game.Tests.Editor.SkirmishS002AriaRunHarness.RunFocusedAriaAndExit
+Successfully changed project path to: /private/tmp/warline-s003-player-ready
+/private/tmp/warline-s003-player-ready
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55504 [Flags] 2 [Guid] 1614942340 [EditorId] 1614942340 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55504 [Flags] 2 [Guid] 1614942340 [EditorId] 1614942340 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              b7822bd685b84333baa8a0e5dd9f2604
+  Correlation Id:          a12e24994cdf1129b78ddeb885cfe210
+  External correlation Id: 7025764612005641362
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.25s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-09-24T22:29:36.042926Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.25s
+[Package Manager] Connected to IPC stream "Upm-39082" after 0.1 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+[Licensing::Client] Successfully resolved entitlement details
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /private/tmp/warline-s003-player-ready/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56082
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.001042 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.200 seconds
+Domain Reload Profiling: 438ms
+	BeginReloadAssembly (69ms)
+		CreateAndSetChildDomain (18ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (25ms)
+	LoadAllAssembliesAndSetupDomain (133ms)
+		LoadAssemblies (52ms)
+		AnalyzeDomain (103ms)
+			TypeCache.Refresh (103ms)
+				TypeCache.ScanAssembly (95ms)
+	FinalizeReload (201ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (38ms)
+			BeforeProcessingInitializeOnLoad (34ms)
+			ProcessInitializeOnLoadAttributes (42ms)
+			ProcessInitializeOnLoadMethodAttributes (48ms)
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/private/tmp/warline-s003-player-ready/Packages/com.sniveler-code.gpu-animation (location: /private/tmp/warline-s003-player-ready/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /private/tmp/warline-s003-player-ready/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-57eb0d385816115c1b6958a166d90951
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /private/tmp/warline-s003-player-ready
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 18.4185ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/1300b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /private/tmp/warline-s003-player-ready
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/1300b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 13.9856ms
+ExitCode: 0 Duration: 0s454ms
+[1445/1995  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.44 seconds), 1 items updated, 1995 evaluated
+AssetDatabase: script compilation time: 0.814256s
+Total cache size 268345058
+Total cache size after purge 268345058, took 00:00:00.1579121
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 150ms
+Start HTTP server: port:7800
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  5.379 seconds
+Domain Reload Profiling: 6027ms
+	BeginReloadAssembly (92ms)
+		DisableScriptedObjects (7ms)
+		CreateAndSetChildDomain (35ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (8ms)
+	initialDomainReloadingComplete (34ms)
+	LoadAllAssembliesAndSetupDomain (509ms)
+		LoadAssemblies (187ms)
+		AnalyzeDomain (284ms)
+			TypeCache.Refresh (232ms)
+				TypeCache.ScanAssembly (213ms)
+			BuildScriptInfoCaches (48ms)
+			ResolveRequiredComponents (3ms)
+	FinalizeReload (5379ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (5ms)
+			BeforeProcessingInitializeOnLoad (46ms)
+			ProcessInitializeOnLoadAttributes (2635ms)
+			ProcessInitializeOnLoadMethodAttributes (2493ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Starting new worker id: 0 with log in /private/tmp/warline-s003-player-ready/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=65328674564e744a09b10dad4cf4eaaa): Total: 8.463 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=6896 ms
+		Asset DB Callback time: managed=19 ms, native=7 ms
+		Scripting: domain reloads=1, domain reload time=675 ms, compile time=815 ms, other=49 ms
+		Project Asset Count: scripts=3312, non-scripts=20219
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 8.015ms
+	ApplyChangesToAssetFolders: 0.199ms
+	Scan: 896.682ms
+	Collect global state as custom dependencies: 1.790ms
+	CategorizeScriptCompilationAssets: 58.246ms
+	ProcessAssetsWithTransientArtifactChanges: 74.311ms
+	CategorizeAssets: 156.874ms
+	CompileScripts: 815.280ms
+	ImportOutOfDateAssets: 5567.110ms (5404.418ms without children)
+		ReloadNativeAssets: 0.284ms
+		UnloadImportedAssets: 4.135ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.142ms
+		ImportSchedulerStart: 156.127ms
+	PostProcessAllAssets: 19.136ms
+		MonoPostProcessAllAssets: 19.108ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 4.694ms
+			SyncVS.PostprocessSyncProject 4.384ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 1.865ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.893ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.735ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.674ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.299ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.161ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.154ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.112ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.093ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.089ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.085ms
+	UnloadStreamsBegin: 1.218ms
+	PersistCurrentRevisions: 0.476ms
+	GenerateScriptTypeHashes: 3.654ms
+	GenerateScriptTypeSerializationHashes: 5.917ms
+	Untracked: 862.429ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.04 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.096ms
+Initializing Unity extensions:
+2026-09-25 00:29:46.467 Unity[39082:25287435] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb84493f20 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-09-25 00:29:46.467 Unity[39082:25287435] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb84490140 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-09-25 00:29:46.467 Unity[39082:25287435] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb844900a0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-09-25 00:29:46.470 Unity[39082:25287435] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb78e64460 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Worker ready: AssetImportWorkerHW0 0
+Unloading 1539 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            789.832 ms
+	Integration:            721.372 ms
+	Integration of assets:  562.594 ms
+	Thread Wait Time:       0.093 ms
+	Total Operation Time:   2073.891 ms
+Unloading 14749 unused Assets / (17.3 MB). Loaded Objects now: 44318.
+Memory consumption went from 0.78 GB to 0.76 GB.
+Total: 74.304000 ms (FindLiveObjects: 6.056167 ms CreateObjectMapping: 10.731125 ms MarkObjects: 40.105625 ms  DeleteObjects: 17.410917 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /private/tmp/warline-s003-player-ready/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+executeMethod class 'SkirmishS002AriaRunHarness' could not be found.
+Argument was -executeMethod Game.Tests.Editor.SkirmishS002AriaRunHarness.RunFocusedAriaAndExit
+[Project] Loading completed in 14.464 seconds
+	Project init time: 				10.325 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.061 seconds
+		Asset Database init time: 		0.380 seconds
+		Global illumination init time: 	0.000 seconds
+		Assemblies load time: 			0.466 seconds
+		Unity extensions init time: 	0.025 seconds
+		Asset Database refresh time: 	8.466 seconds
+	Scene opening time: 			3.934 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1790288990253,"processId":39082,"projectLoad":14.463507750000002,"projectInit":10.324572167,"templateInit":0.0,"packageManagerInit":0.061429416,"assetDatabaseInit":0.380171875,"globalIlluminationInit":0.000338167,"assembliesLoad":0.465601459,"unityExtensionsInit":0.024763208,"assetDatabaseRefresh":8.466011417,"sceneOpening":3.933584083}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1790288990253,"processId":39082,"editorVersion":"6000.5.2f1 (eb73d3b415a1)","branch":"6000.5/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+Scanning for USB devices : 0.107ms
+Multiple ADB server instances found, the following ADB server instance have been terminated due to being run from another SDK. 
+If instance restarts during deployment, this may cause unexpected issues. Please check that ADB versions are consistent across instances. 
+Process paths: 
+/opt/homebrew/Caskroom/android-platform-tools/37.0.0/platform-tools/adb
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:384)
+UnityEditor.Android.TargetScanWorker:DoScan (UnityEditor.DeploymentTargets.IDeploymentTargetsExtension,UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,System.Threading.CancellationToken) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:188)
+UnityEditor.Android.TargetScanWorker/<>c__DisplayClass15_0:<MainThreadProcessing>b__0 () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:227)
+System.Threading.Tasks.Task:InnerInvoke ()
+System.Threading.Tasks.Task:Execute ()
+System.Threading.Tasks.Task:ExecutionContextCallback (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.Tasks.Task:ExecuteWithThreadLocal (System.Threading.Tasks.Task&)
+System.Threading.Tasks.Task:ExecuteEntry (bool)
+System.Threading.Tasks.Task:System.Threading.IThreadPoolWorkItem.ExecuteWorkItem ()
+System.Threading.ThreadPoolWorkQueue:Dispatch ()
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 384)
+
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+[INFO ] [relay] relay.startup port=9002 mcpClientPort=9003 editorPid=39082
+[INFO ] [relay] log === RELAY SERVER STARTED === (unity-ai-relay v1.0.12-build.96)
+[INFO ] [relay] log Starting relay server...
+[INFO ] [relay] log Command line arguments: ["bun","/$bunfs/root/relay_mac_arm64","--relay","--port","9002","--mcp-client-port","9003","--editor-pid","39082","--shutdown-delay","180","--log-dir","/private/tmp/warline-s003-player-ready/Logs"]
+[INFO ] [relay] log Parsed config: {"port":9002,"mcpClientPort":9003,"editorPid":"39082","shutdownDelaySeconds":180}
+[INFO ] [relay] log Initializing relay components...
+[INFO ] [relay] log Creating RelayEditor...
+[INFO ] [relay] log WebSocket server started
+[INFO ] [relay] log Relay server initialization completed
+[INFO ] [relay] log MCP Client initialized at port: 9003
+[INFO ] [relay] log Unity MCP Relay server started | Port: 9003 | Endpoints: /mcp/start-server, /mcp/stop-server, /mcp/server-status, /mcp/call-tool
+[INFO ] [relay] log [shell-env] PATH augmented with shell environment (20 entries)
+GPU Resident Drawer created.
+[INFO ] [relay] log Unity client connected with ID: editor-39082-ialw6s (relay 1.0.12-build.96)
+[INFO ] [relay] connection.established clientId=editor-39082-ialw6s port=9002
+Created GICache directory at /Users/farhad/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.004s, timestamps: [14.474 - 14.478]
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully updated the access token
+[Licensing::Module] Successfully updated access token: "0sY7pmAs"... (expires: 2026-09-24T23:22:23Z)
+[Licensing::Client] Successfully resolved entitlement details
+Starting new worker id: 1 with log in /private/tmp/warline-s003-player-ready/Logs/AssetImportWorkerHW1.log
+[Worker0] Imported GUID: 95c440cd4d126f54999700aafb64b2f5 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_9.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '10ee9021af911820db6021f2eec27ca6') in 0.098074125 seconds
+[Worker0] Imported GUID: e4ef03d180a404ccd87e3bd41f19c8ba - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_SupplyYard01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e4c78a168a2c9bc1f49cc5274e5c3122') in 0.0249655 seconds
+Project ID request failed, Reason: The requested URL returned error: 403 (403).
+Unknown Unity Connect error (400). Please contact support at support@unity.com while processing request "https://services.unity.com/api/unity/legacy/v1/projects/328e4279-a98a-4284-a898-89ed1ab87d7d", HTTP error code 403
+.[Worker0] Imported GUID: 4eef2cf7219c7fe4bb714ac65a15c31b - Path: Assets/Game/GeneratedOperationMapEntityPresentationCandidate/VirtualizedPresentation/OperationMapRenderDatabaseBakeConfig.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dead418ed8e4e6eca9c0685e781d2bd4') in 0.378909542 seconds
+[Worker0] Imported GUID: 9e2e822e41aad2b4d84b00e782f3f642 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '209f654d0d19d3f17ef61dc83f2039c2') in 0.028944333 seconds
+[Worker0] Imported GUID: 2a8e6336c70c4d5ba77147cb5efba5b5 - Path: Assets/Tests/Editor/OperationsReconWorldTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '758e63d05453a5d041e4a0955f87a948') in 0.012101583 seconds
+[Worker0] Imported GUID: f77f078223eb9f8499adeaf5443a65d7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeams_NatureRare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2a1b181780220ad0c06a8de113c15d26') in 0.03209175 seconds
+[Worker0] Imported GUID: c8fa0422b91da4bbdb65e5d43b1275af - Path: Assets/Game/Scripts/UI/Screens/PauseOptionsV3PopupView.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2470d1e97be6d4058cdb57d4f1081248') in 0.011424708 seconds
+[Worker0] Imported GUID: abc581b8c76374752b180a564d64bb6c - Path: Assets/Game/Scripts/Editor/CityCrossroadsCourtyardRepair.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e86cb407895c9eb68580d50c64e81122') in 0.01103925 seconds
+[Worker0] Imported GUID: 8c19d5328fd5b7c43b9d5ecb0065df04 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_DistrictEdge01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0cbc5e69357767cdb12b5700bfd68502') in 0.0248575 seconds
+[Worker0] Imported GUID: 7d70077df8ed98c4c9db35b19463beed - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input/MouseKeyboard - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a500d9e4acc5800556818c86f5b68a26') in 0.013880542 seconds
+[Worker0] Imported GUID: 506de120a8bf94be3aca392f0743aa38 - Path: Assets/Game/Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4358c9b255a4bd054934e5952dac033d') in 0.015136083 seconds
+[Worker0] Imported GUID: 89a4478425a3b8446870df50c2fb2921 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Gamming_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e32cea94f88413a5897f026e0beb4b8d') in 0.033594667 seconds
+[Worker0] Imported GUID: 943276048a958d546af851b7225856b0 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_15.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '792f89175552f6203e8c868df999f978') in 0.030666166 seconds
+[Worker0] Imported GUID: 30ded13be441a44b588827ac6aee0e2d - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ForwardPost01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '679353920e6addcaf63002ff989e0b9b') in 0.013359541 seconds
+[Worker0] Imported GUID: d73f2fcd8b9493a4a8beabbe79e90b0c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ea42d176c0ad4f7151a34a589c2bade8') in 0.02240475 seconds
+[Worker0] Imported GUID: eb3c536bca25149cc966822bda0e9627 - Path: Assets/Game/Configs/OperationMaps/OperationMap_Staged_DesertBase01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e1cbdc720a58e2fb0a002c3dd9c71681') in 0.013905792 seconds
+[Worker0] Imported GUID: 3fbe5c1147facd6408e1daa964acc061 - Path: Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/ShaderLibrary.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '31d7ecdf5ce587a306a9b8f81615dbb1') in 0.011213 seconds
+[Worker0] Imported GUID: 38eb946c1067c3a4faaa5e5123677df7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Orange.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '70eb37aa1db6e101f6c8395b205bdfb3') in 0.024875666 seconds
+[Worker0] Imported GUID: e22b1f19b1909f54e85097e1cecd4085 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Lootbeam/LootBeam_Generic_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e69f02213ef6a5692cc761308621276a') in 0.027492875 seconds
+[Worker0] Imported GUID: 1a2923aa685514516b10e057261fd960 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_Airlift01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6a15e765678b68e699611cd49b56d5e9') in 0.013938 seconds
+Unable to list connected devices. 
+List of devices attached
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+
+UnityEditor.Android.CommandInvokationFailure: Unable to list connected devices. 
+/Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/SDK/platform-tools/adb devices
+
+Environment Variables:
+ZSH_TMUX_AUTOSTART = false
+COLORTERM = 
+ZSH_TMUX_AUTOSTARTED = true
+NODE_REPL_TRUSTED_BROWSER_CLIENT_SHA256S = 9230e2bd8b24b7ac7a0ba6774c64bf0d78ecdabbdd91d0ed627b02a587bae2df
+CODEX_SANDBOX_NETWORK_DISABLED = 1
+_ = /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+LOG_FORMAT = json
+XPC_FLAGS = 0x0
+CODEX_SHELL = 1
+DISABLE_AUTO_UPDATE = true
+RUST_LOG = warn
+SHLVL = 2
+COMMAND_MODE = unix2003
+TERM = dumb
+CODEX_SAGE_BACKFILL_TRACKER_TAB_REUSE = 1
+NO_COLOR = 1
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+CODEX_MCP_NODE_PATH = /Applications/ChatGPT.app/Contents/Resources/cua_node/bin/node
+LANG = C.UTF-8
+LC_CTYPE = C.UTF-8
+XPC_SERVICE_NAME = 0
+CODEX_PERMISSION_PROFILE = :workspace
+PWD = /private/tmp/warline-s003-player-ready
+USER = farhad
+MallocNanoZone = 0
+CODEX_VERSION = 0.155.0-alpha.16.4
+OMLX_API_KEY = 4488
+OSLogRateLimit = 64
+PATH = /usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/pkg/env/global/bin:/usr/local/share/dotnet:~/.dotnet/tools:/opt/homebrew/bin:/Users/farhad/.codex/tmp/arg0/codex-arg0ajc3Vj:/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override:/Users/farhad/.unity/bin:/Users/farhad/bin:/Users/farhad/.lmstudio/bin:/Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/fallback:/Applications/ChatGPT.app/Contents/Resources
+GH_PAGER = cat
+SSH_AUTH_SOCK = /var/run/com.apple.launchd.dEXTzNaT7Q/Listeners
+PAGER = cat
+HOME = /Users/farhad
+CODEX_INTERNAL_ORIGINATOR_OVERRIDE = Codex Desktop
+LOGNAME = farhad
+GIT_PAGER = cat
+TMPDIR = /var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/
+CODEX_APP_TOOLS_PIPE_PATH = /tmp/codex-browser-use/7d7ee5fe-ff25-4602-ac15-165a96941c79.sock
+SHELL = /bin/zsh
+LC_ALL = C.UTF-8
+CODEX_THREAD_ID = 01a0d3c7-e880-7420-a95d-d05564a53041
+CODEX_CI = 1
+CODEX_SESSION_ID = 01a0d3c7-e880-7420-a95d-d05564a53041
+
+
+stderr[
+* daemon not running; starting now at tcp:5037
+* daemon started successfully
+error: protocol fault (couldn't read status): Connection reset by peer
+]
+stdout[
+List of devices attached
+]
+exit code: 1
+  at UnityEditor.Android.Command.WaitForProgramToRun (UnityEditor.Utils.Program p, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00099] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:221 
+  at UnityEditor.Android.Command.Run (System.Diagnostics.ProcessStartInfo psi, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00017] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:159 
+  at UnityEditor.Android.Command.Run (System.String command, System.String args, System.String workingdir, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg, System.Text.Encoding inputEncoding) [0x0000c] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/Command.cs:117 
+  at UnityEditor.Android.ADB.RunInternal (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00008] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:240 
+  at UnityEditor.Android.ADB.Run (System.String[] command, UnityEditor.Android.Command+WaitingForProcessToExit waitingForProcessToExit, System.String errorMsg) [0x00013] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/Android/ADB.cs:233 
+  at UnityEditor.Android.AndroidDeploymentTargetsExtension.GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext context, UnityEditor.ProgressHandler progressHandler) [0x0029d] in /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:393 
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:456)
+UnityEditor.Android.TargetScanWorker:DoScan (UnityEditor.DeploymentTargets.IDeploymentTargetsExtension,UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,System.Threading.CancellationToken) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:188)
+UnityEditor.Android.TargetScanWorker/<>c__DisplayClass15_0:<MainThreadProcessing>b__0 () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:227)
+System.Threading.Tasks.Task:InnerInvoke ()
+System.Threading.Tasks.Task:Execute ()
+System.Threading.Tasks.Task:ExecutionContextCallback (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.Tasks.Task:ExecuteWithThreadLocal (System.Threading.Tasks.Task&)
+System.Threading.Tasks.Task:ExecuteEntry (bool)
+System.Threading.Tasks.Task:System.Threading.IThreadPoolWorkItem.ExecuteWorkItem ()
+System.Threading.ThreadPoolWorkQueue:Dispatch ()
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 456)
+
+Android Extension - Scanning For ADB Devices 3282 ms
+[Worker0] Imported GUID: 94d4124c5c03bce4b9265ab2ad72ab7a - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_6.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a9a2a2474428659be58db6a8394471a7') in 0.037886667 seconds
+[Worker0] Imported GUID: 42a03984901b415fa0c0e1fe7a4ce3e8 - Path: Assets/Game/Scripts/Runtime/Missions/OperationsReconObjectiveSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '63f58549afc922841d68526c53680cf0') in 0.012565875 seconds
+[Worker0] Imported GUID: eab21efbe45fc4848958d084dcb8ef3d - Path: Assets/Game/Resources/Operations/OldQuarter.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5477a3a1d712f0abec31abae5d9ebd59') in 0.015616625 seconds
+[Worker0] Imported GUID: 3a437da229ac4c74b4d9e9c3c6d1944c - Path: Assets/Game/Scripts/Editor/OperationMapRenderEligibilityInventoryProbe.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '34ce6a8ac89f4d31e7aab18beb4dc3f1') in 0.012786791 seconds
+[Worker0] Imported GUID: a51a913ca35f65946af50cb06c71ea5e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'abd5d1d36804b7f0da834dbfc4348211') in 0.0273215 seconds
+[Worker0] Imported GUID: 34fa611b7111b3946a652d6d85379a6c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_8.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2303afd80a2420507471fcd863371fa6') in 0.023555459 seconds
+[Worker0] Imported GUID: 1778584982d2f3c4eb9b026e13fc0115 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/ExtremeLootBeam_Extreme_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '90752079b15d3543484b244f6eb9537a') in 0.040304125 seconds
+[Worker0] Imported GUID: 8d29a83a8b3d9c945a4650ff5016b203 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Groundhover/GroundHover_Tech_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd220e3441ac611180013e392e1216a77') in 0.032231958 seconds
+[Worker0] Imported GUID: 5abbf79244cf40f69531dec248ad45f8 - Path: Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '961e4ee2903ecce43e033b69347d336f') in 0.012131291 seconds
+[Worker0] Imported GUID: 7b2b4fb1292336b459e697eb0bd419c2 - Path: Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/LICENSE.md - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'af9748b94e2e643cd4db9028749d3ba5') in 0.011135791 seconds
+[Worker0] Imported GUID: b54829c354ab9494ebc8049191ac42e7 - Path: Assets/Game/Scripts/UI/Screens/OperationsMissionScreenView.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c11324ce5101c97b0543819aaa4e8c4b') in 0.013283583 seconds
+Worker ready: AssetImportWorkerHW1 1
+[Worker0] Imported GUID: c00140f2e94a04c3084c8dcb0c18cbd0 - Path: Assets/Game/Scenes/OperationMaps/Skirmish/Candidates/opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd7222add395b37195b21dc758c8b8355') in 2.351552084 seconds
+[Worker0] Imported GUID: 7ae9bbe86984a4e91bb59584d0b9abd1 - Path: Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_EntityScene_Candidate.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'aa3f0dcb4dc62c53e8c42bdcfd572299') in 0.019720667 seconds
+[Worker0] Imported GUID: 8d87688d46771410bb8d256e428ddfd9 - Path: Assets/Game/Scripts/Composition/OperationsMissionPresentationSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c6b122e5efdaaa3b429c2668f3fbf9da') in 0.013289375 seconds
+[Worker0] Imported GUID: 18ce36d6d7bac1145bd68cae7f505b07 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Orange.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b1cb180d4799108f6ed3ac939f7e717d') in 0.046355916 seconds
+[Worker0] Imported GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd4775457e060b53e24fa347e6c7dabfd') in 0.085621542 seconds
+[Worker0] Imported GUID: be9ce9c9a677bc94ebae04a682c3b593 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleRadialFillBar.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9c72c7a13db98192c4abfec6be0321da') in 0.012880834 seconds
+[Worker0] Imported GUID: e30e847f0a100544e8267a01aa83747d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeams_Nature.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '81ccde9d9b161905d6095fed5070e45b') in 0.026219292 seconds
+[Worker0] Imported GUID: 8dc46ca880924e65b11bd445731074dd - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiActionRequestDispatchSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '039ad1273700863550c247430a018cfc') in 0.012340708 seconds
+[Worker0] Imported GUID: accd9f03e42201a4b9d8e26a7fefbea2 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_7.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b96fc990e7760d37ae81b24b3a0710c8') in 0.030120583 seconds
+[Worker0] Imported GUID: 650740e21f42641739622a6c499eb11e - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_HospitalCorridor01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'af0f4bc7c78ab0053b577f67679f7276') in 0.019111583 seconds
+[Worker0] Imported GUID: bd5a0145aa113084b9b6690565b71846 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_6.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '554a826a7f5558987b4116f377dc0d6a') in 0.039172125 seconds
+[Worker0] Imported GUID: 12f517deb32ab49698acbfdaf7c3eac7 - Path: Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '42d58ac18f07a79241f6d267d4607099') in 0.021870125 seconds
+[Worker0] Imported GUID: e72d798c36cc8dd4e8f87defbabfb20c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V1/LootBeam_Tech_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e46cdcb3a98e1ab693bdf667846e9607') in 0.0400415 seconds
+[Worker0] Imported GUID: cdac096ca74d84e84b2e0e1f93a29014 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_ConvoyApproach01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2166a7f04a7d86f72d55baaaf2f0f723') in 0.013765333 seconds
+[Worker0] Imported GUID: 111645963984ad94598b953466bdd4cb - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V2/LootBeam_Tech_Uncommon_V2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4f0b89ee6f565dfb6c46f5ba8a309cec') in 0.03034325 seconds
+[Worker0] Imported GUID: 20949d67846d14fc0862faf37b2ba0e9 - Path: Assets/Game/Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'eca79f669dc6cf38166990e9c7e674ae') in 0.015272875 seconds
+Android Extension - Scanning For ADB Devices 3066 ms
+[Worker0] Imported GUID: 1f8e8ce857195474fa7b6e89373f95c7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_BlueFire.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5f81fc4b3a06dee61bb3a2b89e2db24f') in 0.036002833 seconds
+[Worker0] Imported GUID: e1532d1660c00aa4f8077861c83eaf3b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Lootbeam/LootBeam_Generic_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dee3de23bfc59f4215f4d56b12121996') in 0.03914725 seconds
+Multiple ADB server instances found, the following ADB server instance have been terminated due to being run from another SDK. 
+If instance restarts during deployment, this may cause unexpected issues. Please check that ADB versions are consistent across instances. 
+Process paths: 
+/opt/homebrew/Caskroom/android-platform-tools/37.0.0/platform-tools/adb
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+UnityEditor.Android.AndroidDeploymentTargetsExtension:GetKnownTargets (UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,UnityEditor.ProgressHandler) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs:384)
+UnityEditor.Android.TargetScanWorker:DoScan (UnityEditor.DeploymentTargets.IDeploymentTargetsExtension,UnityEditor.DeploymentTargets.IDeploymentTargetsMainThreadContext,System.Threading.CancellationToken) (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:188)
+UnityEditor.Android.TargetScanWorker/<>c__DisplayClass15_0:<MainThreadProcessing>b__0 () (at /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/TargetScanWorker.cs:227)
+System.Threading.Tasks.Task:InnerInvoke ()
+System.Threading.Tasks.Task:Execute ()
+System.Threading.Tasks.Task:ExecutionContextCallback (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.Tasks.Task:ExecuteWithThreadLocal (System.Threading.Tasks.Task&)
+System.Threading.Tasks.Task:ExecuteEntry (bool)
+System.Threading.Tasks.Task:System.Threading.IThreadPoolWorkItem.ExecuteWorkItem ()
+System.Threading.ThreadPoolWorkQueue:Dispatch ()
+System.Threading._ThreadPoolWaitCallback:PerformWaitCallback ()
+
+(Filename: /home/bokken/build/output/unity/unity/PlatformDependent/AndroidPlayer/Editor/Managed/DeploymentTargets/AndroidDeploymentTargetsExtension.cs Line: 384)
+
+[Worker0] Imported GUID: 0a2117ca560a44d4099b1fb448c92c0c - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_BreachAssault01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8b63175d7a3e2ceab6ab8637efa9f0c0') in 0.019969666 seconds
+[Worker0] Imported GUID: 9f4caca2a65c8eb42b26f5f4a7f921d6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Colorless.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6ff611899f88390a0587c2c79f891ad5') in 0.03259925 seconds
+[Worker0] Imported GUID: e74f2043c286c4347893a3a990cda4a1 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V1/LootBeam_Tech_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2a4f0e5659d4725e7c8e8313eb35e491') in 0.027854583 seconds
+[Worker0] Imported GUID: 2998a96cf5e69a040ba1051abc414e23 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_4.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5c63b84214d61cf46d9e6137b5267630') in 0.02671175 seconds
+[Worker0] Imported GUID: 600f7cf1c6250e84687d018d42666742 - Path: Assets/Kevin Iglesias/Human Animations/Scripts/UpperBodyAnimations-SpineProxy.url - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e18061f6d2e3e189d1ec5f1c2bc683c8') in 0.011886208 seconds
+[Worker0] Imported GUID: 55e36a8d7e7a84e2b9893cee052b0e61 - Path: Assets/Game/Configs/OperationMaps/OperationMap_Compatibility_DesertBase01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'eb500b919ae968116e9dc700d491284f') in 0.013063458 seconds
+[Worker0] Imported GUID: d33b97fd2467416385151d294e10de23 - Path: Assets/Game/Scripts/Components/OperationsReconComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '107ce019a3da089fc322db2aca0df6a6') in 0.011730417 seconds
+[Worker0] Imported GUID: 763409a3f98108848a0e1befe8dc39d0 - Path: Assets/Piloto Studio/Shaders_Reforged/Functions/Channel Picker.shadersubgraph - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'eadc1ac1b792bd866b634558f6406630') in 0.015825834 seconds
+[Worker0] Imported GUID: 2effafc5c997a4441bff02ecab14255a - Path: Assets/Game/Configs/Localization/OperationsO001UiStrings.json - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '51ba4eed7248640b64a09d635bf6f94a') in 0.011848208 seconds
+[Worker0] Imported GUID: 155b471e381724b88a13abc3797eb09c - Path: Assets/Game/Scripts/Editor/OperationsReconLaunchSmokeValidation.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '919e8f542a6d29761f7c1efb5f0c625a') in 0.012390875 seconds
+[Worker0] Imported GUID: 0b4b0b6fba17a2a4285ac560b1fe31e5 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Guitar_Grey.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ea5ead45b4b033187a2312c41533b58c') in 0.034336042 seconds
+[Worker0] Imported GUID: 63794df2e96b8ec45bc07d3e5a30d0de - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Gamming_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8f99d86060e882817e682e955c529237') in 0.030065667 seconds
+[Worker0] Imported GUID: 27573e745d52e40d5965dee27e105d48 - Path: Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dacadf47ba05f872b57db6488e4fd96a') in 0.012137958 seconds
+[Worker0] Imported GUID: cbfc2f62e3142413485019bd83197539 - Path: Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bbb0b20072b27bd2fb52ea522440ce5f') in 0.013721 seconds
+[Worker0] Imported GUID: dbeaaea79c5f7e04698757dff1b81236 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Dark.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a3122883a5805825c654af1cb2668f0f') in 0.030226916 seconds
+[Worker0] Imported GUID: 08a5baaec49cca547a485bfdfcca8257 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_7.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9ff7e1eb2b8b6940568e8532bae21252') in 0.030907125 seconds
+[Worker0] Imported GUID: 39c328153ab5c344f906ae9578cfc580 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_4.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e221c93ffbc7f06822ed5409f9cc8aa7') in 0.025073584 seconds
+[Worker0] Imported GUID: ccd4529d43c341443b320b0eea171992 - Path: Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/SoftMaskScript.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '30784a92316098528112ad4103c3dfb8') in 0.012699292 seconds
+[Worker0] Imported GUID: 0c4c6015e0d876947938b75428e3cad6 - Path: Assets/Synty/PolygonGeneric/Scripts/Generic_SimpleTranslate.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b9a0a9c7c56a04b71012dc39d1297447') in 0.012129292 seconds
+[Worker0] Imported GUID: c09de3593c6968d49870f735aa5e15d4 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_4.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8139edcd2ec1dc90a0e119a5dad7f659') in 0.026116083 seconds
+[Worker0] Imported GUID: 18a1e76f4c37a2a49a324c434cb8c171 - Path: Assets/Piloto Studio/Shaders_Reforged/Functions/Soft Particle.shadersubgraph - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4bf6f9996909c77493c666838309bc92') in 0.014649125 seconds
+[Worker0] Imported GUID: c73297e8f83326c4dbbd11aca7c0db3a - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '77691acade946c288b0f6e3b8dc4ef90') in 0.036275167 seconds
+[Worker0] Imported GUID: 8107712f49c429b4192c15034694c0e7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_11.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5b01bdde0e27679f954010cdfb67030f') in 0.038811 seconds
+[Worker0] Imported GUID: b7938247948e63c45a62741e4d129d40 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Song_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ab8f2d5f4ad797ae3e8508da3be34ff9') in 0.030604083 seconds
+[Worker0] Imported GUID: fd59cf8c3a1fae1419b464f078832b8e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Song_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'df774bb91777500dee54470fca5cc7d9') in 0.029859291 seconds
+[Worker0] Imported GUID: ecfe8ef5c454aca48881987e41d99f10 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Sludge.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '038016249403a3ee3afd3a5ff3fc3662') in 0.03169525 seconds
+[Worker0] Imported GUID: c478d945cf2253d4bbda675522b23dbd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Gamming_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2b2eeb50d53d718095b79433ba3cf62f') in 0.028771625 seconds
+[Worker0] Imported GUID: e6d316879c24a2545b3d29ca30505beb - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_ChristmasSock_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7ef3f31ebe6da546398ce9b487fbda02') in 0.034856458 seconds
+[Worker0] Imported GUID: 3dfdfcb690a46184999cfbfb35ef239c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/LootBeam_Universe_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b727a07a485d42f614d55b70638efae7') in 0.028661584 seconds
+[Worker0] Imported GUID: ba27205ede00773429261461037fe0d4 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Ice.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a1302dfbe93a6cecc232fae06bdea3f5') in 0.030007417 seconds
+[Worker0] Imported GUID: 3a365b0677cb23c489ed52a3c7acc585 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e6c169a46a266191913a324a41bd7f48') in 0.032000875 seconds
+[Worker0] Imported GUID: 71f7cb8e8bf992349976d0e877d0e5d6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_14.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd2387e71460b336d0bf99d19b2e8beb6') in 0.027207917 seconds
+[Worker0] Imported GUID: 21029c8d7b90c3f419dc92e0abf1b2b8 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_5.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b0861f0d6d2acc4ba1943205100ddb04') in 0.037393708 seconds
+[Worker0] Imported GUID: b818a7a8c03e86b48a30c7bd49259b63 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5e1cc9b4ac9d62c743ae6af53ee0a0e4') in 0.033024875 seconds
+[Worker0] Imported GUID: ba0e5977e08807f45a6a778696638427 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_13.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '744fd4dc35d340a7791e63881be14d1c') in 0.024100166 seconds
+[Worker0] Imported GUID: 9e3d5e878aa146c4581a78eed3f1475b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_5.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5328b0fc1807f813e153292047903d1b') in 0.033023083 seconds
+[Worker0] Imported GUID: f26f90879c98ae542b3b2f3aaba95232 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Gamming_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f3bead6881f45beb4386a987ade73c74') in 0.043691417 seconds
+[Worker0] Imported GUID: b0a5ac8dd83599645b46a376387f3377 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_13.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '85ea22b2ac4240a2e3068cb2e912921e') in 0.024367167 seconds
+[Worker0] Imported GUID: c3f4377dabdc6bb449d9132ac86a8748 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '42effe71bf6672a32d6a25ec33393376') in 0.026564292 seconds
+[Worker0] Imported GUID: 4d881255962379240ae575b9d9abee07 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/LootBeam_Prismatic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '09eb8c1b8eb193a048d1c4e863201a65') in 0.033592625 seconds
+[Worker0] Imported GUID: 05ee8e3b9c833954e9f3fc3081abb136 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Acid.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '96059991075d68bafc296f60bc1979de') in 0.030345916 seconds
+[Worker0] Imported GUID: 5db3151c2372e8c4a8b2b91ed96f2a72 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Groundhover/GroundHover_Tech_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '415a63d2f31973b7141e2121c13e3356') in 0.031485833 seconds
+[Worker0] Imported GUID: 4ae5c8b23fc3d5a4d918ce713e11d0a3 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Chest_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b819e085440362a75922e06ab92abe08') in 0.041301292 seconds
+[Worker0] Imported GUID: a1b2c3d4e5f60718293a4b5c6d7e8f90 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2cec4a53401073bf999f15a6ba335b56') in 0.011621375 seconds
+[Worker0] Imported GUID: 5c75fd76450c3d8419c5ea5ae99326e8 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8b1fea566b461cf3cfc02eb82f514e51') in 0.027672792 seconds
+[Worker0] Imported GUID: 17d1039496044be419303fb3623e32ff - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot_Poof.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '48ca1b4997a1cf5604a7192ded271d84') in 0.023882666 seconds
+[Worker0] Imported GUID: fcf7ce2174a43704ea6d8699e4fa2d0f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Magical.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a9c2f38bd42149085b47fef4eedbfe00') in 0.028737292 seconds
+[Worker0] Imported GUID: d135283109eb5f84eb6505865667b4c2 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_9.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f1b4c3d8c60f700192d5947b90e43025') in 0.025775041 seconds
+[Worker0] Imported GUID: 69833ad7fb0c79944921524afe2c8cbd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Grey.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'aa182bbf475eaa80012ab4dcf9c7a15f') in 0.024141041 seconds
+[Worker0] Imported GUID: 66ceb2b2de4561c4cbe9564763923827 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_6.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3eb7d1044aa06475034c008c55d32189') in 0.037110125 seconds
+[Worker0] Imported GUID: 6c0ec6f27b7d16848b197e83286bfbad - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleCountdownLabel.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '395034f37c681b84c4415f41821ad3fd') in 0.011715583 seconds
+[Worker0] Imported GUID: d390da82c30655e4fa91e581d07fcadd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1baa07082478c26a00e6c35cec658c03') in 0.034905542 seconds
+[Worker0] Imported GUID: 3ca21135911583c46856103ad4a8ee18 - Path: Assets/Synty/PolygonGeneric/Scripts/Generic_WaterBob.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e3c8b5b5d5ec94050e35192863a34a4d') in 0.011669584 seconds
+[Worker0] Imported GUID: 6e1371e1e1866db4a8d495ae5c44450e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Chest_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '42ab3d0517db15b76c152d83945c0a5d') in 0.040785 seconds
+[Worker0] Imported GUID: 344b6d6955ba26143aee6a462a23f0ed - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_4.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '509ba590ad69dcdcda2ef5586384aad0') in 0.024937709 seconds
+[Worker0] Imported GUID: a24f361892508a649ad5400074890430 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Groundhover/GroundHover_Generic_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '474a8b108830742bef0321844f53a165') in 0.040757834 seconds
+[Worker0] Imported GUID: a16a0977fb4b3e048b6afabb6bd62d95 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_12.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '787a20b18463acc6f21fefa754089aa5') in 0.028483166 seconds
+[Worker0] Imported GUID: d1879b1ba5fdfae4fb24baf9e99a44c3 - Path: Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/PolygonTransparencyShaderGUI.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f7dba95963365537f5213b3fac48a479') in 0.011736417 seconds
+[Worker0] Imported GUID: 1585d934ac839f64f985a8b0bec12939 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V1/LootBeam_Tech_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6a9ec2266abe8476d6db914b450efa43') in 0.035219375 seconds
+[Worker0] Imported GUID: fa5848d6bb6761a49ab120b2f3532dc9 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Groundhover/GroundHover_Generic_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a75f2ae515543537d1957b0ce07da58b') in 0.050507583 seconds
+[Worker0] Imported GUID: d44235b3e8f3dee4a904cfa52ab03ec9 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Lootbeam/LootBeam_Generic_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f71a0356749a9d52b570b5e3a034849c') in 0.035662375 seconds
+[Worker0] Imported GUID: 55794fa2c28d217409754c296bbac9ba - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/_CommonComponents - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'fe72f9bab77bc18933caafe1190343b7') in 0.011449292 seconds
+[Worker0] Imported GUID: 9bb73956f4eb45708de7ae110248b414 - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishS002AriaHarnessTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dc3cb1d1e11fbb96047878bb56301669') in 0.010959916 seconds
+[Worker0] Imported GUID: d8527f4210473db4ab5ecbb87d3e86d9 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleLoopAnimator.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '435ec3bc1cb77a407c9de0943e115871') in 0.011367916 seconds
+[Worker0] Imported GUID: a6ccdbcc50df4d74cb1b8578dc5ab803 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6e26b832d26b975e409054da6c7b8513') in 0.02215675 seconds
+[Worker0] Imported GUID: fa4c093bc2e326446b1e8e68b7ab3679 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/LootBeam_Extreme_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5edea639dad819330516841f2a642e83') in 0.037088292 seconds
+[Worker0] Imported GUID: 1229f7a712e9fab40a488f9cb5e2c281 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_3.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '52e15b8ef2ccff5d816014970a8602a1') in 0.024584833 seconds
+[Worker0] Imported GUID: adb51aa53d3ba9e46ae4adc7c975a953 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_12.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'be657684f03b4daecf20b051c6620f02') in 0.027394333 seconds
+[Worker0] Imported GUID: 5e579b9670f45f0468f178faaee98c05 - Path: Assets/Piloto Studio/Shaders_Reforged/PilotoToon Mobile.shadergraph - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd34d56deaedf0b473a4305a7b4bcf6d5') in 0.249587958 seconds
+[Worker0] Imported GUID: 9aff1e8885185164eb62d0effbfe0897 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_5.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b93231fec34d77804ebb6c52c46ece03') in 0.030504125 seconds
+[Worker0] Imported GUID: c859909508b5d0c4b8895c1502035f5c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V2/LootBeam_Tech_Epic_V2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '156578d55b5fadd369a2473e1773b14f') in 0.031202791 seconds
+[Worker0] Imported GUID: 43035c1be6755744cb8a8b124afa0bfc - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/LootFlash_Cash2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7d4794b1c9f78282eb67402a75cd7082') in 0.030089333 seconds
+[Worker0] Imported GUID: 07f1ddc91fa53584ebf353b5bbf375ac - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ce389d4c79ea5cdce9da085e6715da34') in 0.029118209 seconds
+[Worker0] Imported GUID: 02d3493af56b1034894325adcc1d52d4 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Shock_Yellow.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '737662af2783fc3e0163102da397b1c1') in 0.034003792 seconds
+[Worker0] Imported GUID: 3c95f69d4890a21448ec5689fd24bf5b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_11.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '465a6ea0574e4b3a4c28574f8815f328') in 0.036558791 seconds
+[Worker0] Imported GUID: 67c614ee0c641314685c1c4281adcc47 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_6.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8796fcbeaeb5f30e4ff1362b88bf7604') in 0.036881625 seconds
+[Worker0] Imported GUID: 5e6f708192a3b4c5d6e7f8091a2b3c4d - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishAriaPublicProjection.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f2c4bc0803ac9384bfdea1d79153f1df') in 0.011714459 seconds
+[Worker0] Imported GUID: 7c977f93373c8514ba2f661a0cb4418f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/ExtremeLootBeam_Extreme_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd556e6ca844f410b4820b597e35a53b5') in 0.040627917 seconds
+[Worker0] Imported GUID: da3a30496745ad449bf50d1cb887acb1 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cc55b3ab6bc6d6addfff1ed4c52d0acb') in 0.026452917 seconds
+[Worker0] Imported GUID: d98caab9ddea8479fa9aa617e86ae40f - Path: Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'beac230bf68b73355119ff8de479935d') in 0.012051041 seconds
+[Worker0] Imported GUID: bc4278ed567e7344cab1ebdd651aaf4f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '333fab62d61edba223de75c135be0bec') in 0.029491666 seconds
+[Worker0] Imported GUID: c65a658dc3dff194a9232f591afe4c9f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_14.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '672a60c1716546621868fe97ba045018') in 0.025591167 seconds
+[Worker0] Imported GUID: c2de0db4e571afc43a29266a881df236 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V2/LootBeam_Tech_Common_V2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b8754e998a3823ee57ec22a50eb2054a') in 0.029094917 seconds
+[Worker0] Imported GUID: a123786427a6f0e41ac498047575d18f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Groundhover/GroundHover_Generic_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '109eb1ad9c59ece0e546413ecd6978c8') in 0.041092917 seconds
+[Worker0] Imported GUID: 6997cdf1d5071b244ac28b6e829e8057 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleAutoInputModule.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c6b857544b57f1dac6af633ccb0483b9') in 0.011850792 seconds
+[Worker0] Imported GUID: 4d5e6f708192a3b4c5d6e7f8091a2b3c - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishEnemyStrategySystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ddf6ed8f54c8e8fc36a4648ec03817bb') in 0.012015625 seconds
+[Worker0] Imported GUID: f880830e45d663d4292bc7522ff9dbbd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '28a81ad009fbd1bbe9285fb1dc89978e') in 0.036085458 seconds
+[Worker0] Imported GUID: 1bcd78027022f59499474b0f2903bd5d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_20.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '00f441e1b891abe4ef2cbaf392ca01e4') in 0.031823916 seconds
+[Worker0] Imported GUID: 832a7cbd972e167448d10ba65b2df695 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleAnimatorActionData.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '44bf37164c90943032de31e13955b304') in 0.011011458 seconds
+[Worker0] Imported GUID: a62c76b2537b73c47a42ca8f9b251bad - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_11.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1b316c6bfa29524d4b3f3c7c96523daa') in 0.032905417 seconds
+[Worker0] Imported GUID: cf2f5e0e824c403f9d560abd468585bc - Path: Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4fc0d23cbadbda7c9fac8683a64affcd') in 0.010762709 seconds
+[Worker0] Imported GUID: 9af6b56335d3cb947a75ebadc66142e2 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Log - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2e3a2bce06202672ab8d5feffb803a93') in 0.010764292 seconds
+[Worker0] Imported GUID: 00fa4d8272a55534a869c657fec100b7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_TechCubes.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4685afd703cfe813c6fb2cf553f6a561') in 0.027916542 seconds
+[Worker0] Imported GUID: d734c5a51d7cc5f488caa8cc54d5072d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_10.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c7dfe8cb725b41bb49e0ef475bee42a8') in 0.028718583 seconds
+[Worker0] Imported GUID: 2190c297cdce6cd4a81a46b3475ed6a1 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleSceneLoader.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8d5c6a8c729fccc99c65957a78caf2f6') in 0.012015791 seconds
+[Worker0] Imported GUID: 09b2dbb13f21b1c4f89f904e6a48b591 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Guitar_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6f131ede167eb6af567113a86f0988ec') in 0.028958625 seconds
+[Worker0] Imported GUID: 626cae9b20509e34fbfa82d2e3ae3d60 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3b2051ccb772d83ee74da2bc4a23b2b4') in 0.025876417 seconds
+[Worker0] Imported GUID: ea7086185ac8e6049ad3431e7c1eb64e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Demonic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8ca98a9a136ae71a0b3b77cf33a6951c') in 0.027053541 seconds
+[Worker0] Imported GUID: f3e1dcfa9e886fd4a9dce761d2e39bbb - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input/PlayStation - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd89d5477b163f96038c77ca9d07f61dc') in 0.010695792 seconds
+[Worker0] Imported GUID: 5738a5cc9ad1f7945b138998dd059067 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_ChristmasSock_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dc4c717fac23757598dc404cb238555c') in 0.0277425 seconds
+[Worker0] Imported GUID: 436ad050c3f36ef4bb5892aec60bafb6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_11.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd7be7a8b5372f091d6015ac9cbdff2fd') in 0.035643583 seconds
+[Worker0] Imported GUID: b271a35ef9863bd45930f0573ed2880a - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_3.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5b530830ad5e7680109df24e6cf5aaf9') in 0.021717542 seconds
+[Worker0] Imported GUID: 8c89a5eb59c730944bf1a37dd613301e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '161d1453eb49ba0abfae2a04896be539') in 0.0244155 seconds
+[Worker0] Imported GUID: ed7d72b2c3dc9344fa7ce3b12ed1ed27 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Chest_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5026944a96286f7b0ef50e9707ab02af') in 0.036906792 seconds
+[Worker0] Imported GUID: 444df69c6ea9d6346b9bf74b5c5b8451 - Path: Assets/Synty/InterfaceCore/Scripts/UnityUIExtensions/UIParticleSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bcd42dd4bbca0f73e06f77366e7d944f') in 0.01089275 seconds
+Android Extension - Scanning For ADB Devices 3129 ms
+Attempted to call .Dispose on an already disposed CancellationTokenSource
+[Worker0] Imported GUID: 50dadf15d81740e48bf784bb14f242da - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleScrollUV.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e6c4e81e2cfbd643875abcaaa07732cd') in 0.010772084 seconds
+[Worker0] Imported GUID: f8a46a4a5f481424c903e71f84c208df - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_18.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6d9833c8513b03f50a1af91b5dacf086') in 0.024499 seconds
+[Worker0] Imported GUID: 64255843ee6edae4a96f229d7a3d2fc6 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleXPBar.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5654df78e0285ca1ecc0618546f42dd2') in 0.012179667 seconds
+[Worker0] Imported GUID: e16259084a99b0e489b0e53af4e783a0 - Path: Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/PolygonShaderGUI.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a325b0b4dc4d85ab9caeb63bd02836fd') in 0.01111875 seconds
+Android Extension - Scanning For ADB Devices 89 ms
+[Worker0] Imported GUID: 6328cf80c6ba39f47b2626ea53eb46e5 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Grey.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd4cea02c7014145a8b29e02545e150f7') in 0.027458458 seconds
+[Worker0] Imported GUID: 633adc115346c8a4b805c3ece02f06e6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_3.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '084c7ff21f06f4fdeacadf9196b713fc') in 0.025531333 seconds
+[Worker0] Imported GUID: 84b96cfc401758944ab5664b765de7ed - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_FireArea_Gren.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cf6d277c72e44bd8bd988128cc90fa7f') in 0.031066708 seconds
+[Worker0] Imported GUID: 5d435c6c8153fd74da744d010c7a44d9 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Guitar_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6643e408be7247be242f0438de9f3ca2') in 0.037598958 seconds
+[Worker0] Imported GUID: 2dee6b01edae40a45a01c72835820bfb - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Groundhover/GroundHover_Tech_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c02bf49ab004ca2bf6b91fa1b2a1d50f') in 0.057400334 seconds
+[Worker0] Imported GUID: 08b544cd5a7d2c44381b737b184e8a99 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/ExtremeLootBeam_Extreme_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '45f1868122361456462d64d4ac3b2324') in 0.048942458 seconds
+[Worker0] Imported GUID: 82d330bb34ac80f45af7726924b2b968 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '20c662530d6db126d97eb725a31cee9a') in 0.030670375 seconds
+[Worker0] Imported GUID: fee52d3909940d3489b9efcc9915b6ae - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V1/LootBeam_Tech_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '49bbaa1638187ef4aa88eb3614d532ca') in 0.041740917 seconds
+[Worker0] Imported GUID: bdb17d6dd52394a48a2597cb34a96a0b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_14.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd22c01bcd5a7f227030c3199b77d7684') in 0.028559084 seconds
+[Worker0] Imported GUID: 6fd4e3da97597e44d89ed53032028d61 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Pentagram.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4746178c769346a80b9ae0c3f1db6e90') in 0.030716542 seconds
+[Worker0] Imported GUID: 4b60f700edcb6b548b6ca3202972f2b6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_17.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '62092f2a79bc96431162fce1930d73e0') in 0.028283375 seconds
+[Worker0] Imported GUID: 24f65b369c1e83e4885fecefcf89de41 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleTimeLabel.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f6d857bd7756a0d71131b0b195af74fc') in 0.014484291 seconds
+[Worker0] Imported GUID: 497200fd75a2509499f3bd8f6f3bbd68 - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input/GamepadGeneric - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '78e045be5485dcf37b9c6ecfadf00552') in 0.014498042 seconds
+[Worker0] Imported GUID: d07d9cc7cfd6b344bb23ec570b588c85 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Lootbeam/LootBeam_Generic_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5c2147bd4d688ed0930f4f6f61899a3d') in 0.032393042 seconds
+[Worker0] Imported GUID: ccb2f47ff735f614aa4094376621aabb - Path: Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/polygonShaderTransparent_UI.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3d2f6568b2252f3a77a67ae28eb5af3b') in 0.011928875 seconds
+[Worker0] Imported GUID: 15a7483e9233e09459da64a2ff578019 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_14.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '29b723bf4bb1dcbd2a49390bc7e2ccdb') in 0.022938458 seconds
+[Worker0] Imported GUID: 47930cf2598cf7a41883def8a5b6d396 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeams_Silver.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '194e0a3cbb4f71730bc8add352aaf820') in 0.028844208 seconds
+[Worker0] Imported GUID: 313b8b493a64f1646a0fc72eae7565cd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Song_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '813fbfd949ebc963a36749f695993bf3') in 0.038930792 seconds
+[Worker0] Imported GUID: 6027f5ccad3079a48a3c8a4a924f7d71 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_10.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '45025dbbb25b15d27f18e7b16216006a') in 0.036574416 seconds
+[Worker0] Imported GUID: db634c633afe3eb478fcc401198693ed - Path: Assets/Piloto Studio/Shaders_Reforged/Functions/Channel Picker Clamped.shadersubgraph - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cfa21889219046d995711595e199c9ca') in 0.013519416 seconds
+[Worker1] Imported GUID: 2b9777e7b54ff064a93c14a256605a5d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeams_Golden.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0fba1c3b95b049a23e27339b9d6bb5c0') in 0.113313792 seconds
+[Worker0] Imported GUID: 9ab2a5f80e9bee34181937e3bf86e9d6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/LootBeam_Extreme_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd9354589f9b24241c244854045acda03') in 0.038153916 seconds
+[Worker0] Imported GUID: 881486ecb4c03d04dbca02fb23000440 - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input/Switch - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f5f64fbb22e032752e74b222e2edfc09') in 0.0118885 seconds
+[Worker1] Imported GUID: fa9db4db8e05b2344a2dec1284a9cbb2 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6fb5690ef58c3e72c1ca4584f584c79d') in 0.031042292 seconds
+[Worker0] Imported GUID: 98b6428a5d300d243815565607e675f3 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_ArcaneMagic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3166b2ff065043642791028845edd1ef') in 0.026782917 seconds
+[Worker1] Imported GUID: 397c5fd6afdb87049b0c1365ee201a36 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_13.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4ea651d15372b53d7dde283e430e5d5f') in 0.028740625 seconds
+[Worker0] Imported GUID: ccafbf253b49a477aacc87752e985c21 - Path: Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ab3a52df16ae5e9d1602de004d034995') in 0.011362 seconds
+[Worker0] Imported GUID: dd95fd526fbaddd4e96feb1b5b051f7f - Path: Assets/Kevin Iglesias/Human Animations/Scripts/SpineProxy.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '66582bac80949e8b5e124357df786882') in 0.0111115 seconds
+[Worker0] Imported GUID: 8a998aa24c80a144697fa8355c1bc1f7 - Path: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Scripts/HumanSoldierController.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '989e8ab626effa89dc81ba02950231df') in 0.011240708 seconds
+[Worker1] Imported GUID: 19143d839e77f124ab20a57432be4658 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a6f2ef9d11eb8813317b6e9411abe7e8') in 0.028855417 seconds
+[Worker1] Imported GUID: 2b923873216e9aa4c8ad2ecd92e49fe1 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_9.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9f9240b3327c9ef307cb3a14dc1050d9') in 0.022660291 seconds
+[Worker0] Imported GUID: 4b3e3fa62f193b54f85dd30193121d15 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_FireArea_Purple.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e7b2e530d7f7d6b2d82075da351ee14a') in 0.0286535 seconds
+[Worker0] Imported GUID: 9bd6ad37d7bd29e42b45740a8c746c13 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_8.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2649217e35aa1da61712582be02d74d8') in 0.025295417 seconds
+[Worker1] Imported GUID: 3617019f30bc2864a9d7adaa810becb7 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V1/LootBeam_Tech_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0fd46d3ffa367a9b11af4a22c3fb5dc9') in 0.030870875 seconds
+[Worker0] Imported GUID: 36a67d229c7d45d0a4aac5f247f61980 - Path: Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.CommandTabs.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a37d5d1d0f7d796d5106f00c706a3652') in 0.011667083 seconds
+[Worker1] Imported GUID: 9765d5d16bf6d41a6a6e0e2636c1b162 - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedMaterialsTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6a522c6dcd4d01c507364c5ab9e15662') in 0.011803916 seconds
+[Worker0] Imported GUID: dff3c21f2e7e1c94797a8432b1f966dc - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ebd8002631e8b861c7fad5504c57a4ba') in 0.011344375 seconds
+[Worker1] Imported GUID: b9bd9e253f04dde42b0f7b518a5a2dbf - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/LootFlash_Cash.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '71eb536980ca7cd0db278b34ddda4a07') in 0.027244292 seconds
+[Worker0] Imported GUID: 5d108c84e27cc5a44871c2fb75fd3359 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Orange.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dfd108308a7c8d9131e5ab22cbcec4bc') in 0.027960125 seconds
+[Worker1] Imported GUID: e3452501a14ffbb40ac8a46873bd036c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/LootBeam_Rainbow.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ce4747df51948e6630d41ac48cabb35e') in 0.032957459 seconds
+[Worker0] Imported GUID: adeae228a08c8e04ba80d75c2d686d42 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '680e9ecd7f25a03c9b798dcf80a52ec5') in 0.022006042 seconds
+[Worker0] Imported GUID: 4f79a67c2203299468fb2e2285e22105 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Colorless.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9352b81cec4d75884c4a9b4aa75d5322') in 0.024215333 seconds
+[Worker1] Imported GUID: b5f078ad7948e864a8d9d61ca04bd98e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_6.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '46a063e1d85caf5b67658032a399b36c') in 0.036694958 seconds
+[Worker0] Imported GUID: f60718293a4b5cd6e7f8091a2b3c4d5e - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a3cc71df7798e6137290374470edbbc4') in 0.010735042 seconds
+[Worker0] Imported GUID: cf9584617fa24ce891358de8449d28a4 - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiMatchHudResourceReadModelSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd6ad213028c8067d436eceb4457bc0ca') in 0.010880875 seconds
+[Worker1] Imported GUID: 2a68a4f3efd308044a5092c8c4b21f53 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Groundhover/GroundHover_Tech_Epic.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a90b982b69bee0eda743234063f6f647') in 0.040111333 seconds
+[Worker0] Imported GUID: b444eb4dda58a2c4dac8313ea6962573 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_5.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4505b9c7047b6690b5cfb2566f433793') in 0.030796458 seconds
+[Worker0] Imported GUID: d287b474f3641274cabec756b7c6ee7a - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_ChristmasSock_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8ed9314e1b7b62c7893a38aaa765f0d6') in 0.028778584 seconds
+[Worker1] Imported GUID: 65d04b86730e7ab44be83d5397c0c7cd - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_11.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '996907d15a3be8b79bebb07852e3cf80') in 0.036854792 seconds
+[Worker0] Imported GUID: 594b70df1a465764f9643ed9aeb6d645 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '01fc8d76b750fef5c1b4bf63e9c6e3e5') in 0.02594375 seconds
+[Worker1] Imported GUID: 84dbac2247211f2408455f948db3ba3f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_16.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c994de216d26adc398f6f969a24c1bb8') in 0.037547375 seconds
+[Worker0] Imported GUID: 979de42a53f3278438f980eb8ca17e3c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3d52431effc02c4c8edad28a501874f9') in 0.027772708 seconds
+[Worker1] Imported GUID: 86d0eaac271d56f44994c3bbe05e0f9e - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Input/Xbox - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ab23150a1e09164c4c3ae835a57f198b') in 0.011760084 seconds
+[Worker0] Imported GUID: 86d5b0b21a5f0fa4fb6c0e4eb1baaba1 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_10.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3a8808e5c9b01531fd8dcdc45b2fd0f7') in 0.030759584 seconds
+[Worker1] Imported GUID: b3d0b9d91b279fd4c90c151e6aa8dfbf - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Groundhover/GroundHover_Generic_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1c5af3047cab7280578cbc35fe0e4073') in 0.032598667 seconds
+[Worker0] Imported GUID: 97e0ee8f239a423abf54d12d0140c20f - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionInitializationSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f4cddbf47e6a298d341d9c40d60ee516') in 0.011237333 seconds
+[Worker1] Imported GUID: 96b52a54a62d12e44bc7b94a78563864 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a9df1215fe28d67f4c008b6d1994e948') in 0.028700958 seconds
+[Worker0] Imported GUID: 99847b3b9d0d2524d80bb83a81801cac - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V2/LootBeam_Tech_Rare_V2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7921a6e341d91a96e3e07a3ffabf8423') in 0.028215708 seconds
+[Worker1] Imported GUID: 2991d49ea3d2df74eb5207c1a3a28e99 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Simple_Grey.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2b5998a24c0fd56e6c59d2920a6bd8d6') in 0.026784916 seconds
+[Worker0] Imported GUID: 44ac62b60a082b44bb37e27c4b5eccee - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_8.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'eee5b948562740caac468fe43f83eb12') in 0.022738584 seconds
+[Worker1] Imported GUID: c59f6bb82583988479a8564e020f6499 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_15.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dbf38de4298d026c3b3a4244823e5c1e') in 0.031222208 seconds
+[Worker0] Imported GUID: 6f83ec823b62b9d458187f65f214b156 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Chest_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2e0956a7fc59a391a862afdd4c8e9ccc') in 0.037030166 seconds
+[Worker1] Imported GUID: d1a723f30ece42e2b87150a8e916d615 - Path: Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e1f7e560061f4a16807760abdf8e4c25') in 0.010616208 seconds
+[Worker1] Imported GUID: 58e2cdd4cd0bb41329e93e90c8244823 - Path: Assets/Synty/InterfaceCore/Shaders/SyntyStudios_UI_AdditiveSprite.shader - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8e056b6406cc9de7a6b0a61638f7d041') in 0.014495875 seconds
+[Worker0] Imported GUID: c94e5d0abd2c8154bb1f77f13929698d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_19.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7cfe0c69f7f2ef125a0ae2f711f837ca') in 0.0248925 seconds
+[Worker1] Imported GUID: bf9df407f8dcb7742bd51d8c01773eba - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Orange.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7fbd7936dab8ef11ceda79362defd10d') in 0.022821208 seconds
+[Worker0] Imported GUID: 9866bd328447045499d97461e5895afa - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2a72d5ca406f502177494a0c6da98ced') in 0.034943583 seconds
+[Worker1] Imported GUID: 470ffeeff18d73e40945016956121c0b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_8.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e70fd15cf591b5ad8e4d1bf78b15b07b') in 0.024283625 seconds
+[Worker0] Imported GUID: 7ca9b610be62f29419eb1bf87d54ee2f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_12.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '326398a156f9ac46a9e8ac8177b1b6ee') in 0.025970792 seconds
+[Worker1] Imported GUID: 8a2474e30cae49349b0053a5fa63219f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Extreme Lootbeam/ExtremeLootBeam_Extreme_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6851cc4874eb75e08dc169244b89f605') in 0.038248625 seconds
+[Worker0] Imported GUID: 0c141e169e2cf1443971c419b8859869 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '240feaef648e6675f7a0dd7d9af60553') in 0.02544875 seconds
+[Worker1] Imported GUID: 0ffbd32dfb2a412f86bcc923a3eb86b3 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedPresentedOrders.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '933293476d7214c0178546020c02f703') in 0.01091225 seconds
+[Worker1] Imported GUID: 69d34558d9728d94aa0704e3f9c88dd3 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_9.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '79e8feed24511e7931bc6819e1583f72') in 0.021577042 seconds
+[Worker0] Imported GUID: 690b24d5190d4fa47a12de33bd22cd3b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Lootbeam/LootBeam_Generic_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd1d4da7a639e2c9abc2f5fa5433a037d') in 0.036627583 seconds
+[Worker0] Imported GUID: b78dd379691c42e5a4c810259ea4ccaa - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionHudRestrictions.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5ab5cba22359dff1e82e1b8dc0a44eac') in 0.011333875 seconds
+[Worker1] Imported GUID: 767ffdb8de6b26b468d1cf8499d90408 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Generic Groundhover/GroundHover_Generic_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3df3935db188ef5bd9117a898cf434a3') in 0.035590042 seconds
+[Worker0] Imported GUID: be9b9432871d00e4daf724b569d1320a - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_ChristmasSock_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '588e74cc30e69224c4f6777d41d8877e') in 0.031836542 seconds
+[Worker1] Imported GUID: 1d4e7d22056159b43931f78a38efa2aa - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '272e76564815edd5c8481570f773c891') in 0.027146833 seconds
+[Worker0] Imported GUID: 232e9684e66fe4983b728dbd67811267 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishMaterialsService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0091af9bf00095c9b4a9ba22f193859b') in 0.011423875 seconds
+[Worker1] Imported GUID: 3965e2f8bb9f2694db78e024fb08860d - Path: Assets/Piloto Studio/Scripts/ParticleHandler.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a13657393c4958e081de957b305ad76b') in 0.010944334 seconds
+[Worker0] Imported GUID: 18f0f1d95b078b0469058e96dbabea97 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Shock_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0605f342ddf7800e2e650232948c208c') in 0.030741666 seconds
+[Worker1] Imported GUID: dbf3df9fb92b53146b9f09eed6cfa759 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_DarkLighting.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '014a7704e1b783c05deeb4b9896d242b') in 0.030014958 seconds
+[Worker1] Imported GUID: 02662a8926c5fcf4d918a7a76199b041 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Hovering Circular/LootPickup_HoveringCircular_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '67e4cfdd92b1a03b55516475767c6337') in 0.022625125 seconds
+[Worker0] Imported GUID: 5dda30a1e5609b64a85453787a8704f0 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Grey.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '68153d1c6650b8243b51b5d20124d3a8') in 0.027463042 seconds
+[Worker0] Imported GUID: 8cc65f7c5ed7e2c45bb2c2e189324fd5 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b314d152a58a4a3d2b4eebcd9a762430') in 0.024922375 seconds
+[Worker1] Imported GUID: f6c250fd3e982aa47896558a878fe881 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_7.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f4ee42b51b162a8298d43d102aa488b1') in 0.027350791 seconds
+[Worker0] Imported GUID: 9f912318b83cca744a9998b6c38e5836 - Path: Assets/Piloto Studio/Shaders_Reforged/Functions/Channel Picker Add.shadersubgraph - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'db0a1d66edf580ba7aa70021f8b8bca6') in 0.015291916 seconds
+[Worker0] Imported GUID: 37a1dcc3820434a388bc8d8c8a6c38f1 - Path: Assets/Game/Scripts/UI/Contracts/IUiOperationsMissionGateway.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6597f4a53c3f8fd90344ae19d531c2a0') in 0.011476875 seconds
+[Worker1] Imported GUID: afe19d49383869e4c8d5d1ce16c465d0 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_15.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '08dcd61a24e318a3969d7e38aef25871') in 0.03188975 seconds
+[Worker0] Imported GUID: c2c1e0fdaa7873a448da3c9903cc8b4d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Lootbeam/V2/LootBeam_Tech_Legendary_V2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '24a5cf23fc0ed9b118ae4d04c9742d33') in 0.030486208 seconds
+[Worker1] Imported GUID: cc71dc6be9e30974db60d47a746d4293 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Song_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c0e130af9b2ac77c25827d455cfd6800') in 0.030004 seconds
+[Worker1] Imported GUID: a6873160ca816ed45b93ecd9139b8839 - Path: Assets/Kevin Iglesias/Human Animations/Unity Demo Scenes/Human Soldier Animations/Scripts/HumanSoldierChangeWeaponSMB.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '86c2f395321504354ecbd6d8c1b57629') in 0.010790542 seconds
+[Worker0] Imported GUID: d69b30c4f57747749a52fcc3f03b686f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ca544955b3e0047bcd944338a459b8bb') in 0.03686075 seconds
+[Worker1] Imported GUID: e093d4ae887147144b9be12e4bc0776d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Fire.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e2fb0776d94610caced93714fd1d811b') in 0.029530667 seconds
+[Worker0] Imported GUID: cdb88e4d0422e1d4dac44b81c60b2dc3 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/Ultimate Loot VFX Pack.unity - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e64e300339bd57eb0488d0466472eeda') in 0.021007042 seconds
+[Worker1] Imported GUID: 6b0e542ba13105649b3bc6fa21f49a0f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Red.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5fdb27a5ef0c2d8e9903e9ed4e806fde') in 0.027187833 seconds
+[Worker0] Imported GUID: e4dfbabfa9c11544382a93d50ea34d27 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_Guitar_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ae389084269e090a8af0beaa02906373') in 0.03075325 seconds
+[Worker1] Imported GUID: 21c3e29d306e5b14ea35ebced677a313 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_9.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b6f8a033a8efe8f3344e00520e23dee8') in 0.023262167 seconds
+[Worker1] Imported GUID: be6be32fbd3d2ec4183a7bf88d702cf1 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_12.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6de236e252cb3e04d7dd51f0be5e6344') in 0.024832666 seconds
+[Worker0] Imported GUID: 692b3e6655120f740a8e7db121867209 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_5.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4905df39453be96e2120475dc26661ef') in 0.030273333 seconds
+[Worker0] Imported GUID: 9fa33e76203818d42ae502db2d503520 - Path: Assets/Synty/InterfaceCore/Sprites/Icons_Social - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0cf1f8c39d0a2bf639866ca7fd1c8a01') in 0.010494292 seconds
+[Worker1] Imported GUID: 2ee510f711f8a9c4bbe2c61baecbf86d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Void.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '525036710817f178d8a611d47ba16cba') in 0.029667042 seconds
+[Worker1] Imported GUID: 66e9328989ea4b2c8c5b953b5d0b8955 - Path: Assets/Tests/Editor/UnitCombatFocusedEditModeTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6d7b3ae63164b21bfe26a0c230e10f9d') in 0.010892666 seconds
+[Worker0] Imported GUID: b9d954c423e8244448a7aa1c9aea4a82 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Tech Groundhover/GroundHover_Tech_Rare.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0bd45da9e6fe22f4b6ab9bd9931bbbb2') in 0.038748916 seconds
+[Worker1] Imported GUID: 533e17deef393f14896b2cbf3afee659 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_4.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4f5f5629e2ce8a337d808c27cec18821') in 0.021702 seconds
+[Worker0] Imported GUID: 7519587e457ee44daa2732f0f39fd9da - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingSupplyService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '04499187db182fd7f6bdbdbcaf52c2fd') in 0.011086792 seconds
+[Worker0] Imported GUID: 68f5ef2f3b5acfd4886ab279c31f89c6 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Fiat Money/FiatMoney_8.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ac6333e1f76e017898a5a4184377a1a7') in 0.021260541 seconds
+[Worker1] Imported GUID: dcd777c5328a7674497f0ec45ff2e000 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Bloody.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '91e604919b135c860bdd0cc41537a467') in 0.029873 seconds
+[Worker0] Imported GUID: 9c4b78157e0141edb97ddbdfa5d6d67b - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c23041590e9f3f7acfd183f6cca89c08') in 0.011200708 seconds
+[Worker1] Imported GUID: 052219e11157d584e8d7926740967e53 - Path: Assets/Piloto Studio/Materials/InfiniteBG.mat - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9ee1ccf62bc621c3b92a5b2e26b2e4ef') in 0.016167 seconds
+[Worker1] Imported GUID: bb478ec85ff59da419a6cadc2a23b006 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleButtonAction.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '697c7b079a4afd7df5d315356416d63d') in 0.011186917 seconds
+[Worker0] Imported GUID: dec19f6b7cc32764aa5fc06938c5e069 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_7.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3dc8c194f62bc7db5b98e7811eaf6f6d') in 0.025410709 seconds
+[Worker1] Imported GUID: e5d9178a79f44c5b82d4f78f0b7f1e6a - Path: Assets/Game/Scripts/Systems/UnitMoveOrderRequestSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0b0aa63b6cb9970aa7f229421b6dc7f4') in 0.01140475 seconds
+[Worker0] Imported GUID: 1803b92f65d8e0a4eba568653711603d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_12.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4bc5f2ccbc67020e9e845f1e5c33d387') in 0.025150625 seconds
+[Worker0] Imported GUID: b712b4f09df8543dda786416c35954da - Path: Assets/Game/Scripts/Components/CombatTargetPolicyComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3667a539ba73afc3e6f7893a178bb8c1') in 0.011166916 seconds
+[Worker1] Imported GUID: 7a87d7f156d15514e9f2ca2fecf2c626 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_15.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd5433c0f518fe30c5db447b3e6cad361') in 0.032549416 seconds
+[Worker0] Imported GUID: 6d37b8e041c53647983a5b6c7d8e9f01 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishWorldMovementService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2ad64df1c9794081b47fb02b8192ecd3') in 0.011730083 seconds
+[Worker1] Imported GUID: 3b15f8e920a314257618394a5b6c7d8e - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'fedd106f74ea13e2ce7d81d97bc5a30b') in 0.011271958 seconds
+[Worker1] Imported GUID: 39c8a74faf570a04d806ac0c007db1ed - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Common.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd116339ae96265c883824b29b6d9036f') in 0.023044333 seconds
+[Worker0] Imported GUID: e28c8221f89b3da448b76c1b78679640 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_10.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1428ee5c7380bf9ef252a5ece1d6bb7f') in 0.034101583 seconds
+[Worker1] Imported GUID: bf3f1bbb5f932b445884cb0c518fda9d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Swirls_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7ff3beb6138c33d31b04f77cee570809') in 0.0288255 seconds
+[Worker0] Imported GUID: df413a29b6e75ae4797d4f837e7cd58d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_10.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '04fa34fc7e81ef8d707a7b3322301b76') in 0.032483708 seconds
+[Worker0] Imported GUID: 7a539e26450407a4a9a0ec1c8afa8044 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleURL.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dac4b691d73c4bdf0f6d75ea98809463') in 0.011056583 seconds
+[Worker1] Imported GUID: e0de6047521e49b44a541a10445f951c - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_FireArea_Blue.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c185a99625f78d5453750df4980a545b') in 0.02939425 seconds
+[Worker0] Imported GUID: effabd88fdbf01745babd2bcc8bebf68 - Path: Assets/Piloto Studio/Scripts/ParticleShowcase.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e46c7340a5d4db80435646208090ded9') in 0.011719083 seconds
+[Worker1] Imported GUID: c035bb8a3b580eb40bdf88beb6d65e83 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_14.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f611ecd7220d568f146e42f2d11eba7b') in 0.022544459 seconds
+[Worker0] Imported GUID: 7e4c91b0a2d34f6e8b1c5d9e3a0f2468 - Path: Assets/Game/Prefabs/Skirmish/Building_GroundStaging.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '6929679c2cfaa697ccece91c23a9c8b8') in 0.026772875 seconds
+[Worker1] Imported GUID: 7b79fa22399c36f4abb1ce1bf67b6263 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Update/Loot_FireArea_Gold.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd5a594454bdc4fc4851671e1ccbae6cb') in 0.031086375 seconds
+[Worker0] Imported GUID: 345e0d2f355d6024c940fdc0ea8b26e8 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_15.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8daf7103ad4d5929b716182ff734c405') in 0.029498625 seconds
+[Worker0] Imported GUID: af0e233ebcbe4658984f62159385fe4f - Path: Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4de7955242e880e86c6c97d73fe38181') in 0.01103275 seconds
+[Worker1] Imported GUID: 9140e11b82e64fa4eb29cb06e0ab307d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_13.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b4bb6e476c45f89fad4b48e02fa6fec6') in 0.024234792 seconds
+[Worker0] Imported GUID: 19f3d6c708e1920354f61728394a5b6c - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedCheckpointTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '79d4c403cead968ca46900a3ff62e374') in 0.011364125 seconds
+[Worker1] Imported GUID: e44ec31bdb8f41c4c95c829379ce3b6a - Path: Assets/Synty/PolygonGeneric/Scripts/Generic_SimpleRotate.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ed1068f3872d4ccd1472b0d5408706a3') in 0.010940875 seconds
+[Worker0] Imported GUID: 25ba258757c744839f312d59f00e906d - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishScenarioSpawnSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c472968704b3802206029cb53ea7c9c8') in 0.01086475 seconds
+[Worker1] Imported GUID: e273a4c5d6f8091a2b3c6d7e8f901a2b - Path: Assets/Game/Scripts/Editor/Skirmish/SkirmishGroundStagingPrefabBuilder.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b9695e64ae7537d68bb72b166be3079c') in 0.010410083 seconds
+[Worker0] Imported GUID: 153560e13a12e3342842152c0df4dba9 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Loot Cyllinders/LootCylinder_Shocking_Green.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2a7ea3e3ea04bdbaecd25863ff0fea1b') in 0.026359583 seconds
+[Worker1] Imported GUID: c3d70c2f2f7511643b7003c36837a307 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Gems/Gems_7.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '931e95ac403308748dc317483578bb8f') in 0.025295208 seconds
+[Worker0] Imported GUID: 7b4c2d1e0f9a8427b6c5d4e3f2a1908b - Path: Assets/Game/Scripts/Systems/UnitEngagementSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9fc292c13b92ba8c07dba6045e8e887b') in 0.011611042 seconds
+[Worker0] Imported GUID: 6329e7ab75a0e524bbb95f69ccaac50e - Path: Assets/Synty/PolygonGeneric/Shaders/InterfaceOverrides/Editor/polygonShader_UI.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9e2c0926a87ab52de175ae7121642aee') in 0.011317625 seconds
+[Worker1] Imported GUID: c0fb2543c6ef52f4291c49beab881a1b - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Rings/Rings_3.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd79ea69c7121eb408c1a3067e4dfe184') in 0.022741083 seconds
+[Worker0] Imported GUID: a8c2f7fdce2141e2a37d925a49db911e - Path: Assets/Game/Scripts/Systems/UnitAttackSystem.CampaignMissionSuppression.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a89b54af7337cd9fb5fd64d7e5b5330d') in 0.010648333 seconds
+[Worker1] Imported GUID: 2c53e7d3b1d403a489c26f393f60518e - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Cash/CoinCash_13.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '74612bbdfca0264fc95fc7a45891bbcb') in 0.021804208 seconds
+[Worker1] Imported GUID: 5ec632fd75e03b14886dbae75830764b - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Log/_Parts - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '86517915d06f1f75b3e8bfcc769115fb') in 0.010874917 seconds
+[Worker0] Imported GUID: 65f892ce61a4ff84782e011514e2b094 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Runic Lootbeam/Lootbeams_Runic_Legendary.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2c28db884928be446c1cf560f1f337e0') in 0.0322955 seconds
+[Worker1] Imported GUID: 9fa4b75dae7734880b5a3cd239886c6d - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishStartingBuildingsTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cdf450962709c15b339eb117384debf5') in 0.01106 seconds
+[Worker0] Imported GUID: 6cb4f6b88fc14933b18e28c059075021 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishSessionCleanupSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a827d8a063e12f2ca4fdcff5a675c818') in 0.010995833 seconds
+[Worker1] Imported GUID: 60ba3989da139764f8880d6e56c08e8f - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/Lootbeam_Holy.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '81705f9c91ce7f4d554bd7c904da8269') in 0.023859917 seconds
+[Worker1] Imported GUID: e6c0a3f4d5b8697021c3e4f506172839 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '534b54077f5911d8d3ad987bb0633cf3') in 0.014491584 seconds
+[Worker1] Imported GUID: 23f85b59df3e045d89492280f2481289 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishStartingBuildingsService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9e501eec777ef18f0fa1fcc3ea87f96c') in 0.0115395 seconds
+[Worker1] Imported GUID: 980083d79bde44d1bd2d50078be5affb - Path: Assets/Game/Scripts/Systems/BuildingRuntimeProcessingCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b858534614481d2c1990d364397a3162') in 0.010876333 seconds
+[Worker1] Imported GUID: bd3745a6452ad4e519610bbfbe0a6cb1 - Path: Assets/Game/Scripts/UI/Screens/QuickCustomScreenView.Scenarios.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '72d1652a016b7edce3d10921d4811ff5') in 0.010688167 seconds
+[Worker1] Imported GUID: 3ffb54a78dabd0c40abf0f6813714a89 - Path: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scripts/SampleOscillateSliders.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '89821241e75c5356f0bf54aa037ce816') in 0.010575666 seconds
+[Worker1] Imported GUID: cb381173031b449288f74ed6b0c63b29 - Path: Assets/Game/Scripts/Systems/CombatTargetPolicyUtility.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2f94ac9b6f5e4b560dc9445b15c4ac4f') in 0.01049675 seconds
+[Worker1] Imported GUID: ad027cfa9a1454e02ad7bd49eb0acd1e - Path: Assets/Game/Scripts/Configs/Skirmish/SkirmishSetupBriefing.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9eb4d47f58670f21800b57d381e6e1aa') in 0.010679458 seconds
+[Worker1] Imported GUID: e6c58e75eb676422b8b24e937cbb1097 - Path: Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_GroundStaging_Config.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '4bda7bf0140a2f8e16aacb010b1e41c0') in 0.028192959 seconds
+[Worker1] Imported GUID: 0f0b25d8da0b7564dbcf792fec71c338 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Thematic Lootbeams/LootBeam_Universe_1.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '495ee2697fb717ca8fa16cc12d79751d') in 0.028112875 seconds
+[Worker1] Imported GUID: a5f60a8504014ca5b2686fd356b3e6f1 - Path: Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '066f625ce81ba6ef8cc43ad085ba8070') in 0.011655 seconds
+[Worker1] Imported GUID: 18293a4b5c6d7ef8091a2b3c4d5e6f70 - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedEconomyTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd6626026a3d1abd702339f15d7b70bf1') in 0.0113085 seconds
+[Worker1] Imported GUID: 5030346b216fc2d498a6707191809080 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Flare Lootbeam/Lootbeams_Flare_Uncommon.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e0ea119fbe0e60e3e06e37ce105b3730') in 0.024785542 seconds
+[Worker1] Imported GUID: a0974f21105fe0441afb193caeca899d - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_2.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '83a1326b73d63777d3f3b5d96a3da044') in 0.028682209 seconds
+[Worker1] Imported GUID: a5147234706d9b44c9e65ca565b18178 - Path: Assets/Piloto Studio/Ultimate Loot VFX Pack/VFX Prefabs/Coin Crown/CoinCrown_3.prefab - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7e439c636f890b8f9457b12eefeff469') in 0.024074208 seconds
+[Worker0] Imported GUID: 7542c1da61e97460e893f4634d428b37 - Path: Assets/Game/Configs/Skirmish/Construction.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8f85050d4b74537b82fd4a621a98b747') in 0.703618541 seconds
+[Worker1] Imported GUID: c3d4e5f6071849a2b3c4d5e6f7081920 - Path: Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchResolver.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b5fa9e1848d74cd0ab5c987fb0bbb8e7') in 0.010688167 seconds
+[Worker0] Imported GUID: beb05f66e4a80409c8b5a4fc9592fe5b - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishSharedCombatBinding.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c9f6dac0cd8589b9120ab38b44250d24') in 0.013216417 seconds
+[Worker1] Imported GUID: 6ab40539b99b40578e1e45e81eb0d2ed - Path: Assets/Game/Scripts/Systems/BuildingPlacementStartupSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '53974c2a8cb253886a17d0edac7e7ca0') in 0.010435875 seconds
+[Worker0] Imported GUID: 2b63b67e976c4f3cb180c17a94ed03d7 - Path: Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b3a13e75d68920a47ec85c66c237c55f') in 0.009816583 seconds
+[Worker1] Imported GUID: 81ae6a06dd844428be6dab35f2991dc9 - Path: Assets/Game/Scripts/UI/Contracts/AriaSkirmishContracts.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cf3677d825e92c42bcc9674bb20430ea') in 0.010431125 seconds
+[Worker0] Imported GUID: da9dddf8fa684993b7278d2d2352980f - Path: Assets/Game/Scripts/Skirmish/Contracts/SkirmishCheckpointContracts.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '667df149e14bbf4d6494ca324e020e43') in 0.009901709 seconds
+[Worker1] Imported GUID: be1a7969137543d185cddf3e2208aa80 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointSupplyService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a365b018a15027a7a7f74cc2be00efcc') in 0.010473167 seconds
+[Worker0] Imported GUID: a44dd2f93ed0456c9b8543d4f461c3c5 - Path: Assets/Game/Scripts/Systems/BuildingSpawnCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '25a6dce7c5cab7a5f453cb8a3b1371eb') in 0.00992525 seconds
+[Worker1] Imported GUID: 08e2c5b6f7d0819243e5061728394a5b - Path: Assets/Game/Scripts/Composition/Skirmish/SkirmishCheckpointCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8c0231a17b9ce6ef47bf18dea0d1065f') in 0.009841958 seconds
+[Worker0] Imported GUID: 52a10f606003417aaab184a753ee78ea - Path: Assets/Game/Scripts/Configs/BuildingProductionRecipe.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e5e6571f79fa84a07188367b86bd47a3') in 0.009551083 seconds
+[Worker1] Imported GUID: 00df9da7f1f24dd8a51a21568d7b6ed9 - Path: Assets/Game/Scripts/Composition/Skirmish/SkirmishExpandedLaunchProjection.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '142ac152cae460b61203a0d9acd4e661') in 0.01065225 seconds
+[Worker0] Imported GUID: 79e216ee7d204eeb8c4511e6d046e607 - Path: Assets/Tests/Editor/AutomaticCombatFactionTargetingTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f14e22b16107ce646f9b454912acfefd') in 0.010372459 seconds
+[Worker1] Imported GUID: 8f59d0a263e75869105c7d8e9f012345 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyDrawerProjection.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b32eefd93a0cd33be00bedb3e3395989') in 0.010244667 seconds
+[Worker0] Imported GUID: d40bf170e3d542bc8d42327f2ca706ca - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProduction.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f25388470e391cd749650859fc526317') in 0.009894333 seconds
+[Worker0] Imported GUID: 6f708192a3b4c5d6e7f8091a2b3c4d5e - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedAriaTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ab116a199ffdacc7c7de046b5bd02401') in 0.010182875 seconds
+[Worker1] Imported GUID: 8df0b51c742d42da88b3f85168957f02 - Path: Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '694f4818f518530fe24b35e61b3b4c0f') in 0.01009525 seconds
+[Worker1] Imported GUID: 20ed113ffcd4446eb59240c62f30191c - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionCatalog.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a4e746c1514a43eecd61e3dcac705281') in 0.010062042 seconds
+[Worker0] Imported GUID: b5b61ab0f29a740ae88906b55a7abdcc - Path: Assets/Game/Scripts/Systems/AttackMoveSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e5140bd11278be30f43f7e072415e5ae') in 0.010217542 seconds
+[Worker0] Imported GUID: 8d8a42b785bd4b54a88b552dce86fa37 - Path: Assets/Game/Scripts/Systems/BuildingProductionTransportPresentationSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b129490643676b63220197e30ea1c15b') in 0.010593667 seconds
+[Worker1] Imported GUID: fe0801ff209bb4657b0ee351e8942a26 - Path: Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0e8641aa956e8fb6f2c77fe9613fdab3') in 0.010936833 seconds
+[Worker0] Imported GUID: 02149370a7a6406489cb7036cb0d6e09 - Path: Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '10e73df6d823680af599e491102f9eee') in 0.010911916 seconds
+[Worker1] Imported GUID: b44509af46b4483bb6eebaa3611345ed - Path: Assets/Game/Scripts/Editor/Skirmish/SkirmishCandidateSourceHash.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9199b914cc83bbf961f657e7bd1f4421') in 0.010650125 seconds
+[Worker0] Imported GUID: 379f8e066f1b4ee6a25265d90faaa3ee - Path: Assets/Game/Scripts/UI/Shell/Ecs/AriaSkirmishPlanSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bc54c19d1e7a08fdf75667ec30cedd08') in 0.010676833 seconds
+[Worker1] Imported GUID: 77d492d08563a4502ae09431cbe88b49 - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Skirmish.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c91ac076df968fd08514bae2f772d10f') in 0.010489958 seconds
+[Worker0] Imported GUID: f1b14aa9ffcf4a61a5b1f14764c9330e - Path: Assets/Game/Scripts/Systems/AirMissileLauncherSystems.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8ec880e15a9415fd7d694a63ac0dc64e') in 0.010655375 seconds
+[Worker1] Imported GUID: 2ec10c8973cd40ad96956cfb392e5b4f - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedProductionRecipeTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0c0450ae22d64d44be024c5952d508ad') in 0.010364834 seconds
+[Worker1] Imported GUID: eff356e54dc274670ae5a1fe389156fa - Path: Assets/Game/Scripts/UI/Screens/AriaTutorialBriefingView.Watch.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f804bb46caabecc52df7567789173f77') in 0.010191167 seconds
+[Worker0] Imported GUID: 227a57c7e9a74d95a3d4b6530835383f - Path: Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.NextAction.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '467a08e6f88c33433af6dec70ea31979') in 0.010482833 seconds
+[Worker0] Imported GUID: d5b9f2e3c4a7586910b2d3e4f5061728 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishCheckpointCodec.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'd1d6a5c4f1df0bf3d70aca95687f784a') in 0.010400583 seconds
+[Worker1] Imported GUID: f3ef636535464f6e9e6e56f87f47493e - Path: Assets/Game/Scripts/Components/Skirmish/SkirmishExpandedSessionComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'fdc4018bc8ae551fe341fcc35b434826') in 0.010063125 seconds
+[Worker1] Imported GUID: 242797ae57792469fac0c10eb10c379a - Path: Assets/Game/Scripts/Skirmish/Contracts/SkirmishStrategyContracts.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '21cbfc478bef5d343f95e0a5082d2ae8') in 0.010294459 seconds
+[Worker0] Imported GUID: ca922536c9de42479b50a0c34683454e - Path: Assets/Tests/Editor/UnitMoveOrderSystemTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2d60e744c7af0a74058493dfd34823db') in 0.010693708 seconds
+[Worker1] Imported GUID: 725ba75af1cd4d4fb99c1a99242367af - Path: Assets/Game/Scripts/UI/Contracts/IMatchHudSquadTrayView.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7bb21f7049753fccf5a5bc69b1269f96') in 0.010493708 seconds
+[Worker0] Imported GUID: c05182a3b4d6e7f8091a4b5c6d7e8f90 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishVisualSpawnService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0971d090224f150781e69d56d4f71118') in 0.010265792 seconds
+[Worker1] Imported GUID: 79aa257b201d42dca56557f869b1edb1 - Path: Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '35a713034b568eb35d768e2bcec94a86') in 0.010588417 seconds
+[Worker0] Imported GUID: d7d95cd818cd40dfb3531d0def4529de - Path: Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1f7d31dbce66e272dc36bc5e65fca20c') in 0.010498209 seconds
+[Worker1] Imported GUID: a937584306a748d484af62a57625aac4 - Path: Assets/Game/Scripts/UI/Screens/BuildDrawerView.Readiness.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c7dfe8d43a32ea363da9e1f14be6741d') in 0.010395042 seconds
+[Worker0] Imported GUID: 3a5af961069ec4efdb32238d8046bb72 - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishSharedCombatTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '218516cf07ba9f91f0655698f3d2ed4d') in 0.010316791 seconds
+[Worker0] Imported GUID: 7a84b9153c8646d681fb9eeda8cdca6c - Path: Assets/Game/Scripts/Systems/BuildingProductionQueueCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b4cfaa28bb8f04ffee8092664d4a7702') in 0.01025325 seconds
+[Worker1] Imported GUID: 8b0354fb2e5054ece822870eb27e5423 - Path: Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.Skirmish.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3aeaacea7b9156a1754c014fb5679dcb') in 0.010659375 seconds
+[Worker0] Imported GUID: b0c66417fc1b4f63b8f8d201025273d0 - Path: Assets/Game/Scripts/Systems/BuildingDefinitionProductionRecipes.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '7aa5bf2a015737a0771e722164933061') in 0.010166083 seconds
+[Worker1] Imported GUID: 8e92493284c0d404894777ae8b0b9b75 - Path: Assets/Game/Scripts/Composition/SkirmishPresentationSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e8b74d9d334b06456c1d9d3ceeb77ec7') in 0.010307167 seconds
+[Worker0] Imported GUID: e1ed5ae9525449b3a61e1e49ba69bf11 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishExpandedEngagementService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0189cfce053b5d361d339553801f52c2') in 0.010977958 seconds
+[Worker1] Imported GUID: 1221e0124d744fd2b6ed840441474ed7 - Path: Assets/Game/Scripts/Systems/BuildingProductionCampRequestTransaction.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '77ade08e1d3cbb6fc36388136a1d2156') in 0.010853833 seconds
+[Worker1] Imported GUID: 7df56dff2c3e245f1ab1d87090cb9b69 - Path: Assets/Game/Scripts/Systems/SkirmishCatalogPolicy.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '622ab3fbd8f286a1e0fc3e998b1e138d') in 0.010133666 seconds
+[Worker0] Imported GUID: eb05326f81c345e709b335f61728394a - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyCommandService.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '69fb82298aab9bc4fb65e99abc2e87af') in 0.010467166 seconds
+[Worker0] Imported GUID: 34b0aa04288f14be8be34920d65f4fd1 - Path: Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'e188fd56c59712fbdf4c2b36186c1453') in 0.01071975 seconds
+[Worker1] Imported GUID: c3d4e5f60718293a4b5c6d7e8f901a2b - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2f7dadd819e09f3257f814d02001c28f') in 0.010814791 seconds
+[Worker0] Imported GUID: 6202ff3ec93a414494586910468e4178 - Path: Assets/Game/Scripts/Systems/BuildingProductionUpdateCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a48fb64aff19944cdf970e9edc1f99ac') in 0.010440792 seconds
+[Worker1] Imported GUID: 81afc33374c4c4956978330dba77a128 - Path: Assets/Game/Scripts/Systems/SelectionGameplayStartupSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1efbf288e6b93fbc63a35e4e84bc91ff') in 0.010662583 seconds
+[Worker1] Imported GUID: c2bd0ac45eebe4c55a205ca56ac3b350 - Path: Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.ItemMetadata.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f20b28b641d450d7ecccfce98289c448') in 0.010836541 seconds
+[Worker0] Imported GUID: 22485869e835a46de999b819e71302d9 - Path: Assets/Game/Scripts/UI/Contracts/IUiSkirmishGateway.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'c659844740562e6b3f3b530462f9d5c5') in 0.01110725 seconds
+[Worker0] Imported GUID: e964373e97ad4e9ea0d8cb4494804dca - Path: Assets/Tests/Editor/AIFactionControlStartupSystemValidationTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0607f84970f3e00c750f3bbc085c5bf4') in 0.010513459 seconds
+[Worker1] Imported GUID: ba9bd1dcfa274a5ba89bf588b9c18dfc - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishProductionService.Native.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'a70acf75f0c0f36adfccb23fe9dac85d') in 0.010323125 seconds
+[Worker0] Imported GUID: 43419664058bd4d399acc765a23203de - Path: Assets/Game/Scripts/Systems/UnitAttackSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3c63b61cd996aa684b5d221657536b27') in 0.010596417 seconds
+[Worker1] Imported GUID: 2602f076dcc54879a9b7ee18c8c8f9e5 - Path: Assets/Game/Scripts/Systems/BuildingDefinitionPrefabSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '17ade934ed6a60b0c89772620e376276') in 0.010491584 seconds
+[Worker1] Imported GUID: 0c92c3534d2fa4cbab47da3891e2acc5 - Path: Assets/Game/Scripts/UI/Components/MatchHudSquadTrayView.Cards.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bcaefd091d4afa51d7ffd1f6bf21e9bb') in 0.010637709 seconds
+[Worker0] Imported GUID: 6ad331e2de26544c3a443140ce84fa09 - Path: Assets/Game/Scripts/Components/SelectionComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'dfdee0170beb3ae817ce50cf63bd4e13') in 0.010566541 seconds
+[Worker0] Imported GUID: e59c40d90a9f45c8bd9f4d9cf3d8267a - Path: Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '53e21162c8ea9390cc8819269fa71109') in 0.01200975 seconds
+[Worker1] Imported GUID: fc16437092d456f81ac4460728394a5b - Path: Assets/Tests/Editor/SkirmishExpansion/SkirmishExpandedArmyTests.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '48fcae5835863009eb69ce886942df9b') in 0.012318958 seconds
+[Worker1] Imported GUID: 75173249e7b749f0bbe7522e26b7df16 - Path: Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.SkirmishWatch.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '47e721bf47d275e47d71c9e9a3f0c091') in 0.011326708 seconds
+[Worker0] Imported GUID: 7095644eaf37476eb7b1955b6aa8e98a - Path: Assets/Game/Scripts/RuntimeState/RuntimeBuildingEntity.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bc3f985357a631e7417353020dd7471d') in 0.011556 seconds
+[Worker0] Imported GUID: a1b2c3d4e5f64789a0b1c2d3e4f50617 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishRosterProjectionSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '46182a79c738eb2655c39fba07ba04e9') in 0.010525084 seconds
+[Worker1] Imported GUID: 85730297a3598ee4d92dcb41787af9ae - Path: Assets/Game/Scripts/Configs/GameplayConfigModels.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'fe0e76596b63d2618400f2bd3a5230ac') in 0.010163208 seconds
+[Worker1] Imported GUID: 8b29ebb30b4d4335b636ef140ba933fc - Path: Assets/Game/Scripts/Editor/Skirmish/SkirmishS002AriaRunHarness.ProductionProbe.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5a35638086abf333e2908b50e2a4ee8b') in 0.010973792 seconds
+[Worker0] Imported GUID: fb8730a4c676422ca2f391d7fc750b20 - Path: Assets/Game/Scripts/Components/BuildingRuntimeEcsComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '309ba14cd677a099055a6a7149dcd85f') in 0.0109575 seconds
+[Worker0] Imported GUID: 6492e5d81f52146dc9076a3f83c4fd67 - Path: Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '921384de4c5277f2063e8e9d55f879c1') in 0.010637458 seconds
+[Worker1] Imported GUID: 04af33ef25780464086a9605855d80d7 - Path: Assets/Game/Scripts/Systems/BuildingProductionRequestSystemHelper.ProducerSelection.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1e3ae462bc646ef460c7516a75f4c502') in 0.01093225 seconds
+[Worker1] Imported GUID: 2448593789ef0494a9f606497c47148a - Path: Assets/Game/Scripts/Composition/UiCatalogAuthoringMetadataUiSystemHelper.UnitMetadata.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9a449385f55606eb0b0abb1b3724e4be') in 0.010861292 seconds
+[Worker0] Imported GUID: c4f7a1d83e6b42b8a9f0324d6e1587ac - Path: Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '00ffbb37fbf0412d0b5ac0b8bf3ecb67') in 0.011177041 seconds
+[Worker0] Imported GUID: d4f014d105544d82860ac18ea41a44ec - Path: Assets/Game/Scripts/UI/Contracts/UiRuntimeContracts.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cea4dabb322ddc5065222fbd37bc4460') in 0.010783709 seconds
+[Worker1] Imported GUID: 78ddaaf361024f17a8471c948fd0c787 - Path: Assets/Game/Scripts/Systems/BuildingUiCommandSystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '55c448a4903f7e9ecfe9a9a41a2009d9') in 0.010424958 seconds
+[Worker1] Imported GUID: b8d20f3c5e9012b4d6f8102c3e4f5061 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishArmyGroupSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9b97587027a32580b06ef022d25a174f') in 0.011287542 seconds
+[Worker0] Imported GUID: 03d406550ac140c3ad500046cd7b5a59 - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishNativeProductionSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '88d9f3653626bd7dd17f13ece6c3e81a') in 0.011072166 seconds
+[Worker1] Imported GUID: 05eb1cccffaa86b43a59816d3652e57f - Path: Assets/Game/Scripts/UI/Screens/MatchOverlayCommandInputUiSystemHelper.GuidedCommands.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '396a8e96cd01f14b403608e3e1968782') in 0.0114335 seconds
+[Worker0] Imported GUID: 1fe51a751b5040cca2ee446a3a4f3a87 - Path: Assets/Game/Scripts/UI/Shell/Ecs/Contracts/AriaSkirmishComponents.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cf5280bb0fbe5825701f350da56de9d5') in 0.011164084 seconds
+[Worker1] Imported GUID: 3f6dc3e962704784b839be7eb6722d25 - Path: Assets/Game/Scripts/Skirmish/Contracts/SkirmishRosterContracts.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '46a01c27e548e0fb5525861c08384f74') in 0.010590833 seconds
+[Worker0] Imported GUID: ec4f48cdf9c540079c4fe32a4f0f38c3 - Path: Assets/Game/Scripts/Systems/BuildingCampItemCommandPolicySystemHelper.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8eda3e4a574f1c8eaf19d447b898f5d7') in 0.010533166 seconds
+[Worker0] Imported GUID: 06699a0b0b9240dc868d62d23e8c6395 - Path: Assets/Game/Scripts/Composition/BuildingUiCommandAdapter.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b0f817559a0a73086ac0b82bfc8b39ee') in 0.011188 seconds
+[Worker1] Imported GUID: b2c3d4e5f60718293a4b5c6d7e8f901a - Path: Assets/Game/Scripts/Runtime/Skirmish/SkirmishResearchEffects.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f394e4a9e86ddfa6f2b6ee1da5308cd3') in 0.011291416 seconds
+[Worker0] Imported GUID: 2624f3ad61384a28ad02efde442c325f - Path: Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Assistant.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '8fdf6ecc2f01136143ea7fcfc897f156') in 0.01116275 seconds
+[Worker1] Imported GUID: 4a5b6c7d8e9f0a1b2c3d4e5f60718293 - Path: Assets/Game/Scripts/Configs/Skirmish/SkirmishProductionEligibility.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '62b2fec4aaafb386356acc8e71405b76') in 0.010961875 seconds
+[Worker1] Imported GUID: 24253b2c006a4a9b909861bbff065893 - Path: Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5091080ef797fa0dad441bb98d046a3c') in 0.010869958 seconds
+Request Asset Garbage Collect because used heap size increased from 0.76 GB to 1.34 GB, exceeding the threshold of 256.0 MB.
+Unloading 526 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 26 unused Assets / (90.7 KB). Loaded Objects now: 51784.
+Memory consumption went from 1.34 GB to 1.34 GB.
+Total: 102.170042 ms (FindLiveObjects: 10.847750 ms CreateObjectMapping: 8.485167 ms MarkObjects: 81.596417 ms  DeleteObjects: 1.240417 ms)
+
+Account API did not become accessible within 30 seconds. This may be due to network issues or editor focus.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.AI.Toolkit.Accounts.Services.States.ApiAccessibleState/<WaitForCloudProjectSettings>d__4:MoveNext () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Accounts/Services/States/ApiAccessibleState.cs:46)
+System.Runtime.CompilerServices.AsyncMethodBuilderCore/MoveNextRunner:InvokeMoveNext (object)
+System.Threading.ExecutionContext:RunInternal (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Threading.ExecutionContext:Run (System.Threading.ExecutionContext,System.Threading.ContextCallback,object,bool)
+System.Runtime.CompilerServices.AsyncMethodBuilderCore/MoveNextRunner:Run ()
+System.Threading.Tasks.AwaitTaskContinuation:InvokeAction (object)
+System.Threading.Tasks.AwaitTaskContinuation:RunCallback (System.Threading.ContextCallback,object,System.Threading.Tasks.Task&)
+System.Threading.Tasks.SynchronizationContextAwaitTaskContinuation:Run (System.Threading.Tasks.Task,bool)
+System.Threading.Tasks.Task:FinishContinuations ()
+System.Threading.Tasks.Task:FinishStageThree ()
+System.Threading.Tasks.Task`1<bool>:TrySetResult (bool)
+System.Threading.Tasks.TaskCompletionSource`1<bool>:TrySetResult (bool)
+Unity.AI.Toolkit.EditorTask/<>c__DisplayClass22_0:<WaitForCondition>b__0 () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Async/EditorTask.cs:420)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Toolkit.Accounts/Services/States/ApiAccessibleState.cs Line: 46)
+
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+TrimDiskCacheJob: Current cache size 0mb
+IPCStream (Upm-39082): IPC stream failed to read (Not connected)
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+[INFO ] [relay] log Shutdown: Initiating graceful shutdown: SIGTERM received
+Unexpected transport error from import worker 0 (possible crash). code=2 error=End of file -- for more information, check Logs/AssetImportWorkerHW0.log
+[OnDemand] Worker 0: WorkerState(Connected), ImporterState(Idle) session transport - while handling importAddress Guid(00000000000000000000000000000000) Importer(-2,00000000000000000000000000000000) - path  - see the AssetImportWorker log for worker 0 at /Logs.
+[INFO ] [relay] log Client disconnected - blocking and caching for recovery
+[WARN ] [relay] connection.lost clientId=null
+[WARN ] [relay] log Client disconnected - sessions will persist until auto-shutdown, reason: Client disconnected
+[INFO ] [relay] log Auto-shutdown timer started due to client disconnection

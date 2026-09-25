@@ -44,6 +44,17 @@ namespace Game.Runtime
         }
 
         private readonly Dictionary<GameObject, ProductionTransportSettings> _productionTransportSettingsByPrefab = new();
+        private readonly HashSet<GameObject> _producerGroundExitPrefabs = new();
+
+        public void ConfigureProductionRecipes(IReadOnlyList<Game.Configs.BuildingProductionRecipe> recipes)
+        {
+            _producerGroundExitPrefabs.Clear();
+            _productionTransportSettingsByPrefab.Clear();
+            if (recipes == null) return;
+            foreach (var recipe in recipes)
+                if (recipe != null && recipe.UseProducerGroundExit && recipe.UnitPrefab != null)
+                    _producerGroundExitPrefabs.Add(recipe.UnitPrefab);
+        }
         private IReadOnlyList<GameObject> _cachedTransportUnitSpawnPrefabs;
         private IReadOnlyDictionary<string, GameObject> _cachedTransportUnitSpawnPrefabsByKey;
         private int _cachedTransportUnitSpawnPrefabCount = -1;
@@ -136,6 +147,9 @@ namespace Game.Runtime
                 context.UnitSpawnPrefabsByKey,
                 context.TryGetPrefabLocalBounds);
 
+            if (!SkirmishNativeProduction.TryReserve(entityManager, building, spawnUnitPrefab, out Entity receiptOwner, out uint receiptId))
+                return false;
+
             Production queuedProduction = AcquirePendingProduction();
             InitializePendingProduction(
                 queuedProduction,
@@ -151,6 +165,9 @@ namespace Game.Runtime
                 transportSettings.Mode,
                 transportSettings.RequiresAirportRunway);
             queuedProduction.RemainingQuantity = BuildingDefinitionPrefabSystemHelper.GetProductionQuantity(building.Definition, productionIndex);
+            queuedProduction.ReceiptOwner = receiptOwner;
+            queuedProduction.ReceiptId = receiptId;
+            queuedProduction.ReceiptAttempt = receiptId > 0 ? entityManager.GetComponentData<SkirmishExpandedSessionComponent>(receiptOwner).SessionId : default;
             building.PendingProductions.Add(queuedProduction);
             RebuildPendingProductionTimeline(building.PendingProductions, now, preserveActiveProgress: true);
             return true;
@@ -319,6 +336,9 @@ namespace Game.Runtime
             pending.TransportHoldForNextReadySeconds = 0f;
             pending.TransportMaxConcurrent = pending.RemainingQuantity = pending.TransportClearDropSearchStartRadius = 0;
             pending.RefundableMaterials = pending.PaidQuantity = 0;
+            pending.ReceiptOwner = Entity.Null;
+            pending.ReceiptId = 0;
+            pending.ReceiptAttempt = default;
             pending.TransportMode = default;
             pending.TransportRequiresAirportRunway = false;
             _pendingProductionPool.Push(pending);
@@ -358,6 +378,11 @@ namespace Game.Runtime
             bool requiresAirportRunway = false;
             if (spawnUnitPrefab == null)
                 return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
+
+            // A facility recipe may dispatch at its own ground exit. It must not
+            // acquire an unrelated map Airport through the transport fallback.
+            if (_producerGroundExitPrefabs.Contains(spawnUnitPrefab))
+                return new ProductionTransportSettings(null, 0f, 0f, 1, transportMode, false);
 
             EnsureProductionTransportCache(unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
             if (_productionTransportSettingsByPrefab.TryGetValue(spawnUnitPrefab, out ProductionTransportSettings cachedSettings))

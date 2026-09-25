@@ -42,6 +42,7 @@ namespace Game.Skirmish.Contracts
         public int OwnGroundLive;
         public int OwnSupplyLive;
         public int OwnSupplyCap;
+        public int OwnStartingSupply;
         public int OwnMaterials;
         public int OwnFuel;
         public int OwnAirLive;
@@ -87,8 +88,11 @@ namespace Game.Skirmish.Contracts
         public bool CanAffordRocketeer;
         public bool CanAffordTank;
         public bool CanAffordAntiAir;
+        public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
+        public bool CanBuildAirPad;
         public bool PadReady;
         public bool AirQueueOffered;
+        public bool PadPresent, ReadinessEligible;
         public bool AirPadControlAvailable;
         public int VisibleHostileCombat;
         public int VisibleHostileAir;

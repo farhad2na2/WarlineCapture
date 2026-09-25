@@ -39,7 +39,7 @@ namespace Game.UI.Runtime
                 watchConfirming ? (fa ? "آریا با نیروها و منابع همین بازی ادامه بده؟" : "Let ARIA play using your match resources?") :
                 model.Phase == AriaPlayPhase.Blocked ? (fa ? "آریا نتونست ادامه بده — دوباره امتحان کن" : "ARIA couldn't continue — try again") :
                 UiShellRuntimeGateway.ReadAriaPlayCapability() == AriaPlayCapability.BaseAssault
-                    ? (fa ? "بازی آریا — نسخهٔ آزمایشی" : "Watch ARIA — preview")
+                    ? (fa ? "بازی آریا" : "ARIA Play")
                     : (fa ? "ببین آریا چطور بازی می‌کنه" : "Watch ARIA play");
             if (caption != watchCaption)
             {

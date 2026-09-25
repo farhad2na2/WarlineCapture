@@ -48,7 +48,7 @@ namespace Game.Runtime
                 return FactionTacticalMaterialsMutationResult.InvalidState;
             if (amount > materials.Current)
                 return FactionTacticalMaterialsMutationResult.InsufficientMaterials;
-            if (spendKind > FactionTacticalMaterialsSpendKind.Export)
+            if (spendKind > FactionTacticalMaterialsSpendKind.Production)
                 return FactionTacticalMaterialsMutationResult.InvalidState;
 
             materials.Current -= amount;
@@ -68,6 +68,9 @@ namespace Game.Runtime
                     break;
                 case FactionTacticalMaterialsSpendKind.Upgrade:
                     materials.LifetimeUpgradeSpent = SaturatingAdd(materials.LifetimeUpgradeSpent, amount);
+                    break;
+                case FactionTacticalMaterialsSpendKind.Production:
+                    materials.LifetimeProductionSpent = SaturatingAdd(materials.LifetimeProductionSpent, amount);
                     break;
                 case FactionTacticalMaterialsSpendKind.Export:
                     materials.LifetimeExported = SaturatingAdd(materials.LifetimeExported, amount);
@@ -130,6 +133,23 @@ namespace Game.Runtime
             return FactionTacticalMaterialsMutationResult.Applied;
         }
 
+        public static FactionTacticalMaterialsMutationResult TryRefundQueue(
+            ref FactionTacticalMaterialsComponent materials, int amount, FactionTacticalMaterialsSpendKind kind)
+        {
+            if (amount <= 0) return FactionTacticalMaterialsMutationResult.InvalidAmount;
+            if (!HasValidState(materials)) return FactionTacticalMaterialsMutationResult.InvalidState;
+            if (amount > materials.Capacity - materials.Current) return FactionTacticalMaterialsMutationResult.CapacityExceeded;
+            int spent = kind == FactionTacticalMaterialsSpendKind.Production ? materials.LifetimeProductionSpent :
+                kind == FactionTacticalMaterialsSpendKind.Upgrade ? materials.LifetimeUpgradeSpent : -1;
+            if (amount > spent || amount > materials.LifetimeSpent) return FactionTacticalMaterialsMutationResult.InvalidState;
+            materials.Current += amount;
+            materials.LifetimeSpent -= amount;
+            if (kind == FactionTacticalMaterialsSpendKind.Production) materials.LifetimeProductionSpent -= amount;
+            else materials.LifetimeUpgradeSpent -= amount;
+            IncrementVersion(ref materials);
+            return FactionTacticalMaterialsMutationResult.Applied;
+        }
+
         private static bool HasValidState(in FactionTacticalMaterialsComponent materials)
         {
             return materials.Capacity >= 0 &&
@@ -143,7 +163,8 @@ namespace Game.Runtime
                    materials.LifetimeConstructionSpent >= 0 &&
                    materials.LifetimeRepairSpent >= 0 &&
                    materials.LifetimeInfrastructureSpent >= 0 &&
-                   materials.LifetimeUpgradeSpent >= 0;
+                   materials.LifetimeUpgradeSpent >= 0 &&
+                   materials.LifetimeProductionSpent >= 0;
         }
 
         private static int SaturatingAdd(int current, int amount)

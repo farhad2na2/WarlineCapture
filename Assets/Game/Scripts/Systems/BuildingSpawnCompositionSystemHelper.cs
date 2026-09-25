@@ -313,7 +313,8 @@ namespace Game.Runtime
             Entity gridEntity,
             GridConfig grid,
             DynamicBlockerComponent blockerData,
-            ref uint randomState)
+            ref uint randomState,
+            RuntimeBuildingEntity.PendingProduction pending = null)
         {
             if (building == null || building.Definition == null)
                 return false;
@@ -353,6 +354,10 @@ namespace Game.Runtime
                 return false;
             }
 
+            if (pending?.ReceiptId > 0 && !SkirmishProductionService.CanDeliverNative(em,
+                    pending.ReceiptOwner, pending.ReceiptId, building.Id, building.OwnerFactionId, spawnUnitSourceKey, pending.ReceiptAttempt))
+                return false;
+
             Entity instance = em.Instantiate(prefabEntity);
             if (!isAirUnit)
                 new MapSurfaceSpawnGrounding().TryGroundCellCenter(em, grid, cell, ref pos, out _);
@@ -367,6 +372,10 @@ namespace Game.Runtime
             }
 
             InitializeSpawnedUnit(em, instance, pos, cell, building, isAirUnit, ref randomState);
+            if (pending?.ReceiptId > 0 && !SkirmishProductionService.AdoptNativeMember(em,
+                    pending.ReceiptOwner, pending.ReceiptId, building.Id, instance, pending.ReceiptAttempt))
+                throw new System.InvalidOperationException("A preflighted native production receipt could not adopt its delivered unit.");
+
             bool publishedProducedUnitReadModel = PublishProducedUnitReadModel(
                 context,
                 em,

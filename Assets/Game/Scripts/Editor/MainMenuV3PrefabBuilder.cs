@@ -293,21 +293,25 @@ namespace Game.Editor
             MethodInfo getGroup = sizesType.GetMethod(
                 "GetGroup",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            object androidGroup = getGroup?.Invoke(sizes, new[] { Enum.Parse(groupType, "Android") });
-            if (androidGroup == null)
-                throw new MissingMemberException("Unity Android Game View size group is unavailable.");
+            object currentGroupType = sizesType.GetProperty("currentGroupType",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)?.GetValue(sizes);
+            if (currentGroupType == null)
+                throw new MissingMemberException("Unity active Game View size group is unavailable.");
+            object activeGroup = getGroup?.Invoke(sizes, new[] { currentGroupType });
+            if (activeGroup == null)
+                throw new MissingMemberException("Unity active Game View size group is unavailable.");
 
-            MethodInfo getTotalCount = androidGroup.GetType().GetMethod(
+            MethodInfo getTotalCount = activeGroup.GetType().GetMethod(
                 "GetTotalCount",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            MethodInfo getGameViewSize = androidGroup.GetType().GetMethod(
+            MethodInfo getGameViewSize = activeGroup.GetType().GetMethod(
                 "GetGameViewSize",
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-            int count = getTotalCount != null ? (int)getTotalCount.Invoke(androidGroup, null) : 0;
+            int count = getTotalCount != null ? (int)getTotalCount.Invoke(activeGroup, null) : 0;
             int matchingIndex = -1;
             for (int i = 0; i < count; i++)
             {
-                object size = getGameViewSize?.Invoke(androidGroup, new object[] { i });
+                object size = getGameViewSize?.Invoke(activeGroup, new object[] { i });
                 if (size == null)
                     continue;
 
@@ -319,7 +323,9 @@ namespace Game.Editor
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
                 if (widthProperty?.GetValue(size) is int candidateWidth &&
                     heightProperty?.GetValue(size) is int candidateHeight &&
-                    candidateWidth == width && candidateHeight == height)
+                    candidateWidth == width && candidateHeight == height &&
+                    size.GetType().GetProperty("sizeType", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                        ?.GetValue(size)?.ToString() == "FixedResolution")
                 {
                     // Custom fixed-resolution presets are listed after Unity's
                     // built-in aspect entries (for example "Landscape"). Keep
@@ -329,7 +335,20 @@ namespace Game.Editor
             }
 
             if (matchingIndex < 0)
-                throw new InvalidOperationException($"Game View preset {width}x{height} is missing from the Android size list.");
+            {
+                Type sizeType = editorAssembly.GetType("UnityEditor.GameViewSize");
+                Type sizeKind = editorAssembly.GetType("UnityEditor.GameViewSizeType");
+                if (sizeType == null || sizeKind == null)
+                    throw new MissingMemberException("Unity fixed Game View size API is unavailable.");
+                object size = Activator.CreateInstance(sizeType,
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null,
+                    new[] { Enum.Parse(sizeKind, "FixedResolution"), (object)width, height, $"Warline QA {width}x{height}" }, null);
+                MethodInfo add = activeGroup.GetType().GetMethod("AddCustomSize",
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+                if (add == null) throw new MissingMemberException("Unity custom Game View sizes are unavailable.");
+                add.Invoke(activeGroup, new[] { size });
+                matchingIndex = count;
+            }
 
             EditorWindow gameView = EditorWindow.GetWindow(gameViewType);
             PropertyInfo selectedSize = gameViewType.GetProperty(
@@ -339,6 +358,11 @@ namespace Game.Editor
                 throw new MissingMemberException("Unity Game View selectedSizeIndex is unavailable.");
 
             selectedSize.SetValue(gameView, matchingIndex);
+            MethodInfo selectionCallback = gameViewType.GetMethod("SizeSelectionCallback",
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null, new[] { typeof(int), typeof(object) }, null);
+            selectionCallback?.Invoke(gameView, new object[] { matchingIndex, null });
+            gameView.Focus();
             FieldInfo zoomAreaField = gameViewType.GetField(
                 "m_ZoomArea",
                 BindingFlags.Instance | BindingFlags.NonPublic);

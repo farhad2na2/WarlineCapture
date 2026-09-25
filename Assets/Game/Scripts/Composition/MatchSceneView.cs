@@ -122,7 +122,7 @@ namespace Game.Composition
         public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
         public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
         public BuildingPlacementSystemConfig BuildingPlacementConfig =>
-            IsOperationsSession ? OperationsMissionConfig.startupConfig : IsSkirmishSession ? SkirmishPreset.buildingPlacement : buildingPlacementConfig;
+            IsOperationsSession ? OperationsMissionConfig.startupConfig : IsSkirmishSession ? ResolvedSkirmishBuildingPlacement : buildingPlacementConfig;
         private MapBuildingPlacementConfig missionPlacementOverlay;
         public MapBuildingPlacementConfig MapBuildingPlacementConfig
         {
@@ -313,6 +313,8 @@ namespace Game.Composition
             RestoreAudioListenerAuthority();
             ShutdownMatchRuntimeBound();
             denseCityCandidateRuntimeOverride.Dispose();
+            expandedProductionCatalog?.Dispose();
+            expandedProductionCatalog = null;
         }
 
         private void OnDisable()

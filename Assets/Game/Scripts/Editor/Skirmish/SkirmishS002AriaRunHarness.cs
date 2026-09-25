@@ -403,6 +403,9 @@ namespace Game.Editor
             if (now < next)
                 return;
 
+            if (helipadProbeStage > 0)
+                return;
+
             try
             {
                 World world = World.DefaultGameObjectInjectionWorld;
@@ -579,6 +582,11 @@ namespace Game.Editor
                         {
                             nativeProductionStage = 1;
                             StartNativeProductionProbe(session);
+                            return;
+                        }
+                        if (!invalid && Environment.GetEnvironmentVariable("WARLINE_S003_HELIPAD_PROBE") == "1")
+                        {
+                            StartNativeHelipadProbe(session);
                             return;
                         }
                         if (!invalid && Environment.GetEnvironmentVariable("WARLINE_S003_NATIVE_REVIEW") == "1" &&
@@ -979,7 +987,9 @@ namespace Game.Editor
 
             double wall = playingSince > 0d ? EditorApplication.timeSinceStartup - playingSince : 0d;
             normalSpeed = SkirmishS002AriaRunLog.FinishNormalSpeed(speedLatch,
-                terminalSnapshotValid ? terminalTimeScale : Time.timeScale, duration, terminalSnapshotValid ? terminalWall : wall);
+                terminalSnapshotValid ? terminalTimeScale : Time.timeScale, duration,
+                terminalSnapshotValid ? terminalWall : wall,
+                terminalSnapshotValid && terminalMatch.Phase == SkirmishPhase.Finished);
             if (!normalSpeed)
                 SessionState.SetBool(NormalKey, false);
             string outcome = haveMatch ? match.Outcome.ToString() : string.Empty;
@@ -997,7 +1007,7 @@ namespace Game.Editor
                 " unexpected=" + (inputAudit?.UnexpectedSamples ?? 0) +
                 " interventions=" + (inputAudit?.MeasuredHumanInterventions ?? -1) + " recordedCommands=" + AriaCommandEvidence.AcceptedCommands +
                 " receiptViolations=" + AriaCommandEvidence.Violations +
-                " acceptedCommandCoverage=" + (measuredInput ? "SupportedAriaControlsV1" : "Pending"));
+                " acceptedCommandCoverage=" + (measuredInput ? "SupportedAriaControlsV2" : "Pending"));
             var facts = new SkirmishS002AriaTerminalFacts
             {
                 RunId = runId,

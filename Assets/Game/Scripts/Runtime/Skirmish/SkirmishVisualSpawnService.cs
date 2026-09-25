@@ -117,6 +117,14 @@ namespace Game.Runtime
                 if (em.HasComponent<SkirmishVisualSpawnedComponent>(entity) &&
                     em.GetComponentData<SkirmishVisualSpawnedComponent>(entity).Spawned != 0)
                     continue;
+                // The shared building runtime already owns this GameObject and its
+                // transform. Attaching a skirmish visual here duplicates the model
+                // and resets the committed pose to the deployment anchor.
+                if (em.HasComponent<RuntimeBuildingCombatInfo>(entity))
+                {
+                    memberIndex++;
+                    continue;
+                }
                 Vector3 position = ResolvePosition(em, session, setup, entity, owned, memberIndex);
                 position = GroundPosition(em, position);
                 if (TryAttach(em, entity, catalog, position))

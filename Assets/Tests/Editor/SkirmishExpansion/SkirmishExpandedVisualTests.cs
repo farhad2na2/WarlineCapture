@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using Unity.Transforms;
 
 namespace Game.Tests.Editor
 {
@@ -67,6 +68,43 @@ namespace Game.Tests.Editor
             {
                 SkirmishScenarioSpawnSystem.DestroyAttemptOwned(
                     em, em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId);
+                catalog.Dispose();
+            }
+        }
+
+        [Test]
+        public void ConstructedSharedBuildingKeepsCommittedPoseAndSingleVisualOwner()
+        {
+            using var world = new World(nameof(ConstructedSharedBuildingKeepsCommittedPoseAndSingleVisualOwner));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawn(em, out Entity session, out SkirmishResolvedSetup setup);
+            SkirmishVisualPrefabCatalog catalog = SkirmishVisualPrefabCatalog.CreateS002TestRegistry();
+            GameObject helipadPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            helipadPrefab.SetActive(false);
+            catalog.Bind("Building_Helipad", helipadPrefab, true);
+            Entity building = em.CreateEntity();
+            var sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            var committedPosition = new Unity.Mathematics.float3(1027f, 0f, 332.5f);
+            em.AddComponentData(building, new SkirmishAttemptOwnedComponent
+            { SessionId = sessionId, FactionId = 1, IsStructure = 1 });
+            em.AddComponentData(building, new RuntimeBuildingCombatInfo
+            { RuntimeBuildingId = 99, OwnerFactionId = 1 });
+            em.AddComponentData(building, new UnitSourcePrefabKey
+            { Value = new FixedString64Bytes("Building_Helipad") });
+            em.AddComponentData(building, LocalTransform.FromPosition(committedPosition));
+            try
+            {
+                SkirmishVisualSpawnService.BindCatalog(em, session, catalog);
+                SkirmishVisualSpawnService.AttachMissing(em, session, setup);
+                Assert.IsFalse(em.HasComponent<SkirmishVisualInstanceRecord>(building),
+                    "The skirmish visual service must leave the shared building visual alone.");
+                Assert.AreEqual(committedPosition, em.GetComponentData<LocalTransform>(building).Position);
+                Assert.IsTrue(HasVisibleKey(em, "Unit_Veh_Tank_USA"),
+                    "Ordinary unit visuals must still attach.");
+            }
+            finally
+            {
+                SkirmishScenarioSpawnSystem.DestroyAttemptOwned(em, sessionId);
                 catalog.Dispose();
             }
         }

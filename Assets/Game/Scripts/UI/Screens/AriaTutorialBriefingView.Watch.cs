@@ -66,6 +66,10 @@ namespace Game.UI.Runtime
             return UiShellRuntimeGateway.ReadAriaSkirmishIntent() switch
             {
                 AriaSkirmishIntent.BuildDefense => fa ? "اول نزدیک پایگاه برج نگهبانی می‌سازم تا نیروهامون فرصت جمع شدن داشته باشن." : "I'll build watchtowers near our base so our troops have time to gather.",
+                AriaSkirmishIntent.BuildAirPad => fa ? "دوربین رو به پایگاه خودمون می‌برم و جای امنی برای فرودگاه بالگرد انتخاب می‌کنم." : "I'll focus our base and choose a safe site for the helipad.",
+                AriaSkirmishIntent.WaitForAirPadSite => fa ? "جای امن و قابل ساختی برای فرودگاه بالگرد پیدا نشد. ساخت رو لغو کردم؛ می‌تونید جای مناسبی انتخاب کنید یا دوباره آریا رو شروع کنید." : "I couldn't find a safe buildable helipad site, so I canceled placement. Choose a site or restart ARIA to retry.",
+                AriaSkirmishIntent.ReturnAircraft => fa ? "بالگرد رو با دکمهٔ بازگشت به پایگاه برمی‌گردونم." : "I'll use Return to bring the helicopter home.",
+                AriaSkirmishIntent.ServiceAircraft => fa ? "صبر می‌کنم بالگرد روی فرودگاه بنشینه و سوخت کافی برای پرواز بعدی داشته باشه." : "I'll wait for the helicopter to land and for fuel before the next flight.",
                 AriaSkirmishIntent.DefendBase => fa ? "گروه رو روی حفظ می‌ذارم تا از پایگاه دفاع کنه. هم‌زمان نیروی کمکی می‌گیریم." : "I’ll put this squad on Hold to defend our base while reinforcements arrive.",
                 AriaSkirmishIntent.GroupForce => fa ? "نیروهای نزدیک رو با کشیدن کادر انتخاب می‌کنم تا با هم حمله کنن." : "I’ll drag a selection box around our nearby troops so they fight together.",
                 AriaSkirmishIntent.FindThreat => fa ? "با نقشه، دشمن نزدیک نیروهامون رو میارم توی دید." : "I’ll use the map to bring the nearest enemy into view.",

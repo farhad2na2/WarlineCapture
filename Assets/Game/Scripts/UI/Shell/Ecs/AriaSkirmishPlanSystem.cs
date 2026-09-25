@@ -405,6 +405,131 @@ namespace Game.UI.Shell.Ecs
             return view.GroupStart.Available && view.GroupEnd.Available &&
                 UnityEngine.Mathf.Abs(size.x) >= 20 && UnityEngine.Mathf.Abs(size.y) >= 20;
         }
+        private static void StepHomePadPlacement(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            plan.Intent = plan.PadStage == 8 ? AriaSkirmishIntent.WaitForAirPadSite : AriaSkirmishIntent.BuildAirPad;
+            if (plan.PadStage == 8)
+            {
+                // No legal visible site was found in the bounded search. Wait for
+                // the player or a fresh ARIA start rather than using camera position.
+                if (view.PlacementOpen) Target(view.PlacementCancel, false, ref output);
+                else output.Kind = AriaPlayObservationKind.Waiting;
+                return;
+            }
+            if (view.Time > plan.PadDeadline)
+            {
+                plan.PadStage = 8;
+                plan.Intent = AriaSkirmishIntent.WaitForAirPadSite;
+                if (view.PlacementOpen) Target(view.PlacementCancel, false, ref output);
+                return;
+            }
+            if (plan.PadStage == 1)
+            {
+                if (view.PlacementOpen) { plan.PadStage = 8; Target(view.PlacementCancel, false, ref output); return; }
+                if (!view.FocusPlayer.Available) { plan.PadStage = 8; return; }
+                plan.PadAction = touch.Actions;
+                plan.PadStage = 2;
+                Target(view.FocusPlayer, false, ref output);
+                return;
+            }
+            if (plan.PadStage == 2)
+            {
+                if (view.PlacementOpen) { plan.PadStage = 8; Target(view.PlacementCancel, false, ref output); return; }
+                if (touch.Actions <= plan.PadAction) { Target(view.FocusPlayer, false, ref output); return; }
+                plan.PadStage = 3;
+                plan.PadReadyAt = view.Time + .5f;
+            }
+            if (plan.PadStage == 3)
+            {
+                if (view.Time < plan.PadReadyAt) return;
+                if (view.PlacementOpen) { plan.PadStage = 8; Target(view.PlacementCancel, false, ref output); return; }
+                if (!view.AirPad.Available) return;
+                plan.PadAction = touch.Actions;
+                plan.PadTargetId = view.AirPad.Id;
+                plan.PadStage = 10;
+                Target(view.AirPad, false, ref output);
+                return;
+            }
+            if (plan.PadStage == 10)
+            {
+                if (touch.Actions <= plan.PadAction)
+                {
+                    if (view.AirPad.Id == plan.PadTargetId) Target(view.AirPad, false, ref output);
+                    return;
+                }
+                if (touch.TargetId != plan.PadTargetId) { plan.PadStage = 8; return; }
+                if (!view.PlacementOpen)
+                { plan.PadStage = 3; plan.PadReadyAt = view.Time + .2f; return; }
+                plan.PadStage = 4;
+                plan.PadSiteIndex = 0;
+            }
+            if (plan.PadStage == 4)
+            {
+                if (!view.PlacementOpen) { plan.PadStage = 8; return; }
+                while (plan.PadSiteIndex < 4 && !view.PadSite(plan.PadSiteIndex).Available)
+                    plan.PadSiteIndex++;
+                if (plan.PadSiteIndex == 4)
+                {
+                    // Refocus once after construction changes the camera. The
+                    // remaining deadline bounds the retry and eventual cancel.
+                    if (plan.PadReadyAt >= 0)
+                    {
+                        plan.PadReadyAt = -1;
+                        plan.PadSiteIndex = 0;
+                        if (!view.FocusPlayer.Available) { plan.PadStage = 8; return; }
+                        plan.PadAction = touch.Actions;
+                        plan.PadStage = 9;
+                        Target(view.FocusPlayer, false, ref output);
+                        return;
+                    }
+                    plan.PadStage = 8;
+                    plan.Intent = AriaSkirmishIntent.WaitForAirPadSite;
+                    Target(view.PlacementCancel, false, ref output);
+                    return;
+                }
+                plan.PadAction = touch.Actions;
+                plan.PadStage = 5;
+                Target(view.PadSite(plan.PadSiteIndex), true, ref output);
+                return;
+            }
+            if (plan.PadStage == 5)
+            {
+                if (!view.PlacementOpen) { plan.PadStage = 8; return; }
+                if (touch.Actions <= plan.PadAction)
+                { Target(view.PadSite(plan.PadSiteIndex), true, ref output); return; }
+                if (touch.TargetId != view.PadSite(plan.PadSiteIndex).Id)
+                { plan.PadSiteIndex++; plan.PadStage = 4; return; }
+                plan.PadFeedbackFrame = view.Frame;
+                plan.PadStage = 6;
+                return;
+            }
+            if (plan.PadStage == 6)
+            {
+                if (!view.PlacementOpen) { plan.PadStage = 8; return; }
+                if (view.Frame <= plan.PadFeedbackFrame) return;
+                if (!view.PlacementConfirm.Available)
+                { plan.PadSiteIndex++; plan.PadStage = 4; return; }
+                plan.PadAction = touch.Actions;
+                plan.PadStage = 7;
+                Target(view.PlacementConfirm, false, ref output);
+                return;
+            }
+            if (plan.PadStage == 7)
+            {
+                if (touch.Actions <= plan.PadAction)
+                { Target(view.PlacementConfirm, false, ref output); return; }
+                if (!view.PlacementOpen && !view.PadPresent) plan.PadStage = 8;
+            }
+            if (plan.PadStage == 9)
+            {
+                if (touch.Actions <= plan.PadAction)
+                { Target(view.FocusPlayer, false, ref output); return; }
+                plan.PadStage = 4;
+            }
+        }
+
         private static void StepExpandedBaseAssault(in AriaSkirmishObservation view,
             ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
             ref AriaPlayObservationComponent output)
@@ -457,32 +582,20 @@ namespace Game.UI.Shell.Ecs
             // skirmishes after the first reinforcement squad arrives.
             if (view.AirProfile && plan.AssaultStarted == 0 &&
                 OpeningDefense(view, ref plan, ref touch, ref output)) return;
-            if (view.PlacementOpen)
+            if (view.PadPresent) plan.PadStage = 0;
+            if (plan.PadStage != 0)
             {
-                if (plan.DefenseDeadline == 0) { plan.DefenseDeadline = view.Time + 25f; plan.DefenseSite = 0; }
-                if (view.Time > plan.DefenseDeadline)
-                { Target(view.PlacementCancel, false, ref output); return; }
-                if (view.PlacementConfirm.Available)
-                { Target(view.PlacementConfirm, false, ref output); return; }
-                if (plan.DefenseSite == 0 && !view.Site0.Available && !view.Site1.Available &&
-                    !view.Site2.Available && !view.Site3.Available && !view.Site4.Available && !view.Site5.Available &&
-                    view.FocusPlayer.Available)
-                {
-                    Target(view.FocusPlayer, false, ref output);
-                    return;
-                }
-                if (plan.DefenseSitePending != 0 && touch.Actions > plan.DefenseSiteAction)
-                { plan.DefenseSitePending = 0; plan.DefenseSite++; }
-                while (plan.DefenseSite < 6 && !view.Site(plan.DefenseSite).Available) plan.DefenseSite++;
-                if (plan.DefenseSite < 6)
-                {
-                    if (plan.DefenseSitePending == 0) { plan.DefenseSitePending = 1; plan.DefenseSiteAction = touch.Actions; }
-                    Target(view.Site(plan.DefenseSite), true, ref output);
-                }
-                else Target(view.PlacementCancel, false, ref output);
+                StepHomePadPlacement(view, ref plan, ref touch, ref output);
                 return;
             }
-            plan.DefenseDeadline = 0; plan.DefenseSitePending = 0;
+            if (view.PlacementOpen)
+            {
+                // A placement opened outside this plan has no proven home site.
+                plan.Intent = AriaSkirmishIntent.Inspect;
+                Target(view.PlacementCancel, false, ref output);
+                return;
+            }
+            if (StepAircraftCycle(view, ref plan, ref touch, ref output)) return;
             if (view.AttackMode && view.SelectionVisible)
             {
                 plan.Intent = view.EnemyBase.Available ? AriaSkirmishIntent.TargetBase : AriaSkirmishIntent.FindBase;
@@ -549,10 +662,12 @@ namespace Game.UI.Shell.Ecs
             if (view.ReadinessEligible && !view.PadPresent && view.CanBuildAirPad && view.AirPad.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Inspect;
-                Target(view.AirPad, false, ref output);
+                plan.PadStage = 1;
+                plan.PadDeadline = view.Time + 45f;
+                StepHomePadPlacement(view, ref plan, ref touch, ref output);
                 return;
             }
-            if (view.AirQueueOffered && view.RecruitAir.Available)
+            if (view.AirQueueOffered && !view.AirRecruitPending && view.OwnAttackAirLive == 0 && view.RecruitAir.Available)
             {
                 plan.Intent = AriaSkirmishIntent.Recruit;
                 Target(view.RecruitAir, false, ref output);
@@ -646,6 +761,84 @@ namespace Game.UI.Shell.Ecs
             }
             plan.Intent = AriaSkirmishIntent.Inspect;
             output.Kind = AriaPlayObservationKind.Waiting;
+        }
+
+        private static bool StepAircraftCycle(in AriaSkirmishObservation view,
+            ref AriaSkirmishPlanComponent plan, ref AriaPlaySessionComponent touch,
+            ref AriaPlayObservationComponent output)
+        {
+            if (!view.AirProfile || plan.AirCycleCount != 0) return false;
+            if (plan.AirCycleStage == 0)
+            {
+                if (view.OwnAttackAirActive == 0 || plan.AssaultIssued == 0)
+                { plan.AirSortieObservedAt = 0; return false; }
+                if (plan.AirSortieObservedAt == 0) plan.AirSortieObservedAt = view.Time;
+                if (view.Time - plan.AirSortieObservedAt < 45f) return false;
+                plan.AirCycleStage = 1;
+                plan.AirCycleDeadline = view.Time + 120f;
+            }
+            if (view.OwnAttackAirLive == 0 || !view.PadPresent || view.Time >= plan.AirCycleDeadline)
+            {
+                plan.AirCycleStage = 0;
+                plan.AirCycleCount = 2; // Bounded recovery; normal assault remains available.
+                return false;
+            }
+            if (plan.AirCycleStage == 1)
+            {
+                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
+                if (view.DrawerOpen) { Target(view.CloseDrawer, false, ref output); return true; }
+                if (view.SelectedAircraft) { plan.AirCycleStage = 2; }
+                else
+                {
+                    for (int slot = 0; slot < 4; slot++)
+                        if ((view.ExpandedAirMask & (1 << slot)) != 0 && view.Squad(slot).Available)
+                        { Target(view.Squad(slot), false, ref output); return true; }
+                    if (view.ExpandedNextPage && view.Squad4.Available)
+                        Target(view.Squad4, false, ref output);
+                    else output.Kind = AriaPlayObservationKind.Waiting;
+                    return true;
+                }
+            }
+            if (plan.AirCycleStage == 2)
+            {
+                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
+                if (!view.SelectedAircraft) { plan.AirCycleStage = 1; return true; }
+                if (!view.ReturnAircraft.Available)
+                { output.Kind = AriaPlayObservationKind.Waiting; return true; }
+                plan.AirCycleAction = touch.Actions;
+                plan.AirCycleStage = 3;
+                Target(view.ReturnAircraft, false, ref output);
+                return true;
+            }
+            if (plan.AirCycleStage == 3)
+            {
+                plan.Intent = AriaSkirmishIntent.ReturnAircraft;
+                if (touch.Actions <= plan.AirCycleAction)
+                {
+                    if (view.ReturnAircraft.Available) Target(view.ReturnAircraft, false, ref output);
+                    else output.Kind = AriaPlayObservationKind.Waiting;
+                    return true;
+                }
+                if (view.OwnAttackAirActive == 0 && view.OwnAttackAirLanded > 0)
+                {
+                    plan.AirCycleStage = 4;
+                    plan.AirServiceReadyAt = view.Time + 5f;
+                }
+                else { output.Kind = AriaPlayObservationKind.Waiting; return true; }
+            }
+            plan.Intent = AriaSkirmishIntent.ServiceAircraft;
+            if (view.Time < plan.AirServiceReadyAt || view.OwnAirFuel <= 0)
+            { output.Kind = AriaPlayObservationKind.Waiting; return true; }
+            // The landed aircraft is serviced by shared home/fuel owners. Allow
+            // the visible squad-card attack sequence to issue a second sortie.
+            plan.AirCycleStage = 0;
+            plan.AirCycleCount = 1;
+            plan.AssaultIssued = 0;
+            plan.PagesOrdered = 0;
+            plan.StructureOrdered = 0;
+            plan.ObserveUntil = view.Time + 1f;
+            output.Kind = AriaPlayObservationKind.Waiting;
+            return true;
         }
 
         private static bool SelectionCanDamageDesignatedBase(

@@ -12,6 +12,8 @@ namespace Game.UI.Contracts
         public bool CanAffordRifle, CanAffordAntiAir, PadPresent, ReadinessEligible, CanQueueAir;
         public bool CanAffordLogisticsTruck, LogisticsTruckCommitted, RifleRecruitPending, AirProfile;
         public bool CanBuildAirPad;
+        public bool AirRecruitPending;
+        public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
         public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
     }
@@ -23,6 +25,7 @@ namespace Game.UI.Contracts
         public int SelectedMask;
         public int StructureMask;
         public int AttackOrderMask;
+        public int AirMask;
         public bool NextPage;
     }
 

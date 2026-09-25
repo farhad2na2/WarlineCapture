@@ -88,7 +88,9 @@ namespace Game.Runtime
                 view.CanBuildAirPad = view.Playing && view.AirProfile && view.ReadinessEligible &&
                     CanAffordBuilding(em, SkirmishStructureIds.VisualKey(SkirmishStructureIds.Helipad), view.OwnMaterials);
                 view.PadReady = view.PadPresent && view.ReadinessEligible;
-                view.AirQueueOffered = view.PadReady &&
+                view.AirRecruitPending = HasPendingRecruit(em, session, SkirmishRoleKind.AttackHeliLight);
+                CountPlayerAttackAircraft(em, session, ref view);
+                view.AirQueueOffered = view.PadReady && !view.AirRecruitPending && view.OwnAttackAirLive == 0 &&
                     SkirmishStrategyScoring.TryAfford(
                         army,
                         LiveReadiness(em, session, setup.Readiness),
@@ -105,6 +107,30 @@ namespace Game.Runtime
             view.HoldControlAvailable = true;
             view.GroupControlAvailable = true;
             return view;
+        }
+
+        private static void CountPlayerAttackAircraft(EntityManager em, Entity session, ref SkirmishAriaPublicView view)
+        {
+            var id = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            view.OwnAirFuel = SkirmishStartingSupplyService.ReadFuel(em, session, 1);
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent),
+                typeof(SkirmishUnitRoleComponent), typeof(UnitAirComponent));
+            using var entities = query.ToEntityArray(Allocator.Temp);
+            foreach (var unit in entities)
+            {
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(unit);
+                if (owned.FactionId != 1 || !owned.SessionId.Equals(id) ||
+                    !SkirmishArmyGroupSystem.IsAlive(em, unit)) continue;
+                var role = em.GetComponentData<SkirmishUnitRoleComponent>(unit).Role;
+                if (role != SkirmishRoleKind.AttackHeliLight && role != SkirmishRoleKind.AttackHeli)
+                    continue;
+                view.OwnAttackAirLive++;
+                var air = em.GetComponentData<UnitAirComponent>(unit);
+                if (air.Airborne != 0 || air.TakeoffRolling != 0 || air.LandingRolling != 0 || air.ReturningHome != 0)
+                    view.OwnAttackAirActive++;
+                else if (air.HomeInitialized != 0)
+                    view.OwnAttackAirLanded++;
+            }
         }
 
         private static bool CanAffordBuilding(EntityManager em, string prefabKey, int materials)

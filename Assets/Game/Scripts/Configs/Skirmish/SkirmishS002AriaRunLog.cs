@@ -82,9 +82,16 @@ namespace Game.Configs
             SkirmishS002NormalSpeedLatch latch,
             float timeScale,
             float matchElapsed,
-            double wallSeconds)
+            double wallSeconds,
+            bool finishedResultFrozen = false)
         {
-            if (timeScale <= 0.999f || timeScale >= 1.001f)
+            // The terminal screen freezes simulation at timeScale 0. Judge the
+            // completed match by its observed playing latch and clock/wall ratio.
+            if (finishedResultFrozen && timeScale == 0f)
+            {
+                if (!latch.Normal) return false;
+            }
+            else if (timeScale <= 0.999f || timeScale >= 1.001f)
                 return false;
             if (wallSeconds >= 90d && matchElapsed > 0f)
             {

@@ -21,3 +21,9 @@ The planner source was reviewed for direct gameplay requests/entity mutation: de
 `SupportedAriaControlsV1` identifies this explicit scope in new logs. It does not rewrite historical runs: runs 10–14 remain diagnostic/failed or unknown as originally recorded. Regression cases verify unobserved streams, direct/stale/reused/previous-attempt commands, mismatched release counts, observer shutdown, unexpected samples, and an actual scoped command yielding measured zero.
 
 Native validation of this new measurement revision is pending. No counted win is asserted by this document.
+
+## Return control extension (2026-09-25)
+
+ARIA now uses the existing selection-panel Return button for an observed attack helicopter. `SelectionUiCommandUiSystemHelper.RequestReturnToBase` queues the shared `ReturnToBase` intent. `RtsSelectionInputStateCompositionSystemHelper.TryEnqueueCommandRequest` claims the touch-release receipt and stores it on that request. `RtsSelectionImmediateSelectedUnitCommandSystem` now enters that exact receipt scope and records `ReturnToBase` only when its shared command accepts an issued return. A direct or stale request therefore contributes a violation if accepted. The selection-card tap and later landing are observations, not extra gameplay command receipts.
+
+New measured runs label this expanded scope `SupportedAriaControlsV2`; historical V1 and pending rows retain their original labels. The focused ARIA state-machine test covers completed Return touch, physical landing and delayed relaunch decision. A normal-input native return and zero-violation audit remain pending.

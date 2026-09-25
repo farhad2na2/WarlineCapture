@@ -163,6 +163,11 @@ namespace Game.UI.Shell.Ecs
                     model.PadPresent = publicView.PadPresent;
                     model.ReadinessEligible = publicView.ReadinessEligible;
                     model.CanQueueAir = publicView.AirQueueOffered;
+                    model.AirRecruitPending = publicView.AirRecruitPending;
+                    model.OwnAttackAirLive = publicView.OwnAttackAirLive;
+                    model.OwnAttackAirActive = publicView.OwnAttackAirActive;
+                    model.OwnAttackAirLanded = publicView.OwnAttackAirLanded;
+                    model.OwnAirFuel = publicView.OwnAirFuel;
                     model.VisibleHostileCombat = publicView.VisibleHostileCombat;
                     model.VisibleHostileAir = publicView.VisibleHostileAir;
                 }

@@ -19,6 +19,7 @@ namespace Game.UI.Runtime
         private BuildPlacementConfirmationBarView watchPlacement;
         private MatchHudMinimapView watchMap;
         private MatchHudFullMapPopupView watchFullMap;
+        private MatchHudSelectionPanelView watchSelection;
         private AriaTouchTarget ObserveWatchButton(Button button)
         {
             if (button == null || !button.IsActive() || !button.IsInteractable()) return default;
@@ -29,7 +30,10 @@ namespace Game.UI.Runtime
         }
         private AriaTouchTarget ObserveCatalogTarget(BuildDrawerCategory category, string prefabKey)
         {
-            var button = watchCatalog?.ResolveCatalogTarget(category, prefabKey);
+            return ObserveScrollableButton(watchCatalog?.ResolveCatalogTarget(category, prefabKey));
+        }
+        private AriaTouchTarget ObserveScrollableButton(Button button)
+        {
             var target = ObserveWatchButton(button);
             if (target.Available || button == null || !button.IsActive() || !button.IsInteractable()) return target;
             var scroll = button.GetComponentInParent<ScrollRect>();
@@ -76,6 +80,7 @@ namespace Game.UI.Runtime
                 view.ExpandedSelectedMask = page.SelectedMask;
                 view.ExpandedStructureMask = page.StructureMask;
                 view.ExpandedAttackOrderMask = page.AttackOrderMask;
+                view.ExpandedAirMask = page.AirMask;
                 view.ExpandedNextPage = page.NextPage;
                 view.ExpandedPageIndex = page.PageIndex;
             }
@@ -93,9 +98,12 @@ namespace Game.UI.Runtime
             if (UiShellRuntimeGateway.TryReadMatchHudSelection(out var selected))
             {
                 view.SelectionVisible = selected.Visible;
+                view.SelectedAircraft = selected.Visible && selected.IsAircraft;
                 view.SelectedCount = ReadDisplayedCount(selected.Title);
                 if (view.SelectedCount == 0) view.SelectedCount = ReadDisplayedCount(selected.Subtitle);
             }
+            if (watchSelection == null) watchSelection = Object.FindAnyObjectByType<MatchHudSelectionPanelView>(FindObjectsInactive.Include);
+            if (view.SelectedAircraft) view.ReturnAircraft = ObserveWatchButton(watchSelection?.PresentedReturnButton);
             if (UiShellRuntimeGateway.TryReadMatchHudCommandState(out var command)) { view.AttackMode = command.ActiveCommandMode == TacticalCommandMode.Attack; view.SelectionMode = command.ActiveCommandMode == TacticalCommandMode.Select; }
             view.Infantry = model.InfantryCount;
             view.PlayerHealth = model.PlayerHealth; view.EnemyHealth = model.EnemyHealth;
@@ -124,6 +132,11 @@ namespace Game.UI.Runtime
                 view.ReadinessEligible = model.ReadinessEligible;
                 view.PadReady = model.PadPresent && model.ReadinessEligible;
                 view.AirQueueOffered = model.CanQueueAir;
+                view.AirRecruitPending = model.AirRecruitPending;
+                view.OwnAttackAirLive = model.OwnAttackAirLive;
+                view.OwnAttackAirActive = model.OwnAttackAirActive;
+                view.OwnAttackAirLanded = model.OwnAttackAirLanded;
+                view.OwnAirFuel = model.OwnAirFuel;
                 view.VisibleHostileCombat = model.VisibleHostileCombat;
                 view.VisibleHostileAir = model.VisibleHostileAir;
                 if (watchCatalog == null) watchCatalog = Object.FindAnyObjectByType<BuildDrawerCatalogRuntimeView>(FindObjectsInactive.Include);
@@ -140,7 +153,10 @@ namespace Game.UI.Runtime
                     view.UpgradeReadiness = view.DrawerOpen ? ObserveWatchButton(watchBuild?.ReadinessButton) : openBuild;
                 }
             }
-            view.DefenseBuild = ObserveWatchButton(_highlightPresentationSystem.ResolveBuildTutorialControl(true, true, out _));
+            // The defense card can sit below the drawer viewport at wide aspect
+            // ratios. Publish the visible scroll gesture before its button tap.
+            view.DefenseBuild = ObserveScrollableButton(
+                _highlightPresentationSystem.ResolveBuildTutorialControl(true, true, out _));
             if (watchPlacement == null) watchPlacement = Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>(FindObjectsInactive.Include);
             view.PlacementOpen = watchPlacement != null && watchPlacement.HasPendingPlacement;
             if (view.PlacementOpen)
@@ -150,6 +166,8 @@ namespace Game.UI.Runtime
                 view.Site0 = ObserveDefenseSite(0); view.Site1 = ObserveDefenseSite(1);
                 view.Site2 = ObserveDefenseSite(2); view.Site3 = ObserveDefenseSite(3);
                 view.Site4 = ObserveDefenseSite(4); view.Site5 = ObserveDefenseSite(5);
+                view.PadSite0 = ObserveHomePadSite(0); view.PadSite1 = ObserveHomePadSite(1);
+                view.PadSite2 = ObserveHomePadSite(2); view.PadSite3 = ObserveHomePadSite(3);
             }
             if (watchSkirmish != null && watchSkirmish.EnemyBaseMarkerVisible)
             {
@@ -183,6 +201,38 @@ namespace Game.UI.Runtime
             var point = Camera.main.WorldToScreenPoint(world);
             return new AriaTouchTarget { Id = -20100 - index, Position = point,
                 Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, -20100 - index, true) };
+        }
+        private AriaTouchTarget ObserveHomePadSite(int index)
+        {
+            if (watchSkirmish == null || watchMap == null || Camera.main == null) return default;
+            Vector3 home = watchSkirmish.PlayerBaseObjectivePosition;
+            Vector3 enemy = watchSkirmish.EnemyBaseObjectivePosition;
+            Vector3 forward = enemy - home;
+            forward.y = 0;
+            if (forward.sqrMagnitude < 1) return default;
+            forward.Normalize();
+            Vector3 side = Vector3.Cross(Vector3.up, forward);
+            // The pad footprint and landing approach need a broad clear area. These
+            // The lateral home sites sit 36-46 world units from the Barracks,
+            // outside the forward tower lane (18 wide), and at least 75 from
+            // the hostile base. The first site was verified with normal touch
+            // placement on the desert map.
+            const float footprintAndAccessClearance = 16f;
+            const float hostileContactClearance = 36f;
+            const float enemyBaseClearance = 75f;
+            Vector3 site = home + forward * (index / 2 == 0 ? 18f : 12f) -
+                side * (index % 2 == 0 ? 34f : 42f);
+            if ((site - enemy).sqrMagnitude < enemyBaseClearance * enemyBaseClearance) return default;
+            foreach (var contact in watchMap.PresentedContacts)
+            {
+                float clearance = contact.Model.Allegiance == MatchHudMinimapMarkerAllegiance.Enemy
+                    ? hostileContactClearance : footprintAndAccessClearance;
+                if ((site - contact.Model.Position).sqrMagnitude < clearance * clearance) return default;
+            }
+            var point = Camera.main.WorldToScreenPoint(site);
+            int id = -20200 - index;
+            return new AriaTouchTarget { Id = id, Position = point,
+                Available = point.z > 0 && Screen.safeArea.Contains(point) && WatchTargetIsReachable(point, id, true) };
         }
         private void ObserveAdvanceGround(ref AriaSkirmishObservation view)
         {

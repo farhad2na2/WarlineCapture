@@ -308,6 +308,7 @@ namespace Game.UI.Contracts
         public readonly bool ReturnEnabled;
         public readonly bool DestroyEnabled;
         public readonly bool BoardEnabled;
+        public readonly bool IsAircraft;
 
         public UiMatchHudSelectionPanelModel(
             bool visible,
@@ -319,7 +320,8 @@ namespace Game.UI.Contracts
             bool badgeVisible,
             bool returnEnabled,
             bool destroyEnabled,
-            bool boardEnabled)
+            bool boardEnabled,
+            bool isAircraft = false)
         {
             Visible = visible;
             Title = title;
@@ -331,6 +333,7 @@ namespace Game.UI.Contracts
             ReturnEnabled = returnEnabled;
             DestroyEnabled = destroyEnabled;
             BoardEnabled = boardEnabled;
+            IsAircraft = isAircraft;
         }
 
         public static UiMatchHudSelectionPanelModel Hidden =>

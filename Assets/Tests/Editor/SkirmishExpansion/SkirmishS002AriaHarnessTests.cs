@@ -802,6 +802,10 @@ namespace Game.Tests.Editor
             Assert.IsTrue(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 1080f, 1080d));
             Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 1080f, 400d));
             Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 0f, 1080f, 1080d));
+            Assert.IsTrue(SkirmishS002AriaRunLog.FinishNormalSpeed(
+                SkirmishS002NormalSpeedLatch.Start(), 0f, 1080f, 1080d, finishedResultFrozen: true));
+            Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 0f, 1080f, 1080d, finishedResultFrozen: true));
+            Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 0f, 1080f, 400d, finishedResultFrozen: true));
             Assert.IsFalse(SkirmishS002AriaRunLog.FinishNormalSpeed(latch, 1f, 20f, 40d));
             var stillNormal = SkirmishS002NormalSpeedLatch.Start();
             stillNormal = SkirmishS002AriaRunLog.ObserveTimeScale(stillNormal, 0f);

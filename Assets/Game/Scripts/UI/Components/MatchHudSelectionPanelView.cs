@@ -23,6 +23,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Image badgeImage;
         [SerializeField] private Button commandWheelOpenButton;
         [SerializeField] private Button returnAction;
+        public Button PresentedReturnButton => returnAction;
         [SerializeField] private Button destroyAction;
         [SerializeField] private Button boardAction;
         [SerializeField] private Button cameraAction;

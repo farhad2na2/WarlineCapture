@@ -69,7 +69,7 @@ namespace Game.UI.Runtime
         }
 
         internal MatchHudSquadTraySlot VisibleSelectedSlot => _selectedSlot;
-        internal Button VisibleCardButton(int index) => TryGetCard(index, out var card) ? card.Button : null;
+        public Button VisibleCardButton(int index) => TryGetCard(index, out var card) ? card.Button : null;
 
         internal bool IsAssistantGuidanceTargetSelected =>
             _selectedSlot == MatchHudSquadTraySlot.Soldiers;

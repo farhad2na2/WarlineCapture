@@ -14,5 +14,11 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int PagesOrdered;
         public int EconomicMilestones, MaterialsHighWater;
         public int ObservedPageIndex;
+        // Separate from the legacy two-tower opening. A legal preview alone never
+        // proves that the requested helipad site was selected.
+        public int PadStage, PadSiteIndex, PadAction, PadTargetId, PadFeedbackFrame;
+        public float PadDeadline, PadReadyAt;
+        public int AirCycleStage, AirCycleAction, AirCycleCount;
+        public float AirSortieObservedAt, AirCycleDeadline, AirServiceReadyAt;
     }
 }

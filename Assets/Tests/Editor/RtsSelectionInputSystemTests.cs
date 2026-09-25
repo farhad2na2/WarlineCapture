@@ -115,6 +115,27 @@ public sealed class RtsSelectionInputSystemTests
         }
     }
 
+    public static void RunReturnToBaseFocusedValidation()
+    {
+        try
+        {
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsFocusedPlayerUnitToRespawnSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsProducedUnitToProducingBuildingSpawnPoint());
+            RunCase(test => test.ReturnToBaseCommandSystem_RejectsWhenNoOwnedHomeSpawnPointExists());
+            RunCase(test => test.ReturnToBaseCommandSystem_ReturnsSelectedPlayerUnitsWhenFocusedUnitMissing());
+            RunCase(test => test.ReturnToBaseCommandSystem_RejectsWithoutSelectedPlayerUnit());
+            RunCase(test => test.ReturnToBaseCommandSystem_RecordsTouchReceiptAndDirectViolation());
+            UnityEngine.Debug.Log("[ReturnToBaseInputValidation] result=Passed tests=6");
+            ValidationExit.Exit(0);
+        }
+        catch (Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+            UnityEngine.Debug.LogError("[ReturnToBaseInputValidation] result=Failed");
+            ValidationExit.Exit(1);
+        }
+    }
+
     [SetUp]
     public void SetUp()
     {
@@ -2124,6 +2145,38 @@ public sealed class RtsSelectionInputSystemTests
         Assert.AreEqual(1, runtimeState.SelectionModeActive);
         Assert.AreEqual(1, runtimeState.SuppressNextWorldClick);
         AssertNoQueuedCommandIntents(inputSystem);
+    }
+
+    [Test]
+    public void ReturnToBaseCommandSystem_RecordsTouchReceiptAndDirectViolation()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        CreateRuntimeGameplayState(em, selectionModeActive: true);
+        CreateRespawnQueue(em, FactionIdentity.PlayerFactionId, new int2(12, 14));
+        Entity unit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove));
+        em.SetComponentData(unit, new Faction { Id = FactionIdentity.PlayerFactionId });
+        em.SetComponentData(unit, new UnitGrid { Cell = new int2(2, 3) });
+        em.SetComponentData(unit, new UnitMove { Speed = 5f, WalkSpeed = 5f, ArriveDistance = .1f });
+        var input = new RtsSelectionInputCompositionSystemHelper(em);
+        AriaCommandEvidence.Begin();
+        try
+        {
+            AriaCommandEvidence.ObserveRelease(Time.frameCount, Vector2.zero);
+            Assert.IsTrue(input.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, Time.frameCount));
+            Assert.IsTrue(RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+                em, unit, out _, out bool accepted, out _, out _));
+            Assert.IsTrue(accepted);
+            Assert.AreEqual(1, AriaCommandEvidence.AcceptedCommands);
+            Assert.AreEqual(0, AriaCommandEvidence.Violations);
+
+            Assert.IsTrue(input.QueueCommandIntentRequest(RtsSelectionCommandIntentKind.ReturnToBase, Time.frameCount));
+            Assert.IsTrue(RtsSelectionImmediateSelectedUnitCommandSystem.ProcessPendingRequests(
+                em, unit, out _, out accepted, out _, out _));
+            Assert.IsTrue(accepted);
+            Assert.AreEqual(2, AriaCommandEvidence.AcceptedCommands);
+            Assert.AreEqual(1, AriaCommandEvidence.Violations);
+        }
+        finally { AriaCommandEvidence.End(); }
     }
 
     [Test]

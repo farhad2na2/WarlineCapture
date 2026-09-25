@@ -129,12 +129,13 @@ namespace Game.Runtime
             Entity commandEntity = commandQueueQuery.GetSingletonEntity();
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests =
                 em.GetBuffer<RtsSelectionCommandIntentRequestElement>(commandEntity);
-            if (!RemoveImmediateRequests(commandRequests, out processedKind))
+            if (!RemoveImmediateRequests(commandRequests, out processedKind, out uint inputReceipt))
                 return false;
 
             if (processedKind == RtsSelectionCommandIntentKind.ReturnToBase)
             {
-                return ProcessReturnToBase(
+                using var inputEvidence = AriaCommandEvidence.Enter(inputReceipt);
+                bool processed = ProcessReturnToBase(
                     em,
                     commandEntity,
                     runtimeStateQuery,
@@ -145,6 +146,8 @@ namespace Game.Runtime
                     out accepted,
                     out rejectionReason,
                     out issuedCount);
+                if (processed && accepted) AriaCommandEvidence.Accepted("ReturnToBase", 1);
+                return processed;
             }
 
             if (processedKind == RtsSelectionCommandIntentKind.DestroyFocusedUnit)
@@ -481,10 +484,12 @@ namespace Game.Runtime
 
         private static bool RemoveImmediateRequests(
             DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-            out RtsSelectionCommandIntentKind lastKind)
+            out RtsSelectionCommandIntentKind lastKind,
+            out uint inputReceipt)
         {
             bool removedAny = false;
             lastKind = RtsSelectionCommandIntentKind.None;
+            inputReceipt = 0;
             for (int i = 0; i < commandRequests.Length;)
             {
                 RtsSelectionCommandIntentKind kind = commandRequests[i].Kind;
@@ -498,6 +503,7 @@ namespace Game.Runtime
                 }
 
                 lastKind = kind;
+                inputReceipt = commandRequests[i].InputReceipt;
                 commandRequests.RemoveAt(i);
                 removedAny = true;
             }

@@ -75,7 +75,9 @@ namespace Game.UI.Shell.Ecs
                 component.IsVehicle == 0,
                 owned,
                 owned && component.MissionProtected == 0,
-                ResolveBoardEnabled(world.EntityManager, component.FocusedUnit));
+                ResolveBoardEnabled(world.EntityManager, component.FocusedUnit),
+                world.EntityManager.Exists(component.FocusedUnit) &&
+                world.EntityManager.HasComponent<UnitAirComponent>(component.FocusedUnit));
             return true;
         }
 
@@ -100,7 +102,8 @@ namespace Game.UI.Shell.Ecs
                 false,
                 true,
                 CanDestroySelectedMissionUnits(entityManager),
-                ResolveSelectedBoardEnabled(entityManager));
+                ResolveSelectedBoardEnabled(entityManager),
+                summary.SelectedCount == summary.AircraftCount);
             return true;
         }
 

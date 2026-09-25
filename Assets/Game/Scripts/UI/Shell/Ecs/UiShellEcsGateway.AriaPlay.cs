@@ -88,8 +88,13 @@ namespace Game.UI.Shell.Ecs
         void IUiAriaPlayGateway.StopAriaPlay()
         {
             World.DefaultGameObjectInjectionWorld?.GetExistingSystemManaged<AriaPlayInputSystem>()?.Cancel();
-            if (TryGetBoundary(out var em, out var boundary) && em.HasComponent<AriaPlaySessionComponent>(boundary))
-                em.SetComponentData(boundary, default(AriaPlaySessionComponent));
+            if (TryGetBoundary(out var em, out var boundary))
+            {
+                if (em.HasComponent<AriaPlaySessionComponent>(boundary))
+                    em.SetComponentData(boundary, default(AriaPlaySessionComponent));
+                if (em.HasComponent<AriaSkirmishPlanComponent>(boundary))
+                    em.SetComponentData(boundary, default(AriaSkirmishPlanComponent));
+            }
         }
         AriaPlayModel IUiAriaPlayGateway.ReadAriaPlay()
         {

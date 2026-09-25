@@ -3,6 +3,8 @@ using Game.Configs;
 using Game.Skirmish.Contracts;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 
 namespace Game.Runtime
 {
@@ -10,6 +12,10 @@ namespace Game.Runtime
     [UpdateAfter(typeof(SkirmishArmyGroupSystem))]
     public partial struct SkirmishEnemyStrategySystem : ISystem
     {
+        // A structure must be inside the defended base area and close enough to
+        // an actual defender. This is a local response, not map-wide knowledge.
+        private const float InfrastructureDefenseRadius = 90f;
+        private const float InfrastructureResponseRadius = 100f;
         private EntityQuery ownedQuery;
         private EntityQuery sessions;
 
@@ -188,11 +194,21 @@ namespace Game.Runtime
             }
             else if (score.Priority == SkirmishStrategyPriority.AttackBase)
             {
-                Entity target = FindVisiblePlayerBase(em, session);
                 uint groupId = FirstEnemyAssaultGroup(em, session);
-                if (target == Entity.Null || groupId == 0 ||
-                    !SkirmishArmyCommandService.TryIssueGroupOrder(
-                        em, session, groupId, 2, SkirmishGroupOrderKind.Attack, target, out _))
+                Entity intrusion = FindDefendedHostileStructure(em, session, groupId);
+                Entity target = intrusion != Entity.Null ? intrusion : FindVisiblePlayerBase(em, session);
+                bool issued = target != Entity.Null && groupId != 0 &&
+                    SkirmishArmyCommandService.TryIssueGroupOrder(
+                        em, session, groupId, 2, SkirmishGroupOrderKind.Attack, target, out _);
+                if (!issued && intrusion != Entity.Null)
+                {
+                    // An inaccessible intrusion must not strand the base assault.
+                    target = FindVisiblePlayerBase(em, session);
+                    issued = target != Entity.Null &&
+                        SkirmishArmyCommandService.TryIssueGroupOrder(
+                            em, session, groupId, 2, SkirmishGroupOrderKind.Attack, target, out _);
+                }
+                if (!issued)
                     state.FailedAttempts++;
                 else
                     state.FailedAttempts = 0;
@@ -245,6 +261,70 @@ namespace Game.Runtime
             }
 
             return Entity.Null;
+        }
+
+        internal static Entity FindDefendedHostileStructure(EntityManager em, Entity session, uint groupId)
+        {
+            if (groupId == 0 || !em.HasComponent<SkirmishExpandedSessionComponent>(session))
+                return Entity.Null;
+            FixedString64Bytes sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            using var query = em.CreateEntityQuery(typeof(SkirmishAttemptOwnedComponent), typeof(LocalTransform));
+            using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+            Entity ownBase = Entity.Null;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(entity);
+                if (owned.SessionId.Equals(sessionId) && owned.FactionId == 2 &&
+                    em.HasComponent<SkirmishObjectiveRoleComponent>(entity) &&
+                    em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role == SkirmishObjectiveRoleKind.EnemyBase)
+                { ownBase = entity; break; }
+            }
+            if (ownBase == Entity.Null)
+                return Entity.Null;
+            float2 basePosition = em.GetComponentData<LocalTransform>(ownBase).Position.xz;
+            float best = InfrastructureDefenseRadius * InfrastructureDefenseRadius;
+            Entity chosen = Entity.Null;
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity candidate = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(candidate);
+                if (!owned.SessionId.Equals(sessionId) || owned.FactionId != 1 || owned.IsStructure == 0 ||
+                    !em.HasComponent<UnitHealth>(candidate) ||
+                    !SkirmishArmyGroupSystem.IsAlive(em, candidate) || !SkirmishFogService.IsVisible(em, candidate))
+                    continue;
+                float2 position = em.GetComponentData<LocalTransform>(candidate).Position.xz;
+                float distance = math.distancesq(position, basePosition);
+                if (distance >= best || !HasStructureCapableDefenderNear(em, entities, sessionId, groupId, position))
+                    continue;
+                best = distance;
+                chosen = candidate;
+            }
+            return chosen;
+        }
+
+        private static bool HasStructureCapableDefenderNear(EntityManager em, NativeArray<Entity> entities,
+            FixedString64Bytes sessionId, uint groupId, float2 position)
+        {
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity member = entities[i];
+                var owned = em.GetComponentData<SkirmishAttemptOwnedComponent>(member);
+                if (!owned.SessionId.Equals(sessionId) || owned.FactionId != 2 || owned.IsStructure != 0 ||
+                    !SkirmishArmyGroupSystem.IsAlive(em, member) ||
+                    !em.HasComponent<SkirmishArmyGroupMembershipComponent>(member) ||
+                    em.GetComponentData<SkirmishArmyGroupMembershipComponent>(member).GroupId != groupId ||
+                    !em.HasComponent<SkirmishRoleOverlayComponent>(member))
+                    continue;
+                var overlay = em.GetComponentData<SkirmishRoleOverlayComponent>(member);
+                if (overlay.Damage <= 0 ||
+                    !SkirmishExpandedEngagementService.DomainAllows(overlay.TargetDomains, true, SkirmishPopulationCategory.None))
+                    continue;
+                if (math.distancesq(em.GetComponentData<LocalTransform>(member).Position.xz, position) <=
+                    InfrastructureResponseRadius * InfrastructureResponseRadius)
+                    return true;
+            }
+            return false;
         }
 
         private static uint FirstEnemyAssaultGroup(EntityManager em, Entity session)

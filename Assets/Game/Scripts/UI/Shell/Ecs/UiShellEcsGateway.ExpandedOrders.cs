@@ -29,6 +29,7 @@ namespace Game.UI.Shell.Ecs
             page.SelectedMask = Mask(slot0, 0, false) | Mask(slot1, 1, false) | Mask(slot2, 2, false) | Mask(slot3, 3, false);
             page.StructureMask = StructureBit(slot0, 0) | StructureBit(slot1, 1) | StructureBit(slot2, 2) | StructureBit(slot3, 3);
             page.AttackOrderMask = OrderBit(slot0, 0) | OrderBit(slot1, 1) | OrderBit(slot2, 2) | OrderBit(slot3, 3);
+            page.AirMask = AirBit(slot0, 0) | AirBit(slot1, 1) | AirBit(slot2, 2) | AirBit(slot3, 3);
             return true;
         }
 
@@ -66,6 +67,12 @@ namespace Game.UI.Shell.Ecs
         private static int OrderBit(in SkirmishPresentedSlot slot, int index)
         {
             return slot.Occupied && slot.AttackOrdered ? 1 << index : 0;
+        }
+
+        private static int AirBit(in SkirmishPresentedSlot slot, int index)
+        {
+            return slot.Occupied && (slot.Role == Game.Skirmish.Contracts.SkirmishRoleKind.AttackHeliLight ||
+                slot.Role == Game.Skirmish.Contracts.SkirmishRoleKind.AttackHeli) ? 1 << index : 0;
         }
     }
 }

@@ -10,6 +10,8 @@ using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEngine;
 
 namespace Game.Tests.Editor
@@ -174,6 +176,98 @@ namespace Game.Tests.Editor
                 em, session, groupId, 2, SkirmishGroupOrderKind.Attack, playerBase,
                 out SkirmishCommandDecision hidden));
             Assert.AreEqual(SkirmishReasonCode.HiddenContact, hidden.Reason);
+        }
+
+        [Test]
+        public void EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective()
+        {
+            using var world = new World(nameof(EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective));
+            EntityManager em = world.EntityManager;
+            CompileAndSpawnS003(em, out Entity session, out _);
+            var sessionId = em.GetComponentData<SkirmishExpandedSessionComponent>(session).SessionId;
+            Entity enemyBase = Entity.Null;
+            using (var query = em.CreateEntityQuery(typeof(SkirmishObjectiveRoleComponent), typeof(SkirmishAttemptOwnedComponent)))
+            using (var entities = query.ToEntityArray(Allocator.Temp))
+                foreach (Entity entity in entities)
+                    if (em.GetComponentData<SkirmishObjectiveRoleComponent>(entity).Role == SkirmishObjectiveRoleKind.EnemyBase)
+                        enemyBase = entity;
+            Assert.AreNotEqual(Entity.Null, enemyBase);
+            // Ledger-only editor fixtures have no world pose until visual attach.
+            if (!em.HasComponent<LocalTransform>(enemyBase))
+                em.AddComponentData(enemyBase, LocalTransform.FromPosition(new float3(300, 0, 300)));
+            float3 basePosition = em.GetComponentData<LocalTransform>(enemyBase).Position;
+            const uint groupId = 777;
+            Entity defender = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(LocalTransform),
+                typeof(UnitHealth), typeof(SkirmishArmyGroupMembershipComponent), typeof(SkirmishRoleOverlayComponent));
+            em.SetComponentData(defender, new SkirmishAttemptOwnedComponent
+                { SessionId = sessionId, FactionId = 2 });
+            em.SetComponentData(defender, LocalTransform.FromPosition(basePosition + new float3(20, 0, 0)));
+            em.SetComponentData(defender, new UnitHealth { Current = 100, Max = 100 });
+            em.SetComponentData(defender, new SkirmishArmyGroupMembershipComponent { GroupId = groupId });
+            em.SetComponentData(defender, new SkirmishRoleOverlayComponent
+                { Damage = 10, TargetDomains = SkirmishTargetDomain.Structure, RangeWorld = 35 });
+            Entity pad = em.CreateEntity(typeof(SkirmishAttemptOwnedComponent), typeof(LocalTransform),
+                typeof(UnitHealth), typeof(SkirmishContactSightComponent));
+            em.SetComponentData(pad, new SkirmishAttemptOwnedComponent
+                { SessionId = sessionId, FactionId = 1, IsStructure = 1 });
+            em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
+            em.SetComponentData(pad, new UnitHealth { Current = 100, Max = 100 });
+            SkirmishFogService.Reveal(em, pad);
+            Assert.AreEqual(pad, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            em.SetComponentData(defender, new SkirmishRoleOverlayComponent
+                { Damage = 10, TargetDomains = SkirmishTargetDomain.Infantry, RangeWorld = 35 });
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            em.SetComponentData(defender, new SkirmishRoleOverlayComponent
+                { Damage = 10, TargetDomains = SkirmishTargetDomain.Structure, RangeWorld = 35 });
+            em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(150, 0, 0)));
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            em.SetComponentData(pad, LocalTransform.FromPosition(basePosition + new float3(35, 0, 0)));
+            SkirmishFogService.Hide(em, pad);
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+            SkirmishFogService.Reveal(em, pad);
+            em.SetComponentData(pad, new UnitHealth { Current = 0, Max = 100 });
+            Assert.AreEqual(Entity.Null, SkirmishEnemyStrategySystem.FindDefendedHostileStructure(em, session, groupId));
+        }
+
+        [Test]
+        public void AircraftReturnWaitsForTouchAndLandingBeforeSecondSortie()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, AirProfile = true, PadPresent = true,
+                PlayerDesignatedAlive = true, EnemyDesignatedAlive = true,
+                Time = 100, OwnAttackAirLive = 1, OwnAttackAirActive = 1, OwnAirFuel = 100,
+                ExpandedAirMask = 1, Squad0 = new AriaTouchTarget { Id = 41, Available = true },
+                ReturnAircraft = new AriaTouchTarget { Id = 42, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent
+            {
+                AssaultStarted = 1, AssaultIssued = 1, StructureOrdered = 1,
+                LastProgressAt = 100, AirSortieObservedAt = 50
+            };
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = default(AriaPlayObservationComponent);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(41, output.TargetId);
+            Assert.AreEqual(1, plan.AirCycleStage);
+            view.SelectedAircraft = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(42, output.TargetId);
+            Assert.AreEqual(3, plan.AirCycleStage);
+            view.SelectedAircraft = false;
+            view.OwnAttackAirActive = 0;
+            view.OwnAttackAirLanded = 1;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(3, plan.AirCycleStage, "A physical landing cannot substitute for the completed Return touch.");
+            touch.Actions++;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(4, plan.AirCycleStage);
+            Assert.AreEqual(1, plan.AssaultIssued, "Do not overwrite the return order during service.");
+            view.Time = 106;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(1, plan.AirCycleCount);
+            Assert.AreEqual(0, plan.AssaultIssued, "Only a landed, fueled aircraft may be relaunched.");
+            Assert.AreEqual(0, plan.AirCycleStage);
         }
 
         [Test]
@@ -411,9 +505,10 @@ namespace Game.Tests.Editor
             view.ReadinessEligible = true;
             view.CanBuildAirPad = true;
             view.PadPresent = false;
+            view.FocusPlayer = new AriaTouchTarget { Id = 53, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
-            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
-            Assert.AreEqual(52, output.TargetId);
+            Assert.AreEqual(AriaSkirmishIntent.BuildAirPad, plan.Intent);
+            Assert.AreEqual(53, output.TargetId);
             Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
             Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
         }
@@ -561,9 +656,10 @@ namespace Game.Tests.Editor
             view.CanBuildAirPad = true;
             view.AirQueueOffered = afterPad.AirQueueOffered;
             view.AirPad = new AriaTouchTarget { Id = 52, Available = true };
+            view.FocusPlayer = new AriaTouchTarget { Id = 53, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
-            Assert.AreEqual(AriaSkirmishIntent.Inspect, plan.Intent);
-            Assert.AreEqual(52, output.TargetId);
+            Assert.AreEqual(AriaSkirmishIntent.BuildAirPad, plan.Intent);
+            Assert.AreEqual(53, output.TargetId);
             Assert.AreEqual(playerMaterials, em.GetComponentData<SkirmishEconomyStockComponent>(session).Materials);
             Assert.AreEqual(enemyMaterials - 220, em.GetComponentData<SkirmishEnemyStockComponent>(session).Materials);
             Assert.AreEqual(1, em.GetComponentData<SkirmishCapacityComponent>(session).AirLive);
@@ -626,7 +722,7 @@ namespace Game.Tests.Editor
             view.PlacementConfirm = new AriaTouchTarget { Id = 5, Available = true };
             view.PlacementCancel = new AriaTouchTarget { Id = 6, Available = true };
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
-            Assert.AreEqual(5, output.TargetId);
+            Assert.AreEqual(6, output.TargetId, "An unplanned valid preview must not be committed.");
             view.Time = 27;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(6, output.TargetId);
@@ -766,7 +862,8 @@ namespace Game.Tests.Editor
             var view = new AriaSkirmishObservation
             {
                 Active = true, ExpandedSession = true, AirProfile = true, Infantry = 20,
-                ReadinessEligible = true, AirPad = new AriaTouchTarget { Id = 82, Available = true }
+                ReadinessEligible = true, AirPad = new AriaTouchTarget { Id = 82, Available = true },
+                FocusPlayer = new AriaTouchTarget { Id = 83, Available = true }
             };
             var plan = new AriaSkirmishPlanComponent();
             var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
@@ -775,7 +872,91 @@ namespace Game.Tests.Editor
             Assert.AreEqual(AriaPlayObservationKind.Waiting, output.Kind);
             view.CanBuildAirPad = true;
             AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(83, output.TargetId, "Home focus precedes the build card.");
+            touch.Actions++; view.Time = 1;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            view.Time = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
             Assert.AreEqual(82, output.TargetId);
+        }
+
+        [Test]
+        public void HomePadRequiresCompletedSiteTouchAndFreshLegalFeedback()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, Time = 1, Frame = 10,
+                ReadinessEligible = true, CanBuildAirPad = true,
+                FocusPlayer = new AriaTouchTarget { Id = 10, Available = true },
+                AirPad = new AriaTouchTarget { Id = 11, Available = true },
+                PlacementConfirm = new AriaTouchTarget { Id = 12, Available = true },
+                PlacementCancel = new AriaTouchTarget { Id = 13, Available = true },
+                PadSite0 = new AriaTouchTarget { Id = 14, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            view.PlacementOpen = true; // The initially valid preview is enemy-side.
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(13, output.TargetId);
+            view.PlacementOpen = false;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(10, output.TargetId);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId);
+            touch.Actions = 1; touch.TargetId = 10; view.Time = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId, "Focus alone cannot authorize Confirm.");
+            view.Time = 3; view.Frame = 11;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(11, output.TargetId);
+            touch.Actions = 2; touch.TargetId = 11; view.PlacementOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(14, output.TargetId);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId, "An incomplete site touch cannot authorize Confirm.");
+            touch.Actions = 3; touch.TargetId = 14;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId, "Feedback from the same frame is stale.");
+            view.Frame = 12;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(12, output.TargetId);
+            touch.Actions = 4; touch.TargetId = 12;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreNotEqual(12, output.TargetId, "A completed Confirm is never sent twice.");
+        }
+
+        [Test]
+        public void HomePadCancelsWhenAllVisibleSitesAreBlocked()
+        {
+            var view = new AriaSkirmishObservation
+            {
+                Active = true, ExpandedSession = true, Time = 1, Frame = 10,
+                ReadinessEligible = true, CanBuildAirPad = true,
+                FocusPlayer = new AriaTouchTarget { Id = 10, Available = true },
+                AirPad = new AriaTouchTarget { Id = 11, Available = true },
+                PlacementConfirm = new AriaTouchTarget { Id = 12, Available = true },
+                PlacementCancel = new AriaTouchTarget { Id = 13, Available = true }
+            };
+            var plan = new AriaSkirmishPlanComponent();
+            var touch = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            var output = new AriaPlayObservationComponent();
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            touch.Actions = 1; touch.TargetId = 10; view.Time = 2;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            view.Time = 3;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(11, output.TargetId);
+            touch.Actions = 2; touch.TargetId = 11; view.PlacementOpen = true;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(10, output.TargetId, "A single refocus is allowed.");
+            touch.Actions = 3; touch.TargetId = 10;
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            AriaSkirmishPlanSystem.Step(view, ref plan, ref touch, ref output);
+            Assert.AreEqual(13, output.TargetId);
+            Assert.AreEqual(8, plan.PadStage);
         }
 
         [Test]
@@ -813,6 +994,8 @@ namespace Game.Tests.Editor
                 suite.SharedScoringUsesEligibilityAndHidesHostileCash();
                 suite.EnemyStrategyRecruitsThroughSharedProduceAndLeavesPlayerStocks();
                 suite.EnemyAttackRequiresVisibleTargetAndUsesLegalGroupOrder();
+                suite.EnemyStructureDefendersReactToVisibleUnarmedIntrusionAndResumeBaseObjective();
+                suite.AircraftReturnWaitsForTouchAndLandingBeforeSecondSortie();
                 suite.AriaSkillsStayOnVisibleControlsAndHandBackAfterRetries();
                 suite.ExpandedAriaPlanTargetsPublicControlsWithoutGameplayMutation();
                 suite.PublicProjectionDoesNotExposeEnemyWalletToAria();
@@ -825,6 +1008,8 @@ namespace Game.Tests.Editor
                 suite.AirSupplyProgressIsBoundedAndRepeatedMilestonesDoNotMaskAStall();
                 suite.SuccessfulPagingClearsTapRetriesWithoutExtendingBattleWatchdog();
                 suite.AirPadPlanningWaitsUntilThePublicCardIsAffordable();
+                suite.HomePadRequiresCompletedSiteTouchAndFreshLegalFeedback();
+                suite.HomePadCancelsWhenAllVisibleSitesAreBlocked();
                 suite.PadAffordabilityUsesPersistentAuthoredCatalogWithoutADrawer();
                 SkirmishS002AriaHarnessTests.RunFocusedValidation();
                 Debug.Log("[SkirmishExpandedAriaTests] result=Passed");

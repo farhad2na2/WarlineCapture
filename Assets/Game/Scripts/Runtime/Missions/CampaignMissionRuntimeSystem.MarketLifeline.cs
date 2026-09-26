@@ -32,7 +32,11 @@ namespace Game.Runtime
                 {
                     if(member.Kind==0)
                     {
-                        rifles++;if(em.HasComponent<UnitGrid>(member.Entity)&&!em.HasComponent<UnitPathRequest>(member.Entity)&&!em.HasComponent<UnitPathFollow>(member.Entity))
+                        // A completed path can retain its follow component for a later
+                        // cleanup frame. Observation credit is governed by the authored
+                        // six-second hold, so use real grid proximity instead of component
+                        // lifetime and do not strand a stationary squad in the ring.
+                        rifles++;if(em.HasComponent<UnitGrid>(member.Entity))
                         {
                             int2 cell=em.GetComponentData<UnitGrid>(member.Entity).Cell;
                             rifleAtManifest|=math.distancesq(cell,state.ManifestCell)<=rules.ManifestRadius*rules.ManifestRadius;

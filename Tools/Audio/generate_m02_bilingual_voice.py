@@ -102,7 +102,7 @@ def request_json(api_key: str, path: str) -> dict:
         raise RuntimeError(f"ElevenLabs HTTP {exception.code}: {detail}") from exception
 
 
-def request_audio(api_key: str, voice_id: str, text: str, language: str, seed: int) -> bytes:
+def request_audio(api_key: str, voice_id: str, text: str, language: str, seed: int, direction=None) -> bytes:
     query = urllib.parse.urlencode({"output_format": OUTPUT_FORMAT})
     body = {
         "text": text,
@@ -111,7 +111,7 @@ def request_audio(api_key: str, voice_id: str, text: str, language: str, seed: i
         "seed": seed,
         "apply_text_normalization": "on",
     }
-    persian_voice_profile.apply(body, language)
+    persian_voice_profile.apply(body, language, direction)
     request = urllib.request.Request(
         f"{API_ROOT}/v1/text-to-speech/{voice_id}?{query}",
         data=json.dumps(body).encode("utf-8"),

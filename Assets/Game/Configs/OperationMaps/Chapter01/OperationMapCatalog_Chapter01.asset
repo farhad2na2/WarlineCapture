@@ -23,6 +23,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dc1b384202d46427aab2431d0b043a93, type: 2}
   - {fileID: 11400000, guid: 7b9374274816942dbabc046eae0256d3, type: 2}
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
+  - {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
     contentPack:
@@ -84,3 +85,9 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: a048528ac1ca33d0457210630bd8f503acdb6603ea0efd43ee17a66ef38f9333
+  - definition: {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch03.signal_trace_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3

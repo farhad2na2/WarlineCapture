@@ -583,7 +583,8 @@ namespace Game.Editor
         private static RectTransform BuildMissionChapterRow(Transform parent, int index, Sprite art, string name)
         {
             RectTransform row = CreateTopLeft("ChapterCard_" + (index + 1), parent, 0f, index * 126f, 396f, 116f);
-            CreateGradientPanel(row, index == 0 ? AmberTop : DarkTop, index == 0 ? AmberBottom : DarkBottom, index == 0 ? theme.Amber : Border, 3f);
+            V3GradientGraphic background=CreateGradientPanel(row, index == 0 ? AmberTop : DarkTop, index == 0 ? AmberBottom : DarkBottom, index == 0 ? theme.Amber : Border, 3f);
+            Button button=row.gameObject.AddComponent<Button>();button.targetGraphic=background;button.transition=Selectable.Transition.ColorTint;
             RectTransform clip = CreateTopLeft("ArtClip", row, 4f, 4f, 392f, 108f);
             clip.gameObject.AddComponent<RectMask2D>();
             Image image = CreateImage("Art", clip, art, new Color(0.62f, 0.60f, 0.55f, 1f), false);

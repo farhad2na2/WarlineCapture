@@ -21,14 +21,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -67,14 +67,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -112,14 +112,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -207,14 +207,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -253,14 +253,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -299,14 +299,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -395,14 +395,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
-      m_SubObjectName: PowerRelay
+      m_AssetGUID: 
+      m_SubObjectName: 
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0

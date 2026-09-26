@@ -44,6 +44,7 @@ namespace Game.UI.Runtime
                 campaignOperationsView.ChapterOneButton?.onClick.AddListener(SelectChapterOne);
                 campaignOperationsView.ChapterTwoButton?.onClick.AddListener(SelectChapterTwo);
                 campaignOperationsView.ChapterTwoOverviewButton?.onClick.AddListener(SelectChapterTwo);
+                campaignOperationsView.ChapterThreeButton?.onClick.AddListener(SelectChapterThree);
             }
             if (missionBriefingView != null)
             {
@@ -69,6 +70,7 @@ namespace Game.UI.Runtime
                 campaignOperationsView.ChapterOneButton?.onClick.RemoveListener(SelectChapterOne);
                 campaignOperationsView.ChapterTwoButton?.onClick.RemoveListener(SelectChapterTwo);
                 campaignOperationsView.ChapterTwoOverviewButton?.onClick.RemoveListener(SelectChapterTwo);
+                campaignOperationsView.ChapterThreeButton?.onClick.RemoveListener(SelectChapterThree);
             }
             if (missionBriefingView != null)
             {
@@ -125,9 +127,10 @@ namespace Game.UI.Runtime
                 UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);
         }
 
-        private void SelectM01() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.Gridlock : UiCampaignMissionProjectionIds.M01);
+        private void SelectM01() => SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.SignalTrace : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.Gridlock : UiCampaignMissionProjectionIds.M01);
         private void SelectChapterOne(){SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterTwo(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterThree(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);campaignOperationsView.ShowMissionSelect();}
         private void SelectM02() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
         private void SelectM03() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
         private void SelectM05() => SelectMission(campaignOperationsView.IsChapterTwo

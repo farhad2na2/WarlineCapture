@@ -1,7 +1,7 @@
 {
   "schema": "WarlineCapture.MarketLifelineBilingualVoice.v1",
   "missionId": "saga.ch02.m03.market_lifeline",
-  "generatedAtUtc": "2026-09-26T09:23:38.420593+00:00",
+  "generatedAtUtc": "2026-09-26T16:30:40.696893+00:00",
   "provider": "ElevenLabs",
   "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
   "model": "eleven_v3",
@@ -36,18 +36,18 @@
         "stability": 0.5,
         "similarity_boost": 0.75
       },
-      "performanceDirection": "[conversational tone]",
+      "performanceDirection": "[warm conversational Iranian Persian, relaxed everyday speech, natural local-market cadence, never formal narration]",
       "kind": "narrative",
       "id": "market_lifeline-brief-01",
       "speaker": "YASIN",
       "locale": "fa-IR",
-      "text": "بازار قدیمی با کمبود غذا و دارو روبه‌روئه، اما کارگرهای بازار دشمن شما نیستن. دو بارنامه ادعای یک مسیر تجاری رو دارن؛ یکی برای سه کامیون امدادی ماست و یکی انتقالی کپی‌شده‌ست.",
+      "text": "بازار قدیمی غذا و دارو کم آورده، ولی کارگرای بازار دشمن ما نیستن. دو تا بارنامه برای یه مسیر صادر شده؛ یکی مال سه تا کامیون امدادی ماست، اون یکی یه انتقال کپی‌شده‌ست.",
       "voiceId": "nPczCjzI2devNBz1zQrb",
       "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
       "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-brief-01.wav",
-      "durationSeconds": 16.48,
-      "sha256": "5e882272334a5bc9388de764c42dce0f9594a4194d887302d9d47777439cc028",
-      "captionSha256": "f524a8dbe795fde26919064d5581aff07ba04e9bb15bb3a470a6c1838c2991c5"
+      "durationSeconds": 14.72,
+      "sha256": "38a570c6e77aca4d809abd2b3b0ab514d04c1602c8ccd5e14045ca0b9f7a1c55",
+      "captionSha256": "02412c4719acfb8b3c9ae4ec9d241fd324cd199e9eb82c0bdf0fcb173e2a3896"
     },
     {
       "kind": "narrative",
@@ -68,18 +68,18 @@
         "stability": 0.5,
         "similarity_boost": 0.75
       },
-      "performanceDirection": "[conversational tone]",
+      "performanceDirection": "[warm conversational Iranian Persian, relaxed everyday speech, natural local-market cadence, never formal narration]",
       "kind": "narrative",
       "id": "market_lifeline-brief-02",
       "speaker": "YASIN",
       "locale": "fa-IR",
-      "text": "هر دو میز بارنامهٔ مشخص‌شده رو بررسی کنید. سند واقعی از مقدارها، مهرها و زمان‌بندی همیشگی ما پیروی می‌کنه. نسخهٔ کپی‌شده بار رو به انبارهای دورهٔ شبکه منحرف می‌کنه.",
+      "text": "هر دو تا میز بارنامه‌ای رو که علامت زدیم نگاه کن. سند واقعی با مقدار بار، مهرها و برنامهٔ همیشگی‌مون جور درمیاد. اون کپی، بار رو می‌فرسته سمت انبارای قدیمی شبکه.",
       "voiceId": "nPczCjzI2devNBz1zQrb",
       "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
       "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-brief-02.wav",
       "durationSeconds": 15.76,
-      "sha256": "2f62fa3f223e3597581a919e03bee5a596c6d936203b459bf8b7e45596c6a283",
-      "captionSha256": "97c348445e5442238c901ffd718abd1172fd56165246e626535b48b0fa77762c"
+      "sha256": "8199f26bdb5c8516a1e12a5e49a3b29ef5754105f364dbd3879be58216b8b2f4",
+      "captionSha256": "586aa4b60b238a624f84875f293dc576faf4a0c2fa49f3073b51b34d350965b8"
     },
     {
       "kind": "narrative",
@@ -132,18 +132,18 @@
         "stability": 0.5,
         "similarity_boost": 0.75
       },
-      "performanceDirection": "[conversational tone]",
+      "performanceDirection": "[warm conversational Iranian Persian, relaxed everyday speech, natural local-market cadence, never formal narration]",
       "kind": "narrative",
       "id": "market_lifeline-comms-01",
       "speaker": "YASIN",
       "locale": "fa-IR",
-      "text": "همینه—بارنامهٔ کپی‌شده از یک مسیر واقعی استفاده می‌کنه، اما مقدارها و مهرها با دادوستد ما جور درنمیاد. سه کامیون امدادی واقعی‌ان؛ انتقال جداگانه به انبارهای قدیمی اطراف زیرساخت شبکه می‌رسه.",
+      "text": "خودشه—این بارنامهٔ کپی‌شده مسیر واقعی‌مون رو برداشته، ولی مقدار بار و مهرهاش با کار ما جور نیست. اون سه تا کامیون امدادی مال خودمونن؛ انتقال جداگانه می‌ره سمت انبارای قدیمی دوروبر تأسیسات شبکه.",
       "voiceId": "nPczCjzI2devNBz1zQrb",
       "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
       "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-comms-01.wav",
-      "durationSeconds": 17.28,
-      "sha256": "91ff74b54ac5415be5f5bbdcd403cf20f378aac71352286ea1e2627b56c9a7aa",
-      "captionSha256": "dcb1a4a93b871b04f395956e002773ad22b3056375bd9db8faa3d79580b8f9b7"
+      "durationSeconds": 19.68,
+      "sha256": "e5e2eae4084111063dfac8cec218a5e19ad1b3f0360043c2c36a40ad77982d83",
+      "captionSha256": "4dddd685660ea4a988b271f232733af93b4953c892122b56077f3e1961a98ddd"
     },
     {
       "kind": "narrative",
@@ -164,18 +164,18 @@
         "stability": 0.5,
         "similarity_boost": 0.75
       },
-      "performanceDirection": "[conversational tone]",
+      "performanceDirection": "[warm conversational Iranian Persian, relaxed everyday speech, natural local-market cadence, never formal narration]",
       "kind": "narrative",
       "id": "market_lifeline-debrief-01",
       "speaker": "YASIN",
       "locale": "fa-IR",
-      "text": "هر سه محمولهٔ امدادی واقعی به بازار قدیمی رسید و دادوستد عادی هم متوقف نشد. انتقال رو بررسی کردید، بدون اینکه خود بازار رو متهم کنید.",
+      "text": "هر سه بار امدادی سالم رسید بازار قدیمی و کار بازار هم نخوابید. انتقال رو بررسی کردی، بدون اینکه مردم بازار رو متهم کنی.",
       "voiceId": "nPczCjzI2devNBz1zQrb",
       "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
       "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-debrief-01.wav",
-      "durationSeconds": 12.8,
-      "sha256": "42da1df1b8d91a561f2d117b4a79a086525a8414c2cc6eccfe3c7b81c2e5b8ac",
-      "captionSha256": "be443986366c0f374b56ff946b557fa66d9cd99024e53d6c5b6c294301a61632"
+      "durationSeconds": 11.68,
+      "sha256": "18ed5353e24431ab5a55e82894a69e6f1ebbdd7a7a560355e5c82833b846bd2a",
+      "captionSha256": "abecf5c58d3b231ad903f8c09da9734e451f82f96dc1c54be5a1f3e7fc63bb85"
     },
     {
       "kind": "narrative",

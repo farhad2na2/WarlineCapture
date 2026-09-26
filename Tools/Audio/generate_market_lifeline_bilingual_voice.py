@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/market_lifeline_voice_manifest.json"
 REVIEW = ROOT / "Design/AgentReports/CH02M03MarketLifeline/voice_payload_review.json"
 STRING = r'"((?:[^"\\]|\\.)*)"'
+YASIN_PERSIAN_DIRECTION = "[warm conversational Iranian Persian, relaxed everyday speech, natural local-market cadence, never formal narration]"
 
 
 def decode(value: str) -> str:
@@ -78,8 +79,11 @@ def main() -> None:
             path = MANIFEST.parent / "Voice" / language / f"{identity}.wav"
             old = prior.get((identity, locale), {})
             if args.force or not persian_voice_profile.clip_matches(old, text, path, language):
-                audio.convert(audio.request_audio(key, audio.VOICE_IDS[speaker], text, language, 7300 + index * 2 + (language == "fa")), path, speaker)
+                direction = YASIN_PERSIAN_DIRECTION if speaker == "YASIN" and language == "fa" else None
+                audio.convert(audio.request_audio(key, audio.VOICE_IDS[speaker], text, language, 7300 + index * 2 + (language == "fa"), direction), path, speaker)
             clip = audio.record("narrative", identity, speaker, locale, text, path)
+            if speaker == "YASIN" and language == "fa":
+                clip.update(persian_voice_profile.metadata(language, YASIN_PERSIAN_DIRECTION))
             clip["captionSha256"] = hashlib.sha256(text.encode("utf-8")).hexdigest()
             records.append(clip)
             print(f"[MarketLifelineVoice] {identity} {locale} speaker={speaker} duration={clip['durationSeconds']:.2f}s", flush=True)

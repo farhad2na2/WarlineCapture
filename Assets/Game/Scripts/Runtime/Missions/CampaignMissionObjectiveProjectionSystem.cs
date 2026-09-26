@@ -370,14 +370,15 @@ namespace Game.Runtime
             MatchObjectiveState objectiveState,
             in CampaignMissionAttemptFactsComponent facts)
         {
+            bool signalTrace=objective.ObjectiveId.ToString().StartsWith("obj.ch03.m01",System.StringComparison.Ordinal);
             switch (objective.Rule)
             {
                 case MissionObjectiveRuleKind.TransferSupplyOil: return new FixedString128Bytes("mission.supply_line.objective.oil.body");
                 case MissionObjectiveRuleKind.TransferSupplyFuel: return new FixedString128Bytes("mission.supply_line.objective.fuel.body");
                 case MissionObjectiveRuleKind.SecureSupplyReserve: return new FixedString128Bytes(facts.SupplyFailure==SupplyLineFailure.Integrity?"mission.supply_line.failure.integrity":"mission.supply_line.objective.reserve.body");
-                case MissionObjectiveRuleKind.DeliverMarketRelief: return new FixedString128Bytes("mission.market_lifeline.objective.delivery.body");
-                case MissionObjectiveRuleKind.VerifyMarketManifest: return new FixedString128Bytes("mission.market_lifeline.objective.manifest.body");
-                case MissionObjectiveRuleKind.KeepMarketOpen: return new FixedString128Bytes(facts.MarketFailure==MarketLifelineFailure.Integrity?"mission.market_lifeline.failure.integrity":"mission.market_lifeline.objective.market.body");
+                case MissionObjectiveRuleKind.DeliverMarketRelief: return new FixedString128Bytes(signalTrace?"mission.signal_trace.objective.recover.body":"mission.market_lifeline.objective.delivery.body");
+                case MissionObjectiveRuleKind.VerifyMarketManifest: return new FixedString128Bytes(signalTrace?"mission.signal_trace.objective.compare.body":"mission.market_lifeline.objective.manifest.body");
+                case MissionObjectiveRuleKind.KeepMarketOpen: return new FixedString128Bytes(signalTrace?(facts.MarketFailure==MarketLifelineFailure.Integrity?"mission.signal_trace.failure.integrity":"mission.signal_trace.objective.intercept.body"):(facts.MarketFailure==MarketLifelineFailure.Integrity?"mission.market_lifeline.failure.integrity":"mission.market_lifeline.objective.market.body"));
                 case MissionObjectiveRuleKind.EscortPowerRelayFamilies: return new FixedString128Bytes("mission.power_relay.objective.shelter.body");
                 case MissionObjectiveRuleKind.RestorePowerRelay: return new FixedString128Bytes("mission.power_relay.objective.restore.body");
                 case MissionObjectiveRuleKind.SecurePowerRelay: return new FixedString128Bytes(facts.PowerRelayFailure==PowerRelayFailure.Integrity?"mission.power_relay.failure.integrity":"mission.power_relay.objective.secure.body");

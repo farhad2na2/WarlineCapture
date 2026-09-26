@@ -56,7 +56,7 @@ namespace Game.Editor
                 entry.FindPropertyRelative(pair.Item1+"Fallback").stringValue=pair.Item2;
             }
             entry.FindPropertyRelative("treatment").intValue=(int)NarrativeSpeakerTreatment.HumanPortrait;
-            const string portraitPath="Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_02_AI_RealisticCivilian_ChromaGreen.png";
+            const string portraitPath="Assets/Game/Art/UI/Portraits/Generated/Portrait_Yasin_MarketLifeline.png";
             var importer=AssetImporter.GetAtPath(portraitPath) as TextureImporter??throw new InvalidOperationException("Yasin portrait source is missing.");
             importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;importer.mipmapEnabled=false;importer.isReadable=false;importer.maxTextureSize=1024;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();
             entry.FindPropertyRelative("identitySprite").objectReferenceValue=AssetDatabase.LoadAssetAtPath<Sprite>(portraitPath)??throw new InvalidOperationException("Yasin portrait could not be imported.");
@@ -151,7 +151,18 @@ namespace Game.Editor
             NarrativeLocaleConfig locale = AssetDatabase.LoadAssetAtPath<NarrativeLocaleConfig>(M02EstablishBaseNarrativeLocaleBuilder.PersianLocalePath);
             SerializedObject data = new(locale); SerializedProperty entries = data.FindProperty("text");
             for(int i=entries.arraySize-1;i>=0;i--)
-                if(entries.GetArrayElementAtIndex(i).FindPropertyRelative("key").stringValue.StartsWith("narrative.market_lifeline.",StringComparison.Ordinal)) entries.DeleteArrayElementAtIndex(i);
+            {
+                string key=entries.GetArrayElementAtIndex(i).FindPropertyRelative("key").stringValue;
+                if(key.StartsWith("narrative.market_lifeline.",StringComparison.Ordinal)||key.StartsWith("narrative.speaker.yasin.",StringComparison.Ordinal)) entries.DeleteArrayElementAtIndex(i);
+            }
+            foreach(var pair in new[]{
+                ("narrative.speaker.yasin.name","یاسین برکات"),
+                ("narrative.speaker.yasin.role","نمایندهٔ بازار قدیمی"),
+                ("narrative.speaker.yasin.accessibleLabel","یاسین برکات، نمایندهٔ بازار قدیمی")})
+            {
+                SerializedProperty entry=entries.GetArrayElementAtIndex(entries.arraySize++);
+                S(entry,"key",pair.Item1);S(entry,"value",pair.Item2);
+            }
             SerializedProperty voices=data.FindProperty("voices");
             for(int i=voices.arraySize-1;i>=0;i--)
                 if(voices.GetArrayElementAtIndex(i).FindPropertyRelative("lineId").stringValue.StartsWith("market_lifeline-",StringComparison.Ordinal)) voices.DeleteArrayElementAtIndex(i);

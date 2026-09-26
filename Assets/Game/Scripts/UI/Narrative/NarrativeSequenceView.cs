@@ -44,10 +44,12 @@ namespace Game.UI.Runtime
         public NarrativeSkipConfirmationView SkipConfirmationView => skipConfirmationView;
         public NarrativeReviewerControlsView ReviewerControlsView => reviewerControlsView;
         public Sprite CurrentPanelSprite => panelImage != null ? panelImage.sprite : null;
+        public bool IsPanelVisible => panelImage != null && panelImage.enabled;
         public NarrativeLocationIntroView LocationIntroView => locationIntroView;
 
         private void Awake()
         {
+            ClearPanel();
             SetVisible(false);
         }
 
@@ -87,6 +89,11 @@ namespace Game.UI.Runtime
         {
             if (rootGroup == null)
                 return;
+
+            // A Unity UI Image with no sprite renders as a solid white rectangle. Narrative
+            // states without comic art must expose the live scene instead of a blank panel.
+            if (visible && panelImage != null && panelImage.sprite == null)
+                panelImage.enabled = false;
 
             rootGroup.alpha = visible ? 1f : 0f;
             rootGroup.interactable = visible;

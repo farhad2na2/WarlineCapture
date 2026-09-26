@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Game.Tactical.Contracts;
 using Game.UI.Contracts;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -55,6 +56,36 @@ namespace Game.UI.Runtime
                 var hud=Object.FindAnyObjectByType<MissionDefenseHudView>();
                 var reserve=ObserveWatchButton(hud?.SupplyReserveButton);
                 if(reserve.Available){kind=AriaPlayObservationKind.Control;target=reserve.Id;position=reserve.Position;}
+            }
+            // Observe the real tactical command control directly after selection. The
+            // decorative tutorial frame can trail the selection projection by a frame,
+            // but Watch must still perform the same visible Move/Attack button press as
+            // the player before it is allowed to touch the world destination.
+            if(available && !skirmish && kind!=AriaPlayObservationKind.Control &&
+               UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var tutorialTarget) &&
+               !tutorialTarget.NeedsSelection && !tutorialTarget.Moving && !tutorialTarget.ExecutingAttack)
+            {
+                TacticalCommandMode required=tutorialTarget.BattleAction switch
+                {
+                    UiTutorialBattleAction.Move=>TacticalCommandMode.Move,
+                    UiTutorialBattleAction.Attack=>TacticalCommandMode.Attack,
+                    _=>TacticalCommandMode.None
+                };
+                if(required!=TacticalCommandMode.None && _activeCommandMode!=required)
+                {
+                    var command=ObserveWatchButton(required==TacticalCommandMode.Move
+                        ?_commandControlsView?.MoveButton:_commandControlsView?.AttackButton);
+                    if(command.Available){kind=AriaPlayObservationKind.Control;target=command.Id;position=command.Position;}
+                }
+                else if(required!=TacticalCommandMode.None)
+                {
+                    // Materialize the same public world cue that the manual tutorial uses.
+                    // Watch may observe it only after the required command mode is visibly
+                    // active; the subsequent tap remains a normal world-input gesture.
+                    _highlightPresentationSystem.ShowTutorialWorld(tutorialTarget.Destination);
+                    if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget)
+                        UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false);
+                }
             }
             if (available && !skirmish && !supplyWaiting && kind!=AriaPlayObservationKind.Control)
             {

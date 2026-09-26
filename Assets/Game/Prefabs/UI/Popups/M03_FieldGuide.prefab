@@ -3269,6 +3269,7 @@ MonoBehaviour:
   marketLifelineGuide: {fileID: 11400000, guid: edb4529ac89a4483cb9bbe4c7db37b36, type: 2}
   powerRelayGuide: {fileID: 11400000, guid: 140c6fefdcf6646119e66d8dc3b855af, type: 2}
   routeReopenedGuide: {fileID: 11400000, guid: 70067d88a5488400b93a22944c9340f3, type: 2}
+  signalTraceGuide: {fileID: 11400000, guid: c37ed07c6098c43fd958590f9ed182d5, type: 2}
   topicsButton: {fileID: 6178553223766020603}
   classesButton: {fileID: 2093645630736046819}
   previousButton: {fileID: 9033275931593746121}

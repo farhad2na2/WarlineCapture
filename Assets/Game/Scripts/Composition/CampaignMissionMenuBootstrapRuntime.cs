@@ -246,9 +246,9 @@ namespace Game.Composition
             stage != CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None &&
             shellState.CurrentMode == UiShellMode.MatchHud &&
             shellState.ActiveRoute == UIRoute.Match &&
-            // The opening comic claims the opaque match-intro curtain before any HUD frame is exposed.
-            (stage is CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief or CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterOpening ||
-             shellState.IsTransitionRunning == 0);
+            // Never reveal narrative over the outgoing menu. Let the loading/match transition
+            // finish first, then present the opening comic against the live mission surface.
+            shellState.IsTransitionRunning == 0;
 
         internal static FirstLaunchNarrativeLanguage ReadLanguage()
             => GameLocalization.ResolveNarrativeLanguage();

@@ -43,3 +43,6 @@ MonoBehaviour:
   - missionId: saga.ch02.m05.route_reopened
     definition: {fileID: 11400000, guid: ab9f4adf4978d4e6c8236a26dd64422c, type: 2}
     scenario: {fileID: 11400000, guid: 86aa349dc493645cb91dc5cdc758c046, type: 2}
+  - missionId: saga.ch03.m01.signal_trace
+    definition: {fileID: 11400000, guid: f27eb780edae04f5288c41f3d2a49c14, type: 2}
+    scenario: {fileID: 11400000, guid: e343e655ac7e9478085a5c7068bceed0, type: 2}

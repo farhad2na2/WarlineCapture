@@ -11229,6 +11229,7 @@ MonoBehaviour:
   powerRelayMissionArt: {fileID: 2800000, guid: 994394f6b98a143589b9a5e94319729c, type: 3}
   m03MissionArt: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
   routeReopenedMissionArt: {fileID: 2800000, guid: e27f4ff6025874eb6aecabc859cae6c6, type: 3}
+  signalTraceMissionArt: {fileID: 2800000, guid: cafc3cb3dc9e54711be495834f4fc9ae, type: 3}
   supplyLineMissionArt: {fileID: 2800000, guid: b99d871cee7b64c25a2a9970a28c409f, type: 3}
   backRouteButton: {fileID: 4579297816043088970}
   missionOverview: {fileID: 4284717024942189541}

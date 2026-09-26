@@ -8,12 +8,13 @@ namespace Game.Missions.Contracts
         public const string MarketLifeline="saga.ch02.m03.market_lifeline";
         public const string PowerRelay="saga.ch02.m04.power_relay";
         public const string RouteReopened="saga.ch02.m05.route_reopened";
-        public const int RegisteredMissionCount=10;
+        public const string SignalTrace="saga.ch03.m01.signal_trace";
+        public const int RegisteredMissionCount=11;
         public static string IdAt(int index) => index switch
         {
             0=>"saga.ch01.m01.first_contact",1=>"saga.ch01.m02.establish_base",
             2=>"saga.ch01.m03.radar_warning",3=>"saga.ch01.m04.airlift",
-            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,_=>string.Empty
+            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,10=>SignalTrace,_=>string.Empty
         };
         public static int IndexOf(string id)
         {

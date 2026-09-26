@@ -15,25 +15,34 @@ namespace Game.UI.Runtime
         public Button ChapterOneButton=>chapterOneButton;
         public Button ChapterTwoButton=>chapterTwoButton;
         public Button ChapterTwoOverviewButton=>chapterTwoOverviewButton;
+        public Button ChapterThreeButton=>ResolveChapterCardButton(2);
         public bool IsChapterTwo {get;private set;}
+        public bool IsChapterThree {get;private set;}
         private void ApplyGridlockChapter(in UiCampaignOperationsModel model)
         {
             IsChapterTwo=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.Gridlock || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.PowerRelay || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.RouteReopened;
+            IsChapterThree=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SignalTrace;
             bool unlocked=(model.AvailableMissionMask&(1<<5))!=0;
             if(chapterTwoButton!=null) chapterTwoButton.interactable=unlocked;
             if(chapterTwoOverviewButton!=null) chapterTwoOverviewButton.interactable=unlocked;
             if(chapterTwoLock!=null) chapterTwoLock.SetActive(!unlocked);
             GameObject railLock=ResolveChapterTwoRailLock();
             if(railLock!=null) railLock.SetActive(!unlocked);
-            ApplyChapterTabAppearance(chapterOneButton,!IsChapterTwo,true);
+            ApplyChapterTabAppearance(chapterOneButton,!IsChapterTwo&&!IsChapterThree,true);
             ApplyChapterTabAppearance(chapterTwoButton,IsChapterTwo,unlocked);
+            bool chapterThreeUnlocked=(model.AvailableMissionMask&(1<<10))!=0;
+            ApplyChapterTabAppearance(ChapterThreeButton,IsChapterThree,chapterThreeUnlocked);
+            if(ChapterThreeButton!=null)ChapterThreeButton.interactable=chapterThreeUnlocked;
+            Transform chapterThreeIcon=chapterCards!=null&&chapterCards.Length>2&&chapterCards[2]!=null?chapterCards[2].Find("Icon"):null;
+            if(chapterThreeIcon!=null)chapterThreeIcon.gameObject.SetActive(!chapterThreeUnlocked);
             Set(chapterTwoStatus,UiShellRuntimeGateway.Localization.Get(unlocked?"chapter.broken_grid.available":"chapter.broken_grid.locked"));
-            Set(selectedChapterLabel,UiShellRuntimeGateway.Localization.Get(IsChapterTwo?"chapter.broken_grid.name":"chapter.first_response.name"));
+            Set(selectedChapterLabel,UiShellRuntimeGateway.Localization.Get(IsChapterThree?"chapter.hidden_network.name":IsChapterTwo?"chapter.broken_grid.name":"chapter.first_response.name"));
             for(int i=0;i<(chapterMissionNames?.Length??0);i++)
             {
-                string key=IsChapterTwo?"chapter.broken_grid.mission."+(i+1):"chapter.first_response.mission."+(i+1);
+                string key=IsChapterThree?"chapter.hidden_network.mission."+(i+1):IsChapterTwo?"chapter.broken_grid.mission."+(i+1):"chapter.first_response.mission."+(i+1);
                 Set(chapterMissionNames[i],UiShellRuntimeGateway.Localization.Get(key));
             }
+            if(IsChapterThree){ApplySignalTraceCard();return;}
             if(!IsChapterTwo) return;
             if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.RouteReopened){ApplyRouteReopenedCard();return;}
             if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.PowerRelay){ApplyPowerRelayCard();return;}
@@ -51,6 +60,17 @@ namespace Game.UI.Runtime
             if(chapterTwoRailLock!=null)return chapterTwoRailLock;
             Transform icon=chapterTwoButton!=null?chapterTwoButton.transform.Find("Icon"):null;
             return icon!=null?icon.gameObject:null;
+        }
+
+        private Button ResolveChapterCardButton(int index)
+        {
+            if(chapterCards==null||index<0||index>=chapterCards.Length||chapterCards[index]==null)return null;
+            Button button=chapterCards[index].GetComponent<Button>();
+            if(button!=null)return button;
+            button=chapterCards[index].gameObject.AddComponent<Button>();
+            button.targetGraphic=chapterCards[index].GetComponent<Graphic>();
+            button.transition=Selectable.Transition.ColorTint;
+            return button;
         }
 
         private static void ApplyChapterTabAppearance(Button button,bool selected,bool available)

@@ -1,0 +1,60 @@
+{
+  "mission": "saga.ch03.m01.signal_trace",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "cast": {
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "SAMIRA": "7uxeJ73HfJL9gOH2mttA",
+    "DALIA": "MK1Zvh93428YrgOQ8Obr"
+  },
+  "castDirection": {
+    "ARIA": "Warline - ARIA Civic Relay",
+    "SAMIRA": "Warline - Engineer Samira Haddad",
+    "DALIA": "Warline - Major Dalia Rahim"
+  },
+  "purpose": "Bilingual authored mission story clips; local runtime assets; no runtime network TTS",
+  "entries": [
+    [
+      "signal_trace-brief-01",
+      "ARIA",
+      "Three moving transmitters share the Relay signature. One belongs to the clinic, one to a delivery cooperative, and one is travelling with an armed escort. Proximity alone is not proof.",
+      "سه فرستندهٔ متحرک امضای شبکه رو دارن. یکی مال درمانگاهه، یکی مال تعاونی پخشه و یکی با اسکورت مسلح حرکت می‌کنه. فقط نزدیک بودن، مدرک نیست."
+    ],
+    [
+      "signal_trace-brief-02",
+      "SAMIRA",
+      "The clinic and delivery crews use radios the old registry never recorded. Keep those signals protected. Compare the two observation points before you identify the carrier.",
+      "درمانگاه و گروه‌های پخش از بی‌سیم‌هایی استفاده می‌کنن که هیچ‌وقت توی فهرست قدیمی ثبت نشدن. اون سیگنال‌ها باید امن بمونن. قبل از شناسایی حامل، هر دو نقطهٔ دیده‌بانی رو بررسی کن."
+    ],
+    [
+      "signal_trace-brief-03",
+      "DALIA",
+      "We wait for corroboration, then isolate the armed escort. No fire near the protected transmitters. Recover the device intact.",
+      "تا تأیید دوم صبر می‌کنیم، بعد اسکورت مسلح رو جدا می‌کنیم. نزدیک فرستنده‌های حفاظت‌شده شلیک نکن. دستگاه رو سالم تحویل بگیر."
+    ],
+    [
+      "signal_trace-comms-01",
+      "ARIA",
+      "Evidence correlated. The escorted transmitter crossed a restricted service tunnel and changed routes with the armed patrol. Confidence is now confirmed. The clinic and delivery signals remain protected.",
+      "مدارک با هم جور شد. فرستندهٔ اسکورت‌شده از تونل خدماتی محدود رد شد و همراه گشت مسلح مسیر عوض کرد. حالا هدف قطعی تأیید شده. سیگنال درمانگاه و پخش همچنان حفاظت‌شده‌ان."
+    ],
+    [
+      "signal_trace-debrief-01",
+      "DALIA",
+      "The escort is down and the device is intact. We stopped the cell without turning the district's radios into targets.",
+      "اسکورت از کار افتاد و دستگاه سالمه. سلول رو متوقف کردیم، بدون اینکه بی‌سیم‌های محله رو هدف کنیم."
+    ],
+    [
+      "signal_trace-debrief-02",
+      "SAMIRA",
+      "The clinic never lost contact and the delivery cooperative kept moving. People saw us verify first and act only on the armed carrier.",
+      "ارتباط درمانگاه حتی یک لحظه قطع نشد و تعاونی پخش هم به کارش ادامه داد. مردم دیدن که اول بررسی کردیم و فقط سراغ حامل مسلح رفتیم."
+    ],
+    [
+      "signal_trace-debrief-03",
+      "ARIA",
+      "The recovered device uses a Civic Relay routing signature known only to continuity planners. Its final route points to a verified weapons safehouse beside occupied homes.",
+      "دستگاه بازیابی‌شده از امضای مسیریابی شبکهٔ شهری استفاده می‌کنه؛ امضایی که فقط برنامه‌ریزهای تداوم فرمان می‌شناختن. مسیر آخرش به یک مخفیگاه تأییدشدهٔ سلاح کنار خانه‌های مسکونی می‌رسه."
+    ]
+  ]
+}

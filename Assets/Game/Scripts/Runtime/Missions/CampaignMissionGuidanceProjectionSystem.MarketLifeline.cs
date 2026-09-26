@@ -13,8 +13,12 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes MarketMission="saga.ch02.m03.market_lifeline";
         private bool TryUpdateMarketLifelineGuidance(ref SystemState system,Entity root,in CampaignMissionRuntimeComponent runtime,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
-            if(!runtime.MissionId.Equals(MarketMission))return false;
+            if(!SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog)||
+                !CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int definitionIndex)||
+                catalog.Blob.Value.Missions[definitionIndex].MarketLifeline.Enabled==0)return false;
+            bool signalTrace=!runtime.MissionId.Equals(MarketMission);
             var em=system.EntityManager;
+            if(runtime.Phase!=MissionPhaseKind.Engage&&signalTrace)return false;
             if(runtime.Phase!=MissionPhaseKind.Engage||runtime.Outcome!=MissionOutcomeKind.None||!em.HasComponent<CampaignMissionMarketLifelineState>(root)||!em.HasBuffer<CampaignMissionMarketLifelineMember>(root))
             {ClearDefenseGuidance(em,root,current);return true;}
             var market=em.GetComponentData<CampaignMissionMarketLifelineState>(root);
@@ -37,9 +41,9 @@ namespace Game.Runtime
             if(target!=Entity.Null&&em.HasComponent<LocalTransform>(target))destination=em.GetComponentData<LocalTransform>(target).Position;
             bool moving=em.HasComponent<UnitPathRequest>(actor)||em.HasComponent<UnitPathFollow>(actor);
             bool waiting=step==5||moving||(step==1||step==2)&&math.distancesq(em.GetComponentData<LocalTransform>(actor).Position.xz,destination.xz)<=36;
-            FixedString64Bytes title="mission.market_lifeline.guide.";title.Append(step);title.Append(ExtractionTitleSuffix);
-            FixedString128Bytes body="mission.market_lifeline.guide.";body.Append(step);body.Append(ExtractionBodySuffix);
-            var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=77000+step,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
+            FixedString64Bytes title=signalTrace?"mission.signal_trace.guide.":"mission.market_lifeline.guide.";title.Append(step);title.Append(ExtractionTitleSuffix);
+            FixedString128Bytes body=signalTrace?"mission.signal_trace.guide.":"mission.market_lifeline.guide.";body.Append(step);body.Append(ExtractionBodySuffix);
+            var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=(signalTrace?80000:77000)+step,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=step switch {1=>CampaignMissionGuidancePromptKind.MarketInspectLegitimate,2=>CampaignMissionGuidancePromptKind.MarketInspectCorrupt,3=>CampaignMissionGuidancePromptKind.MarketEscort,4=>CampaignMissionGuidancePromptKind.MarketDefend,_=>CampaignMissionGuidancePromptKind.MarketHold},GuidanceMode=runtime.Guidance,Active=1,Priority=step==4?AssistantMessagePriority.Critical:AssistantMessagePriority.High,
                 RecommendationKind=waiting?AssistantRecommendationKind.Explain:step==4?AssistantRecommendationKind.Attack:AssistantRecommendationKind.Move,
                 TargetKind=target!=Entity.Null?AssistantTargetKind.Entity:AssistantTargetKind.WorldPosition,SourceEntity=actor,TargetEntity=target,WorldPosition=destination,HasWorldPosition=1,

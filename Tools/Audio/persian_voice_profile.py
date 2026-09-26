@@ -4,19 +4,19 @@ VOICE_SETTINGS = {'stability': 0.5, 'similarity_boost': 0.75}
 DIRECTION = '[conversational tone]'
 
 
-def apply(body: dict, language: str) -> dict:
+def apply(body: dict, language: str, direction=None) -> dict:
     if language == 'fa':
         text = body['text']
         # Replace old emotional/narrative direction; never place tags in captions.
         import re
         text = re.sub(r'\[[^\]]+\]\s*', '', text).strip()
-        body['text'] = f'{DIRECTION} {text}'
+        body['text'] = f'{direction or DIRECTION} {text}'
         body['voice_settings'] = dict(VOICE_SETTINGS)
     return body
 
 
-def metadata(language: str) -> dict:
-    return {'deliveryProfile': PROFILE_ID, 'voiceSettings': dict(VOICE_SETTINGS), 'performanceDirection': DIRECTION} if language == 'fa' else {}
+def metadata(language: str, direction=None) -> dict:
+    return {'deliveryProfile': PROFILE_ID, 'voiceSettings': dict(VOICE_SETTINGS), 'performanceDirection': direction or DIRECTION} if language == 'fa' else {}
 
 
 def clip_matches(record: dict, text: str, path, language: str) -> bool:

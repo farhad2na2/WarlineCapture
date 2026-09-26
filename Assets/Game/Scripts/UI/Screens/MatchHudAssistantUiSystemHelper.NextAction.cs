@@ -9,6 +9,7 @@ namespace Game.UI.Runtime
     {
         private bool _waitingForTutorialAction, _continueTutorialAction, _selectionActionRequested;
         private BuildPlacementConfirmationBarView _tutorialPlacement;
+        private float _marketDestinationFocusReadyAt;
         internal void BindPlacementConfirmation(BuildPlacementConfirmationBarView view) => _tutorialPlacement = view;
         private bool HasPendingTutorialPlacement => _tutorialPlacement != null && _tutorialPlacement.HasPendingPlacement;
         private MatchHudSelectionPanelView _tutorialSelection;
@@ -91,13 +92,30 @@ namespace Game.UI.Runtime
         {
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
             {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
-            if(target.NeedsSelection){ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;}
+            if(target.NeedsSelection)
+            {
+                _marketDestinationFocusReadyAt=Time.unscaledTime+.75f;
+                ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;
+            }
             if(target.Moving||target.ExecutingAttack){WaitForTutorialArrival();return;}
             if(target.BattleAction==UiTutorialBattleAction.Watch)
             {_waitingForTutorialAction=true;_highlightPresentationSystem.ShowTutorialArea(target.Destination,target.AreaRadius);return;}
             TacticalCommandMode mode=target.BattleAction==UiTutorialBattleAction.Attack?TacticalCommandMode.Attack:TacticalCommandMode.Move;
             Button button=mode==TacticalCommandMode.Attack?_commandControlsView?.AttackButton:_commandControlsView?.MoveButton;
-            if(_activeCommandMode==mode)ShowTutorialWorld(target.Destination,false);
+            if(_activeCommandMode==mode)
+            {
+                ShowTutorialWorld(target.Destination,false);
+                // These mission routes can place the next inspection point beyond the
+                // current camera after squad selection. Center it once so Watch ARIA and
+                // the player receive a visible target; camera focus never submits an order.
+                if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
+                   Time.unscaledTime>=_marketDestinationFocusReadyAt &&
+                   UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false))
+                {
+                    _tutorialFocusPendingUntil=Time.unscaledTime+2f;
+                    _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
+                }
+            }
             else Cue(button,mode==TacticalCommandMode.Attack?"ui.aria.press_attack":"ui.aria.press_move");
         }
 

@@ -8,6 +8,8 @@ namespace Game.Components
         public byte SupplyOilTransferred, SupplyFuelTransferred, SupplyReserveComplete;
         public int SupplyStoredFuel;
         public SupplyLineFailure SupplyFailure;
+        public byte MarketReliefDelivered, MarketManifestVerified, MarketOpen;
+        public MarketLifelineFailure MarketFailure;
         public byte GridlockSiteAComplete, GridlockSiteBComplete, GridlockDelivered;
         public GridlockFailure GridlockFailure;
         public int ElapsedMilliseconds;

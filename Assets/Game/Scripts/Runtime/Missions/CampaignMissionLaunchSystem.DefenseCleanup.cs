@@ -12,6 +12,8 @@ namespace Game.Runtime
             ClearBufferIfPresent<CampaignMissionSupplyLineLink>(em, root);
             ResetComponentIfPresent<CampaignMissionSupplyLineState>(em, root);
             ResetComponentIfPresent<CampaignMissionSupplyLineAllocationRequest>(em, root);
+            ClearBufferIfPresent<CampaignMissionMarketLifelineMember>(em, root);
+            ResetComponentIfPresent<CampaignMissionMarketLifelineState>(em, root);
             ClearBufferIfPresent<CampaignMissionGridlockMember>(em, root);
             ClearBufferIfPresent<CampaignMissionGridlockWorkSite>(em, root);
             ResetComponentIfPresent<CampaignMissionGridlockState>(em, root);
@@ -34,6 +36,11 @@ namespace Game.Runtime
         private static bool TryQueueDefenseAttemptCleanup(EntityManager em,ref EntityCommandBuffer cleanup,Entity root,
             in CampaignMissionCatalogComponent catalog,in CampaignMissionRuntimeComponent runtime)
         {
+            if(em.HasComponent<CampaignMissionMarketLifelineState>(root))
+            {
+                var market=em.GetComponentData<CampaignMissionMarketLifelineState>(root);
+                if(market.SessionToken.Equals(runtime.SessionToken)&&market.AttemptOrdinal==runtime.AttemptOrdinal&&market.SourceVersion==runtime.SourceVersion)return true;
+            }
             if(TryQueueSupplyLineCleanup(em,root,in runtime)) return true;
             if(TryQueueGridlockCleanup(em,root,in runtime)) return true;
             if(TryQueueBreachCleanup(em,root,in runtime)) return true;

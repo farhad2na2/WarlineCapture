@@ -18,7 +18,7 @@ namespace Game.UI.Runtime
         public bool IsChapterTwo {get;private set;}
         private void ApplyGridlockChapter(in UiCampaignOperationsModel model)
         {
-            IsChapterTwo=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.Gridlock || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine;
+            IsChapterTwo=model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.Gridlock || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine || model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline;
             bool unlocked=(model.AvailableMissionMask&(1<<5))!=0;
             if(chapterTwoButton!=null) chapterTwoButton.interactable=unlocked;
             if(chapterTwoOverviewButton!=null) chapterTwoOverviewButton.interactable=unlocked;
@@ -32,6 +32,7 @@ namespace Game.UI.Runtime
                 Set(chapterMissionNames[i],UiShellRuntimeGateway.Localization.Get(key));
             }
             if(!IsChapterTwo) return;
+            if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline){ApplyMarketLifelineCard();return;}
             if(model.SelectedMission.MissionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine){ApplySupplyLineCard();return;}
             Set(missionNumber,"CH02 · M01");Set(missionName,UiShellRuntimeGateway.Localization.Get("mission.gridlock.name"));
             Set(missionBriefingText,UiShellRuntimeGateway.Localization.Get("mission.gridlock.summary"));

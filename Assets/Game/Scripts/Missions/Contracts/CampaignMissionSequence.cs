@@ -5,12 +5,13 @@ namespace Game.Missions.Contracts
     {
         public const string Gridlock="saga.ch02.m01.gridlock";
         public const string SupplyLine="saga.ch02.m02.supply_line";
-        public const int RegisteredMissionCount=7;
+        public const string MarketLifeline="saga.ch02.m03.market_lifeline";
+        public const int RegisteredMissionCount=8;
         public static string IdAt(int index) => index switch
         {
             0=>"saga.ch01.m01.first_contact",1=>"saga.ch01.m02.establish_base",
             2=>"saga.ch01.m03.radar_warning",3=>"saga.ch01.m04.airlift",
-            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,_=>string.Empty
+            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,_=>string.Empty
         };
         public static int IndexOf(string id)
         {
@@ -20,7 +21,7 @@ namespace Game.Missions.Contracts
         public static string Next(string id)
         {
             int index=IndexOf(id);
-            return index<0?string.Empty:index==RegisteredMissionCount-1?"saga.ch02.m03.market_lifeline":IdAt(index+1);
+            return index<0?string.Empty:index==RegisteredMissionCount-1?string.Empty:IdAt(index+1);
         }
     }
 }

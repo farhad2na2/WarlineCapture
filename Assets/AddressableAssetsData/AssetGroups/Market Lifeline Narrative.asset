@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Market Lifeline Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Market Lifeline Narrative
+  m_GUID: cca4b06fe6a024eacb96ef274bd8c917
+  m_SerializeEntries:
+  - m_GUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+    m_Address: narrative.market_lifeline.OldMarket
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 40e268dabcec14f6aaed9462d75a414e
+    m_Address: narrative.market_lifeline.ManifestEvidence
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5defe244b713341bf813f9fb63ce6446
+    m_Address: narrative.market_lifeline.MarketRelief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: d7b5128edaf3641a1870e06cf7262e3a, type: 2}
+    - {fileID: 11400000, guid: 60957046ad6654ef6b7fd6d1e2987e53, type: 2}

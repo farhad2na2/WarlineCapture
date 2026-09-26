@@ -1,0 +1,37 @@
+{
+  "missionId": "saga.ch02.m03.market_lifeline",
+  "generationMode": "OpenAI ImageGen concept-to-production raster with project-owned continuity references",
+  "generatedAt": "2026-09-25",
+  "assets": [
+    {
+      "path": "Assets/Game/Art/Narrative/CH02M03MarketLifeline/OldMarket.png",
+      "purpose": "briefing and campaign preview",
+      "continuity": "Chapter 2 Old Market and prior low-poly comic language"
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/CH02M03MarketLifeline/ManifestEvidence.png",
+      "purpose": "manifest investigation comic",
+      "generationOutput": "/Users/farhad/.codex/generated_images/01a0da55-3497-7251-80df-14f7537a21e5/exec-c1acd4bc-428a-4bb1-b1cd-13f96ea66630.png",
+      "identityReferences": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png"
+      ],
+      "promptSummary": "Use only shipped Major Dalia Rahim and Samira Haddad comic continuity; preserve the evidence table, manifests, Old Market setting, and text-free low-poly comic composition."
+    },
+    {
+      "path": "Assets/Game/Art/Narrative/CH02M03MarketLifeline/MarketRelief.png",
+      "purpose": "relief-arrival debrief",
+      "generationOutput": "/Users/farhad/.codex/generated_images/01a0da55-3497-7251-80df-14f7537a21e5/exec-4ab4073a-3320-48db-88b8-0eaf8fca3911.png",
+      "identityReferences": [
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P12.png",
+        "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P04.png"
+      ],
+      "promptSummary": "Use only shipped Samira Haddad and Major Dalia Rahim comic continuity; preserve the three-truck Old Market recovery scene and text-free low-poly comic composition."
+    }
+  ],
+  "reviewNotes": [
+    "An initially invented market representative was rejected during user review and removed from the mission entirely.",
+    "Final ManifestEvidence and MarketRelief identity corrections use shipped Dalia and Samira comic panels as authoritative references.",
+    "No text, insignia, UI, or gameplay buttons are baked into the narrative art."
+  ]
+}

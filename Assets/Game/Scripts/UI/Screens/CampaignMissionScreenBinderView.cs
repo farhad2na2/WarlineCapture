@@ -129,7 +129,7 @@ namespace Game.UI.Runtime
         private void SelectChapterOne(){SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterTwo(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
         private void SelectM02() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
-        private void SelectM03() {if(!campaignOperationsView.IsChapterTwo) SelectMission(UiCampaignMissionProjectionIds.M03);}
+        private void SelectM03() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
         private void SelectM05() {if(!campaignOperationsView.IsChapterTwo) SelectMission("saga.ch01.m05.breach_assault");}
         private void SelectM04() {if(!campaignOperationsView.IsChapterTwo) SelectMission("saga.ch01.m04.airlift");}
 

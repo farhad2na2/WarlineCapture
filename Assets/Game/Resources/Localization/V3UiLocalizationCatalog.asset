@@ -1672,6 +1672,93 @@ MonoBehaviour:
       value: A destroyed transmitter alone does not complete the mission.
     - key: mission.m05.tutorial.8.title
       value: Recover the archive
+    - key: mission.market_lifeline.deadline
+      value: 10 active minutes
+    - key: mission.market_lifeline.enemy_intel
+      value: "Two armed Ash Line teams are hiding among the freight approaches\u2014not
+        among the market workers."
+    - key: mission.market_lifeline.failure.convoy
+      value: A relief truck was destroyed. All three loads must reach Old Market.
+    - key: mission.market_lifeline.failure.deadline
+      value: The relief loads did not reach Old Market within ten minutes.
+    - key: mission.market_lifeline.failure.integrity
+      value: Mission state could not be verified. Return and retry; no rewards were
+        settled.
+    - key: mission.market_lifeline.failure.squad
+      value: The escort squads were lost. Retry and keep rifles between the convoy
+        and the armed teams.
+    - key: mission.market_lifeline.forces
+      value: "8 rifles \xB7 3 relief trucks"
+    - key: mission.market_lifeline.guide.1.body
+      value: Select a truck, press Move and tap the marked delivery yard. Repeat
+        until all three trucks arrive.
+    - key: mission.market_lifeline.guide.1.title
+      value: Deliver the relief convoy
+    - key: mission.market_lifeline.guide.2.body
+      value: Move one rifle squad onto the marked manifest table and leave it stationary
+        for 6 seconds.
+    - key: mission.market_lifeline.guide.2.title
+      value: Verify the manifest
+    - key: mission.market_lifeline.guide.3.body
+      value: Select rifles, press Attack and tap a confirmed hostile. Keep the trucks
+        behind the squad.
+    - key: mission.market_lifeline.guide.3.title
+      value: Remove the armed threat
+    - key: mission.market_lifeline.guide.4.body
+      value: After delivery and verification, keep the yard clear for 10 seconds.
+        Trade continues automatically.
+    - key: mission.market_lifeline.guide.4.title
+      value: Hold the market open
+    - key: mission.market_lifeline.guide.diagram
+      value: "3 TRUCKS \u2192 DELIVERY \xB7 RIFLES \u2192 MANIFEST \xB7 CLEAR \u2192
+        HOLD"
+    - key: mission.market_lifeline.guide.example
+      value: Use only Select, Move, Attack and Hold. ARIA can demonstrate the same
+        orders.
+    - key: mission.market_lifeline.guide.mistake
+      value: Do not send unarmed trucks ahead of the rifle escort, and do not move
+        the squad during the 6-second verification.
+    - key: mission.market_lifeline.guide.title
+      value: Market Lifeline field guide
+    - key: mission.market_lifeline.location
+      value: Old Market exchange yard
+    - key: mission.market_lifeline.name
+      value: Market Lifeline
+    - key: mission.market_lifeline.objective.delivery
+      value: Deliver all three relief trucks
+    - key: mission.market_lifeline.objective.delivery.body
+      value: Select each relief truck, press Move and send it to the marked delivery
+        yard. All three must survive.
+    - key: mission.market_lifeline.objective.manifest
+      value: Verify the manifest transfer
+    - key: mission.market_lifeline.objective.manifest.body
+      value: After the delivery, move a rifle squad to the marked manifest table
+        and hold there for 6 seconds. No extra action button is required.
+    - key: mission.market_lifeline.objective.market
+      value: Keep Old Market open
+    - key: mission.market_lifeline.objective.market.body
+      value: Defeat the armed teams, then keep the delivery yard secure for 10 seconds
+        without blocking the market route.
+    - key: mission.market_lifeline.resources
+      value: Three relief trucks are loaded and ready
+    - key: mission.market_lifeline.result.defeat
+      value: Market relief interrupted
+    - key: mission.market_lifeline.result.success
+      value: Relief reached Old Market, legitimate trade stayed open and the false
+        manifests exposed Relay-era storage sites.
+    - key: mission.market_lifeline.result.victory
+      value: Market lifeline restored
+    - key: mission.market_lifeline.reward.card
+      value: "900 Commander XP \xB7 4,500 Credits"
+    - key: mission.market_lifeline.star.1
+      value: Complete the mission
+    - key: mission.market_lifeline.star.2
+      value: Lose no rifle soldiers
+    - key: mission.market_lifeline.star.3
+      value: Finish within 7 minutes
+    - key: mission.market_lifeline.summary
+      value: Escort three relief trucks into Old Market, expose the false transfer
+        and keep legitimate trade open.
     - key: mission.reward.commander_xp
       value: COMMANDER XP
     - key: mission.reward.credits
@@ -2035,6 +2122,33 @@ MonoBehaviour:
       value: First Response is complete. The reconnaissance team and armor parts
         are assigned to your roster. Review your results, then return to the campaign
         map. We will follow the evidence.
+    - key: narrative.market_lifeline.brief.01
+      value: These stalls feed the district, but three relief trucks are stranded
+        outside the market. Keep trade open while you bring them to the marked delivery
+        yard.
+    - key: narrative.market_lifeline.brief.02
+      value: The market is not the enemy. Escort all three trucks, defeat the armed
+        cell, then move one rifle squad to the manifest table and hold there for
+        six seconds to verify the transfer.
+    - key: narrative.market_lifeline.brief.03
+      value: "Use Select, Move, Attack and Hold\u2014the same field commands as before.
+        No search action is needed. Once the manifest is verified, keep the delivery
+        yard secure for ten seconds."
+    - key: narrative.market_lifeline.comms.01
+      value: That manifest copies a real market route, but the quantities and seals
+        do not match our trade. The false transfer leads to old storage sites around
+        Relay infrastructure.
+    - key: narrative.market_lifeline.debrief.01
+      value: All three relief loads reached Old Market, and legitimate trade never
+        stopped. Families can collect food and medicine without crossing a military
+        cordon.
+    - key: narrative.market_lifeline.debrief.02
+      value: This is the compromised transfer. The same false seals appear at several
+        Relay-era storage sites. Take the record; the market workers will keep the
+        real route moving.
+    - key: narrative.market_lifeline.debrief.03
+      value: Evidence correlation confirmed. One listed storage site has just lost
+        power, displacing nearby families. The next operation is the power relay.
     - key: narrative.speaker.fadi.accessibleLabel
       value: Fadi, road crew leader
     - key: narrative.speaker.fadi.name
@@ -8749,6 +8863,172 @@ MonoBehaviour:
     - key: mission.m05.tutorial.8.title
       value: "\u0627\u0633\u0646\u0627\u062F \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
         \u06A9\u0646"
+    - key: mission.market_lifeline.deadline
+      value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
+        \u0641\u0639\u0627\u0644"
+    - key: mission.market_lifeline.enemy_intel
+      value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u0645\u0633\u0644\u062D \u062E\u0637
+        \u062E\u0627\u06A9\u0633\u062A\u0631 \u062F\u0631 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0628\u0627\u0631\u0628\u0631\u06CC \u067E\u0646\u0647\u0627\u0646 \u0634\u062F\u0646\u060C
+        \u0646\u0647 \u0628\u06CC\u0646 \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u0627\u0631."
+    - key: mission.market_lifeline.failure.convoy
+      value: "\u06CC\u06A9 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F. \u0647\u0631 \u0633\u0647 \u0645\u062D\u0645\u0648\u0644\u0647
+        \u0628\u0627\u06CC\u062F \u0628\u0647 \u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC
+        \u0628\u0631\u0633\u0646."
+    - key: mission.market_lifeline.failure.deadline
+      value: "\u0645\u062D\u0645\u0648\u0644\u0647\u200C\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646 \u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u0628\u0647 \u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC
+        \u0646\u0631\u0633\u06CC\u062F\u0646."
+    - key: mission.market_lifeline.failure.integrity
+      value: "\u0648\u0636\u0639\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u06CC\u0633\u062A.
+        \u0628\u0631\u06AF\u0631\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u067E\u0627\u062F\u0627\u0634\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F\u0647."
+    - key: mission.market_lifeline.failure.squad
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u0627\u0633\u06A9\u0648\u0631\u062A
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646. \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646 \u0648 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0648 \u0628\u06CC\u0646 \u06A9\u0627\u0631\u0648\u0627\u0646 \u0648
+        \u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u0645\u0633\u0644\u062D
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.market_lifeline.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u06F3 \u06A9\u0627\u0645\u06CC\u0648\u0646
+        \u0627\u0645\u062F\u0627\u062F\u06CC"
+    - key: mission.market_lifeline.guide.1.body
+      value: "\u06CC\u06A9 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \xAB\u062D\u0631\u06A9\u062A\xBB \u0631\u0648 \u0628\u0632\u0646
+        \u0648 \u0631\u0648\u06CC \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u062D\u0648\u06CC\u0644
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0632\u0646. \u0628\u0631\u0627\u06CC
+        \u0647\u0631 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u062A\u06A9\u0631\u0627\u0631
+        \u06A9\u0646."
+    - key: mission.market_lifeline.guide.1.title
+      value: "\u06A9\u0627\u0631\u0648\u0627\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.market_lifeline.guide.2.body
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0631\u0648\u06CC \u0645\u06CC\u0632 \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0628\u0631 \u0648
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647 \u062B\u0627\u0628\u062A \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.market_lifeline.guide.2.title
+      value: "\u0628\u0627\u0631\u0646\u0627\u0645\u0647 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646"
+    - key: mission.market_lifeline.guide.3.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \xAB\u062D\u0645\u0644\u0647\xBB
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0631\u0648\u06CC \u062F\u0634\u0645\u0646
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0628\u0632\u0646. \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627
+        \u0631\u0648 \u067E\u0634\u062A \u06AF\u0631\u0648\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.market_lifeline.guide.3.title
+      value: "\u062A\u0647\u062F\u06CC\u062F \u0645\u0633\u0644\u062D \u0631\u0648
+        \u0627\u0632 \u0628\u06CC\u0646 \u0628\u0628\u0631"
+    - key: mission.market_lifeline.guide.4.body
+      value: "\u0628\u0639\u062F \u0627\u0632 \u062A\u062D\u0648\u06CC\u0644 \u0648
+        \u0628\u0631\u0631\u0633\u06CC\u060C \u0645\u062D\u0648\u0637\u0647 \u0631\u0648
+        \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u062F\u0627\u062F\u0648\u0633\u062A\u062F \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.market_lifeline.guide.4.title
+      value: "\u0628\u0627\u0632\u0627\u0631 \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631"
+    - key: mission.market_lifeline.guide.diagram
+      value: "\u06F3 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u2190 \u062A\u062D\u0648\u06CC\u0644
+        \xB7 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u2190 \u0628\u0627\u0631\u0646\u0627\u0645\u0647
+        \xB7 \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u2190 \u062A\u0648\u0642\u0641"
+    - key: mission.market_lifeline.guide.example
+      value: "\u0641\u0642\u0637 \u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C
+        \u062D\u0631\u06A9\u062A\u060C \u062D\u0645\u0644\u0647 \u0648 \u062A\u0648\u0642\u0641
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646. \u0622\u0631\u06CC\u0627
+        \u0647\u0645 \u0645\u06CC\u200C\u062A\u0648\u0646\u0647 \u0647\u0645\u06CC\u0646
+        \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627 \u0631\u0648 \u0627\u062C\u0631\u0627
+        \u06A9\u0646\u0647."
+    - key: mission.market_lifeline.guide.mistake
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
+        \u0631\u0648 \u062C\u0644\u0648\u062A\u0631 \u0627\u0632 \u0627\u0633\u06A9\u0648\u0631\u062A
+        \u0646\u0641\u0631\u0633\u062A \u0648 \u0647\u0646\u06AF\u0627\u0645 \u0628\u0631\u0631\u0633\u06CC
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647\u200C\u0627\u06CC \u06AF\u0631\u0648\u0647
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0646\u062F\u0647."
+    - key: mission.market_lifeline.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0634\u0631\u06CC\u0627\u0646
+        \u0628\u0627\u0632\u0627\u0631"
+    - key: mission.market_lifeline.location
+      value: "\u0645\u062D\u0648\u0637\u0647\u0654 \u0645\u0628\u0627\u062F\u0644\u0647\u0654
+        \u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC"
+    - key: mission.market_lifeline.name
+      value: "\u0634\u0631\u06CC\u0627\u0646 \u0628\u0627\u0632\u0627\u0631"
+    - key: mission.market_lifeline.objective.delivery
+      value: "\u0647\u0631 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.market_lifeline.objective.delivery.body
+      value: "\u0647\u0631 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \xAB\u062D\u0631\u06A9\u062A\xBB
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0628\u0647 \u0645\u062D\u0648\u0637\u0647\u0654
+        \u062A\u062D\u0648\u06CC\u0644 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0628\u0641\u0631\u0633\u062A. \u0647\u0631 \u0633\u0647 \u0628\u0627\u06CC\u062F
+        \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.market_lifeline.objective.manifest
+      value: "\u0627\u0646\u062A\u0642\u0627\u0644 \u0628\u0627\u0631\u0646\u0627\u0645\u0647
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646"
+    - key: mission.market_lifeline.objective.manifest.body
+      value: "\u0628\u0639\u062F \u0627\u0632 \u062A\u062D\u0648\u06CC\u0644\u060C
+        \u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0645\u06CC\u0632 \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0628\u0631 \u0648
+        \u06F6 \u062B\u0627\u0646\u06CC\u0647 \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u062F\u06A9\u0645\u0647\u0654 \u062C\u062F\u0627\u06AF\u0627\u0646\u0647\u200C\u0627\u06CC
+        \u0644\u0627\u0632\u0645 \u0646\u06CC\u0633\u062A."
+    - key: mission.market_lifeline.objective.market
+      value: "\u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC \u0631\u0648
+        \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.market_lifeline.objective.market.body
+      value: "\u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC \u0645\u0633\u0644\u062D
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u0647\u060C \u0628\u0639\u062F
+        \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u062D\u0648\u06CC\u0644 \u0631\u0648
+        \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u060C \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647
+        \u0645\u0633\u06CC\u0631 \u0628\u0627\u0632\u0627\u0631 \u0628\u0633\u062A\u0647
+        \u0628\u0634\u0647."
+    - key: mission.market_lifeline.resources
+      value: "\u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0628\u0627\u0631\u06AF\u06CC\u0631\u06CC \u0648 \u0622\u0645\u0627\u062F\u0647\u200C\u0627\u0646"
+    - key: mission.market_lifeline.result.defeat
+      value: "\u0627\u0645\u062F\u0627\u062F\u0631\u0633\u0627\u0646\u06CC \u0628\u0627\u0632\u0627\u0631
+        \u0645\u062A\u0648\u0642\u0641 \u0634\u062F"
+    - key: mission.market_lifeline.result.success
+      value: "\u0627\u0645\u062F\u0627\u062F \u0628\u0647 \u0628\u0627\u0632\u0627\u0631
+        \u0642\u062F\u06CC\u0645\u06CC \u0631\u0633\u06CC\u062F\u060C \u062F\u0627\u062F\u0648\u0633\u062A\u062F
+        \u0639\u0627\u062F\u06CC \u0628\u0627\u0632 \u0645\u0648\u0646\u062F \u0648
+        \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u200C\u0647\u0627\u06CC \u062C\u0639\u0644\u06CC
+        \u0627\u0646\u0628\u0627\u0631\u0647\u0627\u06CC \u0642\u062F\u06CC\u0645\u06CC
+        \u0634\u0628\u06A9\u0647 \u0631\u0648 \u0622\u0634\u06A9\u0627\u0631 \u06A9\u0631\u062F."
+    - key: mission.market_lifeline.result.victory
+      value: "\u0634\u0631\u06CC\u0627\u0646 \u0628\u0627\u0632\u0627\u0631 \u0628\u0631\u0642\u0631\u0627\u0631
+        \u0634\u062F"
+    - key: mission.market_lifeline.reward.card
+      value: "\u06F9\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F4\u06F5\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.market_lifeline.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.market_lifeline.star.2
+      value: "\u0647\u06CC\u0686 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u06CC
+        \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A \u0646\u062F\u0647"
+    - key: mission.market_lifeline.star.3
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F7 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0645\u0627\u0645 \u06A9\u0646"
+    - key: mission.market_lifeline.summary
+      value: "\u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0631\u0648 \u0628\u0647 \u0628\u0627\u0632\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC
+        \u0628\u0631\u0633\u0648\u0646\u060C \u0627\u0646\u062A\u0642\u0627\u0644
+        \u062C\u0639\u0644\u06CC \u0631\u0648 \u067E\u06CC\u062F\u0627 \u06A9\u0646
+        \u0648 \u0645\u0633\u06CC\u0631 \u062F\u0627\u062F\u0648\u0633\u062A\u062F
+        \u0639\u0627\u062F\u06CC \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
     - key: mission.reward.commander_xp
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
@@ -9477,6 +9757,74 @@ MonoBehaviour:
         \u0628\u0647 \u0646\u0642\u0634\u0647\u0654 \u06A9\u0627\u0631\u0632\u0627\u0631.
         \u0631\u062F \u0627\u06CC\u0646 \u0645\u062F\u0627\u0631\u06A9 \u0631\u0648
         \u062F\u0646\u0628\u0627\u0644 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645."
+    - key: narrative.market_lifeline.brief.01
+      value: "\u0627\u06CC\u0646 \u063A\u0631\u0641\u0647\u200C\u0647\u0627 \u063A\u0630\u0627\u06CC
+        \u0645\u062D\u0644\u0647 \u0631\u0648 \u062A\u0623\u0645\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u0646\u060C
+        \u0627\u0645\u0627 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F\u06CC
+        \u0628\u06CC\u0631\u0648\u0646 \u0628\u0627\u0632\u0627\u0631 \u06AF\u06CC\u0631
+        \u0627\u0641\u062A\u0627\u062F\u0646. \u0645\u0633\u06CC\u0631 \u062F\u0627\u062F\u0648\u0633\u062A\u062F
+        \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F
+        \u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627 \u0631\u0648
+        \u0628\u0647 \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u062D\u0648\u06CC\u0644
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0631\u0633\u0648\u0646\u06CC\u062F."
+    - key: narrative.market_lifeline.brief.02
+      value: "\u0628\u0627\u0632\u0627\u0631 \u062F\u0634\u0645\u0646 \u0646\u06CC\u0633\u062A.
+        \u0647\u0631 \u0633\u0647 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0631\u0648
+        \u0627\u0633\u06A9\u0648\u0631\u062A \u06A9\u0646\u06CC\u062F\u060C \u06AF\u0631\u0648\u0647
+        \u0645\u0633\u0644\u062D \u0631\u0648 \u0634\u06A9\u0633\u062A \u0628\u062F\u06CC\u062F\u060C
+        \u0628\u0639\u062F \u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0645\u06CC\u0632 \u0628\u0627\u0631\u0646\u0627\u0645\u0647
+        \u0628\u0628\u0631\u06CC\u062F \u0648 \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u0647\u0645\u0648\u0646\u200C\u062C\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F
+        \u062A\u0627 \u0627\u0646\u062A\u0642\u0627\u0644 \u0628\u0631\u0631\u0633\u06CC
+        \u0628\u0634\u0647."
+    - key: narrative.market_lifeline.brief.03
+      value: "\u0627\u0632 \u0647\u0645\u0648\u0646 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0642\u0628\u0644\u06CC \u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062D\u0631\u06A9\u062A\u060C
+        \u062D\u0645\u0644\u0647 \u0648 \u062A\u0648\u0642\u0641 \u0627\u0633\u062A\u0641\u0627\u062F\u0647
+        \u06A9\u0646\u06CC\u062F. \u0641\u0631\u0645\u0627\u0646 \u062C\u0633\u062A\u200C\u0648\u062C\u0648\u06CC
+        \u062C\u062F\u0627\u06AF\u0627\u0646\u0647\u200C\u0627\u06CC \u0644\u0627\u0632\u0645
+        \u0646\u06CC\u0633\u062A. \u0648\u0642\u062A\u06CC \u0628\u0627\u0631\u0646\u0627\u0645\u0647
+        \u062A\u0623\u06CC\u06CC\u062F \u0634\u062F\u060C \u0645\u062D\u0648\u0637\u0647\u0654
+        \u062A\u062D\u0648\u06CC\u0644 \u0631\u0648 \u062F\u0647 \u062B\u0627\u0646\u06CC\u0647
+        \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: narrative.market_lifeline.comms.01
+      value: "\u0627\u06CC\u0646 \u0628\u0627\u0631\u0646\u0627\u0645\u0647 \u0627\u0632
+        \u06CC\u06A9 \u0645\u0633\u06CC\u0631 \u0648\u0627\u0642\u0639\u06CC \u0628\u0627\u0632\u0627\u0631
+        \u06A9\u067E\u06CC \u0634\u062F\u0647\u060C \u0627\u0645\u0627 \u0645\u0642\u062F\u0627\u0631\u0647\u0627
+        \u0648 \u0645\u0647\u0631\u0647\u0627 \u0628\u0627 \u062F\u0627\u062F\u0648\u0633\u062A\u062F
+        \u0645\u0627 \u062C\u0648\u0631 \u062F\u0631\u0646\u0645\u06CC\u0627\u062F.
+        \u0627\u0646\u062A\u0642\u0627\u0644 \u062C\u0639\u0644\u06CC \u0628\u0647
+        \u0627\u0646\u0628\u0627\u0631\u0647\u0627\u06CC \u0642\u062F\u06CC\u0645\u06CC
+        \u0627\u0637\u0631\u0627\u0641 \u0632\u06CC\u0631\u0633\u0627\u062E\u062A
+        \u0634\u0628\u06A9\u0647 \u0645\u06CC\u200C\u0631\u0633\u0647."
+    - key: narrative.market_lifeline.debrief.01
+      value: "\u0647\u0631 \u0633\u0647 \u0645\u062D\u0645\u0648\u0644\u0647\u0654
+        \u0627\u0645\u062F\u0627\u062F\u06CC \u0628\u0647 \u0628\u0627\u0632\u0627\u0631
+        \u0642\u062F\u06CC\u0645\u06CC \u0631\u0633\u06CC\u062F \u0648 \u062F\u0627\u062F\u0648\u0633\u062A\u062F
+        \u0639\u0627\u062F\u06CC \u0647\u0645 \u0645\u062A\u0648\u0642\u0641 \u0646\u0634\u062F.
+        \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0647\u0627 \u0645\u06CC\u200C\u062A\u0648\u0646\u0646
+        \u0628\u062F\u0648\u0646 \u0639\u0628\u0648\u0631 \u0627\u0632 \u0645\u062D\u0627\u0635\u0631\u0647\u0654
+        \u0646\u0638\u0627\u0645\u06CC \u063A\u0630\u0627 \u0648 \u062F\u0627\u0631\u0648
+        \u0628\u06AF\u06CC\u0631\u0646."
+    - key: narrative.market_lifeline.debrief.02
+      value: "\u0627\u06CC\u0646 \u0647\u0645 \u0627\u0646\u062A\u0642\u0627\u0644
+        \u062F\u0633\u062A\u06A9\u0627\u0631\u06CC\u200C\u0634\u062F\u0647. \u0647\u0645\u06CC\u0646
+        \u0645\u0647\u0631\u0647\u0627\u06CC \u062C\u0639\u0644\u06CC \u062A\u0648\u06CC
+        \u0686\u0646\u062F \u0627\u0646\u0628\u0627\u0631 \u0642\u062F\u06CC\u0645\u06CC
+        \u0634\u0628\u06A9\u0647 \u062F\u06CC\u062F\u0647 \u0645\u06CC\u200C\u0634\u0646.
+        \u0645\u062F\u0631\u06A9 \u0631\u0648 \u0628\u0628\u0631\u06CC\u062F\u061B
+        \u06A9\u0627\u0631\u06AF\u0631\u0647\u0627\u06CC \u0628\u0627\u0632\u0627\u0631
+        \u0645\u0633\u06CC\u0631 \u0648\u0627\u0642\u0639\u06CC \u0631\u0648 \u0628\u0627\u0632
+        \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0646."
+    - key: narrative.market_lifeline.debrief.03
+      value: "\u062A\u0637\u0628\u06CC\u0642 \u0645\u062F\u0627\u0631\u06A9 \u062A\u0623\u06CC\u06CC\u062F
+        \u0634\u062F. \u0628\u0631\u0642 \u06CC\u06A9\u06CC \u0627\u0632 \u0627\u0646\u0628\u0627\u0631\u0647\u0627\u06CC
+        \u0641\u0647\u0631\u0633\u062A\u200C\u0634\u062F\u0647 \u0647\u0645\u06CC\u0646
+        \u062D\u0627\u0644\u0627 \u0642\u0637\u0639 \u0634\u062F\u0647 \u0648 \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u0627\u0637\u0631\u0627\u0641 \u0631\u0648 \u0622\u0648\u0627\u0631\u0647
+        \u06A9\u0631\u062F\u0647. \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC\u060C
+        \u0631\u0644\u0647\u0654 \u0628\u0631\u0642\u0647."
     - key: narrative.speaker.fadi.accessibleLabel
       value: "\u0641\u0627\u062F\u06CC\u060C \u0633\u0631\u06AF\u0631\u0648\u0647
         \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"

@@ -185,7 +185,7 @@ namespace Game.UI.Shell.Ecs
                 : victory
                     ? "Hostile patrol neutralized. The Old Market corridor is secure."
                     : "The command squad was lost. Regroup and redeploy.";
-            bool debriefRequired = (runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SupplyLine)) || establishBase || runtime.MissionId.Equals(RadarResultMissionId) || runtime.MissionId.Equals(AirliftId) || runtime.MissionId.Equals(BreachId) || runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.Gridlock))) && victory &&
+            bool debriefRequired = (runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline)) || runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SupplyLine)) || establishBase || runtime.MissionId.Equals(RadarResultMissionId) || runtime.MissionId.Equals(AirliftId) || runtime.MissionId.Equals(BreachId) || runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.Gridlock))) && victory &&
                                    runtime.Phase != MissionPhaseKind.ResultAfterDebrief;
             if (debriefRequired)
                 return false;
@@ -213,6 +213,7 @@ namespace Game.UI.Shell.Ecs
             if(runtime.MissionId.Equals(BreachId)) result=LocalizeBreachResult(in result,in facts);
             if(runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.Gridlock))) result=LocalizeGridlockResult(in result,in facts);
             if(runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SupplyLine))) result=LocalizeSupplyLineResult(in result,in facts);
+            if(runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline))) result=LocalizeMarketLifelineResult(in result,in facts);
             cachedMissionResultLocale=Game.Configs.GameLocalization.CurrentLocaleCode;
             cachedMissionResultVersion = projection.SourceVersion;
             cachedMissionSettlementAccepted = settlementAccepted;

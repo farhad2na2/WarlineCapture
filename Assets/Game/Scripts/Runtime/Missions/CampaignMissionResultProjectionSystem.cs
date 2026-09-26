@@ -146,6 +146,12 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.MarketLifeline.Enabled != 0)
+                return facts.MarketFailure != MarketLifelineFailure.Integrity && (outcome == MissionOutcomeKind.Victory
+                    ? facts.MarketFailure == MarketLifelineFailure.None && facts.MarketReliefDelivered != 0 &&
+                      facts.MarketManifestVerified != 0 && facts.MarketOpen != 0 && facts.HostileTotalCount > 0 &&
+                      facts.HostileDefeatedCount >= facts.HostileTotalCount
+                    : facts.MarketFailure != MarketLifelineFailure.None);
             if (definition.SupplyLine.Enabled != 0)
                 return facts.SupplyFailure != SupplyLineFailure.Integrity && (outcome == MissionOutcomeKind.Victory
                     ? facts.SupplyFailure == SupplyLineFailure.None && facts.SupplyOilTransferred!=0 && facts.SupplyFuelTransferred!=0 && facts.SupplyReserveComplete!=0

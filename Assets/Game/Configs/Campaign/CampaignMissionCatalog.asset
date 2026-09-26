@@ -34,3 +34,6 @@ MonoBehaviour:
   - missionId: saga.ch02.m02.supply_line
     definition: {fileID: 11400000, guid: f8a8115efb86240289c13f3b7b592750, type: 2}
     scenario: {fileID: 11400000, guid: 363014a9e51e449568e0f567bea3bc4d, type: 2}
+  - missionId: saga.ch02.m03.market_lifeline
+    definition: {fileID: 11400000, guid: 8f33039d7fe3442ae957e2a43aac352c, type: 2}
+    scenario: {fileID: 11400000, guid: c2f5e872bf1924c1b90e143a6ff5d3a7, type: 2}

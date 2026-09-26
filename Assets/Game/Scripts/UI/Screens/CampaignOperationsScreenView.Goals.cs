@@ -13,10 +13,11 @@ namespace Game.UI.Runtime
             bool m5 = missionId == "saga.ch01.m05.breach_assault";
             bool gridlock=missionId==Game.Missions.Contracts.CampaignMissionSequence.Gridlock;
             bool supply=missionId==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine;
-            if(m3 || m4 || m5 || gridlock || supply)
+            bool market=missionId==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline;
+            if(m3 || m4 || m5 || gridlock || supply || market)
             {
-                string prefix = supply ? "mission.supply_line." : gridlock ? "mission.gridlock." : m5 ? "mission.m05." : m3 ? "mission.m03." : "mission.m04.";
-                string[] objectives = supply ? new[] { "oil", "fuel", "reserve" } : gridlock ? new[] { "site_a", "site_b", "delivery" } : m5 ? new[] { "gate", "core", "archive" } : m3 ? new[] { "stop_convoy", "protect_post", "prevent_breach" } : new[] { "extract", "transport", "landing" };
+                string prefix = market ? "mission.market_lifeline." : supply ? "mission.supply_line." : gridlock ? "mission.gridlock." : m5 ? "mission.m05." : m3 ? "mission.m03." : "mission.m04.";
+                string[] objectives = market ? new[] { "delivery", "manifest", "market" } : supply ? new[] { "oil", "fuel", "reserve" } : gridlock ? new[] { "site_a", "site_b", "delivery" } : m5 ? new[] { "gate", "core", "archive" } : m3 ? new[] { "stop_convoy", "protect_post", "prevent_breach" } : new[] { "extract", "transport", "landing" };
                 string[] stars = m3 ? new[] { "complete", "civilians_safe", "post_undamaged" } : new[] { "1", "2", "3" };
                 for(int i = 0; i < 3; i++)
                 {

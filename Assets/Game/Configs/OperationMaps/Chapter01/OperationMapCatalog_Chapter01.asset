@@ -19,6 +19,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
   - {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
   - {fileID: 11400000, guid: 650740e21f42641739622a6c499eb11e, type: 2}
+  - {fileID: 11400000, guid: ab7e541690c8040228fe2284d94173ff, type: 2}
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
@@ -57,6 +58,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 35eec606a5c759849272d581994533078b6f489ba26bab1096ce60fdfbd3d859
+  - definition: {fileID: 11400000, guid: ab7e541690c8040228fe2284d94173ff, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch02.old_market_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: ea25c1dd3dc2c15572af85319a15a29267db2c8d71d84b505940e8503774b564
   - definition: {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.supply_yard_01

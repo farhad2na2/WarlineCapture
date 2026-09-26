@@ -209,6 +209,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.TransferSupplyOil:
                 case MissionObjectiveRuleKind.TransferSupplyFuel:
                 case MissionObjectiveRuleKind.SecureSupplyReserve:
+                case MissionObjectiveRuleKind.DeliverMarketRelief:
+                case MissionObjectiveRuleKind.VerifyMarketManifest:
+                case MissionObjectiveRuleKind.KeepMarketOpen:
                 case MissionObjectiveRuleKind.ExtractPassengers:
                 case MissionObjectiveRuleKind.ProtectExtractionTransport:
                 case MissionObjectiveRuleKind.SecureLandingZone:

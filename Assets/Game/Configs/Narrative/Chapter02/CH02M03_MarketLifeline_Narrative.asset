@@ -1,0 +1,474 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5506583486658291009
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M03_MarketLifeline_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m03.comms
+  entryStateId: MarketLifeline-comms-0
+  defaultSkipDestinationId: MarketLifeline-comms-complete
+  states:
+  - stateId: MarketLifeline-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-comms-01
+      textKey: narrative.market_lifeline.comms.01
+      englishFallback: That manifest copies a real market route, but the quantities
+        and seals do not match our trade. The false transfer leads to old storage
+        sites around Relay infrastructure.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.071428
+      essentialCaption: 1
+    continueStateId: MarketLifeline-comms-complete
+    skipStateId: MarketLifeline-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.071428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.market_lifeline.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-1635092602626465385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M03_MarketLifeline_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m03.debrief
+  entryStateId: MarketLifeline-debrief-0
+  defaultSkipDestinationId: MarketLifeline-debrief-complete
+  states:
+  - stateId: MarketLifeline-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 5defe244b713341bf813f9fb63ce6446
+      m_SubObjectName: MarketRelief-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 5defe244b713341bf813f9fb63ce6446
+      m_SubObjectName: MarketRelief-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-debrief-01
+      textKey: narrative.market_lifeline.debrief.01
+      englishFallback: All three relief loads reached Old Market, and legitimate
+        trade never stopped. Families can collect food and medicine without crossing
+        a military cordon.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.928572
+      essentialCaption: 1
+    continueStateId: MarketLifeline-debrief-1
+    skipStateId: MarketLifeline-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.928572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-debrief-02
+      textKey: narrative.market_lifeline.debrief.02
+      englishFallback: This is the compromised transfer. The same false seals appear
+        at several Relay-era storage sites. Take the record; the market workers will
+        keep the real route moving.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.857142
+      essentialCaption: 1
+    continueStateId: MarketLifeline-debrief-2
+    skipStateId: MarketLifeline-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.857142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 40e268dabcec14f6aaed9462d75a414e
+      m_SubObjectName: ManifestEvidence-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-debrief-03
+      textKey: narrative.market_lifeline.debrief.03
+      englishFallback: Evidence correlation confirmed. One listed storage site has
+        just lost power, displacing nearby families. The next operation is the power
+        relay.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.214286
+      essentialCaption: 1
+    continueStateId: MarketLifeline-debrief-complete
+    skipStateId: MarketLifeline-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.214286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.market_lifeline.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M03_MarketLifeline_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m03.brief
+  entryStateId: MarketLifeline-brief-0
+  defaultSkipDestinationId: MarketLifeline-brief-complete
+  states:
+  - stateId: MarketLifeline-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-brief-01
+      textKey: narrative.market_lifeline.brief.01
+      englishFallback: These stalls feed the district, but three relief trucks are
+        stranded outside the market. Keep trade open while you bring them to the
+        marked delivery yard.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.571428
+      essentialCaption: 1
+    continueStateId: MarketLifeline-brief-1
+    skipStateId: MarketLifeline-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.571428
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-brief-02
+      textKey: narrative.market_lifeline.brief.02
+      englishFallback: The market is not the enemy. Escort all three trucks, defeat
+        the armed cell, then move one rifle squad to the manifest table and hold
+        there for six seconds to verify the transfer.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.785714
+      essentialCaption: 1
+    continueStateId: MarketLifeline-brief-2
+    skipStateId: MarketLifeline-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 2bd2f0098ed644d3e9e1badc21efd6e7
+      m_SubObjectName: OldMarket-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: market_lifeline-brief-03
+      textKey: narrative.market_lifeline.brief.03
+      englishFallback: "Use Select, Move, Attack and Hold\u2014the same field commands
+        as before. No search action is needed. Once the manifest is verified, keep
+        the delivery yard secure for ten seconds."
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.428572
+      essentialCaption: 1
+    continueStateId: MarketLifeline-brief-complete
+    skipStateId: MarketLifeline-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: MarketLifeline-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.market_lifeline.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []

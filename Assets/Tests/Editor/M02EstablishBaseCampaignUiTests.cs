@@ -18,11 +18,14 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class M02EstablishBaseCampaignUiTests
 {
     private const string M01 = "saga.ch01.m01.first_contact";
     private const string M02 = "saga.ch01.m02.establish_base";
+    private const string M05 = "saga.ch01.m05.breach_assault";
+    private const string Gridlock = "saga.ch02.m01.gridlock";
     private const string M02Scenario = "scenario.ch01.m02.establish_base";
     private const string M02Map = "opmap.ch01.forward_post_01";
     private const string Barracks = "Building_Barrack";
@@ -41,6 +44,8 @@ public sealed class M02EstablishBaseCampaignUiTests
             tests.CanonicalBriefingProjectsEveryM02UiField();
             tests.LockedM02SelectionFailsClosed();
             tests.LegacyM01CompletionUnlocksAndDefaultsToM02();
+            tests.M05CompletionAfterInitialProjectionUnlocksChapterTwoInSameSession();
+            tests.ChapterTabsMoveSelectedVisualAndClearChapterTwoLock();
             tests.UnlockedM02SelectionProjectsTheExactCardAndBriefing();
             tests.CampaignPrefabExposesTwoTypedMissionNodes();
             tests.CampaignCardShowsM02WithoutM01CopyOrRawKeys();
@@ -48,7 +53,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             tests.ResolverOverridesM02CopyWithoutLeakingKeys();
             tests.ViewsAndBinderKeepSingleEventDrivenUiOwnership();
             tests.PlayableReviewCaptureSelectsExactM02Mission();
-            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=10");
+            Debug.Log("[M02EstablishBaseCampaignUiValidation] result=Passed tests=12");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -194,6 +199,39 @@ public sealed class M02EstablishBaseCampaignUiTests
     }
 
     [Test]
+    public void M05CompletionAfterInitialProjectionUnlocksChapterTwoInSameSession()
+    {
+        using ProjectionFixture fixture = CreateFixture(unlockM02: false);
+        CampaignMissionProgressStore store = fixture.World.EntityManager
+            .GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(fixture.Root).Store;
+        string[] completedChapterOne = { M01, M02, "saga.ch01.m03.radar_warning", "saga.ch01.m04.airlift" };
+        for (int index = 0; index < completedChapterOne.Length; index++)
+            Assert.That(store.Settle(
+                completedChapterOne[index], $"chapter-one-{index}", index, true, 3, 60000, null), Is.True);
+        SystemHandle handle = fixture.World.CreateSystem<UiCampaignMissionProjectionSystem>();
+        try
+        {
+            UpdateProjection(fixture.World, handle);
+            Assert.That(store.ReadAll().Any(entry => entry.missionId == Gridlock), Is.False);
+            Assert.That(store.Settle(M05, "m05-completed-after-ui-open", 0, true, 3, 60000, null), Is.True);
+
+            UpdateProjection(fixture.World, handle);
+
+            CampaignMissionProgressSaveData gridlock = store.ReadAll()
+                .Single(entry => entry.missionId == Gridlock);
+            UiCampaignOperationsComponent card = fixture.World.EntityManager
+                .GetComponentData<UiCampaignOperationsComponent>(fixture.UiRoot);
+            Assert.That(gridlock.available, Is.True);
+            Assert.That(card.AvailableMissionMask & (1 << 5), Is.Not.Zero);
+            Assert.That(card.SelectedMissionId.ToString(), Is.EqualTo(Gridlock));
+        }
+        finally
+        {
+            fixture.World.DestroySystem(handle);
+        }
+    }
+
+    [Test]
     public void CampaignPrefabExposesTwoTypedMissionNodes()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(CampaignPrefab);
@@ -205,6 +243,40 @@ public sealed class M02EstablishBaseCampaignUiTests
         Assert.NotNull(view.MissionNodeButtons[0]);
         Assert.NotNull(view.MissionNodeButtons[1]);
         Assert.NotNull(prefab.GetComponentInChildren<CampaignMissionScreenBinderView>(true));
+    }
+
+    [Test]
+    public void ChapterTabsMoveSelectedVisualAndClearChapterTwoLock()
+    {
+        GameObject instance = UnityEngine.Object.Instantiate(
+            AssetDatabase.LoadAssetAtPath<GameObject>(CampaignPrefab));
+        try
+        {
+            CampaignOperationsScreenView view =
+                instance.GetComponentInChildren<CampaignOperationsScreenView>(true);
+            Assert.NotNull(view);
+            byte chapterTwoAvailable = 1 << 5;
+            view.Apply(CampaignModel(Gridlock, chapterTwoAvailable));
+
+            Assert.That(view.IsChapterTwo, Is.True);
+            Assert.That(view.ChapterTwoButton.interactable, Is.True);
+            Assert.That(view.ChapterTwoButton.transform.Find("Icon").gameObject.activeSelf, Is.False);
+            Transform chapterTwoOverview = instance.GetComponentsInChildren<Transform>(true)
+                .Single(transform => transform.name == "ChapterII");
+            Assert.That(chapterTwoOverview.Find("Lock").gameObject.activeSelf, Is.False);
+            Assert.That(TabTopColor(view.ChapterOneButton), Is.EqualTo(new Color32(22, 32, 35, 250)));
+            Assert.That(TabTopColor(view.ChapterTwoButton), Is.EqualTo(new Color32(153, 101, 3, 255)));
+
+            view.Apply(CampaignModel(M01, chapterTwoAvailable));
+            Assert.That(view.IsChapterTwo, Is.False);
+            Assert.That(view.ChapterTwoButton.transform.Find("Icon").gameObject.activeSelf, Is.False);
+            Assert.That(TabTopColor(view.ChapterOneButton), Is.EqualTo(new Color32(153, 101, 3, 255)));
+            Assert.That(TabTopColor(view.ChapterTwoButton), Is.EqualTo(new Color32(22, 32, 35, 250)));
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]
@@ -361,6 +433,24 @@ public sealed class M02EstablishBaseCampaignUiTests
         return new UiCampaignOperationsModel(1, 1, 1, mission, string.Empty, false);
     }
 
+    private static UiCampaignOperationsModel CampaignModel(string missionId, byte availableMask)
+    {
+        UiCampaignMissionModel mission = new(
+            missionId, "scenario.test", "opmap.test", missionId,
+            true, false, false, 0, 0, 0,
+            UiCampaignMissionPrimaryActionKind.Start, "START OPERATION");
+        return new UiCampaignOperationsModel(
+            1, 1, 1, mission, string.Empty, false, availableMask, 0);
+    }
+
+    private static Color32 TabTopColor(Button button)
+    {
+        V3GradientGraphic gradient = button.GetComponent<V3GradientGraphic>();
+        Assert.NotNull(gradient);
+        SerializedObject serialized = new(gradient);
+        return serialized.FindProperty("topLeftColor").colorValue;
+    }
+
     private static UiMissionBriefingModel M02BriefingModel() => new(
         1, M02, M02Scenario, M02Map,
         "mission.m02.name", "mission.m02.summary", "mission.m02.location",
@@ -433,13 +523,18 @@ public sealed class M02EstablishBaseCampaignUiTests
     private static void UpdateProjection(World world)
     {
         SystemHandle handle = world.CreateSystem<UiCampaignMissionProjectionSystem>();
+        UpdateProjection(world, handle);
+        world.DestroySystem(handle);
+    }
+
+    private static void UpdateProjection(World world, SystemHandle handle)
+    {
         ref SystemState state = ref world.Unmanaged.ResolveSystemStateRef(handle);
         ref UiCampaignMissionProjectionSystem system = ref
             world.Unmanaged.GetUnsafeSystemRef<UiCampaignMissionProjectionSystem>(handle);
         system.OnUpdate(ref state);
         state.Dependency.Complete();
         world.EntityManager.CompleteAllTrackedJobs();
-        world.DestroySystem(handle);
     }
 
     private static UiMissionBriefingComponent ReadBriefing(EntityManager manager)

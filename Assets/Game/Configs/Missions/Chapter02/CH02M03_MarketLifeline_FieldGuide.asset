@@ -33,6 +33,11 @@ MonoBehaviour:
     ExampleKey: mission.market_lifeline.guide.example
     MistakeKey: mission.market_lifeline.guide.mistake
     DiagramKey: mission.market_lifeline.guide.diagram
+  - TitleKey: mission.market_lifeline.guide.5.title
+    BodyKey: mission.market_lifeline.guide.5.body
+    ExampleKey: mission.market_lifeline.guide.example
+    MistakeKey: mission.market_lifeline.guide.mistake
+    DiagramKey: mission.market_lifeline.guide.diagram
   classes:
   - Id: Unit_Chr_Bombsuit_Male_01
     NameKey: mission.m03.class.Unit_Chr_Bombsuit_Male_01

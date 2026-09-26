@@ -29,7 +29,10 @@ namespace Game.UI.Shell.Ecs
             if(gridlockStep) text=GameText.Get("mission.gridlock.tutorial."+tutorialStep+".body");
             bool m05Step = tutorialStepCount==8 && tutorialStep is >=1 and <=8 && IsBreachGuideContext();
             if(m05Step) text=GameText.Get("mission.m05.tutorial."+tutorialStep+".body");
-            bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5;
+            bool marketStep = tutorialStepCount==5 && tutorialStep is >=1 and <=5 &&
+                TryGetMissionRoot(out var marketManager,out var marketRoot) &&
+                marketManager.GetComponentData<CampaignMissionRuntimeComponent>(marketRoot).MissionId.Equals("saga.ch02.m03.market_lifeline");
+            bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5 && !marketStep;
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
             bool extraction=IsExtractionGuideContext();
             bool m03Step = tutorialStepCount == 12 && tutorialStep is >= 1 and <= 12;

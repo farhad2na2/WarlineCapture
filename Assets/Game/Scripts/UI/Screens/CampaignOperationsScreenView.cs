@@ -184,7 +184,7 @@ namespace Game.UI.Runtime
             return $"{mission.DisplayName}  |  {mission.PrimaryActionLabel}  |  {mission.BestStars}/3{time}";
         }
 
-        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, byte availableMask, byte completedMask)
+        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, ushort availableMask, ushort completedMask)
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {

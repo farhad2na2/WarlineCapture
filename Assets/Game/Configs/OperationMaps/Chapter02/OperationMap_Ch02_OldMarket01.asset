@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
-  contentHash: ea25c1dd3dc2c15572af85319a15a29267db2c8d71d84b505940e8503774b564
-  generatedMetadataHash: ea25c1dd3dc2c15572af85319a15a29267db2c8d71d84b505940e8503774b564
+  contentHash: 302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3
+  generatedMetadataHash: 302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.desert_base_01
     sourceIdentityHash: 2a2a791e8292a4f458bd603ceb86598aa0ba2ca82db41323bf5bf7c748ec6900
@@ -91,6 +91,13 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch02.m03.manifest
     kind: 2
+    position: {x: 698, y: 1.4591798, z: 440}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 6
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m03.corrupt_manifest
+    kind: 2
     position: {x: 748, y: 0.9991798, z: 462}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 6
@@ -101,6 +108,13 @@ MonoBehaviour:
     position: {x: 684, y: 0.57917976, z: 426}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 4
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m03.corrupt_convoy
+    kind: 3
+    position: {x: 738, y: 0.019179778, z: 456}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch02.m03.squad_a

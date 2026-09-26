@@ -1,7 +1,7 @@
 using UnityEngine;
 namespace Game.UI.Contracts
 {
-    public enum UiTutorialBattleAction : byte { None, Move, Hold, Watch }
+    public enum UiTutorialBattleAction : byte { None, Move, Hold, Watch, Attack }
     public readonly struct UiMissionTutorialTarget
     {
         public readonly Vector3 Selection, Destination;

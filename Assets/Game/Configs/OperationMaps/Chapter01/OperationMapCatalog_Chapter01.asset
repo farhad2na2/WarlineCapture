@@ -20,6 +20,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 30ded13be441a44b588827ac6aee0e2d, type: 2}
   - {fileID: 11400000, guid: 650740e21f42641739622a6c499eb11e, type: 2}
   - {fileID: 11400000, guid: ab7e541690c8040228fe2284d94173ff, type: 2}
+  - {fileID: 11400000, guid: dc1b384202d46427aab2431d0b043a93, type: 2}
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
@@ -63,7 +64,13 @@ MonoBehaviour:
       contentPackId: opmap-pack.ch02.old_market_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: ea25c1dd3dc2c15572af85319a15a29267db2c8d71d84b505940e8503774b564
+      contentHash: 302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3
+  - definition: {fileID: 11400000, guid: dc1b384202d46427aab2431d0b043a93, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch02.power_relay_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: c4566b824997b71951aff5620161c5b1fac38f057ce4295fa630a6f2d091c95d
   - definition: {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.supply_yard_01

@@ -1,0 +1,473 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2708880604959515224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M04_PowerRelay_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m04.debrief
+  entryStateId: PowerRelay-debrief-0
+  defaultSkipDestinationId: PowerRelay-debrief-complete
+  states:
+  - stateId: PowerRelay-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-debrief-01
+      textKey: narrative.power_relay.debrief.01
+      englishFallback: Power and clean-water service are returning across the east
+        district. The families reached the school shelter without crossing the exposed
+        lane, and there is room for everyone tonight.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 6688eb288a4d8430fb69174a8322b2b1, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.142858
+      essentialCaption: 1
+    continueStateId: PowerRelay-debrief-1
+    skipStateId: PowerRelay-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-debrief-02
+      textKey: narrative.power_relay.debrief.02
+      englishFallback: The restored substation emitted a dormant Civic Relay handshake.
+        I optimized for the city I could see.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: d8f908d20252c4ef29ab7535e774d784, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.94
+      essentialCaption: 1
+    continueStateId: PowerRelay-debrief-2
+    skipStateId: PowerRelay-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.94
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-debrief-03
+      textKey: narrative.power_relay.debrief.03
+      englishFallback: Then keep asking about the one you can't. The handshake points
+        to a logistics hub; that is where we go next.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: e673df810634648d1bfb28401cfd24e9, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.3
+      essentialCaption: 1
+    continueStateId: PowerRelay-debrief-complete
+    skipStateId: PowerRelay-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.3
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.power_relay.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M04_PowerRelay_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m04.brief
+  entryStateId: PowerRelay-brief-0
+  defaultSkipDestinationId: PowerRelay-brief-complete
+  states:
+  - stateId: PowerRelay-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-brief-01
+      textKey: narrative.power_relay.brief.01
+      englishFallback: The substation serving our homes, shelters and water treatment
+        has failed. Displaced families are waiting in the open, and the nearest shelter
+        is already overcrowded.
+      speaker: 8
+      voiceClip: {fileID: 8300000, guid: 250a0b9ba4b9043cfa54fbfe554e5b49, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.18
+      essentialCaption: 1
+    continueStateId: PowerRelay-brief-1
+    skipStateId: PowerRelay-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.18
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-brief-02
+      textKey: narrative.power_relay.brief.02
+      englishFallback: The exposed industrial lane is the shortest route to shelter.
+        My initial recommendation is to move the family convoy through it, then deliver
+        Fuel and engineers to the relay.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 3f543a3979ad94a5f80902c476bcfed5, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.428572
+      essentialCaption: 1
+    continueStateId: PowerRelay-brief-2
+    skipStateId: PowerRelay-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.428572
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-brief-03
+      textKey: narrative.power_relay.brief.03
+      englishFallback: Do not use the shortest lane. The shelter at its end is full,
+        but the school on the longer service road is open. Take the protected route,
+        then keep the engineers supplied while they restore power.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 6c26b5509618f4a189bff8eb428b3247, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.7
+      essentialCaption: 1
+    continueStateId: PowerRelay-brief-complete
+    skipStateId: PowerRelay-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.7
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.power_relay.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &3699894692286769804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M04_PowerRelay_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m04.comms
+  entryStateId: PowerRelay-comms-0
+  defaultSkipDestinationId: PowerRelay-comms-complete
+  states:
+  - stateId: PowerRelay-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 994394f6b98a143589b9a5e94319729c
+      m_SubObjectName: PowerRelay
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: power_relay-comms-01
+      textKey: narrative.power_relay.comms.01
+      englishFallback: 'Recommendation revised. Samira''s shelter-capacity report
+        changes the optimal route: protect the family convoy along the service road,
+        then secure the repair crew. My first route omitted people the formal map
+        could not see.'
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 684b04dd6c46c49c19b71b0dd040dbc8, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 21.3
+      essentialCaption: 1
+    continueStateId: PowerRelay-comms-complete
+    skipStateId: PowerRelay-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 21.3
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: PowerRelay-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.power_relay.comms.complete
+    evidenceIds: []
+    missionContextFlags: []

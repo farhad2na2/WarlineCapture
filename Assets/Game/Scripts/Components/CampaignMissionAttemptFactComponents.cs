@@ -10,6 +10,8 @@ namespace Game.Components
         public SupplyLineFailure SupplyFailure;
         public byte MarketReliefDelivered, MarketManifestVerified, MarketOpen;
         public MarketLifelineFailure MarketFailure;
+        public byte PowerSafeRouteConfirmed, PowerFamiliesSheltered, PowerRestored, PowerRelaySecured, PowerExposedRouteUsed;
+        public PowerRelayFailure PowerRelayFailure;
         public byte GridlockSiteAComplete, GridlockSiteBComplete, GridlockDelivered;
         public GridlockFailure GridlockFailure;
         public int ElapsedMilliseconds;

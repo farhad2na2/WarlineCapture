@@ -20,17 +20,18 @@ namespace Game.Editor
     {
         public const string Path = "Assets/Game/Configs/Narrative/Chapter02/CH02M03_MarketLifeline_Narrative.asset";
         [MenuItem("Game/Campaign/Market Lifeline/Build Captioned Narrative")]
-        public static void BuildAndInstall()=>Build(false);
-        public static void BuildCaptionedArtAndInstall()=>Build(false);
+        public static void BuildAndInstall()=>Build(true);
+        public static void BuildCaptionedArtAndInstall()=>Build(true);
         private static void Build(bool voices)
         {
             CH02M03MarketLifelineMediaImporter.ConfigureArt();
+            if(voices)CH02M03MarketLifelineMediaImporter.ConfigureVoices();
             System.IO.Directory.CreateDirectory("Assets/Game/Configs/Narrative/Chapter02"); AssetDatabase.Refresh();
             MarketLifelineNarrativeLine[][] lines = {CH02M03MarketLifelineCopy.Brief,CH02M03MarketLifelineCopy.Comms,CH02M03MarketLifelineCopy.Debrief};
             string[] stages = {"brief","comms","debrief"};
             var basis = AssetDatabase.LoadAllAssetsAtPath(M02EstablishBaseNarrativeConfigBuilder.NarrativePath).OfType<NarrativeSequenceConfig>().ToArray();
             for (int i=0;i<stages.Length;i++) Configure(stages[i],lines[i],basis.Single(s => s.SequenceId.EndsWith("."+(stages[i]=="opening" ? "brief" : stages[i]),StringComparison.Ordinal)));
-            AddPersian(); AssetDatabase.SaveAssets();
+            InstallYasin(); AddPersian(); AssetDatabase.SaveAssets();
             Scene scene = EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
             MenuBootstrapView bootstrap = UnityEngine.Object.FindAnyObjectByType<MenuBootstrapView>(FindObjectsInactive.Include);
             if (bootstrap == null) throw new InvalidOperationException("Menu bootstrap missing.");
@@ -41,6 +42,25 @@ namespace Game.Editor
             for(int i=0;i<merged.Length;i++) configs.GetArrayElementAtIndex(i).objectReferenceValue = merged[i];
             menu.ApplyModifiedPropertiesWithoutUndo(); EditorSceneManager.MarkSceneDirty(scene); EditorSceneManager.SaveScene(scene);
             Debug.Log("[CH02M03MarketLifelineNarrativeBuilder] result=Passed sequences=3 presentation=CaptionedCheckpoint locales=en,fa-IR voices="+voices);
+        }
+
+        private static void InstallYasin()
+        {
+            var catalog=AssetDatabase.LoadAssetAtPath<NarrativeSpeakerCatalog>("Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSpeakers.asset")??throw new InvalidOperationException("Narrative speaker catalog missing.");
+            var data=new SerializedObject(catalog);var entries=data.FindProperty("speakers");SerializedProperty entry=null;
+            for(int i=0;i<entries.arraySize;i++)if(entries.GetArrayElementAtIndex(i).FindPropertyRelative("speakerId").intValue==(int)NarrativeSpeakerId.Yasin)entry=entries.GetArrayElementAtIndex(i);
+            entry??=entries.GetArrayElementAtIndex(entries.arraySize++);entry.FindPropertyRelative("speakerId").intValue=(int)NarrativeSpeakerId.Yasin;
+            foreach(var pair in new[]{("name","Yasin Barakat"),("role","Old Market representative"),("accessibleLabel","Yasin Barakat, Old Market representative")})
+            {
+                entry.FindPropertyRelative(pair.Item1+"Key").stringValue="narrative.speaker.yasin."+pair.Item1;
+                entry.FindPropertyRelative(pair.Item1+"Fallback").stringValue=pair.Item2;
+            }
+            entry.FindPropertyRelative("treatment").intValue=(int)NarrativeSpeakerTreatment.HumanPortrait;
+            const string portraitPath="Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_02_AI_RealisticCivilian_ChromaGreen.png";
+            var importer=AssetImporter.GetAtPath(portraitPath) as TextureImporter??throw new InvalidOperationException("Yasin portrait source is missing.");
+            importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;importer.mipmapEnabled=false;importer.isReadable=false;importer.maxTextureSize=1024;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();
+            entry.FindPropertyRelative("identitySprite").objectReferenceValue=AssetDatabase.LoadAssetAtPath<Sprite>(portraitPath)??throw new InvalidOperationException("Yasin portrait could not be imported.");
+            entry.FindPropertyRelative("accentColor").colorValue=new Color(.72f,.57f,.35f);data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(catalog);
         }
 
         private static void Configure(string stage,MarketLifelineNarrativeLine[] lines,NarrativeSequenceConfig basis)
@@ -85,7 +105,7 @@ namespace Game.Editor
                 SerializedProperty line = authored.GetArrayElementAtIndex(0); MarketLifelineNarrativeLine copy = lines[i];
                 S(line,"lineId",copy.Id); S(line,"textKey",copy.Key); S(line,"englishFallback",copy.English);
                 line.FindPropertyRelative("speaker").intValue = (int)copy.Speaker;
-                line.FindPropertyRelative("voiceClip").objectReferenceValue = null;
+                line.FindPropertyRelative("voiceClip").objectReferenceValue = voicesEnabled(copy.Id);
                 line.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = null;
                 line.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = null;
                 line.FindPropertyRelative("startSeconds").floatValue = 0;
@@ -141,13 +161,21 @@ namespace Game.Editor
                 S(entry,"key",line.Key); S(entry,"value",line.Persian);
                 var voice=voices.GetArrayElementAtIndex(voices.arraySize++);
                 S(voice,"lineId",line.Id);
-                voice.FindPropertyRelative("voiceClip").objectReferenceValue=null;
+                voice.FindPropertyRelative("voiceClip").objectReferenceValue=CH02M03MarketLifelineMediaImporter.Voice(line.Id,true);
                 voice.FindPropertyRelative("femaleVoiceClip").objectReferenceValue=null;
                 voice.FindPropertyRelative("neutralVoiceClip").objectReferenceValue=null;
             }
             data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(locale);
         }
-        private static float Duration(in MarketLifelineNarrativeLine line)=>Mathf.Max(8,Mathf.Max(line.English.Length,line.Persian.Length)/14f);
+        private static AudioClip voicesEnabled(string id)=>CH02M03MarketLifelineMediaImporter.Voice(id,false)??throw new InvalidOperationException("English Market Lifeline voice missing: "+id);
+        private static float Duration(in MarketLifelineNarrativeLine line)
+        {
+            AudioClip english = CH02M03MarketLifelineMediaImporter.Voice(line.Id, false);
+            AudioClip persian = CH02M03MarketLifelineMediaImporter.Voice(line.Id, true);
+            float spokenDuration = Mathf.Max(english != null ? english.length : 0f, persian != null ? persian.length : 0f);
+            float readingDuration = Mathf.Max(line.English.Length, line.Persian.Length) / 14f;
+            return Mathf.Max(8f, spokenDuration + 0.5f, readingDuration);
+        }
         private static void S(SerializedProperty property,string field,string value) => property.FindPropertyRelative(field).stringValue=value;
     }
 }

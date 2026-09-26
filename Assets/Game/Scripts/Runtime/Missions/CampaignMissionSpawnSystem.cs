@@ -171,7 +171,7 @@ namespace Game.Runtime
                 }
             }
             int hostileCount = CountHostiles(ref definition);
-            return definition.MarketLifeline.Enabled != 0 || definition.SupplyLine.Enabled != 0 || definition.Gridlock.Enabled != 0 || definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0
+            return definition.PowerRelay.Enabled != 0 || definition.MarketLifeline.Enabled != 0 || definition.SupplyLine.Enabled != 0 || definition.Gridlock.Enabled != 0 || definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0
                 ? total <= 64 && total > hostileCount && hostileCount > 0
                 : total == (hostileCount == 0 ? 4 : 7) && hostileCount is 0 or 3;
         }
@@ -189,6 +189,7 @@ namespace Game.Runtime
             InitializeGridlockAttempt(em, root, ref definition, ref map, in runtime);
             InitializeSupplyLineAttempt(em, root, ref definition, ref map, in runtime);
             InitializeMarketLifelineAttempt(em, root, ref definition, ref map, in runtime);
+            InitializePowerRelayAttempt(em, root, ref definition, ref map, in runtime);
             int ordinal = 0;
             float3 playerPositionSum = float3.zero;
             float3 hostilePositionSum = float3.zero;
@@ -280,6 +281,7 @@ namespace Game.Runtime
                         RegisterGridlockMember(em, root, instance, ref definition, ref group, in unit);
                         RegisterSupplyLineMember(em, root, instance, ref definition, ref group, in unit);
                         RegisterMarketLifelineMember(em, root, instance, ref definition, ref group, in unit);
+                        RegisterPowerRelayMember(em, root, instance, ref definition, ref group, in unit);
                         if (runtime.MissionId.Equals(FirstContactMissionId))
                             ApplyFirstContactHostileCombatPolicy(em, instance, group.FactionId);
                         SetOrAdd(em, instance,

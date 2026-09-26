@@ -26,7 +26,10 @@ namespace Game.UI.Runtime
             }
             // A plain area ring is a wait/defend region, not a tap instruction.
             if (_worldCrosshairRenderers == null || _worldCrosshairRenderers.Length == 0 || !_worldCrosshairRenderers[0].enabled) return false;
-            Vector3 projected = _worldCamera.WorldToScreenPoint(_worldRingRenderer.bounds.center);
+            // LineRenderer bounds can lag one frame after a mission guidance step changes.
+            // Observe the exact world point used to draw the currently visible direct cue so
+            // ARIA never taps the previous objective while the ring is being rebuilt.
+            Vector3 projected = _worldCamera.WorldToScreenPoint(_directTutorialWorldTarget);
             position = projected;
             identity = 1;
             world = true;

@@ -215,6 +215,9 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.ExtractPassengers:
                 case MissionObjectiveRuleKind.ProtectExtractionTransport:
                 case MissionObjectiveRuleKind.SecureLandingZone:
+                case MissionObjectiveRuleKind.EscortPowerRelayFamilies:
+                case MissionObjectiveRuleKind.RestorePowerRelay:
+                case MissionObjectiveRuleKind.SecurePowerRelay:
                     return hasRole && !hasConfig &&
                         IsValidScopedId(objective.MissionRoleId, "role", 2, 7);
                 case MissionObjectiveRuleKind.BuildStructure:

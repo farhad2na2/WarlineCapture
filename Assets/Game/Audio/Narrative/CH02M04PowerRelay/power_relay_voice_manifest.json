@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.PowerRelayBilingualVoice.v1",
+  "missionId": "saga.ch02.m04.power_relay",
+  "generatedAtUtc": "2026-09-26T10:09:23.104970+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "power_relay-brief-01",
+      "speaker": "LINA",
+      "locale": "en-US",
+      "text": "The substation serving our homes, shelters and water treatment has failed. Displaced families are waiting in the open, and the nearest shelter is already overcrowded.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-brief-01.wav",
+      "durationSeconds": 10.24,
+      "sha256": "f0250f8cfb8586333a7ad32f5f7b81390828fd470c31703560ecf937c864fb2c",
+      "captionSha256": "ea64afe0e320756a6bddcd41ab94920b5961082571d15913a1176e56bc1125c7"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-brief-01",
+      "speaker": "LINA",
+      "locale": "fa-IR",
+      "text": "پست برقی که به خونه‌ها، پناهگاه‌ها و تصفیه‌خونه آب می‌رسونه از کار افتاده. خانواده‌های آواره بیرون منتظرن و نزدیک‌ترین پناهگاه هم بیش از حد شلوغه.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-brief-01.wav",
+      "durationSeconds": 11.68,
+      "sha256": "9d9edd1e32a668c15dc1a930b2cb086f016732d95622487833a6efbfd849eadc",
+      "captionSha256": "cd20075e33b2ebc09925671c637ef7449871fb4d2c4572aad2c6cbb304dbd58f"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-brief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The exposed industrial lane is the shortest route to shelter. My initial recommendation is to move the family convoy through it, then deliver Fuel and engineers to the relay.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-brief-02.wav",
+      "durationSeconds": 11.36,
+      "sha256": "c0d8902db4eecbd95483f3a5d6343aca4f93526df60125e678a1f47b61c765e6",
+      "captionSha256": "bbda01fba6f92efd407e8c864be29e3511ba20baab13c7cf059eaf0a0387d50d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-brief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مسیر صنعتیِ روباز، کوتاه‌ترین راه تا پناهگاهه. پیشنهاد اولیه‌م اینه که کاروان خانواده‌ها رو از همون‌جا عبور بدیم، بعد سوخت و مهندس‌ها رو به رله برسونیم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-brief-02.wav",
+      "durationSeconds": 11.52,
+      "sha256": "9fb4b7f06aa089aa05b84228987657796eb30e29b0bebe0742a9d66bdb25b7fc",
+      "captionSha256": "08a42b0699adaa13da9570eb2c37cb4147990c15ce0096e8baea0a905084bcb0"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Do not use the shortest lane. The shelter at its end is full, but the school on the longer service road is open. Take the protected route, then keep the engineers supplied while they restore power.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-brief-03.wav",
+      "durationSeconds": 10.88,
+      "sha256": "2d342f64ac7f87405b27f90d7d0154745cbdbe6b6b4adbcfaa1ed2956abaf819",
+      "captionSha256": "35074fab24007b04d649f4067a26953fddf2f2c47d23cb6abba03f0ac4fdd193"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "از کوتاه‌ترین مسیر نرید. پناهگاه انتهای اون پره، اما مدرسهٔ مسیر خدماتیِ طولانی‌تر بازه. خانواده‌ها رو از مسیر محافظت‌شده ببرید، بعد تا برگشت برق، سوخت مهندس‌ها رو تأمین کنید.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-brief-03.wav",
+      "durationSeconds": 15.2,
+      "sha256": "a5233adcbf4e2a1c27b7d7a241bcc54268ee9d930351a81c458bd1f4cae921aa",
+      "captionSha256": "abc7daf1dc62cc720756e6c0a8a86b864e212ea8a306065a5a8402d83053b67a"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Recommendation revised. Samira's shelter-capacity report changes the optimal route: protect the family convoy along the service road, then secure the repair crew. My first route omitted people the formal map could not see.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-comms-01.wav",
+      "durationSeconds": 13.92,
+      "sha256": "3f584af187e59a214dce9625ae92c56c164f44aab9053f4ddb479a4325ace7f4",
+      "captionSha256": "234743168c82dbe1b2a2015a9dd924026aeb15003220fc1d00fd164e90b7c8c4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پیشنهاد اصلاح شد. گزارش ظرفیت پناهگاهِ سمیرا مسیر بهینه رو عوض می‌کنه: از کاروان خانواده‌ها در جادهٔ خدماتی محافظت کنید، بعد گروه تعمیر رو امن نگه دارید. مسیر اول من آدم‌هایی رو نادیده گرفته بود که روی نقشهٔ رسمی دیده نمی‌شدن.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-comms-01.wav",
+      "durationSeconds": 20.8,
+      "sha256": "c5ebfc4bd95c8cbeabefced448abd4c73c35fff176a3e94f364b99906bfd161d",
+      "captionSha256": "35b8e33711050155b0de2b256cbbb04a9c8c2058c03f1096c7e0bbcfc68a5c2f"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Power and clean-water service are returning across the east district. The families reached the school shelter without crossing the exposed lane, and there is room for everyone tonight.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-debrief-01.wav",
+      "durationSeconds": 11.12,
+      "sha256": "8573ca39368ddfd6b652675c52e6183c57954814443b9ed661a99b66644541bb",
+      "captionSha256": "f61e8a33bd626ef3f0aa7c16417e04c3307bc2eaf5e2567b7d29e44975553809"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "برق و آب سالم دارن در سراسر منطقهٔ شرقی برمی‌گردن. خانواده‌ها بدون عبور از مسیر روباز به پناهگاه مدرسه رسیدن و امشب برای همه جا هست.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-debrief-01.wav",
+      "durationSeconds": 11.68,
+      "sha256": "3b29a2bc5dd4e099d8996c48b25fb6334c5f0b24a4a27ad356a7267bea87d80f",
+      "captionSha256": "3c0c4f2e75a4c10478c912395582967d7f3d317cecde7f4b9625fdd404b3cfe4"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The restored substation emitted a dormant Civic Relay handshake. I optimized for the city I could see.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-debrief-02.wav",
+      "durationSeconds": 7.28,
+      "sha256": "920d15a4c1fec36a366ac2e446f18a712d08d3097fd97522fd57ff356043f8e1",
+      "captionSha256": "6badd920ef101bc01d92875a7ad9f3840eae5f84846144c1c597082e00e6a0f4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پست برقِ بازیابی‌شده یک دست‌دهیِ خاموش از شبکهٔ شهری فرستاد. من برای شهری بهینه‌سازی کردم که می‌تونستم ببینم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-debrief-02.wav",
+      "durationSeconds": 9.44,
+      "sha256": "20e35cb4c7d61a4d40784c5f2d5218050aa46f9d7b14da9e113c61036726e19f",
+      "captionSha256": "fc8d5ed04538ffd7d1920e096cfbf8c25ce014e2c8ff22cf6e1273a606d58e97"
+    },
+    {
+      "kind": "narrative",
+      "id": "power_relay-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Then keep asking about the one you can't. The handshake points to a logistics hub; that is where we go next.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/en/power_relay-debrief-03.wav",
+      "durationSeconds": 6.88,
+      "sha256": "f6a04d198c0c49e47f110a973df03a464d8d57fd3eca468d80fde1b7d7ed54f5",
+      "captionSha256": "396dbd840fa1dc98a24d4c58c11dbc876337886f86210b2222b1e2ffebbc9ac8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "power_relay-debrief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "پس دربارهٔ شهری که نمی‌تونی ببینی هم سؤال بپرس. این دست‌دهی به یک مرکز تدارکات اشاره می‌کنه؛ مقصد بعدی ما همون‌جاست.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice/fa/power_relay-debrief-03.wav",
+      "durationSeconds": 8.8,
+      "sha256": "dc2c4748138c771e0396544f6f37889b449682be3a96fec1fae6099f82eb9781",
+      "captionSha256": "3e410db67cdf77386ee705b5901fd8a60e0bc79a0b6b429accb12b41123d353a"
+    }
+  ]
+}

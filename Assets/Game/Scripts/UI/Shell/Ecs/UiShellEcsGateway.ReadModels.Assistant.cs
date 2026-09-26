@@ -190,7 +190,8 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount is 4 or 8 or 10 or 12)
+            if (topRecommendation.TutorialStepCount is 4 or 8 or 10 or 12 ||
+                topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
@@ -219,7 +220,8 @@ namespace Game.UI.Shell.Ecs
             if (topRecommendation.RecommendationId != 0 &&
                 topRecommendation.TutorialStep > 0 &&
                 topRecommendation.TutorialStepCount == 5 &&
-                topRecommendation.TargetKind != AssistantTargetKind.UiSurface)
+                topRecommendation.TargetKind != AssistantTargetKind.UiSurface &&
+                !(topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005))
             {
                 TryResolveTutorialPresentationText(
                     topRecommendation.TutorialStep,

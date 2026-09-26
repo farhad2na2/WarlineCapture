@@ -11,7 +11,11 @@ namespace Game.Editor
     public static class CH02M03MarketLifelineMediaImporter
     {
         public const string ArtRoot="Assets/Game/Art/Narrative/CH02M03MarketLifeline";
+        public const string VoiceRoot="Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice";
         public static readonly string[] Panels={"OldMarket","ManifestEvidence","MarketRelief"};
+        public static IEnumerable<MarketLifelineNarrativeLine> Lines=>CH02M03MarketLifelineCopy.Brief.Concat(CH02M03MarketLifelineCopy.Comms).Concat(CH02M03MarketLifelineCopy.Debrief);
+        public static string VoicePath(string id,bool persian)=>$"{VoiceRoot}/{(persian?"fa":"en")}/{id}.wav";
+        public static AudioClip Voice(string id,bool persian)=>AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
         public static Sprite Panel(string id,bool wide)=>AssetDatabase.LoadAllAssetsAtPath($"{ArtRoot}/{id}.png")
             .OfType<Sprite>().Single(s=>s.name==$"{id}-{(wide ? "20x9" : "16x9")}");
         public static void ConfigureArt()
@@ -64,6 +68,25 @@ namespace Game.Editor
         }
         private static string PanelIdentity(Sprite panel)
         {AssetDatabase.TryGetGUIDAndLocalFileIdentifier(panel,out string guid,out long id); return guid+":"+id;}
+
+        public static void ConfigureVoices()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            foreach(var line in Lines)foreach(bool persian in new[]{false,true})ConfigureVoice(VoicePath(line.Id,persian),persian);
+            AudioRuntimeConfigAssetBuilder.BuildDefaultAssets();
+            Debug.Log("[MarketLifelineVoiceImports] result=Passed clips=14 locales=2 preload=0 runtimeNetworkTts=0");
+        }
+
+        private static void ConfigureVoice(string path,bool persian)
+        {
+            var importer=AssetImporter.GetAtPath(path) as AudioImporter??throw new InvalidOperationException("Missing final voice: "+path);
+            var settings=importer.defaultSampleSettings;settings.loadType=AudioClipLoadType.CompressedInMemory;settings.compressionFormat=AudioCompressionFormat.Vorbis;
+            settings.sampleRateSetting=AudioSampleRateSetting.PreserveSampleRate;settings.sampleRateOverride=44100;settings.quality=.7f;settings.preloadAudioData=false;importer.defaultSampleSettings=settings;
+            importer.forceToMono=true;importer.loadInBackground=true;importer.ambisonic=false;
+            importer.userData="status=ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE; provider=ElevenLabs; model=eleven_v3; locale="+(persian?"fa-IR":"en-US")+"; manifest=market_lifeline_voice_manifest.json; runtimeNetworkTts=false";
+            importer.SaveAndReimport();var clip=AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            if(clip==null||clip.length<.25f||clip.channels!=1)throw new InvalidOperationException("Invalid voice clip: "+path);
+        }
 
     }
 }

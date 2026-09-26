@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch02_M04_PowerRelay
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch02.m04.power_relay
+  schemaVersion: 1
+  displayNameKey: mission.power_relay.name
+  displaySummaryKey: mission.power_relay.summary
+  locationNameKey: mission.power_relay.location
+  scenarioId: scenario.ch02.m04.power_relay
+  operationMapId: opmap.ch02.power_relay_01
+  briefingSequenceId: seq.ch02.m04.brief
+  commsSequenceId: seq.ch02.m04.comms
+  debriefSequenceId: seq.ch02.m04.debrief
+  objectives:
+  - objectiveId: obj.ch02.m04.shelter
+    displayTextKey: mission.power_relay.objective.shelter
+    rule: 22
+    missionRoleId: role.power.family_convoy
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch02.m04.restore
+    displayTextKey: mission.power_relay.objective.restore
+    rule: 23
+    missionRoleId: role.power.engineer
+    targetConfigId: 
+    requiredCount: 2
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch02.m04.secure
+    displayTextKey: mission.power_relay.objective.secure
+    rule: 24
+    missionRoleId: role.power.rifle
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.power_relay.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 4
+    displayTextKey: mission.power_relay.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.power_relay.star.3
+    threshold: 420000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 1000
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 5000
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 400
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

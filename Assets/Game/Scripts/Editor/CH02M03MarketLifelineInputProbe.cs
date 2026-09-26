@@ -22,19 +22,28 @@ namespace Game.Editor
     public static class CH02M03MarketLifelineInputProbe
     {
         private const string Active="Warline.MarketLifeline.InputProbe";
+        private const string ManualEditorRun="Warline.MarketLifeline.InputProbe.ManualEditorRun";
         private const string Output="/private/tmp/warline-market-lifeline";
         private static bool seeded, finished, watchStarted, won, sawDebrief;
         private static double started, lastInput, lastLog, briefWaitStarted;
         private static int winningClock;
         private static AriaTouchInputUiSystemHelper touch;
+        private static CampaignMissionProgressStore probeStore;
 
         static CH02M03MarketLifelineInputProbe(){if(SessionState.GetBool(Active,false))EditorApplication.update+=Tick;}
+
+        [MenuItem("Game/Campaign/Market Lifeline/Run Normal Input Watch Probe")]
+        public static void RunWatchFromOpenEditor()
+        {
+            SessionState.SetBool(ManualEditorRun,true);
+            RunWatch();
+        }
 
         public static void RunWatch()
         {
             try{CH02M03MarketLifelinePresentationBuilder.BuildCheckpoint();}
             catch(Exception exception){Debug.LogException(exception);Complete(false,"Authoring failed: "+exception.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=false;winningClock=0;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=false;winningClock=0;probeStore=null;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -51,25 +60,34 @@ namespace Game.Editor
                 World world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;EntityManager em=world.EntityManager;
                 using EntityQuery roots=em.CreateEntityQuery(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent));if(roots.CalculateEntityCount()!=1)return;
                 Entity root=roots.GetSingletonEntity();
-                if(!seeded)
+                if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
+                CampaignMissionProgressStoreReferenceComponent storeReference=em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root);
+                if(probeStore==null)
                 {
-                    if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
-                    var store=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,"input-profile-"+Guid.NewGuid().ToString("N")))));
-                    store.EnsureAvailable(CampaignMissionSequence.MarketLifeline);
-                    em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;
-                    GameLocalization.SetLocale("en",false);seeded=true;
+                    probeStore=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,"input-profile-"+Guid.NewGuid().ToString("N")))));
+                    probeStore.EnsureAvailable(CampaignMissionSequence.MarketLifeline);
                 }
+                if(storeReference.Store!=probeStore)storeReference.Store=probeStore;
+                if(!seeded){GameLocalization.SetLocale("en",false);seeded=true;}
                 CampaignMissionRuntimeComponent runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                 CampaignMissionMarketLifelineState market=em.HasComponent<CampaignMissionMarketLifelineState>(root)?em.GetComponentData<CampaignMissionMarketLifelineState>(root):default;
                 if(EditorApplication.timeSinceStartup-lastLog>8)
                 {
-                    Debug.Log($"[MarketLifelineInput] phase={runtime.Phase} ready={market.Ready} delivered={market.DeliveredCount}/3 manifest={market.ManifestVerified} hostiles={em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).HostileDefeatedCount} clock={market.ElapsedMilliseconds} watch={UiShellRuntimeGateway.ReadAriaPlay().Phase}");
+                    CampaignMissionGuidanceProjectionComponent guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+                    bool actorSelected=em.Exists(guidance.SourceEntity)&&em.HasComponent<SelectedUnitTag>(guidance.SourceEntity);
+                    bool targetAvailable=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out UiMissionTutorialTarget tutorial);
+                    using EntityQuery observations=em.CreateEntityQuery(typeof(AriaPlayObservationComponent));
+                    AriaPlayObservationComponent observation=observations.CalculateEntityCount()==1?observations.GetSingleton<AriaPlayObservationComponent>():default;
+                    using EntityQuery recommendationQueries=em.CreateEntityQuery(typeof(AssistantRecommendationElement));
+                    DynamicBuffer<AssistantRecommendationElement> recommendations=recommendationQueries.CalculateEntityCount()==1?recommendationQueries.GetSingletonBuffer<AssistantRecommendationElement>(true):default;
+                    string recommendation=recommendations.IsCreated&&recommendations.Length>0?$"{recommendations[0].RecommendationId}/{recommendations[0].Title}":"none";
+                    Debug.Log($"[MarketLifelineInput] phase={runtime.Phase} ready={market.Ready} manifests={market.LegitimateManifestInspected}/{market.CorruptManifestInspected} delivered={market.DeliveredCount}/3 verified={market.ManifestVerified} defeated={em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).HostileDefeatedCount} clock={market.ElapsedMilliseconds} watch={UiShellRuntimeGateway.ReadAriaPlay().Phase} guide={guidance.GuidanceId}/{guidance.Prompt}/{guidance.RecommendationKind}/can{guidance.CanExecute} recommendation={recommendation} actorSelected={actorSelected} target={targetAvailable}/{tutorial.NeedsSelection}/{tutorial.Moving}/{tutorial.BattleAction} observation={observation.Kind}/{observation.TargetId}/{observation.GoalId}");
                     ScreenCapture.CaptureScreenshot(Output+"/input-current.png");lastLog=EditorApplication.timeSinceStartup;
                 }
                 if(market.Failure!=MarketLifelineFailure.None)throw new InvalidOperationException("Mission failed: "+market.Failure);
                 if(runtime.Outcome==MissionOutcomeKind.Victory)
                 {
-                    if(market.DeliveredCount<3||market.ManifestVerified==0||market.VictoryHoldMilliseconds<10000)throw new InvalidOperationException("Victory lacks required market facts.");
+                    if(market.LegitimateManifestInspected==0||market.CorruptManifestInspected==0||market.DeliveredCount<3||market.ManifestVerified==0||market.VictoryHoldMilliseconds<10000)throw new InvalidOperationException("Victory lacks both inspections, legitimate delivery, or market hold.");
                     if(!won){won=true;winningClock=market.ElapsedMilliseconds;Debug.Log("[MarketLifelineInput] victory=Passed awaiting=debrief-and-return");}
                 }
                 var watch=UiShellRuntimeGateway.ReadAriaPlay();
@@ -95,7 +113,8 @@ namespace Game.Editor
                     if(returned!=null&&Ready(returned.LaunchMissionButton))
                     {
                         if(!sawDebrief)throw new InvalidOperationException("Mandatory debrief was not presented.");
-                        Complete(true,$"publicEntry=Passed normalInput=Passed aria=Passed clock={winningClock} debrief=Passed resultReturn=Passed");
+                        string returnedMission=UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel returnedModel)?returnedModel.SelectedMission.MissionId:"unknown";
+                        Complete(true,$"publicEntry=Passed normalInput=Passed aria=Passed clock={winningClock} debrief=Passed resultReturn=Passed returned={returnedMission}");
                     }
                     return;
                 }
@@ -144,7 +163,14 @@ namespace Game.Editor
         private static void Complete(bool pass,string detail)
         {
             if(finished)return;finished=true;touch?.Dispose();touch=null;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;ScreenCapture.CaptureScreenshot(Output+"/input-last.png");
-            Debug.Log("[MarketLifelineInput] result="+(pass?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(pass);
+            Debug.Log("[MarketLifelineInput] result="+(pass?"Passed":"Failed")+" "+detail);
+            if(SessionState.GetBool(ManualEditorRun,false))
+            {
+                SessionState.SetBool(ManualEditorRun,false);
+                AssetDatabase.AllowAutoRefresh();
+                EditorApplication.ExitPlaymode();
+            }
+            else MissionEditorValidationExit.Complete(pass);
         }
     }
 }

@@ -8,7 +8,9 @@ namespace Game.Catalog.Contracts
         Aria = 3,
         Commander = 4,
         Laila = 5,
-        Fadi = 6
+        Fadi = 6,
+        Yasin = 7,
+        Lina = 8
     }
 
     public enum NarrativeSpeakerTreatment

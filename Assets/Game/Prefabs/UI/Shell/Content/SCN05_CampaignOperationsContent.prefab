@@ -11545,6 +11545,7 @@ MonoBehaviour:
   - {fileID: 5194457206100788249}
   - {fileID: 8557132211075561505}
   - {fileID: 2046301759540425665}
+  powerRelayMissionPreview: {fileID: 2800000, guid: 994394f6b98a143589b9a5e94319729c, type: 3}
   footerStoryArchiveButton: {fileID: 4407469545285371175}
   m03MissionPreview: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
   supplyLineMissionPreview: {fileID: 2800000, guid: b99d871cee7b64c25a2a9970a28c409f, type: 3}

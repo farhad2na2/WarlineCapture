@@ -88,12 +88,18 @@ namespace Game.UI.Shell.Ecs
                 session.DueAt = now + .9f;
                 return;
             }
-            // A moving world contact (or a map contact) must not postpone its tap forever.
-            // Refresh from the latest visible observation immediately before submitting it.
+            // The direct campaign ring is a fixed world point. Camera focus can still be
+            // moving it across the screen, so require a short stable presentation before
+            // pressing; otherwise the release can resolve several map cells away.
+            float positionDelta = (session.Target - observation.Position).sqrMagnitude;
+            if (observation.Kind == AriaPlayObservationKind.WorldTarget && observation.TargetId == 1 && positionDelta > 9f)
+            { session.Target = observation.Position; session.DueAt = now + .35f; return; }
+            // Moving contacts and map contacts must not postpone their tap forever.
+            // Refresh those from the latest visible observation immediately before input.
             if (observation.Kind == AriaPlayObservationKind.WorldTarget || observation.TargetId == -20004)
                 session.Target = observation.Position;
             // Layout controls still need a stable position before pressing.
-            if ((session.Target - observation.Position).sqrMagnitude > 9f)
+            else if (positionDelta > 9f)
             { session.Target = observation.Position; session.DueAt = now + .35f; return; }
             session.Drag = observation.Drag; session.DragEnd = observation.DragEnd;
             session.GestureRequested = 1;

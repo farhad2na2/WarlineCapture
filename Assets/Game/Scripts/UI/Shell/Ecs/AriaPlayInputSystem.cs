@@ -101,7 +101,7 @@ namespace Game.UI.Shell.Ecs
                 {
                     current.GestureRequested = 0;
                     if (!touch.TryGesture(current.Target, current.Drag != 0 ? current.DragEnd : current.Target,
-                        current.Drag != 0 ? .5f : hasSkirmish ? .15f : .3f, current.Drag != 0 ? .9f : 0, UnityEngine.Time.unscaledTime))
+                        current.Drag != 0 ? .5f : hasSkirmish ? .15f : .08f, current.Drag != 0 ? .9f : 0, UnityEngine.Time.unscaledTime))
                     { touch.Stop(); current.Phase = AriaPlayPhase.Blocked; continue; }
                 }
                 touch.Tick(UnityEngine.Time.unscaledTime);

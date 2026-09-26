@@ -146,6 +146,12 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.PowerRelay.Enabled != 0)
+                return facts.PowerRelayFailure != PowerRelayFailure.Integrity && (outcome == MissionOutcomeKind.Victory
+                    ? facts.PowerRelayFailure == PowerRelayFailure.None && facts.PowerSafeRouteConfirmed != 0 &&
+                      facts.PowerFamiliesSheltered != 0 && facts.PowerRestored != 0 && facts.PowerRelaySecured != 0 &&
+                      facts.HostileTotalCount > 0 && facts.HostileDefeatedCount >= facts.HostileTotalCount
+                    : facts.PowerRelayFailure != PowerRelayFailure.None);
             if (definition.MarketLifeline.Enabled != 0)
                 return facts.MarketFailure != MarketLifelineFailure.Integrity && (outcome == MissionOutcomeKind.Victory
                     ? facts.MarketFailure == MarketLifelineFailure.None && facts.MarketReliefDelivered != 0 &&

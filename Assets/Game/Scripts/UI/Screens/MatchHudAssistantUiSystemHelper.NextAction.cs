@@ -26,7 +26,12 @@ namespace Game.UI.Runtime
             { _highlightPresentationSystem.ClearDirectTutorialCue(); return; }
             int step=_lastPanelModel.TutorialStep;
             if(ShowPendingPlacementInstruction(placing)) return;
-            if(_lastPanelModel.TutorialStepCount==5) { ShowFirstContactNextAction(step); return; }
+            if(_lastPanelModel.TutorialStepCount==5)
+            {
+                if(UiShellRuntimeGateway.IsMarketLifelineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext()) ShowMarketLifelineNextAction();
+                else ShowFirstContactNextAction(step);
+                return;
+            }
             if(_lastPanelModel.TutorialStepCount==4) {ShowSupplyLineNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==10) {ShowGridlockNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
@@ -79,6 +84,20 @@ namespace Game.UI.Runtime
             else if (step == 2) ShowCommandOrDestination(_commandControlsView?.MoveButton, TacticalCommandMode.Move);
             else if (step is 3 or 4) ShowEarlyMissionThreat();
             else WaitForTutorialArrival(); // The mission finale owns this transition.
+        }
+
+        private void ShowMarketLifelineNextAction()
+        {
+            if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target))
+            {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
+            if(target.NeedsSelection){ShowSelectionTarget(target.Selection,target.RequiredSelectionCount>1);return;}
+            if(target.Moving||target.ExecutingAttack){WaitForTutorialArrival();return;}
+            if(target.BattleAction==UiTutorialBattleAction.Watch)
+            {_waitingForTutorialAction=true;_highlightPresentationSystem.ShowTutorialArea(target.Destination,target.AreaRadius);return;}
+            TacticalCommandMode mode=target.BattleAction==UiTutorialBattleAction.Attack?TacticalCommandMode.Attack:TacticalCommandMode.Move;
+            Button button=mode==TacticalCommandMode.Attack?_commandControlsView?.AttackButton:_commandControlsView?.MoveButton;
+            if(_activeCommandMode==mode)ShowTutorialWorld(target.Destination,false);
+            else Cue(button,mode==TacticalCommandMode.Attack?"ui.aria.press_attack":"ui.aria.press_move");
         }
 
         private void ShowEarlyMissionThreat()

@@ -37,3 +37,6 @@ MonoBehaviour:
   - missionId: saga.ch02.m03.market_lifeline
     definition: {fileID: 11400000, guid: 8f33039d7fe3442ae957e2a43aac352c, type: 2}
     scenario: {fileID: 11400000, guid: c2f5e872bf1924c1b90e143a6ff5d3a7, type: 2}
+  - missionId: saga.ch02.m04.power_relay
+    definition: {fileID: 11400000, guid: 110fb3dc2581a465ea451f6238c95c39, type: 2}
+    scenario: {fileID: 11400000, guid: 93d2cb4e9af474042a18f9ecc005761f, type: 2}

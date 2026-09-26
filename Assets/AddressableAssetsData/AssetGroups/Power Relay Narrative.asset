@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Power Relay Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Power Relay Narrative
+  m_GUID: 6b1800e498b6546079dabbd88ee3e208
+  m_SerializeEntries:
+  - m_GUID: 994394f6b98a143589b9a5e94319729c
+    m_Address: narrative.power_relay.approved
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 86d6c6efe4f0041979e5083e6fdcc95b, type: 2}
+    - {fileID: 11400000, guid: 249b2acb2ffd7414b9e4cc104d39b3d2, type: 2}

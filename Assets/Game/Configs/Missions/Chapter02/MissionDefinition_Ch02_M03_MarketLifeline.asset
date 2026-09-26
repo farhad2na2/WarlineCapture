@@ -35,7 +35,7 @@ MonoBehaviour:
     rule: 20
     missionRoleId: role.market.manifest
     targetConfigId: 
-    requiredCount: 1
+    requiredCount: 2
     failureOnRuleBreak: 1
   - objectiveId: obj.ch02.m03.market
     displayTextKey: mission.market_lifeline.objective.market

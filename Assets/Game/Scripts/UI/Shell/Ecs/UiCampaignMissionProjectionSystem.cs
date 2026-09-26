@@ -19,6 +19,7 @@ namespace Game.UI.Shell.Ecs
         private EntityQuery _uiRootQuery;
         private EntityQuery _briefingQuery;
         private EntityQuery _campaignRootQuery;
+        private long _progressionCompatibilitySourceVersion;
         private byte _progressionCompatibilityChecked;
         private long _observedStoreId;
         private long _observedProfileVersion;
@@ -63,9 +64,12 @@ namespace Game.UI.Shell.Ecs
             if (_observedStoreId != store.InstanceId)
                 _progressionCompatibilityChecked = 0;
             bool progressionCompatibilityApplied = false;
-            if (_progressionCompatibilityChecked == 0)
+            long progressionSourceVersion = store.SourceVersion;
+            if (_progressionCompatibilityChecked == 0 ||
+                _progressionCompatibilitySourceVersion != progressionSourceVersion)
             {
                 progressionCompatibilityApplied = EnsureChapterProgressionCompatibility(store);
+                _progressionCompatibilitySourceVersion = store.SourceVersion;
                 _progressionCompatibilityChecked = 1;
             }
 

@@ -19,7 +19,11 @@ MonoBehaviour:
     kind: 2
   - anchorId: anchor.ch02.m03.manifest
     kind: 2
+  - anchorId: anchor.ch02.m03.corrupt_manifest
+    kind: 2
   - anchorId: anchor.ch02.m03.convoy
+    kind: 3
+  - anchorId: anchor.ch02.m03.corrupt_convoy
     kind: 3
   - anchorId: anchor.ch02.m03.squad_a
     kind: 3
@@ -37,25 +41,25 @@ MonoBehaviour:
   - groupId: group.ch02.m03.squad_a
     factionIndex: 1
     units:
-    - unitConfigKey: unit.market.chr_soldier_male_02_alt_02.0
+    - unitConfigKey: unit.market.chr_soldier_male_02_alt_02.0.0
       runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
       expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
       spawnAnchorId: anchor.ch02.m03.squad_a
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_male_02_alt_04.1
+    - unitConfigKey: unit.market.chr_soldier_male_02_alt_04.0.1
       runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
       expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
       spawnAnchorId: anchor.ch02.m03.squad_a
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_female_01_alt_01.2
+    - unitConfigKey: unit.market.chr_soldier_female_01_alt_01.0.2
       runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
       expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
       spawnAnchorId: anchor.ch02.m03.squad_a
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_female_02_alt_01.3
+    - unitConfigKey: unit.market.chr_soldier_female_02_alt_01.0.3
       runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
       expectedAssetGuid: 7ab678d235e72407b912caa746540808
       spawnAnchorId: anchor.ch02.m03.squad_a
@@ -64,25 +68,25 @@ MonoBehaviour:
   - groupId: group.ch02.m03.squad_b
     factionIndex: 1
     units:
-    - unitConfigKey: unit.market.chr_soldier_male_02_alt_02.0
+    - unitConfigKey: unit.market.chr_soldier_male_02_alt_02.1.0
       runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_02
       expectedAssetGuid: 44832a7f379be4c30b818e55ed7a45ce
       spawnAnchorId: anchor.ch02.m03.squad_b
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_male_02_alt_04.1
+    - unitConfigKey: unit.market.chr_soldier_male_02_alt_04.1.1
       runtimePrefabSourceKey: Unit_Chr_Soldier_Male_02_Alt_04
       expectedAssetGuid: ff73c8b7cbf844778916da330e9cd3e3
       spawnAnchorId: anchor.ch02.m03.squad_b
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_female_01_alt_01.2
+    - unitConfigKey: unit.market.chr_soldier_female_01_alt_01.1.2
       runtimePrefabSourceKey: Unit_Chr_Soldier_Female_01_Alt_01
       expectedAssetGuid: 8ec7389d67b7543d0ac6050c06d26187
       spawnAnchorId: anchor.ch02.m03.squad_b
       missionRoleId: role.market.rifle
       count: 1
-    - unitConfigKey: unit.market.chr_soldier_female_02_alt_01.3
+    - unitConfigKey: unit.market.chr_soldier_female_02_alt_01.1.3
       runtimePrefabSourceKey: Unit_Chr_Soldier_Female_02_Alt_01
       expectedAssetGuid: 7ab678d235e72407b912caa746540808
       spawnAnchorId: anchor.ch02.m03.squad_b
@@ -91,40 +95,49 @@ MonoBehaviour:
   - groupId: group.ch02.m03.convoy
     factionIndex: 1
     units:
-    - unitConfigKey: unit.market.veh_truck_tray.0
+    - unitConfigKey: unit.market.veh_truck_tray.2.0
       runtimePrefabSourceKey: Unit_Veh_Truck_Tray
       expectedAssetGuid: 57f2dccc00faf49bca391aa1cc44d70a
       spawnAnchorId: anchor.ch02.m03.convoy
       missionRoleId: role.market.relief_convoy
       count: 1
-    - unitConfigKey: unit.market.veh_truck_tray.1
+    - unitConfigKey: unit.market.veh_truck_tray.2.1
       runtimePrefabSourceKey: Unit_Veh_Truck_Tray
       expectedAssetGuid: 57f2dccc00faf49bca391aa1cc44d70a
       spawnAnchorId: anchor.ch02.m03.convoy
       missionRoleId: role.market.relief_convoy
       count: 1
-    - unitConfigKey: unit.market.veh_truck_canopy.2
+    - unitConfigKey: unit.market.veh_truck_canopy.2.2
       runtimePrefabSourceKey: Unit_Veh_Truck_Canopy
       expectedAssetGuid: 3d3206505e16446ab8691d740853c31d
       spawnAnchorId: anchor.ch02.m03.convoy
       missionRoleId: role.market.relief_convoy
       count: 1
+  - groupId: group.ch02.m03.corrupt_convoy
+    factionIndex: 1
+    units:
+    - unitConfigKey: unit.market.veh_truck_tray.3.0
+      runtimePrefabSourceKey: Unit_Veh_Truck_Tray
+      expectedAssetGuid: 57f2dccc00faf49bca391aa1cc44d70a
+      spawnAnchorId: anchor.ch02.m03.corrupt_convoy
+      missionRoleId: role.market.corrupt_transfer
+      count: 1
   - groupId: group.ch02.m03.hostile_a
     factionIndex: 2
     units:
-    - unitConfigKey: unit.market.chr_insurgent_male_03.0
+    - unitConfigKey: unit.market.chr_insurgent_male_03.4.0
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
       expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
       spawnAnchorId: anchor.ch02.m03.hostile_a
       missionRoleId: role.market.hostile
       count: 1
-    - unitConfigKey: unit.market.chr_insurgent_female_01.1
+    - unitConfigKey: unit.market.chr_insurgent_female_01.4.1
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
       expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
       spawnAnchorId: anchor.ch02.m03.hostile_a
       missionRoleId: role.market.hostile
       count: 1
-    - unitConfigKey: unit.market.chr_insurgent_female_02.2
+    - unitConfigKey: unit.market.chr_insurgent_female_02.4.2
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
       expectedAssetGuid: 655c350601d8a48e0b0efcbc75872502
       spawnAnchorId: anchor.ch02.m03.hostile_a
@@ -133,19 +146,19 @@ MonoBehaviour:
   - groupId: group.ch02.m03.hostile_b
     factionIndex: 2
     units:
-    - unitConfigKey: unit.market.chr_insurgent_male_03.0
+    - unitConfigKey: unit.market.chr_insurgent_male_03.5.0
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Male_03
       expectedAssetGuid: 9d3494e0921d647798634354c12f2bf2
       spawnAnchorId: anchor.ch02.m03.hostile_b
       missionRoleId: role.market.hostile
       count: 1
-    - unitConfigKey: unit.market.chr_insurgent_female_01.1
+    - unitConfigKey: unit.market.chr_insurgent_female_01.5.1
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_01
       expectedAssetGuid: 71e48079674fc47b79eb9b4c5fc12b89
       spawnAnchorId: anchor.ch02.m03.hostile_b
       missionRoleId: role.market.hostile
       count: 1
-    - unitConfigKey: unit.market.chr_insurgent_female_02.2
+    - unitConfigKey: unit.market.chr_insurgent_female_02.5.2
       runtimePrefabSourceKey: Unit_Chr_Insurgent_Female_02
       expectedAssetGuid: 655c350601d8a48e0b0efcbc75872502
       spawnAnchorId: anchor.ch02.m03.hostile_b
@@ -162,7 +175,7 @@ MonoBehaviour:
     unitGroupId: group.ch02.m03.hostile_b
     anchorIds:
     - anchor.ch02.m03.hostile_b
-    - anchor.ch02.m03.manifest
+    - anchor.ch02.m03.corrupt_manifest
     startDelayMilliseconds: 70000
   restrictions:
     buildingDisabled: 1
@@ -296,6 +309,7 @@ MonoBehaviour:
     enabled: 1
     deliveryAnchorId: anchor.ch02.m03.delivery
     manifestAnchorId: anchor.ch02.m03.manifest
+    corruptManifestAnchorId: anchor.ch02.m03.corrupt_manifest
     requiredDeliveries: 3
     manifestHoldMilliseconds: 6000
     victoryHoldMilliseconds: 10000
@@ -310,3 +324,23 @@ MonoBehaviour:
       SmoothTimeSeconds: 0.7
       PostPerspective: {x: 52, y: 65, z: 0, w: 55}
       ApproachPerspective: {x: 48, y: 68, z: 0, w: 52}
+  powerRelay:
+    enabled: 0
+    shortRouteAnchorId:
+    safeRouteAnchorId:
+    shelterAnchorId:
+    repairAnchorId:
+    repairHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    routeRadius: 0
+    shelterRadius: 0
+    repairRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

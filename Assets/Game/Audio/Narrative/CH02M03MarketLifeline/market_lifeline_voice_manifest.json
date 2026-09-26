@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.MarketLifelineBilingualVoice.v1",
+  "missionId": "saga.ch02.m03.market_lifeline",
+  "generatedAtUtc": "2026-09-26T09:23:38.420593+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-brief-01",
+      "speaker": "YASIN",
+      "locale": "en-US",
+      "text": "Old Market is short of food and medicine, but the market workers are not your enemy. Two manifests claim the same trade route; one covers our three relief trucks, and one is a copied transfer.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-brief-01.wav",
+      "durationSeconds": 12.16,
+      "sha256": "1278544ec934a8de4e375b14c7393d3ea8d3427611734aa1b63f190b77308285",
+      "captionSha256": "95a8327c2b73bd0155687937d7147f248450275bee7ad928cd4eccb0429da39c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-brief-01",
+      "speaker": "YASIN",
+      "locale": "fa-IR",
+      "text": "بازار قدیمی با کمبود غذا و دارو روبه‌روئه، اما کارگرهای بازار دشمن شما نیستن. دو بارنامه ادعای یک مسیر تجاری رو دارن؛ یکی برای سه کامیون امدادی ماست و یکی انتقالی کپی‌شده‌ست.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-brief-01.wav",
+      "durationSeconds": 16.48,
+      "sha256": "5e882272334a5bc9388de764c42dce0f9594a4194d887302d9d47777439cc028",
+      "captionSha256": "f524a8dbe795fde26919064d5581aff07ba04e9bb15bb3a470a6c1838c2991c5"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-brief-02",
+      "speaker": "YASIN",
+      "locale": "en-US",
+      "text": "Inspect both marked manifest tables. The legitimate record follows our usual quantities, seals and delivery rhythm. The copy diverts cargo toward Relay-era storage sites.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-brief-02.wav",
+      "durationSeconds": 11.84,
+      "sha256": "97bc3f088fea8344bfa490166b1fbde6054d9e12bd958645ac1221bec10209ec",
+      "captionSha256": "a4ef0a09ce6221326eccf504908a2f0c4952c92348ea032c1803456c4899d403"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-brief-02",
+      "speaker": "YASIN",
+      "locale": "fa-IR",
+      "text": "هر دو میز بارنامهٔ مشخص‌شده رو بررسی کنید. سند واقعی از مقدارها، مهرها و زمان‌بندی همیشگی ما پیروی می‌کنه. نسخهٔ کپی‌شده بار رو به انبارهای دورهٔ شبکه منحرف می‌کنه.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-brief-02.wav",
+      "durationSeconds": 15.76,
+      "sha256": "2f62fa3f223e3597581a919e03bee5a596c6d936203b459bf8b7e45596c6a283",
+      "captionSha256": "97c348445e5442238c901ffd718abd1172fd56165246e626535b48b0fa77762c"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Compare first, then escort only the three legitimate relief trucks to the delivery yard. Defeat the armed cell without closing ordinary trade, and do not deliver the copied transfer.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-brief-03.wav",
+      "durationSeconds": 11.6,
+      "sha256": "f2442162e4b3036f0a1ff4597e90ac67087e9a3cc7380d34f1a9a20929f66d7d",
+      "captionSha256": "b2935c053f3bf4945c087934c94452ddd9b3a7519c7d9b9a686e3ec5a61d03cf"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "اول مقایسه کنید، بعد فقط سه کامیون امدادی واقعی رو به محوطهٔ تحویل برسونید. گروه مسلح رو بدون بستن دادوستد عادی شکست بدید و انتقال کپی‌شده رو تحویل ندید.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-brief-03.wav",
+      "durationSeconds": 14.08,
+      "sha256": "4d942b0f652ec51be7a799dfdb221e437be53c6f409372cbe58f54131baa99f1",
+      "captionSha256": "a4b5204ef130b03d44e1c099ea3edcfd2ca12b36470a638b4f9f7a118854eff1"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-comms-01",
+      "speaker": "YASIN",
+      "locale": "en-US",
+      "text": "There—the copied manifest borrows a real route, but its quantities and seals do not match our trade. The three relief trucks are legitimate; the separate transfer leads to old storage sites around Relay infrastructure.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-comms-01.wav",
+      "durationSeconds": 13.76,
+      "sha256": "6b3c8351ab89dfbd1d22ccd41edaae032a12aecd57ac0fed6d23772920348fed",
+      "captionSha256": "26ca3bafaa00a75957b5ea7171824b1fe622fae6a34b382611bb54a902c485ce"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-comms-01",
+      "speaker": "YASIN",
+      "locale": "fa-IR",
+      "text": "همینه—بارنامهٔ کپی‌شده از یک مسیر واقعی استفاده می‌کنه، اما مقدارها و مهرها با دادوستد ما جور درنمیاد. سه کامیون امدادی واقعی‌ان؛ انتقال جداگانه به انبارهای قدیمی اطراف زیرساخت شبکه می‌رسه.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-comms-01.wav",
+      "durationSeconds": 17.28,
+      "sha256": "91ff74b54ac5415be5f5bbdcd403cf20f378aac71352286ea1e2627b56c9a7aa",
+      "captionSha256": "dcb1a4a93b871b04f395956e002773ad22b3056375bd9db8faa3d79580b8f9b7"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-01",
+      "speaker": "YASIN",
+      "locale": "en-US",
+      "text": "All three legitimate relief loads reached Old Market, and ordinary trade never stopped. You investigated the transfer without turning the market into the suspect.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-debrief-01.wav",
+      "durationSeconds": 10.48,
+      "sha256": "7c9336a3710c35dbb6e99b4630d41a9ad025981fe66faa048e7c2bbd582a20ad",
+      "captionSha256": "0d42281bc58acbd72c5e1bf31b39afb8224c86f8635490e70f3354a76b486621"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-01",
+      "speaker": "YASIN",
+      "locale": "fa-IR",
+      "text": "هر سه محمولهٔ امدادی واقعی به بازار قدیمی رسید و دادوستد عادی هم متوقف نشد. انتقال رو بررسی کردید، بدون اینکه خود بازار رو متهم کنید.",
+      "voiceId": "nPczCjzI2devNBz1zQrb",
+      "voiceName": "Brian - Deep, Resonant and Comforting (Yasin)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-debrief-01.wav",
+      "durationSeconds": 12.8,
+      "sha256": "42da1df1b8d91a561f2d117b4a79a086525a8414c2cc6eccfe3c7b81c2e5b8ac",
+      "captionSha256": "be443986366c0f374b56ff946b557fa66d9cd99024e53d6c5b6c294301a61632"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Families can collect food and medicine without crossing a military cordon. The compromised manifest names several Relay-era storage sites; market workers will keep the real route moving.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-debrief-02.wav",
+      "durationSeconds": 10.64,
+      "sha256": "7ffc7f712025edf4866cdaadd7f1e8978a367271a883912781a710aa88187794",
+      "captionSha256": "7a244728fc1101c2d24dd5f8b7606370afa7e409e12fe735136e18ff547e38c2"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "خانواده‌ها می‌تونن بدون عبور از محاصرهٔ نظامی غذا و دارو بگیرن. بارنامهٔ دستکاری‌شده چند انبار دورهٔ شبکه رو نام می‌بره؛ کارگرهای بازار مسیر واقعی رو باز نگه می‌دارن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-debrief-02.wav",
+      "durationSeconds": 14.32,
+      "sha256": "6c24a7f67d091f515936e3a21674d4cb9bb13bd89969af88a4f386301fab4ff7",
+      "captionSha256": "bb02e0082ba9f0defe937e286c85d0bdf06c934d5d63a6ebd42b1b41a2e2ecea"
+    },
+    {
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Evidence correlation confirmed. One listed storage site has just lost power, displacing nearby families. The next operation is the power relay.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/en/market_lifeline-debrief-03.wav",
+      "durationSeconds": 9.28,
+      "sha256": "d821f4915e879f322d7e17ca021940e776c0b637736cd39e4da1e78a42672291",
+      "captionSha256": "a04264dd01a7612e799942c3335d89fcad081c5d86c051801eec4dcf1d82143a"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "market_lifeline-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "تطبیق مدارک تأیید شد. برق یکی از انبارهای فهرست‌شده همین حالا قطع شده و خانواده‌های اطراف رو آواره کرده. عملیات بعدی، رلهٔ برقه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/Voice/fa/market_lifeline-debrief-03.wav",
+      "durationSeconds": 11.2,
+      "sha256": "77fec139dff00b058ecd5e7b54f09c542edc7f20d5ab40901c8c384ee1dc8e9c",
+      "captionSha256": "ce54c598450590ff32ff283335a639244194c9709cc455f71d53ca2977fee4c8"
+    }
+  ]
+}

@@ -35,20 +35,21 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-comms-01
       textKey: narrative.market_lifeline.comms.01
-      englishFallback: That manifest copies a real market route, but the quantities
-        and seals do not match our trade. The false transfer leads to old storage
-        sites around Relay infrastructure.
-      speaker: 2
-      voiceClip: {fileID: 0}
+      englishFallback: "There\u2014the copied manifest borrows a real route, but
+        its quantities and seals do not match our trade. The three relief trucks
+        are legitimate; the separate transfer leads to old storage sites around Relay
+        infrastructure."
+      speaker: 7
+      voiceClip: {fileID: 8300000, guid: 643ba6f18934e4730b510eb251c19b2c, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.071428
+      deadlineSeconds: 17.78
       essentialCaption: 1
     continueStateId: MarketLifeline-comms-complete
     skipStateId: MarketLifeline-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.071428
+    durationSeconds: 17.78
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -131,20 +132,20 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-debrief-01
       textKey: narrative.market_lifeline.debrief.01
-      englishFallback: All three relief loads reached Old Market, and legitimate
-        trade never stopped. Families can collect food and medicine without crossing
-        a military cordon.
-      speaker: 2
-      voiceClip: {fileID: 0}
+      englishFallback: All three legitimate relief loads reached Old Market, and
+        ordinary trade never stopped. You investigated the transfer without turning
+        the market into the suspect.
+      speaker: 7
+      voiceClip: {fileID: 8300000, guid: e5fe90a4c5e664c07aa40a5b17c2c344, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.928572
+      deadlineSeconds: 13.3
       essentialCaption: 1
     continueStateId: MarketLifeline-debrief-1
     skipStateId: MarketLifeline-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.928572
+    durationSeconds: 13.3
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -177,20 +178,20 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-debrief-02
       textKey: narrative.market_lifeline.debrief.02
-      englishFallback: This is the compromised transfer. The same false seals appear
-        at several Relay-era storage sites. Take the record; the market workers will
-        keep the real route moving.
-      speaker: 1
-      voiceClip: {fileID: 0}
+      englishFallback: Families can collect food and medicine without crossing a
+        military cordon. The compromised manifest names several Relay-era storage
+        sites; market workers will keep the real route moving.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 952d0a22601ab4cd88a8aac96473e764, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.857142
+      deadlineSeconds: 14.82
       essentialCaption: 1
     continueStateId: MarketLifeline-debrief-2
     skipStateId: MarketLifeline-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.857142
+    durationSeconds: 14.82
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -227,16 +228,16 @@ MonoBehaviour:
         just lost power, displacing nearby families. The next operation is the power
         relay.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: cec7f50e06d1a4af6aec4e0275299314, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 10.214286
+      deadlineSeconds: 11.7
       essentialCaption: 1
     continueStateId: MarketLifeline-debrief-complete
     skipStateId: MarketLifeline-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 10.214286
+    durationSeconds: 11.7
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -319,20 +320,20 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-brief-01
       textKey: narrative.market_lifeline.brief.01
-      englishFallback: These stalls feed the district, but three relief trucks are
-        stranded outside the market. Keep trade open while you bring them to the
-        marked delivery yard.
-      speaker: 2
-      voiceClip: {fileID: 0}
+      englishFallback: Old Market is short of food and medicine, but the market workers
+        are not your enemy. Two manifests claim the same trade route; one covers
+        our three relief trucks, and one is a copied transfer.
+      speaker: 7
+      voiceClip: {fileID: 8300000, guid: b0d3a9eb3fa194e51beac1aa15ad28a9, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.571428
+      deadlineSeconds: 16.98
       essentialCaption: 1
     continueStateId: MarketLifeline-brief-1
     skipStateId: MarketLifeline-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.571428
+    durationSeconds: 16.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -365,20 +366,20 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-brief-02
       textKey: narrative.market_lifeline.brief.02
-      englishFallback: The market is not the enemy. Escort all three trucks, defeat
-        the armed cell, then move one rifle squad to the manifest table and hold
-        there for six seconds to verify the transfer.
-      speaker: 2
-      voiceClip: {fileID: 0}
+      englishFallback: Inspect both marked manifest tables. The legitimate record
+        follows our usual quantities, seals and delivery rhythm. The copy diverts
+        cargo toward Relay-era storage sites.
+      speaker: 7
+      voiceClip: {fileID: 8300000, guid: b3533d5cf9989467ba9dcdb8d7d83eda, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.785714
+      deadlineSeconds: 16.26
       essentialCaption: 1
     continueStateId: MarketLifeline-brief-2
     skipStateId: MarketLifeline-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.785714
+    durationSeconds: 16.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -411,20 +412,20 @@ MonoBehaviour:
     lines:
     - lineId: market_lifeline-brief-03
       textKey: narrative.market_lifeline.brief.03
-      englishFallback: "Use Select, Move, Attack and Hold\u2014the same field commands
-        as before. No search action is needed. Once the manifest is verified, keep
-        the delivery yard secure for ten seconds."
-      speaker: 1
-      voiceClip: {fileID: 0}
+      englishFallback: Compare first, then escort only the three legitimate relief
+        trucks to the delivery yard. Defeat the armed cell without closing ordinary
+        trade, and do not deliver the copied transfer.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 1876c9b16c36f4e66b6f1e8903472f53, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.428572
+      deadlineSeconds: 14.58
       essentialCaption: 1
     continueStateId: MarketLifeline-brief-complete
     skipStateId: MarketLifeline-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.428572
+    durationSeconds: 14.58
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

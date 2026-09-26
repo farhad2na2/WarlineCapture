@@ -15,6 +15,7 @@ namespace Game.Runtime
     public sealed class RtsSelectionPointerTargetCommandCompositionSystemHelper
     {
         private const float UnitClickScreenFallbackRadiusPixels = 54f;
+        private const float TutorialWorldTargetSnapRadiusPixels = 54f;
         private const int TraversableTargetSearchRadius = 24;
 
         public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
@@ -131,6 +132,7 @@ namespace Game.Runtime
         private EntityQuery _gridConfigQuery;
         private EntityQuery _mapSurfaceQuery;
         private EntityQuery _runtimeBuildingCombatQuery;
+        private EntityQuery _campaignGuidanceQuery;
         private readonly MapSurfaceSampler _mapSurfaceQuerySystem = new();
         private readonly MapSurfaceSlopeClassifier _mapSurfaceSlopeClassificationSystem = new();
         private readonly MapSurfacePathfindingSnapshot _mapSurfaceReadSystem = new();
@@ -253,11 +255,55 @@ namespace Game.Runtime
             if (targetBoundary.TryGetClickedUnitEntity(screenPosition, em, out _))
                 return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
 
+            // A visible tutorial ring can be rendered through dense-city geometry so the
+            // player can always see the requested road/shelter. A normal touch on that ring
+            // must resolve to the authored guidance point instead of the foreground roof or
+            // wall under the same screen pixel.
+            if (TryResolveTutorialWorldMoveTarget(context, screenPosition, em, out int2 guidedCell, out Vector3 guidedPoint))
+            {
+                queuedResolvedTarget = context.InputSystem.QueueMoveCommandRequest(screenPosition, guidedCell, guidedPoint, frame);
+                return queuedResolvedTarget;
+            }
+
             if (!targetBoundary.TryGetMoveCommandCell(screenPosition, em, out int2 targetCell, out Vector3 worldPoint))
                 return context.InputSystem.QueueMoveCommandRequest(screenPosition, frame);
 
             queuedResolvedTarget = context.InputSystem.QueueMoveCommandRequest(screenPosition, targetCell, worldPoint, frame);
             return queuedResolvedTarget;
+        }
+
+        private bool TryResolveTutorialWorldMoveTarget(
+            Context context,
+            Vector2 screenPosition,
+            EntityManager em,
+            out int2 cell,
+            out Vector3 worldPoint)
+        {
+            cell = default;
+            worldPoint = default;
+            EnsureEntityQueries(em);
+            if (context.WorldCamera == null || _campaignGuidanceQuery.CalculateEntityCount() != 1)
+                return false;
+
+            CampaignMissionGuidanceProjectionComponent guidance =
+                _campaignGuidanceQuery.GetSingleton<CampaignMissionGuidanceProjectionComponent>();
+            if (guidance.Active == 0 || guidance.CanExecute == 0 || guidance.HasWorldPosition == 0 ||
+                guidance.TargetKind != AssistantTargetKind.WorldPosition ||
+                guidance.RecommendationKind != AssistantRecommendationKind.Move)
+                return false;
+
+            Vector3 authored = guidance.WorldPosition;
+            Vector3 projected = context.WorldCamera.WorldToScreenPoint(authored + Vector3.up * .08f);
+            if (projected.z <= 0 || ((Vector2)projected - screenPosition).sqrMagnitude >
+                TutorialWorldTargetSnapRadiusPixels * TutorialWorldTargetSnapRadiusPixels)
+                return false;
+
+            cell = new int2(Mathf.RoundToInt(authored.x), Mathf.RoundToInt(authored.z));
+            worldPoint = authored;
+            if (SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace)
+                SelectionRuntimeDiagnosticsSystemHelper.LogMoveCommandTrace(
+                    $"tutorialWorldTargetSnap screen={screenPosition} guidance={guidance.GuidanceId} cell={cell} world={worldPoint}");
+            return true;
         }
 
         public bool TryRequestAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
@@ -1598,6 +1644,8 @@ namespace Game.Runtime
                 ComponentType.ReadOnly<Faction>(),
                 ComponentType.ReadOnly<UnitHealth>(),
                 ComponentType.ReadOnly<LocalTransform>());
+            _campaignGuidanceQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<CampaignMissionGuidanceProjectionComponent>());
         }
     }
 }

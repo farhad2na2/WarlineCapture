@@ -18,12 +18,13 @@ namespace Game.UI.Runtime
                 if(_selectionBoxRequested)return TryObserveVisibleSelectionDrag(out _, out _);
                 if(_directTutorialTarget!=null) return _screenTargetIndicator!=null && _screenTargetIndicator.gameObject.activeInHierarchy;
                 if(_worldCamera==null || _worldRingRenderer==null) return false;
-                var point=_worldCamera.WorldToViewportPoint(_worldRingRenderer.bounds.center);
+                var point=_worldCamera.WorldToViewportPoint(_directTutorialWorldTarget);
                 return point.z>0 && point.x>.18f && point.x<.72f && point.y>.27f && point.y<.86f;
             }
         }
         private bool _directTutorialCue;
         private RectTransform _directTutorialTarget;
+        private Vector3 _directTutorialWorldTarget;
         private string _directCaptionKey, _directCaptionLocale;
         internal Button ResolveSquadTutorialControl() => _squadGuidanceButton;
         internal bool IsBuildDrawerOpen => _buildDrawerView != null && _buildDrawerView.IsOpen;
@@ -131,6 +132,7 @@ namespace Game.UI.Runtime
             HideSelectionDrag();
             _directTutorialCue = true;
             _directTutorialTarget = null;
+            _directTutorialWorldTarget = target + Vector3.up * WorldRingHeightOffset;
             _commandCueActive = false;
             if (_screenTargetIndicator != null) _screenTargetIndicator.gameObject.SetActive(false);
             ApplyWorldRing(new UiAssistantHighlightModel(0,true,0,0,0,3,target.x,target.y,target.z,1), true);

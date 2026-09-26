@@ -77,7 +77,8 @@ namespace Game.Missions.Contracts
         RestoreGridlockSiteB = 14,
         DeliverGridlockRelief = 15,
         TransferSupplyOil = 16, TransferSupplyFuel = 17, SecureSupplyReserve = 18,
-        DeliverMarketRelief = 19, VerifyMarketManifest = 20, KeepMarketOpen = 21
+        DeliverMarketRelief = 19, VerifyMarketManifest = 20, KeepMarketOpen = 21,
+        EscortPowerRelayFamilies = 22, RestorePowerRelay = 23, SecurePowerRelay = 24
     }
 
     public enum MissionStarRuleKind : byte

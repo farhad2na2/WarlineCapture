@@ -180,6 +180,7 @@ namespace Game.Configs
         [SerializeField] private MissionGridlockDefinitionConfig gridlock;
         [SerializeField] private MissionSupplyLineDefinitionConfig supplyLine;
         [SerializeField] private MissionMarketLifelineDefinitionConfig marketLifeline;
+        [SerializeField] private MissionPowerRelayDefinitionConfig powerRelay;
 
         public string ScenarioId => scenarioId;
         public string OperationMapId => operationMapId;
@@ -197,6 +198,7 @@ namespace Game.Configs
         public MissionGridlockDefinitionConfig Gridlock => gridlock;
         public MissionSupplyLineDefinitionConfig SupplyLine => supplyLine;
         public MissionMarketLifelineDefinitionConfig MarketLifeline => marketLifeline;
+        public MissionPowerRelayDefinitionConfig PowerRelay => powerRelay;
 
         public bool TryValidateIdentity(out string error)
         {
@@ -267,7 +269,8 @@ namespace Game.Configs
                 !MissionBreachDefinitionValidation.TryValidate(this, out error) ||
                 !MissionGridlockDefinitionValidation.TryValidate(this, out error) ||
                 !MissionSupplyLineDefinitionValidation.TryValidate(this, out error) ||
-                !MissionMarketLifelineDefinitionValidation.TryValidate(this, out error))
+                !MissionMarketLifelineDefinitionValidation.TryValidate(this, out error) ||
+                !MissionPowerRelayDefinitionValidation.TryValidate(this, out error))
                 return false;
 
             error = null;

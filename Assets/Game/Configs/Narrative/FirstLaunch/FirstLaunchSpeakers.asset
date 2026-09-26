@@ -83,3 +83,23 @@ MonoBehaviour:
     treatment: 1
     identitySprite: {fileID: 21300000, guid: 4b609ca988666424da9b5fef3a115b72, type: 3}
     accentColor: {r: 0.76, g: 0.65, b: 0.43, a: 1}
+  - speakerId: 7
+    nameKey: narrative.speaker.yasin.name
+    nameFallback: Yasin Barakat
+    roleKey: narrative.speaker.yasin.role
+    roleFallback: Old Market representative
+    accessibleLabelKey: narrative.speaker.yasin.accessibleLabel
+    accessibleLabelFallback: Yasin Barakat, Old Market representative
+    treatment: 1
+    identitySprite: {fileID: 21300000, guid: 329770e770a24558a2592701182699af, type: 3}
+    accentColor: {r: 0.72, g: 0.57, b: 0.35, a: 1}
+  - speakerId: 8
+    nameKey: narrative.speaker.lina.name
+    nameFallback: Dr. Lina Mansour
+    roleKey: narrative.speaker.lina.role
+    roleFallback: East district shelter physician
+    accessibleLabelKey: narrative.speaker.lina.accessibleLabel
+    accessibleLabelFallback: Doctor Lina Mansour, east district shelter physician
+    treatment: 1
+    identitySprite: {fileID: 21300000, guid: e0ffd1f1632a54010af96244c40ef79b, type: 3}
+    accentColor: {r: 0.38, g: 0.76, b: 0.72, a: 1}

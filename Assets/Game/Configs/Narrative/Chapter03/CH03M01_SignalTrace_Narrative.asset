@@ -21,14 +21,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 8734a4fd465ba4029b7c07d3035ec070
+      m_SubObjectName: DebriefDeviceRecovered-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 8734a4fd465ba4029b7c07d3035ec070
+      m_SubObjectName: DebriefDeviceRecovered-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -66,14 +66,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: c4f7831caa61b47f885f7f3d587f0965
+      m_SubObjectName: DebriefCivilianTrust-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: c4f7831caa61b47f885f7f3d587f0965
+      m_SubObjectName: DebriefCivilianTrust-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -111,14 +111,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 385c27837e47e4cb4b27157e01c9240a
+      m_SubObjectName: DebriefSafehouseRoute-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 385c27837e47e4cb4b27157e01c9240a
+      m_SubObjectName: DebriefSafehouseRoute-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -207,14 +207,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 9a0ef26f8f0f7483bbbb0699d65b15ac
+      m_SubObjectName: CommsCarrierConfirmed-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 9a0ef26f8f0f7483bbbb0699d65b15ac
+      m_SubObjectName: CommsCarrierConfirmed-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -303,14 +303,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 3bd46195ff2054779a27f436d52d496e
+      m_SubObjectName: BriefThreeSignals-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 3bd46195ff2054779a27f436d52d496e
+      m_SubObjectName: BriefThreeSignals-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -349,14 +349,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: fa85249fd72484ff5a7577642c4a24f6
+      m_SubObjectName: BriefObservationPoints-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: fa85249fd72484ff5a7577642c4a24f6
+      m_SubObjectName: BriefObservationPoints-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -395,14 +395,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 47d15340b117d4f4bbb4d36e99839033
+      m_SubObjectName: BriefRulesOfEngagement-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: cafc3cb3dc9e54711be495834f4fc9ae
-      m_SubObjectName: SignalTrace
+      m_AssetGUID: 47d15340b117d4f4bbb4d36e99839033
+      m_SubObjectName: BriefRulesOfEngagement-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0

@@ -35,6 +35,8 @@ namespace Game.Editor
                 }
             }
             if(failures.Count>0)throw new BuildFailedException("Campaign comic coverage failed:\n"+string.Join("\n",failures));
+            ValidateMissionDistinct(CH02M05RouteReopenedNarrativeBuilder.Path,"seq.ch02.m05.");
+            ValidateMissionDistinct(CH03M01SignalTraceNarrativeBuilder.Path,"seq.ch03.m01.");
             Debug.Log($"[CampaignComicCoverage] result=Passed sequences={sequences} dialogueStates={dialogues} aspects=16x9,20x9 shipGate=enabled");
         }
 
@@ -47,6 +49,17 @@ namespace Game.Editor
             if(dialogues==0)throw new InvalidOperationException("No dialogue states found for "+sequencePrefix);
             Debug.Log($"[CampaignComicCoverage] result=Passed mission={sequencePrefix} dialogueStates={dialogues} aspects=2");
         }
+
+        public static void ValidateMissionDistinct(string assetPath,string sequencePrefix)
+        {
+            ValidateMission(assetPath,sequencePrefix);
+            var states=AssetDatabase.LoadAllAssetsAtPath(assetPath).OfType<NarrativeSequenceConfig>().Where(s=>s.SequenceId.StartsWith(sequencePrefix,StringComparison.Ordinal)).SelectMany(s=>s.States).Where(s=>s.Kind==NarrativeStateKind.PanelDialogue).ToArray();
+            var panel16=states.Select(s=>PanelIdentity(s.Panel16x9,s.Panel16x9Reference)).ToArray();var panel20=states.Select(s=>PanelIdentity(s.Panel20x9,s.Panel20x9Reference)).ToArray();
+            if(panel16.Distinct(StringComparer.Ordinal).Count()!=states.Length||panel20.Distinct(StringComparer.Ordinal).Count()!=states.Length)throw new InvalidOperationException($"{sequencePrefix} must use one distinct authored comic per dialogue line and aspect.");
+            Debug.Log($"[CampaignComicDistinctness] result=Passed mission={sequencePrefix} dialogueStates={states.Length} distinct16x9={panel16.Length} distinct20x9={panel20.Length}");
+        }
+
+        private static string PanelIdentity(Sprite direct,UnityEngine.AddressableAssets.AssetReferenceSprite reference)=>direct!=null?AssetDatabase.GetAssetPath(direct)+":"+direct.name:reference.AssetGUID+":"+reference.SubObjectName;
 
         private static void ValidatePanel(NarrativeSequenceConfig sequence,NarrativeStateRecord state,Sprite direct,UnityEngine.AddressableAssets.AssetReferenceSprite reference,string aspect,List<string> failures)
         {

@@ -15,6 +15,41 @@ MonoBehaviour:
   m_GroupName: Route Reopened Narrative
   m_GUID: 319f359e1fcdd4571ac56c92c98b1dfd
   m_SerializeEntries:
+  - m_GUID: 320e88b595450441286514c1b0d23696
+    m_Address: narrative.route_reopened.briefroutingarchive
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6195b0b8caef54920a1c3c132e481f6a
+    m_Address: narrative.route_reopened.debriefqassemsignal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6223b3293a7924b11b250fbf7bbec757
+    m_Address: narrative.route_reopened.debriefprotocolfragment
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 792505e6234af43259937f02a627051f
+    m_Address: narrative.route_reopened.brieftwinlifelines
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7a7db659cb514a6a81291d10356a97f
+    m_Address: narrative.route_reopened.briefcontrolledcapture
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d21b24e4ac3ca4ac3912095449e98c73
+    m_Address: narrative.route_reopened.commsdormantrelay
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df42a2ee178eb427fb4f0de3771b3ad7
+    m_Address: narrative.route_reopened.debriefhubsecured
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: e27f4ff6025874eb6aecabc859cae6c6
     m_Address: narrative.route_reopened.approved
     m_ReadOnly: 0

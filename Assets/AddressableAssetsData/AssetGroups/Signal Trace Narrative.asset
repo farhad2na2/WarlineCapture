@@ -15,8 +15,43 @@ MonoBehaviour:
   m_GroupName: Signal Trace Narrative
   m_GUID: e017cc9d2e62747419ece93ed4f031c9
   m_SerializeEntries:
+  - m_GUID: 385c27837e47e4cb4b27157e01c9240a
+    m_Address: narrative.signal_trace.debriefsafehouseroute
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3bd46195ff2054779a27f436d52d496e
+    m_Address: narrative.signal_trace.briefthreesignals
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 47d15340b117d4f4bbb4d36e99839033
+    m_Address: narrative.signal_trace.briefrulesofengagement
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8734a4fd465ba4029b7c07d3035ec070
+    m_Address: narrative.signal_trace.debriefdevicerecovered
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9a0ef26f8f0f7483bbbb0699d65b15ac
+    m_Address: narrative.signal_trace.commscarrierconfirmed
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c4f7831caa61b47f885f7f3d587f0965
+    m_Address: narrative.signal_trace.debriefciviliantrust
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cafc3cb3dc9e54711be495834f4fc9ae
     m_Address: narrative.signal_trace.approved
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fa85249fd72484ff5a7577642c4a24f6
+    m_Address: narrative.signal_trace.briefobservationpoints
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

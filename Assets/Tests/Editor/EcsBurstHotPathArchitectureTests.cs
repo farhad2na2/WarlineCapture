@@ -99,6 +99,7 @@ public sealed class EcsBurstHotPathArchitectureTests
         ["Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"] = "audio presentation request boundary; recurring queue/state systems share managed World caching and one-time audio singleton creation before presentation consumes requests.",
         ["Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs"] = "spatial audio presentation bridge; missile-flight ticks route configured managed-string event identifiers through the shared audio request singleton.",
         ["Assets/Game/Scripts/Rendering/Systems/RuntimeCameraReferenceSystem.cs"] = "camera presentation bridge; tracks managed Unity camera references for ECS consumers.",
+        ["Assets/Game/Scripts/Rendering/Systems/CombatCameraShakePresentationSystem.cs"] = "camera presentation bridge; reads explosion audio requests and the final-kill shot state, then offsets the managed world Camera transform only inside URP begin/end camera rendering callbacks.",
         ["Assets/Game/Scripts/Systems/UnitRespawnSystem.cs"] = "spawn/presentation boundary; prefab instantiation, grounding warnings, and setup stay managed.",
         ["Assets/Game/Scripts/Systems/UnitAttackVfxSystems.cs"] = "GameObject VFX presentation bridge; plays managed muzzle flash, impact, missile, and explosion prefabs.",
         ["Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs"] = "GameObject/prefab reference bridge; managed presentation boundary.",

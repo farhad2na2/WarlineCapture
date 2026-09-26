@@ -138,7 +138,8 @@ namespace Game.Runtime
                     }
                     state.EntityManager.SetComponentData(defenseTourQuery.GetSingletonEntity(),camera);
                 }
-            if(_cameraFocusQuery.CalculateEntityCount()==1 || runtime.Phase!=MissionPhaseKind.SecureCorridor) return;
+            if(_cameraFocusQuery.CalculateEntityCount()==1 || runtime.Phase!=MissionPhaseKind.SecureCorridor ||
+                IsFinalKillShotActive(ref state,in runtime)) return;
             foreach(var finale in SystemAPI.Query<RefRW<CampaignMissionFinalePresentationComponent>>())
             {
                 var current=finale.ValueRO;
@@ -151,6 +152,9 @@ namespace Game.Runtime
             em.SetComponentData(target,new RuntimeCameraFocusRequestComponent{Requested=1,Smooth=smoothTime>0 ? (byte)1 : (byte)0,
                 UseExplicitPerspective=1,Perspective=perspective,SmoothTimeSeconds=smoothTime,World=world});
         }
+        private bool IsFinalKillShotActive(ref SystemState state,in CampaignMissionRuntimeComponent runtime) =>
+            SystemAPI.TryGetSingleton(out CampaignMissionFinalKillCinematicComponent finalKill) &&
+            CampaignMissionFinalKillCinematicHelper.IsActive(in finalKill, in runtime.SessionToken);
         private bool IsOpeningVisible(EntityManager entityManager)
         {
             int renderStateCount = _renderVirtualizationStateQuery.CalculateEntityCount();

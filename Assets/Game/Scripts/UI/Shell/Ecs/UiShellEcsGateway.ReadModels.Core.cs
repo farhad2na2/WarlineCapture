@@ -122,7 +122,8 @@ namespace Game.UI.Shell.Ecs
                 projection.SourceVersion == 0 ||
                 !runtime.MissionId.Equals(projection.MissionId) ||
                 !runtime.SessionToken.Equals(projection.SessionToken) ||
-                runtime.AttemptOrdinal != projection.AttemptOrdinal)
+                runtime.AttemptOrdinal != projection.AttemptOrdinal ||
+                CampaignMissionFinalKillCinematicSystem.IsHoldingMissionResult(entityManager, root))
                 return false;
 
             byte settlementAccepted = 0;

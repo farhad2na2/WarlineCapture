@@ -270,12 +270,13 @@ namespace Game.Runtime
                 }
 
                 EntityCommandBuffer finaleStructuralChanges = new(Allocator.Temp);
+                bool finalKillShotActive = IsFinalKillShotActive(ref state, in runtime);
                 foreach (RefRW<CampaignMissionFinalePresentationComponent> finale in
                          SystemAPI.Query<RefRW<CampaignMissionFinalePresentationComponent>>())
                 {
                     CampaignMissionFinalePresentationComponent current = finale.ValueRO;
                     if (current.Required == 0 || !current.SessionToken.Equals(runtime.SessionToken) ||
-                        current.Stage >= 4)
+                        current.Stage >= 4 || finalKillShotActive)
                         continue;
                     if (definition.Breach.Enabled != 0)
                     {

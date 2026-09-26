@@ -329,7 +329,8 @@ namespace Game.Runtime
                 entityManager.GetComponentData<CampaignMissionRuntimeComponent>(root);
             if (!runtime.MissionId.Equals(requiredMissionId) ||
                 runtime.Phase != MissionPhaseKind.Result ||
-                runtime.Outcome != MissionOutcomeKind.Victory)
+                runtime.Outcome != MissionOutcomeKind.Victory ||
+                CampaignMissionFinalKillCinematicSystem.IsHoldingMissionResult(entityManager, root))
             {
                 return false;
             }

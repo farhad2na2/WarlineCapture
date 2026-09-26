@@ -1,0 +1,475 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6559252173837477491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M05_RouteReopened_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m05.debrief
+  entryStateId: RouteReopened-debrief-0
+  defaultSkipDestinationId: RouteReopened-debrief-complete
+  states:
+  - stateId: RouteReopened-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-debrief-01
+      textKey: narrative.route_reopened.debrief.01
+      englishFallback: The hub is ours, both lifelines stayed open, and the road
+        crew restored the broken lane under fire. Samira's teams are already returning
+        the captured equipment to civilian service.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 8065c5b7fdb0847b395c1ebb97b90201, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.58
+      essentialCaption: 1
+    continueStateId: RouteReopened-debrief-1
+    skipStateId: RouteReopened-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-debrief-02
+      textKey: narrative.route_reopened.debrief.02
+      englishFallback: Protocol Fragment Two assembled. Every diverted road, Fuel
+        load, market transfer and power handshake fed selected dormant Civic Relay
+        nodes. The attacks were preparation, not random destruction.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 33f4abff4123145bfa9141d690ed0d18, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.38
+      essentialCaption: 1
+    continueStateId: RouteReopened-debrief-2
+    skipStateId: RouteReopened-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.38
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-debrief-03
+      textKey: narrative.route_reopened.debrief.03
+      englishFallback: A city under stress authorizes what it rejected in peace.
+        You reopened the route for me. Find my signal among the people you insist
+        on protecting.
+      speaker: 9
+      voiceClip: {fileID: 8300000, guid: 95b04ae4c1ff1477d943b0579e193850, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.5
+      essentialCaption: 1
+    continueStateId: RouteReopened-debrief-complete
+    skipStateId: RouteReopened-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.5
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.route_reopened.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-2569961526919428992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M05_RouteReopened_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m05.comms
+  entryStateId: RouteReopened-comms-0
+  defaultSkipDestinationId: RouteReopened-comms-complete
+  states:
+  - stateId: RouteReopened-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-comms-01
+      textKey: narrative.route_reopened.comms.01
+      englishFallback: Commander, that delivery activated another dormant Relay node.
+        The network is not merely stealing resources; it is using the city's emergency
+        traffic as a deliberate activation pattern. Keep the archive intact.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 97ac08f72244a4747bb8a47f9df5ba01, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.3
+      essentialCaption: 1
+    continueStateId: RouteReopened-comms-complete
+    skipStateId: RouteReopened-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.3
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.route_reopened.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH02M05_RouteReopened_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch02.m05.brief
+  entryStateId: RouteReopened-brief-0
+  defaultSkipDestinationId: RouteReopened-brief-complete
+  states:
+  - stateId: RouteReopened-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-brief-01
+      textKey: narrative.route_reopened.brief.01
+      englishFallback: 'The relief network is still moving: clinic supplies on the
+        south lane, Fuel for water pumps on the north. The Ash Line logistics hub
+        controls both stolen routes, but the city cannot wait for the fighting to
+        end.'
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: b246bf6bcd56f4fcc82eaa559d71cd66, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.82
+      essentialCaption: 1
+    continueStateId: RouteReopened-brief-1
+    skipStateId: RouteReopened-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.82
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-brief-02
+      textKey: narrative.route_reopened.brief.02
+      englishFallback: Split the force. Keep both lifelines open, put the road crew
+        on the disrupted lane, and take the assault squad through the hub gate. This
+        is a controlled capture, not a demolition.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 19044161a54084deab5a77c1cbab90a2, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.58
+      essentialCaption: 1
+    continueStateId: RouteReopened-brief-2
+    skipStateId: RouteReopened-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e27f4ff6025874eb6aecabc859cae6c6
+      m_SubObjectName: RouteReopened
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: route_reopened-brief-03
+      textKey: narrative.route_reopened.brief.03
+      englishFallback: The hub's routing archive links the Fuel diversions, market
+        manifests and power handshake. Preserve those records while I correlate each
+        physical delivery with dormant Civic Relay activity.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 14dd3e45e214d4ab281f366c72713cf6, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.74
+      essentialCaption: 1
+    continueStateId: RouteReopened-brief-complete
+    skipStateId: RouteReopened-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.74
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: RouteReopened-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.route_reopened.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []

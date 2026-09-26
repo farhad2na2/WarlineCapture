@@ -59,7 +59,7 @@ namespace Game.UI.Shell.Ecs
             bool m03 = definition.Defense.Enabled != 0;
             bool m04 = definition.Extraction.Enabled != 0;
             bool m05 = definition.Breach.Enabled != 0;
-            FixedString64Bytes displayName = definition.PowerRelay.Enabled != 0 ? new FixedString64Bytes("CH02 M04 - POWER RELAY") : definition.MarketLifeline.Enabled != 0 ? new FixedString64Bytes("CH02 M03 - MARKET LIFELINE") : definition.SupplyLine.Enabled != 0 ? new FixedString64Bytes("CH02 M02 - SUPPLY LINE") : definition.Gridlock.Enabled != 0 ? new FixedString64Bytes("CH02 M01 - GRIDLOCK") : m05 ? new FixedString64Bytes("M05 - BREACH ASSAULT") : m04 ? new FixedString64Bytes("M04 - AIRLIFT") : m03 ? new FixedString64Bytes("M03 - RADAR WARNING") : m01
+            FixedString64Bytes displayName = definition.RouteReopened.Enabled != 0 ? new FixedString64Bytes("CH02 M05 - ROUTE REOPENED") : definition.PowerRelay.Enabled != 0 ? new FixedString64Bytes("CH02 M04 - POWER RELAY") : definition.MarketLifeline.Enabled != 0 ? new FixedString64Bytes("CH02 M03 - MARKET LIFELINE") : definition.SupplyLine.Enabled != 0 ? new FixedString64Bytes("CH02 M02 - SUPPLY LINE") : definition.Gridlock.Enabled != 0 ? new FixedString64Bytes("CH02 M01 - GRIDLOCK") : m05 ? new FixedString64Bytes("M05 - BREACH ASSAULT") : m04 ? new FixedString64Bytes("M04 - AIRLIFT") : m03 ? new FixedString64Bytes("M03 - RADAR WARNING") : m01
                 ? new FixedString64Bytes("M01 - FIRST CONTACT")
                 : new FixedString64Bytes("M02 - ESTABLISH THE BASE");
             FixedString64Bytes nextMissionId = new(CampaignMissionSequence.Next(definition.MissionId.ToString()));

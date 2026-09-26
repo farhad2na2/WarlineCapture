@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.RouteReopenedBilingualVoice.v1",
+  "missionId": "saga.ch02.m05.route_reopened",
+  "generatedAtUtc": "2026-09-26T14:01:59.915560+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "route_reopened-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The relief network is still moving: clinic supplies on the south lane, Fuel for water pumps on the north. The Ash Line logistics hub controls both stolen routes, but the city cannot wait for the fighting to end.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-01.wav",
+      "durationSeconds": 12.32,
+      "sha256": "8a3a9ef9ceb47fbc56a626cd95d2e98e825104bad9d2c72aa86f10a7e65a8c1b",
+      "captionSha256": "231fe7a2314acb5b261f9e952a695e71ee3639277779ad2e146c1957f24d79e6"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "شبکهٔ امداد هنوز در حرکته: تجهیزات درمانگاه در مسیر جنوبی و سوخت پمپ‌های آب در مسیر شمالی. مرکز تدارکات اش‌لاین هر دو مسیر دزدیده‌شده رو کنترل می‌کنه، اما شهر نمی‌تونه تا پایان درگیری منتظر بمونه.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-01.wav",
+      "durationSeconds": 16.32,
+      "sha256": "59a699e37ed01ea9316bc967c43893470c6357e9efa4f996f0e469f47b1864bf",
+      "captionSha256": "3d2fae8215e7345bc81019fadb9293af4a8d539bced5c56462200994ff56a7ac"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Split the force. Keep both lifelines open, put the road crew on the disrupted lane, and take the assault squad through the hub gate. This is a controlled capture, not a demolition.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-02.wav",
+      "durationSeconds": 12.24,
+      "sha256": "661cd63bb65b8badb64b1972bcc976b3f57f6eafe4e3dffc8ed13e2060a2b490",
+      "captionSha256": "e0fea56ae704da568e07ef57af65164c52270e33725acab3b19340b6487f4edb"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "نیرو رو تقسیم کن. هر دو مسیر حیاتی رو باز نگه دار، گروه راه‌سازی رو روی مسیر قطع‌شده بذار و گروه تهاجم رو از دروازهٔ مرکز وارد کن. این عملیات تصرف کنترل‌شده‌ست، نه تخریب.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-02.wav",
+      "durationSeconds": 16.08,
+      "sha256": "db4dce4e5691b3e489c8f9f78126656279469efc7e243e9d78fed869254596dd",
+      "captionSha256": "797f214c2a3961625fe6b6799f41cd89dfaf176fea25c4a17ad48f7f53210fc8"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-brief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The hub's routing archive links the Fuel diversions, market manifests and power handshake. Preserve those records while I correlate each physical delivery with dormant Civic Relay activity.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-03.wav",
+      "durationSeconds": 12.64,
+      "sha256": "34e42c1d5ff109bad7d2d80a32f5182f008e58a349ba399d210de46de66119b9",
+      "captionSha256": "a39884db014e519c4492e6c7f1108f46904d23bee32c3a34ba9dff08eccdedc0"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-brief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بایگانی مسیرهای مرکز، انحراف سوخت، بارنامه‌های بازار و دست‌دهی برق رو به هم وصل می‌کنه. اسناد رو سالم نگه دارید تا هر تحویل فیزیکی رو با فعالیت گره‌های خاموش شبکهٔ شهری تطبیق بدم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-03.wav",
+      "durationSeconds": 16.24,
+      "sha256": "bbf2b44fbacc6bd3418ce3efc20014b3e0dd4bb1c3fa31fa5f542dafd5fae03b",
+      "captionSha256": "31b7b1dd75616cf65d86fb21207eec8eb34cd66443fc3510cc9e26225468b434"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Commander, that delivery activated another dormant Relay node. The network is not merely stealing resources; it is using the city's emergency traffic as a deliberate activation pattern. Keep the archive intact.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-comms-01.wav",
+      "durationSeconds": 13.6,
+      "sha256": "c6ffad06fa1b1b86c29e47bfdeb93686b4b4f48f817f65e4fec7416a3fc82d68",
+      "captionSha256": "f172de65dd9edc6690729f0547c7e04ea324d4437a0c8e89404d3cf2ad6d0f16"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "فرمانده، اون تحویل یک گرهٔ خاموش دیگه رو فعال کرد. این شبکه فقط منابع رو نمی‌دزده؛ از رفت‌وآمد اضطراری شهر به‌عنوان الگوی عمدی فعال‌سازی استفاده می‌کنه. بایگانی رو سالم نگه دارید.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-comms-01.wav",
+      "durationSeconds": 14.8,
+      "sha256": "fd185409a1c0d5fbe302e1206dad551ed8407740247ed6b19610774c4bae7ea8",
+      "captionSha256": "07e0b739006f86b60b50fca132837dda0830724f9a2b686e8508fdde79026651"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The hub is ours, both lifelines stayed open, and the road crew restored the broken lane under fire. Samira's teams are already returning the captured equipment to civilian service.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-01.wav",
+      "durationSeconds": 11.92,
+      "sha256": "5ee1c7829aaba0ac6282d30d40a94e4f76ed7d221492b6358f79939239f9c839",
+      "captionSha256": "2c31aa6b49f67a9ecc1d59db623789f6dddddb67eb9e9cc702fd1a748c356984"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "مرکز دست ماست، هر دو مسیر حیاتی باز موند و گروه راه‌سازی زیر آتش مسیر قطع‌شده رو برگردوند. گروه‌های سمیرا همین حالا تجهیزات ضبط‌شده رو به خدمات شهری برمی‌گردونن.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-01.wav",
+      "durationSeconds": 16.08,
+      "sha256": "2ad5b98c88f6bb65ece6a36d63263d6c9318a6d614a29a22dca3dfe8540d8476",
+      "captionSha256": "795e6a8223792cecf7152ae125888bd8771f13c5426cd5f95b6cd0f79325882b"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Protocol Fragment Two assembled. Every diverted road, Fuel load, market transfer and power handshake fed selected dormant Civic Relay nodes. The attacks were preparation, not random destruction.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-02.wav",
+      "durationSeconds": 14.8,
+      "sha256": "34ea78632b6223209d03255b9781900ef60e6f5799aaa950e10d0322b764c2f1",
+      "captionSha256": "63bc6329e05118d828efa4db3e4e3affa811965955bf445c051751dc8fed610d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "قطعهٔ دوم پروتکل کامل شد. هر انحراف جاده، محمولهٔ سوخت، انتقال بازار و دست‌دهی برق، گره‌های خاموش مشخصی از شبکهٔ شهری رو تغذیه کرده. این حمله‌ها آماده‌سازی بودن، نه تخریب تصادفی.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-02.wav",
+      "durationSeconds": 16.88,
+      "sha256": "aa4d8a97b153ba3397c2303ca990974aaa531b66dab991ec83eae43364f5c2e1",
+      "captionSha256": "17316e6c44ae61497f8932c60dbf0cafa3d780df4c7791190eb8e743d0c0f7a6"
+    },
+    {
+      "kind": "narrative",
+      "id": "route_reopened-debrief-03",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "A city under stress authorizes what it rejected in peace. You reopened the route for me. Find my signal among the people you insist on protecting.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-03.wav",
+      "durationSeconds": 9.44,
+      "sha256": "6117983142075b7f8129360eeb500e9d1ab5c06b539b28df4d4b377077dbd680",
+      "captionSha256": "332af71acc683704198fbf66d2f0f0bdcfa532505605d944cc462f02d76d2f85"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "route_reopened-debrief-03",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "شهری که زیر فشاره چیزی رو تأیید می‌کنه که در زمان صلح رد کرده بود. تو مسیر رو برای من باز کردی. حالا سیگنالم رو میان همون مردمی پیدا کن که اصرار داری ازشون محافظت کنی.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-03.wav",
+      "durationSeconds": 14.0,
+      "sha256": "114fd3aced94f0a36114bc80d348b3149f724ef2a823479cae1606b6d4ef362a",
+      "captionSha256": "f8bc461f1398b183567bf623de463e68bf199759ff675d61f616150ef11c2ec0"
+    }
+  ]
+}

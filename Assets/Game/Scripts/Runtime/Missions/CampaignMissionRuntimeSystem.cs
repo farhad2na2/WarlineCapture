@@ -43,6 +43,7 @@ namespace Game.Runtime
             if (!SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent activeRuntime) ||
                 !SystemAPI.TryGetSingleton(out CampaignMissionAttemptFactsComponent _))
                 return;
+            if (TryAdvanceRouteReopened(ref state, root, in activeRuntime)) return;
             if (TryAdvancePowerRelay(ref state, root, in activeRuntime)) return;
             if (TryAdvanceMarketLifeline(ref state, root, in activeRuntime)) return;
             if (TryAdvanceSupplyLine(ref state, root, in activeRuntime)) return;

@@ -33,6 +33,7 @@ namespace Game.UI.Runtime
                 return;
             }
             if(_lastPanelModel.TutorialStepCount==4) {ShowSupplyLineNextAction();return;}
+            if(_lastPanelModel.TutorialStepCount==6) {ShowMarketLifelineNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==10) {ShowGridlockNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}
             if(_lastPanelModel.TutorialStepCount==9)

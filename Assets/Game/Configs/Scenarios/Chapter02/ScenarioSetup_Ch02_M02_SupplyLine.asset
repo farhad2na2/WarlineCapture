@@ -295,3 +295,64 @@ MonoBehaviour:
     civilianReserveBarrels: 20
     holdMilliseconds: 20000
     deadlineMilliseconds: 720000
+  marketLifeline:
+    enabled: 0
+    deliveryAnchorId: 
+    manifestAnchorId: 
+    corruptManifestAnchorId: 
+    requiredDeliveries: 0
+    manifestHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    manifestRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  powerRelay:
+    enabled: 0
+    shortRouteAnchorId: 
+    safeRouteAnchorId: 
+    shelterAnchorId: 
+    repairAnchorId: 
+    repairHoldMilliseconds: 0
+    victoryHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    routeRadius: 0
+    shelterRadius: 0
+    repairRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
+  routeReopened:
+    enabled: 0
+    reliefGoalAnchorId: 
+    fuelGoalAnchorId: 
+    disruptedLinkAnchorId: 
+    hubGateAnchorId: 
+    recordsAnchorId: 
+    linkRepairHoldMilliseconds: 0
+    recordsHoldMilliseconds: 0
+    deadlineMilliseconds: 0
+    deliveryRadius: 0
+    repairRadius: 0
+    hubRadius: 0
+    recordsRadius: 0
+    cameraTour:
+      StartHoldMilliseconds: 0
+      PostHoldMilliseconds: 0
+      ApproachHoldMilliseconds: 0
+      ReturnHoldMilliseconds: 0
+      SmoothTimeSeconds: 0
+      PostPerspective: {x: 0, y: 0, z: 0, w: 0}
+      ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}

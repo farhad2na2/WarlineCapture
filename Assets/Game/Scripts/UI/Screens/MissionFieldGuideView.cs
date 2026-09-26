@@ -10,11 +10,11 @@ namespace Game.UI.Runtime
     // Serialized, bounded presentation. No world discovery, simulation mutation or duplicated balance table.
     public sealed class MissionFieldGuideView : MonoBehaviour
     {
-        [SerializeField] private ScriptableObject guide, extractionGuide, breachGuide, gridlockGuide, supplyLineGuide, marketLifelineGuide, powerRelayGuide;
+        [SerializeField] private ScriptableObject guide, extractionGuide, breachGuide, gridlockGuide, supplyLineGuide, marketLifelineGuide, powerRelayGuide, routeReopenedGuide;
         private ScriptableObject defenseGuide;
         private IUiMissionGuideSession guideSession;
         private UiMissionGuideCatalog content;
-        private bool extractionContext, breachContext, skirmishContext, gridlockContext, supplyLineContext, marketLifelineContext, powerRelayContext;
+        private bool extractionContext, breachContext, skirmishContext, gridlockContext, supplyLineContext, marketLifelineContext, powerRelayContext, routeReopenedContext;
         [SerializeField] private Button topicsButton,classesButton,previousButton,nextButton,closeButton,filterButton,radioButton;
         [SerializeField] private Image radioPanel;
         [SerializeField] private Sprite radio16x9,radio20x9;
@@ -40,8 +40,8 @@ namespace Game.UI.Runtime
         {
             skirmishContext = UiShellRuntimeGateway.TryReadSkirmish(out _);
             if(defenseGuide==null)defenseGuide=guide;
-            guide=UiShellRuntimeGateway.IsPowerRelayGuideContext() && powerRelayGuide!=null ? powerRelayGuide : UiShellRuntimeGateway.IsMarketLifelineGuideContext() && marketLifelineGuide!=null ? marketLifelineGuide : UiShellRuntimeGateway.IsSupplyLineGuideContext() && supplyLineGuide!=null ? supplyLineGuide : UiShellRuntimeGateway.IsGridlockGuideContext() && gridlockGuide!=null ? gridlockGuide : UiShellRuntimeGateway.IsBreachGuideContext() && breachGuide!=null ? breachGuide : UiShellRuntimeGateway.IsExtractionGuideContext() && extractionGuide!=null ? extractionGuide : defenseGuide;
-            powerRelayContext=guide==powerRelayGuide;marketLifelineContext=guide==marketLifelineGuide;supplyLineContext=guide==supplyLineGuide;gridlockContext=guide==gridlockGuide; extractionContext=guide==extractionGuide; breachContext=guide==breachGuide;
+            guide=UiShellRuntimeGateway.IsRouteReopenedGuideContext() && routeReopenedGuide!=null ? routeReopenedGuide : UiShellRuntimeGateway.IsPowerRelayGuideContext() && powerRelayGuide!=null ? powerRelayGuide : UiShellRuntimeGateway.IsMarketLifelineGuideContext() && marketLifelineGuide!=null ? marketLifelineGuide : UiShellRuntimeGateway.IsSupplyLineGuideContext() && supplyLineGuide!=null ? supplyLineGuide : UiShellRuntimeGateway.IsGridlockGuideContext() && gridlockGuide!=null ? gridlockGuide : UiShellRuntimeGateway.IsBreachGuideContext() && breachGuide!=null ? breachGuide : UiShellRuntimeGateway.IsExtractionGuideContext() && extractionGuide!=null ? extractionGuide : defenseGuide;
+            routeReopenedContext=guide==routeReopenedGuide;powerRelayContext=guide==powerRelayGuide;marketLifelineContext=guide==marketLifelineGuide;supplyLineContext=guide==supplyLineGuide;gridlockContext=guide==gridlockGuide; extractionContext=guide==extractionGuide; breachContext=guide==breachGuide;
             guideSession=skirmishContext ? null : UiShellRuntimeGateway.OpenMissionGuide(guide);
             content=skirmishContext ? CreateSkirmishCatalog() : guideSession?.Catalog;
             classesButton.gameObject.SetActive(!skirmishContext);
@@ -72,7 +72,7 @@ namespace Game.UI.Runtime
         private void LocaleChanged() {RefreshScopedTitle();RebuildMatches(); Refresh();}
         private void RefreshScopedTitle()
         {
-            scopedTitle?.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(skirmishContext?"ui.skirmish.guide.title":powerRelayContext?"mission.power_relay.guide.title":marketLifelineContext?"mission.market_lifeline.guide.title":supplyLineContext?"mission.supply_line.guide.title":gridlockContext?"mission.gridlock.guide.title":breachContext?"mission.m05.guide.title":extractionContext?"mission.m04.guide.title":"mission.m03.guide.title"));
+            scopedTitle?.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(skirmishContext?"ui.skirmish.guide.title":routeReopenedContext?"mission.route_reopened.guide.title":powerRelayContext?"mission.power_relay.guide.title":marketLifelineContext?"mission.market_lifeline.guide.title":supplyLineContext?"mission.supply_line.guide.title":gridlockContext?"mission.gridlock.guide.title":breachContext?"mission.m05.guide.title":extractionContext?"mission.m04.guide.title":"mission.m03.guide.title"));
             if(content!=null && topicsButton!=null)
                 topicsButton.GetComponentInChildren<V3LocalizedTextBindingView>(true)?.SetLocalizedValue(string.Format(UiShellRuntimeGateway.Localization.Get("mission.guide.lesson_count"),content.Topics.Length));
         }
@@ -116,7 +116,7 @@ namespace Game.UI.Runtime
             if(classesSelected!=null)classesSelected.SetActive(classes);
             if(radioSelected!=null)radioSelected.SetActive(radio);
             search.gameObject.SetActive(classes); filterButton.gameObject.SetActive(classes);
-            if(radioButton!=null) {radioButton.gameObject.SetActive(!skirmishContext && !extractionContext && !breachContext && !gridlockContext && !supplyLineContext && !marketLifelineContext && !powerRelayContext); radioButton.interactable=UiShellRuntimeGateway.TryReadMissionRadioArchive();}
+            if(radioButton!=null) {radioButton.gameObject.SetActive(!skirmishContext && !extractionContext && !breachContext && !gridlockContext && !supplyLineContext && !marketLifelineContext && !powerRelayContext && !routeReopenedContext); radioButton.interactable=UiShellRuntimeGateway.TryReadMissionRadioArchive();}
             SetTabState(topicsButton,!classes&&!radio);SetTabState(classesButton,classes);SetTabState(radioButton,radio);
             if(radioPanel!=null) radioPanel.gameObject.SetActive(radio);
             portrait.gameObject.SetActive(false);

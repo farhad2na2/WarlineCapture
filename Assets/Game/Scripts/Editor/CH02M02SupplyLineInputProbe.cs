@@ -27,7 +27,9 @@ namespace Game.Editor
         private static AriaTouchInputUiSystemHelper touch;
         private static bool Manual=>SessionState.GetBool(Mode,false);
         static CH02M02SupplyLineInputProbe(){if(SessionState.GetBool(Active,false))EditorApplication.update+=Tick;}
+        [MenuItem("Game/Campaign/Supply Line/Run Normal Input Watch Probe")]
         public static void RunWatch(){SessionState.SetBool(Mode,false);Begin();}
+        [MenuItem("Game/Campaign/Supply Line/Run Normal Input Manual Probe")]
         public static void RunManual(){SessionState.SetBool(Mode,true);Begin();}
         private static void Begin()
         {

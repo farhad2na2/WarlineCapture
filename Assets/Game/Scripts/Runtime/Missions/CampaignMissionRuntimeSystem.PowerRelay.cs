@@ -8,6 +8,9 @@ namespace Game.Runtime
 {
     public partial struct CampaignMissionRuntimeSystem
     {
+        private static readonly FixedString64Bytes PowerEngineerRoleId="role.power.engineer";
+        private static readonly FixedString64Bytes PowerFamilyConvoyRoleId="role.power.family_convoy";
+        private static readonly FixedString64Bytes PowerFuelServiceRoleId="role.power.fuel_service";
         private bool TryAdvancePowerRelay(ref SystemState system,Entity root,in CampaignMissionRuntimeComponent runtime)
         {
             if(!SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog) || !CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int index))return false;
@@ -110,9 +113,8 @@ namespace Game.Runtime
                 stale=!em.Exists(members[i].Entity)||!em.HasComponent<UnitHealth>(members[i].Entity);
             if(!stale)return;
 
-            using EntityQuery query=em.CreateEntityQuery(
-                ComponentType.ReadOnly<CampaignMissionUnitRoleComponent>(),
-                ComponentType.ReadOnly<Faction>(),ComponentType.ReadOnly<UnitHealth>());
+            using EntityQuery query=new EntityQueryBuilder(Allocator.Temp)
+                .WithAll<CampaignMissionUnitRoleComponent,Faction,UnitHealth>().Build(em);
             using NativeArray<Entity> entities=query.ToEntityArray(Allocator.Temp);
             var replacement=new NativeList<CampaignMissionPowerRelayMember>(entities.Length,Allocator.Temp);
             for(int i=0;i<entities.Length;i++)
@@ -121,9 +123,9 @@ namespace Game.Runtime
                 var role=em.GetComponentData<CampaignMissionUnitRoleComponent>(entity);
                 if(!role.SessionToken.Equals(runtime.SessionToken))continue;
                 byte faction=em.GetComponentData<Faction>(entity).Id;
-                byte kind=faction==2?(byte)4:role.MissionRoleId.Equals(new FixedString64Bytes("role.power.engineer"))?(byte)1:
-                    role.MissionRoleId.Equals(new FixedString64Bytes("role.power.family_convoy"))?(byte)2:
-                    role.MissionRoleId.Equals(new FixedString64Bytes("role.power.fuel_service"))?(byte)3:(byte)0;
+                byte kind=faction==2?(byte)4:role.MissionRoleId.Equals(PowerEngineerRoleId)?(byte)1:
+                    role.MissionRoleId.Equals(PowerFamilyConvoyRoleId)?(byte)2:
+                    role.MissionRoleId.Equals(PowerFuelServiceRoleId)?(byte)3:(byte)0;
                 replacement.Add(new CampaignMissionPowerRelayMember {Entity=entity,Kind=kind});
             }
             if(replacement.Length==0)return;

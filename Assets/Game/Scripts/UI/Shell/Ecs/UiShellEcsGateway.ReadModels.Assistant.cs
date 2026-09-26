@@ -190,8 +190,8 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount is 4 or 8 or 10 or 12 ||
-                topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005)
+            if (topRecommendation.TutorialStepCount is 4 or 6 or 8 or 10 or 12 ||
+                topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005 or >= 79001 and <= 79206)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);

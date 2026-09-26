@@ -150,6 +150,12 @@ namespace Game.Runtime
                     case MissionObjectiveRuleKind.SecurePowerRelay:
                         if (definition.PowerRelay.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
                         break;
+                    case MissionObjectiveRuleKind.SustainRouteLifelines:
+                    case MissionObjectiveRuleKind.RestoreRouteLink:
+                    case MissionObjectiveRuleKind.CaptureRouteHub:
+                    case MissionObjectiveRuleKind.PreserveRouteRecords:
+                        if (definition.RouteReopened.Enabled == 0 || objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty) return false;
+                        break;
                     case MissionObjectiveRuleKind.RestoreGridlockSiteA:
                     case MissionObjectiveRuleKind.RestoreGridlockSiteB:
                     case MissionObjectiveRuleKind.DeliverGridlockRelief:
@@ -244,7 +250,7 @@ namespace Game.Runtime
                 State = objectiveState,
                 Priority = (byte)math.min(byte.MaxValue, index + 2),
                 IsPrimary = index == 0 ? (byte)1 : (byte)0,
-                Title = definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
+                Title = definition.RouteReopened.Enabled!=0 || definition.PowerRelay.Enabled!=0 || definition.MarketLifeline.Enabled!=0 || definition.SupplyLine.Enabled!=0 || definition.Gridlock.Enabled!=0 || definition.Defense.Enabled!=0 || definition.Extraction.Enabled!=0 || definition.Breach.Enabled!=0 ? objective.DisplayTextKey : ResolveTitle(objective.Rule),
                 Body = ResolveBody(in objective, objectiveState, in facts),
                 ProtectsTarget = objective.Rule is MissionObjectiveRuleKind.ProtectMissionRole or
                     MissionObjectiveRuleKind.DefendMissionRole ? (byte)1 : (byte)0
@@ -289,6 +295,10 @@ namespace Game.Runtime
                 MissionObjectiveRuleKind.EscortPowerRelayFamilies => facts.PowerFamiliesSheltered!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestorePowerRelay => facts.PowerRestored!=0?MatchObjectiveState.Complete:facts.PowerSafeRouteConfirmed==0?MatchObjectiveState.Blocked:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.SecurePowerRelay => facts.PowerRelaySecured!=0?MatchObjectiveState.Complete:facts.PowerRestored==0?MatchObjectiveState.Blocked:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.SustainRouteLifelines => facts.RouteReliefDelivered!=0&&facts.RouteFuelDelivered!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.RestoreRouteLink => facts.RouteLinkRestored!=0?MatchObjectiveState.Complete:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.CaptureRouteHub => facts.RouteHubEntered!=0&&facts.RouteGarrisonCleared!=0?MatchObjectiveState.Complete:facts.RouteLinkRestored==0?MatchObjectiveState.Blocked:MatchObjectiveState.Active,
+                MissionObjectiveRuleKind.PreserveRouteRecords => facts.RouteRecordsPreserved!=0?MatchObjectiveState.Complete:facts.RouteGarrisonCleared==0?MatchObjectiveState.Blocked:MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestoreGridlockSiteA => facts.GridlockSiteAComplete != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.RestoreGridlockSiteB => facts.GridlockSiteBComplete != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteAComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
                 MissionObjectiveRuleKind.DeliverGridlockRelief => facts.GridlockDelivered != 0 ? MatchObjectiveState.Complete : facts.GridlockSiteBComplete == 0 ? MatchObjectiveState.Blocked : MatchObjectiveState.Active,
@@ -319,6 +329,10 @@ namespace Game.Runtime
                 MissionObjectiveRuleKind.VerifyMarketManifest => definition.MarketLifeline.ManifestAnchorId,
                 MissionObjectiveRuleKind.EscortPowerRelayFamilies => definition.PowerRelay.ShelterAnchorId,
                 MissionObjectiveRuleKind.RestorePowerRelay or MissionObjectiveRuleKind.SecurePowerRelay => definition.PowerRelay.RepairAnchorId,
+                MissionObjectiveRuleKind.SustainRouteLifelines => definition.RouteReopened.ReliefGoalAnchorId,
+                MissionObjectiveRuleKind.RestoreRouteLink => definition.RouteReopened.DisruptedLinkAnchorId,
+                MissionObjectiveRuleKind.CaptureRouteHub => definition.RouteReopened.HubGateAnchorId,
+                MissionObjectiveRuleKind.PreserveRouteRecords => definition.RouteReopened.RecordsAnchorId,
                 MissionObjectiveRuleKind.RestoreGridlockSiteA => definition.Gridlock.SiteAAnchorId,
                 MissionObjectiveRuleKind.RestoreGridlockSiteB => definition.Gridlock.SiteBAnchorId,
                 MissionObjectiveRuleKind.DeliverGridlockRelief => definition.Gridlock.HospitalAnchorId,
@@ -367,6 +381,10 @@ namespace Game.Runtime
                 case MissionObjectiveRuleKind.EscortPowerRelayFamilies: return new FixedString128Bytes("mission.power_relay.objective.shelter.body");
                 case MissionObjectiveRuleKind.RestorePowerRelay: return new FixedString128Bytes("mission.power_relay.objective.restore.body");
                 case MissionObjectiveRuleKind.SecurePowerRelay: return new FixedString128Bytes(facts.PowerRelayFailure==PowerRelayFailure.Integrity?"mission.power_relay.failure.integrity":"mission.power_relay.objective.secure.body");
+                case MissionObjectiveRuleKind.SustainRouteLifelines: return new FixedString128Bytes("mission.route_reopened.objective.lifelines.body");
+                case MissionObjectiveRuleKind.RestoreRouteLink: return new FixedString128Bytes("mission.route_reopened.objective.link.body");
+                case MissionObjectiveRuleKind.CaptureRouteHub: return new FixedString128Bytes("mission.route_reopened.objective.hub.body");
+                case MissionObjectiveRuleKind.PreserveRouteRecords: return new FixedString128Bytes(facts.RouteReopenedFailure==RouteReopenedFailure.Integrity?"mission.route_reopened.failure.integrity":"mission.route_reopened.objective.records.body");
                 case MissionObjectiveRuleKind.RestoreGridlockSiteA: return new FixedString128Bytes("mission.gridlock.objective.site_a.body");
                 case MissionObjectiveRuleKind.RestoreGridlockSiteB: return new FixedString128Bytes("mission.gridlock.objective.site_b.body");
                 case MissionObjectiveRuleKind.DeliverGridlockRelief: return new FixedString128Bytes("mission.gridlock.objective.delivery.body");

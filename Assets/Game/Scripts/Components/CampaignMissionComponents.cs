@@ -237,7 +237,8 @@ namespace Game.Components
         GridlockProtectRoute = 53, GridlockHospitalHold = 54,
         SupplyLineOil = 55, SupplyLineRefinery = 56, SupplyLineStorage = 57, SupplyLineHold = 58,
         MarketInspectLegitimate = 59, MarketInspectCorrupt = 60, MarketEscort = 61, MarketDefend = 62, MarketHold = 63,
-        PowerRoute = 64, PowerFuel = 65, PowerRepair = 66, PowerDefend = 67, PowerHold = 68
+        PowerRoute = 64, PowerFuel = 65, PowerRepair = 66, PowerDefend = 67, PowerHold = 68,
+        RouteRelief = 69, RouteFuel = 70, RouteRepair = 71, RouteBreach = 72, RouteGarrison = 73, RouteRecords = 74
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData
@@ -305,6 +306,7 @@ namespace Game.Components
         public CampaignMissionSupplyLineDefinitionBlob SupplyLine;
         public CampaignMissionMarketLifelineDefinitionBlob MarketLifeline;
         public CampaignMissionPowerRelayDefinitionBlob PowerRelay;
+        public CampaignMissionRouteReopenedDefinitionBlob RouteReopened;
         public BlobArray<CampaignMissionBuildEntryBlob> BuildCatalog;
         public BlobArray<CampaignMissionObjectiveBlob> Objectives;
         public BlobArray<CampaignMissionForceGroupBlob> ForceGroups;

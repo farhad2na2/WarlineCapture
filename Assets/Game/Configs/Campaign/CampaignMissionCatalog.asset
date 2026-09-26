@@ -40,3 +40,6 @@ MonoBehaviour:
   - missionId: saga.ch02.m04.power_relay
     definition: {fileID: 11400000, guid: 110fb3dc2581a465ea451f6238c95c39, type: 2}
     scenario: {fileID: 11400000, guid: 93d2cb4e9af474042a18f9ecc005761f, type: 2}
+  - missionId: saga.ch02.m05.route_reopened
+    definition: {fileID: 11400000, guid: ab9f4adf4978d4e6c8236a26dd64422c, type: 2}
+    scenario: {fileID: 11400000, guid: 86aa349dc493645cb91dc5cdc758c046, type: 2}

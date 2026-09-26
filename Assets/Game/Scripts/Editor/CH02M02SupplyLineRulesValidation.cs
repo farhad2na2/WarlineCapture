@@ -24,10 +24,12 @@ namespace Game.Editor
             Require(CampaignMissionSupplyLineRuleUtility.AdvanceHold(5000,1000,20000,true,true,true,39,40)==0,"Consuming reserve resets hold.");
             Require(CampaignMissionSupplyLineRuleUtility.AdvanceHold(5000,1000,20000,true,false,true,40,40)==0,"Broken link resets hold.");
             Require(CampaignMissionSupplyLineRuleUtility.AdvanceHold(5000,1000,20000,true,true,false,40,40)==0,"Active attackers block hold.");
+            Require(CampaignMissionSupplyLineRuleUtility.IsAlternateLaneOrder(new Unity.Mathematics.int2(104,100),new Unity.Mathematics.int2(100,100)),"A valid edge-of-lane reroute order must be accepted.");
+            Require(!CampaignMissionSupplyLineRuleUtility.IsAlternateLaneOrder(new Unity.Mathematics.int2(105,100),new Unity.Mathematics.int2(100,100)),"An unrelated move order must not recover the route.");
             Require(CampaignMissionSequence.Next(CampaignMissionSequence.Gridlock)==CampaignMissionSequence.SupplyLine,"Gridlock unlocks Supply Line.");
             Require(CampaignMissionSequence.Next(CampaignMissionSequence.SupplyLine)=="saga.ch02.m03.market_lifeline","Supply Line cannot link to itself.");
             ValidateCivilianReserve();
-            Debug.Log("[SupplyLineRules] result=Passed groups=13 reserveRegression=Passed");
+            Debug.Log("[SupplyLineRules] result=Passed groups=14 rerouteOrder=Passed reserveRegression=Passed");
         }
         private static void ValidateCivilianReserve()
         {

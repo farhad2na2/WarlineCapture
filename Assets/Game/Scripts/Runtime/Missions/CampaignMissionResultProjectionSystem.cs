@@ -146,6 +146,12 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts,
             ref CampaignMissionDefinitionBlob definition)
         {
+            if (definition.RouteReopened.Enabled != 0)
+                return facts.RouteReopenedFailure != RouteReopenedFailure.Integrity && (outcome == MissionOutcomeKind.Victory
+                    ? facts.RouteReopenedFailure == RouteReopenedFailure.None && facts.RouteReliefDelivered != 0 && facts.RouteFuelDelivered != 0 &&
+                      facts.RouteLinkRestored != 0 && facts.RouteHubEntered != 0 && facts.RouteGarrisonCleared != 0 && facts.RouteRecordsPreserved != 0 &&
+                      facts.HostileTotalCount > 0 && facts.HostileDefeatedCount >= facts.HostileTotalCount
+                    : facts.RouteReopenedFailure != RouteReopenedFailure.None);
             if (definition.PowerRelay.Enabled != 0)
                 return facts.PowerRelayFailure != PowerRelayFailure.Integrity && (outcome == MissionOutcomeKind.Victory
                     ? facts.PowerRelayFailure == PowerRelayFailure.None && facts.PowerSafeRouteConfirmed != 0 &&

@@ -130,6 +130,7 @@ public sealed class CH02M02SupplyLineRegressionTests
     {
         if(RunTests())Game.Editor.CH02M02SupplyLineInputProbe.RunWatch();else MissionEditorValidationExit.Complete(false);
     }
+    [MenuItem("Game/Campaign/Supply Line/Run Focused Regression")]
     public static void RunFocusedValidation(){if(RunTests())MissionEditorValidationExit.Complete(true);else MissionEditorValidationExit.Complete(false);}
     private static bool RunTests()
     {

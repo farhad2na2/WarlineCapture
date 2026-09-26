@@ -21,6 +21,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 650740e21f42641739622a6c499eb11e, type: 2}
   - {fileID: 11400000, guid: ab7e541690c8040228fe2284d94173ff, type: 2}
   - {fileID: 11400000, guid: dc1b384202d46427aab2431d0b043a93, type: 2}
+  - {fileID: 11400000, guid: 7b9374274816942dbabc046eae0256d3, type: 2}
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
@@ -71,9 +72,15 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: c4566b824997b71951aff5620161c5b1fac38f057ce4295fa630a6f2d091c95d
+  - definition: {fileID: 11400000, guid: 7b9374274816942dbabc046eae0256d3, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch02.route_reopened_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: d455e33a9dd512e4e6d031b3298e1af737d86d3c7cc2a5d7a5055f59e3295d4f
   - definition: {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.supply_yard_01
       deliveryKind: 0
       contentVersion: 1
-      contentHash: d6feee92f1f67d0f2b48a7253f6375d9cf4e5df8b84d78f2ed4987837e2e8ee1
+      contentHash: a048528ac1ca33d0457210630bd8f503acdb6603ea0efd43ee17a66ef38f9333

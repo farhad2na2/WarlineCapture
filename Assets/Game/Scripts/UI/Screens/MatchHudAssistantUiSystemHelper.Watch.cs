@@ -39,11 +39,24 @@ namespace Game.UI.Runtime
             bool skirmish = UiShellRuntimeGateway.TryReadSkirmish(out var skirmishModel);
             bool supported = UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None;
             bool available = supported && (skirmish ? !skirmishModel.Finished && !skirmishModel.StartupFailed : UsesNextTutorialAction && _lastPanelModel.HasRecommendation);
+            bool supplyCanReserve=_lastPanelModel.TutorialStepCount==4 &&
+                UiShellRuntimeGateway.TryReadSupplyLine(out _,out _,out bool canReserve) && canReserve;
             bool supplyWaiting=_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyTarget) &&
                 (supplyTarget.BattleAction==UiTutorialBattleAction.Watch || supplyTarget.Moving) &&
-                !(UiShellRuntimeGateway.TryReadSupplyLine(out _,out _,out bool canReserve) && canReserve);
+                !supplyCanReserve;
             if (available && !skirmish && supplyWaiting)kind=AriaPlayObservationKind.Waiting;
-            if (available && !skirmish && !supplyWaiting)
+            // Supply Line's final decision is an explicit HUD action. Observe the
+            // visible control directly once it becomes legal instead of depending
+            // on the preceding defend-area cue being replaced in the same frame.
+            // Otherwise Watch can remain on the completed defense step until the
+            // deadline even though the reserve button is enabled for the player.
+            if(available && !skirmish && supplyCanReserve)
+            {
+                var hud=Object.FindAnyObjectByType<MissionDefenseHudView>();
+                var reserve=ObserveWatchButton(hud?.SupplyReserveButton);
+                if(reserve.Available){kind=AriaPlayObservationKind.Control;target=reserve.Id;position=reserve.Position;}
+            }
+            if (available && !skirmish && !supplyWaiting && kind!=AriaPlayObservationKind.Control)
             {
                 kind = _tutorialCinematicSuspended ? AriaPlayObservationKind.Cinematic : AriaPlayObservationKind.Waiting;
                 if(!_tutorialCinematicSuspended && _highlightPresentationSystem.TryObserveVisibleSelectionDrag(out position,out dragEnd))
@@ -153,12 +166,18 @@ namespace Game.UI.Runtime
             watchRaycast.position = point;
             watchHits.Clear(); EventSystem.current.RaycastAll(watchRaycast, watchHits);
             if (world) return watchHits.Count == 0;
-            // Unity dispatches the first raycast hit. A modal/non-button graphic
-            // can block a button even when that button is otherwise interactable.
-            if (watchHits.Count == 0) return false;
-            Button button = watchHits[0].gameObject.GetComponentInParent<Button>();
-            return button != null && button.IsActive() && button.IsInteractable() &&
-                button.GetEntityId().GetHashCode() == targetId;
+            // Labels and decorative panel graphics commonly sit above a button.
+            // Unity still dispatches the click to the first interactable button in
+            // the raycast chain, so ignore non-button graphics while preserving a
+            // real interactable control that is layered in front of the target.
+            for (int i = 0; i < watchHits.Count; i++)
+            {
+                Button button = watchHits[i].gameObject.GetComponentInParent<Button>();
+                if (button == null || !button.IsActive() || !button.IsInteractable())
+                    continue;
+                return button.GetEntityId().GetHashCode() == targetId;
+            }
+            return false;
         }
 
         private void RenderWatchFinger(AriaPlayModel state)

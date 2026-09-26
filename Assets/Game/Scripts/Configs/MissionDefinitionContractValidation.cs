@@ -218,6 +218,10 @@ namespace Game.Configs
                 case MissionObjectiveRuleKind.EscortPowerRelayFamilies:
                 case MissionObjectiveRuleKind.RestorePowerRelay:
                 case MissionObjectiveRuleKind.SecurePowerRelay:
+                case MissionObjectiveRuleKind.SustainRouteLifelines:
+                case MissionObjectiveRuleKind.RestoreRouteLink:
+                case MissionObjectiveRuleKind.CaptureRouteHub:
+                case MissionObjectiveRuleKind.PreserveRouteRecords:
                     return hasRole && !hasConfig &&
                         IsValidScopedId(objective.MissionRoleId, "role", 2, 7);
                 case MissionObjectiveRuleKind.BuildStructure:

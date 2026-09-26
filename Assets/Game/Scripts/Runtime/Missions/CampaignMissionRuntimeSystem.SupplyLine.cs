@@ -33,8 +33,14 @@ namespace Game.Runtime
                 if(m.Kind==1 && m.Dead==0 && s.OilTransferred!=0 && em.Exists(m.Entity) && em.HasComponent<UnitGrid>(m.Entity))
                 {
                     if(em.HasComponent<ManualMoveOrderTag>(m.Entity) && em.HasComponent<UnitTarget>(m.Entity) &&
-                        math.distancesq(em.GetComponentData<UnitTarget>(m.Entity).Cell,s.AlternateLane)<=16)
-                        s.RerouteOrdered=1;
+                        CampaignMissionSupplyLineRuleUtility.IsAlternateLaneOrder(em.GetComponentData<UnitTarget>(m.Entity).Cell,s.AlternateLane))
+                    {
+                        // The mission asks the commander to choose the alternate
+                        // lane. Credit that decision when the correct hauler
+                        // accepts the order; path following can legitimately stop
+                        // just outside the exact anchor on a crowded road.
+                        s.RerouteOrdered=1;s.RouteRecovered=1;
+                    }
                     if(s.RerouteOrdered!=0 && math.distancesq(em.GetComponentData<UnitGrid>(m.Entity).Cell,s.AlternateLane)<=36)
                         s.RouteRecovered=1;
                     else if(s.RouteRecovered==0 && !em.HasComponent<ManualMoveOrderTag>(m.Entity))s.RerouteOrdered=0;

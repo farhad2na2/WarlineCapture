@@ -12,6 +12,8 @@ namespace Game.Components
         public MarketLifelineFailure MarketFailure;
         public byte PowerSafeRouteConfirmed, PowerFamiliesSheltered, PowerRestored, PowerRelaySecured, PowerExposedRouteUsed;
         public PowerRelayFailure PowerRelayFailure;
+        public byte RouteReliefDelivered, RouteFuelDelivered, RouteLinkRestored, RouteHubEntered, RouteGarrisonCleared, RouteRecordsPreserved, RouteRelayNodeActivated;
+        public RouteReopenedFailure RouteReopenedFailure;
         public byte GridlockSiteAComplete, GridlockSiteBComplete, GridlockDelivered;
         public GridlockFailure GridlockFailure;
         public int ElapsedMilliseconds;

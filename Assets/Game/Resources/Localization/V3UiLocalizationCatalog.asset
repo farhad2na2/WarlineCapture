@@ -1870,6 +1870,110 @@ MonoBehaviour:
       value: COMMANDER XP
     - key: mission.reward.credits
       value: CREDITS
+    - key: mission.route_reopened.deadline
+      value: 10 active minutes
+    - key: mission.route_reopened.enemy_intel
+      value: A fortified Ash Line garrison controls both stolen routes and the routing
+        archive.
+    - key: mission.route_reopened.failure.deadline
+      value: The hub and lifelines were not secured within ten minutes.
+    - key: mission.route_reopened.failure.engineer
+      value: A road engineer was lost. Both are required to restore the disrupted
+        link.
+    - key: mission.route_reopened.failure.fuel
+      value: The Fuel truck was lost and the water-service lifeline collapsed.
+    - key: mission.route_reopened.failure.integrity
+      value: Mission state could not be verified. Return and retry; no rewards were
+        settled.
+    - key: mission.route_reopened.failure.records
+      value: The routing archive was destroyed before ARIA could recover the evidence.
+    - key: mission.route_reopened.failure.relief
+      value: The relief truck was lost and the clinic lifeline collapsed.
+    - key: mission.route_reopened.failure.squad
+      value: The assault force was lost before the hub and archive were secured.
+    - key: mission.route_reopened.forces
+      value: "8 rifles \xB7 split defense and assault"
+    - key: mission.route_reopened.guide.1.body
+      value: Select the relief truck and move it to the marked clinic-lane destination.
+    - key: mission.route_reopened.guide.1.title
+      value: Deliver clinic relief
+    - key: mission.route_reopened.guide.2.body
+      value: Select the Fuel truck and move it to the marked water-service destination.
+    - key: mission.route_reopened.guide.2.title
+      value: Deliver water-service Fuel
+    - key: mission.route_reopened.guide.3.body
+      value: Move both engineers to the disrupted lane and hold them there for 7
+        seconds.
+    - key: mission.route_reopened.guide.3.title
+      value: Restore the broken link
+    - key: mission.route_reopened.guide.4.body
+      value: Split off rifles, move through the marked gate, and keep convoy defenders
+        behind.
+    - key: mission.route_reopened.guide.4.title
+      value: Enter the logistics hub
+    - key: mission.route_reopened.guide.5.body
+      value: Attack confirmed Ash Line defenders without damaging the routing archive.
+    - key: mission.route_reopened.guide.5.title
+      value: Defeat the garrison
+    - key: mission.route_reopened.guide.6.body
+      value: Hold rifles at the archive for 10 seconds while ARIA assembles Protocol
+        Fragment Two.
+    - key: mission.route_reopened.guide.6.title
+      value: Preserve the routing records
+    - key: mission.route_reopened.guide.diagram
+      value: "RELIEF + FUEL \u2192 ACTIVE LANES \xB7 2 ENGINEERS \u2192 LINK \xB7
+        RIFLES \u2192 HUB \u2192 RECORDS"
+    - key: mission.route_reopened.guide.example
+      value: Use only Select, Move, Attack and Hold. ARIA demonstrates these same
+        player orders.
+    - key: mission.route_reopened.guide.mistake
+      value: Do not abandon a lifeline or destroy the hub. Victory requires the city
+        to keep operating and the records to survive.
+    - key: mission.route_reopened.guide.title
+      value: Route Reopened field guide
+    - key: mission.route_reopened.location
+      value: Eastern industrial logistics hub
+    - key: mission.route_reopened.name
+      value: Route Reopened
+    - key: mission.route_reopened.objective.hub
+      value: Capture the logistics hub
+    - key: mission.route_reopened.objective.hub.body
+      value: Move rifles through the marked hub gate and defeat the fortified garrison.
+    - key: mission.route_reopened.objective.lifelines
+      value: Keep both lifelines open
+    - key: mission.route_reopened.objective.lifelines.body
+      value: Move the relief truck to the clinic lane and the Fuel truck to the water-service
+        lane. Both vehicles must survive.
+    - key: mission.route_reopened.objective.link
+      value: Reopen the disrupted lane
+    - key: mission.route_reopened.objective.link.body
+      value: Move both road engineers to the disrupted link and protect them there
+        for 7 seconds.
+    - key: mission.route_reopened.objective.records
+      value: Preserve the routing records
+    - key: mission.route_reopened.objective.records.body
+      value: After the garrison falls, hold rifles at the archive for 10 seconds
+        without destroying the records.
+    - key: mission.route_reopened.resources
+      value: "Relief truck \xB7 Fuel truck \xB7 two road engineers"
+    - key: mission.route_reopened.result.defeat
+      value: Logistics hub operation failed
+    - key: mission.route_reopened.result.success
+      value: Both lifelines remained active, the hub was captured, and Protocol Fragment
+        Two was recovered from the intact routing archive.
+    - key: mission.route_reopened.result.victory
+      value: Route reopened
+    - key: mission.route_reopened.reward.card
+      value: "1,200 Commander XP \xB7 6,000 Credits"
+    - key: mission.route_reopened.star.1
+      value: Complete the mission
+    - key: mission.route_reopened.star.2
+      value: No lifeline lost
+    - key: mission.route_reopened.star.3
+      value: Records intact
+    - key: mission.route_reopened.summary
+      value: Keep relief and Fuel moving, restore the disrupted lane, capture the
+        logistics hub, and preserve its routing records.
     - key: mission.supply_line.deadline
       value: 12 minutes
     - key: mission.supply_line.enemy_intel
@@ -2282,6 +2386,33 @@ MonoBehaviour:
     - key: narrative.power_relay.debrief.03
       value: Then keep asking about the one you can't. The handshake points to a
         logistics hub; that is where we go next.
+    - key: narrative.route_reopened.brief.01
+      value: 'The relief network is still moving: clinic supplies on the south lane,
+        Fuel for water pumps on the north. The Ash Line logistics hub controls both
+        stolen routes, but the city cannot wait for the fighting to end.'
+    - key: narrative.route_reopened.brief.02
+      value: Split the force. Keep both lifelines open, put the road crew on the
+        disrupted lane, and take the assault squad through the hub gate. This is
+        a controlled capture, not a demolition.
+    - key: narrative.route_reopened.brief.03
+      value: The hub's routing archive links the Fuel diversions, market manifests
+        and power handshake. Preserve those records while I correlate each physical
+        delivery with dormant Civic Relay activity.
+    - key: narrative.route_reopened.comms.01
+      value: Commander, that delivery activated another dormant Relay node. The network
+        is not merely stealing resources; it is using the city's emergency traffic
+        as a deliberate activation pattern. Keep the archive intact.
+    - key: narrative.route_reopened.debrief.01
+      value: The hub is ours, both lifelines stayed open, and the road crew restored
+        the broken lane under fire. Samira's teams are already returning the captured
+        equipment to civilian service.
+    - key: narrative.route_reopened.debrief.02
+      value: Protocol Fragment Two assembled. Every diverted road, Fuel load, market
+        transfer and power handshake fed selected dormant Civic Relay nodes. The
+        attacks were preparation, not random destruction.
+    - key: narrative.route_reopened.debrief.03
+      value: A city under stress authorizes what it rejected in peace. You reopened
+        the route for me. Find my signal among the people you insist on protecting.
     - key: narrative.speaker.fadi.accessibleLabel
       value: Fadi, road crew leader
     - key: narrative.speaker.fadi.name
@@ -6399,7 +6530,7 @@ MonoBehaviour:
     - key: chapter.broken_grid.mission.4
       value: "\u0631\u0644\u0647\u0654 \u0628\u0631\u0642"
     - key: chapter.broken_grid.mission.5
-      value: "\u0628\u0627\u0632\u06AF\u0634\u0627\u06CC\u06CC \u0645\u0633\u06CC\u0631"
+      value: "\u0645\u0633\u06CC\u0631 \u0628\u0627\u0632 \u0634\u062F"
     - key: chapter.broken_grid.name
       value: "\u0641\u0635\u0644 \u06F2 \xB7 \u0634\u0628\u06A9\u0647\u0654 \u06AF\u0633\u0633\u062A\u0647"
     - key: chapter.first_response.mission.1
@@ -9377,6 +9508,203 @@ MonoBehaviour:
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
       value: "\u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.route_reopened.deadline
+      value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
+        \u0641\u0639\u0627\u0644"
+    - key: mission.route_reopened.enemy_intel
+      value: "\u06CC\u06A9 \u067E\u0627\u062F\u06AF\u0627\u0646 \u0645\u0633\u062A\u062D\u06A9\u0645
+        \u0627\u0634\u200C\u0644\u0627\u06CC\u0646 \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631
+        \u062F\u0632\u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647 \u0648 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0645\u0633\u06CC\u0631\u0647\u0627 \u0631\u0648 \u06A9\u0646\u062A\u0631\u0644
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.route_reopened.failure.deadline
+      value: "\u0645\u0631\u06A9\u0632 \u0648 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u062D\u06CC\u0627\u062A\u06CC \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646
+        \u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u062A\u0623\u0645\u06CC\u0646
+        \u0646\u0634\u062F\u0646."
+    - key: mission.route_reopened.failure.engineer
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u0645\u0647\u0646\u062F\u0633\u200C\u0647\u0627\u06CC
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A. \u0647\u0631 \u062F\u0648 \u0628\u0631\u0627\u06CC \u0628\u0631\u06AF\u0631\u062F\u0648\u0646\u062F\u0646
+        \u0645\u0633\u06CC\u0631 \u0644\u0627\u0632\u0645 \u0647\u0633\u062A\u0646."
+    - key: mission.route_reopened.failure.fuel
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0633\u0648\u062E\u062A \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A \u0648 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u062E\u062F\u0645\u0627\u062A \u0622\u0628 \u0642\u0637\u0639 \u0634\u062F."
+    - key: mission.route_reopened.failure.integrity
+      value: "\u0648\u0636\u0639\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u06CC\u0633\u062A.
+        \u0628\u0631\u06AF\u0631\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u067E\u0627\u062F\u0627\u0634\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F."
+    - key: mission.route_reopened.failure.records
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u067E\u06CC\u0634 \u0627\u0632 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0645\u062F\u0627\u0631\u06A9 \u062A\u0648\u0633\u0637 \u0622\u0631\u06CC\u0627
+        \u0646\u0627\u0628\u0648\u062F \u0634\u062F."
+    - key: mission.route_reopened.failure.relief
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A \u0648 \u0645\u0633\u06CC\u0631
+        \u062D\u06CC\u0627\u062A\u06CC \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0642\u0637\u0639 \u0634\u062F."
+    - key: mission.route_reopened.failure.squad
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062A\u0647\u0627\u062C\u0645 \u067E\u06CC\u0634
+        \u0627\u0632 \u062A\u0623\u0645\u06CC\u0646 \u0645\u0631\u06A9\u0632 \u0648
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A."
+    - key: mission.route_reopened.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u062A\u0642\u0633\u06CC\u0645
+        \u062F\u0641\u0627\u0639 \u0648 \u062A\u0647\u0627\u062C\u0645"
+    - key: mission.route_reopened.guide.1.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647
+        \u0645\u0642\u0635\u062F \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654
+        \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0628\u0628\u0631."
+    - key: mission.route_reopened.guide.1.title
+      value: "\u0627\u0645\u062F\u0627\u062F \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.route_reopened.guide.2.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0633\u0648\u062E\u062A \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647 \u0645\u0642\u0635\u062F
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654 \u062E\u062F\u0645\u0627\u062A
+        \u0622\u0628 \u0628\u0628\u0631."
+    - key: mission.route_reopened.guide.2.title
+      value: "\u0633\u0648\u062E\u062A \u062E\u062F\u0645\u0627\u062A \u0622\u0628
+        \u0631\u0648 \u0628\u0631\u0633\u0648\u0646"
+    - key: mission.route_reopened.guide.3.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0647\u0646\u062F\u0633 \u0631\u0648
+        \u0628\u0647 \u0645\u0633\u06CC\u0631 \u0642\u0637\u0639\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631 \u0648 \u06F7 \u062B\u0627\u0646\u06CC\u0647 \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.route_reopened.guide.3.title
+      value: "\u0627\u062A\u0635\u0627\u0644 \u0642\u0637\u0639\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0631\u06AF\u0631\u062F\u0648\u0646"
+    - key: mission.route_reopened.guide.4.body
+      value: "\u0628\u062E\u0634\u06CC \u0627\u0632 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646\u060C \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0648\u0627\u0631\u062F
+        \u0634\u0648 \u0648 \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627\u06CC
+        \u06A9\u0627\u0631\u0648\u0627\u0646 \u0631\u0648 \u0639\u0642\u0628 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.route_reopened.guide.4.title
+      value: "\u0648\u0627\u0631\u062F \u0645\u0631\u06A9\u0632 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u0634\u0648"
+    - key: mission.route_reopened.guide.5.body
+      value: "\u0628\u0647 \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654 \u0627\u0634\u200C\u0644\u0627\u06CC\u0646
+        \u062D\u0645\u0644\u0647 \u06A9\u0646\u060C \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647
+        \u0628\u0647 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0622\u0633\u06CC\u0628 \u0628\u0632\u0646\u06CC."
+    - key: mission.route_reopened.guide.5.title
+      value: "\u067E\u0627\u062F\u06AF\u0627\u0646 \u0631\u0648 \u0634\u06A9\u0633\u062A
+        \u0628\u062F\u0647"
+    - key: mission.route_reopened.guide.6.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u06A9\u0646\u0627\u0631 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0646\u06AF\u0647 \u062F\u0627\u0631 \u062A\u0627 \u0622\u0631\u06CC\u0627
+        \u0642\u0637\u0639\u0647\u0654 \u062F\u0648\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u0631\u0648 \u06A9\u0627\u0645\u0644 \u06A9\u0646\u0647."
+    - key: mission.route_reopened.guide.6.title
+      value: "\u0627\u0633\u0646\u0627\u062F \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.route_reopened.guide.diagram
+      value: "\u0627\u0645\u062F\u0627\u062F + \u0633\u0648\u062E\u062A \u2190 \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0641\u0639\u0627\u0644 \xB7 \u06F2 \u0645\u0647\u0646\u062F\u0633 \u2190
+        \u0627\u062A\u0635\u0627\u0644 \xB7 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u2190 \u0645\u0631\u06A9\u0632 \u2190 \u0627\u0633\u0646\u0627\u062F"
+    - key: mission.route_reopened.guide.example
+      value: "\u0641\u0642\u0637 \u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C
+        \u062D\u0631\u06A9\u062A\u060C \u062D\u0645\u0644\u0647 \u0648 \u062A\u0648\u0642\u0641
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646. \u0622\u0631\u06CC\u0627
+        \u0647\u0645 \u0647\u0645\u06CC\u0646 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u06CC\u06A9\u0646 \u0631\u0648 \u0646\u0645\u0627\u06CC\u0634
+        \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.route_reopened.guide.mistake
+      value: "\u0647\u06CC\u0686 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0631\u0648 \u0631\u0647\u0627 \u0646\u06A9\u0646 \u0648 \u0645\u0631\u06A9\u0632
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u0646\u06A9\u0646. \u067E\u06CC\u0631\u0648\u0632\u06CC
+        \u06CC\u0639\u0646\u06CC \u0634\u0647\u0631 \u0641\u0639\u0627\u0644 \u0628\u0645\u0648\u0646\u0647
+        \u0648 \u0627\u0633\u0646\u0627\u062F \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.route_reopened.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u0633\u06CC\u0631
+        \u0628\u0627\u0632 \u0634\u062F"
+    - key: mission.route_reopened.location
+      value: "\u0645\u0631\u06A9\u0632 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u0635\u0646\u0639\u062A\u06CC\u0650 \u0634\u0631\u0642"
+    - key: mission.route_reopened.name
+      value: "\u0645\u0633\u06CC\u0631 \u0628\u0627\u0632 \u0634\u062F"
+    - key: mission.route_reopened.objective.hub
+      value: "\u0645\u0631\u06A9\u0632 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u0631\u0648 \u062A\u0635\u0631\u0641 \u06A9\u0646"
+    - key: mission.route_reopened.objective.hub.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0648\u0627\u0631\u062F \u06A9\u0646 \u0648 \u067E\u0627\u062F\u06AF\u0627\u0646
+        \u0645\u0633\u062A\u062D\u06A9\u0645 \u0631\u0648 \u0634\u06A9\u0633\u062A
+        \u0628\u062F\u0647."
+    - key: mission.route_reopened.objective.lifelines
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.route_reopened.objective.lifelines.body
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \u0631\u0648 \u0628\u0647 \u0645\u0633\u06CC\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0648 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0633\u0648\u062E\u062A \u0631\u0648
+        \u0628\u0647 \u0645\u0633\u06CC\u0631 \u062E\u062F\u0645\u0627\u062A \u0622\u0628
+        \u0628\u0631\u0633\u0648\u0646. \u0647\u0631 \u062F\u0648 \u062E\u0648\u062F\u0631\u0648
+        \u0628\u0627\u06CC\u062F \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.route_reopened.objective.link
+      value: "\u0645\u0633\u06CC\u0631 \u0642\u0637\u0639\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646"
+    - key: mission.route_reopened.objective.link.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0647\u0646\u062F\u0633 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0628\u0647 \u0627\u062A\u0635\u0627\u0644 \u0642\u0637\u0639\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0633\u0648\u0646 \u0648 \u06F7 \u062B\u0627\u0646\u06CC\u0647
+        \u0627\u0632\u0634\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.route_reopened.objective.records
+      value: "\u0627\u0633\u0646\u0627\u062F \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.route_reopened.objective.records.body
+      value: "\u0628\u0639\u062F \u0627\u0632 \u0633\u0642\u0648\u0637 \u067E\u0627\u062F\u06AF\u0627\u0646\u060C
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648 \u06F1\u06F0
+        \u062B\u0627\u0646\u06CC\u0647 \u06A9\u0646\u0627\u0631 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u0627\u0633\u0646\u0627\u062F
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0646\u0628\u0631."
+    - key: mission.route_reopened.resources
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0627\u0645\u062F\u0627\u062F
+        \xB7 \u06A9\u0627\u0645\u06CC\u0648\u0646 \u0633\u0648\u062E\u062A \xB7 \u062F\u0648
+        \u0645\u0647\u0646\u062F\u0633 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.route_reopened.result.defeat
+      value: "\u0639\u0645\u0644\u06CC\u0627\u062A \u0645\u0631\u06A9\u0632 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.route_reopened.result.success
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0641\u0639\u0627\u0644 \u0645\u0648\u0646\u062F\u060C \u0645\u0631\u06A9\u0632
+        \u062A\u0635\u0631\u0641 \u0634\u062F \u0648 \u0642\u0637\u0639\u0647\u0654
+        \u062F\u0648\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644 \u0627\u0632 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0633\u0627\u0644\u0645 \u0645\u0633\u06CC\u0631\u0647\u0627 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0634\u062F."
+    - key: mission.route_reopened.result.victory
+      value: "\u0645\u0633\u06CC\u0631 \u0628\u0627\u0632 \u0634\u062F"
+    - key: mission.route_reopened.reward.card
+      value: "\u06F1\u06F2\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F6\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.route_reopened.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.route_reopened.star.2
+      value: "\u0647\u06CC\u0686 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0646\u0631\u0647"
+    - key: mission.route_reopened.star.3
+      value: "\u0627\u0633\u0646\u0627\u062F \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0647"
+    - key: mission.route_reopened.summary
+      value: "\u0627\u0645\u062F\u0627\u062F \u0648 \u0633\u0648\u062E\u062A \u0631\u0648
+        \u062F\u0631 \u062D\u0631\u06A9\u062A \u0646\u06AF\u0647 \u062F\u0627\u0631\u060C
+        \u0645\u0633\u06CC\u0631 \u0642\u0637\u0639\u200C\u0634\u062F\u0647 \u0631\u0648
+        \u0628\u0631\u06AF\u0631\u062F\u0648\u0646\u060C \u0645\u0631\u06A9\u0632
+        \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0648 \u062A\u0635\u0631\u0641
+        \u06A9\u0646 \u0648 \u0627\u0633\u0646\u0627\u062F \u0645\u0633\u06CC\u0631\u0647\u0627
+        \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631."
     - key: mission.supply_line.deadline
       value: "\u06F1\u06F2 \u062F\u0642\u06CC\u0642\u0647"
     - key: mission.supply_line.enemy_intel
@@ -10243,6 +10571,87 @@ MonoBehaviour:
         \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0627\u0634\u0627\u0631\u0647
         \u0645\u06CC\u200C\u06A9\u0646\u0647\u061B \u0645\u0642\u0635\u062F \u0628\u0639\u062F\u06CC
         \u0645\u0627 \u0647\u0645\u0648\u0646\u200C\u062C\u0627\u0633\u062A."
+    - key: narrative.route_reopened.brief.01
+      value: "\u0634\u0628\u06A9\u0647\u0654 \u0627\u0645\u062F\u0627\u062F \u0647\u0646\u0648\u0632
+        \u062F\u0631 \u062D\u0631\u06A9\u062A\u0647: \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u062F\u0631 \u0645\u0633\u06CC\u0631
+        \u062C\u0646\u0648\u0628\u06CC \u0648 \u0633\u0648\u062E\u062A \u067E\u0645\u067E\u200C\u0647\u0627\u06CC
+        \u0622\u0628 \u062F\u0631 \u0645\u0633\u06CC\u0631 \u0634\u0645\u0627\u0644\u06CC.
+        \u0645\u0631\u06A9\u0632 \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0627\u0634\u200C\u0644\u0627\u06CC\u0646
+        \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062F\u0632\u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u06A9\u0646\u062A\u0631\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647\u060C
+        \u0627\u0645\u0627 \u0634\u0647\u0631 \u0646\u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646 \u062F\u0631\u06AF\u06CC\u0631\u06CC
+        \u0645\u0646\u062A\u0638\u0631 \u0628\u0645\u0648\u0646\u0647."
+    - key: narrative.route_reopened.brief.02
+      value: "\u0646\u06CC\u0631\u0648 \u0631\u0648 \u062A\u0642\u0633\u06CC\u0645
+        \u06A9\u0646. \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647 \u062F\u0627\u0631\u060C
+        \u06AF\u0631\u0648\u0647 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0631\u0648\u06CC \u0645\u0633\u06CC\u0631 \u0642\u0637\u0639\u200C\u0634\u062F\u0647
+        \u0628\u0630\u0627\u0631 \u0648 \u06AF\u0631\u0648\u0647 \u062A\u0647\u0627\u062C\u0645
+        \u0631\u0648 \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0631\u06A9\u0632
+        \u0648\u0627\u0631\u062F \u06A9\u0646. \u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u062A\u0635\u0631\u0641 \u06A9\u0646\u062A\u0631\u0644\u200C\u0634\u062F\u0647\u200C\u0633\u062A\u060C
+        \u0646\u0647 \u062A\u062E\u0631\u06CC\u0628."
+    - key: narrative.route_reopened.brief.03
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u0645\u0631\u06A9\u0632\u060C \u0627\u0646\u062D\u0631\u0627\u0641 \u0633\u0648\u062E\u062A\u060C
+        \u0628\u0627\u0631\u0646\u0627\u0645\u0647\u200C\u0647\u0627\u06CC \u0628\u0627\u0632\u0627\u0631
+        \u0648 \u062F\u0633\u062A\u200C\u062F\u0647\u06CC \u0628\u0631\u0642 \u0631\u0648
+        \u0628\u0647 \u0647\u0645 \u0648\u0635\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0627\u0633\u0646\u0627\u062F \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647
+        \u062F\u0627\u0631\u06CC\u062F \u062A\u0627 \u0647\u0631 \u062A\u062D\u0648\u06CC\u0644
+        \u0641\u06CC\u0632\u06CC\u06A9\u06CC \u0631\u0648 \u0628\u0627 \u0641\u0639\u0627\u0644\u06CC\u062A
+        \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC \u062E\u0627\u0645\u0648\u0634
+        \u0634\u0628\u06A9\u0647\u0654 \u0634\u0647\u0631\u06CC \u062A\u0637\u0628\u06CC\u0642
+        \u0628\u062F\u0645."
+    - key: narrative.route_reopened.comms.01
+      value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u0627\u0648\u0646
+        \u062A\u062D\u0648\u06CC\u0644 \u06CC\u06A9 \u06AF\u0631\u0647\u0654 \u062E\u0627\u0645\u0648\u0634
+        \u062F\u06CC\u06AF\u0647 \u0631\u0648 \u0641\u0639\u0627\u0644 \u06A9\u0631\u062F.
+        \u0627\u06CC\u0646 \u0634\u0628\u06A9\u0647 \u0641\u0642\u0637 \u0645\u0646\u0627\u0628\u0639
+        \u0631\u0648 \u0646\u0645\u06CC\u200C\u062F\u0632\u062F\u0647\u061B \u0627\u0632
+        \u0631\u0641\u062A\u200C\u0648\u0622\u0645\u062F \u0627\u0636\u0637\u0631\u0627\u0631\u06CC
+        \u0634\u0647\u0631 \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u0627\u0644\u06AF\u0648\u06CC
+        \u0639\u0645\u062F\u06CC \u0641\u0639\u0627\u0644\u200C\u0633\u0627\u0632\u06CC
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648 \u0633\u0627\u0644\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F."
+    - key: narrative.route_reopened.debrief.01
+      value: "\u0645\u0631\u06A9\u0632 \u062F\u0633\u062A \u0645\u0627\u0633\u062A\u060C
+        \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u062D\u06CC\u0627\u062A\u06CC
+        \u0628\u0627\u0632 \u0645\u0648\u0646\u062F \u0648 \u06AF\u0631\u0648\u0647
+        \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC \u0632\u06CC\u0631 \u0622\u062A\u0634
+        \u0645\u0633\u06CC\u0631 \u0642\u0637\u0639\u200C\u0634\u062F\u0647 \u0631\u0648
+        \u0628\u0631\u06AF\u0631\u062F\u0648\u0646\u062F. \u06AF\u0631\u0648\u0647\u200C\u0647\u0627\u06CC
+        \u0633\u0645\u06CC\u0631\u0627 \u0647\u0645\u06CC\u0646 \u062D\u0627\u0644\u0627
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0636\u0628\u0637\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u062E\u062F\u0645\u0627\u062A \u0634\u0647\u0631\u06CC
+        \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u0648\u0646\u0646."
+    - key: narrative.route_reopened.debrief.02
+      value: "\u0642\u0637\u0639\u0647\u0654 \u062F\u0648\u0645 \u067E\u0631\u0648\u062A\u06A9\u0644
+        \u06A9\u0627\u0645\u0644 \u0634\u062F. \u0647\u0631 \u0627\u0646\u062D\u0631\u0627\u0641
+        \u062C\u0627\u062F\u0647\u060C \u0645\u062D\u0645\u0648\u0644\u0647\u0654
+        \u0633\u0648\u062E\u062A\u060C \u0627\u0646\u062A\u0642\u0627\u0644 \u0628\u0627\u0632\u0627\u0631
+        \u0648 \u062F\u0633\u062A\u200C\u062F\u0647\u06CC \u0628\u0631\u0642\u060C
+        \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC \u062E\u0627\u0645\u0648\u0634
+        \u0645\u0634\u062E\u0635\u06CC \u0627\u0632 \u0634\u0628\u06A9\u0647\u0654
+        \u0634\u0647\u0631\u06CC \u0631\u0648 \u062A\u063A\u0630\u06CC\u0647 \u06A9\u0631\u062F\u0647.
+        \u0627\u06CC\u0646 \u062D\u0645\u0644\u0647\u200C\u0647\u0627 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0628\u0648\u062F\u0646\u060C \u0646\u0647 \u062A\u062E\u0631\u06CC\u0628
+        \u062A\u0635\u0627\u062F\u0641\u06CC."
+    - key: narrative.route_reopened.debrief.03
+      value: "\u0634\u0647\u0631\u06CC \u06A9\u0647 \u0632\u06CC\u0631 \u0641\u0634\u0627\u0631\u0647
+        \u0686\u06CC\u0632\u06CC \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u06A9\u0646\u0647
+        \u06A9\u0647 \u062F\u0631 \u0632\u0645\u0627\u0646 \u0635\u0644\u062D \u0631\u062F
+        \u06A9\u0631\u062F\u0647 \u0628\u0648\u062F. \u062A\u0648 \u0645\u0633\u06CC\u0631
+        \u0631\u0648 \u0628\u0631\u0627\u06CC \u0645\u0646 \u0628\u0627\u0632 \u06A9\u0631\u062F\u06CC.
+        \u062D\u0627\u0644\u0627 \u0633\u06CC\u06AF\u0646\u0627\u0644\u0645 \u0631\u0648
+        \u0645\u06CC\u0627\u0646 \u0647\u0645\u0648\u0646 \u0645\u0631\u062F\u0645\u06CC
+        \u067E\u06CC\u062F\u0627 \u06A9\u0646 \u06A9\u0647 \u0627\u0635\u0631\u0627\u0631
+        \u062F\u0627\u0631\u06CC \u0627\u0632\u0634\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646\u06CC."
     - key: narrative.speaker.fadi.accessibleLabel
       value: "\u0641\u0627\u062F\u06CC\u060C \u0633\u0631\u06AF\u0631\u0648\u0647
         \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"

@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.SignalTraceBilingualVoice.v1",
+  "missionId": "saga.ch03.m01.signal_trace",
+  "generatedAtUtc": "2026-09-26T20:44:53.040199+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "signal_trace-brief-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Three moving transmitters share the Relay signature. One belongs to the clinic, one to a delivery cooperative, and one is travelling with an armed escort. Proximity alone is not proof.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-brief-01.wav",
+      "durationSeconds": 12.24,
+      "sha256": "0f66d08919b66274f253f21bef942b2b43997753fc2b9bea75e4f84180c7a4d7",
+      "captionSha256": "5889aa836bd842d5f2eee76cc63cb6ceeba1bb5644b28b7ff066a8b0a2f39120"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-brief-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سه فرستندهٔ متحرک امضای شبکه رو دارن. یکی مال درمانگاهه، یکی مال تعاونی پخشه و یکی با اسکورت مسلح حرکت می‌کنه. فقط نزدیک بودن، مدرک نیست.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-brief-01.wav",
+      "durationSeconds": 13.04,
+      "sha256": "8c1b04dd91d319b6b1f30f706066c31d8feb94e7e788799122067f7020ce5af1",
+      "captionSha256": "b979b3a2f98d0fb00eca9c2846c3cc4bb794b0d67f503f64f63fdb4d73dce07e"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The clinic and delivery crews use radios the old registry never recorded. Keep those signals protected. Compare the two observation points before you identify the carrier.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-brief-02.wav",
+      "durationSeconds": 10.32,
+      "sha256": "b04b4b0fd14a615d054e56e19b52f2f289330dcba4e88e1ee067b1c1699ab37d",
+      "captionSha256": "c6e2df717542e55c96f7a2e5b8146c987d7fa179f072f9124b9849e30a8b7dd3"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "درمانگاه و گروه‌های پخش از بی‌سیم‌هایی استفاده می‌کنن که هیچ‌وقت توی فهرست قدیمی ثبت نشدن. اون سیگنال‌ها باید امن بمونن. قبل از شناسایی حامل، هر دو نقطهٔ دیده‌بانی رو بررسی کن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-brief-02.wav",
+      "durationSeconds": 14.08,
+      "sha256": "75c8aeae859d163aaa1e4dec1d708e068610d29c86927d16f0b1613f3c08baf4",
+      "captionSha256": "2e939c51a49e05f5ebea6ee16563ce2ac573d3529ccf834bb04e80cb8374cc48"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "We wait for corroboration, then isolate the armed escort. No fire near the protected transmitters. Recover the device intact.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-brief-03.wav",
+      "durationSeconds": 9.04,
+      "sha256": "2f4e7bbd1280f9e8b021cc7a135a72c4c9a7611be46c66078967fb5d23f3bc0d",
+      "captionSha256": "ac1b0c6e73d89ae3eeb6e5ea80e160ea020a5892e572acedcfc827762f8a4058"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "تا تأیید دوم صبر می‌کنیم، بعد اسکورت مسلح رو جدا می‌کنیم. نزدیک فرستنده‌های حفاظت‌شده شلیک نکن. دستگاه رو سالم تحویل بگیر.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-brief-03.wav",
+      "durationSeconds": 11.52,
+      "sha256": "6cca16a3dae11589a8d7ec3293238b8378426ca944455651f514fbc14d2e67a4",
+      "captionSha256": "d0fe097566ff0836cbd597bf5677505890644c6f1cfde9ea9c118adc267aad40"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Evidence correlated. The escorted transmitter crossed a restricted service tunnel and changed routes with the armed patrol. Confidence is now confirmed. The clinic and delivery signals remain protected.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-comms-01.wav",
+      "durationSeconds": 12.8,
+      "sha256": "f37ba68aa4295c2f3d819f81d5213e4a9b2040e3ae0acb8800a3b35d9ac4f5ce",
+      "captionSha256": "e2dfceb2ffab07a8b3a438f37a30414d94d83da0a5eca0dc4eb89923a89145f9"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مدارک با هم جور شد. فرستندهٔ اسکورت‌شده از تونل خدماتی محدود رد شد و همراه گشت مسلح مسیر عوض کرد. حالا هدف قطعی تأیید شده. سیگنال درمانگاه و پخش همچنان حفاظت‌شده‌ان.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-comms-01.wav",
+      "durationSeconds": 17.04,
+      "sha256": "6be62d69878652053d79c01dc5d56acb28dea5a8b58df485253592bb3255de15",
+      "captionSha256": "d9e0da047267241c1f1df88f9bd3d2d8510a3f934dfb005f947fb8a530db1dc7"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The escort is down and the device is intact. We stopped the cell without turning the district's radios into targets.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-debrief-01.wav",
+      "durationSeconds": 6.96,
+      "sha256": "dd4eeb1b4ff0bb5e02c178cedaa33f9a52edbe66cf9bd93b982f0ae65f5383b4",
+      "captionSha256": "8b58bebdebe861863ad0b0ad6e0694d1329aa6c3445c16a7503fc41e46701db5"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "اسکورت از کار افتاد و دستگاه سالمه. سلول رو متوقف کردیم، بدون اینکه بی‌سیم‌های محله رو هدف کنیم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-debrief-01.wav",
+      "durationSeconds": 7.52,
+      "sha256": "d5f2630c86899e916962ca2d09e43afe310711f6eda5bdd3e151a1d8fd2a5716",
+      "captionSha256": "e22cf1de5bae9ca12b37edcb5fd9796e193bbd50ddae604e4ca8eef7bd54ae91"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The clinic never lost contact and the delivery cooperative kept moving. People saw us verify first and act only on the armed carrier.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-debrief-02.wav",
+      "durationSeconds": 8.72,
+      "sha256": "8370f39ea09d0fb78b0c0af554bfabce57d48ff190f46dd75381c3c436d22bad",
+      "captionSha256": "94af04c5ed0e62b9035e2cc69d380055be5a269887aac009fc1d888f8eb946c8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-debrief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "ارتباط درمانگاه حتی یک لحظه قطع نشد و تعاونی پخش هم به کارش ادامه داد. مردم دیدن که اول بررسی کردیم و فقط سراغ حامل مسلح رفتیم.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-debrief-02.wav",
+      "durationSeconds": 11.28,
+      "sha256": "5c3577db0fe787562f016a1799ade9fe2a654a09bc4e23ae0d1e773e16447cce",
+      "captionSha256": "7e0280a65635811c31959f53f11f74f97d30f5d23aab0e998ed5675fc8d0bd3c"
+    },
+    {
+      "kind": "narrative",
+      "id": "signal_trace-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The recovered device uses a Civic Relay routing signature known only to continuity planners. Its final route points to a verified weapons safehouse beside occupied homes.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/en/signal_trace-debrief-03.wav",
+      "durationSeconds": 11.36,
+      "sha256": "84c74c268b866db4a7c1d4062c9d9cb83e17f0af2c7c0b7125ccf1342241c24e",
+      "captionSha256": "f71fb6875f42c782a893c66b50dba7e17447b86e0c7c98af094560e392fda97b"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "signal_trace-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دستگاه بازیابی‌شده از امضای مسیریابی شبکهٔ شهری استفاده می‌کنه؛ امضایی که فقط برنامه‌ریزهای تداوم فرمان می‌شناختن. مسیر آخرش به یک مخفیگاه تأییدشدهٔ سلاح کنار خانه‌های مسکونی می‌رسه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/Voice/fa/signal_trace-debrief-03.wav",
+      "durationSeconds": 15.76,
+      "sha256": "2853c31555e95e39365eb8f6dbe1e9a40844b96fbd32c7902f9353523ac80491",
+      "captionSha256": "dd862f398b0c15efccad796782ff32209e5e5f65e409dbca631546b2f277cc8c"
+    }
+  ]
+}

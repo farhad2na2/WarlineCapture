@@ -38,7 +38,7 @@ MonoBehaviour:
       englishFallback: The escort is down and the device is intact. We stopped the
         cell without turning the district's radios into targets.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: c26799fb7733c42d58fc330841ef3cfc, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -83,16 +83,16 @@ MonoBehaviour:
       englishFallback: The clinic never lost contact and the delivery cooperative
         kept moving. People saw us verify first and act only on the armed carrier.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 0e349f69dbafe442c8d6357085d2d20f, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 9.5
+      deadlineSeconds: 11.78
       essentialCaption: 1
     continueStateId: SignalTrace-debrief-2
     skipStateId: SignalTrace-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 9.5
+    durationSeconds: 11.78
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -129,16 +129,16 @@ MonoBehaviour:
         known only to continuity planners. Its final route points to a verified weapons
         safehouse beside occupied homes.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 731f6fe11fb704f1e908eb01b5786692, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13
+      deadlineSeconds: 16.26
       essentialCaption: 1
     continueStateId: SignalTrace-debrief-complete
     skipStateId: SignalTrace-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13
+    durationSeconds: 16.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -225,16 +225,16 @@ MonoBehaviour:
         service tunnel and changed routes with the armed patrol. Confidence is now
         confirmed. The clinic and delivery signals remain protected.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 73c99bcce27fd4a48a3f14f6be9b26cf, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 14.428572
+      deadlineSeconds: 17.54
       essentialCaption: 1
     continueStateId: SignalTrace-comms-complete
     skipStateId: SignalTrace-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 14.428572
+    durationSeconds: 17.54
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -321,16 +321,16 @@ MonoBehaviour:
         to the clinic, one to a delivery cooperative, and one is travelling with
         an armed escort. Proximity alone is not proof.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 53b5a8288132349529548912f24719d2, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.142858
+      deadlineSeconds: 13.54
       essentialCaption: 1
     continueStateId: SignalTrace-brief-1
     skipStateId: SignalTrace-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.142858
+    durationSeconds: 13.54
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -367,16 +367,16 @@ MonoBehaviour:
         never recorded. Keep those signals protected. Compare the two observation
         points before you identify the carrier.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 4c261a47b5ea2409aa2536e2fcc40b1f, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 12.571428
+      deadlineSeconds: 14.58
       essentialCaption: 1
     continueStateId: SignalTrace-brief-2
     skipStateId: SignalTrace-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 12.571428
+    durationSeconds: 14.58
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -412,16 +412,16 @@ MonoBehaviour:
       englishFallback: We wait for corroboration, then isolate the armed escort.
         No fire near the protected transmitters. Recover the device intact.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 7a6df7a6353584b2ba8f0e703e6dc6e5, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 8.928572
+      deadlineSeconds: 12.02
       essentialCaption: 1
     continueStateId: SignalTrace-brief-complete
     skipStateId: SignalTrace-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 8.928572
+    durationSeconds: 12.02
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 

@@ -1403,30 +1403,30 @@ MonoBehaviour:
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-brief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 80e5fd0c13d034883960b4d89df8c327, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-brief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: d374ee3858c0643008dff68a8af587db, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-brief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 29c66a3f081694da09e92a51cfb7c8b7, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-comms-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: ec940c1db0292474fb54757bc3c9e9c6, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-debrief-01
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 52c85fb6bccd0499c9fb9849f0b67693, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-debrief-02
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: 970520d584e8348de845aac449ed317f, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}
   - lineId: signal_trace-debrief-03
-    voiceClip: {fileID: 0}
+    voiceClip: {fileID: 8300000, guid: c97935dce54c44318b35350eb8b7748a, type: 3}
     femaleVoiceClip: {fileID: 0}
     neutralVoiceClip: {fileID: 0}

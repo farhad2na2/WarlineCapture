@@ -15,8 +15,43 @@ MonoBehaviour:
   m_GroupName: Power Relay Narrative
   m_GUID: 6b1800e498b6546079dabbd88ee3e208
   m_SerializeEntries:
+  - m_GUID: 4ba492ca4429845e7be9e91266e2e49d
+    m_Address: narrative.power_relay.BriefProtectedRoute
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4d6ff5903e705444da8f4dac8829ed73
+    m_Address: narrative.power_relay.DebriefCivicHandshake
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 994394f6b98a143589b9a5e94319729c
     m_Address: narrative.power_relay.approved
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab1da26feac9148b5ab83f640a0c583a
+    m_Address: narrative.power_relay.BriefLinaShelter
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0bf20cb23e934cfbb57936328ac6cc2
+    m_Address: narrative.power_relay.DebriefRestoredServices
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b7d82b41472a540dfa7def3e19ea3a8a
+    m_Address: narrative.power_relay.DebriefLogisticsLead
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ca55ba37bc9384a748b47dedb3af8a82
+    m_Address: narrative.power_relay.CommsProtectedConvoy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d5c47e28c5180490285a25fa8553e66f
+    m_Address: narrative.power_relay.BriefUnsafeRoute
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

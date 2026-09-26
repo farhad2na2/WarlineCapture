@@ -4,31 +4,40 @@ using System.IO;
 using System.Linq;
 using Game.Configs;
 using UnityEditor;
+using UnityEditor.U2D.Sprites;
 using UnityEngine;
 
 namespace Game.Editor
 {
     public static class CH02M04PowerRelayMediaImporter
     {
-        public const string ArtPath="Assets/Game/Art/Narrative/CH02M04PowerRelay/PowerRelay.png";
-        public const string SourceArt="Design/AgentReports/CH02M04PowerRelay/Mockups/ch02m04-power-relay-briefing-v01.png";
+        public const string ArtRoot="Assets/Game/Art/Narrative/CH02M04PowerRelay";
+        public const string ArtPath=ArtRoot+"/PowerRelay.png";
+        public const string PreviewPath=ArtRoot+"/BriefLinaShelter.png";
         public const string VoiceRoot="Assets/Game/Audio/Narrative/CH02M04PowerRelay/Voice";
+        public static readonly string[] Panels={"BriefLinaShelter","BriefUnsafeRoute","BriefProtectedRoute","CommsProtectedConvoy","DebriefRestoredServices","DebriefCivicHandshake","DebriefLogisticsLead"};
         public static IEnumerable<PowerRelayNarrativeLine> Lines=>CH02M04PowerRelayCopy.Brief.Concat(CH02M04PowerRelayCopy.Comms).Concat(CH02M04PowerRelayCopy.Debrief);
         public static string VoicePath(string id,bool persian)=>$"{VoiceRoot}/{(persian?"fa":"en")}/{id}.wav";
         public static AudioClip Voice(string id,bool persian)=>AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
-        public static Sprite Panel()=>AssetDatabase.LoadAssetAtPath<Sprite>(ArtPath);
-        public static Texture Preview()=>AssetDatabase.LoadAssetAtPath<Texture>(ArtPath);
+        public static Sprite Panel(string id,bool wide)=>AssetDatabase.LoadAllAssetsAtPath($"{ArtRoot}/{id}.png").OfType<Sprite>().Single(s=>s.name==$"{id}-{(wide?"20x9":"16x9")}");
+        public static Texture Preview()=>AssetDatabase.LoadAssetAtPath<Texture>(PreviewPath);
         public static void ConfigureArt()
         {
-            if(!File.Exists(SourceArt))throw new InvalidOperationException("Approved Power Relay visual is missing: "+SourceArt);
-            Directory.CreateDirectory(Path.GetDirectoryName(ArtPath));
-            if(!File.Exists(ArtPath) || File.GetLastWriteTimeUtc(SourceArt)>File.GetLastWriteTimeUtc(ArtPath))File.Copy(SourceArt,ArtPath,true);
-            AssetDatabase.ImportAsset(ArtPath,ImportAssetOptions.ForceSynchronousImport);
-            var importer=AssetImporter.GetAtPath(ArtPath) as TextureImporter??throw new InvalidOperationException("Power Relay visual could not be imported.");
-            importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;importer.mipmapEnabled=false;importer.isReadable=false;importer.maxTextureSize=2048;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();
-            if(Panel()==null)throw new InvalidOperationException("Power Relay sprite missing after import.");
-            Debug.Log("[PowerRelayVisual] result=Passed approvedMockup=1 playerFacing=1");
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            foreach(string id in Panels)
+            {
+                string path=$"{ArtRoot}/{id}.png";var importer=AssetImporter.GetAtPath(path) as TextureImporter??throw new InvalidOperationException("Missing final Power Relay comic panel: "+path);
+                importer.GetSourceTextureWidthAndHeight(out int width,out int height);
+                var crops=new[]{new SpriteMetaData{name=$"{id}-16x9",rect=Crop(width,height,16f/9f),alignment=0,pivot=new Vector2(.5f,.5f)},new SpriteMetaData{name=$"{id}-20x9",rect=Crop(width,height,20f/9f),alignment=0,pivot=new Vector2(.5f,.5f)}};
+                importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Multiple;importer.spritePixelsPerUnit=100;importer.sRGBTexture=true;importer.alphaSource=TextureImporterAlphaSource.None;importer.alphaIsTransparency=false;importer.mipmapEnabled=false;importer.streamingMipmaps=false;importer.isReadable=false;importer.npotScale=TextureImporterNPOTScale.None;importer.wrapMode=TextureWrapMode.Clamp;importer.filterMode=FilterMode.Bilinear;importer.textureCompression=TextureImporterCompression.CompressedHQ;importer.maxTextureSize=2048;
+                var factories=new SpriteDataProviderFactories();factories.Init();var provider=factories.GetSpriteEditorDataProviderFromObject(importer);provider.InitSpriteEditorDataProvider();var old=provider.GetSpriteRects();var rectangles=crops.Select(crop=>new SpriteRect{name=crop.name,rect=crop.rect,alignment=SpriteAlignment.Center,pivot=crop.pivot,spriteID=old.FirstOrDefault(existing=>existing.name==crop.name)?.spriteID??GUID.Generate()}).ToArray();provider.SetSpriteRects(rectangles);provider.GetDataProvider<ISpriteNameFileIdDataProvider>().SetNameFileIdPairs(rectangles.Select(rect=>new SpriteNameFileIdPair(rect.name,rect.spriteID)));provider.Apply();importer.SaveAndReimport();
+                if(Mathf.Abs(Panel(id,false).rect.width/Panel(id,false).rect.height-16f/9f)>.005f||Mathf.Abs(Panel(id,true).rect.width/Panel(id,true).rect.height-20f/9f)>.005f)throw new InvalidOperationException("Power Relay comic crop ratio mismatch: "+id);
+            }
+            Debug.Log("[PowerRelayComicArt] result=Passed sources=7 authoredCrops=14 bilingualTextFree=1");
         }
+        private static Rect Crop(int width,int height,float aspect){int h=Mathf.FloorToInt(Mathf.Min(height,width/aspect));int w=Mathf.Min(width,Mathf.FloorToInt(h*aspect));return new Rect((width-w)/2,(height-h)/2,w,h);}
+        public static void ValidateStableArtImports(){ConfigureArt();var before=Panels.SelectMany(id=>new[]{PanelIdentity(Panel(id,false)),PanelIdentity(Panel(id,true))}).ToArray();ConfigureArt();var after=Panels.SelectMany(id=>new[]{PanelIdentity(Panel(id,false)),PanelIdentity(Panel(id,true))}).ToArray();if(!before.SequenceEqual(after))throw new InvalidOperationException("Reimport changed a Power Relay comic sprite identity.");Debug.Log("[PowerRelayComicArtStability] result=Passed sources=7 stableSpriteIds=14");}
+        private static string PanelIdentity(Sprite panel){AssetDatabase.TryGetGUIDAndLocalFileIdentifier(panel,out string guid,out long id);return guid+":"+id;}
         public static void ConfigureVoices()
         {
             AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);int count=0;

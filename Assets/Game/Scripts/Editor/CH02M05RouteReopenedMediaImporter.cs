@@ -11,13 +11,14 @@ namespace Game.Editor
     public static class CH02M05RouteReopenedMediaImporter
     {
         public const string ArtPath="Assets/Game/Art/Narrative/CH02M05RouteReopened/RouteReopened.png";
+        public const string PreviewPath="Assets/Game/Art/Narrative/CH02M05RouteReopened/PreviewRouteReopened.png";
         public const string SourceArt="Design/AgentReports/CH02M05RouteReopened/Mockups/ch02m05-route-reopened-briefing-v01.png";
         public const string VoiceRoot="Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice";
         public static IEnumerable<RouteReopenedNarrativeLine> Lines=>CH02M05RouteReopenedCopy.Brief.Concat(CH02M05RouteReopenedCopy.Comms).Concat(CH02M05RouteReopenedCopy.Debrief);
         public static string VoicePath(string id,bool persian)=>$"{VoiceRoot}/{(persian?"fa":"en")}/{id}.wav";
         public static AudioClip Voice(string id,bool persian)=>AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
         public static Sprite Panel()=>AssetDatabase.LoadAssetAtPath<Sprite>(ArtPath);
-        public static Texture Preview()=>AssetDatabase.LoadAssetAtPath<Texture>(ArtPath);
+        public static Texture Preview()=>AssetDatabase.LoadAssetAtPath<Texture>(PreviewPath);
         public static void ConfigureArt()
         {
             if(!File.Exists(SourceArt))throw new InvalidOperationException("Approved Route Reopened visual is missing: "+SourceArt);
@@ -27,7 +28,11 @@ namespace Game.Editor
             var importer=AssetImporter.GetAtPath(ArtPath) as TextureImporter??throw new InvalidOperationException("Route Reopened visual could not be imported.");
             importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;importer.mipmapEnabled=false;importer.isReadable=false;importer.maxTextureSize=2048;importer.wrapMode=TextureWrapMode.Clamp;importer.SaveAndReimport();
             if(Panel()==null)throw new InvalidOperationException("Route Reopened sprite missing after import.");
-            Debug.Log("[RouteReopenedVisual] result=Passed approvedMockup=1 playerFacing=1");
+            AssetDatabase.ImportAsset(PreviewPath,ImportAssetOptions.ForceSynchronousImport);
+            var previewImporter=AssetImporter.GetAtPath(PreviewPath) as TextureImporter??throw new InvalidOperationException("Clean Route Reopened preview could not be imported: "+PreviewPath);
+            previewImporter.textureType=TextureImporterType.Default;previewImporter.mipmapEnabled=false;previewImporter.isReadable=false;previewImporter.sRGBTexture=true;previewImporter.maxTextureSize=2048;previewImporter.wrapMode=TextureWrapMode.Clamp;previewImporter.filterMode=FilterMode.Bilinear;previewImporter.textureCompression=TextureImporterCompression.CompressedHQ;previewImporter.SaveAndReimport();
+            if(Preview()==null)throw new InvalidOperationException("Clean Route Reopened preview missing after import.");
+            Debug.Log("[RouteReopenedVisual] result=Passed approvedMockup=1 cleanPreview=1 playerFacing=1");
         }
         public static void ConfigureVoices()
         {

@@ -21,14 +21,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: b0bf20cb23e934cfbb57936328ac6cc2
+      m_SubObjectName: DebriefRestoredServices-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: b0bf20cb23e934cfbb57936328ac6cc2
+      m_SubObjectName: DebriefRestoredServices-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -67,14 +67,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: 4d6ff5903e705444da8f4dac8829ed73
+      m_SubObjectName: DebriefCivicHandshake-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: 4d6ff5903e705444da8f4dac8829ed73
+      m_SubObjectName: DebriefCivicHandshake-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -112,14 +112,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: b7d82b41472a540dfa7def3e19ea3a8a
+      m_SubObjectName: DebriefLogisticsLead-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: b7d82b41472a540dfa7def3e19ea3a8a
+      m_SubObjectName: DebriefLogisticsLead-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -207,14 +207,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: ab1da26feac9148b5ab83f640a0c583a
+      m_SubObjectName: BriefLinaShelter-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: ab1da26feac9148b5ab83f640a0c583a
+      m_SubObjectName: BriefLinaShelter-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -253,14 +253,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: d5c47e28c5180490285a25fa8553e66f
+      m_SubObjectName: BriefUnsafeRoute-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: d5c47e28c5180490285a25fa8553e66f
+      m_SubObjectName: BriefUnsafeRoute-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -299,14 +299,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: 4ba492ca4429845e7be9e91266e2e49d
+      m_SubObjectName: BriefProtectedRoute-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: 4ba492ca4429845e7be9e91266e2e49d
+      m_SubObjectName: BriefProtectedRoute-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
@@ -395,14 +395,14 @@ MonoBehaviour:
     panel16x9: {fileID: 0}
     panel20x9: {fileID: 0}
     panel16x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: ca55ba37bc9384a748b47dedb3af8a82
+      m_SubObjectName: CommsProtectedConvoy-16x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0
     panel20x9Reference:
-      m_AssetGUID: 
-      m_SubObjectName: 
+      m_AssetGUID: ca55ba37bc9384a748b47dedb3af8a82
+      m_SubObjectName: CommsProtectedConvoy-20x9
       m_SubObjectType: 
       m_SubObjectGUID: 
       m_EditorAssetChanged: 0

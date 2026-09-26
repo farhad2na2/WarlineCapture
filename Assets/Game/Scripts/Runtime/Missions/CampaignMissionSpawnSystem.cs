@@ -194,6 +194,33 @@ namespace Game.Runtime
             float3 hostilePositionSum = float3.zero;
             int playerCount = 0;
             int hostileCount = 0;
+            using EntityQuery spawnGridQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<GridConfig>(),
+                ComponentType.ReadOnly<GridWalkable>(),
+                ComponentType.ReadOnly<DynamicBlockerComponent>(),
+                ComponentType.ReadOnly<DynamicOccupancyComponent>());
+            bool hasSpawnGrid = spawnGridQuery.CalculateEntityCount() == 1;
+            Entity spawnGridEntity = hasSpawnGrid ? spawnGridQuery.GetSingletonEntity() : Entity.Null;
+            GridConfig spawnGrid = hasSpawnGrid ? em.GetComponentData<GridConfig>(spawnGridEntity) : default;
+            NativeArray<GridWalkable> spawnWalkable = default;
+            if (hasSpawnGrid)
+            {
+                NativeArray<GridWalkable> liveWalkable = em.GetBuffer<GridWalkable>(spawnGridEntity).AsNativeArray();
+                spawnWalkable = new NativeArray<GridWalkable>(liveWalkable.Length, Allocator.Temp);
+                spawnWalkable.CopyFrom(liveWalkable);
+            }
+            NativeBitArray spawnBlocked = hasSpawnGrid
+                ? em.GetComponentData<DynamicBlockerComponent>(spawnGridEntity).Blocked
+                : default;
+            NativeBitArray spawnOccupied = hasSpawnGrid
+                ? em.GetComponentData<DynamicOccupancyComponent>(spawnGridEntity).Occupied
+                : default;
+            NativeBitArray reservedSpawnCells = hasSpawnGrid
+                ? new NativeBitArray(spawnGrid.Width * spawnGrid.Height, Allocator.Temp)
+                : default;
+            Random spawnRandom = new(math.max(1u, math.hash(new int2(runtime.DeterministicSeed, 5005))));
+            try
+            {
             for (int groupIndex = 0; groupIndex < definition.ForceGroups.Length; groupIndex++)
             {
                 ref CampaignMissionForceGroupBlob group = ref definition.ForceGroups[groupIndex];
@@ -216,9 +243,34 @@ namespace Game.Runtime
                             ApplyFirstContactCinematicVisualPolicy(em, instance);
                         float3 position = OffsetInsideAnchor(
                             anchor.Position, anchor.Radius, ordinal++, runtime.DeterministicSeed);
+                        int2 positionCell = ToGridCell(position, map.Grid);
+                        if (hasSpawnGrid)
+                        {
+                            int2 footprint = em.HasComponent<UnitFootprint>(instance)
+                                ? em.GetComponentData<UnitFootprint>(instance).Size
+                                : new int2(1, 1);
+                            if (InitialUnitsSpawnSystem.TryFindInitialUnitSpawnCell(
+                                    ref spawnRandom,
+                                    spawnGrid,
+                                    spawnWalkable,
+                                    spawnBlocked,
+                                    spawnOccupied,
+                                    ref reservedSpawnCells,
+                                    positionCell,
+                                    math.max(4, (int)math.ceil(anchor.Radius)),
+                                    footprint,
+                                    em.HasComponent<UnitAirMovement>(instance),
+                                    out int2 resolvedCell))
+                            {
+                                positionCell = resolvedCell;
+                                float3 cellCenter = GridUtils.CellToWorldCenter(spawnGrid, resolvedCell);
+                                position.x = cellCenter.x;
+                                position.z = cellCenter.z;
+                            }
+                        }
                         SetOrAdd(
                             em, instance, LocalTransform.FromPositionRotationScale(position, anchor.Rotation, 1f));
-                        SetOrAdd(em, instance, new UnitGrid { Cell = ToGridCell(position, map.Grid) });
+                        SetOrAdd(em, instance, new UnitGrid { Cell = positionCell });
                         SetOrAdd(em, instance, new UnitPrevWorldPos { Value = position });
                         SetOrAdd(em, instance, new UnitMoveVisualComponent());
                         SetOrAdd(em, instance, new Faction { Id = group.FactionId });
@@ -263,6 +315,14 @@ namespace Game.Runtime
                         }
                     }
                 }
+            }
+            }
+            finally
+            {
+                if (reservedSpawnCells.IsCreated)
+                    reservedSpawnCells.Dispose();
+                if (spawnWalkable.IsCreated)
+                    spawnWalkable.Dispose();
             }
 
             playerFocus = playerCount > 0

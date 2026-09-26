@@ -9,6 +9,7 @@ namespace Game.Runtime
 {
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
+        private const float BreachApproachArrivalRadius = 8f;
         private static readonly FixedString64Bytes BreachMissionId="saga.ch01.m05.breach_assault";
         private static readonly FixedString64Bytes BreachTitlePrefix="mission.m05.tutorial.";
         private static readonly FixedString32Bytes BreachFallbackSuffix=".fallback";
@@ -26,7 +27,8 @@ namespace Game.Runtime
             foreach(var ack in acks) if(ack.GuidanceId==65001 && ack.SessionToken.Equals(runtime.SessionToken) && ack.AttemptOrdinal==runtime.AttemptOrdinal) breach.GuidanceCompletedMask|=1;
             acks.Clear();
             var members=em.GetBuffer<CampaignMissionBreachMember>(root,true);
-            Entity actor=Entity.Null,rifle=Entity.Null,hostile=Entity.Null; bool rifleThrough=false,atArchive=breach.FriendlyAtArchive!=0;
+            Entity actor=Entity.Null,rifle=Entity.Null,hostile=Entity.Null;
+            bool rifleThrough=false,friendlyThrough=false,atArchive=breach.FriendlyAtArchive!=0;
             foreach(var member in members)
             {
                 var e=member.Entity;
@@ -36,7 +38,10 @@ namespace Game.Runtime
                 {
                     if(actor==Entity.Null || em.HasComponent<SelectedUnitTag>(e)) actor=e;
                     if(member.Kind==0 && (rifle==Entity.Null || em.HasComponent<SelectedUnitTag>(e))) rifle=e;
-                    if(member.Kind==0 && math.distancesq(position.xz,breach.ArchiveCenter.xz)<28*28) rifleThrough=true;
+                    bool through=math.distancesq(position.xz,breach.ApproachCenter.xz)<
+                        BreachApproachArrivalRadius*BreachApproachArrivalRadius;
+                    friendlyThrough|=through;
+                    if(member.Kind==0) rifleThrough|=through;
                 }
                 else if(hostile==Entity.Null) hostile=e;
             }
@@ -44,7 +49,7 @@ namespace Game.Runtime
             if(actor==Entity.Null) {ClearDefenseGuidance(em,root,in current);return true;}
             if(em.HasComponent<SelectedUnitTag>(actor)) breach.GuidanceCompletedMask|=2;
             if(breach.GateDestroyed!=0) breach.GuidanceCompletedMask|=4;
-            if(breach.GateDestroyed!=0 && (rifleThrough || rifle==Entity.Null && atArchive)) breach.GuidanceCompletedMask|=8;
+            if(breach.GateDestroyed!=0 && (rifleThrough || rifle==Entity.Null && friendlyThrough)) breach.GuidanceCompletedMask|=8;
             if(breach.CoreDestroyed!=0) breach.GuidanceCompletedMask|=16;
             if(breach.CounterattackReleased!=0 && hostile==Entity.Null) breach.GuidanceCompletedMask|=32;
             if(breach.CoreDestroyed!=0 && atArchive) breach.GuidanceCompletedMask|=64;
@@ -52,7 +57,9 @@ namespace Game.Runtime
             int step=1;while(step<8 && (breach.GuidanceCompletedMask&(1u<<(step-1)))!=0) step++;
             if(step==4 && rifle!=Entity.Null) actor=rifle;
             Entity target=step==3?breach.Gate:step==5?breach.Core:step==6?hostile:Entity.Null;
-            float3 destination=step==3?breach.GateCenter:step==5?breach.CoreCenter:breach.ArchiveCenter;
+            float3 destination=step==3?breach.GateCenter:
+                step==4?breach.ApproachCenter:
+                step==5?breach.CoreCenter:breach.ArchiveCenter;
             if(target!=Entity.Null && em.HasComponent<LocalTransform>(target)) destination=em.GetComponentData<LocalTransform>(target).Position;
             var title=BreachTitlePrefix; title.Append(step);title.Append(ExtractionTitleSuffix);
             var body=BreachBodyPrefix; body.Append(step);body.Append(step==4 && rifle==Entity.Null ? BreachFallbackSuffix : ExtractionBodySuffix);

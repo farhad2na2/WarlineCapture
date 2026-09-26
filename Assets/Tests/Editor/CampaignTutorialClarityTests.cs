@@ -26,6 +26,7 @@ public sealed class CampaignTutorialClarityTests
             tests.EveryCampaignEntryAndRetryRequiresFullGuidance();
             tests.OldEarlyMissionSessionsStillProjectInstructions();
             tests.BreachLegacyReplayStartsAndAdvancesFromRealSelection();
+            tests.BreachMoveThroughUsesAndCompletesAtApproachAnchor();
             tests.CommandCameraStartsFortyUnitsAboveGround();
             tests.AttentionPulseWaitsResetsAndNeverChangesHitAreas();
             tests.AttentionPulseRespectsReducedMotion();
@@ -43,6 +44,18 @@ public sealed class CampaignTutorialClarityTests
             ValidationExit.Exit(0);
         }
         catch (Exception error) { Debug.LogException(error); Debug.LogError("[CampaignTutorialClarity] result=Failed"); UnityEditor.EditorApplication.Exit(1); }
+    }
+
+    public static void RunBreachApproachValidation()
+    {
+        try
+        {
+            new CampaignTutorialClarityTests().BreachMoveThroughUsesAndCompletesAtApproachAnchor();
+            Debug.Log(Game.Editor.AriaPlayDecisionValidation.Run());
+            Debug.Log("[M05BreachApproachGuidance] result=Passed");
+            ValidationExit.Passed();
+        }
+        catch (Exception error) { Debug.LogException(error); ValidationExit.Failed(); }
     }
 
     [Test]
@@ -118,6 +131,39 @@ public sealed class CampaignTutorialClarityTests
         em.AddComponent<SelectedUnitTag>(actor); system.Update(world.Unmanaged);
         Assert.AreEqual(65003, em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId,
             "The selected unit completes selection; the next instruction is breaching the gate.");
+    }
+
+    [Test]
+    public void BreachMoveThroughUsesAndCompletesAtApproachAnchor()
+    {
+        using var world = new World("M5 approach guidance"); var em = world.EntityManager;
+        var root = em.CreateEntity(typeof(CampaignMissionRootComponent), typeof(CampaignMissionRuntimeComponent),
+            typeof(CampaignMissionAttemptFactsComponent), typeof(CampaignMissionGuidanceProjectionComponent));
+        var rifle = em.CreateEntity(typeof(UnitHealth), typeof(Unity.Transforms.LocalTransform), typeof(SelectedUnitTag));
+        em.SetComponentData(rifle, new UnitHealth { Current = 100, Max = 100 });
+        em.SetComponentData(rifle, Unity.Transforms.LocalTransform.FromPosition(new float3(0, 0, 0)));
+        em.SetComponentData(root, new CampaignMissionRuntimeComponent { MissionId = new FixedString64Bytes(Missions[4]),
+            SessionToken = "m5-approach", Phase = MissionPhaseKind.Engage, Version = 1, SourceVersion = 1,
+            Guidance = NarrativeGuidanceMode.Full, RunKind = MissionRunKind.FirstClear, ReplayTutorialEnabled = 1 });
+        var approach = new float3(40, 0, 20); var archive = new float3(100, 0, 80);
+        em.AddComponentData(root, new CampaignMissionBreachState { Ready = 1, SourceVersion = 1,
+            SessionToken = "m5-approach", GateDestroyed = 1, GuidanceCompletedMask = 7,
+            ApproachCenter = approach, ArchiveCenter = archive });
+        em.AddBuffer<CampaignMissionBreachMember>(root).Add(new CampaignMissionBreachMember { Entity = rifle, Kind = 0 });
+        em.AddBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
+        em.CreateEntity(typeof(AssistantSettingsComponent));
+        var system = world.CreateSystem<CampaignMissionGuidanceProjectionSystem>();
+
+        system.Update(world.Unmanaged);
+        var guidance = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+        Assert.AreEqual(65004, guidance.GuidanceId);
+        Assert.AreEqual(approach, guidance.WorldPosition,
+            "The move-through lesson must target the authored open approach, not the later archive hold area.");
+
+        em.SetComponentData(rifle, Unity.Transforms.LocalTransform.FromPosition(approach + new float3(3, 0, 0)));
+        system.Update(world.Unmanaged);
+        Assert.AreEqual(65005, em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId,
+            "Reaching the marked approach must advance ARIA beyond the move order.");
     }
 
     [Test]

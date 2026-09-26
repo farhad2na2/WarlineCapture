@@ -13,9 +13,11 @@ namespace Game.UI.Runtime
 
         private void RefreshBreachInputMode() {if(UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state))_activeCommandMode=state.ActiveCommandMode;}
         private bool _archiveRecoveryPresented;
+        private bool _archiveReachPresented;
         private void ShowBreachNextAction(int step)
         {
             RefreshBreachInputMode();
+            if(step!=7)_archiveReachPresented=false;
             if(step==1) {Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");return;}
             if(!_lastPanelModel.CanShow) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
             if(!UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target)) {_highlightPresentationSystem.ClearDirectTutorialCue();return;}
@@ -33,7 +35,18 @@ namespace Game.UI.Runtime
             if(step==2 || target.Moving || target.ExecutingAttack) {WaitForTutorialArrival();return;}
             bool attack=step is 3 or 5 or 6;
             var mode=attack?TacticalCommandMode.Attack:TacticalCommandMode.Move;
-            if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);
+            if(_activeCommandMode==mode)
+            {
+                ShowTutorialWorld(target.Destination,false);
+                // The archive is left of the breached lane and can otherwise sit behind
+                // the squad panel. Center the newly revealed destination once so both a
+                // player and Watch ARIA can see and tap the authored world cue.
+                if(step==7 && !_archiveReachPresented)
+                {
+                    UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false);
+                    _archiveReachPresented=true;
+                }
+            }
             else Cue(attack?_commandControlsView?.AttackButton:_commandControlsView?.MoveButton,attack?"ui.aria.press_attack":"ui.aria.press_move");
         }
         private void ExecuteBreachGuidance()

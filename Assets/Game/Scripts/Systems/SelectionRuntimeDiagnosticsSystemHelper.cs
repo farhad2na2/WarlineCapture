@@ -9,13 +9,19 @@ namespace Game.Runtime
     {
 #if UNITY_EDITOR
         public static bool EditorClickDiagnosticsEnabled;
+        public static bool EditorMoveCommandTraceEnabled;
 #endif
         public static bool EnableSelectionClickDiagnostics =>
 #if UNITY_EDITOR
             EditorClickDiagnosticsEnabled ||
 #endif
             !Application.isEditor && Debug.isDebugBuild;
-        public static readonly bool EnableMoveCommandTrace = false;
+        public static bool EnableMoveCommandTrace =>
+#if UNITY_EDITOR
+            EditorMoveCommandTraceEnabled;
+#else
+            false;
+#endif
         public static readonly bool EnableScanCommandTrace = false;
 
         private const string SelectionClickPrefix = "[SelectionClick]";

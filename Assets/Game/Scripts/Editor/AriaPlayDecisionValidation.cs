@@ -34,6 +34,19 @@ namespace Game.Editor
             Check(s.Phase == AriaPlayPhase.Waiting && s.GestureRequested == 0, "defend timer is not an input prompt");
             o.Time = 182; AriaPlayDecisionSystem.Step(o, ref s);
             Check(s.Phase == AriaPlayPhase.Blocked, "silent wait bounded");
+            s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Observing };
+            o = new AriaPlayObservationComponent { Kind = AriaPlayObservationKind.WorldTarget, TargetId = 7,
+                GoalId = 804, Position = new Vector2(400, 300), Time = 1 };
+            AriaPlayDecisionSystem.Step(o, ref s);
+            o.Kind = AriaPlayObservationKind.Waiting; o.Time = 1.2f; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Aiming, "transient wait preserves a prepared world-target aim");
+            o.Kind = AriaPlayObservationKind.WorldTarget; o.Time = 2; AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Touching && s.GestureRequested == 1,
+                "world target submits after a transient waiting frame");
+            s = new AriaPlaySessionComponent { Phase = AriaPlayPhase.Aiming, DueAt = 2, LastProgressAt = 1 };
+            o = new AriaPlayObservationComponent { Kind = AriaPlayObservationKind.Waiting, Time = 4 };
+            AriaPlayDecisionSystem.Step(o, ref s);
+            Check(s.Phase == AriaPlayPhase.Waiting, "a stale hidden aim returns to waiting");
             s.Phase = AriaPlayPhase.Observing; o.Kind = AriaPlayObservationKind.Finished;
             AriaPlayDecisionSystem.Step(o, ref s);
             Check(s.Phase == AriaPlayPhase.Manual, "result ends session");
@@ -75,7 +88,7 @@ namespace Game.Editor
             o.GoalId=1002;o.Time=170;AriaPlayDecisionSystem.Step(o,ref s);
             s.Phase=AriaPlayPhase.Observing;o.Time=200;AriaPlayDecisionSystem.Step(o,ref s);
             Check(s.Phase!=AriaPlayPhase.Blocked,"advancing the public objective renews the watchdog");
-            return "[AriaPlayDecisionValidation] result=Passed cases=17";
+            return "[AriaPlayDecisionValidation] result=Passed cases=19";
         }
         private static void Check(bool condition, string reason)
         { if (!condition) throw new InvalidOperationException(reason); }

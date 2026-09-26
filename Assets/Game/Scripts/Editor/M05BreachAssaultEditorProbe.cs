@@ -67,7 +67,11 @@ namespace Game.Editor
                 if(EditorApplication.timeSinceStartup-lastLog>5)
                 {
                     lastLog=EditorApplication.timeSinceStartup;
-                    string log=$"step={step} phase={runtime.Phase} ready={runtime.ReadyReadiness}/{runtime.RequiredReadiness} spawned={facts.CommandSquadSpawned} breachReady={breach.Ready} gate={breach.Gate} hp={Hp(em,breach.Gate)} core={breach.Core} hp={Hp(em,breach.Core)} clock={facts.ElapsedMilliseconds} hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} hold={breach.SecureHoldMilliseconds} integrity={facts.HostileRosterIntegrityFault} gateRequest={breach.GateRequestId} coreRequest={breach.CoreRequestId}";
+                    var guide=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+                    string selected="none";using(var selectedQuery=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(UnitGrid),typeof(LocalTransform)))
+                    using(var selectedEntities=selectedQuery.ToEntityArray(Allocator.Temp)) if(selectedEntities.Length>0)
+                    {var e=selectedEntities[0];selected=$"{e}@{em.GetComponentData<UnitGrid>(e).Cell}/{em.GetComponentData<LocalTransform>(e).Position} pathRequest={em.HasComponent<UnitPathRequest>(e)} pathFollow={em.HasComponent<UnitPathFollow>(e)}";}
+                    string log=$"step={step} phase={runtime.Phase} ready={runtime.ReadyReadiness}/{runtime.RequiredReadiness} spawned={facts.CommandSquadSpawned} breachReady={breach.Ready} gate={breach.Gate} hp={Hp(em,breach.Gate)} core={breach.Core} hp={Hp(em,breach.Core)} clock={facts.ElapsedMilliseconds} hostiles={facts.HostileDefeatedCount}/{facts.HostileTotalCount} hold={breach.SecureHoldMilliseconds} guide={guide.GuidanceId}/{breach.GuidanceCompletedMask} selected={selected} integrity={facts.HostileRosterIntegrityFault} gateRequest={breach.GateRequestId} coreRequest={breach.CoreRequestId}";
                     Debug.Log("[M05EditorProbe] "+log);File.AppendAllText(Output+"/state.txt",log+"\n");
                 }
                 if (InspectRadarFootprint(em, breach)) return;
@@ -76,6 +80,11 @@ namespace Game.Editor
                 if(runtime.Outcome==MissionOutcomeKind.Defeat) throw new InvalidOperationException("M5 defeat: timeout="+facts.BreachTimedOut+" integrity="+facts.HostileRosterIntegrityFault+" losses="+facts.SquadLossCount);
                 if(runtime.Outcome==MissionOutcomeKind.Victory)
                 {
+                    if(SessionState.GetBool(AriaWatch,false))
+                    {
+                        if(!ariaWatchStarted || ariaWatchActions==0)throw new InvalidOperationException("Watch ARIA Play reached victory without recorded touch actions.");
+                        Complete(true,"Watch ARIA Play victory through shipping touch input; actions="+ariaWatchActions);return;
+                    }
                     Time.timeScale=1;
                     if(!UiShellRuntimeGateway.TryReadMissionResult(out var result))return;
                     if(!result.Breach.Applicable || !result.PrimaryActionEnabled)throw new InvalidOperationException("Missing M5 result or settlement");
@@ -85,6 +94,7 @@ namespace Game.Editor
                 }
                 if(runtime.Phase!=MissionPhaseKind.Engage || breach.Ready==0) return;
                 if(TickGuideAudit())return;
+                if(SessionState.GetBool(AriaWatch,false)) {TickAriaWatch();return;}
                 if(SessionState.GetBool("Warline.M05.Guided",false)) {TickGuided();return;}
                 if(step==0)
                 {
@@ -138,7 +148,9 @@ namespace Game.Editor
         }
         private static void Complete(bool pass,string detail)
         {
-            if(finished)return;if(pass)ValidatePlayedVoices();finished=true;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
+            if(finished)return;bool watch=SessionState.GetBool(AriaWatch,false);if(pass&&!watch)ValidatePlayedVoices();finished=true;SessionState.SetBool(Active,false);SessionState.SetBool(AriaWatch,false);Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
+            SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = false;
+            SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = false;
             Debug.Log("[M05EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(pass);
         }
     }

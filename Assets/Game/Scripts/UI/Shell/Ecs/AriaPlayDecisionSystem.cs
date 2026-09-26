@@ -45,9 +45,23 @@ namespace Game.UI.Shell.Ecs
                 session.LastProgressAt = now;
             }
             if (session.Phase == AriaPlayPhase.Touching) return;
-            if (observation.Kind is AriaPlayObservationKind.Cinematic or AriaPlayObservationKind.Waiting)
+            if (observation.Kind == AriaPlayObservationKind.Cinematic)
             {
                 session.Phase = now - session.LastProgressAt > 180f ? AriaPlayPhase.Blocked : AriaPlayPhase.Waiting;
+                session.GestureRequested = 0;
+                return;
+            }
+            if (observation.Kind == AriaPlayObservationKind.Waiting)
+            {
+                // World guidance can disappear for a frame while its camera focus or
+                // command-mode presentation settles. Keep an already prepared aim so
+                // that the next visible frame can submit it instead of restarting the
+                // human-paced delay forever.
+                // Preserve only a short presentation gap. A target that remains hidden
+                // must return to Waiting so camera/show-me guidance can take over rather
+                // than leaving the session permanently aimed at stale screen geometry.
+                if (session.Phase != AriaPlayPhase.Aiming || now > session.DueAt + 1.5f)
+                    session.Phase = now - session.LastProgressAt > 180f ? AriaPlayPhase.Blocked : AriaPlayPhase.Waiting;
                 session.GestureRequested = 0;
                 return;
             }

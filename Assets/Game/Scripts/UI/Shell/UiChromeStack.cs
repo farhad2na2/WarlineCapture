@@ -12,7 +12,9 @@ namespace Game.UI.Runtime
         public const int TutorialOverlay = 32700;
         public const int TutorialCue = 32750;
         public const int AriaHand = 32760;
-        public const int ModalChrome = 32820;
+        // Unity stores overlay sorting in a signed 16-bit value. 32768 and above wrap
+        // negative and draw behind the HUD. Stay just above the ARIA hand.
+        public const int ModalChrome = 32766;
 
         public static void RaiseAboveTutorial(GameObject root)
         {

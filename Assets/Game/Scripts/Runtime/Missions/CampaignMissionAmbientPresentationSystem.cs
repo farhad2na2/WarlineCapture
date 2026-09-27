@@ -314,13 +314,18 @@ namespace Game.Runtime
                 .Build(ref state);
             builder.Dispose();
             state.RequireForUpdate<CampaignMissionAmbientCivilianMotionComponent>();
+            state.RequireForUpdate<CampaignMissionRuntimeComponent>();
+            state.RequireForUpdate<RuntimeGameplayStateComponent>();
             state.RequireForUpdate(_ecbSingletonQuery);
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            if (!SystemAPI.TryGetSingleton(out CampaignMissionOpeningPresentationComponent opening))
+            if (!SystemAPI.TryGetSingleton(out CampaignMissionOpeningPresentationComponent opening) ||
+                !SystemAPI.TryGetSingleton(out CampaignMissionRuntimeComponent runtime) ||
+                !SystemAPI.TryGetSingleton(out RuntimeGameplayStateComponent gameplay) ||
+                !CanAdvance(in runtime, in gameplay))
                 return;
 
             Entity ecbEntity = _ecbSingletonQuery.GetSingletonEntity();
@@ -332,6 +337,14 @@ namespace Game.Runtime
                 Ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
             }.ScheduleParallel(state.Dependency);
         }
+
+        internal static bool CanAdvance(
+            in CampaignMissionRuntimeComponent runtime,
+            in RuntimeGameplayStateComponent gameplay) =>
+            gameplay.PlayRequested != 0 &&
+            gameplay.SimulationActive != 0 &&
+            runtime.Outcome == MissionOutcomeKind.None &&
+            runtime.Phase is >= MissionPhaseKind.FindSquad and <= MissionPhaseKind.SecureCorridor;
 
         [BurstCompile]
         private partial struct MoveJob : IJobEntity

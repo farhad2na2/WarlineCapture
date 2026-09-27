@@ -78,9 +78,9 @@ public sealed class M01FirstContactAmbientPlayModeTests
     }
 
     [UnityTest]
-    public IEnumerator PanicMotionRunsDuringOpeningPreRollAndCleansUpAtExit()
+    public IEnumerator PanicMotionWaitsForBriefAndSimulationThenCleansUpAtExit()
     {
-        using World world = new(nameof(PanicMotionRunsDuringOpeningPreRollAndCleansUpAtExit));
+        using World world = new(nameof(PanicMotionWaitsForBriefAndSimulationThenCleansUpAtExit));
         Fixture fixture = CreateFixture(world, CivilianCount, withPrefabs: true);
         try
         {
@@ -99,7 +99,39 @@ public sealed class M01FirstContactAmbientPlayModeTests
             endSimulation.Update();
             SystemHandle motionSystem = world.CreateSystem<CampaignMissionAmbientCivilianMotionSystem>();
 
+            CampaignMissionRuntimeComponent runtime = world.EntityManager.GetComponentData<
+                CampaignMissionRuntimeComponent>(fixture.Root);
+            runtime.Phase = MissionPhaseKind.InteractiveBrief;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
+            Entity gameplayEntity = world.EntityManager.CreateEntity(typeof(RuntimeGameplayStateComponent));
+            world.EntityManager.SetComponentData(gameplayEntity, new RuntimeGameplayStateComponent
+            {
+                PlayRequested = 1,
+                SimulationActive = 1
+            });
+
+            world.SetTime(new TimeData(0.5d, 0.5f));
+            UpdateMotionSystem(world, motionSystem);
+            world.EntityManager.CompleteAllTrackedJobs();
+            Assert.That(world.EntityManager.GetComponentData<LocalTransform>(civilian).Position,
+                Is.EqualTo(initial.Position), "comic briefing must hold ambient motion");
+
+            runtime.Phase = MissionPhaseKind.FindSquad;
+            world.EntityManager.SetComponentData(fixture.Root, runtime);
+            RuntimeGameplayStateComponent gameplay = world.EntityManager.GetComponentData<
+                RuntimeGameplayStateComponent>(gameplayEntity);
+            gameplay.SimulationActive = 0;
+            world.EntityManager.SetComponentData(gameplayEntity, gameplay);
             world.SetTime(new TimeData(1d, 0.5f));
+            UpdateMotionSystem(world, motionSystem);
+            world.EntityManager.CompleteAllTrackedJobs();
+            Assert.That(world.EntityManager.GetComponentData<LocalTransform>(civilian).Position,
+                Is.EqualTo(initial.Position), "blocking narrative pause must hold ambient motion");
+
+            gameplay.SimulationActive = 1;
+            world.EntityManager.SetComponentData(gameplayEntity, gameplay);
+
+            world.SetTime(new TimeData(1.5d, 0.5f));
             UpdateMotionSystem(world, motionSystem);
             world.EntityManager.CompleteAllTrackedJobs();
             Assert.That(math.distance(

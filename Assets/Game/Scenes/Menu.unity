@@ -3108,6 +3108,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 18e222ebe6b614bd69eda90b21692f19, type: 2}
   - {fileID: -502834446976812696, guid: 18e222ebe6b614bd69eda90b21692f19, type: 2}
   - {fileID: -7122521941162315292, guid: 18e222ebe6b614bd69eda90b21692f19, type: 2}
+  - {fileID: 11400000, guid: eb7cee82d71d34a0fa0a2bba92638eaf, type: 2}
+  - {fileID: -2581204733449712247, guid: eb7cee82d71d34a0fa0a2bba92638eaf, type: 2}
+  - {fileID: 870692502695756773, guid: eb7cee82d71d34a0fa0a2bba92638eaf, type: 2}
   campaignMissionCatalog: {fileID: 11400000, guid: cb1a7fecce22b2f4b9182d8feebcaed0, type: 2}
   campaignMissionDefinition: {fileID: 11400000, guid: 7284111cf4349bf4bb7bb0faa0b53619, type: 2}
   campaignScenarioSetup: {fileID: 11400000, guid: ccf43b60d0265424291475c15a79ef9a, type: 2}

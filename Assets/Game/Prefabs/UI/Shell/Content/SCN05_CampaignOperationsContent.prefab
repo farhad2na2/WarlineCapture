@@ -11549,6 +11549,7 @@ MonoBehaviour:
   footerStoryArchiveButton: {fileID: 4407469545285371175}
   m03MissionPreview: {fileID: 2800000, guid: 0f000af5086ec458f9fa30b1191960d6, type: 3}
   routeReopenedMissionPreview: {fileID: 2800000, guid: 950ac7cfec1a4470d918e66910e391e3, type: 3}
+  safehouseSweepMissionPreview: {fileID: 2800000, guid: 54bc1a131ca5c4791b09cf1ae592dee9, type: 3}
   signalTraceMissionPreview: {fileID: 2800000, guid: 3bd46195ff2054779a27f436d52d496e, type: 3}
   supplyLineMissionPreview: {fileID: 2800000, guid: b99d871cee7b64c25a2a9970a28c409f, type: 3}
   backRouteButton: {fileID: 4108783249832880391}

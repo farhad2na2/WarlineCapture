@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Safehouse Sweep Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Safehouse Sweep Narrative
+  m_GUID: 8c01223b86c814f39b76eed8f6adbfa9
+  m_SerializeEntries:
+  - m_GUID: 0510b7f6a56314e828cc50c156981b34
+    m_Address: narrative.safehouse_sweep.briefprotectedneighbor
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0a91751c8e32445be94b61c47340b515
+    m_Address: narrative.safehouse_sweep.debriefledgerchannel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0c1c3f0a440b54df48a038ffda4892e1
+    m_Address: narrative.safehouse_sweep.briefperimeterplan
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1feed6efc81184df89661499db2a2b8d
+    m_Address: narrative.safehouse_sweep.commscourierescape
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54bc1a131ca5c4791b09cf1ae592dee9
+    m_Address: narrative.safehouse_sweep.briefverifiednode
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 844e4234b76c54ce0a6ea561eefdb4f9
+    m_Address: narrative.safehouse_sweep.debriefsafehousecleared
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cf901744f7be444c88e1ac9c1d164d5b
+    m_Address: narrative.safehouse_sweep.debriefwronghousespared
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ad649406342de4faf8c79c1434079ae6, type: 2}
+    - {fileID: 11400000, guid: b48bd4e8bc734425d8aae975895c2237, type: 2}

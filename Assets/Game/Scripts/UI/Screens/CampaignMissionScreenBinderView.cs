@@ -131,7 +131,9 @@ namespace Game.UI.Runtime
         private void SelectChapterOne(){SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterTwo(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterThree(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);campaignOperationsView.ShowMissionSelect();}
-        private void SelectM02() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
+        private void SelectM02() => SelectMission(campaignOperationsView.IsChapterThree
+            ? Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep
+            : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
         private void SelectM03() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
         private void SelectM05() => SelectMission(campaignOperationsView.IsChapterTwo
             ? Game.Missions.Contracts.CampaignMissionSequence.RouteReopened

@@ -1,0 +1,471 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-2581204733449712247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M02_SafehouseSweep_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m02.comms
+  entryStateId: SafehouseSweep-comms-0
+  defaultSkipDestinationId: SafehouseSweep-comms-complete
+  states:
+  - stateId: SafehouseSweep-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 1feed6efc81184df89661499db2a2b8d
+      m_SubObjectName: CommsCourierEscape-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 1feed6efc81184df89661499db2a2b8d
+      m_SubObjectName: CommsCourierEscape-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-comms-01
+      textKey: narrative.safehouse_sweep.comms.01
+      englishFallback: Courier moving with the ledger. Block the lane and take him
+        alive. Do not fire into the homes or destroy the vehicle in this crowd.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 120822d462ddf4651a0d6d9848445994, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.1
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-comms-complete
+    skipStateId: SafehouseSweep-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.1
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.safehouse_sweep.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M02_SafehouseSweep_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m02.brief
+  entryStateId: SafehouseSweep-brief-0
+  defaultSkipDestinationId: SafehouseSweep-brief-complete
+  states:
+  - stateId: SafehouseSweep-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 54bc1a131ca5c4791b09cf1ae592dee9
+      m_SubObjectName: BriefVerifiedNode-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 54bc1a131ca5c4791b09cf1ae592dee9
+      m_SubObjectName: BriefVerifiedNode-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-brief-01
+      textKey: narrative.safehouse_sweep.brief.01
+      englishFallback: The recovered route confirms one weapons node in this residential
+        block. The reinforced building is linked to the armed cell. The family home
+        beside it is not.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 963c330f04b914f47ba4b2e12a8074ce, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.357142
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-brief-1
+    skipStateId: SafehouseSweep-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 0510b7f6a56314e828cc50c156981b34
+      m_SubObjectName: BriefProtectedNeighbor-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 0510b7f6a56314e828cc50c156981b34
+      m_SubObjectName: BriefProtectedNeighbor-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-brief-02
+      textKey: narrative.safehouse_sweep.brief.02
+      englishFallback: Waiting gives the cell time to move, but suspicion is not
+        a second target. Seal both escape lanes, breach only the confirmed safehouse,
+        and keep every shot inside the boundary.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 9d185024d379d4bc88973ef1d33e3e0e, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.86
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-brief-2
+    skipStateId: SafehouseSweep-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 0c1c3f0a440b54df48a038ffda4892e1
+      m_SubObjectName: BriefPerimeterPlan-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 0c1c3f0a440b54df48a038ffda4892e1
+      m_SubObjectName: BriefPerimeterPlan-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-brief-03
+      textKey: narrative.safehouse_sweep.brief.03
+      englishFallback: Local guards and residents use the east passage. Keep that
+        route protected. The service lane behind the safehouse is the courier's most
+        likely exit.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 61a428cba9d794bf68e451f79c3eca28, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.3
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-brief-complete
+    skipStateId: SafehouseSweep-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.3
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.safehouse_sweep.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &870692502695756773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M02_SafehouseSweep_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m02.debrief
+  entryStateId: SafehouseSweep-debrief-0
+  defaultSkipDestinationId: SafehouseSweep-debrief-complete
+  states:
+  - stateId: SafehouseSweep-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 844e4234b76c54ce0a6ea561eefdb4f9
+      m_SubObjectName: DebriefSafehouseCleared-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 844e4234b76c54ce0a6ea561eefdb4f9
+      m_SubObjectName: DebriefSafehouseCleared-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-debrief-01
+      textKey: narrative.safehouse_sweep.debrief.01
+      englishFallback: The weapons node is clear, the evidence room is intact, and
+        every family on the protected side is accounted for.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 1684a100beb93468991c61bdc8a89696, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 8
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-debrief-1
+    skipStateId: SafehouseSweep-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 8
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: cf901744f7be444c88e1ac9c1d164d5b
+      m_SubObjectName: DebriefWrongHouseSpared-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: cf901744f7be444c88e1ac9c1d164d5b
+      m_SubObjectName: DebriefWrongHouseSpared-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-debrief-02
+      textKey: narrative.safehouse_sweep.debrief.02
+      englishFallback: Waiting cost us time, and saved the wrong house. The building
+        next door held a family, not a second cell.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 37220458b78ef4fffb07e8464f7ec356, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.66
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-debrief-2
+    skipStateId: SafehouseSweep-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.66
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 0a91751c8e32445be94b61c47340b515
+      m_SubObjectName: DebriefLedgerChannel-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 0a91751c8e32445be94b61c47340b515
+      m_SubObjectName: DebriefLedgerChannel-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: safehouse_sweep-debrief-03
+      textKey: narrative.safehouse_sweep.debrief.03
+      englishFallback: The ledger identifies an evidence courier network and compromised
+        security credentials. One planted report is already moving through an old
+        authority channel.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 679c3e1a019c44ddd81a3d9170212b01, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.54
+      essentialCaption: 1
+    continueStateId: SafehouseSweep-debrief-complete
+    skipStateId: SafehouseSweep-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.54
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SafehouseSweep-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.safehouse_sweep.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []

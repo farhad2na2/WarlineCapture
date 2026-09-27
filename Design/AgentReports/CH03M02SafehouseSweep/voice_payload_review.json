@@ -1,0 +1,60 @@
+{
+  "mission": "saga.ch03.m02.safehouse_sweep",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "cast": {
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "DALIA": "MK1Zvh93428YrgOQ8Obr",
+    "SAMIRA": "7uxeJ73HfJL9gOH2mttA"
+  },
+  "castDirection": {
+    "ARIA": "Warline - ARIA Civic Relay",
+    "DALIA": "Warline - Major Dalia Rahim",
+    "SAMIRA": "Warline - Engineer Samira Haddad"
+  },
+  "purpose": "Bilingual authored mission story clips; local runtime assets; no runtime network TTS",
+  "entries": [
+    [
+      "safehouse_sweep-brief-01",
+      "ARIA",
+      "The recovered route confirms one weapons node in this residential block. The reinforced building is linked to the armed cell. The family home beside it is not.",
+      "مسیر بازیابی‌شده فقط یک انبار سلاح رو در این محله تأیید می‌کنه. ساختمان تقویت‌شده به سلول مسلح وصله؛ خانهٔ خانوادگی کنارش نه."
+    ],
+    [
+      "safehouse_sweep-brief-02",
+      "DALIA",
+      "Waiting gives the cell time to move, but suspicion is not a second target. Seal both escape lanes, breach only the confirmed safehouse, and keep every shot inside the boundary.",
+      "صبر کردن به سلول فرصت جابه‌جایی می‌ده، اما شک یک هدف دوم نمی‌سازه. هر دو راه فرار رو ببند، فقط مخفیگاه تأییدشده رو باز کن و همهٔ شلیک‌ها رو داخل محدوده نگه دار."
+    ],
+    [
+      "safehouse_sweep-brief-03",
+      "SAMIRA",
+      "Local guards and residents use the east passage. Keep that route protected. The service lane behind the safehouse is the courier's most likely exit.",
+      "نگهبان‌های محلی و ساکن‌ها از گذر شرقی استفاده می‌کنن. اون مسیر رو امن نگه دار. راه خدماتی پشت مخفیگاه محتمل‌ترین مسیر فرار پیکه."
+    ],
+    [
+      "safehouse_sweep-comms-01",
+      "DALIA",
+      "Courier moving with the ledger. Block the lane and take him alive. Do not fire into the homes or destroy the vehicle in this crowd.",
+      "پیک با دفتر اسناد در حال فراره. راه رو ببند و زنده دستگیرش کن. وسط این جمعیت به خانه‌ها شلیک نکن و خودرو رو منفجر نکن."
+    ],
+    [
+      "safehouse_sweep-debrief-01",
+      "SAMIRA",
+      "The weapons node is clear, the evidence room is intact, and every family on the protected side is accounted for.",
+      "انبار سلاح پاکسازی شد، اتاق شواهد سالمه و همهٔ خانواده‌های سمت حفاظت‌شده در امانن."
+    ],
+    [
+      "safehouse_sweep-debrief-02",
+      "DALIA",
+      "Waiting cost us time, and saved the wrong house. The building next door held a family, not a second cell.",
+      "صبر کردن از ما وقت گرفت و خانهٔ اشتباهی رو نجات داد. ساختمان کناری محل زندگی یک خانواده بود، نه سلول دوم."
+    ],
+    [
+      "safehouse_sweep-debrief-03",
+      "ARIA",
+      "The ledger identifies an evidence courier network and compromised security credentials. One planted report is already moving through an old authority channel.",
+      "دفتر اسناد یک شبکهٔ پیک شواهد و مجوزهای امنیتی لو‌رفته رو مشخص می‌کنه. یک گزارش جعلی همین حالا از یک کانال قدیمیِ فرماندهی در حال عبوره."
+    ]
+  ]
+}

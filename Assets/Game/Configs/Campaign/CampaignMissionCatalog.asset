@@ -46,3 +46,6 @@ MonoBehaviour:
   - missionId: saga.ch03.m01.signal_trace
     definition: {fileID: 11400000, guid: f27eb780edae04f5288c41f3d2a49c14, type: 2}
     scenario: {fileID: 11400000, guid: e343e655ac7e9478085a5c7068bceed0, type: 2}
+  - missionId: saga.ch03.m02.safehouse_sweep
+    definition: {fileID: 11400000, guid: a76184f55c01c4514b15bcb90a025783, type: 2}
+    scenario: {fileID: 11400000, guid: 343ad2b4da2994434a0835d5ca6c354b, type: 2}

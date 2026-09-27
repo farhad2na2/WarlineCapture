@@ -168,6 +168,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.Gridlock) ApplyGridlock(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SupplyLine) ApplySupplyLine(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SignalTrace) ApplySignalTrace(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep) ApplySafehouseSweep(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.RouteReopened) ApplyRouteReopened(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.PowerRelay) ApplyPowerRelay(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline) ApplyMarketLifeline(in model);

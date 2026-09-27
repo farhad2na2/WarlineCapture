@@ -32,7 +32,8 @@ namespace Game.UI.Shell.Ecs
             bool marketStep = tutorialStepCount==5 && tutorialStep is >=1 and <=5 &&
                 TryGetMissionRoot(out var marketManager,out var marketRoot) &&
                 (marketManager.GetComponentData<CampaignMissionRuntimeComponent>(marketRoot).MissionId.Equals("saga.ch02.m03.market_lifeline") ||
-                 marketManager.GetComponentData<CampaignMissionRuntimeComponent>(marketRoot).MissionId.Equals("saga.ch03.m01.signal_trace"));
+                 marketManager.GetComponentData<CampaignMissionRuntimeComponent>(marketRoot).MissionId.Equals("saga.ch03.m01.signal_trace") ||
+                 marketManager.GetComponentData<CampaignMissionRuntimeComponent>(marketRoot).MissionId.Equals("saga.ch03.m02.safehouse_sweep"));
             bool m01Step = tutorialStepCount == 5 && tutorialStep is >= 1 and <= 5 && !marketStep;
             bool m02Step = tutorialStepCount == 9 && tutorialStep is >= 2 and <= 8;
             bool extraction=IsExtractionGuideContext();

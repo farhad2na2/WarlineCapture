@@ -21,6 +21,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes PowerRelay = "saga.ch02.m04.power_relay";
         private static readonly FixedString64Bytes RouteReopened = "saga.ch02.m05.route_reopened";
         private static readonly FixedString64Bytes SignalTrace = "saga.ch03.m01.signal_trace";
+        private static readonly FixedString64Bytes SafehouseSweep = "saga.ch03.m02.safehouse_sweep";
         private static readonly FixedString64Bytes M05 = "saga.ch01.m05.breach_assault";
         private static readonly FixedString64Bytes M04 = "saga.ch01.m04.airlift";
         private static readonly FixedString64Bytes MixedDebrief = "seq.ch01.m03.debrief.mixed";
@@ -31,9 +32,10 @@ namespace Game.Runtime
             missionId.Equals(M02) && facts.DefenseWaveWarningIssued!=0 && facts.DefenseWaveActivated==0 ||
             missionId.Equals(MarketLifeline) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(SignalTrace) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
+            missionId.Equals(SafehouseSweep) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(PowerRelay) && facts.PowerSafeRouteConfirmed==0;
         internal static bool UsesMissionSequences(in FixedString64Bytes missionId) =>
-            missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
+            missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
         internal static FixedString64Bytes ResolveDebrief(in FixedString64Bytes missionId,
             in CampaignMissionAttemptFactsComponent facts, in FixedString64Bytes fallback)
         {

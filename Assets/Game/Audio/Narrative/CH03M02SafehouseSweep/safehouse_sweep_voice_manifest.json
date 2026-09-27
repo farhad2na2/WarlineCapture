@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.SafehouseSweepBilingualVoice.v1",
+  "missionId": "saga.ch03.m02.safehouse_sweep",
+  "generatedAtUtc": "2026-09-26T21:18:28.365308+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The recovered route confirms one weapons node in this residential block. The reinforced building is linked to the armed cell. The family home beside it is not.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-brief-01.wav",
+      "durationSeconds": 10.24,
+      "sha256": "0206d6a085e10a91574e2d722055071d3a0fe1e75d9c9ac266ae13a53933cc70",
+      "captionSha256": "e0244209d4a0e56ba75f219e197079be76883ce0f81772ecabbb9b07765b4975"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مسیر بازیابی‌شده فقط یک انبار سلاح رو در این محله تأیید می‌کنه. ساختمان تقویت‌شده به سلول مسلح وصله؛ خانهٔ خانوادگی کنارش نه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-brief-01.wav",
+      "durationSeconds": 10.56,
+      "sha256": "c74dd77a5eb5c805c3b2ab0703e034b9f52245edf53d7928a24440cb9f944641",
+      "captionSha256": "549e6ddf09169e28604b6d61d180e1a51e4206c839f5127c964092aafa2c084e"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Waiting gives the cell time to move, but suspicion is not a second target. Seal both escape lanes, breach only the confirmed safehouse, and keep every shot inside the boundary.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-brief-02.wav",
+      "durationSeconds": 13.44,
+      "sha256": "69cd85706b2e9a22cbf392cd1a48c556741e7c3c189a54c4e0658c0c3b375709",
+      "captionSha256": "cf52e51742d971be3c2c58587604ba0dd6e26b414b6c3fc031e90b1ffbf121d8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "صبر کردن به سلول فرصت جابه‌جایی می‌ده، اما شک یک هدف دوم نمی‌سازه. هر دو راه فرار رو ببند، فقط مخفیگاه تأییدشده رو باز کن و همهٔ شلیک‌ها رو داخل محدوده نگه دار.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-brief-02.wav",
+      "durationSeconds": 15.36,
+      "sha256": "cbdb0e88401d30389dec4b35579dd678969f7292bcb3f6442b297ba7db1263e0",
+      "captionSha256": "3bc95c0d2992b09221f8bfb91faaf8c6c30f40732b0b61412516782d99ef109d"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Local guards and residents use the east passage. Keep that route protected. The service lane behind the safehouse is the courier's most likely exit.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-brief-03.wav",
+      "durationSeconds": 8.48,
+      "sha256": "847f1e5e8bcb1c7642f9ad83bbe426aa17037859b2037626a5ac243eb99182a0",
+      "captionSha256": "e65d34abe56ef46f49b4da9e211f699f577f586ba82a9cdfcec023897294e8ec"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-brief-03",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "نگهبان‌های محلی و ساکن‌ها از گذر شرقی استفاده می‌کنن. اون مسیر رو امن نگه دار. راه خدماتی پشت مخفیگاه محتمل‌ترین مسیر فرار پیکه.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-brief-03.wav",
+      "durationSeconds": 10.8,
+      "sha256": "05f78cf8b6ec538c586e69e796e0c17dd6ed70ff6f74a1dd2fe8f2c3aebafe6e",
+      "captionSha256": "a44f4ac2cf5a7162ab3319a1c2fce3921f583938dafb086db0381f6763280556"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-comms-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Courier moving with the ledger. Block the lane and take him alive. Do not fire into the homes or destroy the vehicle in this crowd.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-comms-01.wav",
+      "durationSeconds": 8.24,
+      "sha256": "c1447f0edc0ab29681bc7d35dfd224d0dc2a8825d18c41371805c7140cf6f082",
+      "captionSha256": "aa05eb358919dbbd992907c0044ec4c60b2f5fa83f3145e84b53b981aee7574c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-comms-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "پیک با دفتر اسناد در حال فراره. راه رو ببند و زنده دستگیرش کن. وسط این جمعیت به خانه‌ها شلیک نکن و خودرو رو منفجر نکن.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-comms-01.wav",
+      "durationSeconds": 9.6,
+      "sha256": "2d63799fefa0a952979cc7f7e98fc65c9f3252c222a5e0d4f95dab61560dae36",
+      "captionSha256": "d5cb972fb3e402f11e3005122836e8b2951a7d43bdfc602c3982897846385418"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The weapons node is clear, the evidence room is intact, and every family on the protected side is accounted for.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-debrief-01.wav",
+      "durationSeconds": 6.48,
+      "sha256": "5546752b2c7964b4097fdc1d9337146aab4ab201215738582a628749394a4c0f",
+      "captionSha256": "d50066ecc596b13aaadaef3bcd02173768d106a8da7ae3407e0d03870802567f"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "انبار سلاح پاکسازی شد، اتاق شواهد سالمه و همهٔ خانواده‌های سمت حفاظت‌شده در امانن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-debrief-01.wav",
+      "durationSeconds": 6.96,
+      "sha256": "538729b7186b4dc4256672a2ede156293cc65163b1f2b167cd22074801a62d43",
+      "captionSha256": "6593a13e59401e775c2d969ca8b2bfbd63676ad97ad06f0a83fb15dc39f54b2f"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-02",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Waiting cost us time, and saved the wrong house. The building next door held a family, not a second cell.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-debrief-02.wav",
+      "durationSeconds": 7.44,
+      "sha256": "a4cf243c32fac50ca1ff8ae3ab03a85f7e340894cad49ecff15a09ce78371420",
+      "captionSha256": "a9ba284bdae1bf31d0c26aa93e370d7d834b3f3aa73977ec63168a28c1742c04"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-02",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "صبر کردن از ما وقت گرفت و خانهٔ اشتباهی رو نجات داد. ساختمان کناری محل زندگی یک خانواده بود، نه سلول دوم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-debrief-02.wav",
+      "durationSeconds": 10.16,
+      "sha256": "b396f05b6cfdd46f26a5992b0ff42282cf3b36c9bb8c5c0012b037b3213c549c",
+      "captionSha256": "90abbe69c439bfc649deca05bf66b8db026f395bf10a99667b5e7c42ba9b12db"
+    },
+    {
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The ledger identifies an evidence courier network and compromised security credentials. One planted report is already moving through an old authority channel.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/en/safehouse_sweep-debrief-03.wav",
+      "durationSeconds": 10.08,
+      "sha256": "7153f5feb3b0b22e98f6e561f51f879a07a7bb66dfa850696380e030d3d83b71",
+      "captionSha256": "4f1127f3a26ca1f67aee46430052af502fdd21b7b462982312b169ce2b0f6077"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "safehouse_sweep-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دفتر اسناد یک شبکهٔ پیک شواهد و مجوزهای امنیتی لو‌رفته رو مشخص می‌کنه. یک گزارش جعلی همین حالا از یک کانال قدیمیِ فرماندهی در حال عبوره.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/Voice/fa/safehouse_sweep-debrief-03.wav",
+      "durationSeconds": 13.04,
+      "sha256": "8859cfec7cc86e8e764c2a1a336541e5e9546d5dec036d69db5a3ce9abea5587",
+      "captionSha256": "f41bc167b997b9e3cdabb319ac24443ce92db7f816a09e1ee18a614f08b6e564"
+    }
+  ]
+}

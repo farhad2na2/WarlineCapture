@@ -37,6 +37,7 @@ namespace Game.Editor
             if(failures.Count>0)throw new BuildFailedException("Campaign comic coverage failed:\n"+string.Join("\n",failures));
             ValidateMissionDistinct(CH02M05RouteReopenedNarrativeBuilder.Path,"seq.ch02.m05.");
             ValidateMissionDistinct(CH03M01SignalTraceNarrativeBuilder.Path,"seq.ch03.m01.");
+            ValidateMissionDistinct(CH03M02SafehouseSweepNarrativeBuilder.Path,"seq.ch03.m02.");
             Debug.Log($"[CampaignComicCoverage] result=Passed sequences={sequences} dialogueStates={dialogues} aspects=16x9,20x9 shipGate=enabled");
         }
 

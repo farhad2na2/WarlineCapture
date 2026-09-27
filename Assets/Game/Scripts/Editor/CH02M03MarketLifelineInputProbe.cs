@@ -26,9 +26,11 @@ namespace Game.Editor
         private const string ManualEditorRun="Warline.MarketLifeline.InputProbe.ManualEditorRun";
         private const string PersianEditorRun="Warline.MarketLifeline.InputProbe.PersianEditorRun";
         private const string SignalTraceEditorRun="Warline.SignalTrace.InputProbe.EditorRun";
+        private const string SafehouseSweepEditorRun="Warline.SafehouseSweep.InputProbe.EditorRun";
         private const string Output="/private/tmp/warline-market-lifeline";
         private static bool seeded, finished, watchStarted, won, sawDebrief, sawYasinPortrait, sawLocalizedYasinName, loggedCampaignProjection;
         private static double started, lastInput, lastLog, briefWaitStarted;
+        private static string lastTapDiagnostics;
         private static int winningClock;
         private static AriaTouchInputUiSystemHelper touch;
         private static CampaignMissionProgressStore probeStore;
@@ -39,6 +41,7 @@ namespace Game.Editor
         public static void RunWatchFromOpenEditor()
         {
             SessionState.SetBool(SignalTraceEditorRun,false);
+            SessionState.SetBool(SafehouseSweepEditorRun,false);
             SessionState.SetBool(PersianEditorRun,false);
             SessionState.SetBool(ManualEditorRun,true);
             RunWatch();
@@ -48,6 +51,7 @@ namespace Game.Editor
         public static void RunPersianWatchFromOpenEditor()
         {
             SessionState.SetBool(SignalTraceEditorRun,false);
+            SessionState.SetBool(SafehouseSweepEditorRun,false);
             SessionState.SetBool(PersianEditorRun,true);
             SessionState.SetBool(ManualEditorRun,true);
             RunWatch();
@@ -56,14 +60,20 @@ namespace Game.Editor
         [MenuItem("Game/Campaign/Signal Trace/Run Normal Input Watch Probe")]
         public static void RunSignalTraceWatchFromOpenEditor()
         {
-            SessionState.SetBool(SignalTraceEditorRun,true);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,true);RunWatch();
+            SessionState.SetBool(SignalTraceEditorRun,true);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,true);RunWatch();
+        }
+
+        [MenuItem("Game/Campaign/Safehouse Sweep/Run Normal Input Watch Probe")]
+        public static void RunSafehouseSweepWatchFromOpenEditor()
+        {
+            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,true);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,true);RunWatch();
         }
 
         public static void RunWatch()
         {
-            try{if(IsSignalTrace)CH03M01SignalTracePresentationBuilder.BuildLocalCheckpointWithoutVoices();else CH02M03MarketLifelinePresentationBuilder.BuildCheckpoint();}
+            try{if(IsSafehouseSweep)CH03M02SafehouseSweepPresentationBuilder.BuildCheckpoint();else if(IsSignalTrace)CH03M01SignalTracePresentationBuilder.BuildLocalCheckpointWithoutVoices();else CH02M03MarketLifelinePresentationBuilder.BuildCheckpoint();}
             catch(Exception exception){Debug.LogException(exception);Complete(false,"Authoring failed: "+exception.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=false;winningClock=0;probeStore=null;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=false;winningClock=0;probeStore=null;lastTapDiagnostics=null;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -85,8 +95,14 @@ namespace Game.Editor
                 if(probeStore==null)
                 {
                     probeStore=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,"input-profile-"+Guid.NewGuid().ToString("N")))));
+                    int targetIndex=CampaignMissionSequence.IndexOf(TargetMission);
+                    for(int index=0;index<targetIndex;index++)
+                    {
+                        string priorMission=CampaignMissionSequence.IdAt(index);
+                        probeStore.Settle(priorMission,"input-seed-"+index,1,true,3,1000,CampaignMissionSequence.Next(priorMission));
+                    }
                     probeStore.EnsureAvailable(TargetMission);
-                    if(IsSignalTrace)probeStore.MarkChapterOpeningSeen(TargetMission);
+                    if(IsChapterThree)probeStore.MarkChapterOpeningSeen(TargetMission);
                 }
                 if(storeReference.Store!=probeStore)storeReference.Store=probeStore;
                 if(!seeded){GameLocalization.SetLocale(SessionState.GetBool(PersianEditorRun,false)?"fa-IR":"en",false);seeded=true;}
@@ -124,7 +140,7 @@ namespace Game.Editor
                 if(narrative!=null&&Visible(narrative,"rootGroup"))
                 {
                     briefWaitStarted=0;
-                    if(!IsSignalTrace&&!won&&runtime.MissionId.Equals(TargetMission)&&runtime.Phase==MissionPhaseKind.InteractiveBrief&&!sawYasinPortrait)
+                    if(!IsChapterThree&&!won&&runtime.MissionId.Equals(TargetMission)&&runtime.Phase==MissionPhaseKind.InteractiveBrief&&!sawYasinPortrait)
                     {
                         Sprite portrait=narrative.DialogueView.CurrentPortraitSprite;if(portrait==null)return;
                         const string expected="Assets/Game/Art/UI/Portraits/Generated/Portrait_Yasin_MarketLifeline.png";
@@ -149,9 +165,9 @@ namespace Game.Editor
                     {
                         if(!sawDebrief)throw new InvalidOperationException("Mandatory debrief was not presented.");
                         string returnedMission=UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel returnedModel)?returnedModel.SelectedMission.MissionId:"unknown";
-                        if(!IsSignalTrace&&!sawYasinPortrait)throw new InvalidOperationException("Yasin portrait was not presented.");
-                        if(!IsSignalTrace&&!sawLocalizedYasinName)throw new InvalidOperationException("Yasin localized speaker name was not presented.");
-                        Complete(true,$"publicEntry=Passed normalInput=Passed aria=Passed signalTrace={(IsSignalTrace?"Passed":"n/a")} yasinPortrait={(IsSignalTrace?"n/a":"Passed")} yasinName={(IsSignalTrace?"n/a":"Passed")} locale={GameLocalization.CurrentLocaleCode} clock={winningClock} debrief=Passed resultReturn=Passed returned={returnedMission}");
+                        if(!IsChapterThree&&!sawYasinPortrait)throw new InvalidOperationException("Yasin portrait was not presented.");
+                        if(!IsChapterThree&&!sawLocalizedYasinName)throw new InvalidOperationException("Yasin localized speaker name was not presented.");
+                        Complete(true,$"publicEntry=Passed normalInput=Passed aria=Passed signalTrace={(IsSignalTrace?"Passed":"n/a")} safehouseSweep={(IsSafehouseSweep?"Passed":"n/a")} yasinPortrait={(IsChapterThree?"n/a":"Passed")} yasinName={(IsChapterThree?"n/a":"Passed")} locale={GameLocalization.CurrentLocaleCode} clock={winningClock} debrief=Passed resultReturn=Passed returned={returnedMission}");
                     }
                     return;
                 }
@@ -165,7 +181,7 @@ namespace Game.Editor
                 CampaignOperationsScreenView campaign=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();
                 if(campaign!=null&&UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel model))
                 {
-                    if(IsSignalTrace&&!loggedCampaignProjection)
+                    if(IsChapterThree&&!loggedCampaignProjection)
                     {
                         CampaignMissionCatalogComponent projectedCatalog=em.GetComponentData<CampaignMissionCatalogComponent>(root);
                         ref CampaignMissionCatalogBlob blob=ref projectedCatalog.Blob.Value;
@@ -176,9 +192,9 @@ namespace Game.Editor
                         Debug.Log($"[SignalTraceInputProjection] selected={model.SelectedMission.MissionId} availableMask={model.AvailableMissionMask} modelVersion={model.Version} catalogCount={blob.Missions.Length} chapterThree={(chapterThree==null?"missing":$"active={chapterThree.IsActive()} interactable={chapterThree.IsInteractable()} enabled={chapterThree.enabled}")} catalog={catalogIds} progress={progressIds}");
                         loggedCampaignProjection=true;
                     }
-                    if(IsSignalTrace&&!campaign.IsChapterThree){Tap(campaign.ChapterThreeButton);return;}
-                    if(!IsSignalTrace&&!campaign.IsChapterTwo){Tap(Ready(campaign.ChapterTwoButton)?campaign.ChapterTwoButton:campaign.ChapterTwoOverviewButton);return;}
-                    if(model.SelectedMission.MissionId!=TargetMission){Tap(campaign.MissionNodeButtons[IsSignalTrace?0:2]);return;}
+                    if(IsChapterThree&&!campaign.IsChapterThree){Tap(campaign.ChapterThreeButton);return;}
+                    if(!IsChapterThree&&!campaign.IsChapterTwo){Tap(Ready(campaign.ChapterTwoButton)?campaign.ChapterTwoButton:campaign.ChapterTwoOverviewButton);return;}
+                    if(model.SelectedMission.MissionId!=TargetMission){Tap(campaign.MissionNodeButtons[IsSafehouseSweep?1:IsSignalTrace?0:2]);return;}
                     Tap(campaign.LaunchMissionButton);return;
                 }
                 if(runtime.MissionId.Equals(TargetMission))
@@ -203,7 +219,14 @@ namespace Game.Editor
         }
         private static bool Ready(Button button)=>button!=null&&button.IsActive()&&button.IsInteractable();
         private static bool Visible(object owner,string field){CanvasGroup group=owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(owner) as CanvasGroup;return group!=null&&group.alpha>.9f&&group.gameObject.activeInHierarchy;}
-        private static void EnsureTouch(){if(touch!=null)return;EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Could not start public touch input.");}
+        private static void EnsureTouch()
+        {
+            if(touch!=null&&touch.IsRunning)return;
+            touch?.Dispose();
+            EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
+            touch=new AriaTouchInputUiSystemHelper();
+            if(!touch.Start())throw new InvalidOperationException("Could not start public touch input.");
+        }
         private static void RepairSelectableRegistry()
         {
             const BindingFlags flags=BindingFlags.Static|BindingFlags.Instance|BindingFlags.NonPublic;Type type=typeof(Selectable);FieldInfo arrayField=type.GetField("s_Selectables",flags),countField=type.GetField("s_SelectableCount",flags),enabledField=type.GetField("m_EnableCalled",flags),indexField=type.GetField("m_CurrentIndex",flags);if(arrayField==null||countField==null||enabledField==null||indexField==null)return;
@@ -212,6 +235,8 @@ namespace Game.Editor
         private static void Tap(Button button)
         {
             if(!Ready(button))return;RectTransform rect=(RectTransform)button.transform;Canvas canvas=button.GetComponentInParent<Canvas>();Vector2 point=RectTransformUtility.WorldToScreenPoint(canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:canvas.worldCamera,rect.TransformPoint(rect.rect.center));
+            string diagnostics=$"{button.name}@{point.x:0},{point.y:0}/{Screen.width}x{Screen.height}";
+            if(lastTapDiagnostics!=diagnostics){lastTapDiagnostics=diagnostics;Debug.Log("[MarketLifelineInput] target="+diagnostics);}
             if(touch.TryGesture(point,point,.18f,0,Time.unscaledTime)){lastInput=EditorApplication.timeSinceStartup;Debug.Log("[MarketLifelineInput] touch="+button.name);}
         }
         private static void Complete(bool pass,string detail)
@@ -223,12 +248,15 @@ namespace Game.Editor
                 SessionState.SetBool(ManualEditorRun,false);
                 SessionState.SetBool(PersianEditorRun,false);
                 SessionState.SetBool(SignalTraceEditorRun,false);
+                SessionState.SetBool(SafehouseSweepEditorRun,false);
                 AssetDatabase.AllowAutoRefresh();
                 EditorApplication.ExitPlaymode();
             }
             else MissionEditorValidationExit.Complete(pass);
         }
         private static bool IsSignalTrace=>SessionState.GetBool(SignalTraceEditorRun,false);
-        private static string TargetMission=>IsSignalTrace?CampaignMissionSequence.SignalTrace:CampaignMissionSequence.MarketLifeline;
+        private static bool IsSafehouseSweep=>SessionState.GetBool(SafehouseSweepEditorRun,false);
+        private static bool IsChapterThree=>IsSignalTrace||IsSafehouseSweep;
+        private static string TargetMission=>IsSafehouseSweep?CampaignMissionSequence.SafehouseSweep:IsSignalTrace?CampaignMissionSequence.SignalTrace:CampaignMissionSequence.MarketLifeline;
     }
 }

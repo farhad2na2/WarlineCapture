@@ -1986,6 +1986,101 @@ MonoBehaviour:
     - key: mission.route_reopened.summary
       value: Keep relief and Fuel moving, restore the disrupted lane, capture the
         logistics hub, and preserve its routing records.
+    - key: mission.safehouse_sweep.deadline
+      value: 10 active minutes
+    - key: mission.safehouse_sweep.enemy_intel
+      value: One reinforced weapons node is verified. The neighboring building is
+        an occupied family home. A courier may flee through the rear service lane.
+    - key: mission.safehouse_sweep.failure.convoy
+      value: A protected civilian asset was lost. Fire must stay inside the verified
+        safehouse boundary.
+    - key: mission.safehouse_sweep.failure.deadline
+      value: The courier escaped with the ledger.
+    - key: mission.safehouse_sweep.failure.integrity
+      value: Mission state could not be verified. Return and retry; no rewards were
+        settled.
+    - key: mission.safehouse_sweep.failure.squad
+      value: The perimeter team was lost before the safehouse could be secured.
+    - key: mission.safehouse_sweep.failure.wrong_transfer
+      value: The occupied family home was treated as hostile. Only the verified weapons
+        node is a valid target.
+    - key: mission.safehouse_sweep.forces
+      value: "8 rifles \xB7 perimeter and capture team"
+    - key: mission.safehouse_sweep.guide.1.body
+      value: Move rifles to the first marked exit and hold for 6 seconds.
+    - key: mission.safehouse_sweep.guide.1.title
+      value: Seal the front exit
+    - key: mission.safehouse_sweep.guide.2.body
+      value: Hold the rear exit too. The courier route is not secure until both exits
+        are covered.
+    - key: mission.safehouse_sweep.guide.2.title
+      value: Seal the service lane
+    - key: mission.safehouse_sweep.guide.3.body
+      value: Keep all three protected civilian assets moving and outside the safehouse
+        fire boundary.
+    - key: mission.safehouse_sweep.guide.3.title
+      value: Protect the occupied side
+    - key: mission.safehouse_sweep.guide.4.body
+      value: Attack only the armed safehouse after both exits are confirmed. Never
+        fire into the neighboring home.
+    - key: mission.safehouse_sweep.guide.4.title
+      value: Clear the verified node
+    - key: mission.safehouse_sweep.guide.5.body
+      value: Hold the capture area for 10 seconds while ARIA secures the courier's
+        ledger.
+    - key: mission.safehouse_sweep.guide.5.title
+      value: Capture the ledger intact
+    - key: mission.safehouse_sweep.guide.diagram
+      value: "2 EXITS \u2192 SEAL \xB7 CIVILIAN SIDE \u2192 PROTECT \xB7 COURIER
+        \u2192 CAPTURE"
+    - key: mission.safehouse_sweep.guide.example
+      value: Use Select, Move, Attack and Hold. ARIA demonstrates the same player
+        orders.
+    - key: mission.safehouse_sweep.guide.mistake
+      value: The second building is occupied, not hostile. Suspicion never authorizes
+        a breach.
+    - key: mission.safehouse_sweep.guide.title
+      value: Safehouse Sweep field guide
+    - key: mission.safehouse_sweep.location
+      value: "Residential service lanes \xB7 east district"
+    - key: mission.safehouse_sweep.name
+      value: Safehouse Sweep
+    - key: mission.safehouse_sweep.objective.confirm
+      value: Seal and confirm both safehouse exits
+    - key: mission.safehouse_sweep.objective.confirm.body
+      value: Move the assault squad to each marked exit and hold for 6 seconds. Do
+        not breach until both sides of the verified building are sealed.
+    - key: mission.safehouse_sweep.objective.ledger
+      value: Capture the courier and preserve the ledger
+    - key: mission.safehouse_sweep.objective.ledger.body
+      value: Clear the armed safehouse, block the rear lane and hold the courier
+        capture area for 10 seconds without destroying the evidence.
+    - key: mission.safehouse_sweep.objective.protect
+      value: Keep three civilian assets protected
+    - key: mission.safehouse_sweep.objective.protect.body
+      value: Keep the family home, east passage and resident route protected. Any
+        attack on a protected asset fails the mission.
+    - key: mission.safehouse_sweep.resources
+      value: "Two exits \xB7 three protected assets \xB7 one evidence courier"
+    - key: mission.safehouse_sweep.result.defeat
+      value: Safehouse sweep failed
+    - key: mission.safehouse_sweep.result.success
+      value: The verified weapons node was cleared, the neighboring family was unharmed
+        and the intact ledger exposed the evidence courier network.
+    - key: mission.safehouse_sweep.result.victory
+      value: Safehouse secured
+    - key: mission.safehouse_sweep.reward.card
+      value: "1,200 Commander XP \xB7 6,000 Credits"
+    - key: mission.safehouse_sweep.star.1
+      value: Complete the mission
+    - key: mission.safehouse_sweep.star.2
+      value: No protected civilian asset lost
+    - key: mission.safehouse_sweep.star.3
+      value: Finish within 7 minutes
+    - key: mission.safehouse_sweep.summary
+      value: Confirm both exits, protect the occupied family homes, clear only the
+        verified weapons safehouse and capture its courier with the evidence ledger
+        intact.
     - key: mission.signal_trace.deadline
       value: 10 active minutes
     - key: mission.signal_trace.enemy_intel
@@ -2521,6 +2616,30 @@ MonoBehaviour:
     - key: narrative.route_reopened.debrief.03
       value: A city under stress authorizes what it rejected in peace. You reopened
         the route for me. Find my signal among the people you insist on protecting.
+    - key: narrative.safehouse_sweep.brief.01
+      value: The recovered route confirms one weapons node in this residential block.
+        The reinforced building is linked to the armed cell. The family home beside
+        it is not.
+    - key: narrative.safehouse_sweep.brief.02
+      value: Waiting gives the cell time to move, but suspicion is not a second target.
+        Seal both escape lanes, breach only the confirmed safehouse, and keep every
+        shot inside the boundary.
+    - key: narrative.safehouse_sweep.brief.03
+      value: Local guards and residents use the east passage. Keep that route protected.
+        The service lane behind the safehouse is the courier's most likely exit.
+    - key: narrative.safehouse_sweep.comms.01
+      value: Courier moving with the ledger. Block the lane and take him alive. Do
+        not fire into the homes or destroy the vehicle in this crowd.
+    - key: narrative.safehouse_sweep.debrief.01
+      value: The weapons node is clear, the evidence room is intact, and every family
+        on the protected side is accounted for.
+    - key: narrative.safehouse_sweep.debrief.02
+      value: Waiting cost us time, and saved the wrong house. The building next door
+        held a family, not a second cell.
+    - key: narrative.safehouse_sweep.debrief.03
+      value: The ledger identifies an evidence courier network and compromised security
+        credentials. One planted report is already moving through an old authority
+        channel.
     - key: narrative.signal_trace.brief.01
       value: Three moving transmitters share the Relay signature. One belongs to
         the clinic, one to a delivery cooperative, and one is travelling with an
@@ -9850,6 +9969,180 @@ MonoBehaviour:
         \u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0631\u0648 \u062A\u0635\u0631\u0641
         \u06A9\u0646 \u0648 \u0627\u0633\u0646\u0627\u062F \u0645\u0633\u06CC\u0631\u0647\u0627
         \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.safehouse_sweep.deadline
+      value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
+        \u0641\u0639\u0627\u0644"
+    - key: mission.safehouse_sweep.enemy_intel
+      value: "\u06CC\u06A9 \u0627\u0646\u0628\u0627\u0631 \u0633\u0644\u0627\u062D\u0650
+        \u062A\u0642\u0648\u06CC\u062A\u200C\u0634\u062F\u0647 \u062A\u0623\u06CC\u06CC\u062F
+        \u0634\u062F\u0647. \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u06A9\u0646\u0627\u0631\u06CC
+        \u062E\u0627\u0646\u0647\u0654 \u06CC\u06A9 \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0633\u062A.
+        \u0645\u0645\u06A9\u0646\u0647 \u067E\u06CC\u06A9 \u0627\u0632 \u0631\u0627\u0647
+        \u062E\u062F\u0645\u0627\u062A\u06CC \u067E\u0634\u062A \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u0641\u0631\u0627\u0631 \u06A9\u0646\u0647."
+    - key: mission.safehouse_sweep.failure.convoy
+      value: "\u06CC\u06A9 \u062F\u0627\u0631\u0627\u06CC\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0622\u062A\u0634 \u0628\u0627\u06CC\u062F
+        \u062F\u0627\u062E\u0644 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.safehouse_sweep.failure.deadline
+      value: "\u067E\u06CC\u06A9 \u0647\u0645\u0631\u0627\u0647 \u062F\u0641\u062A\u0631
+        \u0634\u0648\u0627\u0647\u062F \u0641\u0631\u0627\u0631 \u06A9\u0631\u062F."
+    - key: mission.safehouse_sweep.failure.integrity
+      value: "\u0648\u0636\u0639\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u06CC\u0633\u062A.
+        \u0628\u0631\u06AF\u0631\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u067E\u0627\u062F\u0627\u0634\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F."
+    - key: mission.safehouse_sweep.failure.squad
+      value: "\u06AF\u0631\u0648\u0647 \u0645\u062D\u0627\u0635\u0631\u0647 \u067E\u06CC\u0634
+        \u0627\u0632 \u0627\u0645\u0646 \u0634\u062F\u0646 \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.safehouse_sweep.failure.wrong_transfer
+      value: "\u062E\u0627\u0646\u0647\u0654 \u0645\u0633\u06A9\u0648\u0646\u06CC
+        \u0628\u0647\u200C\u0639\u0646\u0648\u0627\u0646 \u062F\u0634\u0645\u0646
+        \u0647\u062F\u0641 \u06AF\u0631\u0641\u062A\u0647 \u0634\u062F. \u0641\u0642\u0637
+        \u0627\u0646\u0628\u0627\u0631 \u0633\u0644\u0627\u062D\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0647\u062F\u0641 \u0645\u0639\u062A\u0628\u0631\u0647."
+    - key: mission.safehouse_sweep.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u06AF\u0631\u0648\u0647
+        \u0645\u062D\u0627\u0635\u0631\u0647 \u0648 \u062F\u0633\u062A\u06AF\u06CC\u0631\u06CC"
+    - key: mission.safehouse_sweep.guide.1.body
+      value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648
+        \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC \u0627\u0648\u0644 \u0628\u0628\u0631
+        \u0648 \u06F6 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.safehouse_sweep.guide.1.title
+      value: "\u062E\u0631\u0648\u062C\u06CC \u062C\u0644\u0648 \u0631\u0648 \u0628\u0628\u0646\u062F"
+    - key: mission.safehouse_sweep.guide.2.body
+      value: "\u062E\u0631\u0648\u062C\u06CC \u067E\u0634\u062A \u0631\u0648 \u0647\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u062A\u0627 \u0647\u0631 \u062F\u0648
+        \u0631\u0627\u0647 \u067E\u0648\u0634\u0634 \u062F\u0627\u062F\u0647 \u0646\u0634\u0646\u060C
+        \u0645\u0633\u06CC\u0631 \u067E\u06CC\u06A9 \u0627\u0645\u0646 \u0646\u06CC\u0633\u062A."
+    - key: mission.safehouse_sweep.guide.2.title
+      value: "\u0631\u0627\u0647 \u062E\u062F\u0645\u0627\u062A\u06CC \u0631\u0648
+        \u0628\u0628\u0646\u062F"
+    - key: mission.safehouse_sweep.guide.3.body
+      value: "\u0647\u0631 \u0633\u0647 \u062F\u0627\u0631\u0627\u06CC\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u062F\u0631 \u062D\u0631\u06A9\u062A \u0648 \u0628\u06CC\u0631\u0648\u0646
+        \u0627\u0632 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0622\u062A\u0634
+        \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.safehouse_sweep.guide.3.title
+      value: "\u0627\u0632 \u0628\u062E\u0634 \u0645\u0633\u06A9\u0648\u0646\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.safehouse_sweep.guide.4.body
+      value: "\u0628\u0639\u062F \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F \u0647\u0631
+        \u062F\u0648 \u062E\u0631\u0648\u062C\u06CC \u0641\u0642\u0637 \u0628\u0647
+        \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0645\u0633\u0644\u062D \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0628\u0647 \u062E\u0627\u0646\u0647\u0654 \u06A9\u0646\u0627\u0631\u06CC
+        \u0634\u0644\u06CC\u06A9 \u0646\u06A9\u0646."
+    - key: mission.safehouse_sweep.guide.4.title
+      value: "\u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u06A9\u0646"
+    - key: mission.safehouse_sweep.guide.5.body
+      value: "\u0645\u0646\u0637\u0642\u0647\u0654 \u062F\u0633\u062A\u06AF\u06CC\u0631\u06CC
+        \u0631\u0648 \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631 \u062A\u0627 \u0622\u0631\u06CC\u0627 \u062F\u0641\u062A\u0631
+        \u067E\u06CC\u06A9 \u0631\u0648 \u0627\u0645\u0646 \u06A9\u0646\u0647."
+    - key: mission.safehouse_sweep.guide.5.title
+      value: "\u062F\u0641\u062A\u0631 \u0634\u0648\u0627\u0647\u062F \u0631\u0648
+        \u0633\u0627\u0644\u0645 \u0628\u06AF\u06CC\u0631"
+    - key: mission.safehouse_sweep.guide.diagram
+      value: "\u06F2 \u062E\u0631\u0648\u062C\u06CC \u2190 \u0628\u0633\u062A\u0646
+        \xB7 \u0628\u062E\u0634 \u0645\u0633\u06A9\u0648\u0646\u06CC \u2190 \u062D\u0641\u0627\u0638\u062A
+        \xB7 \u067E\u06CC\u06A9 \u2190 \u062F\u0633\u062A\u06AF\u06CC\u0631\u06CC"
+    - key: mission.safehouse_sweep.guide.example
+      value: "\u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062D\u0631\u06A9\u062A\u060C
+        \u062D\u0645\u0644\u0647 \u0648 \u062A\u0648\u0642\u0641 \u0627\u0633\u062A\u0641\u0627\u062F\u0647
+        \u06A9\u0646. \u0622\u0631\u06CC\u0627 \u0647\u0645\u06CC\u0646 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u06CC\u06A9\u0646 \u0631\u0648 \u0646\u0645\u0627\u06CC\u0634
+        \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.safehouse_sweep.guide.mistake
+      value: "\u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u062F\u0648\u0645 \u0645\u0633\u06A9\u0648\u0646\u06CC\u0647\u060C
+        \u0646\u0647 \u062F\u0634\u0645\u0646. \u0634\u06A9 \u0647\u06CC\u0686\u200C\u0648\u0642\u062A
+        \u0645\u062C\u0648\u0632 \u0648\u0631\u0648\u062F \u0646\u06CC\u0633\u062A."
+    - key: mission.safehouse_sweep.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC
+        \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647"
+    - key: mission.safehouse_sweep.location
+      value: "\u0631\u0627\u0647\u200C\u0647\u0627\u06CC \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u0645\u062D\u0644\u0647\u0654 \u0645\u0633\u06A9\u0648\u0646\u06CC \xB7
+        \u0645\u0646\u0637\u0642\u0647\u0654 \u0634\u0631\u0642\u06CC"
+    - key: mission.safehouse_sweep.name
+      value: "\u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647"
+    - key: mission.safehouse_sweep.objective.confirm
+      value: "\u0647\u0631 \u062F\u0648 \u0631\u0627\u0647 \u062E\u0631\u0648\u062C
+        \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0628\u0646\u062F
+        \u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646"
+    - key: mission.safehouse_sweep.objective.confirm.body
+      value: "\u06AF\u0631\u0648\u0647 \u062A\u0647\u0627\u062C\u0645\u06CC \u0631\u0648
+        \u0628\u0647 \u0647\u0631 \u062E\u0631\u0648\u062C\u06CC \u0639\u0644\u0627\u0645\u062A\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631 \u0648 \u06F6 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u062A\u0627 \u0648\u0642\u062A\u06CC \u0647\u0631 \u062F\u0648
+        \u0633\u0645\u062A \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0628\u0633\u062A\u0647 \u0646\u0634\u062F\u0647\u060C \u0648\u0627\u0631\u062F
+        \u0646\u0634\u0648."
+    - key: mission.safehouse_sweep.objective.ledger
+      value: "\u067E\u06CC\u06A9 \u0631\u0648 \u062F\u0633\u062A\u06AF\u06CC\u0631
+        \u06A9\u0646 \u0648 \u062F\u0641\u062A\u0631 \u0634\u0648\u0627\u0647\u062F
+        \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.safehouse_sweep.objective.ledger.body
+      value: "\u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0645\u0633\u0644\u062D
+        \u0631\u0648 \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u06A9\u0646\u060C
+        \u0631\u0627\u0647 \u067E\u0634\u062A \u0631\u0648 \u0628\u0628\u0646\u062F
+        \u0648 \u0628\u062F\u0648\u0646 \u0646\u0627\u0628\u0648\u062F \u06A9\u0631\u062F\u0646
+        \u0634\u0648\u0627\u0647\u062F \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647
+        \u0645\u0646\u0637\u0642\u0647\u0654 \u062F\u0633\u062A\u06AF\u06CC\u0631\u06CC
+        \u067E\u06CC\u06A9 \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.safehouse_sweep.objective.protect
+      value: "\u0627\u0632 \u0633\u0647 \u062F\u0627\u0631\u0627\u06CC\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
+    - key: mission.safehouse_sweep.objective.protect.body
+      value: "\u062E\u0627\u0646\u0647\u0654 \u062E\u0627\u0646\u0648\u0627\u062F\u06AF\u06CC\u060C
+        \u06AF\u0630\u0631 \u0634\u0631\u0642\u06CC \u0648 \u0645\u0633\u06CC\u0631
+        \u0633\u0627\u06A9\u0646\u200C\u0647\u0627 \u0631\u0648 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0647\u0631 \u062D\u0645\u0644\u0647
+        \u0628\u0647 \u062F\u0627\u0631\u0627\u06CC\u06CC \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u0634\u06A9\u0633\u062A
+        \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.safehouse_sweep.resources
+      value: "\u062F\u0648 \u062E\u0631\u0648\u062C\u06CC \xB7 \u0633\u0647 \u062F\u0627\u0631\u0627\u06CC\u06CC
+        \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647 \xB7 \u06CC\u06A9
+        \u067E\u06CC\u06A9 \u0634\u0648\u0627\u0647\u062F"
+    - key: mission.safehouse_sweep.result.defeat
+      value: "\u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.safehouse_sweep.result.success
+      value: "\u0627\u0646\u0628\u0627\u0631 \u0633\u0644\u0627\u062D\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC \u0634\u062F\u060C \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u0654
+        \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u06A9\u0646\u0627\u0631\u06CC
+        \u0622\u0633\u06CC\u0628 \u0646\u062F\u06CC\u062F \u0648 \u062F\u0641\u062A\u0631
+        \u0633\u0627\u0644\u0645 \u0634\u0628\u06A9\u0647\u0654 \u067E\u06CC\u06A9
+        \u0634\u0648\u0627\u0647\u062F \u0631\u0648 \u0622\u0634\u06A9\u0627\u0631
+        \u06A9\u0631\u062F."
+    - key: mission.safehouse_sweep.result.victory
+      value: "\u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0627\u0645\u0646 \u0634\u062F"
+    - key: mission.safehouse_sweep.reward.card
+      value: "\u06F1\u06F2\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F6\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.safehouse_sweep.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.safehouse_sweep.star.2
+      value: "\u0647\u06CC\u0686 \u062F\u0627\u0631\u0627\u06CC\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0646\u0631\u0647"
+    - key: mission.safehouse_sweep.star.3
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F7 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0645\u0627\u0645 \u06A9\u0646"
+    - key: mission.safehouse_sweep.summary
+      value: "\u0647\u0631 \u062F\u0648 \u0631\u0627\u0647 \u062E\u0631\u0648\u062C
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646\u060C \u0627\u0632
+        \u062E\u0627\u0646\u0647\u200C\u0647\u0627\u06CC \u0645\u0633\u06A9\u0648\u0646\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646\u060C \u0641\u0642\u0637
+        \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0633\u0644\u0627\u062D\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0631\u0648 \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC
+        \u06A9\u0646 \u0648 \u067E\u06CC\u06A9 \u0631\u0648 \u0647\u0645\u0631\u0627\u0647
+        \u062F\u0641\u062A\u0631 \u0634\u0648\u0627\u0647\u062F \u0633\u0627\u0644\u0645
+        \u062F\u0633\u062A\u06AF\u06CC\u0631 \u06A9\u0646."
     - key: mission.signal_trace.deadline
       value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -10975,6 +11268,65 @@ MonoBehaviour:
         \u067E\u06CC\u062F\u0627 \u06A9\u0646 \u06A9\u0647 \u0627\u0635\u0631\u0627\u0631
         \u062F\u0627\u0631\u06CC \u0627\u0632\u0634\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A
         \u06A9\u0646\u06CC."
+    - key: narrative.safehouse_sweep.brief.01
+      value: "\u0645\u0633\u06CC\u0631 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647
+        \u0641\u0642\u0637 \u06CC\u06A9 \u0627\u0646\u0628\u0627\u0631 \u0633\u0644\u0627\u062D
+        \u0631\u0648 \u062F\u0631 \u0627\u06CC\u0646 \u0645\u062D\u0644\u0647 \u062A\u0623\u06CC\u06CC\u062F
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u062A\u0642\u0648\u06CC\u062A\u200C\u0634\u062F\u0647 \u0628\u0647 \u0633\u0644\u0648\u0644
+        \u0645\u0633\u0644\u062D \u0648\u0635\u0644\u0647\u061B \u062E\u0627\u0646\u0647\u0654
+        \u062E\u0627\u0646\u0648\u0627\u062F\u06AF\u06CC \u06A9\u0646\u0627\u0631\u0634
+        \u0646\u0647."
+    - key: narrative.safehouse_sweep.brief.02
+      value: "\u0635\u0628\u0631 \u06A9\u0631\u062F\u0646 \u0628\u0647 \u0633\u0644\u0648\u0644
+        \u0641\u0631\u0635\u062A \u062C\u0627\u0628\u0647\u200C\u062C\u0627\u06CC\u06CC
+        \u0645\u06CC\u200C\u062F\u0647\u060C \u0627\u0645\u0627 \u0634\u06A9 \u06CC\u06A9
+        \u0647\u062F\u0641 \u062F\u0648\u0645 \u0646\u0645\u06CC\u200C\u0633\u0627\u0632\u0647.
+        \u0647\u0631 \u062F\u0648 \u0631\u0627\u0647 \u0641\u0631\u0627\u0631 \u0631\u0648
+        \u0628\u0628\u0646\u062F\u060C \u0641\u0642\u0637 \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0631\u0648 \u0628\u0627\u0632
+        \u06A9\u0646 \u0648 \u0647\u0645\u0647\u0654 \u0634\u0644\u06CC\u06A9\u200C\u0647\u0627
+        \u0631\u0648 \u062F\u0627\u062E\u0644 \u0645\u062D\u062F\u0648\u062F\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: narrative.safehouse_sweep.brief.03
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u062D\u0644\u06CC
+        \u0648 \u0633\u0627\u06A9\u0646\u200C\u0647\u0627 \u0627\u0632 \u06AF\u0630\u0631
+        \u0634\u0631\u0642\u06CC \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646.
+        \u0627\u0648\u0646 \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0631\u0627\u0647 \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u067E\u0634\u062A \u0645\u062E\u0641\u06CC\u06AF\u0627\u0647 \u0645\u062D\u062A\u0645\u0644\u200C\u062A\u0631\u06CC\u0646
+        \u0645\u0633\u06CC\u0631 \u0641\u0631\u0627\u0631 \u067E\u06CC\u06A9\u0647."
+    - key: narrative.safehouse_sweep.comms.01
+      value: "\u067E\u06CC\u06A9 \u0628\u0627 \u062F\u0641\u062A\u0631 \u0627\u0633\u0646\u0627\u062F
+        \u062F\u0631 \u062D\u0627\u0644 \u0641\u0631\u0627\u0631\u0647. \u0631\u0627\u0647
+        \u0631\u0648 \u0628\u0628\u0646\u062F \u0648 \u0632\u0646\u062F\u0647 \u062F\u0633\u062A\u06AF\u06CC\u0631\u0634
+        \u06A9\u0646. \u0648\u0633\u0637 \u0627\u06CC\u0646 \u062C\u0645\u0639\u06CC\u062A
+        \u0628\u0647 \u062E\u0627\u0646\u0647\u200C\u0647\u0627 \u0634\u0644\u06CC\u06A9
+        \u0646\u06A9\u0646 \u0648 \u062E\u0648\u062F\u0631\u0648 \u0631\u0648 \u0645\u0646\u0641\u062C\u0631
+        \u0646\u06A9\u0646."
+    - key: narrative.safehouse_sweep.debrief.01
+      value: "\u0627\u0646\u0628\u0627\u0631 \u0633\u0644\u0627\u062D \u067E\u0627\u06A9\u0633\u0627\u0632\u06CC
+        \u0634\u062F\u060C \u0627\u062A\u0627\u0642 \u0634\u0648\u0627\u0647\u062F
+        \u0633\u0627\u0644\u0645\u0647 \u0648 \u0647\u0645\u0647\u0654 \u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u0633\u0645\u062A \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062F\u0631 \u0627\u0645\u0627\u0646\u0646."
+    - key: narrative.safehouse_sweep.debrief.02
+      value: "\u0635\u0628\u0631 \u06A9\u0631\u062F\u0646 \u0627\u0632 \u0645\u0627
+        \u0648\u0642\u062A \u06AF\u0631\u0641\u062A \u0648 \u062E\u0627\u0646\u0647\u0654
+        \u0627\u0634\u062A\u0628\u0627\u0647\u06CC \u0631\u0648 \u0646\u062C\u0627\u062A
+        \u062F\u0627\u062F. \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u06A9\u0646\u0627\u0631\u06CC
+        \u0645\u062D\u0644 \u0632\u0646\u062F\u06AF\u06CC \u06CC\u06A9 \u062E\u0627\u0646\u0648\u0627\u062F\u0647
+        \u0628\u0648\u062F\u060C \u0646\u0647 \u0633\u0644\u0648\u0644 \u062F\u0648\u0645."
+    - key: narrative.safehouse_sweep.debrief.03
+      value: "\u062F\u0641\u062A\u0631 \u0627\u0633\u0646\u0627\u062F \u06CC\u06A9
+        \u0634\u0628\u06A9\u0647\u0654 \u067E\u06CC\u06A9 \u0634\u0648\u0627\u0647\u062F
+        \u0648 \u0645\u062C\u0648\u0632\u0647\u0627\u06CC \u0627\u0645\u0646\u06CC\u062A\u06CC
+        \u0644\u0648\u200C\u0631\u0641\u062A\u0647 \u0631\u0648 \u0645\u0634\u062E\u0635
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634
+        \u062C\u0639\u0644\u06CC \u0647\u0645\u06CC\u0646 \u062D\u0627\u0644\u0627
+        \u0627\u0632 \u06CC\u06A9 \u06A9\u0627\u0646\u0627\u0644 \u0642\u062F\u06CC\u0645\u06CC\u0650
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062F\u0631 \u062D\u0627\u0644
+        \u0639\u0628\u0648\u0631\u0647."
     - key: narrative.signal_trace.brief.01
       value: "\u0633\u0647 \u0641\u0631\u0633\u062A\u0646\u062F\u0647\u0654 \u0645\u062A\u062D\u0631\u06A9
         \u0627\u0645\u0636\u0627\u06CC \u0634\u0628\u06A9\u0647 \u0631\u0648 \u062F\u0627\u0631\u0646.

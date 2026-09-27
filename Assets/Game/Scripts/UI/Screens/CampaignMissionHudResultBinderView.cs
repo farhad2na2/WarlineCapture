@@ -15,6 +15,8 @@ namespace Game.UI.Runtime
         private uint appliedVersion;
         private bool appliedActionEnabled;
         private string appliedLocale;
+        private FutureMissionComicPreviewController chapterClosePreview;
+        private bool chapterClosePending;
 
         private void Awake()
         {
@@ -95,6 +97,40 @@ namespace Game.UI.Runtime
             }
             UiMissionResultActionKind action = activeModel.Outcome == UiMissionResultOutcome.Victory
                 ? UiMissionResultActionKind.Continue : UiMissionResultActionKind.Retry;
+            if (action == UiMissionResultActionKind.Continue && !activeModel.DebriefRequired &&
+                !chapterClosePending)
+            {
+                string sequenceId = activeModel.MissionId switch
+                {
+                    "saga.ch01.m05.breach_assault" => "seq.ch01.close.protocol_fragment_01",
+                    "saga.ch02.m05.route_reopened" => "seq.ch02.close.protocol_fragment_02",
+                    _ => null
+                };
+                if (sequenceId != null)
+                {
+                    chapterClosePreview ??= GetComponent<FutureMissionComicPreviewController>() ??
+                        gameObject.AddComponent<FutureMissionComicPreviewController>();
+                    chapterClosePending = true;
+                    if (chapterClosePreview.PlaySequence(sequenceId, completed: ContinueAfterChapterClose))
+                        return;
+                    chapterClosePending = false;
+                    Debug.LogError($"[BookendComics] Could not show {sequenceId} after mission result.");
+                    return;
+                }
+            }
+            if (chapterClosePending)
+                return;
+            ContinueResult(action);
+        }
+
+        private void ContinueAfterChapterClose()
+        {
+            chapterClosePending = false;
+            ContinueResult(UiMissionResultActionKind.Continue);
+        }
+
+        private void ContinueResult(UiMissionResultActionKind action)
+        {
             bool queued = UiShellRuntimeGateway.TryEnqueueMissionResultAction(action);
             if (queued && action == UiMissionResultActionKind.Continue && !activeModel.DebriefRequired)
             {

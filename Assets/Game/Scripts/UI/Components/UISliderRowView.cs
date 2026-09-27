@@ -33,7 +33,7 @@ namespace Game.UI.Runtime
         public void Bind(string label, float value, float minValue, float maxValue, string valueFormat = "0")
         {
             if (labelText != null)
-                labelText.text = label;
+                UiLocalizedText.Set(labelText, label);
 
             _minValue = minValue;
             _maxValue = maxValue;

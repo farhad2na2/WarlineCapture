@@ -35,6 +35,7 @@ namespace Game.Composition
         public UnityEngine.Object CurrentFontAsset => GameLocalization.CurrentFontAsset;
         public int AvailableLocaleCount => GameLocalization.AvailableLocales.Count;
         public string[] GetLocaleShortLabels() => GameLocalization.GetLocaleShortLabels();
+        public string[] GetLocaleSwitchLabels() => GameLocalization.GetLocaleSwitchLabels();
         public int GetLocaleIndex(string code) => GameLocalization.GetLocaleIndex(code);
         public string GetLocaleCode(int index) => GameLocalization.GetLocaleCode(index);
         public bool SetLocale(string code, bool persist = true) => GameLocalization.SetLocale(code, persist);

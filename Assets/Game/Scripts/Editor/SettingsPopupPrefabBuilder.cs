@@ -32,6 +32,7 @@ namespace Game.Editor
         private static TMP_FontAsset boldFont;
         private static TMP_FontAsset mediumFont;
         private static TMP_FontAsset lightFont;
+        private static TMP_FontAsset persianFont;
         private static V3UiArtCatalog art;
         private static V3UiTheme theme;
         private static Sprite panelBacking;
@@ -60,7 +61,8 @@ namespace Game.Editor
         private static readonly string[] AssistanceLevelLabels = { "FULL", "HINTS", "MINIMAL", "OFF" };
         private static readonly string[] NarrationModeLabels = { "OFF", "CRITICAL", "IMPORTANT", "ALL" };
         private static readonly string[] ColorblindModeLabels = { "OFF", "PRO", "DEU", "TRI" };
-        private static readonly string[] LanguageLabels = { "EN", "FA" };
+        private static readonly string[] LanguageLabels = { "EN", "فارسی" };
+        private const string PersianFontPath = "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset";
 
         [MenuItem("Game/UI/Rebuild Settings Popups")]
         public static void Build()
@@ -246,6 +248,7 @@ namespace Game.Editor
             boldFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(BoldFontPath);
             mediumFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(MediumFontPath);
             lightFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(LightFontPath);
+            persianFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(PersianFontPath);
             art = V3UiFoundationBuilder.RequireCatalog();
             theme = V3UiFoundationBuilder.RequireTheme();
 
@@ -281,7 +284,7 @@ namespace Game.Editor
             Image dim = CreateImage("InputBlocker", root.transform, null, new Color(0f, 0f, 0f, 0.76f), true);
             Stretch(dim.rectTransform);
 
-            RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1540f, 970f), Vector2.zero);
+            RectTransform panel = CreateRect("SettingsRoot", root.transform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1560f, 1064f), Vector2.zero);
             panel.localScale = Vector3.one * PopupRuntimeScale;
             SettingsPopupResponsiveScaleView responsiveScale = panel.gameObject.AddComponent<SettingsPopupResponsiveScaleView>();
             responsiveScale.Configure(0.84f, 0.76f);
@@ -298,7 +301,7 @@ namespace Game.Editor
                 0f);
             Stretch(panelFill.rectTransform);
 
-            RectTransform header = CreateRect("Header", panel, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 112f), new Vector2(0f, -56f));
+            RectTransform header = CreateRect("Header", panel, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(0f, 124f), new Vector2(0f, -62f));
             V3GradientGraphic headerImage = CreateGradient(
                 "HeaderFill",
                 header,
@@ -310,13 +313,13 @@ namespace Game.Editor
             CreateEdge("HeaderDivider", header, ChromeBorder, ChromeStroke, Edge.Bottom);
 
             Image gear = CreateImage("SettingsIcon", header, settingsIcon, theme.TextPrimary, false);
-            SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(80f, 80f), new Vector2(70f, 0f));
+            SetRect(gear.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(88f, 88f), new Vector2(72f, 0f));
 
-            TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 71f, boldFont, TextAlignmentOptions.Left);
-            SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-220f, 0f), new Vector2(12f, 0f));
+            TMP_Text title = CreateText("TitleText", header, "COMMAND SETTINGS", 64f, boldFont, TextAlignmentOptions.Left);
+            SetRect(title.rectTransform, new Vector2(0f, 0f), new Vector2(1f, 1f), new Vector2(-240f, -16f), new Vector2(28f, 0f));
 
             Button closeButton = CreateButton("CloseButton", header, squareDefault, squareHover, squarePressed, squareSelected, squareDisabled);
-            SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(74f, 74f), new Vector2(-70f, 0f));
+            SetRect(closeButton.GetComponent<RectTransform>(), new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(84f, 84f), new Vector2(-68f, 0f));
             V3GradientGraphic closeFill = CreateGradient(
                 "CloseFill",
                 closeButton.transform,
@@ -330,9 +333,9 @@ namespace Game.Editor
             Stretch(closeLabel.rectTransform);
 
             SettingsPanelView panelView = panel.gameObject.AddComponent<SettingsPanelView>();
-            RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 1f), new Vector2(0.5f, 1f), new Vector2(1450f, 700f), new Vector2(0f, -466f));
+            RectTransform content = CreateRect("Content", panel, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1520f, 760f), new Vector2(0f, 16f));
 
-            RectTransform tabRail = CreateRect("SettingsTabRail", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(406f, 694f), new Vector2(-553f, 0f));
+            RectTransform tabRail = CreateRect("SettingsTabRail", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(420f, 760f), new Vector2(-550f, 0f));
             V3GradientGraphic tabRailBacking = CreateGradient(
                 "TabRailFill",
                 tabRail,
@@ -342,7 +345,7 @@ namespace Game.Editor
                 ChromeStroke);
             Stretch(tabRailBacking.rectTransform);
 
-            RectTransform pageFrame = CreateRect("ActivePageFrame", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1086f, 694f), new Vector2(203f, 0f));
+            RectTransform pageFrame = CreateRect("ActivePageFrame", content, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1084f, 760f), new Vector2(218f, 0f));
             V3GradientGraphic pageBacking = CreateGradient(
                 "PageFill",
                 pageFrame,
@@ -352,7 +355,7 @@ namespace Game.Editor
                 ChromeStroke);
             Stretch(pageBacking.rectTransform);
 
-            RectTransform pagesRoot = CreateRect("SettingsPages", pageFrame, Vector2.zero, Vector2.one, new Vector2(-34f, -28f), Vector2.zero);
+            RectTransform pagesRoot = CreateRect("SettingsPages", pageFrame, Vector2.zero, Vector2.one, new Vector2(-32f, -24f), Vector2.zero);
             RectTransform audioPage = CreateSettingsPage("AudioPage", pagesRoot);
             RectTransform gameplayPage = CreateSettingsPage("GameplayPage", pagesRoot);
             RectTransform videoPage = CreateSettingsPage("VideoPage", pagesRoot);
@@ -400,27 +403,28 @@ namespace Game.Editor
             SetColor(tabView, "inactiveBorder", ChromeBorder);
             SetInt(tabView, "defaultTab", 0);
 
-            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioPage, "MASTER VOLUME", 28f, 82f);
-            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioPage, "MUSIC VOLUME", 125f, 82f);
-            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioPage, "SOUND VOLUME", 222f, 82f);
-            UIToggleRowView musicToggle = CreateToggleRow("MusicEnabledRow", audioPage, "MUSIC", "Adjust in-game music volume.", 321f, 86f);
-            UIToggleRowView soundToggle = CreateToggleRow("SoundEnabledRow", audioPage, "SOUND", "Adjust in-game sound effects volume.", 445f, 86f);
-            UIToggleRowView voiceToggle = CreateToggleRow("VoiceEnabledRow", audioPage, "VOICE", "Adjust in-game voice volume.", 565f, 86f);
+            UISliderRowView master = CreateSliderRow("MasterVolumeRow", audioPage, "MASTER VOLUME", 10f, 108f);
+            UISliderRowView music = CreateSliderRow("MusicVolumeRow", audioPage, "MUSIC VOLUME", 124f, 108f);
+            UISliderRowView sfx = CreateSliderRow("SfxVolumeRow", audioPage, "SOUND VOLUME", 238f, 108f);
+            UIToggleRowView musicToggle = CreateToggleRow("MusicEnabledRow", audioPage, "MUSIC", "Adjust in-game music volume.", 352f, 116f);
+            UIToggleRowView soundToggle = CreateToggleRow("SoundEnabledRow", audioPage, "SOUND", "Adjust in-game sound effects volume.", 474f, 116f);
+            UIToggleRowView voiceToggle = CreateToggleRow("VoiceEnabledRow", audioPage, "VOICE", "Adjust in-game voice volume.", 596f, 116f);
 
-            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", gameplayPage, "CAMERA SENSITIVITY", 34f, 84f);
-            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", gameplayPage, "THREAT WARNINGS", "Show tactical warnings during missions.", 132f, 86f);
-            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", gameplayPage, "ASSISTANT GUIDANCE", 232f, AssistanceLevelLabels, 94f);
-            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", gameplayPage, "NARRATION", 340f, NarrationModeLabels, 94f);
-            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", gameplayPage, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 466f, 86f);
+            UISliderRowView camera = CreateSliderRow("CameraSensitivityRow", gameplayPage, "CAMERA SENSITIVITY", 10f, 108f);
+            UIToggleRowView threat = CreateToggleRow("ThreatWarningsRow", gameplayPage, "THREAT WARNINGS", "Show tactical warnings during missions.", 124f, 116f);
+            UISegmentedControlView assistance = CreateSegmentRow("AssistanceLevelControl", gameplayPage, "ASSISTANT GUIDANCE", 246f, AssistanceLevelLabels, 136f, 76f, 30f);
+            UISegmentedControlView narration = CreateSegmentRow("NarrationModeControl", gameplayPage, "NARRATION", 388f, NarrationModeLabels, 136f, 76f, 30f);
+            UIToggleRowView takeover = CreateToggleRow("AssistantTakeoverRow", gameplayPage, "ASSISTANT TAKEOVER", "Allow assistant-guided bounded actions.", 530f, 116f);
 
-            UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", videoPage, "GRAPHICS QUALITY", 86f, GraphicsQualityLabels, 118f);
-            UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", videoPage, "FRAME RATE", 246f, FrameRateLabels, 118f);
+            UISegmentedControlView quality = CreateSegmentRow("GraphicsQualityControl", videoPage, "GRAPHICS QUALITY", 16f, GraphicsQualityLabels, 148f, 84f, 32f);
+            UISegmentedControlView frameRate = CreateSegmentRow("FrameRateControl", videoPage, "FRAME RATE", 176f, FrameRateLabels, 148f, 84f, 32f);
 
-            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessibilityPage, "HIGH CONTRAST UI", "Increase panel and text contrast.", 24f, 84f);
-            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessibilityPage, "LARGE TEXT", "Increase UI text scale for readability.", 116f, 84f);
-            UIToggleRowView subtitles = CreateToggleRow("AssistantSubtitlesRow", accessibilityPage, "ASSISTANT SUBTITLES", "Show narration subtitles in the assistant panel.", 208f, 84f);
-            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessibilityPage, "COLORBLIND MODE", 316f, ColorblindModeLabels, 96f);
-            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessibilityPage, "LANGUAGE", 430f, LanguageLabels, 96f);
+            UIToggleRowView contrast = CreateToggleRow("HighContrastRow", accessibilityPage, "HIGH CONTRAST UI", "Increase panel and text contrast.", 10f, 116f);
+            UIToggleRowView largeText = CreateToggleRow("LargeTextRow", accessibilityPage, "LARGE TEXT", "Increase UI text scale for readability.", 132f, 116f);
+            UIToggleRowView subtitles = CreateToggleRow("AssistantSubtitlesRow", accessibilityPage, "ASSISTANT SUBTITLES", "Show narration subtitles in the assistant panel.", 254f, 116f);
+            UISegmentedControlView colorblind = CreateSegmentRow("ColorblindModeControl", accessibilityPage, "COLORBLIND MODE", 376f, ColorblindModeLabels, 140f, 78f, 30f);
+            UISegmentedControlView language = CreateSegmentRow("LanguageControl", accessibilityPage, "LANGUAGE", 522f, LanguageLabels, 176f, 104f, 42f);
+            ApplyLanguageSwitchFont(language);
 
             SetObject(panelView, "masterVolumeRow", master);
             SetObject(panelView, "musicVolumeRow", music);
@@ -441,7 +445,7 @@ namespace Game.Editor
             SetObject(panelView, "colorblindModeControl", colorblind);
             SetObject(panelView, "languageControl", language);
 
-            RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 152f), new Vector2(0f, 76f));
+            RectTransform footer = CreateRect("Footer", panel, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(0f, 156f), new Vector2(0f, 78f));
             V3GradientGraphic footerBacking = CreateGradient(
                 "FooterFill",
                 footer,
@@ -452,7 +456,7 @@ namespace Game.Editor
             Stretch(footerBacking.rectTransform);
             CreateEdge("FooterDivider", footer, ChromeBorder, ChromeStroke, Edge.Top);
             Button reset = CreateButton("ResetButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-            SetRect(reset.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-34f, 120f), new Vector2(10f, 0f));
+            SetRect(reset.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(-48f, 112f), new Vector2(20f, 0f));
             SetButtonPalette(reset, theme.Amber, new Color(1f, 0.82f, 0.2f, 1f), new Color(0.9f, 0.58f, 0.02f, 1f));
             V3GradientGraphic resetFill = CreateGradient(
                 "ActionFill",
@@ -479,7 +483,7 @@ namespace Game.Editor
             SetRect(resetGlyph.rectTransform, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(70f, 70f), new Vector2(-140f, 0f));
 
             Button apply = CreateButton("ApplyButton", footer, deployDefault, deployHover, deployPressed, deploySelected, deployDisabled);
-            SetRect(apply.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-34f, 120f), new Vector2(-10f, 0f));
+            SetRect(apply.GetComponent<RectTransform>(), new Vector2(0.5f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-48f, 112f), new Vector2(-20f, 0f));
             SetButtonPalette(apply, theme.Green, new Color(0.34f, 0.9f, 0.42f, 1f), new Color(0.12f, 0.56f, 0.22f, 1f));
             V3GradientGraphic applyFill = CreateGradient(
                 "ActionFill",
@@ -521,6 +525,7 @@ namespace Game.Editor
             SetObject(popupView, "resetButton", reset);
             SetObject(popupView, "applyButton", apply);
 
+            V3UiLocalizationCatalogBuilder.BindExistingCatalog(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             return prefab;
@@ -548,8 +553,8 @@ namespace Game.Editor
                 button.GetComponent<RectTransform>(),
                 new Vector2(0.5f, 1f),
                 new Vector2(0.5f, 1f),
-                new Vector2(390f, 163f),
-                new Vector2(0f, -86f - index * 172f));
+                new Vector2(404f, 181f),
+                new Vector2(0f, -90.5f - index * 193f));
             SetButtonPalette(button, theme.LinePrimary, theme.TextPrimary, theme.Cyan);
 
             background = CreateGradient(
@@ -568,7 +573,7 @@ namespace Game.Editor
             RectTransform iconRoot = CreateRect("CategoryIcon", button.transform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(78f, 78f), new Vector2(80f, 0f));
             CreateTabIcon(iconRoot, index, accent);
 
-            label = CreateText("Label", button.transform, labelText, 36f, boldFont, TextAlignmentOptions.Left);
+            label = CreateText("Label", button.transform, labelText, 34f, boldFont, TextAlignmentOptions.Left);
             SetRect(label.rectTransform, Vector2.zero, Vector2.one, new Vector2(-150f, 0f), new Vector2(70f, 0f));
             label.color = theme.TextPrimary;
 
@@ -711,12 +716,12 @@ namespace Game.Editor
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UISliderRowView view = row.gameObject.AddComponent<UISliderRowView>();
             TMP_Text label = CreateText("Label", row, labelText, 30f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(270f, 42f), new Vector2(134f, 8f));
+            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(640f, 52f), new Vector2(336f, 20f));
             TMP_Text value = CreateText("Value", row, "0%", 30f, lightFont, TextAlignmentOptions.Right);
-            SetRect(value.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(104f, 42f), new Vector2(-62f, 8f));
+            SetRect(value.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(150f, 52f), new Vector2(-91f, 20f));
 
             Slider slider = CreateSlider("Slider", row);
-            SetRect(slider.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-394f, 26f), new Vector2(90f, -12f));
+            SetRect(slider.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(1f, 0.5f), new Vector2(-48f, 36f), new Vector2(0f, -26f));
             SetObject(view, "labelText", label);
             SetObject(view, "valueText", value);
             SetObject(view, "slider", slider);
@@ -728,13 +733,17 @@ namespace Game.Editor
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UIToggleRowView view = row.gameObject.AddComponent<UIToggleRowView>();
             Image divider = CreateSolid("Divider", row, new Color(theme.LinePrimary.r, theme.LinePrimary.g, theme.LinePrimary.b, 0.34f), new Vector2(1000f, 2f), new Vector2(0f, -rowHeight * 0.5f + 2f));
+            divider.rectTransform.anchorMin = new Vector2(0f, 0f);
+            divider.rectTransform.anchorMax = new Vector2(1f, 0f);
+            divider.rectTransform.sizeDelta = new Vector2(-32f, 2f);
+            divider.rectTransform.anchoredPosition = new Vector2(0f, 1f);
             divider.raycastTarget = false;
-            TMP_Text label = CreateText("Label", row, labelText, 32f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(520f, 38f), new Vector2(260f, 16f));
+            TMP_Text label = CreateText("Label", row, labelText, 30f, mediumFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(680f, 50f), new Vector2(356f, 26f));
             TMP_Text description = CreateText("Description", row, descriptionText, 22f, lightFont, TextAlignmentOptions.Left);
-            SetRect(description.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(690f, 30f), new Vector2(345f, -20f));
+            SetRect(description.rectTransform, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(680f, 48f), new Vector2(356f, -22f));
 
-            RectTransform toggleRect = CreateRect("Toggle", row, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(236f, 62f), new Vector2(-126f, 0f));
+            RectTransform toggleRect = CreateRect("Toggle", row, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(248f, 76f), new Vector2(-140f, 4f));
             V3GradientGraphic track = toggleRect.gameObject.AddComponent<V3GradientGraphic>();
             track.Configure(
                 new Color(0.035f, 0.39f, 0.63f, 1f),
@@ -743,9 +752,9 @@ namespace Game.Editor
                 4f);
             Toggle toggle = toggleRect.gameObject.AddComponent<Toggle>();
             toggle.targetGraphic = track;
-            TMP_Text state = CreateText("State", row, "OFF", 32f, boldFont, TextAlignmentOptions.Center);
-            SetRect(state.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(132f, 52f), new Vector2(-164f, 0f));
-            RectTransform handle = CreateRect("Handle", toggleRect, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(58f, 52f), new Vector2(5f, 0f));
+            TMP_Text state = CreateText("State", row, "OFF", 30f, boldFont, TextAlignmentOptions.Center);
+            SetRect(state.rectTransform, new Vector2(1f, 0.5f), new Vector2(1f, 0.5f), new Vector2(160f, 64f), new Vector2(-140f, 4f));
+            RectTransform handle = CreateRect("Handle", toggleRect, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(64f, 64f), new Vector2(6f, 0f));
             V3GradientGraphic handleImage = handle.gameObject.AddComponent<V3GradientGraphic>();
             handleImage.Configure(
                 new Color(0.3f, 0.8f, 0.22f, 1f),
@@ -767,18 +776,27 @@ namespace Game.Editor
             return view;
         }
 
-        private static UISegmentedControlView CreateSegmentRow(string name, Transform parent, string labelText, float topOffset, string[] optionLabels, float rowHeight)
+        private static UISegmentedControlView CreateSegmentRow(
+            string name,
+            Transform parent,
+            string labelText,
+            float topOffset,
+            string[] optionLabels,
+            float rowHeight,
+            float buttonHeight,
+            float optionFontSize)
         {
             RectTransform row = CreateRowRoot(name, parent, topOffset, rowHeight);
             UISegmentedControlView view = row.gameObject.AddComponent<UISegmentedControlView>();
-            TMP_Text label = CreateText("Label", row, labelText, 27f, mediumFont, TextAlignmentOptions.Left);
-            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-40f, 34f), new Vector2(0f, -18f));
+            float labelBand = Mathf.Max(44f, rowHeight - buttonHeight - 24f);
+            TMP_Text label = CreateText("Label", row, labelText, 28f, mediumFont, TextAlignmentOptions.Left);
+            SetRect(label.rectTransform, new Vector2(0f, 1f), new Vector2(1f, 1f), new Vector2(-36f, labelBand), new Vector2(0f, -(labelBand * 0.5f + 6f)));
 
-            RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-40f, 46f), new Vector2(0f, 25f));
+            RectTransform segmentRoot = CreateRect("Segments", row, new Vector2(0f, 0f), new Vector2(1f, 0f), new Vector2(-36f, buttonHeight), new Vector2(0f, 12f + buttonHeight * 0.5f));
             Button[] buttons = new Button[optionLabels.Length];
             TMP_Text[] labels = new TMP_Text[optionLabels.Length];
-            float gap = 8f;
-            float segmentRootWidth = 980f;
+            float gap = 10f;
+            float segmentRootWidth = 960f;
             float width = (segmentRootWidth - (optionLabels.Length - 1) * gap) / optionLabels.Length;
             for (int i = 0; i < optionLabels.Length; i++)
             {
@@ -787,9 +805,10 @@ namespace Game.Editor
                 segmentColors.selectedColor = theme.Selected;
                 segmentColors.disabledColor = theme.Selected;
                 button.colors = segmentColors;
-                SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, 46f), new Vector2(i * (width + gap) + width * 0.5f, 0f));
-                TMP_Text segmentLabel = CreateText("Label", button.transform, optionLabels[i], 14f, boldFont, TextAlignmentOptions.Center);
+                SetRect(button.GetComponent<RectTransform>(), new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(width, buttonHeight), new Vector2(i * (width + gap) + width * 0.5f, 0f));
+                TMP_Text segmentLabel = CreateText("Label", button.transform, optionLabels[i], optionFontSize, boldFont, TextAlignmentOptions.Center);
                 Stretch(segmentLabel.rectTransform);
+                segmentLabel.margin = new Vector4(8f, 4f, 8f, 4f);
                 buttons[i] = button;
                 labels[i] = segmentLabel;
             }
@@ -826,7 +845,7 @@ namespace Game.Editor
             fillArea.sizeDelta = new Vector2(-28f, -12f);
 
             RectTransform handleArea = CreateRect("Handle Slide Area", root, Vector2.zero, Vector2.one, new Vector2(-28f, 0f), Vector2.zero);
-            RectTransform handle = CreateRect("Handle", handleArea, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(32f, 32f), Vector2.zero);
+            RectTransform handle = CreateRect("Handle", handleArea, new Vector2(0f, 0.5f), new Vector2(0f, 0.5f), new Vector2(48f, 48f), Vector2.zero);
             Image handleImage = handle.gameObject.AddComponent<Image>();
             handleImage.sprite = null;
             handleImage.color = theme.TextPrimary;
@@ -869,13 +888,42 @@ namespace Game.Editor
             tmp.font = font != null ? font : TMP_Settings.defaultFontAsset;
             tmp.fontSize = size;
             tmp.enableAutoSizing = true;
-            tmp.fontSizeMin = Mathf.Max(10f, size - 4f);
+            tmp.fontSizeMin = Mathf.Max(16f, size * 0.55f);
             tmp.fontSizeMax = size;
             tmp.alignment = alignment;
             tmp.color = theme != null ? theme.TextPrimary : Color.white;
             tmp.raycastTarget = false;
-            tmp.overflowMode = TextOverflowModes.Ellipsis;
+            tmp.enableWordWrapping = true;
+            tmp.overflowMode = TextOverflowModes.Overflow;
             return tmp;
+        }
+
+        private static void ApplyLanguageSwitchFont(UISegmentedControlView language)
+        {
+            if (language?.SegmentLabels == null || persianFont == null)
+                return;
+
+            for (int i = 0; i < language.SegmentLabels.Length; i++)
+            {
+                TMP_Text label = language.SegmentLabels[i];
+                if (label == null || !ContainsArabic(label.text))
+                    continue;
+                label.font = persianFont;
+                label.isRightToLeftText = true;
+                label.text = V3LocalizedTextBindingView.ShapeForRendering(label.text);
+            }
+        }
+
+        private static bool ContainsArabic(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                if (value[i] is >= '\u0600' and <= '\u06ff')
+                    return true;
+            }
+            return false;
         }
 
         private static Image CreateImage(string name, Transform parent, Sprite sprite, Color color, bool raycastTarget)

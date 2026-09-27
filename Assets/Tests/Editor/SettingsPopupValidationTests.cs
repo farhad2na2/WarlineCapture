@@ -608,8 +608,33 @@ public sealed class SettingsPopupValidationTests
             TMP_Text label = segments.GetChild(i).GetComponentInChildren<TMP_Text>(true);
             Assert.NotNull(label, $"{prefabPath} missing segment label in {rowName}/{segments.GetChild(i).name}.");
             Assert.GreaterOrEqual(buttonRect.rect.width, 92f, $"{prefabPath} segment button too narrow in {rowName}.");
-            Assert.LessOrEqual(label.fontSizeMax, 14f, $"{prefabPath} segment label font too large for compact button in {rowName}.");
+            Assert.GreaterOrEqual(buttonRect.rect.height, 72f, $"{prefabPath} segment button is too short for a mobile touch target in {rowName}.");
+            Assert.GreaterOrEqual(label.fontSizeMax, 28f, $"{prefabPath} segment label is too small to read on a phone in {rowName}.");
         }
+
+        if (string.Equals(rowName, "LanguageControl", StringComparison.Ordinal))
+        {
+            Assert.AreEqual(2, segments.childCount, $"{prefabPath} language switch must offer English and Farsi.");
+            RectTransform languageButton = segments.GetChild(1) as RectTransform;
+            TMP_Text languageLabel = languageButton.GetComponentInChildren<TMP_Text>(true);
+            Assert.GreaterOrEqual(languageButton.rect.height, 96f, $"{prefabPath} Farsi language button must be a large touch target.");
+            Assert.GreaterOrEqual(languageLabel.fontSizeMax, 40f, $"{prefabPath} Farsi language label must stay readable on a phone.");
+            Assert.IsTrue(ContainsArabicScript(languageLabel.text),
+                $"{prefabPath} Farsi language button must show Persian script.");
+        }
+    }
+
+    private static bool ContainsArabicScript(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return false;
+        for (int i = 0; i < value.Length; i++)
+        {
+            char character = value[i];
+            if (character is >= '\u0600' and <= '\u06ff' or >= '\uFB50' and <= '\uFDFF' or >= '\uFE70' and <= '\uFEFF')
+                return true;
+        }
+        return false;
     }
 
     private static TMP_Text FindDirectChildText(Transform row, string name)

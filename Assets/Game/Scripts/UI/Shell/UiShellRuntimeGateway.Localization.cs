@@ -23,6 +23,7 @@ namespace Game.UI.Runtime
             public UnityEngine.Object CurrentFontAsset => null;
             public int AvailableLocaleCount => 2;
             public string[] GetLocaleShortLabels() => new[] { "EN", "FA" };
+            public string[] GetLocaleSwitchLabels() => new[] { "EN", "فارسی" };
             public int GetLocaleIndex(string code) => code == UiLocaleCodes.Persian ? 1 : 0;
             public string GetLocaleCode(int index) => index == 1 ? UiLocaleCodes.Persian : UiLocaleCodes.English;
             public bool SetLocale(string code, bool persist = true) => false;

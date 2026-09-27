@@ -12,6 +12,7 @@ namespace Game.UI.Contracts
         UnityEngine.Object CurrentFontAsset { get; }
         int AvailableLocaleCount { get; }
         string[] GetLocaleShortLabels();
+        string[] GetLocaleSwitchLabels();
         int GetLocaleIndex(string code);
         string GetLocaleCode(int index);
         bool SetLocale(string code, bool persist = true);

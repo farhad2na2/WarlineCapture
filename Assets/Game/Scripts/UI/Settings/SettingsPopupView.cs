@@ -45,6 +45,17 @@ namespace Game.UI.Runtime
             LoadSettings();
         }
 
+        private void OnEnable()
+        {
+            UiShellRuntimeGateway.Localization.LocaleChanged += ApplyContextTitle;
+            ApplyContextTitle();
+        }
+
+        private void OnDisable()
+        {
+            UiShellRuntimeGateway.Localization.LocaleChanged -= ApplyContextTitle;
+        }
+
         private void OnDestroy()
         {
             if (closeButton != null)
@@ -91,7 +102,7 @@ namespace Game.UI.Runtime
         private void ApplyContextTitle()
         {
             if (titleText != null)
-                titleText.text = UiShellRuntimeGateway.Localization.Get("ui.settings.command_title", "COMMAND SETTINGS");
+                UiLocalizedText.Set(titleText, "COMMAND SETTINGS");
         }
     }
 }

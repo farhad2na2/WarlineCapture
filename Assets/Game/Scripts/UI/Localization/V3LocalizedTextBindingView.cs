@@ -33,6 +33,7 @@ namespace Game.UI.Runtime
         private float presentationScale=1f;
         private float minimumPresentationSize,maximumPresentationSize;
         private bool meshRefreshQueued;
+        private TextOverflowModes sourceOverflow;
 
         public string LocalizationKey => localizationKey;
         public string EnglishFallback => englishFallback;
@@ -171,6 +172,7 @@ namespace Game.UI.Runtime
             sourceFontSize = target.fontSize;
             sourceFontSizeMin = target.fontSizeMin;
             sourceFontSizeMax = target.fontSizeMax;
+            sourceOverflow = target.overflowMode;
             hasPresentationDefaults = true;
             if (string.IsNullOrEmpty(englishFallback))
                 englishFallback = ReadAuthoredText();
@@ -222,6 +224,7 @@ namespace Game.UI.Runtime
             }
             if (!containsRightToLeftText)
             {
+                target.overflowMode = sourceOverflow;
                 target.enableAutoSizing = sourceAutoSizing;
                 target.fontSize = sourceFontSize*presentationScale;
                 target.fontSizeMin = sourceFontSizeMin*presentationScale;
@@ -229,19 +232,26 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            // Noto Arabic's ascender/descender line box is taller than the V3 Latin authoring font.
-            // Let translated labels shrink within their authored bounds so TMP's Ellipsis mode does
-            // not reject the entire line. Existing authored auto-size ranges remain authoritative.
+            // Noto Arabic's line box is taller than the Latin authoring font. A short rect with
+            // Ellipsis rejects the entire line, which shows up as an empty label after Farsi.
             target.enableAutoSizing = true;
-            if (sourceAutoSizing)
+            float authoredMax = (sourceAutoSizing ? sourceFontSizeMax : sourceFontSize) * presentationScale;
+            float authoredMin = sourceAutoSizing
+                ? sourceFontSizeMin * presentationScale
+                : Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f)) * presentationScale;
+            float height = target.rectTransform != null ? target.rectTransform.rect.height : 0f;
+            if (height >= 16f)
             {
-                target.fontSizeMin = sourceFontSizeMin*presentationScale;
-                target.fontSizeMax = sourceFontSizeMax*presentationScale;
-                return;
+                float fittedMax = Mathf.Max(14f, height / 1.65f);
+                authoredMax = Mathf.Min(authoredMax, fittedMax);
+                authoredMin = Mathf.Min(authoredMin, Mathf.Max(12f, authoredMax * 0.62f));
+                target.overflowMode = TextOverflowModes.Overflow;
             }
 
-            target.fontSizeMax = sourceFontSize*presentationScale;
-            target.fontSizeMin = Mathf.Min(sourceFontSize, Mathf.Max(8f, sourceFontSize * 0.55f))*presentationScale;
+            if (authoredMin > authoredMax)
+                authoredMin = authoredMax;
+            target.fontSizeMax = authoredMax;
+            target.fontSizeMin = authoredMin;
         }
 
         private string ReadAuthoredText()

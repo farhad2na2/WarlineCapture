@@ -100,6 +100,30 @@ namespace Game.Configs
             return labels;
         }
 
+        /// <summary>
+        /// Labels for the settings language switch. Latin locales keep their short code.
+        /// Right-to-left locales use their own display name so Farsi reads فارسی, not FA.
+        /// </summary>
+        public static string[] GetLocaleSwitchLabels()
+        {
+            EnsureInitialized();
+            if (catalog?.Locales == null || catalog.Locales.Count == 0)
+                return new[] { "EN" };
+
+            string[] labels = new string[catalog.Locales.Count];
+            for (int i = 0; i < catalog.Locales.Count; i++)
+            {
+                GameLocaleTable locale = catalog.Locales[i];
+                if (locale != null && locale.RightToLeft && !string.IsNullOrWhiteSpace(locale.DisplayName))
+                    labels[i] = locale.DisplayName;
+                else if (!string.IsNullOrWhiteSpace(locale?.ShortLabel))
+                    labels[i] = locale.ShortLabel;
+                else
+                    labels[i] = locale?.LocaleCode ?? string.Empty;
+            }
+            return labels;
+        }
+
         public static int GetLocaleIndex(string localeCode)
         {
             EnsureInitialized();

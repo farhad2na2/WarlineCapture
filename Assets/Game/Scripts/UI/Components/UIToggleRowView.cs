@@ -39,10 +39,10 @@ namespace Game.UI.Runtime
         public void Bind(string label, string description, bool value)
         {
             if (labelText != null)
-                labelText.text = label;
+                UiLocalizedText.Set(labelText, label);
 
             if (descriptionText != null)
-                descriptionText.text = description;
+                UiLocalizedText.Set(descriptionText, description);
 
             if (toggle != null)
                 toggle.SetIsOnWithoutNotify(value);
@@ -54,9 +54,7 @@ namespace Game.UI.Runtime
         {
             if (stateText != null)
             {
-                stateText.text = value
-                    ? UiShellRuntimeGateway.Localization.Get("ui.common.on", "ON")
-                    : UiShellRuntimeGateway.Localization.Get("ui.common.off", "OFF");
+                UiLocalizedText.Set(stateText, value ? "ON" : "OFF");
                 stateText.alignment = value ? TextAlignmentOptions.Left : TextAlignmentOptions.Right;
             }
 

@@ -24,7 +24,14 @@ namespace Game.UI.Runtime
             if (image != null && sprite != null)
             {
                 image.sprite = sprite;
-                image.color = selected ? Color.white : available && !completed ? new Color(.55f, 1f, .65f) : Color.white;
+                image.color = selected ? new Color(1f, 0.86f, 0.35f) : Color.white;
+            }
+            FitSelectedNode(missionNodeButtons[index].GetComponent<RectTransform>(), selected);
+            if (nodeLabelPanels != null && index < nodeLabelPanels.Length && nodeLabelPanels[index] != null)
+            {
+                TMP_Text name = nodeLabelPanels[index].transform.Find("Name")?.GetComponent<TMP_Text>();
+                if (name != null)
+                    name.color = selected ? new Color32(255, 214, 120, 255) : new Color32(245, 246, 238, 255);
             }
             if (nodeStateImages != null && index < nodeStateImages.Length && nodeStateImages[index] != null)
             {
@@ -34,6 +41,16 @@ namespace Game.UI.Runtime
             }
             if (nodeNumberLabels != null && index < nodeNumberLabels.Length && nodeNumberLabels[index] != null)
                 nodeNumberLabels[index].gameObject.SetActive(available && (!completed || selected));
+        }
+
+        private static void FitSelectedNode(RectTransform rect, bool selected)
+        {
+            if (rect == null || rect.pivot.x > 0.2f)
+                return;
+            float next = selected ? 86f : 66f;
+            Vector2 center = rect.anchoredPosition + new Vector2(rect.sizeDelta.x * 0.5f, -rect.sizeDelta.y * 0.5f);
+            rect.sizeDelta = new Vector2(next, next);
+            rect.anchoredPosition = new Vector2(center.x - next * 0.5f, center.y + next * 0.5f);
         }
     }
 }

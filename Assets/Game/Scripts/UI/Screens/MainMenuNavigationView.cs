@@ -11,6 +11,7 @@ namespace Game.UI.Runtime
         [SerializeField] private MainMenuNavigationTabView[] tabs;
 
         private readonly List<TabBinding> bindings = new();
+        private readonly Dictionary<TMP_Text, float> labelSizes = new();
         private Sprite selectedFrameSprite;
         private Sprite inactiveFrameSprite;
         private Color selectedTextColor = Color.white;
@@ -111,8 +112,18 @@ namespace Game.UI.Runtime
                     frame.sprite = sprite;
 
                 TMP_Text label = bindings[i].Label;
-                if (label != null)
-                    label.color = selected ? selectedTextColor : inactiveTextColor;
+                if (label == null)
+                    continue;
+                if (!labelSizes.ContainsKey(label))
+                    labelSizes[label] = label.fontSize;
+                label.fontSize = labelSizes[label] + (selected ? 4f : 0f);
+                label.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+                Color authoredSelected = hasSelectedTextColor && selectedTextColor.maxColorComponent < 0.92f
+                    ? selectedTextColor
+                    : new Color32(255, 214, 96, 255);
+                label.color = selected
+                    ? authoredSelected
+                    : hasInactiveTextColor ? inactiveTextColor : new Color32(232, 236, 232, 255);
             }
         }
 

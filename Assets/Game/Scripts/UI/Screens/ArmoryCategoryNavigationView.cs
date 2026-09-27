@@ -117,9 +117,12 @@ namespace Game.UI.Runtime
             for (int i = 0; i < bindings.Count; i++)
             {
                 bool selected = bindings[i].Category == category;
-                bindings[i].Button
-                    ?.GetComponent<ArmoryV3CategoryTabVisualView>()
-                    ?.SetSelected(selected);
+                ArmoryV3CategoryTabVisualView visual = bindings[i].Button != null
+                    ? bindings[i].Button.GetComponent<ArmoryV3CategoryTabVisualView>()
+                    : null;
+                visual?.SetSelected(selected);
+                if (visual != null)
+                    continue;
 
                 Image frame = bindings[i].Frame;
                 if (frame == null)

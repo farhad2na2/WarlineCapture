@@ -88,6 +88,9 @@ namespace Game.UI.Runtime
             Transform subtitle=button.transform.Find("Subtitle");
             TMP_Text subtitleText=subtitle!=null?subtitle.GetComponent<TMP_Text>():null;
             if(subtitleText!=null)subtitleText.color=selected?new Color32(243,174,0,255):available?new Color32(190,202,207,255):new Color32(140,158,164,255);
+            Transform title=button.transform.Find("Title");
+            TMP_Text titleText=title!=null?title.GetComponent<TMP_Text>():null;
+            if(titleText!=null)titleText.color=selected?new Color32(255,236,196,255):available?new Color32(245,246,238,255):new Color32(168,180,184,255);
         }
     }
 }

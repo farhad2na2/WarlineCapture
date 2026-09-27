@@ -310,7 +310,16 @@ namespace Game.UI.Runtime
         }
         private static void Set(TMP_Text target, string value)
         {
-            if (target != null) UiLocalizedText.Set(target, value);
+            if (target == null)
+                return;
+            UiLocalizedText.Set(target, value);
+            if (target.name == "MissionNumber" && value != null && value.Length > 4)
+            {
+                RectTransform rect = target.rectTransform;
+                rect.sizeDelta = new Vector2(Mathf.Max(rect.sizeDelta.x, 460f), rect.sizeDelta.y);
+                target.overflowMode = TextOverflowModes.Overflow;
+                target.textWrappingMode = TextWrappingModes.NoWrap;
+            }
         }
     }
 }

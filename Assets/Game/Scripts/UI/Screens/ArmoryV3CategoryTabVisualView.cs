@@ -49,7 +49,10 @@ namespace Game.UI.Runtime
             }
 
             if (label != null)
-                label.color = White;
+            {
+                label.color = selected ? Cyan : White;
+                label.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+            }
             if (icon != null)
                 icon.color = selected ? Cyan : White;
         }

@@ -37,6 +37,8 @@ namespace Game.UI.Runtime
             {
                 var state = nodeStateImages[index];
                 state.sprite = completed ? completedNodeIcon : lockedNodeIcon;
+                // A UI Image with no sprite draws a solid white rectangle.
+                state.enabled = state.sprite != null;
                 state.gameObject.SetActive(!available || completed && !selected);
             }
             if (nodeNumberLabels != null && index < nodeNumberLabels.Length && nodeNumberLabels[index] != null)

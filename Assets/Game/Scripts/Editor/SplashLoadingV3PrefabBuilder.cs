@@ -296,8 +296,10 @@ namespace Game.Editor
             CreateSolid("LegRight", root, color, new Vector2(6f, 14f), new Vector2(7f, -22f));
             Image antennaLeft = CreateSolid("AntennaLeft", root, color, new Vector2(3f, 11f), new Vector2(-7f, 23f));
             antennaLeft.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -28f);
+            antennaLeft.maskable = false;
             Image antennaRight = CreateSolid("AntennaRight", root, color, new Vector2(3f, 11f), new Vector2(7f, 23f));
             antennaRight.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 28f);
+            antennaRight.maskable = false;
             CreateSolid("EyeLeft", root, GraphiteBottom, new Vector2(3f, 3f), new Vector2(-6f, 14f));
             CreateSolid("EyeRight", root, GraphiteBottom, new Vector2(3f, 3f), new Vector2(6f, 14f));
         }
@@ -330,6 +332,7 @@ namespace Game.Editor
                 Color segmentColor = new Color(color.r, color.g, color.b, 0.3f + i * 0.07f);
                 Image segment = CreateSolid("SpinnerSegment" + i, root, segmentColor, new Vector2(5f, 10f), position);
                 segment.rectTransform.localRotation = Quaternion.Euler(0f, 0f, -angle);
+                segment.maskable = false;
             }
         }
 
@@ -348,12 +351,18 @@ namespace Game.Editor
             if (importer == null)
                 throw new InvalidOperationException($"Splash background did not import as a texture: {BackgroundPath}");
 
+            TextureImporterSettings settings = new TextureImporterSettings();
+            importer.ReadTextureSettings(settings);
             bool dirty = importer.textureType != TextureImporterType.Sprite ||
                          importer.mipmapEnabled ||
                          importer.wrapMode != TextureWrapMode.Clamp ||
+                         importer.alphaIsTransparency ||
+                         settings.spriteMeshType != SpriteMeshType.FullRect ||
                          importer.maxTextureSize < 2048;
             importer.textureType = TextureImporterType.Sprite;
             importer.spriteImportMode = SpriteImportMode.Single;
+            settings.spriteMeshType = SpriteMeshType.FullRect;
+            importer.SetTextureSettings(settings);
             importer.alphaIsTransparency = false;
             importer.mipmapEnabled = false;
             importer.wrapMode = TextureWrapMode.Clamp;

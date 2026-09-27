@@ -53,6 +53,12 @@ namespace Game.UI.Runtime
             SetVisible(false);
         }
 
+        private void OnEnable()
+        {
+            if (panelImage != null && panelImage.sprite == null)
+                panelImage.enabled = false;
+        }
+
         public void ApplyPanel(in NarrativePanelPresentationModel model)
         {
             if (panelImage != null)
@@ -98,6 +104,8 @@ namespace Game.UI.Runtime
             rootGroup.alpha = visible ? 1f : 0f;
             rootGroup.interactable = visible;
             rootGroup.blocksRaycasts = visible;
+            if (visible)
+                UiChromeStack.RaiseAboveTutorial(gameObject);
         }
 
         public void SetSkipState(bool visible, bool interactable, string accessibleLabel)

@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -49,6 +50,7 @@ namespace Game.UI.Runtime
             ResetPresentationCache();
             lastReadWasComplete = false;
             nextCompletedPollTime = 0f;
+            CoverLoadingPlate();
             BindTipPair();
             ApplyProgress(0f, DefaultStatus);
         }
@@ -85,7 +87,60 @@ namespace Game.UI.Runtime
         private void OnRectTransformDimensionsChange()
         {
             if (!Application.isPlaying)
+            {
                 ApplyEditorPreview();
+                return;
+            }
+
+            CoverLoadingPlate();
+        }
+
+        private void CoverLoadingPlate()
+        {
+            // The background is a tight sprite on a point-sized rect. Its fitted edge
+            // draws a one-pixel white line over the plate. Cover the parent with a
+            // few pixels of overscan, and keep rotated icon quads out of any mask.
+            Transform environment = transform.Find("LoadingEnvironment");
+            if (environment is RectTransform environmentRect)
+            {
+                AspectRatioFitter fitter = environmentRect.GetComponent<AspectRatioFitter>();
+                float aspect = fitter != null && fitter.aspectRatio > 0.01f ? fitter.aspectRatio : 1.777778f;
+                if (fitter != null)
+                    fitter.enabled = false;
+
+                RectTransform parent = environmentRect.parent as RectTransform;
+                Vector2 parentSize = parent != null ? parent.rect.size : environmentRect.rect.size;
+                if (parentSize.x >= 2f && parentSize.y >= 2f)
+                {
+                    float width = parentSize.x;
+                    float height = parentSize.y;
+                    if (height * aspect < width)
+                        height = width / aspect;
+                    else
+                        width = height * aspect;
+
+                    environmentRect.anchorMin = new Vector2(0.5f, 0.5f);
+                    environmentRect.anchorMax = new Vector2(0.5f, 0.5f);
+                    environmentRect.pivot = new Vector2(0.5f, 0.5f);
+                    environmentRect.anchoredPosition = Vector2.zero;
+                    environmentRect.sizeDelta = new Vector2(width + 8f, height + 8f);
+                }
+
+                Image environmentImage = environmentRect.GetComponent<Image>();
+                if (environmentImage != null)
+                    environmentImage.maskable = false;
+            }
+
+            Image[] images = GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null)
+                    continue;
+                float angle = Quaternion.Angle(image.rectTransform.localRotation, Quaternion.identity);
+                if (angle > 0.5f)
+                    image.maskable = false;
+            }
         }
 
         private void ApplyEditorPreview()

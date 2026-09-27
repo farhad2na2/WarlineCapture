@@ -100,7 +100,11 @@ namespace Game.UI.Runtime
                 canvas = canvas.transform.parent?.GetComponentInParent<Canvas>();
             var cueCanvas = _screenTargetIndicator.GetComponent<Canvas>();
             cueCanvas.sortingLayerID = canvas != null ? canvas.sortingLayerID : _screenTargetCanvas.sortingLayerID;
-            cueCanvas.sortingOrder = Mathf.Max(_screenTargetCanvas.sortingOrder + 50, (canvas != null ? canvas.sortingOrder : 0) + 2);
+            // Stay under the comic, Pause, and Settings even when the highlighted control lives inside them.
+            int aboveTarget = (canvas != null ? canvas.sortingOrder : 0) + 2;
+            cueCanvas.sortingOrder = Mathf.Min(
+                UiChromeStack.AriaHand,
+                Mathf.Max(_screenTargetCanvas.sortingOrder + 50, aboveTarget));
             TutorialAttentionPulseView.BindFrame(_screenTargetIndicator, TickCommandCue);
             TickCommandCue();
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Game.UI.Contracts;
 
 namespace Game.UI.Runtime
@@ -167,8 +168,33 @@ namespace Game.UI.Runtime
             if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
                 return;
 
+            // The result popup's hide tween is cancelled when this loading command
+            // starts. Leave it fully hidden so a half-scaled card cannot sit on the plate.
+            if (TryGetRegion(UIShellRegionId.PopupLayer, out UIShellRegionView popup) && popup.CanvasGroup != null)
+            {
+                popup.RegionRoot.localScale = Vector3.one;
+                popup.CanvasGroup.alpha = 0f;
+                popup.CanvasGroup.interactable = false;
+                popup.CanvasGroup.blocksRaycasts = false;
+            }
+
             loading.ResetVisualState();
             loading.CanvasGroup.alpha = 1f;
+            EnsureLoadingDrawsAboveMenu(loading);
+        }
+
+        private static void EnsureLoadingDrawsAboveMenu(UIShellRegionView loading)
+        {
+            // Menu and HUD sections can own nested canvases. Without an override,
+            // those sections draw through the loading picture and leave a one-pixel
+            // white edge on the plate that appears after the result screen closes.
+            Canvas canvas = loading.GetComponent<Canvas>();
+            if (canvas == null)
+                canvas = loading.gameObject.AddComponent<Canvas>();
+            canvas.overrideSorting = true;
+            canvas.sortingOrder = 500;
+            if (loading.GetComponent<GraphicRaycaster>() == null)
+                loading.gameObject.AddComponent<GraphicRaycaster>();
         }
 
         private void AddExitLoadingSteps(int transitionId, List<UIMotionStep> steps)
@@ -176,9 +202,10 @@ namespace Game.UI.Runtime
             if (!TryGetRegion(UIShellRegionId.LoadingLayer, out UIShellRegionView loading))
                 return;
 
-            steps.Add(UIMotionStep.Parallel(
-                motionHost.AlphaStep(loading.CanvasGroup, 0f, motionHost.DefaultDurationSeconds, motionHost.DefaultExitEase, transitionId),
-                motionHost.ScaleStep(loading.RegionRoot, Vector3.zero, motionHost.DefaultDurationSeconds, motionHost.DefaultExitEase, transitionId)));
+            // Fade only. Scaling this full-screen plate to zero collapses it into a
+            // one-pixel line across the menu it is supposed to cover.
+            steps.Add(UIMotionStep.Single(
+                motionHost.AlphaStep(loading.CanvasGroup, 0f, motionHost.DefaultDurationSeconds, motionHost.DefaultExitEase, transitionId)));
         }
 
         private void AddEnterMenuSteps(int transitionId, List<UIMotionStep> steps)

@@ -429,7 +429,13 @@ namespace Game.Editor
             };
             int[,] edges = { { 0, 1 }, { 1, 2 }, { 2, 3 }, { 3, 4 } };
             for (int i = 0; i < edges.GetLength(0); i++)
-                BuildRouteLine(mapClip, centers[edges[i, 0]], centers[edges[i, 1]], i == 0 ? theme.Green : theme.TextMuted);
+            {
+                // Keep the marks outside MapClip. A rotated Image inside that RectMask2D
+                // leaks a one-pixel white line over the campaign menu.
+                Vector2 start = centers[edges[i, 0]] + new Vector2(4f, 4f);
+                Vector2 end = centers[edges[i, 1]] + new Vector2(4f, 4f);
+                BuildRouteLine(strategicMap, start, end, i == 0 ? theme.Green : theme.TextMuted);
+            }
             missionNodes = new RectTransform[5];
             missionNodeButtons = new Button[5];
             string[] missionNames = { "FIRST CONTACT", "ESTABLISH\nTHE BASE", "RADAR WARNING", "AIRLIFT", "BREACH ASSAULT" };

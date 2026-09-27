@@ -65,6 +65,7 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            ReleaseMaskedRouteLines();
             storyArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
             footerStoryArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
             if (!_stateButtonsBound)
@@ -77,6 +78,28 @@ namespace Game.UI.Runtime
             if (chapterSelectRoot != null && missionSelectRoot != null &&
                 !chapterSelectRoot.gameObject.activeSelf && !missionSelectRoot.gameObject.activeSelf)
                 ShowMissionSelect();
+        }
+
+        private void ReleaseMaskedRouteLines()
+        {
+            // Rotated route marks live inside the map's RectMask2D. On the screen-space
+            // menu canvas that clip leaks a one-pixel white edge across the campaign
+            // screen after a mission returns here. The marks sit inside the map, so
+            // they do not need the clip.
+            Image[] images = GetComponentsInChildren<Image>(true);
+            for (int i = 0; i < images.Length; i++)
+            {
+                Image image = images[i];
+                if (image == null || image.name != "Route")
+                    continue;
+
+                RectMask2D mask = image.GetComponentInParent<RectMask2D>();
+                if (mask == null || mask.transform.parent == null)
+                    continue;
+
+                image.transform.SetParent(mask.transform.parent, true);
+                image.maskable = false;
+            }
         }
 
         private void OnDisable()

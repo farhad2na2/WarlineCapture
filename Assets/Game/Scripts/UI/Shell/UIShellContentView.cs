@@ -836,12 +836,14 @@ namespace Game.UI.Runtime
                 _settingsPopupView.BindClose(CloseSettingsPopup);
             }
 
+            UiChromeStack.RaiseAboveTutorial(_settingsPopupInstance);
             return _settingsPopupInstance;
         }
 
         public GameObject InstallPauseMenuPopup()
         {
             _pauseMenuPopupInstance = InstallRoot(pauseMenuPopupPrefab, UIShellRegionId.PopupLayer);
+            UiChromeStack.RaiseAboveTutorial(_pauseMenuPopupInstance);
             return _pauseMenuPopupInstance;
         }
 

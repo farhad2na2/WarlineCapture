@@ -74,6 +74,12 @@ namespace Game.UI.Runtime
                 frame.pivot = new Vector2(.5f, 1); frame.anchoredPosition = Vector2.zero;
                 frame.sizeDelta = new Vector2(0, frame.rect.height);
             }
+            // The passenger drawer is intentionally placed beside the compact card.
+            // RectMask2D on the card otherwise clips both its artwork and its raycast
+            // geometry, leaving the visible passenger chip unable to reach Exit All.
+            var cardMask = panel.GetComponent<RectMask2D>();
+            if (cardMask != null && cardMask.enabled == _passengerDrawerOpen)
+                cardMask.enabled = !_passengerDrawerOpen;
             float chipHeight = passengerChipRoot != null && passengerChipRoot.activeSelf
                 ? ((RectTransform)passengerChipRoot.transform).rect.height + 8 : 0;
             float portraitHeight = Mathf.Clamp(selectionHeightLimit - 247 - chipHeight, 100, 180);

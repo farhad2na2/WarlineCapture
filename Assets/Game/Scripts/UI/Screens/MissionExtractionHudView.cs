@@ -28,7 +28,10 @@ namespace Game.UI.Runtime
         public void RefreshPresentation()
         {
             bool active=UiShellRuntimeGateway.TryReadMissionExtraction(out var model) && !UiShellRuntimeGateway.TryReadMissionCameraTour();if(actions.activeSelf!=active)actions.SetActive(active);
-            if(navigation!=null)navigation.SetActive(active);
+            // Evidence Chain uses the normal Show Me, selection and tactical controls.
+            // Do not add camera-shortcut buttons inside its ARIA guidance panel.
+            bool evidenceChain=active && UiShellRuntimeGateway.IsEvidenceChainGuideContext();
+            if(navigation!=null)navigation.SetActive(active && !evidenceChain);
             RefreshWorldMarkers(active,in model);
             if(active && status!=null) status.SetLocalizedValue(model.Cleared ? UiShellRuntimeGateway.Localization.Get("mission.m04.hud.cleared") : model.PatrolSeconds>0 ? UiShellRuntimeGateway.Localization.Format("mission.m04.patrol.warning","",model.PatrolSeconds) : UiShellRuntimeGateway.Localization.Get("mission.m04.patrol.active"));
             if(!active)return;
@@ -45,7 +48,9 @@ namespace Game.UI.Runtime
             }
             // The briefing needs room for the rescue objective. Team navigation becomes
             // useful after Continue, when the player starts selecting and moving units.
-            team.gameObject.SetActive(model.Lesson>1 && model.Lesson<=5);landing.gameObject.SetActive(model.Lesson>5 && model.Lesson<=10);departure.gameObject.SetActive(model.Lesson>10);
+            team.gameObject.SetActive(!evidenceChain && model.Lesson>1 && model.Lesson<=5);
+            landing.gameObject.SetActive(!evidenceChain && model.Lesson>5 && model.Lesson<=10);
+            departure.gameObject.SetActive(!evidenceChain && model.Lesson>10);
             if(lastStatus!=null && lastAboard==model.Aboard && lastCarrier==model.CarrierLeg && lastSecure==model.SecureSeconds && lastRemaining==model.RemainingSeconds && lastRequired==model.Required && lastRequiredSecure==model.RequiredSecureSeconds && lastContested==model.Contested && lastCleared==model.Cleared)return;
             lastAboard=model.Aboard;lastCarrier=model.CarrierLeg;lastSecure=model.SecureSeconds;lastRemaining=model.RemainingSeconds;lastRequired=model.Required;lastRequiredSecure=model.RequiredSecureSeconds;lastContested=model.Contested;lastCleared=model.Cleared;
             aboard.SetLocalizedValue(model.Aboard+" / "+model.Required);carrier.SetLocalizedValue(model.CarrierLeg+" / "+model.Required);secure.SetLocalizedValue(model.SecureSeconds+" / "+model.RequiredSecureSeconds);

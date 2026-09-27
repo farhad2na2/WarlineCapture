@@ -231,4 +231,4 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  additionalBuildingPlacements: {fileID: 0}
+  additionalBuildingPlacements: {fileID: 11400000, guid: 1db6bdaec61dc4a2f994f96c9dd1ed64, type: 2}

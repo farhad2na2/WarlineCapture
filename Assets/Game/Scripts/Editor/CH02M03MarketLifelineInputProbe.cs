@@ -33,7 +33,7 @@ namespace Game.Editor
         private const string EvidenceChainEditorRun="Warline.EvidenceChain.InputProbe.EditorRun";
         private const string Output="/private/tmp/warline-market-lifeline";
         private static bool seeded, finished, watchStarted, won, sawDebrief, sawYasinPortrait, sawLocalizedYasinName, loggedCampaignProjection, capturedFalseFrontBrief, capturedFalseFrontDebrief;
-        private static double started, lastInput, lastLog, briefWaitStarted;
+        private static double started, lastInput, lastLog, briefWaitStarted, touchStartWait, evidenceLaunchWaitStarted;
         private static string lastTapDiagnostics;
         private static int winningClock;
         private static AriaTouchInputUiSystemHelper touch;
@@ -103,7 +103,7 @@ namespace Game.Editor
         {
             try{if(IsEvidenceChain)CH03M04EvidenceChainPresentationBuilder.BuildCheckpoint();else if(IsFalseFront)CH03M03FalseFrontPresentationBuilder.BuildCheckpoint();else if(IsSafehouseSweep)CH03M02SafehouseSweepPresentationBuilder.BuildCheckpoint();else if(IsSignalTrace)CH03M01SignalTracePresentationBuilder.BuildLocalCheckpointWithoutVoices();else CH02M03MarketLifelinePresentationBuilder.BuildCheckpoint();}
             catch(Exception exception){Debug.LogException(exception);Complete(false,"Authoring failed: "+exception.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=capturedFalseFrontBrief=capturedFalseFrontDebrief=false;winningClock=0;probeStore=null;lastTapDiagnostics=null;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=capturedFalseFrontBrief=capturedFalseFrontDebrief=false;winningClock=0;probeStore=null;lastTapDiagnostics=null;touchStartWait=evidenceLaunchWaitStarted=0;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -173,7 +173,7 @@ namespace Game.Editor
                     byte reason=sessions.CalculateEntityCount()==1?sessions.GetSingleton<AriaPlaySessionComponent>().StopReason:(byte)255;
                     throw new InvalidOperationException("Watch stopped before outcome: "+watch.Phase+" reason="+reason);
                 }
-                EnsureTouch();touch.Tick(Time.unscaledTime);if(touch.IsBusy||EditorApplication.timeSinceStartup-lastInput<1)return;
+                if(!EnsureTouch())return;touch.Tick(Time.unscaledTime);if(touch.IsBusy||EditorApplication.timeSinceStartup-lastInput<1)return;
                 NarrativeSequenceView narrative=UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>(FindObjectsInactive.Include);
                 if(narrative!=null&&Visible(narrative,"rootGroup"))
                 {
@@ -240,6 +240,12 @@ namespace Game.Editor
                     if(IsChapterThree&&!campaign.IsChapterThree){Tap(campaign.ChapterThreeButton);return;}
                     if(!IsChapterThree&&!campaign.IsChapterTwo){Tap(Ready(campaign.ChapterTwoButton)?campaign.ChapterTwoButton:campaign.ChapterTwoOverviewButton);return;}
                     if(model.SelectedMission.MissionId!=TargetMission){Tap(campaign.MissionNodeButtons[IsEvidenceChain?3:IsFalseFront?2:IsSafehouseSweep?1:IsSignalTrace?0:2]);return;}
+                    if(IsEvidenceChain)
+                    {
+                        if(evidenceLaunchWaitStarted==0)evidenceLaunchWaitStarted=EditorApplication.timeSinceStartup;
+                        if(EditorApplication.timeSinceStartup-evidenceLaunchWaitStarted>30)
+                            throw new InvalidOperationException("Start Briefing did not advance after 30 seconds of normal touches.");
+                    }
                     Tap(campaign.LaunchMissionButton);return;
                 }
                 if(runtime.MissionId.Equals(TargetMission))
@@ -264,13 +270,19 @@ namespace Game.Editor
         }
         private static bool Ready(Button button)=>button!=null&&button.IsActive()&&button.IsInteractable();
         private static bool Visible(object owner,string field){CanvasGroup group=owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(owner) as CanvasGroup;return group!=null&&group.alpha>.9f&&group.gameObject.activeInHierarchy;}
-        private static void EnsureTouch()
+        private static bool EnsureTouch()
         {
-            if(touch!=null&&touch.IsRunning)return;
-            touch?.Dispose();
-            EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
-            touch=new AriaTouchInputUiSystemHelper();
-            if(!touch.Start())throw new InvalidOperationException("Could not start public touch input.");
+            if(touch!=null&&touch.IsRunning){touchStartWait=0;return true;}
+            if(touch==null)
+            {
+                EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
+                touch=new AriaTouchInputUiSystemHelper();
+            }
+            if(touch.Start()){touchStartWait=0;return true;}
+            if(touchStartWait==0)touchStartWait=EditorApplication.timeSinceStartup;
+            if(EditorApplication.timeSinceStartup-touchStartWait>20)
+                throw new InvalidOperationException("Could not start public touch input after physical input release wait.");
+            return false;
         }
         private static void RepairSelectableRegistry()
         {
@@ -284,7 +296,7 @@ namespace Game.Editor
             if(lastTapDiagnostics!=diagnostics)
             {
                 lastTapDiagnostics=diagnostics;Debug.Log("[MarketLifelineInput] target="+diagnostics);
-                if(IsEvidenceChain && (button.name=="WatchAriaPlay" || button.name=="ConfirmWatchAria") && EventSystem.current!=null)
+                if(IsEvidenceChain && (button.name=="WatchAriaPlay" || button.name=="ConfirmWatchAria" || button.name=="LaunchMissionButton") && EventSystem.current!=null)
                 {
                     var hits=new List<RaycastResult>();
                     EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);

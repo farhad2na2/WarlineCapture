@@ -96,6 +96,9 @@ namespace Game.UI.Runtime
         private void HandlePassengerExitAll()
         {
             _passengerExitAllRequested?.Invoke();
+            // The drawer otherwise remains over the newly unloaded group and
+            // blocks the next ordinary world-selection touch.
+            CloseTransportPassengerDrawer();
         }
 
         private void HandlePassengerExit(UiEntityHandle passenger)

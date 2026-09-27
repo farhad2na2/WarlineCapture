@@ -36,10 +36,13 @@ namespace Game.Editor
 
         private static void BuildMap()
         {
+            CH03M04EvidenceChainWorldBuilder.Build();
             var map = Clone<OperationMapDefinition>(M04AirliftConfigBuilder.MapPath, MapPath);
             var data = new SerializedObject(map);
             ReplaceStrings(data, "ch01.m04", "ch03.m04");
             Set(data, "operationMapId", MapId);
+            data.FindProperty("additionalBuildingPlacements").objectReferenceValue =
+                Load<MapBuildingPlacementConfig>(CH03M04EvidenceChainWorldBuilder.PlacementsPath);
             Set(data, "planningCameraId", "camera.ch03.m04.planning");
             Set(data, "battleCameraId", "camera.ch03.m04.battle");
             Set(data.FindProperty("minimap"), "minimapId", "minimap.ch03.m04.evidence_chain");

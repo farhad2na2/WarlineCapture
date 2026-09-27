@@ -172,10 +172,11 @@ namespace Game.UI.Runtime
             }
             if (!IsRunning || !down) return;
 #if UNITY_EDITOR
-            // A wrapper-owned Editor can run behind the Codex window. In this
-            // explicit validation mode, keys pressed in that other app are not
-            // player takeover input for the match being tested.
-            if (AllowBackgroundValidation && !Application.isFocused && device is Keyboard) return;
+            // The wrapper-owned Editor can receive keyboard events while its
+            // normal-input probe runs, including when macOS briefly focuses it.
+            // Only this explicit Editor validation mode ignores those keys;
+            // shipping ARIA still yields to every physical player input.
+            if (AllowBackgroundValidation && device is Keyboard) return;
 #endif
             // Mouse movement alone is not intervention. A real button/contact is.
 #if UNITY_EDITOR

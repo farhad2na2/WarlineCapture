@@ -87,7 +87,8 @@ namespace Game.UI.Runtime
                     // Watch may observe it only after the required command mode is visibly
                     // active; the subsequent tap remains a normal world-input gesture.
                     _highlightPresentationSystem.ShowTutorialWorld(tutorialTarget.Destination);
-                    if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget)
+                    if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
+                       !UiShellRuntimeGateway.IsEvidenceChainGuideContext())
                         UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false);
                 }
             }

@@ -239,16 +239,24 @@ namespace Game.Composition
     {
         internal static bool IsPresentationReady(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage stage,
-            in UiShellStateComponent shellState) =>
-            stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterReplay
-                ? shellState.ActiveRoute == UIRoute.Campaign && shellState.IsTransitionRunning == 0
-                :
-            stage != CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None &&
-            shellState.CurrentMode == UiShellMode.MatchHud &&
-            shellState.ActiveRoute == UIRoute.Match &&
-            // Never reveal narrative over the outgoing menu. Let the loading/match transition
-            // finish first, then present the opening comic against the live mission surface.
-            shellState.IsTransitionRunning == 0;
+            in UiShellStateComponent shellState)
+        {
+            if (stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterReplay)
+                return shellState.ActiveRoute == UIRoute.Campaign && shellState.IsTransitionRunning == 0;
+            if (stage == CampaignMissionDebriefCompositionSystemHelper.SequenceStage.None ||
+                shellState.CurrentMode != UiShellMode.MatchHud ||
+                shellState.ActiveRoute != UIRoute.Match)
+                return false;
+
+            // Opening comics claim the incoming Match HUD while the loading transition still
+            // covers it. Their first rendered frame is therefore already present when loading
+            // clears, instead of briefly exposing the battlefield before the comic appears.
+            if (stage is CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief or
+                CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterOpening)
+                return true;
+
+            return shellState.IsTransitionRunning == 0;
+        }
 
         internal static FirstLaunchNarrativeLanguage ReadLanguage()
             => GameLocalization.ResolveNarrativeLanguage();

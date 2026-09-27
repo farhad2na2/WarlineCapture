@@ -602,6 +602,8 @@ public static class M02EstablishBaseNarrativeTests
         shell.IsTransitionRunning = 1;
         Assert.IsTrue(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Brief, in shell));
+        Assert.IsTrue(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
+            CampaignMissionDebriefCompositionSystemHelper.SequenceStage.ChapterOpening, in shell));
         Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(
             CampaignMissionDebriefCompositionSystemHelper.SequenceStage.Comms, in shell));
         Assert.IsFalse(CampaignMissionNarrativeCompositionUtility.IsPresentationReady(

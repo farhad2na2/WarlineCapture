@@ -172,6 +172,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.RouteReopened) ApplyRouteReopened(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.PowerRelay) ApplyPowerRelay(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline) ApplyMarketLifeline(in model);
+            ApplyReadingOrder();
         }
 
         public void ApplyUnavailable()

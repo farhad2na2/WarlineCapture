@@ -45,6 +45,8 @@ namespace Game.UI.Runtime
         public NarrativeReviewerControlsView ReviewerControlsView => reviewerControlsView;
         public Sprite CurrentPanelSprite => panelImage != null ? panelImage.sprite : null;
         public bool IsPanelVisible => panelImage != null && panelImage.enabled;
+        public bool IsVisible => rootGroup != null && rootGroup.gameObject.activeInHierarchy &&
+                                 rootGroup.alpha > 0.9f && rootGroup.blocksRaycasts;
         public NarrativeLocationIntroView LocationIntroView => locationIntroView;
 
         private void Awake()

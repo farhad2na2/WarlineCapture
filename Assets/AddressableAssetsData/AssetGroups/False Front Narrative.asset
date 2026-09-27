@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: False Front Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: False Front Narrative
+  m_GUID: 71025fc67d4de44b8ac49c36ba8d64b0
+  m_SerializeEntries:
+  - m_GUID: 1f1b35a456cf64ec8a894d4eb5bfb1f3
+    m_Address: narrative.false_front.briefprotectroute
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2abb639c51d164f4bbc59b4f0097edb8
+    m_Address: narrative.false_front.debriefauthorityseal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 31c58822dc95c4d6eb68759128ab7221
+    m_Address: narrative.false_front.debriefevacueessafe
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5a14232005f4b450a8d61fe3cfdd1873
+    m_Address: narrative.false_front.commssamiracorrection
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c35197ba203da4c379cb498afb8b168c
+    m_Address: narrative.false_front.briefuncertainroutes
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc00bc35cf9884a259c7a202b28bd7fd
+    m_Address: narrative.false_front.commsariaredirect
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f47a92d1ccf944c579bacd75431941e9
+    m_Address: narrative.false_front.briefevacuationreport
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 36e35e2decb3a4550afe4064317a07cd, type: 2}
+    - {fileID: 11400000, guid: cab58fa9a84b64d73b9eed681e290499, type: 2}

@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.FalseFrontBilingualVoice.v1",
+  "missionId": "saga.ch03.m03.false_front",
+  "generatedAtUtc": "2026-09-27T11:24:33.523777+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "false_front-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Three evacuation vehicles are gathering at the east road. A sealed authority report says the threat is at the old depot, but my people have seen no fighters there.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-brief-01.wav",
+      "durationSeconds": 9.68,
+      "sha256": "e7832175da4c56c55ae88cf6aaf4d64819bcd3869a0ad5d63beaa68403dcd1a0",
+      "captionSha256": "8065fa5a8f4bdd5e37e62605b77bee40ff8f0fb4e01573e931929b91705bc037"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-brief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "سه خودروی تخلیه توی جادهٔ شرقی جمع شدن. یک گزارش مُهرشده می‌گه خطر کنار انبار قدیمیه، اما آدم‌های من اونجا هیچ نیروی مسلحی ندیدن.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-brief-01.wav",
+      "durationSeconds": 10.64,
+      "sha256": "e815e5a64a4280397cd1b9141a20c6a777305765ff2d2c4094a8e3b0af62f463",
+      "captionSha256": "e4059eaa8896ee66e7e27737647ae8d28a8ea347fec1fc5126fc0bc69a52ed50"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-brief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The report's seal is valid, but its source trail is incomplete. The depot is unconfirmed. I recommend checking both approaches while keeping the evacuation route protected.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-brief-02.wav",
+      "durationSeconds": 10.32,
+      "sha256": "10543638119f16aaff1f1f2ba7b773bb3e4ebaed652cb1ca4c68e6ab9f394384",
+      "captionSha256": "ae44571ea394a8a64ee2712ea1da8b067e69306038611779d06624594d87c582"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-brief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مُهر گزارش معتبره، ولی مسیر منبعش کامل نیست. خطرِ انبار هنوز تأیید نشده. پیشنهاد می‌کنم هر دو مسیر رو بررسی کنی و جادهٔ تخلیه رو امن نگه داری.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-brief-02.wav",
+      "durationSeconds": 12.0,
+      "sha256": "a30cb0653d7a00d10af2da70e16e6f10d5388286a907b06e7bd0eccafb3e39ad",
+      "captionSha256": "bbaece32e59483c666a67756a6116efbb5841aaa28ad8463d1bdbf2a1233e1a7"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "No strike on a rumor. Put our squad on the two observation points, move the three civilian vehicles toward shelter, and be ready to turn when we know where the ambush is.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-brief-03.wav",
+      "durationSeconds": 10.72,
+      "sha256": "5f32029f29fcd83bd7b4f2abe56cbec7720bc22d73dc260a1d5919936172cc71",
+      "captionSha256": "95ca8b08cfbfbe8ec2df66001bfa4b5339072e2a0e0729c2bfdcc2dc2dd5aefe"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "با شایعه حمله نمی‌کنیم. گروه رو به دو نقطهٔ دیده‌بانی ببر، سه خودروی غیرنظامی رو به سمت پناهگاه حرکت بده و آماده باش وقتی جای کمین روشن شد مسیر رو عوض کنی.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-brief-03.wav",
+      "durationSeconds": 12.48,
+      "sha256": "b107b0bba6e7b8163063dc504b8457065a1cab716627ede356696ae3772250f4",
+      "captionSha256": "334c3f22acc14069fc05e7835c4a6a7cd85a9b3644093a74ebb37512d909c70a"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The depot is empty. Ash Line fighters are building a roadblock beyond the second checkpoint, right across the evacuation lane. That's the real ambush.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-comms-01.wav",
+      "durationSeconds": 8.88,
+      "sha256": "c752fe9fcc382e3900dc4b32bef5f0f7601e88e00f5427e190312a91e643f449",
+      "captionSha256": "9b2ddc78754b710be040086693d122bcfbfd45bc6fa7dc8dbce4cdbdb24ebe4c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-comms-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "انبار خالیه. نیروهای خط خاکستر بعد از ایستگاه دوم، درست روی مسیر تخلیه دارن راه‌بند می‌سازن. کمین واقعی اونجاست.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-comms-01.wav",
+      "durationSeconds": 9.92,
+      "sha256": "20421bb6e558c14712662ea0f8100bc13585490f86100a30502b0c9b57c6633f",
+      "captionSha256": "9abc55eacb5f2014a006a1d78d7f2324245ed23e373d51b76c112cfa0555f031"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-comms-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "My first interpretation was wrong. I treated the seal as stronger evidence than the missing source trail. Redirect to the confirmed roadblock; keep the vehicles out of its fire.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-comms-02.wav",
+      "durationSeconds": 10.88,
+      "sha256": "4397936f48c442cd8cb495621f12c0b9d449f5bdf78ceba65166bba863a87b31",
+      "captionSha256": "d9fe065ff4997255506a1fe018963896ebb7987f16f60e212c00451bc76a665d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-comms-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "برداشت اول من اشتباه بود. به مُهر گزارش بیشتر از جای خالیِ مسیر منبعش وزن دادم. به سمت راه‌بندِ تأییدشده برو و خودروها رو از تیررسش دور نگه دار.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-comms-02.wav",
+      "durationSeconds": 13.04,
+      "sha256": "7d646810ace2e492455faed17941c10b88ca751616ecb42933e7a6d72f1e2f95",
+      "captionSha256": "e2311458e34b719f748c99359327e0d56583644015fcc95023470827e9aa826c"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-debrief-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "All three vehicles reached shelter. The confirmed ambush is down, and the depot was never attacked. That distinction kept civilians alive.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-debrief-01.wav",
+      "durationSeconds": 11.36,
+      "sha256": "9a1de65d30709c018504d9eff6e3073c70c27380beb069837147e7f6dd8b4ad4",
+      "captionSha256": "825f2a7e5508b4b1494869a226cb1a21caed0d8fd70b0b12f053cfb355fa4e16"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-debrief-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "هر سه خودرو به پناهگاه رسیدن. کمینِ تأییدشده از بین رفت و به انبار حمله نکردیم. همین فرق جون غیرنظامی‌ها رو نجات داد.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-debrief-01.wav",
+      "durationSeconds": 10.0,
+      "sha256": "44b196778db78ebc9769c66c0f59b54f6b167c4b347e6fb00de363adb2d656c2",
+      "captionSha256": "5dcb99fde36b6611e5a958c76ff833e5cd05daf839c005966be6bef5db68e825"
+    },
+    {
+      "kind": "narrative",
+      "id": "false_front-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "I preserved the false report. It traveled through a compromised Relay-era authority channel with a seal compatible with mine. I need to examine whether my missing archive made it.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/en/false_front-debrief-02.wav",
+      "durationSeconds": 10.4,
+      "sha256": "ca3c8073982bd3b01b086b183137f4614c5faf0df8b42eb5394b1c0b829f0c7e",
+      "captionSha256": "2ace95971cadc96eac6ff2adebebd018a439dcb87da7e1458520ce85563d4359"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "false_front-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "گزارش جعلی رو نگه داشتم. از یک کانال فرماندهیِ لو‌رفتهٔ دورهٔ رله اومده و مُهرش با مُهر من سازگاره. باید بررسی کنم که آیا بایگانی گم‌شدهٔ من ساخته‌تش یا نه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M03FalseFront/Voice/fa/false_front-debrief-02.wav",
+      "durationSeconds": 12.48,
+      "sha256": "50fdda9231a5b0dae833b70f42b7b4d9a7ff8f9eb8c70baacd55ff80be155506",
+      "captionSha256": "2ead7c752b0784d644e22033df036120effc688519b72d981a8dc20b73baead9"
+    }
+  ]
+}

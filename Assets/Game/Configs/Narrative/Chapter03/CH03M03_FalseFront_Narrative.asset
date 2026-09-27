@@ -1,0 +1,473 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-1658373716150144034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M03_FalseFront_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m03.debrief
+  entryStateId: FalseFront-debrief-0
+  defaultSkipDestinationId: FalseFront-debrief-complete
+  states:
+  - stateId: FalseFront-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 31c58822dc95c4d6eb68759128ab7221
+      m_SubObjectName: DebriefEvacueesSafe-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 31c58822dc95c4d6eb68759128ab7221
+      m_SubObjectName: DebriefEvacueesSafe-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-debrief-01
+      textKey: narrative.false_front.debrief.01
+      englishFallback: All three vehicles reached shelter. The confirmed ambush is
+        down, and the depot was never attacked. That distinction kept civilians alive.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 5dd1b7d1c8c8f486d98391975b4fce0a, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.86
+      essentialCaption: 1
+    continueStateId: FalseFront-debrief-1
+    skipStateId: FalseFront-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 2abb639c51d164f4bbc59b4f0097edb8
+      m_SubObjectName: DebriefAuthoritySeal-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 2abb639c51d164f4bbc59b4f0097edb8
+      m_SubObjectName: DebriefAuthoritySeal-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-debrief-02
+      textKey: narrative.false_front.debrief.02
+      englishFallback: I preserved the false report. It traveled through a compromised
+        Relay-era authority channel with a seal compatible with mine. I need to examine
+        whether my missing archive made it.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 54044ec451d2c4d1ca33f810091b1458, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.98
+      essentialCaption: 1
+    continueStateId: FalseFront-debrief-complete
+    skipStateId: FalseFront-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.98
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.false_front.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-1272868891436081786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M03_FalseFront_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m03.comms
+  entryStateId: FalseFront-comms-0
+  defaultSkipDestinationId: FalseFront-comms-complete
+  states:
+  - stateId: FalseFront-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 5a14232005f4b450a8d61fe3cfdd1873
+      m_SubObjectName: CommsSamiraCorrection-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 5a14232005f4b450a8d61fe3cfdd1873
+      m_SubObjectName: CommsSamiraCorrection-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-comms-01
+      textKey: narrative.false_front.comms.01
+      englishFallback: The depot is empty. Ash Line fighters are building a roadblock
+        beyond the second checkpoint, right across the evacuation lane. That's the
+        real ambush.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: eed09929292a649babda8f1bcf62bbbf, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.714286
+      essentialCaption: 1
+    continueStateId: FalseFront-comms-1
+    skipStateId: FalseFront-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: dc00bc35cf9884a259c7a202b28bd7fd
+      m_SubObjectName: CommsAriaRedirect-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: dc00bc35cf9884a259c7a202b28bd7fd
+      m_SubObjectName: CommsAriaRedirect-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-comms-02
+      textKey: narrative.false_front.comms.02
+      englishFallback: My first interpretation was wrong. I treated the seal as stronger
+        evidence than the missing source trail. Redirect to the confirmed roadblock;
+        keep the vehicles out of its fire.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 98c88f0e886134ca297b7ca0bbd0b0cf, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.54
+      essentialCaption: 1
+    continueStateId: FalseFront-comms-complete
+    skipStateId: FalseFront-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.54
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.false_front.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M03_FalseFront_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m03.brief
+  entryStateId: FalseFront-brief-0
+  defaultSkipDestinationId: FalseFront-brief-complete
+  states:
+  - stateId: FalseFront-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: f47a92d1ccf944c579bacd75431941e9
+      m_SubObjectName: BriefEvacuationReport-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: f47a92d1ccf944c579bacd75431941e9
+      m_SubObjectName: BriefEvacuationReport-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-brief-01
+      textKey: narrative.false_front.brief.01
+      englishFallback: Three evacuation vehicles are gathering at the east road.
+        A sealed authority report says the threat is at the old depot, but my people
+        have seen no fighters there.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 15f26207f2419422f9a2ad256ea6f3ca, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.642858
+      essentialCaption: 1
+    continueStateId: FalseFront-brief-1
+    skipStateId: FalseFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.642858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: c35197ba203da4c379cb498afb8b168c
+      m_SubObjectName: BriefUncertainRoutes-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: c35197ba203da4c379cb498afb8b168c
+      m_SubObjectName: BriefUncertainRoutes-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-brief-02
+      textKey: narrative.false_front.brief.02
+      englishFallback: The report's seal is valid, but its source trail is incomplete.
+        The depot is unconfirmed. I recommend checking both approaches while keeping
+        the evacuation route protected.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: e8fef2e4eab9941c7af1ba8ccc8ae539, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.5
+      essentialCaption: 1
+    continueStateId: FalseFront-brief-2
+    skipStateId: FalseFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.5
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 1f1b35a456cf64ec8a894d4eb5bfb1f3
+      m_SubObjectName: BriefProtectRoute-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 1f1b35a456cf64ec8a894d4eb5bfb1f3
+      m_SubObjectName: BriefProtectRoute-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: false_front-brief-03
+      textKey: narrative.false_front.brief.03
+      englishFallback: No strike on a rumor. Put our squad on the two observation
+        points, move the three civilian vehicles toward shelter, and be ready to
+        turn when we know where the ambush is.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: abcaae170e0d0487d8a0e300f696b871, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.98
+      essentialCaption: 1
+    continueStateId: FalseFront-brief-complete
+    skipStateId: FalseFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.98
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: FalseFront-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.false_front.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []

@@ -49,3 +49,6 @@ MonoBehaviour:
   - missionId: saga.ch03.m02.safehouse_sweep
     definition: {fileID: 11400000, guid: a76184f55c01c4514b15bcb90a025783, type: 2}
     scenario: {fileID: 11400000, guid: 343ad2b4da2994434a0835d5ca6c354b, type: 2}
+  - missionId: saga.ch03.m03.false_front
+    definition: {fileID: 11400000, guid: f76e796583b8f446c887d8c9b4e1517e, type: 2}
+    scenario: {fileID: 11400000, guid: 2f68f3c5be2644396ae3bff6f96761c7, type: 2}

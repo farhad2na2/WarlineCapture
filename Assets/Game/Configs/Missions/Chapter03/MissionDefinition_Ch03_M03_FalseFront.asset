@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch03_M03_FalseFront
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch03.m03.false_front
+  schemaVersion: 1
+  displayNameKey: mission.false_front.name
+  displaySummaryKey: mission.false_front.summary
+  locationNameKey: mission.false_front.location
+  scenarioId: scenario.ch03.m03.false_front
+  operationMapId: opmap.ch03.false_front_01
+  briefingSequenceId: seq.ch03.m03.brief
+  commsSequenceId: seq.ch03.m03.comms
+  debriefSequenceId: seq.ch03.m03.debrief
+  objectives:
+  - objectiveId: obj.ch03.m03.verify
+    displayTextKey: mission.false_front.objective.verify
+    rule: 20
+    missionRoleId: role.market.manifest
+    targetConfigId: 
+    requiredCount: 2
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch03.m03.evacuate
+    displayTextKey: mission.false_front.objective.evacuate
+    rule: 19
+    missionRoleId: role.market.relief_convoy
+    targetConfigId: 
+    requiredCount: 3
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch03.m03.ambush
+    displayTextKey: mission.false_front.objective.ambush
+    rule: 21
+    missionRoleId: role.market.trade
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.false_front.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.false_front.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.false_front.star.3
+    threshold: 420000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 1300
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 6500
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 350
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

@@ -38,6 +38,10 @@ namespace Game.UI.Runtime
             Vector2 position = default;
             Vector2 dragEnd=default;bool drag=false;
             bool skirmish = UiShellRuntimeGateway.TryReadSkirmish(out var skirmishModel);
+            bool narrativeBlocking = false;
+            if (!skirmish)
+                foreach (var narrative in Object.FindObjectsByType<NarrativeSequenceView>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+                    if (narrative.IsVisible) { narrativeBlocking = true; break; }
             bool supported = UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None;
             bool available = supported && (skirmish ? !skirmishModel.Finished && !skirmishModel.StartupFailed : UsesNextTutorialAction && _lastPanelModel.HasRecommendation);
             bool supplyCanReserve=_lastPanelModel.TutorialStepCount==4 &&
@@ -112,6 +116,16 @@ namespace Game.UI.Runtime
             }
             if (skirmish && supported) { kind = skirmishModel.Finished ? AriaPlayObservationKind.Finished : AriaPlayObservationKind.Waiting; ObserveSkirmishWatch(skirmishModel); }
             else UiShellRuntimeGateway.PublishAriaSkirmishObservation(default);
+            // A comms comic can interrupt live play. Keep Watch active, but never
+            // touch tactical controls underneath its raycast-blocking canvas.
+            if (narrativeBlocking)
+            {
+                kind = AriaPlayObservationKind.Cinematic;
+                target = 0;
+                position = default;
+                drag = false;
+                dragEnd = default;
+            }
             if (!skirmish && _finalTutorialSuppressed) kind = AriaPlayObservationKind.Finished;
             int goalId=_lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep;
             // A delivered load is visible reserve progress, even while the same
@@ -123,7 +137,7 @@ namespace Game.UI.Runtime
             var state = UiShellRuntimeGateway.ReadAriaPlay();
             _embeddedTutorialView.PresentWatch(state, available);
             _embeddedTutorialView.RefreshContentLayout();
-            RenderWatchFinger(state);
+            RenderWatchFinger(state, narrativeBlocking);
         }
 
         private AriaPlayObservation ObserveOperationsWatch(UiOperationsMissionModel model)
@@ -211,7 +225,7 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private void RenderWatchFinger(AriaPlayModel state)
+        private void RenderWatchFinger(AriaPlayModel state, bool suppressFinger = false)
         {
             bool visible = state.Active;
             if (watchOverlay == null && visible)
@@ -236,6 +250,7 @@ namespace Game.UI.Runtime
             if (watchOverlay == null) return;
             watchOverlay.SetActive(visible);
             if (!visible) return;
+            watchFinger.gameObject.SetActive(!suppressFinger);
             // The panel already has Stop. Keep the floating copy only when a modal
             // covers it, so it cannot obscure mission counters during normal play.
             var panelStop = _embeddedTutorialView.WatchButton;

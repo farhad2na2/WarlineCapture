@@ -230,6 +230,99 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.false_front.deadline
+      value: 9 active minutes
+    - key: mission.false_front.enemy_intel
+      value: Authority-channel warning is plausible but unverified. An Ash Line roadblock
+        may form beyond the second observation point; do not attack the empty depot.
+    - key: mission.false_front.failure.convoy
+      value: A civilian vehicle was lost on the evacuation route.
+    - key: mission.false_front.failure.deadline
+      value: The evacuation corridor was not secured before the ambush closed in.
+    - key: mission.false_front.failure.integrity
+      value: Mission state could not be verified. Return and retry; no rewards were
+        settled.
+    - key: mission.false_front.failure.squad
+      value: The route protection squad was lost before the civilians reached shelter.
+    - key: mission.false_front.failure.wrong_transfer
+      value: The unconfirmed depot route was treated as a safe evacuation destination.
+        Follow the verified shelter route.
+    - key: mission.false_front.forces
+      value: "8 rifles \xB7 route protection team"
+    - key: mission.false_front.guide.1.body
+      value: Move a rifle squad to the first observation point and hold for 5 seconds.
+    - key: mission.false_front.guide.1.title
+      value: Check the first approach
+    - key: mission.false_front.guide.2.body
+      value: Observe the second point as well. The sealed depot report is still unconfirmed.
+    - key: mission.false_front.guide.2.title
+      value: Check the second approach
+    - key: mission.false_front.guide.3.body
+      value: Select and move each of the three civilian vehicles to the shelter marker.
+        Keep escorts nearby.
+    - key: mission.false_front.guide.3.title
+      value: Move the evacuees
+    - key: mission.false_front.guide.4.body
+      value: Once Samira confirms the roadblock, attack the armed fighters there,
+        not the unconfirmed depot.
+    - key: mission.false_front.guide.4.title
+      value: Stop the real ambush
+    - key: mission.false_front.guide.5.body
+      value: With all vehicles safe and fighters defeated, hold for 10 seconds while
+        ARIA preserves the false report.
+    - key: mission.false_front.guide.5.title
+      value: Hold the evacuation route
+    - key: mission.false_front.guide.diagram
+      value: "OBSERVE 2 \u2192 ESCORT 3 \u2192 CONFIRMED AMBUSH \u2192 HOLD"
+    - key: mission.false_front.guide.example
+      value: Use Select, Move, Attack and Hold. ARIA can demonstrate those same player
+        orders.
+    - key: mission.false_front.guide.mistake
+      value: A valid seal is not proof of a target. Do not attack the depot or send
+        civilians toward it.
+    - key: mission.false_front.guide.title
+      value: False Front field guide
+    - key: mission.false_front.location
+      value: "East evacuation road \xB7 district outskirts"
+    - key: mission.false_front.name
+      value: False Front
+    - key: mission.false_front.objective.ambush
+      value: Defeat the confirmed ambush and hold the route
+    - key: mission.false_front.objective.ambush.body
+      value: After Samira confirms the roadblock, defeat the armed ambush and hold
+        the evacuation approach for 10 seconds. Preserve the false report for analysis.
+    - key: mission.false_front.objective.evacuate
+      value: Escort all three civilian vehicles
+    - key: mission.false_front.objective.evacuate.body
+      value: Select each civilian vehicle and move it to the marked shelter route.
+        All three must survive; a lost vehicle fails the mission.
+    - key: mission.false_front.objective.verify
+      value: Verify both observation points
+    - key: mission.false_front.objective.verify.body
+      value: Move a rifle squad to each marked observation point and hold for 5 seconds.
+        A seal is not confirmation of the depot target.
+    - key: mission.false_front.resources
+      value: "Two observation points \xB7 three civilian vehicles \xB7 one preserved
+        report"
+    - key: mission.false_front.result.defeat
+      value: Evacuation route lost
+    - key: mission.false_front.result.success
+      value: All three vehicles reached shelter. The confirmed ambush was defeated,
+        the unconfirmed depot was spared and the false authority report was preserved.
+    - key: mission.false_front.result.victory
+      value: Evacuation route secured
+    - key: mission.false_front.reward.card
+      value: "1,300 Commander XP \xB7 6,500 Credits"
+    - key: mission.false_front.star.1
+      value: Complete the mission
+    - key: mission.false_front.star.2
+      value: All three civilian vehicles survive
+    - key: mission.false_front.star.3
+      value: Finish within 7 minutes
+    - key: mission.false_front.summary
+      value: A sealed report points at an unconfirmed depot while three civilian
+        vehicles must cross an exposed route. Verify both approaches, protect the
+        evacuation and stop only the confirmed ambush.
     - key: mission.gridlock.clue
       value: The sabotage steers traffic toward a dormant substation.
     - key: mission.gridlock.crew.description
@@ -2278,6 +2371,33 @@ MonoBehaviour:
         pumps and JRC relief transport.
     - key: mission.supply_line.time_limit
       value: Time limit
+    - key: narrative.false_front.brief.01
+      value: Three evacuation vehicles are gathering at the east road. A sealed authority
+        report says the threat is at the old depot, but my people have seen no fighters
+        there.
+    - key: narrative.false_front.brief.02
+      value: The report's seal is valid, but its source trail is incomplete. The
+        depot is unconfirmed. I recommend checking both approaches while keeping
+        the evacuation route protected.
+    - key: narrative.false_front.brief.03
+      value: No strike on a rumor. Put our squad on the two observation points, move
+        the three civilian vehicles toward shelter, and be ready to turn when we
+        know where the ambush is.
+    - key: narrative.false_front.comms.01
+      value: The depot is empty. Ash Line fighters are building a roadblock beyond
+        the second checkpoint, right across the evacuation lane. That's the real
+        ambush.
+    - key: narrative.false_front.comms.02
+      value: My first interpretation was wrong. I treated the seal as stronger evidence
+        than the missing source trail. Redirect to the confirmed roadblock; keep
+        the vehicles out of its fire.
+    - key: narrative.false_front.debrief.01
+      value: All three vehicles reached shelter. The confirmed ambush is down, and
+        the depot was never attacked. That distinction kept civilians alive.
+    - key: narrative.false_front.debrief.02
+      value: I preserved the false report. It traveled through a compromised Relay-era
+        authority channel with a seal compatible with mine. I need to examine whether
+        my missing archive made it.
     - key: narrative.first_launch.control.cancel_skip
       value: KEEP WATCHING
     - key: narrative.first_launch.control.confirm_skip
@@ -6825,6 +6945,193 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647\u0654 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0647\u0646\u0648\u0632 \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.false_front.deadline
+      value: "\u06F9 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646 \u0641\u0639\u0627\u0644"
+    - key: mission.false_front.enemy_intel
+      value: "\u0647\u0634\u062F\u0627\u0631 \u06A9\u0627\u0646\u0627\u0644 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0628\u0627\u0648\u0631\u067E\u0630\u06CC\u0631\u0647 \u0627\u0645\u0627
+        \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0647. \u0645\u0645\u06A9\u0646\u0647
+        \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0628\u0639\u062F \u0627\u0632
+        \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \u062F\u0648\u0645 \u0631\u0627\u0647\u200C\u0628\u0646\u062F \u0628\u0632\u0646\u0647\u061B
+        \u0628\u0647 \u0627\u0646\u0628\u0627\u0631 \u062E\u0627\u0644\u06CC \u062D\u0645\u0644\u0647
+        \u0646\u06A9\u0646."
+    - key: mission.false_front.failure.convoy
+      value: "\u06CC\u06A9 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u062F\u0631 \u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647 \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.false_front.failure.deadline
+      value: "\u067E\u06CC\u0634 \u0627\u0632 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u06A9\u0645\u06CC\u0646\u060C \u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647
+        \u0627\u0645\u0646 \u0646\u0634\u062F."
+    - key: mission.false_front.failure.integrity
+      value: "\u0648\u0636\u0639\u06CC\u062A \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u06CC\u0633\u062A.
+        \u0628\u0631\u06AF\u0631\u062F \u0648 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u062A\u0644\u0627\u0634 \u06A9\u0646\u061B \u067E\u0627\u062F\u0627\u0634\u06CC
+        \u062B\u0628\u062A \u0646\u0634\u062F."
+    - key: mission.false_front.failure.squad
+      value: "\u06AF\u0631\u0648\u0647 \u062D\u0641\u0627\u0638\u062A \u0645\u0633\u06CC\u0631
+        \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u200C\u0647\u0627
+        \u0628\u0647 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A."
+    - key: mission.false_front.failure.wrong_transfer
+      value: "\u0645\u0633\u06CC\u0631 \u0627\u0646\u0628\u0627\u0631\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647
+        \u0628\u0647\u200C\u0627\u0634\u062A\u0628\u0627\u0647 \u0645\u0642\u0635\u062F
+        \u0627\u0645\u0646\u0650 \u062A\u062E\u0644\u06CC\u0647 \u062D\u0633\u0627\u0628
+        \u0634\u062F. \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0628\u0631\u0648."
+    - key: mission.false_front.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u06AF\u0631\u0648\u0647
+        \u062D\u0641\u0627\u0638\u062A \u0645\u0633\u06CC\u0631"
+    - key: mission.false_front.guide.1.body
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \u0627\u0648\u0644 \u0628\u0628\u0631 \u0648 \u06F5 \u062B\u0627\u0646\u06CC\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.false_front.guide.1.title
+      value: "\u0645\u0633\u06CC\u0631 \u0627\u0648\u0644 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646"
+    - key: mission.false_front.guide.2.body
+      value: "\u0646\u0642\u0637\u0647\u0654 \u062F\u0648\u0645 \u0631\u0648 \u0647\u0645
+        \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646. \u06AF\u0632\u0627\u0631\u0634\u0650
+        \u0645\u064F\u0647\u0631\u0634\u062F\u0647\u0654 \u0627\u0646\u0628\u0627\u0631
+        \u0647\u0646\u0648\u0632 \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0647."
+    - key: mission.false_front.guide.2.title
+      value: "\u0645\u0633\u06CC\u0631 \u062F\u0648\u0645 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646"
+    - key: mission.false_front.guide.3.body
+      value: "\u0647\u0631 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647
+        \u0639\u0644\u0627\u0645\u062A \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0628\u0628\u0631. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0647\u0645\u0631\u0627\u0647
+        \u0631\u0648 \u0646\u0632\u062F\u06CC\u06A9 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.false_front.guide.3.title
+      value: "\u062A\u062E\u0644\u06CC\u0647\u200C\u0634\u0648\u0646\u062F\u0647\u200C\u0647\u0627
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0628\u062F\u0647"
+    - key: mission.false_front.guide.4.body
+      value: "\u0648\u0642\u062A\u06CC \u0633\u0645\u06CC\u0631\u0627 \u0631\u0627\u0647\u200C\u0628\u0646\u062F
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0631\u062F\u060C \u0628\u0647
+        \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0633\u0644\u062D \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u062D\u0645\u0644\u0647 \u06A9\u0646\u060C \u0646\u0647 \u0628\u0647 \u0627\u0646\u0628\u0627\u0631\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647."
+    - key: mission.false_front.guide.4.title
+      value: "\u06A9\u0645\u06CC\u0646 \u0648\u0627\u0642\u0639\u06CC \u0631\u0648
+        \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646"
+    - key: mission.false_front.guide.5.body
+      value: "\u0648\u0642\u062A\u06CC \u0647\u0645\u0647\u0654 \u062E\u0648\u062F\u0631\u0648\u0647\u0627
+        \u0627\u0645\u0646 \u0634\u062F\u0646 \u0648 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0645\u0633\u0644\u062D \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F\u0646\u060C
+        \u06F1\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u062A\u0627 \u0622\u0631\u06CC\u0627 \u06AF\u0632\u0627\u0631\u0634 \u062C\u0639\u0644\u06CC
+        \u0631\u0648 \u062B\u0628\u062A \u06A9\u0646\u0647."
+    - key: mission.false_front.guide.5.title
+      value: "\u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647 \u0631\u0648
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.false_front.guide.diagram
+      value: "\u06F2 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC \u2190
+        \u0647\u0645\u0631\u0627\u0647\u06CC \u06F3 \u062E\u0648\u062F\u0631\u0648
+        \u2190 \u06A9\u0645\u06CC\u0646\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u2190 \u0646\u06AF\u0647\u200C\u062F\u0627\u0634\u062A\u0646"
+    - key: mission.false_front.guide.example
+      value: "\u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062D\u0631\u06A9\u062A\u060C
+        \u062D\u0645\u0644\u0647 \u0648 \u062A\u0648\u0642\u0641 \u0627\u0633\u062A\u0641\u0627\u062F\u0647
+        \u06A9\u0646. \u0622\u0631\u06CC\u0627 \u0645\u06CC\u200C\u062A\u0648\u0646\u0647
+        \u0647\u0645\u06CC\u0646 \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u0628\u0627\u0632\u06CC\u06A9\u0646 \u0631\u0648 \u0646\u0645\u0627\u06CC\u0634
+        \u0628\u062F\u0647."
+    - key: mission.false_front.guide.mistake
+      value: "\u0645\u064F\u0647\u0631 \u0645\u0639\u062A\u0628\u0631\u060C \u0627\u062B\u0628\u0627\u062A\u0650
+        \u0647\u062F\u0641 \u0628\u0648\u062F\u0646 \u0646\u06CC\u0633\u062A. \u0628\u0647
+        \u0627\u0646\u0628\u0627\u0631 \u062D\u0645\u0644\u0647 \u0646\u06A9\u0646
+        \u0648 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u200C\u0647\u0627
+        \u0631\u0648 \u0628\u0647 \u0633\u0645\u062A\u0634 \u0646\u0641\u0631\u0633\u062A."
+    - key: mission.false_front.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u067E\u0648\u0634\u0634
+        \u062C\u0639\u0644\u06CC"
+    - key: mission.false_front.location
+      value: "\u062C\u0627\u062F\u0647\u0654 \u062A\u062E\u0644\u06CC\u0647\u0654
+        \u0634\u0631\u0642\u06CC \xB7 \u062D\u0627\u0634\u06CC\u0647\u0654 \u0634\u0647\u0631"
+    - key: mission.false_front.name
+      value: "\u067E\u0648\u0634\u0634 \u062C\u0639\u0644\u06CC"
+    - key: mission.false_front.objective.ambush
+      value: "\u06A9\u0645\u06CC\u0646\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0628\u0628\u0631 \u0648 \u0645\u0633\u06CC\u0631
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.false_front.objective.ambush.body
+      value: "\u0628\u0639\u062F \u0627\u0632 \u0627\u06CC\u0646\u06A9\u0647 \u0633\u0645\u06CC\u0631\u0627
+        \u0631\u0627\u0647\u200C\u0628\u0646\u062F \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0631\u062F\u060C \u06A9\u0645\u06CC\u0646 \u0645\u0633\u0644\u062D
+        \u0631\u0648 \u0627\u0632 \u0628\u06CC\u0646 \u0628\u0628\u0631 \u0648 \u06F1\u06F0
+        \u062B\u0627\u0646\u06CC\u0647 \u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631. \u06AF\u0632\u0627\u0631\u0634
+        \u062C\u0639\u0644\u06CC \u0631\u0648 \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.false_front.objective.evacuate
+      value: "\u0647\u0631 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0647\u0645\u0631\u0627\u0647\u06CC \u06A9\u0646"
+    - key: mission.false_front.objective.evacuate.body
+      value: "\u0647\u0631 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647
+        \u0645\u0633\u06CC\u0631 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u0650
+        \u0639\u0644\u0627\u0645\u062A\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631. \u0647\u0631 \u0633\u0647 \u0628\u0627\u06CC\u062F \u0633\u0627\u0644\u0645
+        \u0628\u0645\u0648\u0646\u0646\u061B \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646
+        \u06CC\u06A9 \u062E\u0648\u062F\u0631\u0648 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0648 \u0634\u06A9\u0633\u062A \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.false_front.objective.verify
+      value: "\u0647\u0631 \u062F\u0648 \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646"
+    - key: mission.false_front.objective.verify.body
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0628\u0647 \u0647\u0631 \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \u0639\u0644\u0627\u0645\u062A\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631 \u0648 \u06F5 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u0645\u064F\u0647\u0631 \u06AF\u0632\u0627\u0631\u0634\u060C
+        \u0647\u062F\u0641 \u0628\u0648\u062F\u0646 \u0627\u0646\u0628\u0627\u0631
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u0646\u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.false_front.resources
+      value: "\u062F\u0648 \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \xB7 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \xB7 \u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634 \u062D\u0641\u0638\u200C\u0634\u062F\u0647"
+    - key: mission.false_front.result.defeat
+      value: "\u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647 \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.false_front.result.success
+      value: "\u0647\u0631 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648 \u0628\u0647
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0631\u0633\u06CC\u062F\u0646.
+        \u06A9\u0645\u06CC\u0646\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F\u060C \u0627\u0646\u0628\u0627\u0631\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647 \u0622\u0633\u06CC\u0628
+        \u0646\u062F\u06CC\u062F \u0648 \u06AF\u0632\u0627\u0631\u0634 \u062C\u0639\u0644\u06CC\u0650
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062D\u0641\u0638 \u0634\u062F."
+    - key: mission.false_front.result.victory
+      value: "\u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647 \u0627\u0645\u0646
+        \u0634\u062F"
+    - key: mission.false_front.reward.card
+      value: "\u06F1\u06F3\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F6\u06F5\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.false_front.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.false_front.star.2
+      value: "\u0647\u0631 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0646"
+    - key: mission.false_front.star.3
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F7 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0645\u0627\u0645 \u06A9\u0646"
+    - key: mission.false_front.summary
+      value: "\u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634 \u0645\u064F\u0647\u0631\u0634\u062F\u0647
+        \u0628\u0647 \u0627\u0646\u0628\u0627\u0631\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647
+        \u0627\u0634\u0627\u0631\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0647\u060C
+        \u062F\u0631 \u062D\u0627\u0644\u06CC \u06A9\u0647 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0628\u0627\u06CC\u062F
+        \u0627\u0632 \u0645\u0633\u06CC\u0631\u06CC \u062E\u0637\u0631\u0646\u0627\u06A9
+        \u0628\u06AF\u0630\u0631\u0646. \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u060C \u0627\u0632
+        \u062A\u062E\u0644\u06CC\u0647 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646
+        \u0648 \u0641\u0642\u0637 \u06A9\u0645\u06CC\u0646\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646."
     - key: mission.gridlock.clue
       value: "\u0627\u06CC\u0646 \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u06CC
         \u062A\u0631\u0627\u0641\u06CC\u06A9 \u0631\u0648 \u0628\u0647 \u0633\u0645\u062A
@@ -10522,6 +10829,70 @@ MonoBehaviour:
         \u0627\u0645\u062F\u0627\u062F \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
     - key: mission.supply_line.time_limit
       value: "\u0645\u0647\u0644\u062A"
+    - key: narrative.false_front.brief.01
+      value: "\u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC \u062A\u062E\u0644\u06CC\u0647
+        \u062A\u0648\u06CC \u062C\u0627\u062F\u0647\u0654 \u0634\u0631\u0642\u06CC
+        \u062C\u0645\u0639 \u0634\u062F\u0646. \u06CC\u06A9 \u06AF\u0632\u0627\u0631\u0634
+        \u0645\u064F\u0647\u0631\u0634\u062F\u0647 \u0645\u06CC\u200C\u06AF\u0647
+        \u062E\u0637\u0631 \u06A9\u0646\u0627\u0631 \u0627\u0646\u0628\u0627\u0631
+        \u0642\u062F\u06CC\u0645\u06CC\u0647\u060C \u0627\u0645\u0627 \u0622\u062F\u0645\u200C\u0647\u0627\u06CC
+        \u0645\u0646 \u0627\u0648\u0646\u062C\u0627 \u0647\u06CC\u0686 \u0646\u06CC\u0631\u0648\u06CC
+        \u0645\u0633\u0644\u062D\u06CC \u0646\u062F\u06CC\u062F\u0646."
+    - key: narrative.false_front.brief.02
+      value: "\u0645\u064F\u0647\u0631 \u06AF\u0632\u0627\u0631\u0634 \u0645\u0639\u062A\u0628\u0631\u0647\u060C
+        \u0648\u0644\u06CC \u0645\u0633\u06CC\u0631 \u0645\u0646\u0628\u0639\u0634
+        \u06A9\u0627\u0645\u0644 \u0646\u06CC\u0633\u062A. \u062E\u0637\u0631\u0650
+        \u0627\u0646\u0628\u0627\u0631 \u0647\u0646\u0648\u0632 \u062A\u0623\u06CC\u06CC\u062F
+        \u0646\u0634\u062F\u0647. \u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0645\u06CC\u200C\u06A9\u0646\u0645
+        \u0647\u0631 \u062F\u0648 \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646\u06CC \u0648 \u062C\u0627\u062F\u0647\u0654 \u062A\u062E\u0644\u06CC\u0647
+        \u0631\u0648 \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC."
+    - key: narrative.false_front.brief.03
+      value: "\u0628\u0627 \u0634\u0627\u06CC\u0639\u0647 \u062D\u0645\u0644\u0647
+        \u0646\u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645. \u06AF\u0631\u0648\u0647
+        \u0631\u0648 \u0628\u0647 \u062F\u0648 \u0646\u0642\u0637\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0628\u0627\u0646\u06CC
+        \u0628\u0628\u0631\u060C \u0633\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0628\u0647
+        \u0633\u0645\u062A \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u062D\u0631\u06A9\u062A
+        \u0628\u062F\u0647 \u0648 \u0622\u0645\u0627\u062F\u0647 \u0628\u0627\u0634
+        \u0648\u0642\u062A\u06CC \u062C\u0627\u06CC \u06A9\u0645\u06CC\u0646 \u0631\u0648\u0634\u0646
+        \u0634\u062F \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0639\u0648\u0636 \u06A9\u0646\u06CC."
+    - key: narrative.false_front.comms.01
+      value: "\u0627\u0646\u0628\u0627\u0631 \u062E\u0627\u0644\u06CC\u0647. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0628\u0639\u062F \u0627\u0632
+        \u0627\u06CC\u0633\u062A\u06AF\u0627\u0647 \u062F\u0648\u0645\u060C \u062F\u0631\u0633\u062A
+        \u0631\u0648\u06CC \u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647
+        \u062F\u0627\u0631\u0646 \u0631\u0627\u0647\u200C\u0628\u0646\u062F \u0645\u06CC\u200C\u0633\u0627\u0632\u0646.
+        \u06A9\u0645\u06CC\u0646 \u0648\u0627\u0642\u0639\u06CC \u0627\u0648\u0646\u062C\u0627\u0633\u062A."
+    - key: narrative.false_front.comms.02
+      value: "\u0628\u0631\u062F\u0627\u0634\u062A \u0627\u0648\u0644 \u0645\u0646
+        \u0627\u0634\u062A\u0628\u0627\u0647 \u0628\u0648\u062F. \u0628\u0647 \u0645\u064F\u0647\u0631
+        \u06AF\u0632\u0627\u0631\u0634 \u0628\u06CC\u0634\u062A\u0631 \u0627\u0632
+        \u062C\u0627\u06CC \u062E\u0627\u0644\u06CC\u0650 \u0645\u0633\u06CC\u0631
+        \u0645\u0646\u0628\u0639\u0634 \u0648\u0632\u0646 \u062F\u0627\u062F\u0645.
+        \u0628\u0647 \u0633\u0645\u062A \u0631\u0627\u0647\u200C\u0628\u0646\u062F\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0628\u0631\u0648 \u0648
+        \u062E\u0648\u062F\u0631\u0648\u0647\u0627 \u0631\u0648 \u0627\u0632 \u062A\u06CC\u0631\u0631\u0633\u0634
+        \u062F\u0648\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: narrative.false_front.debrief.01
+      value: "\u0647\u0631 \u0633\u0647 \u062E\u0648\u062F\u0631\u0648 \u0628\u0647
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0631\u0633\u06CC\u062F\u0646.
+        \u06A9\u0645\u06CC\u0646\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0627\u0632 \u0628\u06CC\u0646 \u0631\u0641\u062A \u0648 \u0628\u0647 \u0627\u0646\u0628\u0627\u0631
+        \u062D\u0645\u0644\u0647 \u0646\u06A9\u0631\u062F\u06CC\u0645. \u0647\u0645\u06CC\u0646
+        \u0641\u0631\u0642 \u062C\u0648\u0646 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u200C\u0647\u0627
+        \u0631\u0648 \u0646\u062C\u0627\u062A \u062F\u0627\u062F."
+    - key: narrative.false_front.debrief.02
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u062C\u0639\u0644\u06CC \u0631\u0648
+        \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0645. \u0627\u0632 \u06CC\u06A9
+        \u06A9\u0627\u0646\u0627\u0644 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC\u0650
+        \u0644\u0648\u200C\u0631\u0641\u062A\u0647\u0654 \u062F\u0648\u0631\u0647\u0654
+        \u0631\u0644\u0647 \u0627\u0648\u0645\u062F\u0647 \u0648 \u0645\u064F\u0647\u0631\u0634
+        \u0628\u0627 \u0645\u064F\u0647\u0631 \u0645\u0646 \u0633\u0627\u0632\u06AF\u0627\u0631\u0647.
+        \u0628\u0627\u06CC\u062F \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u0645
+        \u06A9\u0647 \u0622\u06CC\u0627 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u06AF\u0645\u200C\u0634\u062F\u0647\u0654 \u0645\u0646 \u0633\u0627\u062E\u062A\u0647\u200C\u062A\u0634
+        \u06CC\u0627 \u0646\u0647."
     - key: narrative.first_launch.control.cancel_skip
       value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u062A\u0645\u0627\u0634\u0627"
     - key: narrative.first_launch.control.confirm_skip

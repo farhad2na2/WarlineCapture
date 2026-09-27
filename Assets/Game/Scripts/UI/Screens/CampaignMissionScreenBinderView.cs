@@ -134,7 +134,7 @@ namespace Game.UI.Runtime
         private void SelectM02() => SelectMission(campaignOperationsView.IsChapterThree
             ? Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep
             : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
-        private void SelectM03() => SelectMission(campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
+        private void SelectM03() => SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.FalseFront : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
         private void SelectM05() => SelectMission(campaignOperationsView.IsChapterTwo
             ? Game.Missions.Contracts.CampaignMissionSequence.RouteReopened
             : "saga.ch01.m05.breach_assault");

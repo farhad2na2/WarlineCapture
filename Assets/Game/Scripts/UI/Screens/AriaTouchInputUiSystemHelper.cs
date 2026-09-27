@@ -171,7 +171,16 @@ namespace Game.UI.Runtime
                 return;
             }
             if (!IsRunning || !down) return;
+#if UNITY_EDITOR
+            // A wrapper-owned Editor can run behind the Codex window. In this
+            // explicit validation mode, keys pressed in that other app are not
+            // player takeover input for the match being tested.
+            if (AllowBackgroundValidation && !Application.isFocused && device is Keyboard) return;
+#endif
             // Mouse movement alone is not intervention. A real button/contact is.
+#if UNITY_EDITOR
+            Debug.Log($"[AriaTouchInput] physicalTakeover device={device.name} type={device.GetType().Name} generated={device.name == "AriaDemonstrationTouch"}");
+#endif
             PhysicalInterventions++;
             Evidence?.Invoke(this, "PhysicalTakeover", ContactPosition);
             PlayerInterrupted = true;

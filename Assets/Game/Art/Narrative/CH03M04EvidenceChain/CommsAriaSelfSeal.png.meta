@@ -113,10 +113,10 @@ TextureImporter:
       name: CommsAriaSelfSeal-16x9
       rect:
         serializedVersion: 2
-        x: 226
+        x: 0
         y: 0
-        width: 1461
-        height: 822
+        width: 1671
+        height: 940
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,10 +135,10 @@ TextureImporter:
       name: CommsAriaSelfSeal-20x9
       rect:
         serializedVersion: 2
-        x: 44
-        y: 0
-        width: 1826
-        height: 822
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

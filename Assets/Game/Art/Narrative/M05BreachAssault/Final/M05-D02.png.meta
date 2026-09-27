@@ -113,10 +113,10 @@ TextureImporter:
       name: M05-D02-16x9
       rect:
         serializedVersion: 2
-        x: 197
+        x: 0
         y: 0
-        width: 1486
-        height: 836
+        width: 1671
+        height: 940
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,10 +135,10 @@ TextureImporter:
       name: M05-D02-20x9
       rect:
         serializedVersion: 2
-        x: 12
-        y: 0
-        width: 1857
-        height: 836
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

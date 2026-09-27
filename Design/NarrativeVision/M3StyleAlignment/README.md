@@ -4,6 +4,10 @@ Design-folder review images referenced here remain local and are excluded from G
 
 The preferred M3 art is the canonical direction. Earlier scenes now use its finer facial modelling, richer material detail and warm faceted lighting. Samira, Dalia and ARIA were matched to their M3 references.
 
+For all new or revised campaign comics, follow the color, geography and side-by-side review rules in `visual_direction.md` before installing generated art.
+
+The later campaign continuity pass, including the ARIA identity corrections and common panel size check, is recorded in `continuity_review_2026-09-27.md`. Run `check_comic_dimensions.py` when adding or replacing landscape panels.
+
 ## Installed scope
 
 - 22 FirstLaunch/M1 scenes, installed into both existing aspect asset paths (44 PNGs).
@@ -12,7 +16,7 @@ The preferred M3 art is the canonical direction. Earlier scenes now use its fine
 - Commander atlas: all six selectable portraits plus the faceless fallback, retaining the existing sprite rectangles.
 - Shared ARIA UI portrait with actual transparent alpha, plus the ARIA Field Trials event illustration. Existing references pick up the replacement in menu, narrative, HUD and other UI consumers.
 
-Total: 54 installed PNG replacements. The seven M3 source panels remain byte-identical. Asset GUIDs and sprite bindings are retained. Earlier story beats and cast roles remain intact. FirstLaunch wide assets use the same source image as the standard assets; the existing EnvelopeParent aspect fitter provides viewport cropping. FL-P11 and FL-P14 received targeted composition corrections to keep Dalia's face clear of the wide-screen transport overlay.
+Total: 54 installed PNG replacements. The seven M3 source panels remained byte-identical in that 2026-09-09 pass; later Sahrin geography corrections to M03-B02 and M03-D03 are documented in `visual_direction.md`. Asset GUIDs and sprite bindings are retained. Earlier story beats and cast roles remain intact. FirstLaunch wide assets use the same source image as the standard assets; the existing EnvelopeParent aspect fitter provides viewport cropping. FL-P11 and FL-P14 received targeted composition corrections to keep Dalia's face clear of the wide-screen transport overlay.
 
 ## Editor evidence
 

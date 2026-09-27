@@ -113,10 +113,10 @@ TextureImporter:
       name: BriefProtectedCustody-16x9
       rect:
         serializedVersion: 2
-        x: 187
+        x: 0
         y: 0
-        width: 1495
-        height: 841
+        width: 1671
+        height: 940
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -135,10 +135,10 @@ TextureImporter:
       name: BriefProtectedCustody-20x9
       rect:
         serializedVersion: 2
-        x: 1
-        y: 0
-        width: 1868
-        height: 841
+        x: 0
+        y: 94
+        width: 1671
+        height: 752
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}

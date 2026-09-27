@@ -171,6 +171,25 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep) ApplySafehouseSweep(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.FalseFront) ApplyFalseFront(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain) ApplyEvidenceChain(in model);
+            bool evidenceChain = model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;
+            if (evidenceChainRoutePanel != null) evidenceChainRoutePanel.gameObject.SetActive(evidenceChain);
+            if (enemyIntel != null) enemyIntel.gameObject.SetActive(!evidenceChain);
+            if (rewards != null) rewards.gameObject.SetActive(!evidenceChain);
+            if (evidenceChain)
+            {
+                Transform parent = enemyIntel != null ? enemyIntel.parent : transform;
+                Transform portrait = parent.Find("EnemyCommander");
+                Transform stars = parent.Find("StarGoals");
+                if (portrait != null) portrait.gameObject.SetActive(false);
+                if (stars != null) stars.gameObject.SetActive(false);
+            }
+            else if (enemyIntel != null)
+            {
+                Transform portrait = enemyIntel.parent.Find("EnemyCommander");
+                Transform stars = enemyIntel.parent.Find("StarGoals");
+                if (portrait != null) portrait.gameObject.SetActive(true);
+                if (stars != null) stars.gameObject.SetActive(true);
+            }
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.RouteReopened) ApplyRouteReopened(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.PowerRelay) ApplyPowerRelay(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline) ApplyMarketLifeline(in model);

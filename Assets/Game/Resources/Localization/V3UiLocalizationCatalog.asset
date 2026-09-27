@@ -236,16 +236,15 @@ MonoBehaviour:
       value: Ash Line can block the road after pickup. Protect the witness and archive;
         do not abandon the convoy to pursue retreating fighters.
     - key: mission.evidence_chain.forces
-      value: "8 rifles \xB7 one APC \xB7 one helicopter"
+      value: "8 rifles \xB7 APC \xB7 helicopter available"
     - key: mission.evidence_chain.guide.diagram
-      value: "WITNESS + ARCHIVE \u2192 APC \u2192 SAFE LANDING \u2192 HELICOPTER
-        \u2192 ANALYSIS"
+      value: "WITNESS + ARCHIVE \u2192 APC \u2192 AIR OR ARMORED ROUTE \u2192 ANALYSIS"
     - key: mission.evidence_chain.guide.example
       value: Select, Move, Board, Unload and Hold are the same player controls ARIA
         demonstrates.
     - key: mission.evidence_chain.guide.mistake
-      value: Do not move the carrier before both people board or launch the helicopter
-        before the landing zone is clear.
+      value: Do not move the APC before both people board. Keep the chosen extraction
+        point clear until custody is confirmed.
     - key: mission.evidence_chain.guide.title
       value: Evidence Chain field guide
     - key: mission.evidence_chain.hud.aboard
@@ -255,11 +254,11 @@ MonoBehaviour:
     - key: mission.evidence_chain.name
       value: Evidence Chain
     - key: mission.evidence_chain.objective.carrier
-      value: Protect the APC and helicopter
+      value: Protect archive + APC
     - key: mission.evidence_chain.objective.extract
-      value: Extract the witness and archive custodian
+      value: Extract witness + Dr. Lina
     - key: mission.evidence_chain.objective.landing
-      value: Secure the landing zone
+      value: Secure the exit point
     - key: mission.evidence_chain.resources
       value: "Two protected passengers \xB7 one sealed archive"
     - key: mission.evidence_chain.result.aircraft_lost
@@ -294,6 +293,20 @@ MonoBehaviour:
       value: EVIDENCE SECURED
     - key: mission.evidence_chain.reward.card
       value: "1,500 Commander XP \xB7 7,000 Credits"
+    - key: mission.evidence_chain.route.air.body
+      value: "HOLD THE HELIPAD\nFAST EXIT \xB7 EXPOSED SKY"
+    - key: mission.evidence_chain.route.air.title
+      value: AIR EXTRACTION
+    - key: mission.evidence_chain.route.armored.body
+      value: 'SECURE THE CHECKPOINT
+
+        GROUND AMBUSH RISK'
+    - key: mission.evidence_chain.route.armored.title
+      value: ARMORED ROUTE
+    - key: mission.evidence_chain.route.custody
+      value: "CUSTODY \xB7 WITNESS + SEALED ARCHIVE"
+    - key: mission.evidence_chain.route.title
+      value: "EXTRACTION ROUTE \xB7 SELECT ONE"
     - key: mission.evidence_chain.star.1
       value: Complete the mission
     - key: mission.evidence_chain.star.2
@@ -301,12 +314,12 @@ MonoBehaviour:
     - key: mission.evidence_chain.star.3
       value: Finish within 8 minutes
     - key: mission.evidence_chain.summary
-      value: Escort the archive custodian and Dr. Lina from the clinic. Board both
-        in the APC, protect the transfer through the ambush, then move them to Laila's
-        helicopter at a clear landing zone.
+      value: Escort the witness and Dr. Lina from the clinic with the sealed archive.
+        Choose Laila's helicopter or the guarded armored corridor, then deliver both
+        to analysis.
     - key: mission.evidence_chain.tutorial.1.body
-      value: The witness and Dr. Lina carry the sealed archive. Both must travel
-        APC first, helicopter second. Keep their escort alive and the case in authorized
+      value: The witness and Dr. Lina carry the sealed archive. Both must board the
+        APC; follow your selected air or armored route. Keep the case in authorized
         custody.
     - key: mission.evidence_chain.tutorial.1.title
       value: Protect both people
@@ -365,6 +378,21 @@ MonoBehaviour:
         Confirm two aboard.
     - key: mission.evidence_chain.tutorial.9.title
       value: Transfer both passengers
+    - key: mission.evidence_chain.tutorial.armored.10.body
+      value: Keep the loaded APC at the clear checkpoint for 16 seconds. An enemy
+        inside the zone resets the hold.
+    - key: mission.evidence_chain.tutorial.armored.10.title
+      value: Hold the checkpoint
+    - key: mission.evidence_chain.tutorial.armored.11.body
+      value: Keep the witness and sealed archive aboard until the guarded transfer
+        is confirmed.
+    - key: mission.evidence_chain.tutorial.armored.11.title
+      value: Confirm armored custody
+    - key: mission.evidence_chain.tutorial.armored.6.body
+      value: Keep both protected people aboard the APC. Drive to the guarded custody
+        checkpoint and cover the road approach.
+    - key: mission.evidence_chain.tutorial.armored.6.title
+      value: Reach the guarded checkpoint
     - key: mission.evidence_chain.tutorial.selection_progress
       value: 'Protected people selected: {0}/2'
     - key: mission.false_front.deadline
@@ -7121,13 +7149,12 @@ MonoBehaviour:
         \u0639\u0642\u0628\u200C\u0646\u0634\u0633\u062A\u0647 \u06A9\u0627\u0631\u0648\u0627\u0646
         \u0631\u0648 \u0631\u0647\u0627 \u0646\u06A9\u0646."
     - key: mission.evidence_chain.forces
-      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u06CC\u06A9
-        \u0646\u0641\u0631\u0628\u0631 \xB7 \u06CC\u06A9 \u0628\u0627\u0644\u06AF\u0631\u062F"
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
+        \xB7 \u0628\u0627\u0644\u06AF\u0631\u062F \u0622\u0645\u0627\u062F\u0647"
     - key: mission.evidence_chain.guide.diagram
       value: "\u0634\u0627\u0647\u062F + \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
-        \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0641\u0631\u0648\u062F \u0627\u0645\u0646
-        \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190 \u0645\u0631\u06A9\u0632
-        \u0628\u0631\u0631\u0633\u06CC"
+        \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC
+        \u06CC\u0627 \u0632\u0631\u0647\u06CC \u2190 \u0645\u0631\u06A9\u0632 \u0628\u0631\u0631\u0633\u06CC"
     - key: mission.evidence_chain.guide.example
       value: "\u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062D\u0631\u06A9\u062A\u060C
         \u0633\u0648\u0627\u0631 \u06A9\u0631\u062F\u0646\u060C \u067E\u06CC\u0627\u062F\u0647
@@ -7137,10 +7164,10 @@ MonoBehaviour:
     - key: mission.evidence_chain.guide.mistake
       value: "\u067E\u06CC\u0634 \u0627\u0632 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646
         \u0647\u0631 \u062F\u0648 \u0646\u0641\u0631 \u0646\u0641\u0631\u0628\u0631
-        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0646\u062F\u0647 \u0648 \u067E\u06CC\u0634
-        \u0627\u0632 \u0627\u0645\u0646 \u0634\u062F\u0646 \u0645\u0646\u0637\u0642\u0647\u0654
-        \u0641\u0631\u0648\u062F \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648
-        \u0628\u0644\u0646\u062F \u0646\u06A9\u0646."
+        \u0631\u0648 \u062D\u0631\u06A9\u062A \u0646\u062F\u0647. \u0645\u062D\u0644
+        \u062A\u062E\u0644\u06CC\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062A\u0627 \u062A\u0623\u06CC\u06CC\u062F \u062D\u0641\u0627\u0638\u062A
+        \u0627\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631."
     - key: mission.evidence_chain.guide.title
       value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
         \u0634\u0648\u0627\u0647\u062F"
@@ -7154,15 +7181,14 @@ MonoBehaviour:
     - key: mission.evidence_chain.name
       value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0634\u0648\u0627\u0647\u062F"
     - key: mission.evidence_chain.objective.carrier
-      value: "\u0627\u0632 \u0646\u0641\u0631\u0628\u0631 \u0648 \u0628\u0627\u0644\u06AF\u0631\u062F
+      value: "\u0627\u0632 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0648 \u0646\u0641\u0631\u0628\u0631
         \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
     - key: mission.evidence_chain.objective.extract
-      value: "\u0634\u0627\u0647\u062F \u0648 \u0646\u06AF\u0647\u0628\u0627\u0646
-        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648 \u062E\u0627\u0631\u062C
-        \u06A9\u0646"
+      value: "\u0634\u0627\u0647\u062F \u0648 \u062F\u06A9\u062A\u0631 \u0644\u06CC\u0646\u0627
+        \u0631\u0648 \u062E\u0627\u0631\u062C \u06A9\u0646"
     - key: mission.evidence_chain.objective.landing
-      value: "\u0645\u0646\u0637\u0642\u0647\u0654 \u0641\u0631\u0648\u062F \u0631\u0648
-        \u0627\u0645\u0646 \u06A9\u0646"
+      value: "\u0645\u062D\u0644 \u062E\u0631\u0648\u062C \u0631\u0648 \u0627\u0645\u0646
+        \u06A9\u0646"
     - key: mission.evidence_chain.resources
       value: "\u062F\u0648 \u0645\u0633\u0627\u0641\u0631 \u062A\u062D\u062A \u062D\u0641\u0627\u0638\u062A
         \xB7 \u06CC\u06A9 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u064F\u0647\u0631\u0634\u062F\u0647"
@@ -7218,6 +7244,25 @@ MonoBehaviour:
     - key: mission.evidence_chain.reward.card
       value: "\u06F1\u06F5\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
         \xB7 \u06F7\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.evidence_chain.route.air.body
+      value: "\u0627\u0632 \u0628\u0627\u0644\u06AF\u0631\u062F\u06AF\u0627\u0647
+        \u062F\u0641\u0627\u0639 \u06A9\u0646\n\u062E\u0631\u0648\u062C \u0633\u0631\u06CC\u0639
+        \xB7 \u0622\u0633\u0645\u0627\u0646\u0650 \u062F\u0631 \u0645\u0639\u0631\u0636
+        \u062E\u0637\u0631"
+    - key: mission.evidence_chain.route.air.title
+      value: "\u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.evidence_chain.route.armored.body
+      value: "\u0627\u06CC\u0633\u062A \u0628\u0627\u0632\u0631\u0633\u06CC \u0631\u0648
+        \u0627\u0645\u0646 \u06A9\u0646\n\u062E\u0637\u0631 \u06A9\u0645\u06CC\u0646
+        \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.evidence_chain.route.armored.title
+      value: "\u0645\u0633\u06CC\u0631 \u0632\u0631\u0647\u06CC"
+    - key: mission.evidence_chain.route.custody
+      value: "\u062D\u0641\u0627\u0638\u062A \xB7 \u0634\u0627\u0647\u062F + \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0645\u064F\u0647\u0631\u0634\u062F\u0647"
+    - key: mission.evidence_chain.route.title
+      value: "\u0645\u0633\u06CC\u0631 \u062A\u062E\u0644\u06CC\u0647 \xB7 \u06CC\u06A9\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
     - key: mission.evidence_chain.star.1
       value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
         \u06A9\u0646"
@@ -7228,24 +7273,23 @@ MonoBehaviour:
       value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F8 \u062F\u0642\u06CC\u0642\u0647
         \u062A\u0645\u0627\u0645 \u06A9\u0646"
     - key: mission.evidence_chain.summary
-      value: "\u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
-        \u0648 \u062F\u06A9\u062A\u0631 \u0644\u06CC\u0646\u0627 \u0631\u0648 \u0627\u0632
-        \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u062E\u0627\u0631\u062C
-        \u06A9\u0646. \u0647\u0631 \u062F\u0648 \u0631\u0648 \u0633\u0648\u0627\u0631
-        \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646\u060C \u0627\u0632 \u0627\u0646\u062A\u0642\u0627\u0644\u0634\u0648\u0646
-        \u062F\u0631 \u0628\u0631\u0627\u0628\u0631 \u06A9\u0645\u06CC\u0646 \u0645\u062D\u0627\u0641\u0638\u062A
-        \u06A9\u0646 \u0648 \u0628\u0639\u062F \u062F\u0631 \u0645\u0646\u0637\u0642\u0647\u0654
-        \u0641\u0631\u0648\u062F\u0650 \u0627\u0645\u0646 \u0628\u0647 \u0628\u0627\u0644\u06AF\u0631\u062F
-        \u0644\u06CC\u0644\u0627 \u0628\u0631\u0633\u0648\u0646."
+      value: "\u0634\u0627\u0647\u062F \u0648 \u062F\u06A9\u062A\u0631 \u0644\u06CC\u0646\u0627
+        \u0631\u0648 \u0628\u0627 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u064F\u0647\u0631\u0634\u062F\u0647
+        \u0627\u0632 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u062E\u0627\u0631\u062C
+        \u06A9\u0646. \u0628\u0627\u0644\u06AF\u0631\u062F \u0644\u06CC\u0644\u0627
+        \u06CC\u0627 \u0645\u0633\u06CC\u0631 \u0632\u0631\u0647\u06CC\u0650 \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0647\u0631
+        \u062F\u0648 \u0631\u0648 \u0628\u0647 \u0645\u0631\u06A9\u0632 \u0628\u0631\u0631\u0633\u06CC
+        \u0628\u0631\u0633\u0648\u0646."
     - key: mission.evidence_chain.tutorial.1.body
       value: "\u0634\u0627\u0647\u062F \u0648 \u062F\u06A9\u062A\u0631 \u0644\u06CC\u0646\u0627
         \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u064F\u0647\u0631\u0634\u062F\u0647
         \u0631\u0648 \u0647\u0645\u0631\u0627\u0647 \u062F\u0627\u0631\u0646. \u0647\u0631
-        \u062F\u0648 \u0628\u0627\u06CC\u062F \u0627\u0648\u0644 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631
-        \u0648 \u0628\u0639\u062F \u0628\u0627 \u0628\u0627\u0644\u06AF\u0631\u062F
-        \u0628\u0631\u0646. \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0647\u0645\u0631\u0627\u0647
-        \u0648 \u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u062D\u0641\u0627\u0638\u062A
-        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+        \u062F\u0648 \u0628\u0627\u06CC\u062F \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631
+        \u0628\u0634\u0646\u061B \u0628\u0639\u062F \u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC
+        \u06CC\u0627 \u0632\u0631\u0647\u06CC\u0650 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646. \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u062D\u0641\u0627\u0638\u062A \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
     - key: mission.evidence_chain.tutorial.1.title
       value: "\u0627\u0632 \u0647\u0631 \u062F\u0648 \u0646\u0641\u0631 \u0645\u062D\u0627\u0641\u0638\u062A
         \u06A9\u0646"
@@ -7346,6 +7390,32 @@ MonoBehaviour:
     - key: mission.evidence_chain.tutorial.9.title
       value: "\u0647\u0631 \u062F\u0648 \u0646\u0641\u0631 \u0631\u0648 \u0645\u0646\u062A\u0642\u0644
         \u06A9\u0646"
+    - key: mission.evidence_chain.tutorial.armored.10.body
+      value: "\u0646\u0641\u0631\u0628\u0631\u0650 \u067E\u0631 \u0631\u0648 \u06F1\u06F6
+        \u062B\u0627\u0646\u06CC\u0647 \u062A\u0648\u06CC \u0627\u06CC\u0633\u062A
+        \u0628\u0627\u0632\u0631\u0633\u06CC\u0650 \u0627\u0645\u0646 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u0648\u0631\u0648\u062F \u062F\u0634\u0645\u0646 \u0634\u0645\u0627\u0631\u0634
+        \u0631\u0648 \u0627\u0632 \u0646\u0648 \u0634\u0631\u0648\u0639 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.evidence_chain.tutorial.armored.10.title
+      value: "\u0627\u06CC\u0633\u062A \u0628\u0627\u0632\u0631\u0633\u06CC \u0631\u0648
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.evidence_chain.tutorial.armored.11.body
+      value: "\u0634\u0627\u0647\u062F \u0648 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0645\u064F\u0647\u0631\u0634\u062F\u0647 \u0631\u0648 \u062A\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u0627\u0646\u062A\u0642\u0627\u0644\u0650 \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0633\u0648\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.evidence_chain.tutorial.armored.11.title
+      value: "\u062D\u0641\u0627\u0638\u062A \u0632\u0631\u0647\u06CC \u0631\u0648
+        \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646"
+    - key: mission.evidence_chain.tutorial.armored.6.body
+      value: "\u0647\u0631 \u062F\u0648 \u0646\u0641\u0631 \u0631\u0648 \u062A\u0648\u06CC
+        \u0646\u0641\u0631\u0628\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0628\u0647
+        \u0627\u06CC\u0633\u062A \u0628\u0627\u0632\u0631\u0633\u06CC\u0650 \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0648 \u0648 \u0645\u0633\u06CC\u0631 \u062C\u0627\u062F\u0647
+        \u0631\u0648 \u067E\u0648\u0634\u0634 \u0628\u062F\u0647."
+    - key: mission.evidence_chain.tutorial.armored.6.title
+      value: "\u0628\u0647 \u0627\u06CC\u0633\u062A \u0628\u0627\u0632\u0631\u0633\u06CC\u0650
+        \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647 \u0628\u0631\u0633"
     - key: mission.evidence_chain.tutorial.selection_progress
       value: "\u0627\u0641\u0631\u0627\u062F \u062A\u062D\u062A \u062D\u0641\u0627\u0638\u062A\u0650
         \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647: {0}/\u06F2"

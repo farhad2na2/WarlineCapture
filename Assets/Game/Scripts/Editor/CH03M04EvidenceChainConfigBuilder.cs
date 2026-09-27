@@ -41,6 +41,19 @@ namespace Game.Editor
             var data = new SerializedObject(map);
             ReplaceStrings(data, "ch01.m04", "ch03.m04");
             Set(data, "operationMapId", MapId);
+            // The source airlift mission lands in the road. Evidence Chain uses the
+            // existing off-road helipad beside that road instead.
+            var anchors = data.FindProperty("anchors");
+            for (int i = 0; i < anchors.arraySize; i++)
+            {
+                var anchor = anchors.GetArrayElementAtIndex(i);
+                string id = anchor.FindPropertyRelative("anchorId").stringValue;
+                if (id == "anchor.ch03.m04.landing" || id == "anchor.ch03.m04.aircraft")
+                    anchor.FindPropertyRelative("position").vector3Value =
+                        new Vector3(1006.93f, 0.121525705f, 393.26f);
+                if (id == "anchor.ch03.m04.aircraft")
+                    anchor.FindPropertyRelative("radius").floatValue = 0f;
+            }
             data.FindProperty("additionalBuildingPlacements").objectReferenceValue =
                 Load<MapBuildingPlacementConfig>(CH03M04EvidenceChainWorldBuilder.PlacementsPath);
             Set(data, "planningCameraId", "camera.ch03.m04.planning");

@@ -74,6 +74,7 @@ namespace Game.Editor
                 out RectTransform[] rewardRows,
                 out TMP_Text[] rewardLabels,
                 out TMP_Text[] rewardValues);
+            BuildEvidenceChainRoutes(composition, screen);
             BuildFooter(
                 composition,
                 out UIShellRouteButtonView backRoute,
@@ -201,6 +202,22 @@ namespace Game.Editor
             if (gradients < 12)
                 throw new InvalidOperationException($"Mission Briefing V3 requires procedural gradients; found {gradients}.");
             Debug.Log($"[MissionBriefingV3PrefabBuilder] validation=Passed gradients={gradients} images={prefab.GetComponentsInChildren<Image>(true).Length}");
+        }
+
+        public static void EnsureEvidenceChainRoutes()
+        {
+            V3UiFoundationBuilder.EnsureBuilt();
+            LoadAssets();
+            GameObject root = PrefabUtility.LoadPrefabContents(PrefabPath);
+            try
+            {
+                MissionBriefingScreenView screen = root.GetComponentInChildren<MissionBriefingScreenView>(true)
+                    ?? throw new MissingReferenceException("Mission briefing screen missing.");
+                if (screen.transform.Find("EvidenceChainRoutes") != null) return;
+                BuildEvidenceChainRoutes(screen.GetComponent<RectTransform>(), screen);
+                PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
         }
 
         private static void LoadAssets()
@@ -415,6 +432,65 @@ namespace Game.Editor
                 SetTopLeft(valueText.rectTransform, width - 72f, 0f, 72f, height);
             }
             return text;
+        }
+
+        private static void BuildEvidenceChainRoutes(RectTransform root, MissionBriefingScreenView screen)
+        {
+            RectTransform panel = CreateTopLeft("EvidenceChainRoutes", root, 935f, 391f, 717f, 390f);
+            CreateGradientPanel(panel, DarkTop, DarkBottom, theme.Blue, 3f);
+            TMP_Text title = CreateText("RouteTitle", panel, "EXTRACTION ROUTE · SELECT ONE", 25f,
+                boldFont, TextAlignmentOptions.MidlineLeft, theme.Blue);
+            SetTopLeft(title.rectTransform, 18f, 8f, 680f, 43f);
+            CreateSolidTopLeft("HeaderRule", panel, 17f, 51f, 683f, 2f, Border);
+
+            Button air = CreateGradientButton("AirRoute", panel, 17f, 63f, 335f, 222f,
+                new Color32(8, 60, 83, 255), DarkBottom, theme.Blue, 3f);
+            Button armored = CreateGradientButton("ArmoredRoute", panel, 365f, 63f, 335f, 222f,
+                DarkTop, DarkBottom, theme.Amber, 3f);
+            Image airIcon = CreateImage("Icon", air.transform,
+                RequireSprite(V3UiFoundationBuilder.MissionAirIconPath), theme.Blue, false);
+            SetTopLeft(airIcon.rectTransform, 18f, 15f, 62f, 62f);
+            Image armorIcon = CreateImage("Icon", armored.transform,
+                RequireSprite(V3UiFoundationBuilder.MissionVehicleIconPath), theme.Amber, false);
+            SetTopLeft(armorIcon.rectTransform, 18f, 15f, 62f, 62f);
+            TMP_Text airTitle = CreateText("Title", air.transform, "AIR EXTRACTION", 27f,
+                boldFont, TextAlignmentOptions.MidlineLeft, theme.Blue);
+            SetTopLeft(airTitle.rectTransform, 89f, 15f, 232f, 62f);
+            TMP_Text armorTitle = CreateText("Title", armored.transform, "ARMORED CORRIDOR", 25f,
+                boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(armorTitle.rectTransform, 89f, 15f, 232f, 62f);
+            TMP_Text airBody = CreateText("Body", air.transform,
+                "HOLD THE HELIPAD\nFAST EXIT · EXPOSED SKY", 20f,
+                mediumFont, TextAlignmentOptions.TopLeft, theme.TextPrimary);
+            SetTopLeft(airBody.rectTransform, 20f, 91f, 295f, 112f);
+            airBody.textWrappingMode = TextWrappingModes.Normal;
+            TMP_Text armorBody = CreateText("Body", armored.transform,
+                "SECURE THE CHECKPOINT\nGROUND AMBUSH RISK", 20f,
+                mediumFont, TextAlignmentOptions.TopLeft, theme.TextPrimary);
+            SetTopLeft(armorBody.rectTransform, 20f, 91f, 295f, 112f);
+            armorBody.textWrappingMode = TextWrappingModes.Normal;
+
+            RectTransform custody = CreateTopLeft("Custody", panel, 17f, 298f, 683f, 74f);
+            CreateGradientPanel(custody, new Color32(7, 37, 51, 255), DarkBottom, Olive, 2f);
+            Image caseIcon = CreateImage("Icon", custody,
+                RequireSprite(V3UiFoundationBuilder.MissionIntelIconPath), Olive, false);
+            SetTopLeft(caseIcon.rectTransform, 13f, 13f, 44f, 44f);
+            TMP_Text custodyText = CreateText("Label", custody, "CUSTODY · WITNESS + SEALED ARCHIVE", 23f,
+                boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
+            SetTopLeft(custodyText.rectTransform, 69f, 11f, 602f, 50f);
+
+            var binding = new SerializedObject(screen);
+            SetReference(binding, "evidenceChainRoutePanel", panel);
+            SetReference(binding, "evidenceChainAirRouteButton", air);
+            SetReference(binding, "evidenceChainArmoredRouteButton", armored);
+            SetReference(binding, "evidenceChainRouteTitle", title);
+            SetReference(binding, "evidenceChainAirTitle", airTitle);
+            SetReference(binding, "evidenceChainAirBody", airBody);
+            SetReference(binding, "evidenceChainArmoredTitle", armorTitle);
+            SetReference(binding, "evidenceChainArmoredBody", armorBody);
+            SetReference(binding, "evidenceChainCustody", custodyText);
+            binding.ApplyModifiedPropertiesWithoutUndo();
+            panel.gameObject.SetActive(false);
         }
 
         private static void BuildPanelTitle(RectTransform panel, Sprite iconSprite, string title, Color color)

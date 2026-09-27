@@ -16,6 +16,7 @@ namespace Game.Editor
         public static void Build()
         {
             CH03M04EvidenceChainMediaImporter.ConfigureArt();
+            MissionBriefingV3PrefabBuilder.EnsureEvidenceChainRoutes();
             SeedLocalization(); BuildGuide(); BindArt(); AssetDatabase.SaveAssets();
             Debug.Log("[EvidenceChainPresentation] result=Passed locales=en,fa-IR preview=clean comicPanels=7 controls=existing-only");
         }
@@ -25,17 +26,23 @@ namespace Game.Editor
             var copy = new (string key, string en, string fa)[]
             {
                 ("name", "Evidence Chain", "زنجیرهٔ شواهد"),
-                ("summary", "Escort the archive custodian and Dr. Lina from the clinic. Board both in the APC, protect the transfer through the ambush, then move them to Laila's helicopter at a clear landing zone.", "نگهبان بایگانی و دکتر لینا رو از درمانگاه خارج کن. هر دو رو سوار نفربر کن، از انتقالشون در برابر کمین محافظت کن و بعد در منطقهٔ فرودِ امن به بالگرد لیلا برسون."),
+                ("summary", "Escort the witness and Dr. Lina from the clinic with the sealed archive. Choose Laila's helicopter or the guarded armored corridor, then deliver both to analysis.", "شاهد و دکتر لینا رو با بایگانی مُهرشده از درمانگاه خارج کن. بالگرد لیلا یا مسیر زرهیِ حفاظت‌شده رو انتخاب کن و هر دو رو به مرکز بررسی برسون."),
                 ("location", "East clinic road · secure analysis route", "جادهٔ درمانگاه شرقی · مسیر مرکز بررسی"),
                 ("enemy_intel", "Ash Line can block the road after pickup. Protect the witness and archive; do not abandon the convoy to pursue retreating fighters.", "خط خاکستر ممکنه بعد از سوار کردن شاهد راه رو ببنده. از شاهد و بایگانی محافظت کن؛ برای تعقیب مهاجم‌های عقب‌نشسته کاروان رو رها نکن."),
-                ("objective.extract", "Extract the witness and archive custodian", "شاهد و نگهبان بایگانی رو خارج کن"),
-                ("objective.carrier", "Protect the APC and helicopter", "از نفربر و بالگرد محافظت کن"),
-                ("objective.landing", "Secure the landing zone", "منطقهٔ فرود رو امن کن"),
+                ("objective.extract", "Extract witness + Dr. Lina", "شاهد و دکتر لینا رو خارج کن"),
+                ("objective.carrier", "Protect archive + APC", "از بایگانی و نفربر محافظت کن"),
+                ("objective.landing", "Secure the exit point", "محل خروج رو امن کن"),
                 ("star.1", "Complete the mission", "مأموریت رو کامل کن"),
                 ("star.2", "No escort losses", "هیچ نیروی همراهی رو از دست نده"),
                 ("star.3", "Finish within 8 minutes", "در کمتر از ۸ دقیقه تمام کن"),
                 ("resources", "Two protected passengers · one sealed archive", "دو مسافر تحت حفاظت · یک بایگانی مُهرشده"),
-                ("forces", "8 rifles · one APC · one helicopter", "۸ تفنگدار · یک نفربر · یک بالگرد"),
+                ("forces", "8 rifles · APC · helicopter available", "۸ تفنگدار · نفربر · بالگرد آماده"),
+                ("route.title", "EXTRACTION ROUTE · SELECT ONE", "مسیر تخلیه · یکی رو انتخاب کن"),
+                ("route.air.title", "AIR EXTRACTION", "تخلیهٔ هوایی"),
+                ("route.air.body", "HOLD THE HELIPAD\nFAST EXIT · EXPOSED SKY", "از بالگردگاه دفاع کن\nخروج سریع · آسمانِ در معرض خطر"),
+                ("route.armored.title", "ARMORED ROUTE", "مسیر زرهی"),
+                ("route.armored.body", "SECURE THE CHECKPOINT\nGROUND AMBUSH RISK", "ایست بازرسی رو امن کن\nخطر کمین زمینی"),
+                ("route.custody", "CUSTODY · WITNESS + SEALED ARCHIVE", "حفاظت · شاهد + بایگانی مُهرشده"),
                 ("deadline", "11 active minutes", "۱۱ دقیقه زمان فعال"),
                 ("reward.card", "1,500 Commander XP · 7,000 Credits", "۱۵۰۰ تجربهٔ فرمانده · ۷۰۰۰ اعتبار"),
                 ("result.victory", "EVIDENCE SECURED", "شواهد حفظ شد"),
@@ -55,8 +62,14 @@ namespace Game.Editor
                 ("tutorial.selection_progress", "Protected people selected: {0}/2", "افراد تحت حفاظتِ انتخاب‌شده: {0}/۲"),
                 ("guide.title", "Evidence Chain field guide", "راهنمای زنجیرهٔ شواهد"),
                 ("guide.example", "Select, Move, Board, Unload and Hold are the same player controls ARIA demonstrates.", "انتخاب، حرکت، سوار کردن، پیاده کردن و نگه داشتن همون فرمان‌هایی‌ان که آریا نشون می‌ده."),
-                ("guide.mistake", "Do not move the carrier before both people board or launch the helicopter before the landing zone is clear.", "پیش از سوار شدن هر دو نفر نفربر رو حرکت نده و پیش از امن شدن منطقهٔ فرود بالگرد رو بلند نکن."),
-                ("guide.diagram", "WITNESS + ARCHIVE → APC → SAFE LANDING → HELICOPTER → ANALYSIS", "شاهد + بایگانی ← نفربر ← فرود امن ← بالگرد ← مرکز بررسی")
+                ("guide.mistake", "Do not move the APC before both people board. Keep the chosen extraction point clear until custody is confirmed.", "پیش از سوار شدن هر دو نفر نفربر رو حرکت نده. محل تخلیهٔ انتخاب‌شده رو تا تأیید حفاظت امن نگه دار."),
+                ("guide.diagram", "WITNESS + ARCHIVE → APC → AIR OR ARMORED ROUTE → ANALYSIS", "شاهد + بایگانی ← نفربر ← مسیر هوایی یا زرهی ← مرکز بررسی"),
+                ("tutorial.armored.6.title", "Reach the guarded checkpoint", "به ایست بازرسیِ حفاظت‌شده برس"),
+                ("tutorial.armored.6.body", "Keep both protected people aboard the APC. Drive to the guarded custody checkpoint and cover the road approach.", "هر دو نفر رو توی نفربر نگه دار. به ایست بازرسیِ حفاظت‌شده برو و مسیر جاده رو پوشش بده."),
+                ("tutorial.armored.10.title", "Hold the checkpoint", "ایست بازرسی رو نگه دار"),
+                ("tutorial.armored.10.body", "Keep the loaded APC at the clear checkpoint for 16 seconds. An enemy inside the zone resets the hold.", "نفربرِ پر رو ۱۶ ثانیه توی ایست بازرسیِ امن نگه دار. ورود دشمن شمارش رو از نو شروع می‌کنه."),
+                ("tutorial.armored.11.title", "Confirm armored custody", "حفاظت زرهی رو تأیید کن"),
+                ("tutorial.armored.11.body", "Keep the witness and sealed archive aboard until the guarded transfer is confirmed.", "شاهد و بایگانی مُهرشده رو تا تأیید انتقالِ حفاظت‌شده سوار نگه دار.")
             };
             string[] titles =
             {
@@ -66,7 +79,7 @@ namespace Game.Editor
             };
             string[] bodies =
             {
-                "The witness and Dr. Lina carry the sealed archive. Both must travel APC first, helicopter second. Keep their escort alive and the case in authorized custody.",
+                "The witness and Dr. Lina carry the sealed archive. Both must board the APC; follow your selected air or armored route. Keep the case in authorized custody.",
                 "Select the APC beside your rifle escort. Keep two seats free for the protected passengers.",
                 "Press Move, then tap beside the clinic pickup point. Send rifles forward to cover the approach.",
                 "Select the witness and Dr. Lina together; do not include the armed escort in this selection.",
@@ -87,7 +100,7 @@ namespace Game.Editor
             };
             string[] faBodies =
             {
-                "شاهد و دکتر لینا بایگانی مُهرشده رو همراه دارن. هر دو باید اول با نفربر و بعد با بالگرد برن. نیروهای همراه و زنجیرهٔ حفاظت رو حفظ کن.",
+                "شاهد و دکتر لینا بایگانی مُهرشده رو همراه دارن. هر دو باید سوار نفربر بشن؛ بعد مسیر هوایی یا زرهیِ انتخاب‌شده رو دنبال کن. زنجیرهٔ حفاظت رو حفظ کن.",
                 "نفربر کنار گروه تفنگدار رو انتخاب کن. دو جای خالی برای افراد تحت حفاظت نگه دار.",
                 "حرکت رو بزن و کنار نقطهٔ سوار شدن درمانگاه رو لمس کن. تفنگدارها رو برای پوشش جلو بفرست.",
                 "شاهد و دکتر لینا رو با هم انتخاب کن؛ نیروهای مسلحِ همراه رو وارد انتخاب نکن.",

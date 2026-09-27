@@ -107,7 +107,8 @@ namespace Game.UI.Shell.Ecs
         {
             target=default;
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
-            Entity actor=step is 8 or 9 or 10 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
+            bool armored = extraction.ArmoredRoute != 0;
+            Entity actor=!armored && step is 8 or 9 or 10 or 11 or 12 ? extraction.Aircraft : extraction.Carrier;
             float3 team=default,missing=default; int count=0,selected=0; bool moving=false;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
             foreach(var member in members)
@@ -123,14 +124,16 @@ namespace Game.UI.Shell.Ecs
             team/=count;
             bool teamStep=step is 4 or 5 or 9;
             if(!TryGetLiveExtractionPosition(em,actor,out var actorPosition)) return false;
-            float3 destination=step is 6 or 7 or 10 ? extraction.LandingCenter : step>=11 ? extraction.DepartureCenter : team;
+            float3 destination=step is 6 or 7 ? armored ? extraction.LandingCenter : extraction.HandoffCenter
+                : step==10 || armored && step>=11 ? extraction.LandingCenter
+                : step>=11 ? extraction.DepartureCenter : team;
             if(step==3) destination=team+new float3(12,0,0); // Stop beside the pickup group, not on top of it.
             if(step==5) destination=actorPosition;
             if(step==9 && !TryGetLiveExtractionPosition(em,extraction.Aircraft,out destination)) return false;
             target=new UiMissionTutorialTarget(teamStep ? (selected>0 && selected<count ? missing : team) : actorPosition,destination,
                 teamStep ? selected!=count : !em.HasComponent<SelectedUnitTag>(actor),
                 teamStep ? moving : IsTutorialActorMoving(em,actor),teamStep?count:1,
-                selectionLabelKey:teamStep?"ui.aria.select_specialists":step>=8?"ui.aria.select_helicopter":"ui.aria.select_carrier");
+                selectionLabelKey:teamStep?"ui.aria.select_specialists":step>=8 && !armored?"ui.aria.select_helicopter":"ui.aria.select_carrier");
             return true;
         }
 

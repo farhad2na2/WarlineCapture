@@ -105,16 +105,16 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch03.m04.landing
     kind: 3
-    position: {x: 1060, y: 0.44917977, z: 428}
+    position: {x: 1006.93, y: 0.121525705, z: 393.26}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 14
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch03.m04.aircraft
     kind: 3
-    position: {x: 1060, y: 0.44917977, z: 428}
+    position: {x: 1006.93, y: 0.121525705, z: 393.26}
     eulerAngles: {x: 0, y: 0, z: 0}
-    radius: 8
+    radius: 0
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch03.m04.departure

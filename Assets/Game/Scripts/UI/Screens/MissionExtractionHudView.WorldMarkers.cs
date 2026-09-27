@@ -19,6 +19,11 @@ namespace Game.UI.Runtime
             if(markerRoot==null) CreateWorldMarkers();
             markerRotation=model.MarkerRotation;
             markerRoot.SetActive(true);
+            // Evidence Chain's physical helipad/checkpoint is already legible in the
+            // world. The old floating "LANDING AREA" caption obscured the aircraft.
+            bool evidenceChain = UiShellRuntimeGateway.IsEvidenceChainGuideContext();
+            landingLabel.gameObject.SetActive(!evidenceChain);
+            departureLabel.gameObject.SetActive(!evidenceChain);
             var landingColor=model.Contested ? new Color32(255,79,28,255) : model.Cleared ? new Color32(94,224,79,255) : new Color32(255,196,36,255);
             DrawZone(landingRing,landingLabel,model.LandingCenter,model.LandingRadius,landingColor,
                 UiShellRuntimeGateway.Localization.Get(model.Contested ? "mission.m04.hud.contested" : model.Cleared ? "mission.m04.hud.cleared" : "mission.m04.focus.landing"));

@@ -1,8 +1,10 @@
 using Game.Components;
 using Game.Missions.Contracts;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 namespace Game.Runtime
 {
@@ -46,10 +48,13 @@ namespace Game.Runtime
                     em.HasComponent<CampaignMissionExtractionState>(root) && SystemAPI.TryGetSingleton(out OperationMapMetadataComponent map) && map.Blob.IsCreated && SystemAPI.TryGetSingletonEntity<UnitMoveOrderQueueComponent>(out var moveQueue))
                 {
                     var rescue=em.GetComponentData<CampaignMissionExtractionState>(root);
-                    float3 direction=math.normalizesafe(rescue.DepartureCenter-rescue.LandingCenter,new float3(1,0,0));
-                    float3 exit=rescue.DepartureCenter+direction*180f;
-                    UnitMoveOrderRequestSystem.EnqueueExisting(em,moveQueue,rescue.Aircraft,
-                        CampaignMissionSpawnSystem.ToGridCell(exit,map.Blob.Value.Grid),UnitMoveOrderRequestKind.GroupedManual,true,false,0,0);
+                    if (rescue.ArmoredRoute == 0)
+                    {
+                        float3 direction=math.normalizesafe(rescue.DepartureCenter-rescue.LandingCenter,new float3(1,0,0));
+                        float3 exit=rescue.DepartureCenter+direction*180f;
+                        UnitMoveOrderRequestSystem.EnqueueExisting(em,moveQueue,rescue.Aircraft,
+                            CampaignMissionSpawnSystem.ToGridCell(exit,map.Blob.Value.Grid),UnitMoveOrderRequestKind.GroupedManual,true,false,0,0);
+                    }
                 }
                 em.SetComponentData(root, next);
             }
@@ -60,6 +65,18 @@ namespace Game.Runtime
             ref CampaignMissionExtractionDefinitionBlob definition, in CampaignMissionRuntimeComponent runtime,
             ref CampaignMissionAttemptFactsComponent facts, float deltaTime)
         {
+            if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.EvidenceChain)) &&
+                state.ParkedTransportCleared == 0 &&
+                facts.ElapsedMilliseconds >= state.NextParkedTransportScanMilliseconds)
+            {
+                state.NextParkedTransportScanMilliseconds = facts.ElapsedMilliseconds + 1000;
+                int cleared = ClearEvidenceChainParkedTransport(em, state.Aircraft);
+                if (cleared > 0)
+                {
+                    state.ParkedTransportCleared = 1;
+                    Debug.Log($"[EvidenceChainHelipad] parkedBakedTransportChildrenCleared={cleared}");
+                }
+            }
             var members = em.GetBuffer<CampaignMissionExtractionMember>(root);
             int initialized = 0, passengers = 0, lost = 0, aboard = 0, inAircraft = 0, rode = 0, escortAlive = 0, escortLost = 0, hostileDead = 0;
             bool carrierDead = false, aircraftDead = false, contested = false;
@@ -104,11 +121,40 @@ namespace Game.Runtime
             if(rode==definition.RequiredPassengers && state.PatrolReleaseAtMilliseconds==0) state.PatrolReleaseAtMilliseconds=facts.ElapsedMilliseconds+15000;
             facts.CommandSquadAlive = escortAlive > 0 ? (byte)1 : (byte)0; facts.SquadLossCount = escortLost;
             facts.HostileDefeatedCount = hostileDead;
-            facts.ExtractionAircraftLost = aircraftDead ? (byte)1 : (byte)0;
+            facts.ExtractionContested = contested ? (byte)1 : (byte)0;
+            facts.ExtractionAircraftLost = state.ArmoredRoute == 0 && aircraftDead ? (byte)1 : (byte)0;
+            if (state.ArmoredRoute != 0)
+            {
+                // The alternate route keeps both protected passengers and the sealed
+                // archive in the APC all the way to the guarded custody checkpoint.
+                facts.ExtractionCarrierLost = carrierDead ? (byte)1 : (byte)0;
+                if (runtime.Phase != MissionPhaseKind.Engage || state.Ready == 0 || carrierDead ||
+                    !em.HasComponent<LocalTransform>(state.Carrier)) return;
+                int inCarrier = 0;
+                for (int i = 0; i < members.Length; i++)
+                    if (members[i].Kind == 1 && members[i].Dead == 0 && em.Exists(members[i].Entity) &&
+                        em.HasComponent<UnitTransportPassenger>(members[i].Entity) &&
+                        em.GetComponentData<UnitTransportPassenger>(members[i].Entity).Transport == state.Carrier)
+                        inCarrier++;
+                var carrierPosition = em.GetComponentData<LocalTransform>(state.Carrier).Position;
+                bool atCheckpoint = math.distancesq(carrierPosition.xz, state.LandingCenter.xz) <=
+                    definition.LandingRadius * definition.LandingRadius;
+                bool canHold = atCheckpoint && !contested && inCarrier == definition.RequiredPassengers &&
+                    rode == definition.RequiredPassengers && lost == 0;
+                state.SecureHoldMilliseconds = canHold ? SaturatingAddMilliseconds(state.SecureHoldMilliseconds, deltaTime) : 0;
+                facts.ExtractionSecureMilliseconds = state.SecureHoldMilliseconds;
+                if (state.SecureHoldMilliseconds >= definition.SecureHoldMilliseconds)
+                {
+                    state.DepartureCleared = 1;
+                    state.CarrierTransferComplete = 1;
+                    facts.ExtractionPassengersDelivered = inCarrier;
+                    facts.ExtractionDeparted = 1;
+                }
+                return;
+            }
             if (inAircraft == definition.RequiredPassengers && rode == definition.RequiredPassengers && lost == 0)
                 state.CarrierTransferComplete = 1;
             if (carrierDead && state.CarrierTransferComplete == 0) facts.ExtractionCarrierLost = 1;
-            facts.ExtractionContested = contested ? (byte)1 : (byte)0;
             if (runtime.Phase != MissionPhaseKind.Engage || state.Ready == 0 || aircraftDead || !em.HasComponent<LocalTransform>(state.Aircraft)) return;
             var position = em.GetComponentData<LocalTransform>(state.Aircraft).Position;
             bool atLanding = math.distancesq(position.xz, state.LandingCenter.xz) <= definition.LandingRadius * definition.LandingRadius;
@@ -123,6 +169,46 @@ namespace Game.Runtime
             bool atDeparture = math.distancesq(position.xz, state.DepartureCenter.xz) <= definition.DepartureRadius * definition.DepartureRadius;
             if (state.DepartureCleared != 0 && atDeparture && airborne && inAircraft == definition.RequiredPassengers && lost == 0)
             { facts.ExtractionPassengersDelivered = inAircraft; facts.ExtractionDeparted = 1; }
+        }
+
+        private static int ClearEvidenceChainParkedTransport(EntityManager em, Entity missionAircraft)
+        {
+            using NativeArray<Entity> entities = em.GetAllEntities(Allocator.Temp);
+            for (int i = 0; i < entities.Length; i++)
+            {
+                Entity entity = entities[i];
+                if (entity == missionAircraft || em.HasComponent<Parent>(entity) ||
+                    !em.HasComponent<Disabled>(entity) || !em.HasComponent<LocalToWorld>(entity) ||
+                    !em.HasBuffer<Child>(entity)) continue;
+                float3 position = em.GetComponentData<LocalToWorld>(entity).Position;
+                if (math.distancesq(position.xz, new float2(1009.9f, 390.8f)) > 2f * 2f)
+                    continue;
+                int cleared = DisableEvidenceChainParkedChildren(em, entity);
+                if (cleared > 0) return cleared;
+            }
+            return 0;
+        }
+
+        private static int DisableEvidenceChainParkedChildren(EntityManager em, Entity entity)
+        {
+            if (!em.Exists(entity)) return 0;
+            Entity[] children = null;
+            if (em.HasBuffer<Child>(entity))
+            {
+                DynamicBuffer<Child> buffer = em.GetBuffer<Child>(entity, true);
+                children = new Entity[buffer.Length];
+                for (int i = 0; i < buffer.Length; i++) children[i] = buffer[i].Value;
+            }
+            int cleared = 0;
+            if (!em.HasComponent<Disabled>(entity))
+            {
+                em.AddComponent<Disabled>(entity);
+                cleared++;
+            }
+            if (children != null)
+                for (int i = 0; i < children.Length; i++)
+                    cleared += DisableEvidenceChainParkedChildren(em, children[i]);
+            return cleared;
         }
     }
 }

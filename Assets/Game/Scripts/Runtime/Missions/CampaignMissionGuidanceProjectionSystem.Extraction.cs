@@ -29,6 +29,7 @@ namespace Game.Runtime
             if(!runtime.MissionId.Equals(ExtractionMissionId) && !evidenceChain)return false;
             if(!em.HasComponent<CampaignMissionExtractionState>(root)) {ClearDefenseGuidance(em,root,in current);return true;}
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
+            bool armored = evidenceChain && extraction.ArmoredRoute != 0;
             if(!extraction.SessionToken.Equals(runtime.SessionToken) || extraction.AttemptOrdinal!=runtime.AttemptOrdinal || extraction.SourceVersion!=runtime.SourceVersion ||
                 runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None)
             {ClearDefenseGuidance(em,root,in current);return true;}
@@ -39,26 +40,30 @@ namespace Game.Runtime
             bool selectedCarrier=em.Exists(extraction.Carrier)&&em.HasComponent<SelectedUnitTag>(extraction.Carrier);
             bool selectedAircraft=em.Exists(extraction.Aircraft)&&em.HasComponent<SelectedUnitTag>(extraction.Aircraft);
             int inAircraft=0,groundAtLanding=0;float3 team=default;int selectedTeamCount=0; int teamCount=0;
+            float3 handoff = evidenceChain && !armored ? extraction.HandoffCenter : extraction.LandingCenter;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
             int required = math.max(1, facts.ExtractionPassengerTotal);
             for(int i=0;i<members.Length;i++) if(members[i].Kind==1 && em.Exists(members[i].Entity))
             {
                 var e=members[i].Entity;if(em.HasComponent<SelectedUnitTag>(e)) selectedTeamCount++;
                 if(em.HasComponent<LocalTransform>(e)){var pos=em.GetComponentData<LocalTransform>(e).Position;team+=pos;teamCount++;
-                    if(!em.HasComponent<UnitTransportPassenger>(e)&&math.distancesq(pos.xz,extraction.LandingCenter.xz)<=25*25)groundAtLanding++;}
+                    if(!em.HasComponent<UnitTransportPassenger>(e)&&math.distancesq(pos.xz,handoff.xz)<=25*25)groundAtLanding++;}
                 if(em.HasComponent<UnitTransportPassenger>(e)&&em.GetComponentData<UnitTransportPassenger>(e).Transport==extraction.Aircraft)inAircraft++;
             }
             if(teamCount>0)team/=teamCount;
             float3 carrier=em.Exists(extraction.Carrier)&&em.HasComponent<LocalTransform>(extraction.Carrier)?em.GetComponentData<LocalTransform>(extraction.Carrier).Position:default;
             bool nearTeam=math.distancesq(carrier.xz,team.xz)<=20*20;
-            bool atLanding=math.distancesq(carrier.xz,extraction.LandingCenter.xz)<=20*20;
+            bool atLanding=math.distancesq(carrier.xz,handoff.xz)<=20*20;
             if(groundAtLanding==required && facts.ExtractionCarrierLegCount==required)extraction.UnloadedAtLanding=1;
             // M4 teaches the rescue workflow on every entry, including older replay/retry payloads.
             for(int step=1;step<=12;step++)
             {
                 bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeamCount==required||facts.ExtractionCarrierLegCount==required,
-                    5=>facts.ExtractionCarrierLegCount==required,6=>atLanding&&facts.ExtractionCarrierLegCount==required,7=>extraction.UnloadedAtLanding!=0||inAircraft==required,
-                    8=>selectedAircraft||inAircraft>0,9=>inAircraft==required,10=>extraction.DepartureCleared!=0,11=>facts.ExtractionDeparted!=0,12=>runtime.Outcome!=MissionOutcomeKind.None,_=>false};
+                    5=>facts.ExtractionCarrierLegCount==required,6=>atLanding&&facts.ExtractionCarrierLegCount==required,
+                    7=>armored ? atLanding && facts.ExtractionCarrierLegCount==required : extraction.UnloadedAtLanding!=0||inAircraft==required,
+                    8=>armored ? atLanding && facts.ExtractionCarrierLegCount==required : selectedAircraft||inAircraft>0,
+                    9=>armored ? atLanding && facts.ExtractionCarrierLegCount==required : inAircraft==required,
+                    10=>extraction.DepartureCleared!=0,11=>facts.ExtractionDeparted!=0,12=>runtime.Outcome!=MissionOutcomeKind.None,_=>false};
                 if(done)extraction.GuidanceCompletedMask|=1u<<(step-1);
             }
             em.SetComponentData(root,extraction);
@@ -66,6 +71,11 @@ namespace Game.Runtime
             if(chosen>12){ClearDefenseGuidance(em,root,in current);return true;}
             var title=evidenceChain ? EvidenceChainTitlePrefix : ExtractionTitlePrefix;title.Append(chosen);title.Append(ExtractionTitleSuffix);
             var body=evidenceChain ? EvidenceChainBodyPrefix : ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
+            if (armored && chosen is 6 or 10 or 11)
+            {
+                title = new FixedString64Bytes("mission.evidence_chain.tutorial.armored."); title.Append(chosen); title.Append(ExtractionTitleSuffix);
+                body = new FixedString128Bytes("mission.evidence_chain.tutorial.armored."); body.Append(chosen); body.Append(ExtractionBodySuffix);
+            }
             var targetId=evidenceChain ? EvidenceChainTargetPrefix : ExtractionTargetPrefix;targetId.Append(chosen);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=55000+chosen,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=(CampaignMissionGuidancePromptKind)(24+chosen),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,
@@ -74,7 +84,8 @@ namespace Game.Runtime
                 Title=title,Body=body,
                 ActionLabel=chosen==7 ? ExtractionPassengerAction : chosen==1?RadarContinue:chosen is 10 or 12?ExtractionGuideAction:RadarAct,
                 Priority=facts.ElapsedMilliseconds>=480000?AssistantMessagePriority.Critical:AssistantMessagePriority.High,
-                CanShow=1,CanExecute=chosen==7 && !selectedCarrier ? (byte)0 : (byte)1,WorldPosition=chosen<=5?team:chosen>=11?extraction.DepartureCenter:extraction.LandingCenter,HasWorldPosition=1,
+                CanShow=1,CanExecute=chosen==7 && !selectedCarrier ? (byte)0 : (byte)1,
+                WorldPosition=chosen<=5?team:chosen is 6 or 7 ? handoff : chosen>=11?extraction.DepartureCenter:extraction.LandingCenter,HasWorldPosition=1,
                 SubtitlesEnabled=settings.SubtitlesEnabled,LargeTextEnabled=settings.LargeTextEnabled,HighContrastEnabled=settings.HighContrastEnabled};
             if(!ProjectionEquals(in current,in next)||current.MissionSourceVersion!=next.MissionSourceVersion||!current.Title.Equals(next.Title)||current.Priority!=next.Priority)em.SetComponentData(root,next);
             return true;

@@ -1,4 +1,5 @@
 using Game.UI.Contracts;
+using Game.Components;
 using UnityEngine;
 
 namespace Game.UI.Runtime
@@ -57,6 +58,8 @@ namespace Game.UI.Runtime
             if (missionBriefingView != null)
             {
                 missionBriefingView.DeployOperationButton.onClick.AddListener(Deploy);
+                missionBriefingView.EvidenceChainAirRouteButton?.onClick.AddListener(SelectAirRoute);
+                missionBriefingView.EvidenceChainArmoredRouteButton?.onClick.AddListener(SelectArmoredRoute);
                 if (missionBriefingView.ReplayTutorialToggle != null)
                     missionBriefingView.ReplayTutorialToggle.onValueChanged.AddListener(SetReplayTutorial);
             }
@@ -85,6 +88,8 @@ namespace Game.UI.Runtime
             if (missionBriefingView != null)
             {
                 missionBriefingView.DeployOperationButton.onClick.RemoveListener(Deploy);
+                missionBriefingView.EvidenceChainAirRouteButton?.onClick.RemoveListener(SelectAirRoute);
+                missionBriefingView.EvidenceChainArmoredRouteButton?.onClick.RemoveListener(SelectArmoredRoute);
                 if (missionBriefingView.ReplayTutorialToggle != null)
                     missionBriefingView.ReplayTutorialToggle.onValueChanged.RemoveListener(SetReplayTutorial);
             }
@@ -265,5 +270,8 @@ namespace Game.UI.Runtime
             if (missionBriefingView.ReplayTutorialToggle != null)
                 missionBriefingView.ReplayTutorialToggle.interactable = false;
         }
+
+        private void SelectAirRoute() => missionBriefingView.SelectEvidenceChainRoute(EvidenceChainExtractionRoute.Air);
+        private void SelectArmoredRoute() => missionBriefingView.SelectEvidenceChainRoute(EvidenceChainExtractionRoute.Armored);
     }
 }

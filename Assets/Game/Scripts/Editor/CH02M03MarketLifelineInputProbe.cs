@@ -11,6 +11,8 @@ using Game.UI.Contracts;
 using Game.UI.Runtime;
 using Game.UI.Shell.Contracts.Ecs;
 using Unity.Entities;
+using Unity.Collections;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -31,9 +33,11 @@ namespace Game.Editor
         private const string SafehouseSweepEditorRun="Warline.SafehouseSweep.InputProbe.EditorRun";
         private const string FalseFrontEditorRun="Warline.FalseFront.InputProbe.EditorRun";
         private const string EvidenceChainEditorRun="Warline.EvidenceChain.InputProbe.EditorRun";
+        private const string EvidenceChainArmoredEditorRun="Warline.EvidenceChain.InputProbe.ArmoredEditorRun";
+        private const string EvidenceChainHelipadDiagnosticRun="Warline.EvidenceChain.InputProbe.HelipadDiagnosticRun";
         private const string Output="/private/tmp/warline-market-lifeline";
-        private static bool seeded, finished, watchStarted, won, sawDebrief, sawYasinPortrait, sawLocalizedYasinName, loggedCampaignProjection, capturedFalseFrontBrief, capturedFalseFrontDebrief;
-        private static double started, lastInput, lastLog, briefWaitStarted, touchStartWait, evidenceLaunchWaitStarted;
+        private static bool seeded, finished, watchStarted, won, sawDebrief, sawYasinPortrait, sawLocalizedYasinName, loggedCampaignProjection, capturedFalseFrontBrief, capturedFalseFrontDebrief, capturedEvidenceRouteBrief;
+        private static double started, lastInput, lastLog, briefWaitStarted, touchStartWait, evidenceLaunchWaitStarted, deployWaitStarted;
         private static string lastTapDiagnostics;
         private static int winningClock;
         private static AriaTouchInputUiSystemHelper touch;
@@ -91,19 +95,31 @@ namespace Game.Editor
 
         public static void RunEvidenceChainWatch()
         {
-            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(FalseFrontEditorRun,false);SessionState.SetBool(EvidenceChainEditorRun,true);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,false);RunWatch();
+            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(FalseFrontEditorRun,false);SessionState.SetBool(EvidenceChainEditorRun,true);SessionState.SetBool(EvidenceChainArmoredEditorRun,false);SessionState.SetBool(EvidenceChainHelipadDiagnosticRun,false);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,false);RunWatch();
+        }
+
+        public static void RunEvidenceChainArmoredWatch()
+        {
+            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(FalseFrontEditorRun,false);SessionState.SetBool(EvidenceChainEditorRun,true);SessionState.SetBool(EvidenceChainArmoredEditorRun,true);SessionState.SetBool(PersianEditorRun,false);SessionState.SetBool(ManualEditorRun,false);RunWatch();
+        }
+
+        public static void RunEvidenceChainHelipadDiagnostic()
+        {
+            RunEvidenceChainWatch();
+            SessionState.SetBool(EvidenceChainHelipadDiagnosticRun,true);
         }
 
         public static void RunEvidenceChainPersianWatch()
         {
-            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(FalseFrontEditorRun,false);SessionState.SetBool(EvidenceChainEditorRun,true);SessionState.SetBool(PersianEditorRun,true);SessionState.SetBool(ManualEditorRun,false);RunWatch();
+            SessionState.SetBool(SignalTraceEditorRun,false);SessionState.SetBool(SafehouseSweepEditorRun,false);SessionState.SetBool(FalseFrontEditorRun,false);SessionState.SetBool(EvidenceChainEditorRun,true);SessionState.SetBool(EvidenceChainArmoredEditorRun,false);SessionState.SetBool(PersianEditorRun,true);SessionState.SetBool(ManualEditorRun,false);RunWatch();
         }
 
         public static void RunWatch()
         {
             try{if(IsEvidenceChain)CH03M04EvidenceChainPresentationBuilder.BuildCheckpoint();else if(IsFalseFront)CH03M03FalseFrontPresentationBuilder.BuildCheckpoint();else if(IsSafehouseSweep)CH03M02SafehouseSweepPresentationBuilder.BuildCheckpoint();else if(IsSignalTrace)CH03M01SignalTracePresentationBuilder.BuildLocalCheckpointWithoutVoices();else CH02M03MarketLifelinePresentationBuilder.BuildCheckpoint();}
             catch(Exception exception){Debug.LogException(exception);Complete(false,"Authoring failed: "+exception.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=capturedFalseFrontBrief=capturedFalseFrontDebrief=false;winningClock=0;probeStore=null;lastTapDiagnostics=null;touchStartWait=evidenceLaunchWaitStarted=0;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=sawYasinPortrait=sawLocalizedYasinName=loggedCampaignProjection=capturedFalseFrontBrief=capturedFalseFrontDebrief=capturedEvidenceRouteBrief=false;winningClock=0;probeStore=null;lastTapDiagnostics=null;touchStartWait=evidenceLaunchWaitStarted=deployWaitStarted=0;
+            EvidenceChainRouteChoice.Selected=EvidenceChainExtractionRoute.Air;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -139,6 +155,13 @@ namespace Game.Editor
                 CampaignMissionRuntimeComponent runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                 CampaignMissionMarketLifelineState market=em.HasComponent<CampaignMissionMarketLifelineState>(root)?em.GetComponentData<CampaignMissionMarketLifelineState>(root):default;
                 CampaignMissionAttemptFactsComponent facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+                if(IsEvidenceChain && SessionState.GetBool(EvidenceChainHelipadDiagnosticRun,false) &&
+                   runtime.Phase==MissionPhaseKind.Engage && facts.ElapsedMilliseconds>5000)
+                {
+                    CaptureHelipadInventory(em,root);
+                    Complete(true,"helipadInventory=Captured scope=DiagnosticOnly");
+                    return;
+                }
                 if(EditorApplication.timeSinceStartup-lastLog>8)
                 {
                     CampaignMissionGuidanceProjectionComponent guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
@@ -222,7 +245,27 @@ namespace Game.Editor
                     Tap(buttons.FirstOrDefault(b=>b.name=="ConfirmWatchAria"&&Ready(b))??buttons.FirstOrDefault(b=>b.name=="WatchAriaPlay"&&Ready(b)));return;
                 }
                 MissionBriefingScreenView briefing=UnityEngine.Object.FindAnyObjectByType<MissionBriefingScreenView>();
-                if(briefing!=null&&Ready(briefing.DeployOperationButton)){Tap(briefing.DeployOperationButton);return;}
+                if(briefing!=null&&Ready(briefing.DeployOperationButton))
+                {
+                    if(deployWaitStarted==0)deployWaitStarted=EditorApplication.timeSinceStartup;
+                    if(EditorApplication.timeSinceStartup-deployWaitStarted>35)
+                        throw new InvalidOperationException("Deploy did not advance after 35 seconds of normal touches.");
+                    if(IsEvidenceChain)
+                    {
+                        if(!capturedEvidenceRouteBrief)
+                        {
+                            ScreenCapture.CaptureScreenshot(Output+"/evidence-chain-route-brief.png");
+                            capturedEvidenceRouteBrief=true;
+                            return;
+                        }
+                        if(IsEvidenceChainArmored && EvidenceChainRouteChoice.Selected!=EvidenceChainExtractionRoute.Armored)
+                        {
+                            Tap(briefing.EvidenceChainArmoredRouteButton);
+                            return;
+                        }
+                    }
+                    Tap(briefing.DeployOperationButton);return;
+                }
                 CampaignOperationsScreenView campaign=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();
                 if(campaign!=null&&UiShellRuntimeGateway.TryReadCampaignOperations(out UiCampaignOperationsModel model))
                 {
@@ -296,7 +339,7 @@ namespace Game.Editor
             if(lastTapDiagnostics!=diagnostics)
             {
                 lastTapDiagnostics=diagnostics;Debug.Log("[MarketLifelineInput] target="+diagnostics);
-                if(IsEvidenceChain && (button.name=="WatchAriaPlay" || button.name=="ConfirmWatchAria" || button.name=="LaunchMissionButton") && EventSystem.current!=null)
+                if(IsEvidenceChain && (button.name=="WatchAriaPlay" || button.name=="ConfirmWatchAria" || button.name=="LaunchMissionButton" || button.name=="DeployOperationButton") && EventSystem.current!=null)
                 {
                     var hits=new List<RaycastResult>();
                     EventSystem.current.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
@@ -309,6 +352,7 @@ namespace Game.Editor
         private static void Complete(bool pass,string detail)
         {
             if(finished)return;finished=true;touch?.Dispose();touch=null;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;ScreenCapture.CaptureScreenshot(Output+"/input-last.png");
+            SessionState.SetBool(EvidenceChainHelipadDiagnosticRun,false);
             Debug.Log("[MarketLifelineInput] result="+(pass?"Passed":"Failed")+" "+detail);
             if(SessionState.GetBool(ManualEditorRun,false))
             {
@@ -318,6 +362,8 @@ namespace Game.Editor
                 SessionState.SetBool(SafehouseSweepEditorRun,false);
                 SessionState.SetBool(FalseFrontEditorRun,false);
                 SessionState.SetBool(EvidenceChainEditorRun,false);
+                SessionState.SetBool(EvidenceChainArmoredEditorRun,false);
+                SessionState.SetBool(EvidenceChainHelipadDiagnosticRun,false);
                 AssetDatabase.AllowAutoRefresh();
                 EditorApplication.ExitPlaymode();
             }
@@ -327,6 +373,60 @@ namespace Game.Editor
         private static bool IsSafehouseSweep=>SessionState.GetBool(SafehouseSweepEditorRun,false);
         private static bool IsFalseFront=>SessionState.GetBool(FalseFrontEditorRun,false);
         private static bool IsEvidenceChain=>SessionState.GetBool(EvidenceChainEditorRun,false);
+        private static bool IsEvidenceChainArmored=>SessionState.GetBool(EvidenceChainArmoredEditorRun,false);
+
+        private static void CaptureHelipadInventory(EntityManager em,Entity root)
+        {
+            var lines=new List<string>();
+            var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
+            lines.Add("missionAircraft="+extraction.Aircraft+" name="+(em.Exists(extraction.Aircraft)?em.GetName(extraction.Aircraft).ToString():"missing"));
+            using(EntityQuery grids=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable),typeof(DynamicBlockerComponent),typeof(DynamicOccupancyComponent)))
+            {
+                if(grids.CalculateEntityCount()==1 && em.Exists(extraction.Aircraft) && em.HasComponent<UnitGrid>(extraction.Aircraft))
+                {
+                    Entity gridEntity=grids.GetSingletonEntity();
+                    GridConfig grid=em.GetComponentData<GridConfig>(gridEntity);
+                    NativeArray<GridWalkable> walkable=em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+                    var blocked=em.GetComponentData<DynamicBlockerComponent>(gridEntity).Blocked;
+                    var occupied=em.GetComponentData<DynamicOccupancyComponent>(gridEntity).Occupied;
+                    var aircraftCell=em.GetComponentData<UnitGrid>(extraction.Aircraft).Cell;
+                    var handoffCell=GridUtils.WorldToCell(grid,extraction.HandoffCenter);
+                    lines.Add($"grid={grid.Width}x{grid.Height} cellSize={grid.CellSize} origin={grid.Origin} aircraftCell={aircraftCell} handoffCell={handoffCell} aircraftFootprint={em.GetComponentData<UnitFootprint>(extraction.Aircraft).Size}");
+                    int minX=Math.Min(aircraftCell.x,handoffCell.x)-12,maxX=Math.Max(aircraftCell.x,handoffCell.x)+12;
+                    int minY=Math.Min(aircraftCell.y,handoffCell.y)-12,maxY=Math.Max(aircraftCell.y,handoffCell.y)+12;
+                    for(int y=minY;y<=maxY;y++)
+                    {
+                        var row=new System.Text.StringBuilder();
+                        for(int x=minX;x<=maxX;x++)
+                        {
+                            var cell=new Unity.Mathematics.int2(x,y);
+                            if(!GridUtils.InBounds(cell,grid.Width,grid.Height)){row.Append(' ');continue;}
+                            int index=GridUtils.CellToIndex(cell,grid.Width);
+                            row.Append(cell.Equals(aircraftCell)?'H':cell.Equals(handoffCell)?'R':walkable[index].Value==0?'#':blocked.IsCreated&&blocked.IsSet(index)?'B':occupied.IsCreated&&occupied.IsSet(index)?'O':'.');
+                        }
+                        lines.Add($"gridRow y={y} x={minX} {row}");
+                    }
+                }
+            }
+            using NativeArray<Entity> entities=em.GetAllEntities(Allocator.Temp);
+            foreach(Entity entity in entities)
+            {
+                string name=em.GetName(entity).ToString();
+                bool heli=name.IndexOf("heli",StringComparison.OrdinalIgnoreCase)>=0;
+                bool world=em.HasComponent<LocalToWorld>(entity);
+                var position=world?em.GetComponentData<LocalToWorld>(entity).Position:default;
+                bool nearby=world && (position.x-1009.9f)*(position.x-1009.9f)+(position.z-390.8f)*(position.z-390.8f)<25f*25f;
+                if(!heli&&!nearby)continue;
+                lines.Add($"entity={entity} name={name} world={(world?position.ToString():"none")} nearby={nearby} parent={(em.HasComponent<Parent>(entity)?em.GetComponentData<Parent>(entity).Value.ToString():"none")} children={(em.HasBuffer<Child>(entity)?em.GetBuffer<Child>(entity,true).Length:0)} disabled={em.HasComponent<Disabled>(entity)}");
+            }
+            foreach(Transform transform in Resources.FindObjectsOfTypeAll<Transform>())
+            {
+                if(!transform.gameObject.scene.IsValid()||transform.name.IndexOf("heli",StringComparison.OrdinalIgnoreCase)<0)continue;
+                lines.Add($"gameObject={transform.name} world={transform.position} active={transform.gameObject.activeInHierarchy} scene={transform.gameObject.scene.name}");
+            }
+            File.WriteAllLines(Output+"/evidence-chain-helipad-inventory.txt",lines);
+            Debug.Log("[EvidenceChainHelipad] inventory=Captured rows="+lines.Count);
+        }
         private static bool IsChapterThree=>IsSignalTrace||IsSafehouseSweep||IsFalseFront||IsEvidenceChain;
         private static string TargetMission=>IsEvidenceChain?CampaignMissionSequence.EvidenceChain:IsFalseFront?CampaignMissionSequence.FalseFront:IsSafehouseSweep?CampaignMissionSequence.SafehouseSweep:IsSignalTrace?CampaignMissionSequence.SignalTrace:CampaignMissionSequence.MarketLifeline;
     }

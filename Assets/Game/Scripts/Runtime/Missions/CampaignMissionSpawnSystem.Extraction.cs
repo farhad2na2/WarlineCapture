@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Missions.Contracts;
 using Unity.Entities;
 
 namespace Game.Runtime
@@ -11,9 +12,18 @@ namespace Game.Runtime
             if (definition.Extraction.Enabled == 0) return;
             TryFindAnchor(ref map, definition.Extraction.LandingAnchorId, out var landing);
             TryFindAnchor(ref map, definition.Extraction.DepartureAnchorId, out var departure);
+            bool evidenceChain = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.EvidenceChain));
+            bool armored = evidenceChain && EvidenceChainRouteChoice.Selected == EvidenceChainExtractionRoute.Armored;
+            var handoff = landing.Position;
+            if (evidenceChain && TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch03.m04.route_05"), out var road))
+                handoff = road.Position;
+            if (armored && TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch03.m04.return_rts"), out var checkpoint))
+                landing = checkpoint;
             SetOrAdd(em, root, new CampaignMissionExtractionState { SessionToken = runtime.SessionToken,
                 AttemptOrdinal = runtime.AttemptOrdinal, SourceVersion = runtime.SourceVersion,
-                LandingCenter = landing.Position, DepartureCenter = departure.Position, Initialized = 1 });
+                LandingCenter = landing.Position, DepartureCenter = departure.Position, HandoffCenter = handoff,
+                ArmoredRoute = armored ? (byte)1 : (byte)0,
+                Initialized = 1 });
             SetOrAdd(em, root, new CampaignMissionCameraTourState { SessionToken = runtime.SessionToken,
                 AttemptOrdinal = runtime.AttemptOrdinal, SourceVersion = runtime.SourceVersion });
             if (!em.HasBuffer<CampaignMissionExtractionMember>(root)) em.AddBuffer<CampaignMissionExtractionMember>(root);

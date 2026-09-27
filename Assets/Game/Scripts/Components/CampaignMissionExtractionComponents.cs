@@ -22,10 +22,13 @@ namespace Game.Components
         public int AttemptOrdinal;
         public uint SourceVersion;
         public float3 LandingCenter, DepartureCenter;
+        public float3 HandoffCenter;
         public Entity Carrier, Aircraft;
         public int SecureHoldMilliseconds;
         public int PatrolReleaseAtMilliseconds;
-        public byte Initialized, Ready, DepartureCleared, CarrierTransferComplete;
+        public int NextParkedTransportScanMilliseconds;
+        public byte ParkedTransportCleared;
+        public byte Initialized, Ready, DepartureCleared, CarrierTransferComplete, ArmoredRoute;
     }
 
     [InternalBufferCapacity(32)]

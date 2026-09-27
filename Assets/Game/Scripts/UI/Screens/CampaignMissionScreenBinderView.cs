@@ -17,6 +17,7 @@ namespace Game.UI.Runtime
         private int futureChapter;
         private int futureMissionNumber;
         private FutureMissionComicPreviewController futureComicPreview;
+        private bool chapterThreeOpeningSeen;
 
         public void Configure(CampaignOperationsScreenView view, string selectedMissionId)
         {
@@ -163,7 +164,17 @@ namespace Game.UI.Runtime
         }
         private void SelectChapterOne(){futureChapter=0;futureMissionNumber=0;SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterTwo(){futureChapter=0;futureMissionNumber=0;SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
-        private void SelectChapterThree(){futureChapter=0;futureMissionNumber=0;SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterThree()
+        {
+            futureChapter = 0;
+            futureMissionNumber = 0;
+            SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);
+            campaignOperationsView.ShowMissionSelect();
+            if (chapterThreeOpeningSeen)
+                return;
+            chapterThreeOpeningSeen = futureComicPreview != null &&
+                futureComicPreview.PlaySequence("seq.ch03.open.hidden_network");
+        }
         private void SelectChapterFour() => SelectFutureChapter(4);
         private void SelectChapterFive() => SelectFutureChapter(5);
         private void SelectM02()

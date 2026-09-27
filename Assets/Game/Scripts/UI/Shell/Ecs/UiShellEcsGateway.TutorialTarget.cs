@@ -37,7 +37,7 @@ namespace Game.UI.Shell.Ecs
                     areaRadius:5);
                 return true;
             }
-            if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
+            if(IsExtractionMission(runtime.MissionId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
             if(runtime.MissionId.Equals(BreachId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
@@ -137,7 +137,7 @@ namespace Game.UI.Shell.Ecs
         private static int ReadExtractionSelectionCount(byte step)
         {
             if(step is not (4 or 5 or 9) || !TryGetMissionRoot(out var em,out var root) ||
-                !em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId) ||
+                !IsExtractionMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId) ||
                 !em.HasBuffer<CampaignMissionExtractionMember>(root)) return -1;
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
             Entity actor=step==9 ? extraction.Aircraft : extraction.Carrier;

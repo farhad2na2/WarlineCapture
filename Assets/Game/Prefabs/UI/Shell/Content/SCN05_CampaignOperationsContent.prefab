@@ -11497,6 +11497,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.CampaignOperationsScreenView
   m04MissionPreview: {fileID: 2800000, guid: 2a3df06fb843e4b19a65c408ea7aecf6, type: 3}
   m05MissionPreview: {fileID: 2800000, guid: 6fac5173b42724e0da3626d90eba0590, type: 3}
+  evidenceChainMissionPreview: {fileID: 2800000, guid: e42b38417d4e84835a57b596ba398dbf, type: 3}
   falseFrontMissionPreview: {fileID: 2800000, guid: f47a92d1ccf944c579bacd75431941e9, type: 3}
   objectiveCards:
   - {fileID: 1538010805240694327}

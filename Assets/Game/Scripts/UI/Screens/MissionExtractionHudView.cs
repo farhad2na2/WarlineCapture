@@ -10,7 +10,8 @@ namespace Game.UI.Runtime
         [SerializeField]private Button guide,team,landing,departure;
         [SerializeField]private V3LocalizedTextBindingView status,aboard,carrier,secure,remaining;
         private string lastStatus;
-        private int lastAboard=-1,lastCarrier=-1,lastSecure=-1,lastRemaining=-1;
+        private int lastAboard=-1,lastCarrier=-1,lastSecure=-1,lastRemaining=-1,lastRequired=-1,lastRequiredSecure=-1;
+        private V3LocalizedTextBindingView aboardTitle;
         private bool lastContested,lastCleared;
         private void OnEnable(){guide.onClick.AddListener(Guide);team.onClick.AddListener(Team);landing.onClick.AddListener(Landing);departure.onClick.AddListener(Departure);UiShellRuntimeGateway.Localization.LocaleChanged+=RefreshLocale;RefreshPresentation();}
         private void OnDisable(){DestroyWorldMarkers();if(navigation!=null)navigation.SetActive(false);guide.onClick.RemoveListener(Guide);team.onClick.RemoveListener(Team);landing.onClick.RemoveListener(Landing);departure.onClick.RemoveListener(Departure);UiShellRuntimeGateway.Localization.LocaleChanged-=RefreshLocale;}
@@ -31,12 +32,23 @@ namespace Game.UI.Runtime
             RefreshWorldMarkers(active,in model);
             if(active && status!=null) status.SetLocalizedValue(model.Cleared ? UiShellRuntimeGateway.Localization.Get("mission.m04.hud.cleared") : model.PatrolSeconds>0 ? UiShellRuntimeGateway.Localization.Format("mission.m04.patrol.warning","",model.PatrolSeconds) : UiShellRuntimeGateway.Localization.Get("mission.m04.patrol.active"));
             if(!active)return;
+            if(aboardTitle==null)
+                foreach(var label in GetComponentsInChildren<V3LocalizedTextBindingView>(true))
+                    if(label.LocalizationKey=="mission.m04.hud.aboard" || label.LocalizationKey=="mission.evidence_chain.hud.aboard")
+                    { aboardTitle=label; break; }
+            if(aboardTitle!=null)
+            {
+                bool evidence=UiShellRuntimeGateway.IsEvidenceChainGuideContext();
+                string titleKey=evidence?"mission.evidence_chain.hud.aboard":"mission.m04.hud.aboard";
+                if(aboardTitle.LocalizationKey!=titleKey)
+                    aboardTitle.Configure(titleKey,evidence?"PROTECTED PEOPLE ABOARD":"SPECIALISTS ABOARD",false);
+            }
             // The briefing needs room for the rescue objective. Team navigation becomes
             // useful after Continue, when the player starts selecting and moving units.
             team.gameObject.SetActive(model.Lesson>1 && model.Lesson<=5);landing.gameObject.SetActive(model.Lesson>5 && model.Lesson<=10);departure.gameObject.SetActive(model.Lesson>10);
-            if(lastStatus!=null && lastAboard==model.Aboard && lastCarrier==model.CarrierLeg && lastSecure==model.SecureSeconds && lastRemaining==model.RemainingSeconds && lastContested==model.Contested && lastCleared==model.Cleared)return;
-            lastAboard=model.Aboard;lastCarrier=model.CarrierLeg;lastSecure=model.SecureSeconds;lastRemaining=model.RemainingSeconds;lastContested=model.Contested;lastCleared=model.Cleared;
-            aboard.SetLocalizedValue(model.Aboard+" / 4");carrier.SetLocalizedValue(model.CarrierLeg+" / 4");secure.SetLocalizedValue(model.SecureSeconds+" / 20");
+            if(lastStatus!=null && lastAboard==model.Aboard && lastCarrier==model.CarrierLeg && lastSecure==model.SecureSeconds && lastRemaining==model.RemainingSeconds && lastRequired==model.Required && lastRequiredSecure==model.RequiredSecureSeconds && lastContested==model.Contested && lastCleared==model.Cleared)return;
+            lastAboard=model.Aboard;lastCarrier=model.CarrierLeg;lastSecure=model.SecureSeconds;lastRemaining=model.RemainingSeconds;lastRequired=model.Required;lastRequiredSecure=model.RequiredSecureSeconds;lastContested=model.Contested;lastCleared=model.Cleared;
+            aboard.SetLocalizedValue(model.Aboard+" / "+model.Required);carrier.SetLocalizedValue(model.CarrierLeg+" / "+model.Required);secure.SetLocalizedValue(model.SecureSeconds+" / "+model.RequiredSecureSeconds);
             int seconds=Mathf.Max(0,model.RemainingSeconds);
             remaining.SetLocalizedValue((seconds/60).ToString("00")+":"+(seconds%60).ToString("00"));
             remaining.GetComponent<TMPro.TMP_Text>().color=seconds<=60?new Color32(255,112,60,255):new Color32(255,196,67,255);

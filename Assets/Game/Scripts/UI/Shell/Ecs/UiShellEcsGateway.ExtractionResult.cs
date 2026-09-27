@@ -5,12 +5,12 @@ namespace Game.UI.Shell.Ecs
 {
     public sealed partial class UiShellEcsGateway
     {
-        private static UiMissionResultPopupModel LocalizeExtractionResult(in UiMissionResultPopupModel model,in CampaignMissionAttemptFactsComponent facts)
+        private static UiMissionResultPopupModel LocalizeExtractionResult(in UiMissionResultPopupModel model,in CampaignMissionAttemptFactsComponent facts,string prefix="mission.m04")
         {
             bool victory=model.Outcome==UiMissionResultOutcome.Victory;
             string reason=victory?"success":facts.CivilianLossCount>0?"passenger_lost":facts.ExtractionAircraftLost!=0?"aircraft_lost":facts.ExtractionCarrierLost!=0?"carrier_lost":facts.ExtractionTimedOut!=0?"timeout":"integrity";
-            return new UiMissionResultPopupModel(model.Version,model.MissionId,model.Outcome,GameText.Get("mission.m04.result."+(victory?"victory":"defeat")),
-                GameText.Get("mission.m04.result.subtitle"),GameText.Get("mission.m04.result."+reason),model.Stars,
+            return new UiMissionResultPopupModel(model.Version,model.MissionId,model.Outcome,GameText.Get(prefix+".result."+(victory?"victory":"defeat")),
+                GameText.Get(prefix+".result.subtitle"),GameText.Get(prefix+".result."+reason),model.Stars,
                 model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,victory?model.RewardsText:GameText.Get("mission.m03.result.no_reward"),
                 GameText.Get(victory?"mission.m03.action.continue":"mission.m03.result.retry"),model.PrimaryActionEnabled,model.RetryVisible,model.FirstClear,model.DebriefRequired,
                 default,model.SettlementFailed,new UiMissionExtractionResultDetails(facts.ExtractionPassengersDelivered,facts.CivilianLossCount,facts.ExtractionCarrierLegCount,

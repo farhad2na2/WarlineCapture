@@ -1,0 +1,84 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976d0e40bd07865479ff5de27cefdbb8, type: 3}
+  m_Name: MissionDefinition_Ch03_M04_EvidenceChain
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MissionDefinitionConfig
+  missionId: saga.ch03.m04.evidence_chain
+  schemaVersion: 1
+  displayNameKey: mission.evidence_chain.name
+  displaySummaryKey: mission.evidence_chain.summary
+  locationNameKey: mission.evidence_chain.location
+  scenarioId: scenario.ch03.m04.evidence_chain
+  operationMapId: opmap.ch03.evidence_chain_01
+  briefingSequenceId: seq.ch03.m04.brief
+  commsSequenceId: seq.ch03.m04.comms
+  debriefSequenceId: seq.ch03.m04.debrief
+  objectives:
+  - objectiveId: obj.ch03.m04.extract
+    displayTextKey: mission.evidence_chain.objective.extract
+    rule: 7
+    missionRoleId: role.friendly.archive_witness
+    targetConfigId: 
+    requiredCount: 2
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch03.m04.carrier
+    displayTextKey: mission.evidence_chain.objective.carrier
+    rule: 8
+    missionRoleId: role.friendly.evidence_apc
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 1
+  - objectiveId: obj.ch03.m04.landing
+    displayTextKey: mission.evidence_chain.objective.landing
+    rule: 9
+    missionRoleId: role.friendly.evidence_airlift
+    targetConfigId: 
+    requiredCount: 1
+    failureOnRuleBreak: 0
+  stars:
+  - starIndex: 1
+    rule: 1
+    displayTextKey: mission.evidence_chain.star.1
+    threshold: 0
+  - starIndex: 2
+    rule: 2
+    displayTextKey: mission.evidence_chain.star.2
+    threshold: 0
+  - starIndex: 3
+    rule: 3
+    displayTextKey: mission.evidence_chain.star.3
+    threshold: 480000
+  firstClearRewards:
+  - kind: 0
+    rewardConfigId: reward.commander_xp
+    displayTextKey: mission.reward.commander_xp
+    amount: 1500
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 7000
+  replayRewards:
+  - kind: 1
+    rewardConfigId: 
+    displayTextKey: mission.reward.credits
+    amount: 300
+  commandPolicy:
+    allowedCommands: 010000000200000003000000040000000500000006000000
+  replayAllowed: 1
+  replayTutorialDefaultEnabled: 0
+  requireOperationMapReady: 1
+  requireGridReady: 1
+  requireUnitCatalogReady: 1
+  requiredFeatureIds:
+  - feature.operation_map
+  - feature.unit_catalog
+  - feature.tactical_commands

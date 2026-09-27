@@ -10,6 +10,8 @@ namespace Game.UI.Shell.Ecs
     public sealed partial class UiShellEcsGateway : IUiMissionExtractionGateway
     {
         private static readonly FixedString64Bytes AirliftId="saga.ch01.m04.airlift";
+        private static readonly FixedString64Bytes EvidenceChainId=CampaignMissionSequence.EvidenceChain;
+        private static bool IsExtractionMission(in FixedString64Bytes id)=>id.Equals(AirliftId)||id.Equals(EvidenceChainId);
         private static bool TryFindExtractionDefinition(in CampaignMissionCatalogComponent catalog,in CampaignMissionRuntimeComponent runtime,out int index)
         {
             index=-1;if(!catalog.Blob.IsCreated || catalog.SourceVersion!=runtime.SourceVersion)return false;
@@ -26,16 +28,17 @@ namespace Game.UI.Shell.Ecs
         {anchor=default;for(int i=0;i<map.Anchors.Length;i++)if(map.Anchors[i].Id.Equals(id)){anchor=map.Anchors[i];return true;}return false;}
         public bool IsExtractionGuideContext()
         {
-            if(TryGetMissionRoot(out var em,out var root) && em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId) &&
+            if(TryGetMissionRoot(out var em,out var root) && IsExtractionMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId) &&
                 TryGetBoundary(out var shell,out var boundary) && shell.GetComponentData<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>(boundary).ActiveRoute==UIRoute.Match) return true;
-            return UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) && campaign.SelectedMission.MissionId==AirliftId.ToString();
+            return UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) &&
+                (campaign.SelectedMission.MissionId==AirliftId.ToString() || campaign.SelectedMission.MissionId==EvidenceChainId.ToString());
         }
         public bool TryReadMissionExtraction(out UiMissionExtractionModel model)
         {
             model=default;
             if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionExtractionState>(root)) return false;
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
-            if(!runtime.MissionId.Equals(AirliftId) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None ||
+            if(!IsExtractionMission(runtime.MissionId) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None ||
                 extraction.Ready==0 || !extraction.SessionToken.Equals(runtime.SessionToken) || extraction.AttemptOrdinal!=runtime.AttemptOrdinal || extraction.SourceVersion!=runtime.SourceVersion) return false;
             var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             var catalog=em.GetComponentData<CampaignMissionCatalogComponent>(root);
@@ -70,7 +73,7 @@ namespace Game.UI.Shell.Ecs
             return math.max(0,(requiredMilliseconds-facts.ExtractionSecureMilliseconds+999)/1000);
         }
         private static int ReadExtractionHoldStatus(byte step) => step==10 && TryGetMissionRoot(out var em,out var root) &&
-            em.HasComponent<CampaignMissionExtractionState>(root) && em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId)
+            em.HasComponent<CampaignMissionExtractionState>(root) && IsExtractionMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId)
             ? ResolveExtractionHoldStatus(em,root) : int.MinValue;
         private static string ExtractionHoldCopy(int status) => Game.Configs.GameText.Format(
             status==-2 ? "mission.m04.tutorial.hold.return" : status==-1 ? "mission.m04.tutorial.hold.contested" : "mission.m04.tutorial.hold.wait",

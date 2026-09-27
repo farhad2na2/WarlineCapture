@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Evidence Chain Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Evidence Chain Narrative
+  m_GUID: 5951b7c96e5f249bbaf10ab5c6bb65d4
+  m_SerializeEntries:
+  - m_GUID: 20c1d4c69ca23439b8525fe679345af6
+    m_Address: narrative.evidence_chain.commsadaptiveambush
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ec523c9fce25474cb72da6a2d22f888
+    m_Address: narrative.evidence_chain.debriefsafearrival
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4333cc1ef8cca4d8d8f317f30cd27584
+    m_Address: narrative.evidence_chain.debriefauditbunker
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5f7d27dcc177244e48e6c0951a6233ce
+    m_Address: narrative.evidence_chain.briefprotectedcustody
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 651f29885273f48bbad9e6b44e64ad12
+    m_Address: narrative.evidence_chain.brieftransportchoice
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 82eeb3d3862bd4b7babbc5a5ee8c001e
+    m_Address: narrative.evidence_chain.commsariaselfseal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e42b38417d4e84835a57b596ba398dbf
+    m_Address: narrative.evidence_chain.briefclinicwitness
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: e078b13a95ed84aef903c43b4a2310fd, type: 2}
+    - {fileID: 11400000, guid: 225157ae104ef42f4906cada7c0b5a7f, type: 2}

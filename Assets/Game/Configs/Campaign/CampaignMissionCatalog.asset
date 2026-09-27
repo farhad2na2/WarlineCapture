@@ -52,3 +52,6 @@ MonoBehaviour:
   - missionId: saga.ch03.m03.false_front
     definition: {fileID: 11400000, guid: f76e796583b8f446c887d8c9b4e1517e, type: 2}
     scenario: {fileID: 11400000, guid: 2f68f3c5be2644396ae3bff6f96761c7, type: 2}
+  - missionId: saga.ch03.m04.evidence_chain
+    definition: {fileID: 11400000, guid: 1f3b5ba452dde4f8987a9d463cca75f8, type: 2}
+    scenario: {fileID: 11400000, guid: 7b7920159fb8046e3b304e81db1ab53c, type: 2}

@@ -140,7 +140,7 @@ namespace Game.UI.Runtime
             : "saga.ch01.m05.breach_assault");
         private void SelectM04() => SelectMission(campaignOperationsView.IsChapterTwo
             ? Game.Missions.Contracts.CampaignMissionSequence.PowerRelay
-            : "saga.ch01.m04.airlift");
+            : campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain : "saga.ch01.m04.airlift");
 
         private void SelectMission(string selectedMissionId)
         {

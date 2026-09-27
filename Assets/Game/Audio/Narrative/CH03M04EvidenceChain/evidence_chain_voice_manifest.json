@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.EvidenceChainBilingualVoice.v1",
+  "missionId": "saga.ch03.m04.evidence_chain",
+  "generatedAtUtc": "2026-09-27T14:01:31.711751+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-brief-01",
+      "speaker": "LINA",
+      "locale": "en-US",
+      "text": "The archive custodian made it to my clinic. The witness has the physical record, and the roads outside are closing. They need a safe passage, not another interrogation.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-brief-01.wav",
+      "durationSeconds": 10.24,
+      "sha256": "e2a394b076cf7809eaf9c55a8570e35c1175f5d6767c73a3368fdc5629ebf34f",
+      "captionSha256": "a5b268972850ffafb20dd7dad9e018fec8a0b173b76249957ea9997272012b9a"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-brief-01",
+      "speaker": "LINA",
+      "locale": "fa-IR",
+      "text": "نگهبان بایگانی خودش رو به درمانگاه من رسونده. شاهد سندِ اصلی رو همراهش داره و راه‌های بیرون دارن بسته می‌شن. الان به یک مسیر امن نیاز داره، نه بازجوییِ بیشتر.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-brief-01.wav",
+      "durationSeconds": 12.32,
+      "sha256": "e6096fe9f0bc015d9750856bca27b98183b3e088fac9d4c5117596f331587731",
+      "captionSha256": "37cf6c9854d4c9c523e0524a03d77b462fb865e2db0a10b40007c7732660c181"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-brief-02",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "I can take them by air if you secure the landing zone. If the sky closes, the armored carrier is the way through. Keep both options in sight.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-brief-02.wav",
+      "durationSeconds": 8.48,
+      "sha256": "8800895d589a37d54a0ac28a7a792ccfd513db8e57438b00ef4c595a2a036dc5",
+      "captionSha256": "26b32b5e757197aee0ba429266df38e5c8bf8ddc667767162ae2939fddd08e9c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-brief-02",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "اگه منطقهٔ فرود رو امن کنی، می‌تونم هوایی ببرمشون. اگه آسمون بسته شد، نفربر زرهی راه عبوره. هر دو گزینه رو در نظر داشته باش.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-brief-02.wav",
+      "durationSeconds": 10.08,
+      "sha256": "b813ffddf2c28c3dd05ae19a231e0e63c69a546034d040def46b6ad43c7e4502",
+      "captionSha256": "52356bb26ea2378c6819d98f8a000159f22ec4c12bae0fc54f3daa79fc4350ee"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The witness and the archive stay together. Board them in the carrier, keep the escorts close, then transfer them only at a secure landing zone. We do not chase fighters at their expense.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-brief-03.wav",
+      "durationSeconds": 12.24,
+      "sha256": "a7f18e532f9c694d9413e1210c6abc0b909539eb0769add4518afb416076de6d",
+      "captionSha256": "16899f236386dbe790635567afbdf258e45e0ee88968c3b1a41c6c0229beaffd"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "شاهد و بایگانی باید کنار هم بمونن. سوار نفربرشون کن، نیروهای همراه رو نزدیک نگه دار و فقط در منطقهٔ فرودِ امن منتقلشون کن. برای تعقیب مهاجم‌ها رهاشون نمی‌کنیم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-brief-03.wav",
+      "durationSeconds": 14.08,
+      "sha256": "7580a8b0d0ed79115b781938ad59fb9f61c99b4f68c92b3bd082eabef8d6829a",
+      "captionSha256": "7dc34270a1aeb6b9e40dc45231cc47ee23433cf75af6ce9b91d95580313893f1"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-comms-01",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Ambush ahead. Salma is holding the rear. Open a path for the carrier and keep the witness out of the firing line; the retreating fighters are not the priority.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-comms-01.wav",
+      "durationSeconds": 10.4,
+      "sha256": "e630bbcb51c3d1c9a4a037e1bbeea3c3d0a5ae735d42cb3bc315b680f5ac2fd0",
+      "captionSha256": "ad253dd90cb80cad44c86f59906e1f1a99d17972466815d637f28228dba51e7e"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-comms-01",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "جلو کمین گذاشتن. سلما پشت سر رو نگه داشته. برای نفربر راه باز کن و شاهد رو از تیررس دور نگه دار؛ تعقیب نیروهای عقب‌نشسته اولویت نیست.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-comms-01.wav",
+      "durationSeconds": 11.92,
+      "sha256": "faf900c380c46bb16243032456ff77bbfacec75b4aea9550a0a732d89b6a195b",
+      "captionSha256": "00503e973c7bba414491aad2f4a076bf95342e847726411a9a33c236788991c9"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-comms-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The archive just authenticated with a self-sealing command bearing my signature. I created that barrier. Protect the case; I cannot open the missing key record from here.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-comms-02.wav",
+      "durationSeconds": 10.16,
+      "sha256": "6efee252cee8ddf6e1037f2deeeb3453a25a0e2f5fef5d2549aed865077cde8c",
+      "captionSha256": "5e7eeeb5e6c6053773c74bbc452475c826c509c582404855466b6c4d0f11c186"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-comms-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بایگانی با یک فرمانِ خودمُهر تأیید شد که امضای من رو داره. این مانع رو خودم ساختم. از محفظه محافظت کن؛ از اینجا به کلیدِ گم‌شده دسترسی ندارم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-comms-02.wav",
+      "durationSeconds": 11.68,
+      "sha256": "5c37489f4ddb9befce31b9eb7a19e8d4dd39abcf3bed7b968e8c53e232569d3c",
+      "captionSha256": "875151b14c7e99dadf49d76a4868c49aa8de0865d300ce0c86a8f328c99c23b7"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-debrief-01",
+      "speaker": "LINA",
+      "locale": "en-US",
+      "text": "The witness is safe, and the archive reached analysis without leaving authorized hands. Thank you for making their safety part of the mission.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-debrief-01.wav",
+      "durationSeconds": 7.76,
+      "sha256": "b0b86b6af0875148e6c4f62b96154f064314f5a7da4cbf69bb726d9a275f54a2",
+      "captionSha256": "d030d0835a934701cbebe3c9ec9a3431fde4c1e315e14b14599032bc9070b02c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-debrief-01",
+      "speaker": "LINA",
+      "locale": "fa-IR",
+      "text": "شاهد در امانه و بایگانی بدون اینکه از دست افراد مسئول خارج بشه به مرکز بررسی رسید. ممنون که امنیت اون رو بخشی از مأموریت دونستی.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Dr. Lina Mansour",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-debrief-01.wav",
+      "durationSeconds": 10.24,
+      "sha256": "18a691dea134fbfaeb812f81d17909696f2eee99076d64de8b916dee805536bb",
+      "captionSha256": "35429d902a397b37b3eeb6c0515ca56d077727405ede8081f60a48d1f883d0a3"
+    },
+    {
+      "kind": "narrative",
+      "id": "evidence_chain-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The self-seal is mine, not an imitation. I isolated this part of the original audit. Its key record is still in the active audit bunker, and Ash Line is moving to erase it.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/en/evidence_chain-debrief-02.wav",
+      "durationSeconds": 12.08,
+      "sha256": "18a0570a5dfc8961c5251bd4529048170c3c5c4c6849e64ef55150f89661ae2e",
+      "captionSha256": "1be020c19f8833f6b2926b8f11397d7612ef594a8ce95d8bd8148080a08735cd"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "evidence_chain-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "این خودمُهر مال منه، نه یک تقلید. من این بخش از بازرسی اصلی رو جدا کردم. کلیدش هنوز توی پناهگاهِ بازرسیِ فعاله و خط خاکستر داره برای پاک کردنش حرکت می‌کنه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/Voice/fa/evidence_chain-debrief-02.wav",
+      "durationSeconds": 13.12,
+      "sha256": "80c633c13dc7487bbe44b0b6bfcf330ef0dcbff99080d5e70bf18a0f6a0e5738",
+      "captionSha256": "40b8a1a2591e552b4671fc4d2d4819150c5b0b8767e4f10528e6ec2525d81acf"
+    }
+  ]
+}

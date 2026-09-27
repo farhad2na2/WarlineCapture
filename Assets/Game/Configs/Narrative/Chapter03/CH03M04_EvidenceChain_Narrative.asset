@@ -1,0 +1,473 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-3354031373179539018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M04_EvidenceChain_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m04.debrief
+  entryStateId: EvidenceChain-debrief-0
+  defaultSkipDestinationId: EvidenceChain-debrief-complete
+  states:
+  - stateId: EvidenceChain-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 3ec523c9fce25474cb72da6a2d22f888
+      m_SubObjectName: DebriefSafeArrival-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 3ec523c9fce25474cb72da6a2d22f888
+      m_SubObjectName: DebriefSafeArrival-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-debrief-01
+      textKey: narrative.evidence_chain.debrief.01
+      englishFallback: The witness is safe, and the archive reached analysis without
+        leaving authorized hands. Thank you for making their safety part of the mission.
+      speaker: 8
+      voiceClip: {fileID: 8300000, guid: 01de15d5ce3f74facb9855f42acc00e8, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.74
+      essentialCaption: 1
+    continueStateId: EvidenceChain-debrief-1
+    skipStateId: EvidenceChain-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.74
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 4333cc1ef8cca4d8d8f317f30cd27584
+      m_SubObjectName: DebriefAuditBunker-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 4333cc1ef8cca4d8d8f317f30cd27584
+      m_SubObjectName: DebriefAuditBunker-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-debrief-02
+      textKey: narrative.evidence_chain.debrief.02
+      englishFallback: The self-seal is mine, not an imitation. I isolated this part
+        of the original audit. Its key record is still in the active audit bunker,
+        and Ash Line is moving to erase it.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 03ce3659d4a7b42708f8798852640106, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.62
+      essentialCaption: 1
+    continueStateId: EvidenceChain-debrief-complete
+    skipStateId: EvidenceChain-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.62
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.evidence_chain.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-851238106552131444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M04_EvidenceChain_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m04.comms
+  entryStateId: EvidenceChain-comms-0
+  defaultSkipDestinationId: EvidenceChain-comms-complete
+  states:
+  - stateId: EvidenceChain-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 20c1d4c69ca23439b8525fe679345af6
+      m_SubObjectName: CommsAdaptiveAmbush-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 20c1d4c69ca23439b8525fe679345af6
+      m_SubObjectName: CommsAdaptiveAmbush-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-comms-01
+      textKey: narrative.evidence_chain.comms.01
+      englishFallback: Ambush ahead. Salma is holding the rear. Open a path for the
+        carrier and keep the witness out of the firing line; the retreating fighters
+        are not the priority.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: ccc1e63d3aa224c2d9fe313f8f70d7df, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.42
+      essentialCaption: 1
+    continueStateId: EvidenceChain-comms-1
+    skipStateId: EvidenceChain-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.42
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 82eeb3d3862bd4b7babbc5a5ee8c001e
+      m_SubObjectName: CommsAriaSelfSeal-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 82eeb3d3862bd4b7babbc5a5ee8c001e
+      m_SubObjectName: CommsAriaSelfSeal-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-comms-02
+      textKey: narrative.evidence_chain.comms.02
+      englishFallback: The archive just authenticated with a self-sealing command
+        bearing my signature. I created that barrier. Protect the case; I cannot
+        open the missing key record from here.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 8f8f063e5f3794c8e8896d00b188b86e, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.18
+      essentialCaption: 1
+    continueStateId: EvidenceChain-comms-complete
+    skipStateId: EvidenceChain-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.18
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.evidence_chain.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH03M04_EvidenceChain_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch03.m04.brief
+  entryStateId: EvidenceChain-brief-0
+  defaultSkipDestinationId: EvidenceChain-brief-complete
+  states:
+  - stateId: EvidenceChain-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: e42b38417d4e84835a57b596ba398dbf
+      m_SubObjectName: BriefClinicWitness-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: e42b38417d4e84835a57b596ba398dbf
+      m_SubObjectName: BriefClinicWitness-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-brief-01
+      textKey: narrative.evidence_chain.brief.01
+      englishFallback: The archive custodian made it to my clinic. The witness has
+        the physical record, and the roads outside are closing. They need a safe
+        passage, not another interrogation.
+      speaker: 8
+      voiceClip: {fileID: 8300000, guid: d12f8833a06c94adfaf9ba8a6c44f20d, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.82
+      essentialCaption: 1
+    continueStateId: EvidenceChain-brief-1
+    skipStateId: EvidenceChain-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.82
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 651f29885273f48bbad9e6b44e64ad12
+      m_SubObjectName: BriefTransportChoice-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 651f29885273f48bbad9e6b44e64ad12
+      m_SubObjectName: BriefTransportChoice-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-brief-02
+      textKey: narrative.evidence_chain.brief.02
+      englishFallback: I can take them by air if you secure the landing zone. If
+        the sky closes, the armored carrier is the way through. Keep both options
+        in sight.
+      speaker: 5
+      voiceClip: {fileID: 8300000, guid: b321e0d88e8df428c893391de3372345, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.58
+      essentialCaption: 1
+    continueStateId: EvidenceChain-brief-2
+    skipStateId: EvidenceChain-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 5f7d27dcc177244e48e6c0951a6233ce
+      m_SubObjectName: BriefProtectedCustody-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 5f7d27dcc177244e48e6c0951a6233ce
+      m_SubObjectName: BriefProtectedCustody-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: evidence_chain-brief-03
+      textKey: narrative.evidence_chain.brief.03
+      englishFallback: The witness and the archive stay together. Board them in the
+        carrier, keep the escorts close, then transfer them only at a secure landing
+        zone. We do not chase fighters at their expense.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 6ec9aea2be4fa41e6a2fb8e147b09369, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 14.58
+      essentialCaption: 1
+    continueStateId: EvidenceChain-brief-complete
+    skipStateId: EvidenceChain-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 14.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: EvidenceChain-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.evidence_chain.interactive_brief.complete
+    evidenceIds: []
+    missionContextFlags: []

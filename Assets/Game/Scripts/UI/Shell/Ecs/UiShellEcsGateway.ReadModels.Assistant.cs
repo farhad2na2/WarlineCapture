@@ -197,8 +197,13 @@ namespace Game.UI.Shell.Ecs
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
                 if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
                 if(topRecommendation.TutorialStepCount==10) recommendationBody=AppendGridlockStatus(recommendationBody);
-                if(extractionSelectionCount>=0 && extractionSelectionCount<4)
-                    recommendationBody=GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
+                bool evidenceChain=TryGetMissionRoot(out var evidenceManager,out var evidenceRoot) &&
+                    evidenceManager.GetComponentData<CampaignMissionRuntimeComponent>(evidenceRoot).MissionId.Equals(Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain);
+                int extractionRequired=evidenceChain?2:4;
+                if(extractionSelectionCount>=0 && extractionSelectionCount<extractionRequired)
+                    recommendationBody=evidenceChain
+                        ? GameText.Format("mission.evidence_chain.tutorial.selection_progress", "Protected people selected: {0}/2", extractionSelectionCount)
+                        : GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
                 if(extractionHoldStatus!=int.MinValue) recommendationBody=ExtractionHoldCopy(extractionHoldStatus);
                 tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
             }

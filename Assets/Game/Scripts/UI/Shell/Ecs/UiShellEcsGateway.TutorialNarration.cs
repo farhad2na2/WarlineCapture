@@ -23,6 +23,11 @@ namespace Game.UI.Shell.Ecs
             UiTutorialNarrationPhase phase,
             string text)
         {
+            // Evidence Chain has its own two-passenger tutorial copy. The older
+            // Airlift narration explicitly says "four specialists"; never play it here.
+            if (TryGetMissionRoot(out var evidenceManager, out var evidenceRoot) &&
+                evidenceManager.GetComponentData<CampaignMissionRuntimeComponent>(evidenceRoot).MissionId.Equals("saga.ch03.m04.evidence_chain"))
+                return false;
             bool gridlockStep = tutorialStepCount==10 && tutorialStep is >=1 and <=10 &&
                 TryGetMissionRoot(out var missionManager,out var missionRoot) &&
                 missionManager.GetComponentData<CampaignMissionRuntimeComponent>(missionRoot).MissionId.Equals("saga.ch02.m01.gridlock");

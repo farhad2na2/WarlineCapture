@@ -1,0 +1,62 @@
+{
+  "mission": "saga.ch03.m04.evidence_chain",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "cast": {
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "DALIA": "MK1Zvh93428YrgOQ8Obr",
+    "LAILA": "EXAVITQu4vr4xnSDxMaL",
+    "LINA": "EXAVITQu4vr4xnSDxMaL"
+  },
+  "castDirection": {
+    "ARIA": "Warline - ARIA Civic Relay",
+    "DALIA": "Warline - Major Dalia Rahim",
+    "LAILA": "Sarah - Captain Laila Nasser",
+    "LINA": "Sarah - Dr. Lina Mansour"
+  },
+  "purpose": "Bilingual authored mission story clips; local runtime assets; no runtime network TTS",
+  "entries": [
+    [
+      "evidence_chain-brief-01",
+      "LINA",
+      "The archive custodian made it to my clinic. The witness has the physical record, and the roads outside are closing. They need a safe passage, not another interrogation.",
+      "نگهبان بایگانی خودش رو به درمانگاه من رسونده. شاهد سندِ اصلی رو همراهش داره و راه‌های بیرون دارن بسته می‌شن. الان به یک مسیر امن نیاز داره، نه بازجوییِ بیشتر."
+    ],
+    [
+      "evidence_chain-brief-02",
+      "LAILA",
+      "I can take them by air if you secure the landing zone. If the sky closes, the armored carrier is the way through. Keep both options in sight.",
+      "اگه منطقهٔ فرود رو امن کنی، می‌تونم هوایی ببرمشون. اگه آسمون بسته شد، نفربر زرهی راه عبوره. هر دو گزینه رو در نظر داشته باش."
+    ],
+    [
+      "evidence_chain-brief-03",
+      "DALIA",
+      "The witness and the archive stay together. Board them in the carrier, keep the escorts close, then transfer them only at a secure landing zone. We do not chase fighters at their expense.",
+      "شاهد و بایگانی باید کنار هم بمونن. سوار نفربرشون کن، نیروهای همراه رو نزدیک نگه دار و فقط در منطقهٔ فرودِ امن منتقلشون کن. برای تعقیب مهاجم‌ها رهاشون نمی‌کنیم."
+    ],
+    [
+      "evidence_chain-comms-01",
+      "DALIA",
+      "Ambush ahead. Salma is holding the rear. Open a path for the carrier and keep the witness out of the firing line; the retreating fighters are not the priority.",
+      "جلو کمین گذاشتن. سلما پشت سر رو نگه داشته. برای نفربر راه باز کن و شاهد رو از تیررس دور نگه دار؛ تعقیب نیروهای عقب‌نشسته اولویت نیست."
+    ],
+    [
+      "evidence_chain-comms-02",
+      "ARIA",
+      "The archive just authenticated with a self-sealing command bearing my signature. I created that barrier. Protect the case; I cannot open the missing key record from here.",
+      "بایگانی با یک فرمانِ خودمُهر تأیید شد که امضای من رو داره. این مانع رو خودم ساختم. از محفظه محافظت کن؛ از اینجا به کلیدِ گم‌شده دسترسی ندارم."
+    ],
+    [
+      "evidence_chain-debrief-01",
+      "LINA",
+      "The witness is safe, and the archive reached analysis without leaving authorized hands. Thank you for making their safety part of the mission.",
+      "شاهد در امانه و بایگانی بدون اینکه از دست افراد مسئول خارج بشه به مرکز بررسی رسید. ممنون که امنیت اون رو بخشی از مأموریت دونستی."
+    ],
+    [
+      "evidence_chain-debrief-02",
+      "ARIA",
+      "The self-seal is mine, not an imitation. I isolated this part of the original audit. Its key record is still in the active audit bunker, and Ash Line is moving to erase it.",
+      "این خودمُهر مال منه، نه یک تقلید. من این بخش از بازرسی اصلی رو جدا کردم. کلیدش هنوز توی پناهگاهِ بازرسیِ فعاله و خط خاکستر داره برای پاک کردنش حرکت می‌کنه."
+    ]
+  ]
+}

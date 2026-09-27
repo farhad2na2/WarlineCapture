@@ -19,9 +19,10 @@ namespace Game.UI.Runtime
             bool signal=missionId==Game.Missions.Contracts.CampaignMissionSequence.SignalTrace;
             bool safehouse=missionId==Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep;
             bool falseFront=missionId==Game.Missions.Contracts.CampaignMissionSequence.FalseFront;
-            if(m3 || m4 || m5 || gridlock || supply || market || power || route || signal || safehouse || falseFront)
+            bool evidenceChain=missionId==Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;
+            if(m3 || m4 || m5 || gridlock || supply || market || power || route || signal || safehouse || falseFront || evidenceChain)
             {
-                string prefix = falseFront ? "mission.false_front." : safehouse ? "mission.safehouse_sweep." : signal ? "mission.signal_trace." : route ? "mission.route_reopened." : power ? "mission.power_relay." : market ? "mission.market_lifeline." : supply ? "mission.supply_line." : gridlock ? "mission.gridlock." : m5 ? "mission.m05." : m3 ? "mission.m03." : "mission.m04.";
+                string prefix = evidenceChain ? "mission.evidence_chain." : falseFront ? "mission.false_front." : safehouse ? "mission.safehouse_sweep." : signal ? "mission.signal_trace." : route ? "mission.route_reopened." : power ? "mission.power_relay." : market ? "mission.market_lifeline." : supply ? "mission.supply_line." : gridlock ? "mission.gridlock." : m5 ? "mission.m05." : m3 ? "mission.m03." : "mission.m04.";
                 string[] objectives = falseFront ? new[] { "verify", "evacuate", "ambush" } : safehouse ? new[] { "confirm", "protect", "ledger" } : signal ? new[] { "compare", "intercept", "recover" } : route ? new[] { "lifelines", "link", "records" } : power ? new[] { "shelter", "restore", "secure" } : market ? new[] { "delivery", "manifest", "market" } : supply ? new[] { "oil", "fuel", "reserve" } : gridlock ? new[] { "site_a", "site_b", "delivery" } : m5 ? new[] { "gate", "core", "archive" } : m3 ? new[] { "stop_convoy", "protect_post", "prevent_breach" } : new[] { "extract", "transport", "landing" };
                 string[] stars = m3 ? new[] { "complete", "civilians_safe", "post_undamaged" } : new[] { "1", "2", "3" };
                 for(int i = 0; i < 3; i++)

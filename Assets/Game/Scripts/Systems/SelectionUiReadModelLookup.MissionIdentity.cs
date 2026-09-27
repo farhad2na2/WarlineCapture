@@ -13,9 +13,11 @@ namespace Game.Runtime
     public sealed partial class SelectionUiReadModelLookup
     {
         private static readonly FixedString64Bytes RescueSpecialistRole = "role.friendly.specialist";
+        private static readonly FixedString64Bytes EvidenceChainPassengerRole = "role.friendly.archive_witness";
         public static bool IsRescueSpecialist(EntityManager em,Entity entity) =>
             em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
-            em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(RescueSpecialistRole);
+            (em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(RescueSpecialistRole) ||
+             em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(EvidenceChainPassengerRole));
         private static readonly FixedString64Bytes GridlockFadiRole = "role.gridlock.fadi";
         private static readonly FixedString64Bytes GridlockWorkerRole = "role.gridlock.worker";
         public static bool IsGridlockFadi(EntityManager em, Entity entity) =>
@@ -41,7 +43,10 @@ namespace Game.Runtime
             var root=query.GetSingletonEntity();
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             int lesson=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).GuidanceId-55000;
-            if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage || !runtime.MissionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift")) || lesson is not (4 or 5 or 9)) return selected.Count;
+            if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage ||
+                (!runtime.MissionId.Equals(new FixedString64Bytes("saga.ch01.m04.airlift")) &&
+                 !runtime.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain))) ||
+                lesson is not (4 or 5 or 9)) return selected.Count;
             bool hasPassenger=false;
             foreach(var entity in selected) if(IsRescueSpecialist(em,entity)) {hasPassenger=true;break;}
             if(hasPassenger)

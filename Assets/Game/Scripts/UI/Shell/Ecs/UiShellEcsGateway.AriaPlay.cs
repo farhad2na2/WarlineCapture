@@ -48,7 +48,8 @@ namespace Game.UI.Shell.Ecs
                 id==Game.Missions.Contracts.CampaignMissionSequence.RouteReopened ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.SignalTrace ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep ||
-                id==Game.Missions.Contracts.CampaignMissionSequence.FalseFront)
+                id==Game.Missions.Contracts.CampaignMissionSequence.FalseFront ||
+                id==Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain)
                 return AriaPlayCapability.GuidedCampaign;
             return id is "saga.ch01.m01.first_contact" or "saga.ch01.m02.establish_base" or
                 "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault" or

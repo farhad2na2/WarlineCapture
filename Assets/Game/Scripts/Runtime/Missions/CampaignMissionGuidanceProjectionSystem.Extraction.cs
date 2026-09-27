@@ -10,18 +10,23 @@ namespace Game.Runtime
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
         private static readonly FixedString64Bytes ExtractionMissionId = "saga.ch01.m04.airlift";
+        private static readonly FixedString64Bytes EvidenceChainMissionId = CampaignMissionSequence.EvidenceChain;
         private static readonly FixedString64Bytes ExtractionTitlePrefix = "mission.m04.tutorial.";
         private static readonly FixedString128Bytes ExtractionBodyPrefix = "mission.m04.tutorial.";
+        private static readonly FixedString64Bytes EvidenceChainTitlePrefix = "mission.evidence_chain.tutorial.";
+        private static readonly FixedString128Bytes EvidenceChainBodyPrefix = "mission.evidence_chain.tutorial.";
         private static readonly FixedString32Bytes ExtractionTitleSuffix = ".title";
         private static readonly FixedString32Bytes ExtractionBodySuffix = ".body";
         private static readonly FixedString64Bytes ExtractionTargetPrefix = "tutorial.ch01.m04.";
+        private static readonly FixedString64Bytes EvidenceChainTargetPrefix = "tutorial.ch03.m04.";
         private static readonly FixedString64Bytes ExtractionGuideAction = "mission.m03.guide.open";
         private static readonly FixedString64Bytes ExtractionPassengerAction="mission.m04.action.passengers";
         private bool TryUpdateExtractionGuidance(ref SystemState state,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
             var em=state.EntityManager;
-            if(!runtime.MissionId.Equals(ExtractionMissionId))return false;
+            bool evidenceChain = runtime.MissionId.Equals(EvidenceChainMissionId);
+            if(!runtime.MissionId.Equals(ExtractionMissionId) && !evidenceChain)return false;
             if(!em.HasComponent<CampaignMissionExtractionState>(root)) {ClearDefenseGuidance(em,root,in current);return true;}
             var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);
             if(!extraction.SessionToken.Equals(runtime.SessionToken) || extraction.AttemptOrdinal!=runtime.AttemptOrdinal || extraction.SourceVersion!=runtime.SourceVersion ||
@@ -35,6 +40,7 @@ namespace Game.Runtime
             bool selectedAircraft=em.Exists(extraction.Aircraft)&&em.HasComponent<SelectedUnitTag>(extraction.Aircraft);
             int inAircraft=0,groundAtLanding=0;float3 team=default;int selectedTeamCount=0; int teamCount=0;
             var members=em.GetBuffer<CampaignMissionExtractionMember>(root,true);
+            int required = math.max(1, facts.ExtractionPassengerTotal);
             for(int i=0;i<members.Length;i++) if(members[i].Kind==1 && em.Exists(members[i].Entity))
             {
                 var e=members[i].Entity;if(em.HasComponent<SelectedUnitTag>(e)) selectedTeamCount++;
@@ -46,21 +52,21 @@ namespace Game.Runtime
             float3 carrier=em.Exists(extraction.Carrier)&&em.HasComponent<LocalTransform>(extraction.Carrier)?em.GetComponentData<LocalTransform>(extraction.Carrier).Position:default;
             bool nearTeam=math.distancesq(carrier.xz,team.xz)<=20*20;
             bool atLanding=math.distancesq(carrier.xz,extraction.LandingCenter.xz)<=20*20;
-            if(groundAtLanding==4 && facts.ExtractionCarrierLegCount==4)extraction.UnloadedAtLanding=1;
+            if(groundAtLanding==required && facts.ExtractionCarrierLegCount==required)extraction.UnloadedAtLanding=1;
             // M4 teaches the rescue workflow on every entry, including older replay/retry payloads.
             for(int step=1;step<=12;step++)
             {
-                bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeamCount==4||facts.ExtractionCarrierLegCount==4,
-                    5=>facts.ExtractionCarrierLegCount==4,6=>atLanding&&facts.ExtractionCarrierLegCount==4,7=>extraction.UnloadedAtLanding!=0||inAircraft==4,
-                    8=>selectedAircraft||inAircraft>0,9=>inAircraft==4,10=>extraction.DepartureCleared!=0,11=>facts.ExtractionDeparted!=0,12=>runtime.Outcome!=MissionOutcomeKind.None,_=>false};
+                bool done=step switch {2=>selectedCarrier,3=>nearTeam||facts.ExtractionCarrierLegCount>0,4=>selectedTeamCount==required||facts.ExtractionCarrierLegCount==required,
+                    5=>facts.ExtractionCarrierLegCount==required,6=>atLanding&&facts.ExtractionCarrierLegCount==required,7=>extraction.UnloadedAtLanding!=0||inAircraft==required,
+                    8=>selectedAircraft||inAircraft>0,9=>inAircraft==required,10=>extraction.DepartureCleared!=0,11=>facts.ExtractionDeparted!=0,12=>runtime.Outcome!=MissionOutcomeKind.None,_=>false};
                 if(done)extraction.GuidanceCompletedMask|=1u<<(step-1);
             }
             em.SetComponentData(root,extraction);
             int chosen=1;while(chosen<=12&&(extraction.GuidanceCompletedMask&(1u<<(chosen-1)))!=0)chosen++;
             if(chosen>12){ClearDefenseGuidance(em,root,in current);return true;}
-            var title=ExtractionTitlePrefix;title.Append(chosen);title.Append(ExtractionTitleSuffix);
-            var body=ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
-            var targetId=ExtractionTargetPrefix;targetId.Append(chosen);
+            var title=evidenceChain ? EvidenceChainTitlePrefix : ExtractionTitlePrefix;title.Append(chosen);title.Append(ExtractionTitleSuffix);
+            var body=evidenceChain ? EvidenceChainBodyPrefix : ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
+            var targetId=evidenceChain ? EvidenceChainTargetPrefix : ExtractionTargetPrefix;targetId.Append(chosen);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=55000+chosen,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=(CampaignMissionGuidancePromptKind)(24+chosen),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,
                 RecommendationKind=AssistantRecommendationKind.Explain,TargetKind=AssistantTargetKind.UiSurface,

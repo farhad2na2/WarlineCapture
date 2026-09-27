@@ -34,7 +34,7 @@ namespace Game.UI.Shell.Ecs
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             // Optional mission state can remain on the persistent root after returning
             // to the campaign. Only M4 owns specialist/transport selection routing.
-            if(runtime.MissionId.Equals(AirliftId) && em.HasComponent<CampaignMissionExtractionState>(root))
+            if(IsExtractionMission(runtime.MissionId) && em.HasComponent<CampaignMissionExtractionState>(root))
             {
                 int step=guidance.GuidanceId-55000;
                 var extraction=em.GetComponentData<CampaignMissionExtractionState>(root);

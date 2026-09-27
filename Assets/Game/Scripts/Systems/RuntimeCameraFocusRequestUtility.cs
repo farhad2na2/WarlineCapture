@@ -6,6 +6,11 @@ namespace Game.Runtime
 {
     public static class RuntimeCameraFocusRequestUtility
     {
+        // Mission introductions need enough visual travel time for players to understand
+        // where the camera is taking them. Keep this shared floor so newly-authored tours
+        // cannot accidentally ship with the near-snap timings used by utility camera jumps.
+        public const float MinimumMissionIntroSmoothTimeSeconds = 2.25f;
+
         public const float TacticalRevealHeight = 9f;
         public const float TacticalRevealPitch = 30f;
         public const float TacticalRevealYaw = 0f;
@@ -20,6 +25,9 @@ namespace Game.Runtime
         public const float CombatRevealHeight = 12f;
         public const float CombatRevealPitch = 30f;
         public const float CombatRevealFieldOfView = 38f;
+
+        public static float EnsureMissionIntroSmoothTime(float smoothTimeSeconds) =>
+            Mathf.Max(MinimumMissionIntroSmoothTimeSeconds, smoothTimeSeconds);
 
         public static Vector3 GetInitialBuildingFootprintCenterWorld(
             Vector2Int originCell,

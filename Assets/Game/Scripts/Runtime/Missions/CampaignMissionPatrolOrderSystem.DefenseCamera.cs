@@ -23,6 +23,8 @@ namespace Game.Runtime
             var owner=defenseTourQuery.GetSingletonEntity();
             var camera=defenseTourQuery.GetSingleton<CampaignMissionCameraTourState>();
             if(!camera.SessionToken.Equals(opening.SessionToken)) return;
+            bool routeReopened=state.EntityManager.HasComponent<CampaignMissionRuntimeComponent>(owner) &&
+                state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(CampaignMissionSequence.RouteReopened);
             var rts=rtsCameraStateQuery.GetSingleton<RtsCameraStateComponent>();
             bool settled=focus.Requested==0 && rts.HasSmoothFocusTarget==0 && rts.HasSmoothPerspectiveTarget==0 &&
                 rts.MatchIntroZoomSettlePending==0 && rts.IsZoomTransitionActive==0;
@@ -48,17 +50,20 @@ namespace Game.Runtime
             else switch(opening.Stage)
             {
                 case 0 when stageTime>=tour.StartHoldMilliseconds && settled:
-                    QueueTourCamera(state.EntityManager,focusEntity,opening.EstablishingFocus,tour.PostPerspective,tour.SmoothTimeSeconds);
+                    QueueTourCamera(state.EntityManager,focusEntity,opening.EstablishingFocus,tour.PostPerspective,
+                        ResolveOpeningTourSmoothTime(tour.SmoothTimeSeconds,routeReopened));
                     opening.Stage=1; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds; break;
                 case 1 when stageTime>=100 && settled:
                     opening.Stage=2; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds; break;
                 case 2 when stageTime>=tour.PostHoldMilliseconds:
-                    QueueTourCamera(state.EntityManager,focusEntity,opening.HostileFocus,tour.ApproachPerspective,tour.SmoothTimeSeconds);
+                    QueueTourCamera(state.EntityManager,focusEntity,opening.HostileFocus,tour.ApproachPerspective,
+                        ResolveOpeningTourSmoothTime(tour.SmoothTimeSeconds,routeReopened));
                     opening.Stage=3; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds; break;
                 case 3 when stageTime>=100 && settled:
                     opening.Stage=4; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds; break;
                 case 4 when stageTime>=tour.ApproachHoldMilliseconds:
-                    QueueTourCamera(state.EntityManager,focusEntity,camera.StartFocus,camera.StartPerspective,tour.SmoothTimeSeconds);
+                    QueueTourCamera(state.EntityManager,focusEntity,camera.StartFocus,camera.StartPerspective,
+                        ResolveOpeningTourSmoothTime(tour.SmoothTimeSeconds,routeReopened));
                     opening.Stage=5; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds; break;
                 case 5 when stageTime>=100 && settled:
                     if(camera.ReturnSettled==0) {camera.ReturnSettled=1; camera.StageStartedAtMilliseconds=opening.ElapsedMilliseconds;}
@@ -130,7 +135,7 @@ namespace Game.Runtime
                     if(!camera.SessionToken.Equals(runtime.SessionToken)) continue;
                     camera.OpeningWatchdogMilliseconds=SaturatingAddMilliseconds(camera.OpeningWatchdogMilliseconds,SystemAPI.Time.DeltaTime);
                     // Readiness still belongs to the mission/map owners. Only the optional presentation times out.
-                    if(camera.OpeningWatchdogMilliseconds>=30000)
+                    if(camera.OpeningWatchdogMilliseconds>=90000)
                     {
                         if(camera.Captured!=0 && _cameraFocusQuery.CalculateEntityCount()==1)
                             QueueTourCamera(state.EntityManager,_cameraFocusQuery.GetSingletonEntity(),camera.StartFocus,camera.StartPerspective,0);
@@ -152,6 +157,9 @@ namespace Game.Runtime
             em.SetComponentData(target,new RuntimeCameraFocusRequestComponent{Requested=1,Smooth=smoothTime>0 ? (byte)1 : (byte)0,
                 UseExplicitPerspective=1,Perspective=perspective,SmoothTimeSeconds=smoothTime,World=world});
         }
+        internal static float ResolveOpeningTourSmoothTime(float authoredSmoothTimeSeconds,bool routeReopened=false) =>
+            routeReopened ? math.max(1.5f,authoredSmoothTimeSeconds) :
+                RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(authoredSmoothTimeSeconds);
         private bool IsFinalKillShotActive(ref SystemState state,in CampaignMissionRuntimeComponent runtime) =>
             SystemAPI.TryGetSingleton(out CampaignMissionFinalKillCinematicComponent finalKill) &&
             CampaignMissionFinalKillCinematicHelper.IsActive(in finalKill, in runtime.SessionToken);

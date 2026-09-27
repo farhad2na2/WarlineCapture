@@ -30,6 +30,7 @@ public sealed class CampaignMissionFinalKillCinematicTests
             tests.System_StartsShotAndHoldsResultWhenLastHostileDies(); passed++;
             tests.System_ReleasesHoldOnDefeatAndNewAttempt(); passed++;
             tests.System_DoesNotTriggerWhileOtherHostilesRemain(); passed++;
+            tests.System_DoesNotInterruptOpeningCameraTour(); passed++;
             tests.Shake_AttenuatesDecaysAndStaysBounded(); passed++;
             Debug.Log($"[CampaignMissionFinalKillCinematicValidation] result=Passed tests={passed}");
             ValidationExit.Passed();
@@ -190,6 +191,38 @@ public sealed class CampaignMissionFinalKillCinematicTests
         fixture.Kill(civilian);
         fixture.Tick();
         Assert.IsFalse(CampaignMissionFinalKillCinematicSystem.IsHoldingMissionResult(fixture.Em, fixture.Root));
+    }
+
+    [Test]
+    public void System_DoesNotInterruptOpeningCameraTour()
+    {
+        using var fixture = new Fixture();
+        fixture.Em.AddComponentData(fixture.Root, new CampaignMissionOpeningPresentationComponent
+        {
+            SessionToken = Session,
+            Stage = 1
+        });
+        Entity openingHostile = fixture.AddUnit(FactionIdentity.EnemyFactionId, new float3(0f, 0f, 30f), 10);
+        fixture.AddUnit(FactionIdentity.PlayerFactionId, new float3(0f, 0f, 0f), 10);
+        fixture.Tick();
+        fixture.Kill(openingHostile);
+        fixture.Tick();
+
+        Assert.IsFalse(CampaignMissionFinalKillCinematicSystem.IsHoldingMissionResult(fixture.Em, fixture.Root));
+        Assert.AreEqual(0, fixture.Em.GetComponentData<RuntimeCameraFocusRequestComponent>(fixture.Focus).Requested,
+            "A kill during the opening must not replace the tour with a close-up camera request.");
+
+        CampaignMissionOpeningPresentationComponent opening =
+            fixture.Em.GetComponentData<CampaignMissionOpeningPresentationComponent>(fixture.Root);
+        opening.Stage = 6;
+        fixture.Em.SetComponentData(fixture.Root, opening);
+        Entity laterHostile = fixture.AddUnit(FactionIdentity.EnemyFactionId, new float3(0f, 0f, 20f), 10);
+        fixture.Tick();
+        fixture.Kill(laterHostile);
+        fixture.Tick();
+
+        Assert.IsTrue(CampaignMissionFinalKillCinematicSystem.IsHoldingMissionResult(fixture.Em, fixture.Root),
+            "The final-kill shot remains available once the opening has handed control back.");
     }
 
     [Test]

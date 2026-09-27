@@ -7,6 +7,8 @@ namespace Game.UI.Shell.Ecs
 {
     public sealed partial class UiShellEcsGateway : IUiMissionTutorialFocusGateway
     {
+        public const float MissionTutorialFocusSmoothTimeSeconds = 2.5f;
+
         public bool TryFocusMissionTutorialTarget(bool selection)
         {
             if (!TryReadMissionTutorialTarget(out var lesson) || !TryGetMissionRoot(out var em,out _)) return false;
@@ -25,10 +27,18 @@ namespace Game.UI.Shell.Ecs
             if (!math.all(math.isfinite(target))) return false;
             using var focus = em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if (focus.CalculateEntityCount()!=1) return false;
-            em.SetComponentData(focus.GetSingletonEntity(),new RuntimeCameraFocusRequestComponent {
-                Requested=1, Smooth=1, SmoothTimeSeconds=.5f, UseExplicitPerspective=1,
-                Perspective=new float4(target.y+height,65f,0f,40f), World=target });
+            em.SetComponentData(focus.GetSingletonEntity(),CreateMissionTutorialFocusRequest(target,height));
             return true;
         }
+
+        public static RuntimeCameraFocusRequestComponent CreateMissionTutorialFocusRequest(float3 target,float height) => new()
+        {
+            Requested=1,
+            Smooth=1,
+            SmoothTimeSeconds=MissionTutorialFocusSmoothTimeSeconds,
+            UseExplicitPerspective=1,
+            Perspective=new float4(target.y+height,65f,0f,40f),
+            World=target
+        };
     }
 }

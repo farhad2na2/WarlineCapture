@@ -354,6 +354,6 @@ MonoBehaviour:
       PostHoldMilliseconds: 1200
       ApproachHoldMilliseconds: 1700
       ReturnHoldMilliseconds: 500
-      SmoothTimeSeconds: 0.7
+      SmoothTimeSeconds: 1.5
       PostPerspective: {x: 52, y: 67, z: 0, w: 55}
       ApproachPerspective: {x: 48, y: 69, z: 0, w: 52}

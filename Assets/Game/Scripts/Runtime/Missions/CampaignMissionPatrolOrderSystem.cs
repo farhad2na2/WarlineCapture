@@ -148,6 +148,8 @@ namespace Game.Runtime
             if (definition.Breach.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Breach.CameraTour);
             if (definition.Extraction.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.Extraction.CameraTour);
             if (definition.MarketLifeline.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.MarketLifeline.CameraTour);
+            if (definition.PowerRelay.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.PowerRelay.CameraTour);
+            if (definition.RouteReopened.Enabled != 0) AdvanceDefenseCameraFallbacks(ref state,in runtime,ref definition.RouteReopened.CameraTour);
             if (_cameraFocusQuery.CalculateEntityCount() == 1)
             {
                 Entity focusEntity = _cameraFocusQuery.GetSingletonEntity();
@@ -172,7 +174,8 @@ namespace Game.Runtime
                         CampaignMissionSpawnSystem.QueueMissionOpeningOverview(
                             state.EntityManager,
                             focusEntity,
-                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0 || definition.MarketLifeline.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0 || definition.MarketLifeline.Enabled != 0);
+                            in current, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0 || definition.MarketLifeline.Enabled != 0 || definition.PowerRelay.Enabled != 0 || definition.RouteReopened.Enabled != 0, definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0 || definition.MarketLifeline.Enabled != 0 || definition.PowerRelay.Enabled != 0 || definition.RouteReopened.Enabled != 0,
+                            definition.RouteReopened.Enabled != 0 ? definition.RouteReopened.CameraTour.SmoothTimeSeconds : 0f);
                         current.InitialRtsOverviewRequested = 1;
                         opening.ValueRW = current;
                         break;
@@ -180,11 +183,21 @@ namespace Game.Runtime
 
                     bool useEstablishBaseOpening = ShouldUseEstablishBaseOpening(runtime.MissionId);
                     bool openingCanAdvance = (!useEstablishBaseOpening || CanAdvanceEstablishBaseOpening(runtime.Phase)) &&
-                        ((definition.Gridlock.Enabled == 0 && definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0 && definition.MarketLifeline.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
+                        ((definition.Gridlock.Enabled == 0 && definition.Defense.Enabled == 0 && definition.Extraction.Enabled == 0 && definition.Breach.Enabled == 0 && definition.MarketLifeline.Enabled == 0 && definition.PowerRelay.Enabled == 0 && definition.RouteReopened.Enabled == 0) || runtime.Phase >= MissionPhaseKind.FindSquad);
                     if (current.Stage <= 5 && focus.Requested == 0 && openingCanAdvance &&
                         IsOpeningVisible(state.EntityManager))
                         current.ElapsedMilliseconds = SaturatingAddMilliseconds(
                             current.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
+                    if(definition.RouteReopened.Enabled!=0 && openingCanAdvance)
+                    {
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.RouteReopened.CameraTour,metadata);
+                        opening.ValueRW=current; break;
+                    }
+                    if(definition.PowerRelay.Enabled!=0 && openingCanAdvance)
+                    {
+                        AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.PowerRelay.CameraTour,metadata);
+                        opening.ValueRW=current; break;
+                    }
                     if(definition.MarketLifeline.Enabled!=0 && openingCanAdvance)
                     {
                         AdvanceDefenseCamera(ref state,focusEntity,in focus,ref current,ref definition.MarketLifeline.CameraTour,metadata);

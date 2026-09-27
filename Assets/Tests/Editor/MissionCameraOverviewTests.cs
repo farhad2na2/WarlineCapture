@@ -4,10 +4,12 @@ using Unity.Mathematics;
 using UnityEngine;
 using NUnit.Framework;
 using Game.Components;
+using Game.Configs;
 using Game.UI.Contracts;
 using Game.UI.Shell.Ecs;
 using Unity.Entities;
 using Unity.Transforms;
+using UnityEditor;
 using System.Reflection;
 
 public sealed class MissionCameraOverviewTests
@@ -18,7 +20,10 @@ public sealed class MissionCameraOverviewTests
         {
             new MissionCameraOverviewTests().BothMissionOverviewsKeepSubjectsOutsideHudOcclusion();
             new MissionCameraOverviewTests().ExtractionFocusUsesTheMovingSubjectsAndTransport();
-            Debug.Log("[MissionCameraOverview] result=Passed missions=2 aspects=2 liveExtractionFocus=true");
+            new MissionCameraOverviewTests().OpeningTourRejectsFastAuthoredWindowReveal();
+            new MissionCameraOverviewTests().AriaTutorialFocusSlowsTheSkyToWindowReveal();
+            new MissionCameraOverviewTests().RouteReopenedUsesSlowApproachAndReturn();
+            Debug.Log("[MissionCameraOverview] result=Passed missions=2 aspects=2 liveExtractionFocus=true cinematicOpeningFloor=true ariaWindowGlide=true routeReopenedGlide=true");
             ValidationExit.Exit(0);
         }
         catch (Exception error)
@@ -27,6 +32,47 @@ public sealed class MissionCameraOverviewTests
             Debug.LogError("[MissionCameraOverview] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void OpeningTourRejectsFastAuthoredWindowReveal()
+    {
+        Assert.That(CampaignMissionPatrolOrderSystem.ResolveOpeningTourSmoothTime(.7f),
+            Is.EqualTo(RuntimeCameraFocusRequestUtility.MinimumMissionIntroSmoothTimeSeconds));
+        Assert.That(CampaignMissionPatrolOrderSystem.ResolveOpeningTourSmoothTime(3f), Is.EqualTo(3f));
+    }
+
+    [Test]
+    public void AriaTutorialFocusSlowsTheSkyToWindowReveal()
+    {
+        var target = new float3(410f, 2f, 265f);
+        RuntimeCameraFocusRequestComponent request =
+            UiShellEcsGateway.CreateMissionTutorialFocusRequest(target, 40f);
+
+        Assert.That(request.Requested, Is.EqualTo(1));
+        Assert.That(request.Smooth, Is.EqualTo(1));
+        Assert.That(request.UseExplicitPerspective, Is.EqualTo(1));
+        Assert.That(request.SmoothTimeSeconds,
+            Is.EqualTo(UiShellEcsGateway.MissionTutorialFocusSmoothTimeSeconds));
+        Assert.That(request.SmoothTimeSeconds, Is.GreaterThanOrEqualTo(2.5f));
+        Assert.That(request.World, Is.EqualTo(target));
+    }
+
+    [Test]
+    public void RouteReopenedUsesSlowApproachAndReturn()
+    {
+        const float expectedSeconds = 1.5f;
+        var scenario = AssetDatabase.LoadAssetAtPath<ScenarioSetupConfig>(
+            "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M05_RouteReopened.asset");
+        Assert.NotNull(scenario);
+        Assert.That(scenario.RouteReopened.CameraTour.IsValid, Is.True);
+        Assert.That(scenario.RouteReopened.CameraTour.SmoothTimeSeconds, Is.EqualTo(expectedSeconds));
+        var opening = CampaignMissionSpawnSystem.CreateDefenseCommandView(new float3(700f, 2f, 442f),
+            scenario.RouteReopened.CameraTour.SmoothTimeSeconds);
+        Assert.That(opening.Smooth, Is.EqualTo(1), "The first sky-to-command view must not teleport.");
+        Assert.That(opening.SmoothTimeSeconds, Is.EqualTo(expectedSeconds));
+        Assert.That(CampaignMissionPatrolOrderSystem.ResolveOpeningTourSmoothTime(
+            scenario.RouteReopened.CameraTour.SmoothTimeSeconds,true), Is.EqualTo(expectedSeconds));
     }
 
     [Test]

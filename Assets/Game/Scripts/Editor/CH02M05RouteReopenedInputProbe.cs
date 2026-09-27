@@ -20,15 +20,19 @@ namespace Game.Editor
     [InitializeOnLoad]
     public static class CH02M05RouteReopenedInputProbe
     {
-        private const string Active="Warline.RouteReopened.InputProbe",Manual="Warline.RouteReopened.InputProbe.ManualEditorRun",Output="/private/tmp/warline-route-reopened";
+        private const string Active="Warline.RouteReopened.InputProbe",Manual="Warline.RouteReopened.InputProbe.ManualEditorRun",OpeningOnly="Warline.RouteReopened.InputProbe.OpeningOnly",Output="/private/tmp/warline-route-reopened";
         private static bool seeded,finished,watchStarted,won,sawDebrief;private static double started,lastInput,lastLog,briefWait;private static int winningClock;private static AriaTouchInputUiSystemHelper touch;private static CampaignMissionProgressStore store;
+        private static int openingCameraSamples;
+        private static float lastOpeningCameraTime,lastOpeningScreenshotTime,maxOpeningCameraSpeed;
+        private static Vector3 lastOpeningCameraPosition;
         static CH02M05RouteReopenedInputProbe(){if(SessionState.GetBool(Active,false))EditorApplication.update+=Tick;}
         [MenuItem("Game/Campaign/Route Reopened/Run Normal Input Watch Probe")]
-        public static void RunFromOpenEditor(){SessionState.SetBool(Manual,true);Run();}
+        public static void RunFromOpenEditor(){SessionState.SetBool(Manual,true);SessionState.SetBool(OpeningOnly,false);Run();}
+        public static void RunOpeningCamera(){SessionState.SetBool(OpeningOnly,true);Run();}
         public static void Run()
         {
             try{CH02M05RouteReopenedRulesValidation.Run();CH02M05RouteReopenedConfigBuilder.Build();CH02M05RouteReopenedPresentationBuilder.Build();CH02M05RouteReopenedNarrativeBuilder.BuildCaptionedArtWithoutVoices();}catch(Exception e){Debug.LogException(e);Complete(false,"Authoring failed: "+e.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=false;winningClock=0;store=null;SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=false;SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);RepairSelectableRegistry();AssetDatabase.DisallowAutoRefresh();EditorApplication.update-=Tick;EditorApplication.update+=Tick;EditorApplication.EnterPlaymode();
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=false;winningClock=openingCameraSamples=0;lastOpeningCameraTime=lastOpeningScreenshotTime=maxOpeningCameraSpeed=0f;store=null;SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=false;SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);RepairSelectableRegistry();AssetDatabase.DisallowAutoRefresh();EditorApplication.update-=Tick;EditorApplication.update+=Tick;EditorApplication.EnterPlaymode();
         }
         private static void Tick()
         {
@@ -39,6 +43,21 @@ namespace Game.Editor
                 if(EditorApplication.timeSinceStartup-started>600)throw new TimeoutException("Route Reopened public-input Watch probe timed out.");World world=World.DefaultGameObjectInjectionWorld;if(world==null||!world.IsCreated)return;EntityManager em=world.EntityManager;using EntityQuery roots=em.CreateEntityQuery(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent));if(roots.CalculateEntityCount()!=1)return;Entity root=roots.GetSingletonEntity();if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;var reference=em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root);
                 if(store==null){store=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,"input-profile-"+Guid.NewGuid().ToString("N")))));store.EnsureAvailable(CampaignMissionSequence.RouteReopened);}if(reference.Store!=store)reference.Store=store;if(!seeded){Game.Configs.GameLocalization.SetLocale("en",false);seeded=true;}
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var routeState=em.HasComponent<CampaignMissionRouteReopenedState>(root)?em.GetComponentData<CampaignMissionRouteReopenedState>(root):default;
+                if(runtime.MissionId.Equals(CampaignMissionSequence.RouteReopened)&&runtime.Phase>=MissionPhaseKind.FindSquad&&em.HasComponent<CampaignMissionOpeningPresentationComponent>(root))
+                {
+                    var opening=em.GetComponentData<CampaignMissionOpeningPresentationComponent>(root);
+                    if(SessionState.GetBool(OpeningOnly,false)) RecordOpeningCamera(em,opening.Stage);
+                    if(SessionState.GetBool(OpeningOnly,false)&&opening.Stage<6&&
+                       em.HasComponent<CampaignMissionFinalKillCinematicComponent>(root)&&
+                       em.GetComponentData<CampaignMissionFinalKillCinematicComponent>(root).Active!=0)
+                        throw new InvalidOperationException("Final-kill camera interrupted the mission opening tour.");
+                    if(SessionState.GetBool(OpeningOnly,false)&&opening.Stage>=6)
+                    {
+                        if(openingCameraSamples<10||maxOpeningCameraSpeed>120f)
+                            throw new InvalidOperationException($"Opening camera transition jumped: samples={openingCameraSamples} maxSpeed={maxOpeningCameraSpeed:F1}.");
+                        Complete(true,$"openingCamera=Passed samples={openingCameraSamples} maxSpeed={maxOpeningCameraSpeed:F1}");return;
+                    }
+                }
                 if(EditorApplication.timeSinceStartup-lastLog>8){var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);Debug.Log($"[RouteReopenedInput] phase={runtime.Phase} ready={routeState.Ready} relief={routeState.ReliefDelivered} fuel={routeState.FuelDelivered} link={routeState.LinkRestored} hub={routeState.HubEntered} garrison={routeState.GarrisonCleared} records={routeState.RecordsPreserved}/{routeState.RecordsHoldMilliseconds} clock={routeState.ElapsedMilliseconds} watch={UiShellRuntimeGateway.ReadAriaPlay().Phase} guide={guidance.GuidanceId}/{guidance.Prompt}/{guidance.RecommendationKind}/can{guidance.CanExecute} {RouteMemberStatus(em,root,in routeState)} {RouteLifecycleStatus(em,root)}");ScreenCapture.CaptureScreenshot(Output+"/input-current.png");lastLog=EditorApplication.timeSinceStartup;}
                 if(routeState.Failure!=RouteReopenedFailure.None)throw new InvalidOperationException("Mission failed: "+routeState.Failure);
                 if(runtime.Outcome==MissionOutcomeKind.Victory){if(routeState.ReliefDelivered==0||routeState.FuelDelivered==0||routeState.LinkRestored==0||routeState.HubEntered==0||routeState.GarrisonCleared==0||routeState.RecordsPreserved==0||routeState.RecordsHoldMilliseconds<10000)throw new InvalidOperationException("Victory lacks a lifeline, link repair, controlled hub capture, or preserved archive.");if(!won){won=true;winningClock=routeState.ElapsedMilliseconds;Debug.Log("[RouteReopenedInput] victory=Passed awaiting=debrief-and-return");}}
@@ -53,6 +72,27 @@ namespace Game.Editor
             catch(Exception e){Debug.LogException(e);Complete(false,e.Message);}
         }
         private static void SkipNarrative(NarrativeSequenceView view){var confirm=view.SkipConfirmationView;bool confirming=confirm!=null&&Visible(confirm,"group");object owner=confirming?(object)confirm:view.PlaybackControlsView;Tap(owner?.GetType().GetField(confirming?"confirmButton":"skipButton",BindingFlags.NonPublic|BindingFlags.Instance)?.GetValue(owner) as Button);}
+        private static void RecordOpeningCamera(EntityManager em,byte stage)
+        {
+            Camera camera=Camera.main;if(camera==null)return;
+            float now=Time.realtimeSinceStartup;
+            if(lastOpeningCameraTime>0f)
+            {
+                float elapsed=now-lastOpeningCameraTime;
+                if(elapsed>.001f&&elapsed<1f)
+                    maxOpeningCameraSpeed=Mathf.Max(maxOpeningCameraSpeed,Vector3.Distance(camera.transform.position,lastOpeningCameraPosition)/elapsed);
+            }
+            lastOpeningCameraTime=now;lastOpeningCameraPosition=camera.transform.position;
+            if(openingCameraSamples>0&&now-lastOpeningScreenshotTime<.25f)return;
+            lastOpeningScreenshotTime=now;
+            var position=camera.transform.position;
+            var focus=em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
+            var request=focus.CalculateEntityCount()==1?focus.GetSingleton<RuntimeCameraFocusRequestComponent>():default;
+            focus.Dispose();
+            Debug.Log($"[RouteReopenedCamera] sample={openingCameraSamples} stage={stage} time={now:F2} position={position} pitch={camera.transform.eulerAngles.x:F1} fov={camera.fieldOfView:F1} request={request.Requested}/{request.Smooth}/{request.SmoothTimeSeconds:F2} maxSpeed={maxOpeningCameraSpeed:F1}");
+            ScreenCapture.CaptureScreenshot($"{Output}/opening-camera-{openingCameraSamples:D3}.png");
+            openingCameraSamples++;
+        }
         private static bool Ready(Button b)=>b!=null&&b.IsActive()&&b.IsInteractable();private static bool Visible(object owner,string field){var group=owner.GetType().GetField(field,BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(owner) as CanvasGroup;return group!=null&&group.alpha>.9f&&group.gameObject.activeInHierarchy;}
         private static void EnsureTouch(){if(touch!=null)return;EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();touch=new AriaTouchInputUiSystemHelper();if(!touch.Start())throw new InvalidOperationException("Could not start public touch input.");}
         private static string RouteMemberStatus(EntityManager em,Entity root,in CampaignMissionRouteReopenedState routeState)
@@ -106,6 +146,6 @@ namespace Game.Editor
             Debug.Log($"[RouteReopenedInput] selectableRegistry=Rebuilt live={all.Count(x=>x.isActiveAndEnabled)} capacity={((Selectable[])arrayField.GetValue(null)).Length}");
         }
         private static void Tap(Button b){if(!Ready(b))return;var rect=(RectTransform)b.transform;var canvas=b.GetComponentInParent<Canvas>();Vector2 point=RectTransformUtility.WorldToScreenPoint(canvas.renderMode==RenderMode.ScreenSpaceOverlay?null:canvas.worldCamera,rect.TransformPoint(rect.rect.center));if(touch.TryGesture(point,point,.18f,0,Time.unscaledTime)){lastInput=EditorApplication.timeSinceStartup;Debug.Log("[RouteReopenedInput] touch="+b.name);}}
-        private static void Complete(bool pass,string detail){if(finished)return;finished=true;SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=false;touch?.Dispose();touch=null;SessionState.SetBool(Active,false);EditorApplication.update-=Tick;ScreenCapture.CaptureScreenshot(Output+"/input-last.png");Debug.Log("[RouteReopenedInput] result="+(pass?"Passed":"Failed")+" "+detail);if(SessionState.GetBool(Manual,false)){SessionState.SetBool(Manual,false);AssetDatabase.AllowAutoRefresh();EditorApplication.ExitPlaymode();}else MissionEditorValidationExit.Complete(pass);}
+        private static void Complete(bool pass,string detail){if(finished)return;finished=true;SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=false;touch?.Dispose();touch=null;SessionState.SetBool(Active,false);SessionState.SetBool(OpeningOnly,false);EditorApplication.update-=Tick;ScreenCapture.CaptureScreenshot(Output+"/input-last.png");Debug.Log("[RouteReopenedInput] result="+(pass?"Passed":"Failed")+" "+detail);if(SessionState.GetBool(Manual,false)){SessionState.SetBool(Manual,false);AssetDatabase.AllowAutoRefresh();EditorApplication.ExitPlaymode();}else MissionEditorValidationExit.Complete(pass);}
     }
 }

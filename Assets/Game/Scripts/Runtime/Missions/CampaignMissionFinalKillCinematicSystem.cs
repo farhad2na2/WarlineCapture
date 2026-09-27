@@ -186,6 +186,16 @@ namespace Game.Runtime
             float3 victim, ref CampaignMissionFinalKillCinematicComponent cinematic)
         {
             EntityManager em = state.EntityManager;
+            // The opening tour owns the camera until it hands control back at stage 6.
+            // A last-hostile kill during that tour must not replace its camera request
+            // with the close-up shot (or the fast return shot) before the player starts.
+            if (em.HasComponent<CampaignMissionOpeningPresentationComponent>(root))
+            {
+                CampaignMissionOpeningPresentationComponent opening =
+                    em.GetComponentData<CampaignMissionOpeningPresentationComponent>(root);
+                if (opening.SessionToken.Equals(runtime.SessionToken) && opening.Stage < 6)
+                    return;
+            }
             if (IsReducedMotion(em, root, in runtime) || IsAttackCinematicActive() ||
                 _cameraFocusQuery.CalculateEntityCount() != 1)
                 return;

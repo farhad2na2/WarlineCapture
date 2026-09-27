@@ -16,7 +16,10 @@ namespace Game.UI.Contracts
         public float[] SiteProgress;
         public float EvidenceProgress;
         public bool Introduction, Touring, Resumed, Paused, ViewingObjective;
-        public int IntroductionStage, NextSite, CompletedScans, InfantryAtExit;
+        public int IntroductionStage, NextSite, CompletedScans, InfantryAtExit, SurvivingInfantry;
+        public byte ResultStars;
+        public bool EvidenceRecovered;
+        public string ResultTitle, ResultStatus, ResultSummary, ResultElapsed;
         public string Guidance, Progress;
         public UnityEngine.Vector3 ObjectivePosition;
     }

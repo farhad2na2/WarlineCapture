@@ -296,6 +296,17 @@ namespace Game.UI.Runtime
                         star.color = filled ? (Color)new Color32(246, 177, 22, 255) : accent;
                     }
                 }
+
+                var filledRects = new RectTransform[starRoots.Length];
+                var outlineRoots = new GameObject[starRoots.Length];
+                for (int index = 0; index < starRoots.Length; index++)
+                {
+                    filledRects[index] = filledStars != null && index < filledStars.Length && filledStars[index] != null
+                        ? filledStars[index].GetComponent<RectTransform>() : null;
+                    outlineRoots[index] = outlinedStars != null && index < outlinedStars.Length ? outlinedStars[index] : null;
+                }
+                var sequence = GetComponent<ResultStarSequence>() ?? gameObject.AddComponent<ResultStarSequence>();
+                sequence.Play(filledRects, model.Stars, victory, outlineRoots);
             }
         }
 

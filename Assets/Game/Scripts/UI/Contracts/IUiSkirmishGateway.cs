@@ -16,6 +16,10 @@ namespace Game.UI.Contracts
         public int OwnAttackAirLive, OwnAttackAirActive, OwnAttackAirLanded, OwnAirFuel;
         public int OwnMaterials, VisibleHostileCombat, VisibleHostileAir;
         public string PlayerBase, EnemyBase, Clock, Objective, ResultTitle, ResultDetail, Statistics;
+        public byte ResultStars;
+        public string ResultElapsed;
+        public int PlayerUnitsLost, EnemyUnitsLost, PlayerBuildingsLost, EnemyBuildingsLost;
+        public bool PlayerBaseHeld, EnemyBaseDestroyed;
     }
     public struct UiExpandedSquadPage
     {

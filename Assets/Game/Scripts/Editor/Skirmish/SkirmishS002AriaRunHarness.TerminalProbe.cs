@@ -75,7 +75,10 @@ namespace Game.Editor
                         SkirmishLaunchProjection.IsSimulationActive(em))
                     { EndTerminalProbe(false, "terminalNotFrozen"); return; }
                     var view = UnityEngine.Object.FindAnyObjectByType<SkirmishMatchView>();
-                    var button = view == null ? null : view.transform.Find("SkirmishResult/ResultCard/ResultActions/" + terminalAction)?.GetComponent<Button>();
+                    string actionObject = terminalAction == "REPLAY" ? "Replay"
+                        : terminalAction == "ADJUST SETUP" ? "Adjust"
+                        : terminalAction == "RETRY" ? "Retry" : "Leave";
+                    var button = view == null ? null : view.transform.Find("SkirmishResult/CampaignStyleResult/" + actionObject)?.GetComponent<Button>();
                     if (!TryPresentedButtonPoint(button, out var point)) return;
                     ScreenCapture.CaptureScreenshot(prefix + "-result.png");
                     terminalTouch = new AriaTouchInputUiSystemHelper();

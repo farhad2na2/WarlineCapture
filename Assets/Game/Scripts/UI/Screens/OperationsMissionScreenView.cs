@@ -11,9 +11,10 @@ namespace Game.UI.Runtime
     {
         private bool hud, interruptedAttempt;
         private TMP_FontAsset font;
-        private TMP_Text title, description, status, clock, result;
-        private Button deploy, resume, withdrawInterrupted, continueButton;
+        private TMP_Text title, description, status, clock;
+        private Button deploy, resume, withdrawInterrupted;
         private GameObject confirmation, resultPanel;
+        private CampaignStyleResultCard resultCard;
         private RectTransform safeRoot, tracker, introduction, tour;
         private readonly TMP_Text[] objectiveRows = new TMP_Text[3];
         private readonly V3GradientGraphic[] objectiveFrames = new V3GradientGraphic[3];
@@ -145,8 +146,16 @@ namespace Game.UI.Runtime
             }
             recoverButton = Button(safeRoot,T("recover_action","RECOVER EVIDENCE"),() => Send(UiOperationsMissionAction.RecoverEvidence),Green);
             ((RectTransform)recoverButton.transform).sizeDelta = new Vector2(340,78); recoverText = recoverButton.GetComponentInChildren<TMP_Text>(); recoverButton.gameObject.SetActive(false);
-            var resultCard = Modal("MissionResult",out resultPanel); result = Label(resultCard,"",38,280);
-            continueButton = Button(resultCard,Text("ui.common.continue","CONTINUE"),() => Send(UiOperationsMissionAction.Return),Green); resultPanel.SetActive(false);
+            var shade = Surface("MissionResult", safeRoot, new Color(0, 0, 0, .75f));
+            Stretch(shade);
+            resultPanel = shade.gameObject;
+            resultCard = CampaignStyleResultCard.Mount(shade, font);
+            resultCard.Bind(
+                () => Send(UiOperationsMissionAction.RestartAttempt),
+                () => Send(UiOperationsMissionAction.RestartAttempt),
+                () => Send(UiOperationsMissionAction.Return),
+                null);
+            resultPanel.SetActive(false);
             BuildConfirmation();
         }
         private void BuildConfirmation()
@@ -210,7 +219,8 @@ namespace Game.UI.Runtime
             Set(introObjective,current.Resumed ? current.Objective : T("intro_objectives","1   Scan all 3 signal sites\n\n2   Recover the relay evidence\n\n3   Extract with evidence and 2+ infantry"));
             Set(introFacts,current.Resumed ? current.Clock : T("force_deadline","16 INFANTRY  •  12 MINUTES"));
             Set(introActionText,current.Resumed ? T("resume_mission","RESUME MISSION") : T("show_plan","SHOW THE PLAN"));
-            Set(result,current.Result); continueButton.interactable = current.Saved;
+            if (current.Finished)
+                resultCard.Present(BuildResult(current));
             for (int i=0;i<5;i++)
             {
                 bool complete = i<3 && current.SiteCompleted != null && current.SiteCompleted[i];
@@ -257,6 +267,41 @@ namespace Game.UI.Runtime
         { if (RectTransformUtility.ScreenPointToLocalPointInRectangle(safeRoot,screen,null,out var local)) rect.anchoredPosition = local+offset; }
         private void OnDestroy() { if (sharedAria != null) sharedAria.gameObject.SetActive(sharedAriaWasActive); }
         private static void Send(UiOperationsMissionAction action,int index=0) => UiShellRuntimeGateway.TryRequestOperationsMission(action,index);
+        private ModeResultContent BuildResult(UiOperationsMissionModel model)
+        {
+            string complete = T("state_complete", "COMPLETE");
+            string missed = T("state_missed", "MISSED");
+            return new ModeResultContent
+            {
+                Victory = model.ResultStars > 0,
+                Title = string.IsNullOrEmpty(model.ResultTitle) ? T("victory", "VICTORY") : model.ResultTitle,
+                ObjectiveTitle = model.EvidenceRecovered
+                    ? T("evidence_saved", "Relay evidence recovered with the squad.")
+                    : T("evidence_missed", "Relay evidence was not recovered."),
+                Identity = T("short_title", "STREET SIGNALS") + "\n" + T("district", "OLD QUARTER"),
+                Status = model.ResultStatus,
+                Elapsed = model.ResultElapsed,
+                Stars = model.ResultStars,
+                Objective1 = T("check_scans_plain", "Scan signal sites"),
+                Objective2 = T("check_evidence_plain", "Recover relay evidence"),
+                Objective3 = T("check_extract_plain", "Extract with 2+ infantry"),
+                Objective1State = model.CompletedScans >= 3 ? complete : model.CompletedScans + "/3",
+                Objective2State = model.EvidenceRecovered ? complete : missed,
+                Objective3State = model.InfantryAtExit >= 2 ? complete : model.InfantryAtExit + " " + T("at_exit", "AT EXIT"),
+                Performance1 = T("signals", "SIGNALS"),
+                Performance1Value = model.CompletedScans + "/3",
+                Performance2 = T("extracted", "EXTRACTED"),
+                Performance2Value = model.InfantryAtExit.ToString(),
+                Performance3 = T("survivors", "SURVIVORS"),
+                Performance3Value = model.SurvivingInfantry.ToString(),
+                Summary = model.ResultSummary,
+                LeaveLabel = Text("ui.common.continue", "CONTINUE"),
+                ShowAdjust = false,
+                ActionsEnabled = model.Saved,
+                Signature = model.ResultTitle + "|" + model.ResultStars + "|" + model.CompletedScans + "|" +
+                            UiShellRuntimeGateway.Localization.CurrentLocaleCode
+            };
+        }
         private static string Text(string key,string fallback) => UiShellRuntimeGateway.Localization.Get(key,fallback);
         private static string T(string key,string fallback) => Text("operations.o001."+key,fallback);
         private static void Set(TMP_Text label,string value) { if (label != null) UiLocalizedText.Set(label,value); }

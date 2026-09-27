@@ -27,6 +27,7 @@ namespace Game.Composition
         private string notice = string.Empty;
         private bool resultSaved;
         private bool reopenOperationsMenu;
+        private bool restartAfterResult;
         private double nextRefresh, nextSaveRetry;
         private string settlementCommand;
         private string startupSession, rollbackCommand;
@@ -52,6 +53,12 @@ namespace Game.Composition
             if (reopenOperationsMenu && shell.CurrentMode == UiShellMode.MainMenu && !shell.IsTransitionRunning &&
                 UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute, UIRoute.Operations, false))
                 reopenOperationsMenu = false;
+            if (restartAfterResult && !reopenOperationsMenu && shell.CurrentMode == UiShellMode.MainMenu &&
+                shell.ActiveRoute == UIRoute.Operations && !shell.IsTransitionRunning)
+            {
+                restartAfterResult = false;
+                Deploy(true, false);
+            }
             bool live = OperationsReconLaunchProjection.TryGet(EntityManager, out var root, out var mission);
             if (!live && shell.ActiveRoute != UIRoute.Operations) return;
             saves ??= SaveService.CreateDefault();
@@ -207,6 +214,13 @@ namespace Game.Composition
             }
             if (!live) return;
             if (HandleExperienceRequest(request, root, mission)) return;
+            if (request.Action == UiOperationsMissionAction.RestartAttempt &&
+                mission.Phase == OperationsReconPhase.Terminal && resultSaved)
+            {
+                restartAfterResult = true;
+                BeginReturn(root, string.Empty);
+                return;
+            }
             if (request.Action == UiOperationsMissionAction.Return)
             {
                 if (mission.Phase != OperationsReconPhase.Terminal || !resultSaved) return;
@@ -533,9 +547,32 @@ namespace Game.Composition
                 OperationsReconOutcome.Withdraw => Copy("withdrawn", "WITHDRAWN"),
                 _ => Copy("defeat", "DEFEAT")
             };
-            model.Result = string.Format(Copy("result", "{0}\n{1}/3 signals • {2} extracted\n{3}"), outcome,
-                mission.CompletedScans, mission.InfantryAtExit,
-                resultSaved ? Copy("saved", "District result and rewards saved.") : Copy("saving", "Saving result…"));
+            int elapsed = Mathf.FloorToInt(mission.ElapsedSeconds);
+            bool evidenceRecovered = evidence.Recovered != 0;
+            model.SurvivingInfantry = mission.SurvivingInfantry;
+            model.EvidenceRecovered = evidenceRecovered;
+            model.ResultTitle = outcome;
+            model.ResultElapsed = elapsed / 60 + ":" + (elapsed % 60).ToString("00");
+            model.ResultStars = CampaignStyleResultCard.OperationsStars(
+                mission.Outcome == OperationsReconOutcome.Victory,
+                mission.Outcome == OperationsReconOutcome.Partial);
+            model.ResultStatus = mission.Outcome switch
+            {
+                OperationsReconOutcome.Victory => Copy("status_complete", "MISSION COMPLETE"),
+                OperationsReconOutcome.Partial => Copy("status_partial", "PARTIAL SUCCESS"),
+                OperationsReconOutcome.Withdraw => Copy("status_withdrawn", "WITHDRAWN"),
+                _ => Copy("status_failed", "MISSION FAILED")
+            };
+            model.ResultSummary = mission.Outcome switch
+            {
+                OperationsReconOutcome.Victory => Copy("summary_victory", "All signal sites scanned. The relay evidence left with the squad."),
+                OperationsReconOutcome.Partial => Copy("summary_partial", "The squad extracted, but the relay evidence was not recovered."),
+                OperationsReconOutcome.Withdraw => Copy("summary_withdraw", "The attempt ended before the mission was complete."),
+                _ => Copy("summary_defeat", "The squad did not finish the extraction.")
+            };
+            model.Result = resultSaved
+                ? string.Format(Copy("result_saved", "{0}\n{1}/3 signals • {2} extracted"), outcome, mission.CompletedScans, mission.InfantryAtExit)
+                : Copy("saving", "Saving result…");
             ProjectExperience(root, mission, ref model);
             return model;
         }
@@ -559,7 +596,8 @@ namespace Game.Composition
             if (query.CalculateEntityCount() != 1) return;
             EntityManager.SetComponentData(query.GetSingletonEntity(), new RuntimeCameraFocusRequestComponent
             { Requested = 1, Smooth = SettingsService.Load().Accessibility.ReducedMotion ? (byte)0 : (byte)1,
-                SmoothTimeSeconds = .55f, UseExplicitPerspective = 1, Perspective = new float4(40,58,0,60), World = position });
+                SmoothTimeSeconds = .55f,
+                UseExplicitPerspective = 1, Perspective = new float4(40,58,0,60), World = position });
         }
 
         private void Settle(Entity root, OperationsReconMissionComponent mission)

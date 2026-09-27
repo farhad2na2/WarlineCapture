@@ -2,6 +2,7 @@ using Game.Components;
 using Game.Configs;
 using Game.Runtime;
 using Game.UI.Contracts;
+using Game.UI.Runtime;
 using Unity.Entities;
 using UnityEngine;
 namespace Game.UI.Shell.Ecs
@@ -142,6 +143,14 @@ namespace Game.UI.Shell.Ecs
                 Objective=objective,
                 ResultTitle=resultTitle,
                 ResultDetail=resultDetail,
+                ResultStars=CampaignStyleResultCard.SkirmishStars(match.Outcome==SkirmishOutcome.Victory, match.PlayerBuildingsLost, match.PlayerUnitsLost),
+                ResultElapsed=((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),
+                PlayerUnitsLost=match.PlayerUnitsLost,
+                EnemyUnitsLost=match.EnemyUnitsLost,
+                PlayerBuildingsLost=match.PlayerBuildingsLost,
+                EnemyBuildingsLost=match.EnemyBuildingsLost,
+                PlayerBaseHeld=playerAlive,
+                EnemyBaseDestroyed=!enemyAlive && match.Outcome==SkirmishOutcome.Victory,
                 Statistics=GameText.Format("ui.skirmish.statistics","Time {0} • Units lost {1} / defeated {2}\nBuildings lost {3} / destroyed {4}",
                     ((int)match.ElapsedSeconds/60)+":"+((int)match.ElapsedSeconds%60).ToString("00"),match.PlayerUnitsLost,match.EnemyUnitsLost,match.PlayerBuildingsLost,match.EnemyBuildingsLost)
             };

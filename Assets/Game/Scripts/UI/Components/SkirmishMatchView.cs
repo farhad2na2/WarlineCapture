@@ -19,8 +19,9 @@ namespace Game.UI.Runtime
         private MatchHudThreatVisibilityView threatWarning;
         private readonly Vector3[] warningCorners = new Vector3[4];
         private static TMP_FontAsset interfaceFont;
-        private TMP_Text player, enemy, playerHealth, enemyHealth, clock, title, detail, statistics, confirmText, replayText;
-        private GameObject resultActions, confirmationActions;
+        private TMP_Text player, enemy, playerHealth, enemyHealth, clock, confirmText;
+        private GameObject confirmationActions;
+        private CampaignStyleResultCard resultCard;
         private UiSkirmishAction pendingAction;
         private bool confirming;
         private static readonly Color Background=new(.025f,.07f,.08f,.97f);
@@ -53,16 +54,17 @@ namespace Game.UI.Runtime
             enemyHealth=HealthLabel(enemy);
             var shade=Panel("SkirmishResult",transform,false);modal=shade.gameObject;Stretch(shade);
             shade.gameObject.AddComponent<Image>().color=new Color(0,0,0,.72f);
-            var box=Panel("ResultCard",shade);box.anchorMin=box.anchorMax=new Vector2(.5f,.5f);box.sizeDelta=new Vector2(830,620);
-            var layout=box.gameObject.AddComponent<VerticalLayoutGroup>();layout.padding=new RectOffset(30,30,28,28);layout.spacing=16;
-            layout.childControlWidth=true;layout.childControlHeight=true;layout.childForceExpandHeight=false;
-            title=Label(box,"BASE ASSAULT",42,70);detail=Label(box,"",30,90);statistics=Label(box,"",28,80);
-            confirmText=Label(box,"",30,90);
-            var result=Panel("ResultActions",box,false);resultActions=result.gameObject;Vertical(result);
-            replayText=Button(result,"REPLAY",()=>Send(UiSkirmishAction.Replay));
-            Button(result,"ADJUST SETUP",()=>Send(UiSkirmishAction.AdjustSetup));
-            Button(result,"MAIN MENU",()=>Send(UiSkirmishAction.MainMenu));
-            var confirmation=Panel("ConfirmationActions",box,false);confirmationActions=confirmation.gameObject;Vertical(confirmation);
+            resultCard=CampaignStyleResultCard.Mount(shade, interfaceFont);
+            resultCard.Bind(
+                ()=>Send(UiSkirmishAction.Restart),
+                ()=>Send(UiSkirmishAction.Replay),
+                ()=>Send(UiSkirmishAction.MainMenu),
+                ()=>Send(UiSkirmishAction.AdjustSetup));
+            var confirmation=Panel("ConfirmationActions",shade,false);
+            confirmation.anchorMin=confirmation.anchorMax=new Vector2(.5f,.5f);
+            confirmation.sizeDelta=new Vector2(760,280);
+            confirmationActions=confirmation.gameObject;Vertical(confirmation);
+            confirmText=Label(confirmation,"",30,90);
             Button(confirmation,"CONFIRM",()=>{confirming=false;Send(pendingAction);});
             Button(confirmation,"CANCEL",()=>{confirming=false;modal.SetActive(false);UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);});
             modal.SetActive(false);
@@ -89,13 +91,10 @@ namespace Game.UI.Runtime
             bool terminal=model.Finished||model.StartupFailed;
             modal.SetActive(terminal||confirming);
             if(!modal.activeSelf)return;
-            UiLocalizedText.Set(title,terminal?model.ResultTitle:"BASE ASSAULT");
-            UiLocalizedText.Set(detail,terminal?model.ResultDetail:model.Objective);
-            detail.GetComponent<LayoutElement>().preferredHeight=model.StartupFailed?160:90;
-            statistics.gameObject.SetActive(model.Finished);UiLocalizedText.Set(statistics,model.Statistics);
-            UiLocalizedText.Set(replayText,model.StartupFailed?"RETRY":"REPLAY");
+            resultCard.gameObject.SetActive(terminal);
+            if(terminal) resultCard.Present(BuildResult(model));
             confirmText.gameObject.SetActive(confirming&&!terminal);
-            resultActions.SetActive(terminal);confirmationActions.SetActive(confirming&&!terminal);
+            confirmationActions.SetActive(confirming&&!terminal);
         }
         private void RefreshMapInformation(UiSkirmishModel model)
         {
@@ -156,6 +155,48 @@ namespace Game.UI.Runtime
         }
 
         private static void Send(UiSkirmishAction action)=>UiShellRuntimeGateway.TryRequestSkirmish(action);
+        private static ModeResultContent BuildResult(UiSkirmishModel model)
+        {
+            string mapKey = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "ui.skirmish.industrial_basin_map"
+                : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "ui.skirmish.city_crossroads_map"
+                : "ui.skirmish.base_assault_map";
+            string mapFallback = model.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "INDUSTRIAL BASIN"
+                : model.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "CITY CROSSROADS" : "DESERT BASE";
+            string map = UiShellRuntimeGateway.Localization.Get(mapKey, mapFallback);
+            string complete = "COMPLETE";
+            string failed = "FAILED";
+            bool victory = model.ResultStars > 0;
+            return new ModeResultContent
+            {
+                Victory = victory,
+                Title = string.IsNullOrEmpty(model.ResultTitle) ? (victory ? "VICTORY" : "DEFEAT") : model.ResultTitle,
+                Identity = "SKIRMISH\n" + map,
+                ObjectiveTitle = model.EnemyBaseDestroyed
+                    ? "Enemy main base destroyed."
+                    : model.PlayerBaseHeld ? "Your main base is still standing." : "Your main base was lost.",
+                Status = model.StartupFailed ? "MATCH DID NOT START" : victory ? "MATCH COMPLETE" : model.ResultTitle,
+                Elapsed = model.ResultElapsed,
+                Stars = model.ResultStars,
+                Objective1 = "Destroy the enemy main base",
+                Objective2 = "Protect your main base",
+                Objective3 = "Keep squad losses low",
+                Objective1State = model.EnemyBaseDestroyed ? complete : failed,
+                Objective2State = model.PlayerBaseHeld ? "HELD" : failed,
+                Objective3State = victory && model.PlayerUnitsLost <= 2 ? complete : failed,
+                Performance1 = "UNITS LOST",
+                Performance1Value = model.PlayerUnitsLost.ToString(),
+                Performance2 = "UNITS DEFEATED",
+                Performance2Value = model.EnemyUnitsLost.ToString(),
+                Performance3 = "BUILDINGS LOST / DESTROYED",
+                Performance3Value = model.PlayerBuildingsLost + " / " + model.EnemyBuildingsLost,
+                Summary = string.IsNullOrEmpty(model.ResultDetail) ? model.Objective : model.ResultDetail,
+                LeaveLabel = "MAIN MENU",
+                ShowAdjust = true,
+                ActionsEnabled = true,
+                Signature = model.ResultTitle + "|" + model.ResultStars + "|" + model.PlayerUnitsLost + "|" + model.ScenarioIndex + "|" +
+                            UiShellRuntimeGateway.Localization.CurrentLocaleCode
+            };
+        }
         // Keep numeric health out of the RTL heading so current/maximum retains its order.
         private static TMP_Text HealthLabel(TMP_Text heading)
         {

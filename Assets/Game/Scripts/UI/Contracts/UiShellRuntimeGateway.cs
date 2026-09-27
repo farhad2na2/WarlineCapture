@@ -103,6 +103,11 @@ namespace Game.UI.Contracts
         bool TryRestartCurrentMission();
     }
 
+    public interface IUiMatchSkipGateway
+    {
+        bool TrySkipMatchToPerfectWin();
+    }
+
     public interface IUiTutorialNarrationGateway
     {
         bool TryEnqueueTutorialNarration(

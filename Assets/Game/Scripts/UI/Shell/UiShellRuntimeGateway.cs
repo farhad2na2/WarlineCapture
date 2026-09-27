@@ -75,6 +75,11 @@ namespace Game.UI.Runtime
                    restartGateway.TryRestartCurrentMission();
         }
 
+        public static bool TrySkipMatchToPerfectWin()
+        {
+            return current is IUiMatchSkipGateway skip && skip.TrySkipMatchToPerfectWin();
+        }
+
         public static bool TryReadCampaignOperations(out UiCampaignOperationsModel campaign)
         {
             return current.TryReadCampaignOperations(out campaign);

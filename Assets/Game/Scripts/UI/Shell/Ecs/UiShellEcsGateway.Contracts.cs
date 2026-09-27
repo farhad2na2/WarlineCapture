@@ -14,8 +14,10 @@ using Game.Missions.Contracts;
 
 namespace Game.UI.Shell.Ecs
 {
-    public sealed partial class UiShellEcsGateway : IUiMatchHudResourceValuesGateway, IUiCurrentMissionRestartGateway
+    public sealed partial class UiShellEcsGateway : IUiMatchHudResourceValuesGateway, IUiCurrentMissionRestartGateway, IUiMatchSkipGateway
     {
+        bool IUiMatchSkipGateway.TrySkipMatchToPerfectWin() => MatchSkipWin.TryApply();
+
         bool IUiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent intent, UIRoute route, bool pushHistory)
         {
             return TryEnqueueRouteRequest(intent, route, pushHistory);

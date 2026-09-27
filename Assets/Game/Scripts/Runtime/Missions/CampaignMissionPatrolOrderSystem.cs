@@ -16,6 +16,7 @@ namespace Game.Runtime
     public partial struct CampaignMissionPatrolOrderSystem : ISystem
     {
         private static readonly FixedString64Bytes FirstContactMissionId = "saga.ch01.m01.first_contact";
+        private static readonly FixedString64Bytes RouteReopenedMissionId = CampaignMissionSequence.RouteReopened;
         private const int InitialRtsHoldMilliseconds = 2500;
         private const int EstablishingArrivalMilliseconds = 5500;
         private const int EstablishingHoldMilliseconds = 7000;

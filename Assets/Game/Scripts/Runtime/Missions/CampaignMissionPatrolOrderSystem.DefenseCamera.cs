@@ -24,7 +24,7 @@ namespace Game.Runtime
             var camera=defenseTourQuery.GetSingleton<CampaignMissionCameraTourState>();
             if(!camera.SessionToken.Equals(opening.SessionToken)) return;
             bool routeReopened=state.EntityManager.HasComponent<CampaignMissionRuntimeComponent>(owner) &&
-                state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(CampaignMissionSequence.RouteReopened);
+                state.EntityManager.GetComponentData<CampaignMissionRuntimeComponent>(owner).MissionId.Equals(RouteReopenedMissionId);
             var rts=rtsCameraStateQuery.GetSingleton<RtsCameraStateComponent>();
             bool settled=focus.Requested==0 && rts.HasSmoothFocusTarget==0 && rts.HasSmoothPerspectiveTarget==0 &&
                 rts.MatchIntroZoomSettlePending==0 && rts.IsZoomTransitionActive==0;

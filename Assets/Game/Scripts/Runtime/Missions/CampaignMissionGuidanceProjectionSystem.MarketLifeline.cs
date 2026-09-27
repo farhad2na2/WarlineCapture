@@ -11,12 +11,13 @@ namespace Game.Runtime
     public partial struct CampaignMissionGuidanceProjectionSystem
     {
         private static readonly FixedString64Bytes MarketMission="saga.ch02.m03.market_lifeline";
+        private static readonly FixedString64Bytes SafehouseMission=CampaignMissionSequence.SafehouseSweep;
         private bool TryUpdateMarketLifelineGuidance(ref SystemState system,Entity root,in CampaignMissionRuntimeComponent runtime,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
             if(!SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog)||
                 !CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int definitionIndex)||
                 catalog.Blob.Value.Missions[definitionIndex].MarketLifeline.Enabled==0)return false;
-            bool safehouseSweep=runtime.MissionId.Equals(CampaignMissionSequence.SafehouseSweep);
+            bool safehouseSweep=runtime.MissionId.Equals(SafehouseMission);
             bool signalTrace=!safehouseSweep&&!runtime.MissionId.Equals(MarketMission);
             bool chapterIntel=signalTrace||safehouseSweep;
             var em=system.EntityManager;

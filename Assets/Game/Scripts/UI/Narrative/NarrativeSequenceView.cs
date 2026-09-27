@@ -166,6 +166,8 @@ namespace Game.UI.Runtime
                     target.text = value;
                 }
             }
+
+            dialogueView?.ApplyIdentityReadingOrder(rightToLeft);
         }
 
         private void CacheDefaultTextPresentation()

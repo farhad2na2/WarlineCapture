@@ -73,6 +73,30 @@ public sealed class StartThroughM02LocalizationTests
         Assert.That(matched, Is.GreaterThanOrEqualTo(40), "Do not silently lose identity/guidance binding coverage.");
     }
 
+    [Test] public void FarsiLoadingTipStaysAgainstItsLabel()
+    {
+        var label = Own(new GameObject("TipLabel", typeof(RectTransform))).GetComponent<RectTransform>();
+        var tip = Own(new GameObject("TipText", typeof(RectTransform))).GetComponent<RectTransform>();
+        label.sizeDelta = new Vector2(96f, 48f);
+        tip.sizeDelta = new Vector2(410f, 48f);
+        Vector2 labelBase = new(1120f, -151f);
+        Vector2 tipBase = new(1224f, -151f);
+
+        UIShellLoadingProgressView.ApplyTipPair(label, tip, false, 80f, labelBase, tipBase);
+        float englishGap = tip.anchoredPosition.x - (label.anchoredPosition.x + label.sizeDelta.x);
+
+        UIShellLoadingProgressView.ApplyTipPair(label, tip, true, 80f, labelBase, tipBase);
+        float farsiGap = label.anchoredPosition.x - (tip.anchoredPosition.x + tip.sizeDelta.x);
+        Assert.That(farsiGap, Is.EqualTo(englishGap).Within(0.01f));
+        Assert.That(tip.anchoredPosition.x, Is.LessThan(label.anchoredPosition.x));
+        Assert.That(tip.anchoredPosition.x, Is.EqualTo(labelBase.x + 80f));
+        Assert.That(label.anchoredPosition.x + label.sizeDelta.x, Is.EqualTo(tipBase.x + 80f + tip.sizeDelta.x));
+
+        UIShellLoadingProgressView.ApplyTipPair(label, tip, false, 80f, labelBase, tipBase);
+        Assert.That(label.anchoredPosition.x, Is.EqualTo(labelBase.x + 80f));
+        Assert.That(tip.anchoredPosition.x, Is.EqualTo(tipBase.x + 80f));
+    }
+
     [Test] public void LoadingProgressRendersEveryPhaseAndHidesTechnicalFailureDetails()
     {
         var root = Own(new GameObject("Loading", typeof(RectTransform)));

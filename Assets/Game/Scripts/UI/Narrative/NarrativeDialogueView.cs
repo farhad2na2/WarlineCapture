@@ -28,6 +28,11 @@ namespace Game.UI.Runtime
         private Action<NarrativeDialoguePhase> inputHandler;
         private bool subtitlesVisible = true;
         private bool inputBound;
+        private Vector2 speakerNameBase;
+        private Vector2 speakerRoleBase;
+        private Vector2 speakerNameBaseSize;
+        private Vector2 speakerRoleBaseSize;
+        private bool identityLayoutCached;
         private const float StandardHeight = 292f;
         private const float ExpandedHeight = 376f;
         private const float DialogueTextTopInset = 155f;
@@ -72,6 +77,7 @@ namespace Game.UI.Runtime
                 speakerNameText.text = model.DisplayName ?? string.Empty;
             if (speakerRoleText != null)
                 speakerRoleText.text = model.Role ?? string.Empty;
+            ApplyIdentityReadingOrder(UiShellRuntimeGateway.Localization.IsRightToLeft);
 
             bool isAria = model.Treatment == Game.Catalog.Contracts.NarrativeSpeakerTreatment.AriaIcon;
             if (portraitImage != null)
@@ -86,6 +92,99 @@ namespace Game.UI.Runtime
                 ariaIconImage.sprite = isAria ? model.IdentitySprite : null;
                 ariaIconImage.color = Color.white;
             }
+        }
+
+        public void ApplyIdentityReadingOrder(bool rightToLeft)
+        {
+            if (speakerNameText == null || speakerRoleText == null)
+                return;
+
+            CacheIdentityLayout();
+            float lineStart = 0f;
+            if (dialogueText != null)
+            {
+                RectTransform line = dialogueText.rectTransform;
+                lineStart = line.anchoredPosition.x + line.sizeDelta.x - dialogueText.margin.z;
+            }
+
+            ApplyIdentityReadingOrder(
+                speakerNameText.rectTransform,
+                speakerRoleText.rectTransform,
+                rightToLeft,
+                speakerNameBase,
+                speakerRoleBase,
+                speakerNameBaseSize,
+                speakerRoleBaseSize,
+                MeasureIdentityWidth(speakerNameText, speakerNameBaseSize.x),
+                MeasureIdentityWidth(speakerRoleText, speakerRoleBaseSize.x),
+                lineStart);
+        }
+
+        // English reads name then role from the left. Farsi reads from the right, so the
+        // speaker name starts on the same edge as the dialogue line and the role sits on its left.
+        public static void ApplyIdentityReadingOrder(
+            RectTransform name,
+            RectTransform role,
+            bool rightToLeft,
+            Vector2 nameBase,
+            Vector2 roleBase,
+            Vector2 nameBaseSize,
+            Vector2 roleBaseSize,
+            float nameWidth,
+            float roleWidth,
+            float lineStartX = 0f)
+        {
+            if (name == null || role == null)
+                return;
+
+            if (!rightToLeft)
+            {
+                name.sizeDelta = nameBaseSize;
+                role.sizeDelta = roleBaseSize;
+                name.anchoredPosition = nameBase;
+                role.anchoredPosition = roleBase;
+                return;
+            }
+
+            float gap = nameBase.x <= roleBase.x
+                ? roleBase.x - (nameBase.x + nameBaseSize.x)
+                : nameBase.x - (roleBase.x + roleBaseSize.x);
+            if (gap < 8f)
+                gap = 12f;
+
+            float right = Mathf.Max(nameBase.x + nameBaseSize.x, roleBase.x + roleBaseSize.x);
+            if (lineStartX > right)
+                right = lineStartX;
+            float fittedName = Mathf.Clamp(nameWidth, 1f, nameBaseSize.x);
+            float fittedRole = Mathf.Clamp(roleWidth, 1f, roleBaseSize.x);
+            float nameX = right - fittedName;
+            name.sizeDelta = new Vector2(fittedName, nameBaseSize.y);
+            role.sizeDelta = new Vector2(fittedRole, roleBaseSize.y);
+            name.anchoredPosition = new Vector2(nameX, nameBase.y);
+            role.anchoredPosition = new Vector2(nameX - gap - fittedRole, roleBase.y);
+        }
+
+        private static float MeasureIdentityWidth(TMP_Text text, float maximum)
+        {
+            if (text == null)
+                return maximum;
+
+            float width = text.GetPreferredValues(text.text ?? string.Empty).x;
+            if (width < 1f)
+                width = text.preferredWidth;
+            return width < 1f ? maximum : width;
+        }
+
+        private void CacheIdentityLayout()
+        {
+            if (identityLayoutCached || speakerNameText == null || speakerRoleText == null)
+                return;
+
+            speakerNameBase = speakerNameText.rectTransform.anchoredPosition;
+            speakerRoleBase = speakerRoleText.rectTransform.anchoredPosition;
+            speakerNameBaseSize = speakerNameText.rectTransform.sizeDelta;
+            speakerRoleBaseSize = speakerRoleText.rectTransform.sizeDelta;
+            identityLayoutCached = true;
         }
 
         public void PrepareLine(string resolvedText, NarrativeSubtitleStyle style)

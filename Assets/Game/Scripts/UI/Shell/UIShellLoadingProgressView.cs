@@ -23,6 +23,10 @@ namespace Game.UI.Runtime
         private bool lastReadWasComplete;
         private float nextCompletedPollTime;
         private bool applyingEditorPreview;
+        private bool tipPairBound;
+        private RectTransform tipLabel;
+        private RectTransform tipText;
+        private MainMenuV3SectionLayoutView sectionLayout;
 
         public void Configure(RectTransform fill, TMP_Text percent, TMP_Text status, float maxFillWidth)
         {
@@ -45,7 +49,19 @@ namespace Game.UI.Runtime
             ResetPresentationCache();
             lastReadWasComplete = false;
             nextCompletedPollTime = 0f;
+            BindTipPair();
             ApplyProgress(0f, DefaultStatus);
+        }
+
+        private void OnDisable()
+        {
+            if (!tipPairBound)
+                return;
+
+            if (sectionLayout != null)
+                sectionLayout.LayoutApplied -= ApplyLoadingTipPair;
+            UiShellRuntimeGateway.Localization.LocaleChanged -= ApplyLoadingTipPair;
+            tipPairBound = false;
         }
 
         private void Update()
@@ -143,6 +159,80 @@ namespace Game.UI.Runtime
         private bool TryGetLoading(out UiShellLoadingProgressModel loading)
         {
             return UiShellRuntimeGateway.TryReadLoadingProgress(out loading);
+        }
+
+        private void BindTipPair()
+        {
+            if (tipPairBound)
+                return;
+
+            RectTransform[] rects = GetComponentsInChildren<RectTransform>(true);
+            for (int i = 0; i < rects.Length; i++)
+            {
+                if (rects[i].name == "TipLabel")
+                    tipLabel = rects[i];
+                else if (rects[i].name == "TipText")
+                    tipText = rects[i];
+            }
+
+            sectionLayout = GetComponentInChildren<MainMenuV3SectionLayoutView>(true);
+            if (sectionLayout != null)
+                sectionLayout.LayoutApplied += ApplyLoadingTipPair;
+            UiShellRuntimeGateway.Localization.LocaleChanged += ApplyLoadingTipPair;
+            tipPairBound = true;
+            ApplyLoadingTipPair();
+        }
+
+        private void ApplyLoadingTipPair()
+        {
+            if (tipLabel == null || tipText == null)
+                return;
+
+            Vector2 labelBase = tipLabel.anchoredPosition;
+            Vector2 tipBase = tipText.anchoredPosition;
+            if (sectionLayout != null)
+            {
+                if (sectionLayout.TryGetAuthoredBasePosition(tipLabel, out Vector2 authoredLabel))
+                    labelBase = authoredLabel;
+                if (sectionLayout.TryGetAuthoredBasePosition(tipText, out Vector2 authoredTip))
+                    tipBase = authoredTip;
+            }
+
+            float extraWidth = sectionLayout != null ? sectionLayout.LastAppliedExtraWidth : 0f;
+            ApplyTipPair(
+                tipLabel,
+                tipText,
+                UiShellRuntimeGateway.Localization.IsRightToLeft,
+                extraWidth,
+                labelBase,
+                tipBase);
+        }
+
+        // English keeps "Tip:" on the left and the sentence against its right edge.
+        // Farsi mirrors each line's alignment, which parks the sentence on the far
+        // side of its box. Swap the pair so the mirrored edges meet again.
+        public static void ApplyTipPair(
+            RectTransform label,
+            RectTransform tip,
+            bool rightToLeft,
+            float extraWidth,
+            Vector2 labelBase,
+            Vector2 tipBase)
+        {
+            if (label == null || tip == null)
+                return;
+
+            float gap = tipBase.x - (labelBase.x + label.sizeDelta.x);
+            float left = labelBase.x + extraWidth;
+            if (!rightToLeft)
+            {
+                label.anchoredPosition = new Vector2(left, labelBase.y);
+                tip.anchoredPosition = new Vector2(tipBase.x + extraWidth, tipBase.y);
+                return;
+            }
+
+            tip.anchoredPosition = new Vector2(left, tipBase.y);
+            label.anchoredPosition = new Vector2(left + tip.sizeDelta.x + gap, labelBase.y);
         }
     }
 }

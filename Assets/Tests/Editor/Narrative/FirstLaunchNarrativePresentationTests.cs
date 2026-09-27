@@ -27,7 +27,8 @@ public sealed class FirstLaunchNarrativePresentationTests
             tests.Phase10RPresentation_UsesReadableTypeMobileTargetsAndCleanFrame();
             tests.Dialogue_LongTextExpandsFrameWithoutEllipsis();
             tests.Phase10RAudio_UsesIndependentSettingsAwareLayersAndCancelsCleanly();
-            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=11");
+            tests.FarsiComicIdentity_PlacesRoleOnTheLeftOfTheSpeakerName();
+            Debug.Log("[FirstLaunchNarrativePresentationValidation] result=Passed tests=12");
             ValidationExit.Passed();
         }
         catch (Exception exception)
@@ -404,6 +405,35 @@ public sealed class FirstLaunchNarrativePresentationTests
         Assert.GreaterOrEqual(frame.sizeDelta.y, 155f + 78f + measuredHeight + 10f);
         UnityEngine.Object.DestroyImmediate(instance);
         UnityEngine.Object.DestroyImmediate(canvasObject);
+    }
+
+    [Test]
+    public void FarsiComicIdentity_PlacesRoleOnTheLeftOfTheSpeakerName()
+    {
+        RectTransform name = new GameObject("SpeakerName", typeof(RectTransform)).GetComponent<RectTransform>();
+        RectTransform role = new GameObject("SpeakerRole", typeof(RectTransform)).GetComponent<RectTransform>();
+        Vector2 nameBase = new(298f, -12f);
+        Vector2 roleBase = new(774f, -22f);
+        Vector2 nameSize = new(455f, 64f);
+        Vector2 roleSize = new(420f, 44f);
+        name.anchoredPosition = nameBase;
+        role.anchoredPosition = roleBase;
+        name.sizeDelta = nameSize;
+        role.sizeDelta = roleSize;
+
+        NarrativeDialogueView.ApplyIdentityReadingOrder(name, role, true, nameBase, roleBase, nameSize, roleSize, 180f, 140f, 1400f);
+        Assert.That(name.anchoredPosition.x + name.sizeDelta.x, Is.EqualTo(1400f).Within(0.01f));
+        Assert.That(role.anchoredPosition.x + role.sizeDelta.x + 21f, Is.EqualTo(name.anchoredPosition.x).Within(0.01f));
+        Assert.That(role.anchoredPosition.x, Is.LessThan(name.anchoredPosition.x));
+
+        NarrativeDialogueView.ApplyIdentityReadingOrder(name, role, false, nameBase, roleBase, nameSize, roleSize, 180f, 140f);
+        Assert.That(name.anchoredPosition, Is.EqualTo(nameBase));
+        Assert.That(role.anchoredPosition, Is.EqualTo(roleBase));
+        Assert.That(name.sizeDelta, Is.EqualTo(nameSize));
+        Assert.That(role.sizeDelta, Is.EqualTo(roleSize));
+
+        UnityEngine.Object.DestroyImmediate(name.gameObject);
+        UnityEngine.Object.DestroyImmediate(role.gameObject);
     }
 
     private static NarrativeDialogueRevealPresentationSystemHelper Build(string text, float deadline, bool instant = false)

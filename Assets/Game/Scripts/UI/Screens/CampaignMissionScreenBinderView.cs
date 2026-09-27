@@ -13,6 +13,9 @@ namespace Game.UI.Runtime
         private uint appliedVersion;
         private string appliedLocale;
         private bool projectionApplied;
+        private int futureChapter;
+        private int futureMissionNumber;
+        private FutureMissionComicPreviewController futureComicPreview;
 
         public void Configure(CampaignOperationsScreenView view, string selectedMissionId)
         {
@@ -32,6 +35,9 @@ namespace Game.UI.Runtime
         {
             campaignOperationsView ??= GetComponent<CampaignOperationsScreenView>();
             missionBriefingView ??= GetComponent<MissionBriefingScreenView>();
+            if (campaignOperationsView != null)
+                futureComicPreview ??= GetComponent<FutureMissionComicPreviewController>() ??
+                    gameObject.AddComponent<FutureMissionComicPreviewController>();
             if (_bound) return;
             if (campaignOperationsView != null)
             {
@@ -45,6 +51,8 @@ namespace Game.UI.Runtime
                 campaignOperationsView.ChapterTwoButton?.onClick.AddListener(SelectChapterTwo);
                 campaignOperationsView.ChapterTwoOverviewButton?.onClick.AddListener(SelectChapterTwo);
                 campaignOperationsView.ChapterThreeButton?.onClick.AddListener(SelectChapterThree);
+                campaignOperationsView.ChapterFourButton?.onClick.AddListener(SelectChapterFour);
+                campaignOperationsView.ChapterFiveButton?.onClick.AddListener(SelectChapterFive);
             }
             if (missionBriefingView != null)
             {
@@ -71,6 +79,8 @@ namespace Game.UI.Runtime
                 campaignOperationsView.ChapterTwoButton?.onClick.RemoveListener(SelectChapterTwo);
                 campaignOperationsView.ChapterTwoOverviewButton?.onClick.RemoveListener(SelectChapterTwo);
                 campaignOperationsView.ChapterThreeButton?.onClick.RemoveListener(SelectChapterThree);
+                campaignOperationsView.ChapterFourButton?.onClick.RemoveListener(SelectChapterFour);
+                campaignOperationsView.ChapterFiveButton?.onClick.RemoveListener(SelectChapterFive);
             }
             if (missionBriefingView != null)
             {
@@ -80,6 +90,7 @@ namespace Game.UI.Runtime
             }
             _bound = false;
             projectionApplied = false;
+            futureComicPreview?.Close();
         }
 
         public void Refresh()
@@ -100,6 +111,14 @@ namespace Game.UI.Runtime
                     projectionApplied = true; appliedVersion = campaign.Version; appliedLocale = locale;
                     missionId = campaign.SelectedMission.MissionId;
                     campaignOperationsView.Apply(campaign);
+                    campaignOperationsView.EnableFutureComicChapters(futureChapter);
+                    campaignOperationsView.EnableNetworkBreakNode(futureChapter == 3 &&
+                        futureMissionNumber == 5);
+                    if (futureChapter >= 4)
+                        campaignOperationsView.ApplyFutureComicMission(futureChapter,
+                            Mathf.Max(1, futureMissionNumber));
+                    else if (futureChapter == 3 && futureMissionNumber == 5)
+                        campaignOperationsView.ApplyFutureComicMission(3, 5);
                 }
                 else
                     campaignOperationsView.ApplyUnavailable();
@@ -120,6 +139,11 @@ namespace Game.UI.Runtime
 
         private void OpenBriefing()
         {
+            if (futureChapter >= 4 || futureChapter == 3 && futureMissionNumber == 5)
+            {
+                OpenFutureComic(futureChapter, futureMissionNumber);
+                return;
+            }
             if (!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
                     UiCampaignMissionActionKind.OpenBriefing, missionId))
                 return;
@@ -127,23 +151,80 @@ namespace Game.UI.Runtime
                 UiShellRouteIntent.OpenMenuRoute, UIRoute.MissionBriefing, true);
         }
 
-        private void SelectM01() => SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.SignalTrace : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.Gridlock : UiCampaignMissionProjectionIds.M01);
-        private void SelectChapterOne(){SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
-        private void SelectChapterTwo(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
-        private void SelectChapterThree(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);campaignOperationsView.ShowMissionSelect();}
-        private void SelectM02() => SelectMission(campaignOperationsView.IsChapterThree
+        private void SelectM01()
+        {
+            if (TrySelectFutureMission(1)) return;
+            SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.SignalTrace : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.Gridlock : UiCampaignMissionProjectionIds.M01);
+        }
+        private void SelectChapterOne(){futureChapter=0;futureMissionNumber=0;SelectMission(UiCampaignMissionProjectionIds.M01);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterTwo(){futureChapter=0;futureMissionNumber=0;SelectMission(Game.Missions.Contracts.CampaignMissionSequence.Gridlock);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterThree(){futureChapter=0;futureMissionNumber=0;SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SignalTrace);campaignOperationsView.ShowMissionSelect();}
+        private void SelectChapterFour() => SelectFutureChapter(4);
+        private void SelectChapterFive() => SelectFutureChapter(5);
+        private void SelectM02()
+        {
+            if (TrySelectFutureMission(2)) return;
+            SelectMission(campaignOperationsView.IsChapterThree
             ? Game.Missions.Contracts.CampaignMissionSequence.SafehouseSweep
             : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.SupplyLine : UiCampaignMissionProjectionIds.M02);
-        private void SelectM03() => SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.FalseFront : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
-        private void SelectM05() => SelectMission(campaignOperationsView.IsChapterTwo
+        }
+        private void SelectM03()
+        {
+            if (TrySelectFutureMission(3)) return;
+            SelectMission(campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.FalseFront : campaignOperationsView.IsChapterTwo ? Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline : UiCampaignMissionProjectionIds.M03);
+        }
+        private void SelectM05()
+        {
+            if (TrySelectFutureMission(5)) return;
+            if (campaignOperationsView.IsChapterThree)
+            {
+                futureChapter = 3;
+                futureMissionNumber = 5;
+                campaignOperationsView.ApplyFutureComicMission(3, 5);
+                OpenFutureComic(3, 5);
+                return;
+            }
+            SelectMission(campaignOperationsView.IsChapterTwo
             ? Game.Missions.Contracts.CampaignMissionSequence.RouteReopened
             : "saga.ch01.m05.breach_assault");
-        private void SelectM04() => SelectMission(campaignOperationsView.IsChapterTwo
+        }
+        private void SelectM04()
+        {
+            if (TrySelectFutureMission(4)) return;
+            SelectMission(campaignOperationsView.IsChapterTwo
             ? Game.Missions.Contracts.CampaignMissionSequence.PowerRelay
             : campaignOperationsView.IsChapterThree ? Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain : "saga.ch01.m04.airlift");
+        }
+
+        private void SelectFutureChapter(int chapter)
+        {
+            futureChapter = chapter;
+            futureMissionNumber = 1;
+            campaignOperationsView.ShowMissionSelect();
+            campaignOperationsView.ApplyFutureComicMission(chapter, 1);
+        }
+
+        private bool TrySelectFutureMission(int number)
+        {
+            if (futureChapter < 4)
+                return false;
+            futureMissionNumber = number;
+            campaignOperationsView.ApplyFutureComicMission(futureChapter, number);
+            OpenFutureComic(futureChapter, number);
+            return true;
+        }
+
+        private void OpenFutureComic(int chapter, int number)
+        {
+            FutureMissionComicMission comic = FutureMissionComicCatalog.Find(chapter, number);
+            if (comic != null)
+                futureComicPreview?.Play(comic);
+        }
 
         private void SelectMission(string selectedMissionId)
         {
+            futureChapter = 0;
+            futureMissionNumber = 0;
             if (!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(
                     UiCampaignMissionActionKind.Select, selectedMissionId))
                 return;

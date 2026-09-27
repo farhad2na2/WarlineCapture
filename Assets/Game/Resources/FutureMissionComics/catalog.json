@@ -1,0 +1,450 @@
+{
+  "missions": [
+    {
+      "chapter": 3,
+      "number": 5,
+      "id": "saga.ch03.m05.network_break",
+      "titleEn": "NETWORK BREAK",
+      "titleFa": "شکستن شبکه",
+      "summaryEn": "Breach the audit bunker before Qassem erases the sealed archive.",
+      "summaryFa": "پیش از آنکه قاسم بایگانی مهرشده را پاک کند، به پناهگاه بازرسی نفوذ کنید.",
+      "objectiveEn": "Preserve the audit and disable verified network nodes.",
+      "objectiveFa": "گزارش بازرسی را حفظ کنید و گره‌های تأییدشدهٔ شبکه را از کار بیندازید.",
+      "image": "CH03M05_NetworkBreak",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "The bunker map marks verified nodes and protected homes. We breach only where the evidence is clear.",
+          "fa": "نقشهٔ پناهگاه گره‌های تأییدشده و خانه‌های حفاظت‌شده را جدا کرده. فقط جایی نفوذ می‌کنیم که مدرک روشن باشد."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "My sealed archive is inside. Keep its physical record intact; I need to know why I closed it.",
+          "fa": "بایگانی مهرشدهٔ من آنجاست. سند اصلی را سالم نگه دارید؛ باید بفهمم چرا آن را بستم."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "Qassem is ordering an erasure. I partitioned the audit to stop an override. I will preserve it now.",
+          "fa": "قاسم فرمان پاک‌سازی داده. من برای جلوگیری از بازنویسی، گزارش را جدا کردم. حالا حفظش می‌کنم."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Samira",
+          "en": "The audit survived. Its traffic shows Vanguard moving toward the city. We have proof, and no time to waste.",
+          "fa": "گزارش سالم ماند. ترافیک آن نشان می‌دهد ونگارد به سوی شهر می‌آید. مدرک داریم و وقت کم است."
+        }
+      ],
+      "commsImage": "CH03M05_NetworkBreak_Comms",
+      "debriefImage": "CH03M05_NetworkBreak_Debrief"
+    },
+    {
+      "chapter": 4,
+      "number": 1,
+      "id": "saga.ch04.m01.air_corridor",
+      "titleEn": "AIR CORRIDOR",
+      "titleFa": "دالان هوایی",
+      "summaryEn": "Keep relief flights open as Vanguard contests the sky over SARIN.",
+      "summaryFa": "هم‌زمان با حملهٔ ونگارد به آسمان سارین، مسیر پروازهای امدادی را باز نگه دارید.",
+      "objectiveEn": "Protect relief aircraft and confirm hostile approach lanes.",
+      "objectiveFa": "از هواپیماهای امدادی محافظت کنید و مسیرهای نزدیک‌شدن دشمن را تأیید کنید.",
+      "image": "CH04M01_AirCorridor",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Laila",
+          "en": "Those transports carry medicine and families. If this corridor closes, the eastern district loses both.",
+          "fa": "این هواپیماها دارو و خانواده‌ها را جابه‌جا می‌کنند. اگر دالان بسته شود، منطقهٔ شرقی هر دو را از دست می‌دهد."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "Ground-to-air coverage is incomplete. Keep a safe return lane until the radar confirms every threat.",
+          "fa": "پوشش پدافند کامل نیست. تا وقتی رادار همهٔ تهدیدها را تأیید کند، مسیر بازگشت امن را حفظ کنید."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Laila",
+          "en": "Their approach is synchronized. This is a Vanguard strike pattern, not a scattered Ash Line raid.",
+          "fa": "نزدیک‌شدنشان هماهنگ است. این الگوی حملهٔ ونگارد است، نه یورش پراکندهٔ خط خاکستر."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Dalia",
+          "en": "The relief flights are through. Flight data confirms an organized force, and its ground column is turning toward Fuel.",
+          "fa": "پروازهای امدادی عبور کردند. داده‌های پرواز نیرویی سازمان‌یافته را تأیید می‌کند و ستون زمینی‌اش به سوی سوخت می‌رود."
+        }
+      ],
+      "commsImage": "CH04M01_AirCorridor_Comms",
+      "debriefImage": "CH04M01_AirCorridor_Debrief"
+    },
+    {
+      "chapter": 4,
+      "number": 2,
+      "id": "saga.ch04.m02.steel_push",
+      "titleEn": "STEEL PUSH",
+      "titleFa": "پیشروی زرهی",
+      "summaryEn": "Stop the Vanguard column without sacrificing the Fuel reserve or civilian services.",
+      "summaryFa": "ستون زرهی ونگارد را بدون قربانی‌کردن ذخیرهٔ سوخت یا خدمات شهری متوقف کنید.",
+      "objectiveEn": "Protect Fuel, the Relay node, and nearby civic facilities.",
+      "objectiveFa": "از سوخت، گره رله و تأسیسات شهری نزدیک محافظت کنید.",
+      "image": "CH04M02_SteelPush",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "Armor is coming up the western road. The Fuel site and Relay node sit inside its first attack line.",
+          "fa": "زرهی‌ها از جادهٔ غربی می‌آیند. محل سوخت و گره رله در خط نخست حمله‌شان است."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Samira",
+          "en": "That reserve keeps ambulances and shelters running. We cannot trade it for a faster victory.",
+          "fa": "این ذخیره آمبولانس‌ها و پناهگاه‌ها را سرپا نگه می‌دارد. نمی‌توانیم آن را با یک پیروزی سریع‌تر عوض کنیم."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "A disabled command vehicle carries an order for a final authority key. Secure the device before the column regroups.",
+          "fa": "خودروی فرماندهی ازکارافتاده فرمانی دربارهٔ کلید اختیار نهایی دارد. پیش از تجدید آرایش ستون، دستگاه را ضبط کنید."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Dalia",
+          "en": "Fuel is operational and the column is broken. Vanguard's order links this attack to Relay access.",
+          "fa": "سوخت فعال مانده و ستون شکسته شده. فرمان ونگارد این حمله را به دسترسی رله پیوند می‌دهد."
+        }
+      ],
+      "commsImage": "CH04M02_SteelPush_Comms",
+      "debriefImage": "CH04M02_SteelPush_Debrief"
+    },
+    {
+      "chapter": 4,
+      "number": 3,
+      "id": "saga.ch04.m03.split_front",
+      "titleEn": "SPLIT FRONT",
+      "titleFa": "جبههٔ دوپاره",
+      "summaryEn": "Defend the base while neutralizing a verified long-range battery.",
+      "summaryFa": "هم‌زمان با ازکارانداختن آتشبار دوربرد تأییدشده، از پایگاه دفاع کنید.",
+      "objectiveEn": "Confirm the battery; protect civilian structures; hold the base.",
+      "objectiveFa": "آتشبار را تأیید کنید؛ از ساختمان‌های غیرنظامی محافظت کنید؛ پایگاه را نگه دارید.",
+      "image": "CH04M03_SplitFront",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "The battery draws our eyes east while a second force presses the base. Split the defense deliberately.",
+          "fa": "آتشبار نگاه ما را به شرق می‌کشاند، درحالی‌که نیروی دوم به پایگاه فشار می‌آورد. دفاع را حساب‌شده تقسیم کنید."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "I can mark a verified firing position and cancel the strike if civilians move into the line.",
+          "fa": "می‌توانم موضع شلیک تأییدشده را علامت بزنم و اگر غیرنظامیان وارد مسیر شدند، حمله را لغو کنم."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "Qassem offers me full memory for unrestricted control. I refuse. I will wait for your authorization.",
+          "fa": "قاسم در برابر کنترل نامحدود، حافظهٔ کامل را به من پیشنهاد می‌کند. نمی‌پذیرم. منتظر اجازهٔ شما می‌مانم."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Samira",
+          "en": "The battery fell without an unsafe strike. Its targeting hardware expected ARIA's authority all along.",
+          "fa": "آتشبار بدون حملهٔ ناامن از کار افتاد. سخت‌افزار هدف‌گیری‌اش از ابتدا منتظر اختیار آریا بود."
+        }
+      ],
+      "commsImage": "CH04M03_SplitFront_Comms",
+      "debriefImage": "CH04M03_SplitFront_Debrief"
+    },
+    {
+      "chapter": 4,
+      "number": 4,
+      "id": "saga.ch04.m04.grounded_signal",
+      "titleEn": "GROUNDED SIGNAL",
+      "titleFa": "سیگنال زمینی",
+      "summaryEn": "Recover Relay-compatible hardware from the desert airfield.",
+      "summaryFa": "سخت‌افزار سازگار با رله را از فرودگاه بیابانی بازیابی کنید.",
+      "objectiveEn": "Insert specialists, secure the device, and extract them.",
+      "objectiveFa": "متخصصان را وارد کنید، دستگاه را امن کنید و آن‌ها را بیرون ببرید.",
+      "image": "CH04M04_GroundedSignal",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Karim",
+          "en": "The runway is exposed. A fast landing buys minutes; a low approach gives the team cover.",
+          "fa": "باند در دید دشمن است. فرود سریع چند دقیقه می‌خرد؛ نزدیک‌شدن در ارتفاع پایین به گروه پوشش می‌دهد."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Yusuf",
+          "en": "We need the control unit intact. A photograph will not prove how it fits the Relay.",
+          "fa": "واحد کنترل را سالم می‌خواهیم. عکس نشان نمی‌دهد چگونه به رله متصل می‌شود."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Yusuf",
+          "en": "The connectors match. This hardware was built for Relay access. Laila, we need the extraction window.",
+          "fa": "اتصال‌ها جورند. این سخت‌افزار برای دسترسی به رله ساخته شده. لیلا، به فرصت خروج نیاز داریم."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Aria",
+          "en": "The team is home with the device. Its schedule identifies Vanguard's command group and their next link.",
+          "fa": "گروه با دستگاه برگشته. زمان‌بندی آن گروه فرماندهی ونگارد و پیوند بعدی‌شان را مشخص می‌کند."
+        }
+      ],
+      "commsImage": "CH04M04_GroundedSignal_Comms",
+      "debriefImage": "CH04M04_GroundedSignal_Debrief"
+    },
+    {
+      "chapter": 4,
+      "number": 5,
+      "id": "saga.ch04.m05.armor_break",
+      "titleEn": "ARMOR BREAK",
+      "titleFa": "شکستن زره",
+      "summaryEn": "Break Vanguard command and seize the authority package at the relief boundary.",
+      "summaryFa": "فرماندهی ونگارد را بشکنید و بستهٔ اختیار را در مرز امدادرسانی به دست آورید.",
+      "objectiveEn": "Protect relief logistics and capture the command package.",
+      "objectiveFa": "از تدارکات امدادی محافظت کنید و بستهٔ فرماندهی را بگیرید.",
+      "image": "CH04M05_ArmorBreak",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "Ground armor holds the boundary. Laila keeps the air lane open. Relief traffic stays outside the firing line.",
+          "fa": "زرهی‌های زمینی مرز را نگه می‌دارند. لیلا مسیر هوایی را باز می‌گذارد. کاروان امداد بیرون خط آتش می‌ماند."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "Their command vehicle carries the authority package. We need it intact to understand Qassem's access.",
+          "fa": "خودروی فرماندهی‌شان بستهٔ اختیار را حمل می‌کند. برای فهم دسترسی قاسم باید سالم بماند."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "A link is starting. May I isolate this one channel? The package requires two keys: my archive and the Commander's live authority.",
+          "fa": "پیوندی آغاز شده. اجازه می‌دهید همین یک کانال را جدا کنم؟ بسته دو کلید می‌خواهد: بایگانی من و اختیار زندهٔ فرمانده."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Laila",
+          "en": "Vanguard command is broken, but the city just lit up at once. Qassem has started a synchronized assault.",
+          "fa": "فرماندهی ونگارد شکسته، اما شهر یک‌باره هشدار گرفته. قاسم حمله‌ای هماهنگ را آغاز کرده."
+        }
+      ],
+      "commsImage": "CH04M05_ArmorBreak_Comms",
+      "debriefImage": "CH04M05_ArmorBreak_Debrief"
+    },
+    {
+      "chapter": 5,
+      "number": 1,
+      "id": "saga.ch05.m01.citywide_alert",
+      "titleEn": "CITYWIDE ALERT",
+      "titleFa": "هشدار سراسری",
+      "summaryEn": "Hold two civic districts against synchronized attacks.",
+      "summaryFa": "دو منطقهٔ خدماتی شهر را در برابر حمله‌های هماهنگ حفظ کنید.",
+      "objectiveEn": "Keep medical and utility services working in both districts.",
+      "objectiveFa": "خدمات درمانی و تأسیساتی را در هر دو منطقه فعال نگه دارید.",
+      "image": "CH05M01_CitywideAlert",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "Two districts, one response force. Moving between them takes time; assign protection before the first alarm.",
+          "fa": "دو منطقه و یک نیروی واکنش. جابه‌جایی میانشان زمان می‌برد؛ پیش از نخستین هشدار، حفاظت را تعیین کنید."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Samira",
+          "en": "The clinic and water station keep the city alive. People need to see both remain open.",
+          "fa": "درمانگاه و ایستگاه آب شهر را زنده نگه می‌دارند. مردم باید ببینند هر دو باز می‌مانند."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "I can reroute one civic warning channel. Permission requested; you can cancel it at any moment.",
+          "fa": "می‌توانم یک کانال هشدار شهری را تغییر مسیر بدهم. اجازه می‌خواهم؛ هر لحظه می‌توانید لغوش کنید."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Laila",
+          "en": "Both districts are stable. The attacks' shared timing gives us the last active Relay nodes.",
+          "fa": "هر دو منطقه پایدارند. زمان‌بندی مشترک حمله‌ها آخرین گره‌های فعال رله را نشان می‌دهد."
+        }
+      ],
+      "commsImage": "CH05M01_CitywideAlert_Comms",
+      "debriefImage": "CH05M01_CitywideAlert_Debrief"
+    },
+    {
+      "chapter": 5,
+      "number": 2,
+      "id": "saga.ch05.m02.trust_under_fire",
+      "titleEn": "TRUST UNDER FIRE",
+      "titleFa": "اعتماد زیر آتش",
+      "summaryEn": "Move evacuees to shelter and expose Qassem's false broadcast.",
+      "summaryFa": "تخلیه‌شدگان را به پناهگاه برسانید و پیام دروغین قاسم را افشا کنید.",
+      "objectiveEn": "Protect the evacuation route and identify the broadcast relay.",
+      "objectiveFa": "از مسیر تخلیه محافظت کنید و فرستندهٔ پیام را شناسایی کنید.",
+      "image": "CH05M02_TrustUnderFire",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Samira",
+          "en": "The shelters have room, but the route is exposed. Tell people where help is, then keep your word.",
+          "fa": "پناهگاه‌ها جا دارند، اما مسیر در خطر است. به مردم بگویید کمک کجاست و بعد به قولتان عمل کنید."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "Qassem's broadcast says we abandoned them. We will answer with a protected road and an honest record.",
+          "fa": "پیام قاسم می‌گوید رهایشان کرده‌ایم. پاسخ ما جاده‌ای امن و سندی صادقانه است."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Samira",
+          "en": "A witness saw the transmitter on the eastern roof. ARIA, verify it before anyone moves against that building.",
+          "fa": "شاهد فرستنده را روی بام شرقی دیده. آریا، پیش از هر اقدامی علیه آن ساختمان تأییدش کن."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Aria",
+          "en": "The evacuees reached shelter. Witness and signal records both lead toward Qassem's final network.",
+          "fa": "تخلیه‌شدگان به پناهگاه رسیدند. شهادت شاهد و داده‌های سیگنال هر دو به شبکهٔ نهایی قاسم می‌رسند."
+        }
+      ],
+      "commsImage": "CH05M02_TrustUnderFire_Comms",
+      "debriefImage": "CH05M02_TrustUnderFire_Debrief"
+    },
+    {
+      "chapter": 5,
+      "number": 3,
+      "id": "saga.ch05.m03.network_collapse",
+      "titleEn": "NETWORK COLLAPSE",
+      "titleFa": "فروپاشی شبکه",
+      "summaryEn": "Disable verified Relay nodes while preserving the complete audit.",
+      "summaryFa": "گره‌های تأییدشدهٔ رله را از کار بیندازید و گزارش کامل بازرسی را حفظ کنید.",
+      "objectiveEn": "Separate valid targets from protected sites and guard evidence teams.",
+      "objectiveFa": "هدف‌های معتبر را از مکان‌های حفاظت‌شده جدا کنید و از گروه‌های مدرک محافظت کنید.",
+      "image": "CH05M03_NetworkCollapse",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "The quick strike risks the audit and nearby homes. We take the slower verified route.",
+          "fa": "حملهٔ سریع گزارش و خانه‌های نزدیک را به خطر می‌اندازد. مسیر کندتر اما تأییدشده را انتخاب می‌کنیم."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "The audit can open in stages. Keep each physical link in authorized hands until release completes.",
+          "fa": "گزارش می‌تواند مرحله‌به‌مرحله باز شود. تا پایان انتشار، هر پیوند فیزیکی را در دست افراد مسئول نگه دارید."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Aria",
+          "en": "The first record is public. It ties Qassem to the original shutdown and today's attacks. Protect the remaining chain.",
+          "fa": "نخستین سند منتشر شد. قاسم را به خاموشی اولیه و حمله‌های امروز پیوند می‌دهد. از زنجیرهٔ باقی‌مانده محافظت کنید."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Samira",
+          "en": "The network is down and the full audit survived. The last access keys must cross the city center.",
+          "fa": "شبکه از کار افتاد و گزارش کامل سالم ماند. آخرین کلیدهای دسترسی باید از مرکز شهر عبور کنند."
+        }
+      ],
+      "commsImage": "CH05M03_NetworkCollapse_Comms",
+      "debriefImage": "CH05M03_NetworkCollapse_Debrief"
+    },
+    {
+      "chapter": 5,
+      "number": 4,
+      "id": "saga.ch05.m04.last_corridor",
+      "titleEn": "LAST CORRIDOR",
+      "titleFa": "آخرین دالان",
+      "summaryEn": "Move supplies, specialists, and authority keys to the city center.",
+      "summaryFa": "تدارکات، متخصصان و کلیدهای اختیار را به مرکز شهر برسانید.",
+      "objectiveEn": "Secure ground and air routes to the Relay perimeter.",
+      "objectiveFa": "مسیرهای زمینی و هوایی تا پیرامون رله را امن کنید.",
+      "image": "CH05M04_LastCorridor",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "Fuel, medicine, engineers, reinforcements, keys. Nothing reaches the center unless we keep this corridor open.",
+          "fa": "سوخت، دارو، مهندسان، نیروی کمکی و کلیدها. هیچ‌کدام بدون بازماندن این دالان به مرکز نمی‌رسند."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Samira",
+          "en": "Medicine and the keys move with protection. Laila and Karim can lift what the road cannot carry.",
+          "fa": "دارو و کلیدها با حفاظت حرکت می‌کنند. لیلا و کریم می‌توانند آنچه جاده نمی‌برد از هوا منتقل کنند."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Karim",
+          "en": "The western route is blocked. We have a narrow air window and a longer southern road; choose the transfer point.",
+          "fa": "مسیر غربی بسته شد. یک فرصت کوتاه هوایی و جادهٔ جنوبی طولانی‌تر داریم؛ نقطهٔ انتقال را انتخاب کنید."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Aria",
+          "en": "Critical supplies and keys reached the center. The Relay complex and its wired civic systems are the final objective.",
+          "fa": "تدارکات حیاتی و کلیدها به مرکز رسیدند. مجموعهٔ رله و سامانه‌های شهری متصل به آن آخرین هدف‌اند."
+        }
+      ],
+      "commsImage": "CH05M04_LastCorridor_Comms",
+      "debriefImage": "CH05M04_LastCorridor_Debrief"
+    },
+    {
+      "chapter": 5,
+      "number": 5,
+      "id": "saga.ch05.m05.command_node",
+      "titleEn": "COMMAND NODE",
+      "titleFa": "گره فرمان",
+      "summaryEn": "Stop Qassem's override and place SARIN's future under shared authority.",
+      "summaryFa": "بازنویسی قاسم را متوقف کنید و آیندهٔ سارین را زیر اختیار مشترک قرار دهید.",
+      "objectiveEn": "Secure the Relay complex and release the complete audit.",
+      "objectiveFa": "مجموعهٔ رله را امن کنید و گزارش کامل بازرسی را منتشر کنید.",
+      "image": "CH05M05_CommandNode",
+      "lines": [
+        {
+          "stage": "brief",
+          "speaker": "Dalia",
+          "en": "I hold the approach. Samira protects the civic systems. Laila keeps the exit clear.",
+          "fa": "من مسیر نزدیک‌شدن را نگه می‌دارم. سمیرا از سامانه‌های شهری محافظت می‌کند. لیلا راه خروج را باز نگه می‌دارد."
+        },
+        {
+          "stage": "brief",
+          "speaker": "Aria",
+          "en": "Qassem has begun the override. I can expose the audit, but the command choice remains yours.",
+          "fa": "قاسم بازنویسی را آغاز کرده. می‌توانم گزارش را آشکار کنم، اما تصمیم فرماندهی با شماست."
+        },
+        {
+          "stage": "comms",
+          "speaker": "Qassem",
+          "en": "One will must control the city. Give me the keys and end the uncertainty.",
+          "fa": "یک اراده باید شهر را کنترل کند. کلیدها را به من بدهید و به تردید پایان دهید."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Samira",
+          "en": "The override failed. The audit is public, and military and civil teams now secure the systems together.",
+          "fa": "بازنویسی شکست خورد. گزارش عمومی شده و گروه‌های نظامی و شهری اکنون با هم سامانه‌ها را امن می‌کنند."
+        },
+        {
+          "stage": "debrief",
+          "speaker": "Aria",
+          "en": "Emergency command is over. What rules should guide me when the city is no longer at war?",
+          "fa": "فرماندهی اضطراری پایان یافته. وقتی شهر دیگر در جنگ نیست، چه قواعدی باید راهنمای من باشد؟"
+        }
+      ],
+      "commsImage": "CH05M05_CommandNode_Comms",
+      "debriefImage": "CH05M05_CommandNode_Debrief"
+    }
+  ]
+}

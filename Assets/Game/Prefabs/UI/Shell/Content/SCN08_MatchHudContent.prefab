@@ -452,6 +452,7 @@ GameObject:
   - component: {fileID: 9047593390580522595}
   - component: {fileID: 8765736163130452616}
   - component: {fileID: 8625426344573319516}
+  - component: {fileID: 6418971534864906099}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -532,6 +533,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &6418971534864906099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 131140829581624751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &136656111656167879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1865,6 +1878,7 @@ GameObject:
   - component: {fileID: 6752163789727471471}
   - component: {fileID: 7422134379112312363}
   - component: {fileID: 6516004255200202726}
+  - component: {fileID: 4823560352327476847}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -1929,7 +1943,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4290631387
-  m_fontColor: {r: 0.9607843, g: 0.9647059, b: 0.9490196, a: 1}
+  m_fontColor: {r: 0.78, g: 0.78, b: 0.78, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -2006,6 +2020,18 @@ MonoBehaviour:
   localizationKey: ui.v3.build.3053677e43
   englishFallback: BUILD
   observeRuntimeSourceChanges: 1
+--- !u!114 &4823560352327476847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 399508180654509517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &400498386235251140
 GameObject:
   m_ObjectHideFlags: 0
@@ -13566,6 +13592,7 @@ GameObject:
   - component: {fileID: 6493379717981041183}
   - component: {fileID: 7437314175761415324}
   - component: {fileID: 5357983710840486875}
+  - component: {fileID: -3230930446951559484}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -13646,6 +13673,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &-3230930446951559484
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2330827738705339738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &2353518330235299349
 GameObject:
   m_ObjectHideFlags: 0
@@ -13870,6 +13909,7 @@ GameObject:
   - component: {fileID: 2894274497971652470}
   - component: {fileID: 8594513098423088342}
   - component: {fileID: 7250549715964797535}
+  - component: {fileID: -8475001062703660888}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -13950,6 +13990,18 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
+--- !u!114 &-8475001062703660888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2408397478103466866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &2411476501938817709
 GameObject:
   m_ObjectHideFlags: 0
@@ -16688,7 +16740,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: 820d8eb3ea8641b38d0d7b6abd53010e, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -22516,6 +22568,8 @@ GameObject:
   - component: {fileID: 1800108208000011009}
   - component: {fileID: 575952947409795803}
   - component: {fileID: 2648422827605019939}
+  - component: {fileID: 478834972638933908}
+  - component: {fileID: 4286457803981769347}
   m_Layer: 0
   m_Name: BuildCommand
   m_TagString: Untagged
@@ -22608,7 +22662,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.91, g: 0.98, b: 1, a: 1}
     m_PressedColor: {r: 0.72, g: 0.84, b: 0.9, a: 1}
     m_SelectedColor: {r: 0.78, g: 1, b: 0.86, a: 1}
-    m_DisabledColor: {r: 0.42, g: 0.46, b: 0.46, a: 0.72}
+    m_DisabledColor: {r: 1, g: 1, b: 1, a: 1}
     m_ColorMultiplier: 1
     m_FadeDuration: 0
   m_SpriteState:
@@ -22622,7 +22676,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 7437314175761415324}
   m_OnClick:
     m_PersistentCalls:
@@ -22659,6 +22713,30 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &478834972638933908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3834970336718461161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledSelectableVisualStateView
+--- !u!114 &4286457803981769347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3834970336718461161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &3841680018916876631
 GameObject:
   m_ObjectHideFlags: 0
@@ -24554,6 +24632,7 @@ GameObject:
   - component: {fileID: 6766250271624365886}
   - component: {fileID: 6809692886415249230}
   - component: {fileID: 4404575027223590731}
+  - component: {fileID: 3530476654948540076}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -24620,6 +24699,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &3530476654948540076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4167900470035262515}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &4171465162826805754
 GameObject:
   m_ObjectHideFlags: 0
@@ -28730,6 +28821,7 @@ GameObject:
   - component: {fileID: 7299385553833860657}
   - component: {fileID: 1287119343159587829}
   - component: {fileID: 2324060647496722935}
+  - component: {fileID: 1350153087566137297}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -28794,6 +28886,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1350153087566137297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5004153944543139808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &5010016907511874583
 GameObject:
   m_ObjectHideFlags: 0

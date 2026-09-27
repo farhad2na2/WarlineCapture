@@ -104,6 +104,7 @@ namespace Game.Editor
             ["SETTINGS"] = "تنظیمات",
             ["SHOW ME"] = "نشان بده",
             ["SKIP"] = "رد کردن",
+            ["SKIP TO VICTORY"] = "پرش به پیروزی",
             ["SOLDIERS"] = "سربازان",
             ["STANDARD"] = "استاندارد",
             ["STOP"] = "توقف",

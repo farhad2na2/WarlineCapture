@@ -38,6 +38,7 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            EnsureSkipButton();
             Bind();
             ShowDefault();
             RefreshLiveText();
@@ -102,6 +103,7 @@ namespace Game.UI.Runtime
         private void Bind()
         {
             Add(restartButton, ShowRestart);
+            Add(skipButton, SkipToVictory);
             Add(helpButton, ShowHelp);
             Add(restartConfirmButton, ConfirmRestart);
             Add(restartCancelButton, ShowDefault);
@@ -111,6 +113,7 @@ namespace Game.UI.Runtime
         private void Unbind()
         {
             Remove(restartButton, ShowRestart);
+            Remove(skipButton, SkipToVictory);
             Remove(helpButton, ShowHelp);
             Remove(restartConfirmButton, ConfirmRestart);
             Remove(restartCancelButton, ShowDefault);
@@ -170,6 +173,69 @@ namespace Game.UI.Runtime
                 return;
             }
 
+            UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
+        }
+
+        private Button skipButton;
+
+        private void EnsureSkipButton()
+        {
+            if (skipButton != null || restartButton == null)
+                return;
+            GameObject copy = Instantiate(restartButton.gameObject, restartButton.transform.parent);
+            copy.name = "SkipToVictoryButton";
+            skipButton = copy.GetComponent<Button>();
+            skipButton.onClick.RemoveAllListeners();
+            ReflowPauseActions();
+            ApplySkipLabel();
+        }
+
+        private void ReflowPauseActions()
+        {
+            Button[] actions =
+            {
+                resumeButton, restartButton, settingsButton, helpButton, skipButton, exitButton
+            };
+            const float height = 74f;
+            const float gap = 6f;
+            for (int i = 0; i < actions.Length; i++)
+            {
+                if (actions[i] == null)
+                    continue;
+                RectTransform rect = actions[i].GetComponent<RectTransform>();
+                rect.anchorMin = new Vector2(0f, 1f);
+                rect.anchorMax = new Vector2(0f, 1f);
+                rect.pivot = new Vector2(0f, 1f);
+                rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+                rect.anchoredPosition = new Vector2(0f, -(i * (height + gap)));
+                if (actions[i].transform.Find("LabelText") is RectTransform labelRect)
+                {
+                    labelRect.anchorMin = new Vector2(0f, 1f);
+                    labelRect.anchorMax = new Vector2(0f, 1f);
+                    labelRect.pivot = new Vector2(0f, 1f);
+                    labelRect.anchoredPosition = new Vector2(labelRect.anchoredPosition.x, -6f);
+                    labelRect.sizeDelta = new Vector2(labelRect.sizeDelta.x, height - 12f);
+                }
+            }
+        }
+
+        private void ApplySkipLabel()
+        {
+            TMP_Text label = skipButton != null ? skipButton.transform.Find("LabelText")?.GetComponent<TMP_Text>() : null;
+            if (label == null)
+                return;
+            label.enableAutoSizing = true;
+            label.fontSizeMin = 18f;
+            label.fontSizeMax = 28f;
+            label.overflowMode = TextOverflowModes.Overflow;
+            label.textWrappingMode = TextWrappingModes.NoWrap;
+            UiLocalizedText.Set(label, "SKIP TO VICTORY");
+        }
+
+        private void SkipToVictory()
+        {
+            if (!UiShellRuntimeGateway.TrySkipMatchToPerfectWin())
+                return;
             UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.ClosePause);
         }
 
@@ -298,6 +364,7 @@ namespace Game.UI.Runtime
 
         private void RefreshLiveText()
         {
+            ApplySkipLabel();
             if (UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
             {
                 ShowOperationsStatus(operation);

@@ -18,6 +18,8 @@ namespace Game.Composition
     [UpdateInGroup(typeof(PresentationSystemGroup))]
     public partial class OperationsMissionPresentationSystem : SystemBase
     {
+        internal const float IntroductionCameraSmoothTimeSeconds = 2.5f;
+
         private Entity boundary;
         private OperationsProfileCommandService commands;
         private SaveService saves;
@@ -596,7 +598,7 @@ namespace Game.Composition
             if (query.CalculateEntityCount() != 1) return;
             EntityManager.SetComponentData(query.GetSingletonEntity(), new RuntimeCameraFocusRequestComponent
             { Requested = 1, Smooth = SettingsService.Load().Accessibility.ReducedMotion ? (byte)0 : (byte)1,
-                SmoothTimeSeconds = .55f,
+                SmoothTimeSeconds = RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(IntroductionCameraSmoothTimeSeconds),
                 UseExplicitPerspective = 1, Perspective = new float4(40,58,0,60), World = position });
         }
 

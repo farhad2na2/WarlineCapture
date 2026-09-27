@@ -1,4 +1,6 @@
 using Game.Components;
+using Game.Composition;
+using Game.Runtime;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using Unity.Entities;
@@ -6,6 +8,18 @@ using UnityEngine;
 
 public sealed class OperationsIntroductionPauseTests
 {
+    [Test]
+    public void MissionIntroCameraTimingRejectsNearSnapTransitions()
+    {
+        Assert.That(RuntimeCameraFocusRequestUtility.MinimumMissionIntroSmoothTimeSeconds, Is.GreaterThanOrEqualTo(2.25f));
+        Assert.That(RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(.55f),
+            Is.EqualTo(RuntimeCameraFocusRequestUtility.MinimumMissionIntroSmoothTimeSeconds));
+        Assert.That(RuntimeCameraFocusRequestUtility.EnsureMissionIntroSmoothTime(1.8f),
+            Is.EqualTo(RuntimeCameraFocusRequestUtility.MinimumMissionIntroSmoothTimeSeconds));
+        Assert.That(OperationsMissionPresentationSystem.IntroductionCameraSmoothTimeSeconds,
+            Is.GreaterThan(RuntimeCameraFocusRequestUtility.MinimumMissionIntroSmoothTimeSeconds));
+    }
+
     [Test]
     public void BriefingFreezesSimulationAndHandoffRestoresItsPriorState()
     {

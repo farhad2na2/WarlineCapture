@@ -118,6 +118,34 @@ namespace Game.UI.Runtime
                 _lockedContentVersion = _shellContent.ContentVersion;
             }
             ReapplyCinematicHudInteractionLock();
+            KeepPauseAvailable();
+        }
+
+        private void KeepPauseAvailable()
+        {
+            if (_shellContent == null ||
+                !_shellContent.TryGetRegionContentRoot(UIShellRegionId.HeaderRegion, out RectTransform root) ||
+                root == null)
+                return;
+
+            foreach (UIShellActionButtonView action in root.GetComponentsInChildren<UIShellActionButtonView>(true))
+            {
+                if (action == null || action.ActionKind != UiActionKind.Pause)
+                    continue;
+                Button button = action.GetComponent<Button>();
+                if (button == null)
+                    continue;
+                UiDisabledMaterialUtility.SetSelectableDisabled(
+                    button, UiDisabledVisualReason.CinematicInteractionLock, false);
+                UiDisabledMaterialUtility.SetDisabled(
+                    button.gameObject, UiDisabledVisualReason.CinematicInteractionLock, false);
+                button.interactable = true;
+                CanvasGroup group = button.GetComponent<CanvasGroup>();
+                if (group == null)
+                    continue;
+                group.interactable = true;
+                group.blocksRaycasts = true;
+            }
         }
 
         private void CaptureAndDisableMatchHudSelectables()
@@ -135,10 +163,7 @@ namespace Game.UI.Runtime
 
             foreach (Selectable selectable in root.GetComponentsInChildren<Selectable>(true))
             {
-                if (selectable == null || _selectableStates.ContainsKey(selectable))
-                    continue;
-                var defenseHud = selectable.GetComponentInParent<MissionDefenseHudView>();
-                if (defenseHud != null && defenseHud.IsCameraTourControl(selectable))
+                if (selectable == null || _selectableStates.ContainsKey(selectable) || IsAlwaysAvailable(selectable))
                     continue;
 
                 CanvasGroup group = selectable.GetComponent<CanvasGroup>();
@@ -165,6 +190,15 @@ namespace Game.UI.Runtime
                 if (selectable != null)
                     ApplyDisabledState(selectable, saved.CanvasGroup);
             }
+        }
+
+        private static bool IsAlwaysAvailable(Selectable selectable)
+        {
+            MissionDefenseHudView defenseHud = selectable.GetComponentInParent<MissionDefenseHudView>();
+            if (defenseHud != null && defenseHud.IsCameraTourControl(selectable))
+                return true;
+            UIShellActionButtonView action = selectable.GetComponent<UIShellActionButtonView>();
+            return action != null && action.ActionKind == UiActionKind.Pause;
         }
 
         private static void ApplyDisabledState(Selectable selectable, CanvasGroup group)

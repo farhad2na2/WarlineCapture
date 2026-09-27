@@ -49,7 +49,8 @@ namespace Game.Editor
             {
                 if(!source.isPlaying || source.clip==null || source.timeSamples<=0 || source.volume<=0 || source.mute)continue;
                 string path=AssetDatabase.GetAssetPath(source.clip);
-                if(!path.StartsWith(M05BreachAssaultMediaImporter.VoiceRoot+"/",StringComparison.Ordinal))continue;
+                string root=IsNetworkBreakProbe?CH03M05NetworkBreakNarrativeBuilder.VoiceRoot:M05BreachAssaultMediaImporter.VoiceRoot;
+                if(!path.StartsWith(root+"/",StringComparison.Ordinal))continue;
                 string language=GameLocalization.CurrentLocaleCode.StartsWith("fa",StringComparison.Ordinal)?"fa":"en";
                 if(!path.Contains("/"+language+"/"))throw new InvalidOperationException("Wrong-language M5 playback: "+path);
                 if(PlayedVoices.Add(path))Debug.Log("[M05VoicePlayback] "+path+" advancingSamples="+source.timeSamples);
@@ -58,6 +59,16 @@ namespace Game.Editor
         private static void ValidatePlayedVoices()
         {
             if(!SessionState.GetBool(VoiceAudit,false))return;
+            if(IsNetworkBreakProbe)
+            {
+                string prefix=CH03M05NetworkBreakNarrativeBuilder.VoiceRoot+"/"+
+                    (GameLocalization.CurrentLocaleCode.StartsWith("fa",StringComparison.Ordinal)?"fa":"en")+"/";
+                foreach(var line in CH03M05NetworkBreakCopy.Brief.Concat(CH03M05NetworkBreakCopy.Comms).Concat(CH03M05NetworkBreakCopy.Debrief))
+                    if(!PlayedVoices.Contains(prefix+line.Id+".wav"))
+                        throw new InvalidOperationException("Network Break voice never played: "+line.Id);
+                Debug.Log("[NetworkBreakVoicePlayback] result=Passed locale="+GameLocalization.CurrentLocaleCode+" clips=6");
+                SessionState.SetBool(VoiceAudit,false);return;
+            }
             foreach(bool fa in new[]{false,true})
             {
                 foreach(var line in M05BreachAssaultMediaImporter.Lines)

@@ -1210,6 +1210,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.MissionResultPopupView
   m05ResultBackdrop: {fileID: 2800000, guid: c763203e008a3441fa441395042d854d, type: 3}
+  networkBreakResultBackdrop: {fileID: 2800000, guid: 7c8639611e11493d8bda40e0f6d5ecd3, type: 3}
   defenseLabels:
   - Text: {fileID: 110705637376275036}
     Key: mission.m03.result.objectives

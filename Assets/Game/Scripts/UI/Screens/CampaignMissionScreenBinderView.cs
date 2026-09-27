@@ -118,13 +118,9 @@ namespace Game.UI.Runtime
                     missionId = campaign.SelectedMission.MissionId;
                     campaignOperationsView.Apply(campaign);
                     campaignOperationsView.EnableFutureComicChapters(futureChapter);
-                    campaignOperationsView.EnableNetworkBreakNode(futureChapter == 3 &&
-                        futureMissionNumber == 5);
                     if (futureChapter >= 4)
                         campaignOperationsView.ApplyFutureComicMission(futureChapter,
                             Mathf.Max(1, futureMissionNumber));
-                    else if (futureChapter == 3 && futureMissionNumber == 5)
-                        campaignOperationsView.ApplyFutureComicMission(3, 5);
                 }
                 else
                     campaignOperationsView.ApplyUnavailable();
@@ -145,7 +141,7 @@ namespace Game.UI.Runtime
 
         private void OpenBriefing()
         {
-            if (futureChapter >= 4 || futureChapter == 3 && futureMissionNumber == 5)
+            if (futureChapter >= 4)
             {
                 OpenFutureComic(futureChapter, futureMissionNumber);
                 return;
@@ -194,10 +190,7 @@ namespace Game.UI.Runtime
             if (TrySelectFutureMission(5)) return;
             if (campaignOperationsView.IsChapterThree)
             {
-                futureChapter = 3;
-                futureMissionNumber = 5;
-                campaignOperationsView.ApplyFutureComicMission(3, 5);
-                OpenFutureComic(3, 5);
+                SelectMission(Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak);
                 return;
             }
             SelectMission(campaignOperationsView.IsChapterTwo

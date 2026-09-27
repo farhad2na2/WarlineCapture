@@ -24,6 +24,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes SafehouseSweep = "saga.ch03.m02.safehouse_sweep";
         private static readonly FixedString64Bytes FalseFront = "saga.ch03.m03.false_front";
         private static readonly FixedString64Bytes EvidenceChain = CampaignMissionSequence.EvidenceChain;
+        private static readonly FixedString64Bytes NetworkBreak = CampaignMissionSequence.NetworkBreak;
         private static readonly FixedString64Bytes M05 = "saga.ch01.m05.breach_assault";
         private static readonly FixedString64Bytes M04 = "saga.ch01.m04.airlift";
         private static readonly FixedString64Bytes MixedDebrief = "seq.ch01.m03.debrief.mixed";
@@ -32,6 +33,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes CleanDebrief = "seq.ch01.m03.debrief.clean";
         internal static bool UsesBlockingComms(in FixedString64Bytes missionId, in CampaignMissionAttemptFactsComponent facts) =>
             missionId.Equals(M02) && facts.DefenseWaveWarningIssued!=0 && facts.DefenseWaveActivated==0 ||
+            missionId.Equals(NetworkBreak) && facts.BreachGateDestroyed!=0 && facts.BreachCoreDestroyed==0 ||
             missionId.Equals(MarketLifeline) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(SignalTrace) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(SafehouseSweep) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
@@ -39,7 +41,7 @@ namespace Game.Runtime
             missionId.Equals(EvidenceChain) && facts.ExtractionCarrierLegCount>=2 && facts.ExtractionDeparted==0 ||
             missionId.Equals(PowerRelay) && facts.PowerSafeRouteConfirmed==0;
         internal static bool UsesMissionSequences(in FixedString64Bytes missionId) =>
-            missionId.Equals(EvidenceChain) || missionId.Equals(FalseFront) || missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
+            missionId.Equals(NetworkBreak) || missionId.Equals(EvidenceChain) || missionId.Equals(FalseFront) || missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);
         internal static FixedString64Bytes ResolveDebrief(in FixedString64Bytes missionId,
             in CampaignMissionAttemptFactsComponent facts, in FixedString64Bytes fallback)
         {

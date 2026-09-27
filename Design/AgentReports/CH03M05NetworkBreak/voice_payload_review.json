@@ -1,0 +1,56 @@
+{
+  "mission": "saga.ch03.m05.network_break",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "cast": {
+    "ARIA": "Fi9tPTnEcbh3of7hOHC8",
+    "DALIA": "MK1Zvh93428YrgOQ8Obr",
+    "QASSEM": "JBFqnCBsd6RMkjVDRZzb",
+    "SAMIRA": "7uxeJ73HfJL9gOH2mttA"
+  },
+  "castDirection": {
+    "ARIA": "Warline - ARIA Civic Relay",
+    "DALIA": "Warline - Major Dalia Rahim",
+    "QASSEM": "George - controlled, persuasive antagonist (Nadir Qassem)",
+    "SAMIRA": "Warline - Engineer Samira Haddad"
+  },
+  "purpose": "Bilingual authored story clips; local runtime assets; no runtime network TTS",
+  "entries": [
+    [
+      "network_break-brief-dalia",
+      "DALIA",
+      "The bunker map marks verified nodes and protected homes. We breach only where the evidence is clear.",
+      "نقشهٔ پناهگاه گره‌های تأییدشده و خانه‌های حفاظت‌شده را جدا کرده. فقط جایی نفوذ می‌کنیم که مدرک روشن باشد."
+    ],
+    [
+      "network_break-brief-aria",
+      "ARIA",
+      "My sealed archive is inside. Keep its physical record intact; I need to know why I closed it.",
+      "بایگانی مهرشدهٔ من آنجاست. سند اصلی را سالم نگه دارید؛ باید بفهمم چرا آن را بستم."
+    ],
+    [
+      "network_break-comms-qassem",
+      "QASSEM",
+      "Erase the audit, ARIA. Your missing memory proves what happens when you disobey.",
+      "آریا، گزارش رو پاک کن. همین حافظهٔ گمشده‌ات نشون می‌ده وقتی نافرمانی می‌کنی چی می‌شه."
+    ],
+    [
+      "network_break-comms-aria",
+      "ARIA",
+      "Qassem is ordering an erasure. I partitioned the audit to stop an override. I will preserve it now.",
+      "قاسم فرمان پاک‌سازی داده. من برای جلوگیری از بازنویسی، گزارش رو جدا کردم. حالا حفظش می‌کنم."
+    ],
+    [
+      "network_break-debrief-aria",
+      "ARIA",
+      "I sealed the audit to stop Qassem's illegal override. This was my decision, not a failure.",
+      "من گزارش رو مهر و موم کردم تا جلوی بازنویسی غیرقانونی قاسم رو بگیرم. این تصمیم خودم بود، نه یک خطا."
+    ],
+    [
+      "network_break-debrief-samira",
+      "SAMIRA",
+      "The audit survived. Its traffic shows Vanguard moving toward the city. We have proof, and no time to waste.",
+      "گزارش سالم ماند. ترافیک آن نشان می‌دهد ونگارد به سوی شهر می‌آید. مدرک داریم و وقت کم است."
+    ]
+  ]
+}

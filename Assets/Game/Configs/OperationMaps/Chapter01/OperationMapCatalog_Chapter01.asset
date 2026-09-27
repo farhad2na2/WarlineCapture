@@ -25,6 +25,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
   - {fileID: 11400000, guid: a1ad8b0179a914fffbab35b084f46833, type: 2}
   - {fileID: 11400000, guid: 2f7247240b0664c4d9e58b8e3d196517, type: 2}
+  - {fileID: 11400000, guid: 59cb6a805606e4264a737d29ad73b366, type: 2}
   - {fileID: 11400000, guid: a53c5ba7463dd4d868a2300ca98b8b8c, type: 2}
   - {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
   entries:
@@ -100,6 +101,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 302279193f188f68f3a50b1a505dd4b899ca418b5ec8a9db2e79c805ec01bbf3
+  - definition: {fileID: 11400000, guid: 59cb6a805606e4264a737d29ad73b366, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch03.network_break_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 9494c8023034456ee0593c31e190e650791ac2e45a0f7d43cda61ae99be32d03
   - definition: {fileID: 11400000, guid: a53c5ba7463dd4d868a2300ca98b8b8c, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch03.safehouse_sweep_01

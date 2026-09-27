@@ -39,7 +39,7 @@ namespace Game.UI.Shell.Ecs
             }
             if(IsExtractionMission(runtime.MissionId) && em.HasComponent<CampaignMissionExtractionState>(root))
                 return ResolveExtractionTutorialTarget(em,root,guidance.GuidanceId-55000,out target);
-            if(runtime.MissionId.Equals(BreachId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            if(IsBreachMission(runtime.MissionId) && em.HasComponent<CampaignMissionBreachState>(root) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
                 var breach = em.GetComponentData<CampaignMissionBreachState>(root);
                 bool recovering = guidance.GuidanceId == 65008 && breach.FriendlyAtArchive != 0;

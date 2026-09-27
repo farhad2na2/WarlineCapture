@@ -20,7 +20,7 @@ namespace Game.Editor
         private static Entity[] oldActors;
         private static void BeginReturn(EntityManager em,Entity root,UiMissionResultPopupModel result)
         {
-            var entry=store.ReadAll().Single(x=>x.missionId==M05BreachAssaultConfigBuilder.MissionId);
+            var entry=store.ReadAll().Single(x=>x.missionId==ProbedMissionId);
             if(!entry.firstClearRewardSettled || result.SettlementFailed)throw new InvalidOperationException("First-clear reward settlement missing");
             if(replay && result.FirstClear)throw new InvalidOperationException("Replay offered first-clear grants again");
             var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
@@ -44,12 +44,13 @@ namespace Game.Editor
                 if(shell.ActiveRoute!=UIRoute.Campaign)throw new InvalidOperationException("M5 returned to "+shell.ActiveRoute);
                 var view=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();if(view==null || !view.isActiveAndEnabled)return;
                 ScreenCapture.CaptureScreenshot(Output+"/campaign-return-"+GameLocalization.CurrentLocaleCode+".png");
+                if(IsNetworkBreakProbe){Complete(true,"CH03-M05 ARIA normal touch-input victory, result, settlement and campaign return; actions="+ariaWatchActions);return;}
                 if(replay){Complete(true,"guided English and real Persian replay victory; 3-objective combat/hold; visible rewards; campaign return; fresh replay actors/tutorial; no objective or health edits");return;}
                 MainMenuV3PrefabBuilder.SetGameViewResolution(2400,1080);GameLocalization.SetLocale("fa-IR",false);SessionState.SetBool("Warline.M05.Guided",false);
                 if(!UiShellRuntimeGateway.TryReadCampaignOperations(out var campaign))return;
-                if(campaign.SelectedMission.MissionId!=M05BreachAssaultConfigBuilder.MissionId)
-                {UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,M05BreachAssaultConfigBuilder.MissionId);return;}
-                if(!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,M05BreachAssaultConfigBuilder.MissionId))return;
+                if(campaign.SelectedMission.MissionId!=ProbedMissionId)
+                {UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,ProbedMissionId);return;}
+                if(!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,ProbedMissionId))return;
                 recoveryStage=2;returnAt=EditorApplication.timeSinceStartup;return;
             }
             if(runtime.Phase!=MissionPhaseKind.Engage || breach.Ready==0)return;

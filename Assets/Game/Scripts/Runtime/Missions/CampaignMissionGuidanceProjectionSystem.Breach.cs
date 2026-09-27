@@ -11,13 +11,17 @@ namespace Game.Runtime
     {
         private const float BreachApproachArrivalRadius = 8f;
         private static readonly FixedString64Bytes BreachMissionId="saga.ch01.m05.breach_assault";
+        private static readonly FixedString64Bytes NetworkBreakMissionId=CampaignMissionSequence.NetworkBreak;
         private static readonly FixedString64Bytes BreachTitlePrefix="mission.m05.tutorial.";
+        private static readonly FixedString64Bytes NetworkBreakTitlePrefix="mission.network_break.tutorial.";
         private static readonly FixedString32Bytes BreachFallbackSuffix=".fallback";
         private static readonly FixedString128Bytes BreachBodyPrefix="mission.m05.tutorial.";
+        private static readonly FixedString128Bytes NetworkBreakBodyPrefix="mission.network_break.tutorial.";
         private bool TryUpdateBreachGuidance(ref SystemState state,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
-            if(!runtime.MissionId.Equals(BreachMissionId)) return false;
+            bool networkBreak=runtime.MissionId.Equals(NetworkBreakMissionId);
+            if(!networkBreak && !runtime.MissionId.Equals(BreachMissionId)) return false;
             var em=state.EntityManager;
             if(runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || !em.HasComponent<CampaignMissionBreachState>(root))
             {ClearDefenseGuidance(em,root,in current);return true;}
@@ -61,8 +65,8 @@ namespace Game.Runtime
                 step==4?breach.ApproachCenter:
                 step==5?breach.CoreCenter:breach.ArchiveCenter;
             if(target!=Entity.Null && em.HasComponent<LocalTransform>(target)) destination=em.GetComponentData<LocalTransform>(target).Position;
-            var title=BreachTitlePrefix; title.Append(step);title.Append(ExtractionTitleSuffix);
-            var body=BreachBodyPrefix; body.Append(step);body.Append(step==4 && rifle==Entity.Null ? BreachFallbackSuffix : ExtractionBodySuffix);
+            var title=networkBreak?NetworkBreakTitlePrefix:BreachTitlePrefix; title.Append(step);title.Append(ExtractionTitleSuffix);
+            var body=networkBreak?NetworkBreakBodyPrefix:BreachBodyPrefix; body.Append(step);body.Append(step==4 && rifle==Entity.Null ? BreachFallbackSuffix : ExtractionBodySuffix);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=65000+step,Version=Next(current.Version),MissionSourceVersion=runtime.Version,
                 Prompt=(CampaignMissionGuidancePromptKind)(36+step),GuidanceMode=NarrativeGuidanceMode.Full,Active=1,Priority=AssistantMessagePriority.High,
                 RecommendationKind=step is 3 or 5 or 6?AssistantRecommendationKind.Attack:(step is 4 or 7 || step==8 && !atArchive)?AssistantRecommendationKind.Move:step==2?AssistantRecommendationKind.Select:AssistantRecommendationKind.Explain,

@@ -40,6 +40,7 @@ namespace Game.Editor
             ValidateMissionDistinct(CH03M02SafehouseSweepNarrativeBuilder.Path,"seq.ch03.m02.");
             ValidateMissionDistinct(CH03M03FalseFrontNarrativeBuilder.Path,"seq.ch03.m03.");
             ValidateMissionDistinct(CH03M04EvidenceChainNarrativeBuilder.Path,"seq.ch03.m04.");
+            ValidateMissionDistinct(CH03M05NetworkBreakNarrativeBuilder.Path,"seq.ch03.m05.");
             Debug.Log($"[CampaignComicCoverage] result=Passed sequences={sequences} dialogueStates={dialogues} aspects=16x9,20x9 shipGate=enabled");
         }
 

@@ -10,6 +10,8 @@ namespace Game.UI.Shell.Ecs
     public sealed partial class UiShellEcsGateway : IUiMissionBreachGateway
     {
         private static readonly FixedString64Bytes BreachId="saga.ch01.m05.breach_assault";
+        private static readonly FixedString64Bytes NetworkBreakId=CampaignMissionSequence.NetworkBreak;
+        private static bool IsBreachMission(in FixedString64Bytes id)=>id.Equals(BreachId)||id.Equals(NetworkBreakId);
         private static (int Hold, int Clock, int Guards, int Reinforcements, int Flags) cachedBreachStatusStamp;
         private static (int Hold, int Clock, int Guards, int Reinforcements, int Flags) ReadBreachStatusStamp()
         {
@@ -28,42 +30,45 @@ namespace Game.UI.Shell.Ecs
             if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionBreachState>(root))return text;
             var breach=em.GetComponentData<CampaignMissionBreachState>(root);
             if((breach.GuidanceCompletedMask&1)==0)return text;
+            string prefix=em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(NetworkBreakId)
+                ? "mission.network_break" : "mission.m05";
             var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
             int remaining=System.Math.Max(0,(breach.DeadlineMilliseconds-facts.ElapsedMilliseconds+999)/1000);
-            string status=string.Format(GameText.Get("mission.m05.hud.status"),breach.SecureHoldMilliseconds/1000,
+            string status=string.Format(GameText.Get(prefix+".hud.status"),breach.SecureHoldMilliseconds/1000,
                 System.Math.Max(0,facts.HostileTotalCount-facts.HostileDefeatedCount),$"{remaining/60:00}:{remaining%60:00}",breach.SecureRequiredMilliseconds/1000);
             if(breach.CounterattackReleaseAtMilliseconds>0 && breach.CounterattackReleased==0)
-                status=string.Format(GameText.Get("mission.m05.hud.counterattack"),System.Math.Max(0,(breach.CounterattackReleaseAtMilliseconds-facts.ElapsedMilliseconds+999)/1000))+"\n"+status;
+                status=string.Format(GameText.Get(prefix+".hud.counterattack"),System.Math.Max(0,(breach.CounterattackReleaseAtMilliseconds-facts.ElapsedMilliseconds+999)/1000))+"\n"+status;
             if(breach.CoreDestroyed!=0)
             {
                 string recovery;
                 int seconds=System.Math.Max(0,(breach.SecureRequiredMilliseconds-breach.SecureHoldMilliseconds+999)/1000);
-                if(breach.ArchiveSecured!=0) recovery=GameText.Get("mission.m05.hud.recovery.complete");
+                if(breach.ArchiveSecured!=0) recovery=GameText.Get(prefix+".hud.recovery.complete");
                 else if(breach.Contested!=0 || facts.HostileTotalCount>facts.HostileDefeatedCount)
-                    recovery=GameText.Get("mission.m05.hud.recovery.enemies");
-                else if(breach.CounterattackReleased==0) recovery=GameText.Get("mission.m05.hud.recovery.reinforcements");
+                    recovery=GameText.Get(prefix+".hud.recovery.enemies");
+                else if(breach.CounterattackReleased==0) recovery=GameText.Get(prefix+".hud.recovery.reinforcements");
                 else if(breach.SecureHoldMilliseconds>0)
-                    recovery=string.Format(GameText.Get("mission.m05.hud.recovery.progress"),seconds);
-                else recovery=GameText.Get("mission.m05.hud.recovery.enter");
+                    recovery=string.Format(GameText.Get(prefix+".hud.recovery.progress"),seconds);
+                else recovery=GameText.Get(prefix+".hud.recovery.enter");
                 return recovery+"\n\n"+status;
             }
             return text+"\n\n"+status;
         }
         public bool IsBreachGuideContext()
         {
-            if(TryGetMissionRoot(out var em,out var root) && em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(BreachId) &&
+            if(TryGetMissionRoot(out var em,out var root) && IsBreachMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId) &&
                 TryGetBoundary(out var shell,out var boundary) && shell.GetComponentData<Game.UI.Shell.Contracts.Ecs.UiShellStateComponent>(boundary).ActiveRoute==UIRoute.Match) return true;
-            return UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) && campaign.SelectedMission.MissionId==BreachId.ToString();
+            return UiShellReadModelAdapter.TryReadCampaignOperations(out var campaign) &&
+                (campaign.SelectedMission.MissionId==BreachId.ToString() || campaign.SelectedMission.MissionId==NetworkBreakId.ToString());
         }
         public bool TryReadBreachInputMode(out int mode)
         {
-            mode=0;if(!TryGetMissionRoot(out var em,out var root) || !em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(BreachId))return false;
+            mode=0;if(!TryGetMissionRoot(out var em,out var root) || !IsBreachMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId))return false;
             using var query=em.CreateEntityQuery(typeof(RtsSelectionInputStateComponent));if(query.CalculateEntityCount()!=1)return false;
             mode=query.GetSingleton<RtsSelectionInputStateComponent>().ActiveCommandMode;return true;
         }
         public bool TrySelectBreachActor()
         {
-            if(!TryGetMissionRoot(out var em,out var root) || !em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(BreachId)) return false;
+            if(!TryGetMissionRoot(out var em,out var root) || !IsBreachMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId)) return false;
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(guidance.Active==0 || guidance.CanExecute==0 || !em.Exists(guidance.SourceEntity)) return false;
             using var query=em.CreateEntityQuery(typeof(RtsSelectionInputRequestQueueComponent),typeof(RtsSelectionCommandIntentRequestElement));
@@ -77,7 +82,7 @@ namespace Game.UI.Shell.Ecs
             if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionGuidanceProjectionComponent>(root)) return false;
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
-            if(!runtime.MissionId.Equals(BreachId) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || guidance.Active==0 || guidance.GuidanceId!=65001) return false;
+            if(!IsBreachMission(runtime.MissionId) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || guidance.Active==0 || guidance.GuidanceId!=65001) return false;
             var requests=em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
             if(requests.Length>=8) return false;
             requests.Add(new CampaignMissionGuidanceAcknowledgementRequestElement {SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,GuidanceId=65001}); return true;

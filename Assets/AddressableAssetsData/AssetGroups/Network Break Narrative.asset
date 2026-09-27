@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Network Break Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Network Break Narrative
+  m_GUID: 57193cf9fd7c5449398dad7454ee637c
+  m_SerializeEntries:
+  - m_GUID: 7c8639611e11493d8bda40e0f6d5ecd3
+    m_Address: narrative.network_break.ch03m05_networkbreak_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7d4e9cd76bf94aa3865e10189d9dfcfd
+    m_Address: narrative.network_break.ch03m05_networkbreak_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: bff3262689ad4e0eb588c19c8612629a
+    m_Address: narrative.network_break.ch03m05_networkbreak
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: be03de4de92b94da5a0ba879714e545a, type: 2}
+    - {fileID: 11400000, guid: 5a59ce9e506b8481c99151645aa273d8, type: 2}

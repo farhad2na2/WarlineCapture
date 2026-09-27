@@ -32,6 +32,31 @@ namespace Game.Editor
             SessionState.SetBool(AriaWatch,true);ariaWatchStarted=false;ariaWatchActions=0;ariaWatchProgressAt=0;
             Run();
         }
+        [MenuItem("Tools/Warline/Validation/Run CH03 M05 ARIA Watch")]
+        public static void RunNetworkBreakAriaWatchEnglish()
+        {
+            SessionState.SetBool(NetworkBreakProbe,true);
+            SessionState.SetBool(NetworkBreakVisualOnly,false);
+            SessionState.SetBool("Warline.M05.EnglishCombat",true);
+            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION", "1");
+            SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = true;
+            SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = true;
+            SessionState.SetBool("Warline.M05.GuideOnly",false); SessionState.SetBool("Warline.M05.RetryProbe",false);
+            SessionState.SetBool("Warline.M05.Guided",false); SessionState.SetBool("Warline.M05.SkipComics",false);
+            SessionState.SetBool(VoiceAudit,true); PlayedVoices.Clear(); nextVoiceSample=0;
+            SessionState.SetBool(AriaWatch,true); ariaWatchStarted=false; ariaWatchActions=0; ariaWatchProgressAt=0;
+            Run();
+        }
+        [MenuItem("Tools/Warline/Validation/Capture CH03 M05 Native Screens")]
+        public static void CaptureNetworkBreakScreens()
+        {
+            SessionState.SetBool(NetworkBreakProbe,true);
+            SessionState.SetBool(NetworkBreakVisualOnly,true);
+            SessionState.SetBool("Warline.M05.EnglishCombat",true);
+            SessionState.SetBool(VoiceAudit,false);
+            SessionState.SetBool(AriaWatch,false);
+            Run();
+        }
         private static void TickAriaWatch()
         {
             var state=UiShellRuntimeGateway.ReadAriaPlay();

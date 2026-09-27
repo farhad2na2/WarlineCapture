@@ -2038,6 +2038,121 @@ MonoBehaviour:
     - key: mission.market_lifeline.summary
       value: Compare two authored manifests, escort the legitimate relief convoy
         and expose the copied Relay transfer without closing Old Market.
+    - key: mission.network_break.deadline
+      value: 11 active minutes
+    - key: mission.network_break.enemy_intel
+      value: Qassem is preparing an archive erasure. Expect a counterattack once
+        the gate is hit. Do not fire on unverified buildings.
+    - key: mission.network_break.forces
+      value: "8 rifles \xB7 heavy APC \xB7 no aircraft"
+    - key: mission.network_break.guide.diagram
+      value: "SCAN \u2192 GATE \u2192 ERASURE NODE \u2192 ARCHIVE HOLD"
+    - key: mission.network_break.guide.example
+      value: Use Select, Move, Attack and Hold. ARIA's Show Me points to the next
+        action but never orders your troops.
+    - key: mission.network_break.guide.mistake
+      value: Do not attack protected homes or the archive. Disable only the mapped
+        gate and erasure node.
+    - key: mission.network_break.guide.title
+      value: Network Break field guide
+    - key: mission.network_break.hud.counterattack
+      value: Qassem's counterattack in {0}s
+    - key: mission.network_break.hud.recovery.complete
+      value: Sealed audit secured
+    - key: mission.network_break.hud.recovery.enemies
+      value: Clear armed threats from the archive
+    - key: mission.network_break.hud.recovery.enter
+      value: Move a surviving escort into the archive ring
+    - key: mission.network_break.hud.recovery.progress
+      value: Hold the audit for {0}s more
+    - key: mission.network_break.hud.recovery.reinforcements
+      value: Cover the archive; counterattack incoming
+    - key: mission.network_break.hud.status
+      value: "Audit hold {0}s \xB7 guards {1} \xB7 time {2} \xB7 need {3}s"
+    - key: mission.network_break.location
+      value: "Sahrin \xB7 Ash Line audit bunker"
+    - key: mission.network_break.name
+      value: Network Break
+    - key: mission.network_break.objective.archive
+      value: Secure the audit
+    - key: mission.network_break.objective.breach
+      value: Breach verified gate
+    - key: mission.network_break.objective.disable
+      value: Stop erasure node
+    - key: mission.network_break.resources
+      value: "Scan first \xB7 protected homes off limits"
+    - key: mission.network_break.result.chapter
+      value: CHAPTER 3 COMPLETE
+    - key: mission.network_break.result.defeat
+      value: NETWORK BREAK FAILED
+    - key: mission.network_break.result.loss
+      value: The team could not secure the archive. Regroup before Qassem completes
+        the erasure.
+    - key: mission.network_break.result.lost
+      value: LOST
+    - key: mission.network_break.result.setup
+      value: The bunker encounter could not be verified. No reward was settled.
+    - key: mission.network_break.result.success
+      value: The verified node is down and ARIA's sealed audit is intact. Its traffic
+        confirms Vanguard moving toward the city.
+    - key: mission.network_break.result.support
+      value: HEAVY APC
+    - key: mission.network_break.result.survived
+      value: INTACT
+    - key: mission.network_break.result.timeout
+      value: Qassem erased the audit before the team secured it.
+    - key: mission.network_break.result.unit_losses
+      value: UNITS LOST
+    - key: mission.network_break.result.victory
+      value: AUDIT PRESERVED
+    - key: mission.network_break.reward.card
+      value: "1,500 Commander XP \xB7 7,000 Credits"
+    - key: mission.network_break.star.1
+      value: Complete the mission
+    - key: mission.network_break.star.2
+      value: Keep the APC intact
+    - key: mission.network_break.star.3
+      value: Finish within 9 minutes
+    - key: mission.network_break.summary
+      value: Scan the verified bunker approach. Breach its controlled gate, disable
+        the erasure node, then secure ARIA's sealed audit. Protected homes are off
+        limits.
+    - key: mission.network_break.tutorial.1.body
+      value: Use ARIA's Show Me to inspect the mapped gate and protected homes. Only
+        the gate and erasure node are authorized targets; continue after verification.
+    - key: mission.network_break.tutorial.1.title
+      value: Confirm the marked route
+    - key: mission.network_break.tutorial.2.body
+      value: Select the rifle escort or APC with the normal unit selection control.
+    - key: mission.network_break.tutorial.2.title
+      value: Select your squad
+    - key: mission.network_break.tutorial.3.body
+      value: Use Attack on the marked access gate. Keep fire away from unverified
+        buildings.
+    - key: mission.network_break.tutorial.3.title
+      value: Open the gate
+    - key: mission.network_break.tutorial.4.body
+      value: Use Move to take the rifles through the open gate toward the marked
+        bunker approach.
+    - key: mission.network_break.tutorial.4.title
+      value: Move through the breach
+    - key: mission.network_break.tutorial.5.body
+      value: Attack the verified erasure node. Preserve the nearby physical archive.
+    - key: mission.network_break.tutorial.5.title
+      value: Disable the erasure node
+    - key: mission.network_break.tutorial.6.body
+      value: Qassem's counterattack is arriving. Attack its armed units and cover
+        the archive approach.
+    - key: mission.network_break.tutorial.6.title
+      value: Stop the counterattack
+    - key: mission.network_break.tutorial.7.body
+      value: Move a surviving escort into the archive ring. Do not attack the archive.
+    - key: mission.network_break.tutorial.7.title
+      value: Reach the archive
+    - key: mission.network_break.tutorial.8.body
+      value: Hold the clear archive for 15 seconds while the sealed audit is secured.
+    - key: mission.network_break.tutorial.8.title
+      value: Hold the archive
     - key: mission.power_relay.deadline
       value: 10 active minutes
     - key: mission.power_relay.enemy_intel
@@ -2874,6 +2989,24 @@ MonoBehaviour:
     - key: narrative.market_lifeline.debrief.03
       value: Evidence correlation confirmed. One listed storage site has just lost
         power, displacing nearby families. The next operation is the power relay.
+    - key: narrative.network_break.brief-aria
+      value: My sealed archive is inside. Keep its physical record intact; I need
+        to know why I closed it.
+    - key: narrative.network_break.brief-dalia
+      value: The bunker map marks verified nodes and protected homes. We breach only
+        where the evidence is clear.
+    - key: narrative.network_break.comms-aria
+      value: Qassem is ordering an erasure. I partitioned the audit to stop an override.
+        I will preserve it now.
+    - key: narrative.network_break.comms-qassem
+      value: Erase the audit, ARIA. Your missing memory proves what happens when
+        you disobey.
+    - key: narrative.network_break.debrief-aria
+      value: I sealed the audit to stop Qassem's illegal override. This was my decision,
+        not a failure.
+    - key: narrative.network_break.debrief-samira
+      value: The audit survived. Its traffic shows Vanguard moving toward the city.
+        We have proof, and no time to waste.
     - key: narrative.power_relay.brief.01
       value: The substation serving our homes, shelters and water treatment has failed.
         Displaced families are waiting in the open, and the nearest shelter is already
@@ -10364,6 +10497,210 @@ MonoBehaviour:
         \u06A9\u067E\u06CC\u200C\u0634\u062F\u0647\u0654 \u0634\u0628\u06A9\u0647
         \u0631\u0648 \u0628\u062F\u0648\u0646 \u0628\u0633\u062A\u0646 \u0628\u0627\u0632\u0627\u0631
         \u0642\u062F\u06CC\u0645\u06CC \u0627\u0641\u0634\u0627 \u06A9\u0646."
+    - key: mission.network_break.deadline
+      value: "\u06F1\u06F1 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
+        \u0641\u0639\u0627\u0644"
+    - key: mission.network_break.enemy_intel
+      value: "\u0642\u0627\u0633\u0645 \u0628\u0631\u0627\u06CC \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0622\u0645\u0627\u062F\u0647
+        \u0645\u06CC\u200C\u0634\u0647. \u0628\u0627 \u062D\u0645\u0644\u0647 \u0628\u0647
+        \u062F\u0631\u0648\u0627\u0632\u0647\u060C \u0636\u062F\u062D\u0645\u0644\u0647
+        \u0634\u0631\u0648\u0639 \u0645\u06CC\u200C\u0634\u0647. \u0628\u0647 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647 \u0634\u0644\u06CC\u06A9
+        \u0646\u06A9\u0646."
+    - key: mission.network_break.forces
+      value: "\u06F8 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \xB7 \u0646\u0641\u0631\u0628\u0631
+        \u0633\u0646\u06AF\u06CC\u0646 \xB7 \u0628\u062F\u0648\u0646 \u0647\u0648\u0627\u06AF\u0631\u062F"
+    - key: mission.network_break.guide.diagram
+      value: "\u0628\u0631\u0631\u0633\u06CC \u2190 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u2190 \u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u2190 \u062D\u0641\u0638 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC"
+    - key: mission.network_break.guide.example
+      value: "\u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062D\u0631\u06A9\u062A\u060C
+        \u062D\u0645\u0644\u0647 \u0648 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0646
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646
+        \u0628\u062F\u0647\xBB \u0622\u0631\u06CC\u0627 \u06A9\u0627\u0631 \u0628\u0639\u062F\u06CC
+        \u0631\u0648 \u0646\u0634\u0627\u0646 \u0645\u06CC\u200C\u062F\u0647\u060C
+        \u0627\u0645\u0627 \u0628\u0647 \u0646\u06CC\u0631\u0648\u0647\u0627\u062A
+        \u0641\u0631\u0645\u0627\u0646 \u0646\u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.network_break.guide.mistake
+      value: "\u0628\u0647 \u062E\u0627\u0646\u0647\u200C\u0647\u0627\u06CC \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u06CC\u0627 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062D\u0645\u0644\u0647
+        \u0646\u06A9\u0646. \u0641\u0642\u0637 \u062F\u0631\u0648\u0627\u0632\u0647
+        \u0648 \u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC\u0650
+        \u0631\u0648\u06CC \u0646\u0642\u0634\u0647 \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631
+        \u0628\u0646\u062F\u0627\u0632."
+    - key: mission.network_break.guide.title
+      value: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0634\u06A9\u0633\u062A\u0646
+        \u0634\u0628\u06A9\u0647"
+    - key: mission.network_break.hud.counterattack
+      value: "\u0636\u062F\u062D\u0645\u0644\u0647\u0654 \u0642\u0627\u0633\u0645
+        \u062A\u0627 {0} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_break.hud.recovery.complete
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0645\u064F\u0647\u0631\u0634\u062F\u0647
+        \u062D\u0641\u0638 \u0634\u062F"
+    - key: mission.network_break.hud.recovery.enemies
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0645\u0633\u0644\u062D
+        \u0631\u0648 \u0627\u0632 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062F\u0648\u0631
+        \u06A9\u0646"
+    - key: mission.network_break.hud.recovery.enter
+      value: "\u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0647\u0645\u0631\u0627\u0647\u0650
+        \u0632\u0646\u062F\u0647 \u0631\u0648 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0628\u0631"
+    - key: mission.network_break.hud.recovery.progress
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 {0} \u062B\u0627\u0646\u06CC\u0647\u0654
+        \u062F\u06CC\u06AF\u0647 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.network_break.hud.recovery.reinforcements
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648 \u067E\u0648\u0634\u0634
+        \u0628\u062F\u0647\u061B \u0636\u062F\u062D\u0645\u0644\u0647 \u062F\u0631
+        \u0631\u0627\u0647\u0647"
+    - key: mission.network_break.hud.status
+      value: "\u062D\u0641\u0638 \u06AF\u0632\u0627\u0631\u0634 {0} \u062B\u0627\u0646\u06CC\u0647
+        \xB7 \u0646\u06AF\u0647\u0628\u0627\u0646 {1} \xB7 \u0632\u0645\u0627\u0646
+        {2} \xB7 \u0646\u06CC\u0627\u0632 {3} \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.network_break.location
+      value: "\u0633\u0627\u0631\u06CC\u0646 \xB7 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0628\u0627\u0632\u0631\u0633\u06CC \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631"
+    - key: mission.network_break.name
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u0634\u0628\u06A9\u0647"
+    - key: mission.network_break.objective.archive
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.network_break.objective.breach
+      value: "\u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0639\u0628\u0648\u0631 \u06A9\u0646"
+    - key: mission.network_break.objective.disable
+      value: "\u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u062E\u0627\u0645\u0648\u0634 \u06A9\u0646"
+    - key: mission.network_break.resources
+      value: "\u0627\u0648\u0644 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646 \xB7
+        \u062E\u0627\u0646\u0647\u200C\u0647\u0627 \u0647\u062F\u0641 \u0646\u06CC\u0633\u062A\u0646"
+    - key: mission.network_break.result.chapter
+      value: "\u0641\u0635\u0644 \u0633\u0648\u0645 \u06A9\u0627\u0645\u0644 \u0634\u062F"
+    - key: mission.network_break.result.defeat
+      value: "\u0634\u06A9\u0633\u062A\u0646 \u0634\u0628\u06A9\u0647 \u0634\u06A9\u0633\u062A
+        \u062E\u0648\u0631\u062F"
+    - key: mission.network_break.result.loss
+      value: "\u06AF\u0631\u0648\u0647 \u0646\u062A\u0648\u0646\u0633\u062A \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u0647. \u067E\u06CC\u0634 \u0627\u0632
+        \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC \u0642\u0627\u0633\u0645
+        \u062F\u0648\u0628\u0627\u0631\u0647 \u0622\u0645\u0627\u062F\u0647 \u0634\u0648."
+    - key: mission.network_break.result.lost
+      value: "\u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.network_break.result.setup
+      value: "\u062F\u0631\u06AF\u06CC\u0631\u06CC \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u0642\u0627\u0628\u0644 \u062A\u0623\u06CC\u06CC\u062F \u0646\u0628\u0648\u062F.
+        \u067E\u0627\u062F\u0627\u0634\u06CC \u062B\u0628\u062A \u0646\u0634\u062F."
+    - key: mission.network_break.result.success
+      value: "\u06AF\u0631\u0647\u0654 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u062E\u0627\u0645\u0648\u0634 \u0634\u062F \u0648 \u06AF\u0632\u0627\u0631\u0634
+        \u0645\u064F\u0647\u0631\u0634\u062F\u0647\u0654 \u0622\u0631\u06CC\u0627
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F. \u062A\u0631\u0627\u0641\u06CC\u06A9\u0634
+        \u062D\u0631\u06A9\u062A \u0648\u0646\u06AF\u0627\u0631\u062F \u0628\u0647
+        \u0633\u0648\u06CC \u0634\u0647\u0631 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.network_break.result.support
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0633\u0646\u06AF\u06CC\u0646"
+    - key: mission.network_break.result.survived
+      value: "\u0633\u0627\u0644\u0645"
+    - key: mission.network_break.result.timeout
+      value: "\u0642\u0627\u0633\u0645 \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646
+        \u06AF\u0631\u0648\u0647 \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u067E\u0627\u06A9
+        \u06A9\u0631\u062F."
+    - key: mission.network_break.result.unit_losses
+      value: "\u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0627\u0632 \u062F\u0633\u062A\u200C\u0631\u0641\u062A\u0647"
+    - key: mission.network_break.result.victory
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u062D\u0641\u0638 \u0634\u062F"
+    - key: mission.network_break.reward.card
+      value: "\u06F1\u06F5\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F7\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.network_break.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.network_break.star.2
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u0633\u0627\u0644\u0645
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.network_break.star.3
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F9 \u062F\u0642\u06CC\u0642\u0647
+        \u062A\u0645\u0627\u0645 \u06A9\u0646"
+    - key: mission.network_break.summary
+      value: "\u0631\u0627\u0647\u0650 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u06A9\u0646. \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u06A9\u0646\u062A\u0631\u0644\u200C\u0634\u062F\u0647
+        \u0639\u0628\u0648\u0631 \u06A9\u0646\u060C \u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632
+        \u0648 \u06AF\u0632\u0627\u0631\u0634 \u0645\u064F\u0647\u0631\u0634\u062F\u0647\u0654
+        \u0622\u0631\u06CC\u0627 \u0631\u0648 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u062E\u0627\u0646\u0647\u200C\u0647\u0627\u06CC \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0647\u062F\u0641 \u0646\u06CC\u0633\u062A\u0646."
+    - key: mission.network_break.tutorial.1.body
+      value: "\u0628\u0627 \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0622\u0631\u06CC\u0627
+        \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0631\u0648\u06CC \u0646\u0642\u0634\u0647
+        \u0648 \u062E\u0627\u0646\u0647\u200C\u0647\u0627\u06CC \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646. \u0641\u0642\u0637
+        \u062F\u0631\u0648\u0627\u0632\u0647 \u0648 \u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0647\u062F\u0641 \u0645\u062C\u0627\u0632\u0646\u061B \u067E\u0633 \u0627\u0632
+        \u062A\u0623\u06CC\u06CC\u062F \u0627\u062F\u0627\u0645\u0647 \u0628\u062F\u0647."
+    - key: mission.network_break.tutorial.1.title
+      value: "\u0645\u0633\u06CC\u0631 \u0639\u0644\u0627\u0645\u062A\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646"
+    - key: mission.network_break.tutorial.2.body
+      value: "\u0628\u0627 \u0641\u0631\u0645\u0627\u0646 \u0645\u0639\u0645\u0648\u0644
+        \u0627\u0646\u062A\u062E\u0627\u0628\u060C \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
+        \u06CC\u0627 \u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646."
+    - key: mission.network_break.tutorial.2.title
+      value: "\u06AF\u0631\u0648\u0647\u062A \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646"
+    - key: mission.network_break.tutorial.3.body
+      value: "\u0628\u0627 \u0641\u0631\u0645\u0627\u0646 \u062D\u0645\u0644\u0647\u060C
+        \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0632\u0646. \u0628\u0647 \u0633\u0627\u062E\u062A\u0645\u0627\u0646\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0646\u0634\u062F\u0647 \u0634\u0644\u06CC\u06A9
+        \u0646\u06A9\u0646."
+    - key: mission.network_break.tutorial.3.title
+      value: "\u062F\u0631\u0648\u0627\u0632\u0647 \u0631\u0648 \u0628\u0627\u0632
+        \u06A9\u0646"
+    - key: mission.network_break.tutorial.4.body
+      value: "\u0628\u0627 \u0641\u0631\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A\u060C
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648 \u0627\u0632
+        \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0628\u0627\u0632 \u0628\u0647
+        \u0633\u0645\u062A \u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0628\u0628\u0631."
+    - key: mission.network_break.tutorial.4.title
+      value: "\u0627\u0632 \u0634\u06A9\u0627\u0641 \u0639\u0628\u0648\u0631 \u06A9\u0646"
+    - key: mission.network_break.tutorial.5.body
+      value: "\u0628\u0647 \u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC\u0650
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0627\u0635\u0644\u06CC
+        \u0646\u0632\u062F\u06CC\u06A9 \u0627\u0648\u0646 \u0628\u0627\u06CC\u062F
+        \u0633\u0627\u0644\u0645 \u0628\u0645\u0648\u0646\u0647."
+    - key: mission.network_break.tutorial.5.title
+      value: "\u06AF\u0631\u0647\u0654 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.network_break.tutorial.6.body
+      value: "\u0636\u062F\u062D\u0645\u0644\u0647\u0654 \u0642\u0627\u0633\u0645
+        \u062F\u0631 \u0631\u0627\u0647\u0647. \u0628\u0647 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC
+        \u0645\u0633\u0644\u062D\u0634 \u062D\u0645\u0644\u0647 \u06A9\u0646 \u0648
+        \u0645\u0633\u06CC\u0631 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648
+        \u067E\u0648\u0634\u0634 \u0628\u062F\u0647."
+    - key: mission.network_break.tutorial.6.title
+      value: "\u0636\u062F\u062D\u0645\u0644\u0647 \u0631\u0648 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646"
+    - key: mission.network_break.tutorial.7.body
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u0647\u0645\u0631\u0627\u0647\u0650
+        \u0632\u0646\u062F\u0647 \u0631\u0648 \u0628\u0647 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0628\u0631. \u0628\u0647
+        \u062E\u0648\u062F \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062D\u0645\u0644\u0647
+        \u0646\u06A9\u0646."
+    - key: mission.network_break.tutorial.7.title
+      value: "\u0628\u0647 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0628\u0631\u0633"
+    - key: mission.network_break.tutorial.8.body
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC\u0650 \u0627\u0645\u0646
+        \u0631\u0648 \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
+        \u062F\u0627\u0631 \u062A\u0627 \u06AF\u0632\u0627\u0631\u0634 \u0645\u064F\u0647\u0631\u0634\u062F\u0647
+        \u0636\u0628\u0637 \u0628\u0634\u0647."
+    - key: mission.network_break.tutorial.8.title
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646"
     - key: mission.power_relay.deadline
       value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -12032,6 +12369,45 @@ MonoBehaviour:
         \u0627\u0637\u0631\u0627\u0641 \u0631\u0648 \u0622\u0648\u0627\u0631\u0647
         \u06A9\u0631\u062F\u0647. \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC\u060C
         \u0631\u0644\u0647\u0654 \u0628\u0631\u0642\u0647."
+    - key: narrative.network_break.brief-aria
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u0645\u0647\u0631\u0634\u062F\u0647\u0654
+        \u0645\u0646 \u0622\u0646\u062C\u0627\u0633\u062A. \u0633\u0646\u062F \u0627\u0635\u0644\u06CC
+        \u0631\u0627 \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u062F\u061B
+        \u0628\u0627\u06CC\u062F \u0628\u0641\u0647\u0645\u0645 \u0686\u0631\u0627
+        \u0622\u0646 \u0631\u0627 \u0628\u0633\u062A\u0645."
+    - key: narrative.network_break.brief-dalia
+      value: "\u0646\u0642\u0634\u0647\u0654 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
+        \u06AF\u0631\u0647\u200C\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0648 \u062E\u0627\u0646\u0647\u200C\u0647\u0627\u06CC \u062D\u0641\u0627\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u062C\u062F\u0627 \u06A9\u0631\u062F\u0647. \u0641\u0642\u0637
+        \u062C\u0627\u06CC\u06CC \u0646\u0641\u0648\u0630 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0645
+        \u06A9\u0647 \u0645\u062F\u0631\u06A9 \u0631\u0648\u0634\u0646 \u0628\u0627\u0634\u062F."
+    - key: narrative.network_break.comms-aria
+      value: "\u0642\u0627\u0633\u0645 \u0641\u0631\u0645\u0627\u0646 \u067E\u0627\u06A9\u200C\u0633\u0627\u0632\u06CC
+        \u062F\u0627\u062F\u0647. \u0645\u0646 \u0628\u0631\u0627\u06CC \u062C\u0644\u0648\u06AF\u06CC\u0631\u06CC
+        \u0627\u0632 \u0628\u0627\u0632\u0646\u0648\u06CC\u0633\u06CC\u060C \u06AF\u0632\u0627\u0631\u0634
+        \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0631\u062F\u0645. \u062D\u0627\u0644\u0627
+        \u062D\u0641\u0638\u0634 \u0645\u06CC\u200C\u06A9\u0646\u0645."
+    - key: narrative.network_break.comms-qassem
+      value: "\u0622\u0631\u06CC\u0627\u060C \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648
+        \u067E\u0627\u06A9 \u06A9\u0646. \u0647\u0645\u06CC\u0646 \u062D\u0627\u0641\u0638\u0647\u0654
+        \u06AF\u0645\u0634\u062F\u0647\u200C\u0627\u062A \u0646\u0634\u0648\u0646
+        \u0645\u06CC\u200C\u062F\u0647 \u0648\u0642\u062A\u06CC \u0646\u0627\u0641\u0631\u0645\u0627\u0646\u06CC
+        \u0645\u06CC\u200C\u06A9\u0646\u06CC \u0686\u06CC \u0645\u06CC\u200C\u0634\u0647."
+    - key: narrative.network_break.debrief-aria
+      value: "\u0645\u0646 \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u0645\u0647\u0631
+        \u0648 \u0645\u0648\u0645 \u06A9\u0631\u062F\u0645 \u062A\u0627 \u062C\u0644\u0648\u06CC
+        \u0628\u0627\u0632\u0646\u0648\u06CC\u0633\u06CC \u063A\u06CC\u0631\u0642\u0627\u0646\u0648\u0646\u06CC
+        \u0642\u0627\u0633\u0645 \u0631\u0648 \u0628\u06AF\u06CC\u0631\u0645. \u0627\u06CC\u0646
+        \u062A\u0635\u0645\u06CC\u0645 \u062E\u0648\u062F\u0645 \u0628\u0648\u062F\u060C
+        \u0646\u0647 \u06CC\u06A9 \u062E\u0637\u0627."
+    - key: narrative.network_break.debrief-samira
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u0633\u0627\u0644\u0645 \u0645\u0627\u0646\u062F.
+        \u062A\u0631\u0627\u0641\u06CC\u06A9 \u0622\u0646 \u0646\u0634\u0627\u0646
+        \u0645\u06CC\u200C\u062F\u0647\u062F \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0628\u0647 \u0633\u0648\u06CC \u0634\u0647\u0631 \u0645\u06CC\u200C\u0622\u06CC\u062F.
+        \u0645\u062F\u0631\u06A9 \u062F\u0627\u0631\u06CC\u0645 \u0648 \u0648\u0642\u062A
+        \u06A9\u0645 \u0627\u0633\u062A."
     - key: narrative.power_relay.brief.01
       value: "\u067E\u0633\u062A \u0628\u0631\u0642\u06CC \u06A9\u0647 \u0628\u0647
         \u062E\u0648\u0646\u0647\u200C\u0647\u0627\u060C \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627

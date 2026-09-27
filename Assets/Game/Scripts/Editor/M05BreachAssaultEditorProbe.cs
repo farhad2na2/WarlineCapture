@@ -22,15 +22,19 @@ namespace Game.Editor
     public static partial class M05BreachAssaultEditorProbe
     {
         private const string Active="Warline.M05.EditorProbe";
-        private const string Output="/private/tmp/warline-m05-editor-probe";
-        private static bool prepared,deployed,finished;private static double started,lastLog,lastClick,lastOrder;private static int step;
+        private const string NetworkBreakProbe="Warline.CH03M05.EditorProbe";
+        private const string NetworkBreakVisualOnly="Warline.CH03M05.VisualOnly";
+        private static bool IsNetworkBreakProbe=>SessionState.GetBool(NetworkBreakProbe,false);
+        private static string ProbedMissionId=>IsNetworkBreakProbe?CH03M05NetworkBreakConfigBuilder.MissionId:M05BreachAssaultConfigBuilder.MissionId;
+        private static string Output=>IsNetworkBreakProbe?"/private/tmp/warline-network-break-editor-probe":"/private/tmp/warline-m05-editor-probe";
+        private static bool prepared,deployed,finished,openedBriefing,capturedBriefing;private static double started,lastLog,lastClick,lastOrder,briefingOpenedAt;private static int step;
         private static double victoryAt;
         private static string narrativeShot;private static double narrativePanelAt;
         private static string error;private static CampaignMissionProgressStore store;
         static M05BreachAssaultEditorProbe(){if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}}
         public static void Run()
         {
-            Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=false;step=0;guideAuditStage=0;error=null;
+            Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);prepared=deployed=finished=openedBriefing=capturedBriefing=false;step=0;guideAuditStage=0;error=null;
             MissionMotionEditorAudit.Begin();started=EditorApplication.timeSinceStartup;victoryAt=0;recoveryStage=0;replay=false;MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
             AssetDatabase.DisallowAutoRefresh();EditorApplication.update-=Tick;EditorApplication.update+=Tick;Application.logMessageReceived-=Observe;Application.logMessageReceived+=Observe;
@@ -50,14 +54,37 @@ namespace Game.Editor
                 {
                     if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
                     var save=new SaveService(new JsonSaveRepository(Path.Combine(Output,Guid.NewGuid().ToString("N"))));
-                    store=new CampaignMissionProgressStore(save);store.EnsureAvailable(M05BreachAssaultConfigBuilder.MissionId);
+                    store=new CampaignMissionProgressStore(save);store.EnsureAvailable(ProbedMissionId);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;GameLocalization.SetLocale(SessionState.GetBool("Warline.M05.Guided",false) || SessionState.GetBool("Warline.M05.EnglishCombat",false)?"en":"fa-IR",false);prepared=true;return;
                 }
                 if(!deployed)
                 {
                     if(!UiShellRuntimeGateway.TryReadCampaignOperations(out var campaign)||!campaign.IsValid)return;
-                    if(campaign.SelectedMission.MissionId!=M05BreachAssaultConfigBuilder.MissionId){UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,M05BreachAssaultConfigBuilder.MissionId);return;}
-                    deployed=UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,M05BreachAssaultConfigBuilder.MissionId);return;
+                    if(campaign.SelectedMission.MissionId!=ProbedMissionId){UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Select,ProbedMissionId);return;}
+                    if(IsNetworkBreakProbe && !openedBriefing)
+                    {
+                        var campaignView=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>(FindObjectsInactive.Exclude);
+                        if(campaignView==null || !campaignView.isActiveAndEnabled)
+                        {
+                            UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute,UIRoute.Campaign,true);
+                            return;
+                        }
+                        ScreenCapture.CaptureScreenshot(Output+"/campaign-selected-"+GameLocalization.CurrentLocaleCode+".png");
+                        if(!UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.OpenBriefing,ProbedMissionId))return;
+                        UiShellRuntimeGateway.TryEnqueueRouteRequest(UiShellRouteIntent.OpenMenuRoute,UIRoute.MissionBriefing,true);
+                        openedBriefing=true;briefingOpenedAt=EditorApplication.timeSinceStartup;return;
+                    }
+                    if(IsNetworkBreakProbe && !capturedBriefing)
+                    {
+                        if(EditorApplication.timeSinceStartup-briefingOpenedAt<2)return;
+                        var view=UnityEngine.Object.FindAnyObjectByType<MissionBriefingScreenView>(FindObjectsInactive.Exclude);
+                        if(view==null || !view.isActiveAndEnabled)return;
+                        ScreenCapture.CaptureScreenshot(Output+"/briefing-"+GameLocalization.CurrentLocaleCode+".png");
+                        capturedBriefing=true;
+                        if(SessionState.GetBool(NetworkBreakVisualOnly,false)) {Complete(true,"CH03-M05 native Campaign and briefing visual capture");return;}
+                        return;
+                    }
+                    deployed=UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Deploy,ProbedMissionId);return;
                 }
                 SampleVoices();SkipNarrative();
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
@@ -83,7 +110,7 @@ namespace Game.Editor
                     if(SessionState.GetBool(AriaWatch,false))
                     {
                         if(!ariaWatchStarted || ariaWatchActions==0)throw new InvalidOperationException("Watch ARIA Play reached victory without recorded touch actions.");
-                        Complete(true,"Watch ARIA Play victory through shipping touch input; actions="+ariaWatchActions);return;
+                        if(!IsNetworkBreakProbe){Complete(true,"Watch ARIA Play victory through shipping touch input; actions="+ariaWatchActions);return;}
                     }
                     Time.timeScale=1;
                     if(!UiShellRuntimeGateway.TryReadMissionResult(out var result))return;
@@ -128,7 +155,7 @@ namespace Game.Editor
         private static void SkipNarrative()
         {
             var view=UnityEngine.Object.FindAnyObjectByType<NarrativeSequenceView>(FindObjectsInactive.Include);if(view==null||!Visible(view,"rootGroup")||EditorApplication.timeSinceStartup-lastClick<.7)return;
-            if(!SessionState.GetBool("Warline.M05.SkipComics",false) && !SessionState.GetBool("Warline.M05.GuideOnly",false) && !SessionState.GetBool("Warline.M05.RetryProbe",false) && view.CurrentPanelSprite!=null && view.CurrentPanelSprite.name.StartsWith("M05-",StringComparison.Ordinal))
+            if(!SessionState.GetBool("Warline.M05.SkipComics",false) && !SessionState.GetBool("Warline.M05.GuideOnly",false) && !SessionState.GetBool("Warline.M05.RetryProbe",false) && view.CurrentPanelSprite!=null && (view.CurrentPanelSprite.name.StartsWith("M05-",StringComparison.Ordinal) || IsNetworkBreakProbe && view.CurrentPanelSprite.name.StartsWith("CH03M05_",StringComparison.Ordinal)))
             {
                 string shot=GameLocalization.CurrentLocaleCode+"-"+view.CurrentPanelSprite.name;
                 if(narrativeShot!=shot){narrativeShot=shot;narrativePanelAt=EditorApplication.timeSinceStartup;return;}
@@ -148,10 +175,12 @@ namespace Game.Editor
         }
         private static void Complete(bool pass,string detail)
         {
-            if(finished)return;bool watch=SessionState.GetBool(AriaWatch,false);if(pass&&!watch)ValidatePlayedVoices();finished=true;SessionState.SetBool(Active,false);SessionState.SetBool(AriaWatch,false);Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
+            if(finished)return;bool watch=SessionState.GetBool(AriaWatch,false);if(pass&&(!watch||IsNetworkBreakProbe))ValidatePlayedVoices();finished=true;SessionState.SetBool(Active,false);SessionState.SetBool(AriaWatch,false);Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;Time.timeScale=1;
             SelectionRuntimeDiagnosticsSystemHelper.EditorClickDiagnosticsEnabled = false;
             SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled = false;
-            Debug.Log("[M05EditorProbe] result="+(pass?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(pass);
+            Debug.Log((IsNetworkBreakProbe?"[NetworkBreakInput]":"[M05EditorProbe]")+" result="+(pass?"Passed":"Failed")+" "+detail);
+            SessionState.SetBool(NetworkBreakVisualOnly,false);SessionState.SetBool(NetworkBreakProbe,false);
+            MissionEditorValidationExit.Complete(pass);
         }
     }
 }

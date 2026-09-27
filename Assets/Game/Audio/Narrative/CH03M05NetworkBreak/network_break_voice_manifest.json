@@ -1,0 +1,213 @@
+{
+  "schema": "WarlineCapture.NetworkBreakBilingualVoice.v1",
+  "missionId": "saga.ch03.m05.network_break",
+  "generatedAtUtc": "2026-09-27T21:44:30.907215+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "network_break-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The bunker map marks verified nodes and protected homes. We breach only where the evidence is clear.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-brief-dalia.wav",
+      "durationSeconds": 7.12,
+      "sha256": "97e585c91e1cc182f75ef407da536a9587b1f56ed23a10b4f82fbd686556d32a",
+      "captionSha256": "46586297ed14fd66e19031afed111ef253126abf688b62b5300f7aa768e3556d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "نقشهٔ پناهگاه گره‌های تأییدشده و خانه‌های حفاظت‌شده را جدا کرده. فقط جایی نفوذ می‌کنیم که مدرک روشن باشد.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-brief-dalia.wav",
+      "durationSeconds": 9.28,
+      "sha256": "86a6edd5c85ce9d26188bf794d3beb5a30c1d81238a94771b37358340ef857ef",
+      "captionSha256": "28e74dc7ce2fdf0639f3d682fc10067462aec78cfacdc6f8948879ed965f30ae"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_break-brief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "My sealed archive is inside. Keep its physical record intact; I need to know why I closed it.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-brief-aria.wav",
+      "durationSeconds": 7.36,
+      "sha256": "f4b072d14f3d753c5500e1deb0a96ed4b64fb4b62548ccae91647d987a84cbd8",
+      "captionSha256": "37225d2c800ef39f10b0c9a20898382b3e52c70e47e33a050e36dcc26989b3c4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-brief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بایگانی مهرشدهٔ من آنجاست. سند اصلی را سالم نگه دارید؛ باید بفهمم چرا آن را بستم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-brief-aria.wav",
+      "durationSeconds": 7.28,
+      "sha256": "17a4384b5c9d125b59ec93398c683b73526fe5ed01720784a61d2ac8c43087d5",
+      "captionSha256": "19a2e8a1325ea8d721792655acb00c56c265c43e7aeb14612b3b0107a0f4d246"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_break-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "Erase the audit, ARIA. Your missing memory proves what happens when you disobey.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-comms-qassem.wav",
+      "durationSeconds": 5.92,
+      "sha256": "0c5a211819e948ada991cf68f3a051833bdd4554508c2ad4605ff3ab0d1733ad",
+      "captionSha256": "7c55277e3e4af9af09dff98ace29e0f1e9989604e2ff64c6ec00082abe690a59"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "آریا، گزارش رو پاک کن. همین حافظهٔ گمشده‌ات نشون می‌ده وقتی نافرمانی می‌کنی چی می‌شه.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-comms-qassem.wav",
+      "durationSeconds": 6.88,
+      "sha256": "fab7b71db30e55b2cf0ff1c1b3dad969e5e56099e6642f20d005f67f3d55423d",
+      "captionSha256": "5a33348a163d84d6c79b2fd33ee79b759678f501d6d39451e6a2b75022d07077"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_break-comms-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Qassem is ordering an erasure. I partitioned the audit to stop an override. I will preserve it now.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-comms-aria.wav",
+      "durationSeconds": 6.48,
+      "sha256": "a8a54527215777df60e74ea21d5ac275e26beee769b9cfa2d86c2785a8ce42c9",
+      "captionSha256": "3d7b7df9424f46ed180b73452d70830634688c244adface76beb9e482191b4af"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-comms-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "قاسم فرمان پاک‌سازی داده. من برای جلوگیری از بازنویسی، گزارش رو جدا کردم. حالا حفظش می‌کنم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-comms-aria.wav",
+      "durationSeconds": 8.48,
+      "sha256": "c8c03b41941eec6df7e3709a47ca9ae7a0402bb17fc22a3e8f9398484f98dd2c",
+      "captionSha256": "726eeb120905e62d3ab1cffb6017ff619a36245b0401f5dac88e2a53f2fe3585"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_break-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "I sealed the audit to stop Qassem's illegal override. This was my decision, not a failure.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-debrief-aria.wav",
+      "durationSeconds": 5.84,
+      "sha256": "fa5577c66e3ef19cf089bf3857c637458550729897ff59ca422a100d83fcc305",
+      "captionSha256": "51b8f2cfcb7f3a47b3a60b4cfb5ff9e82bf4eb7cf00f45e9e3157d6dae831c3d"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "من گزارش رو مهر و موم کردم تا جلوی بازنویسی غیرقانونی قاسم رو بگیرم. این تصمیم خودم بود، نه یک خطا.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-debrief-aria.wav",
+      "durationSeconds": 8.32,
+      "sha256": "ef1eb7b2d4599a6dfb1ec4768a1ffc3d548f8ff7e1f576e3dbd7f7376797a8f2",
+      "captionSha256": "c94a7e7b0e6514c24bdd42cb11c3e9e2a2584665c6e71e930d726d37018d1126"
+    },
+    {
+      "kind": "narrative",
+      "id": "network_break-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The audit survived. Its traffic shows Vanguard moving toward the city. We have proof, and no time to waste.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/en/network_break-debrief-samira.wav",
+      "durationSeconds": 6.96,
+      "sha256": "3a7b17e88927ce832e0e346f0acade7e443a143ccf05352825a3b5a6bce3293f",
+      "captionSha256": "cb5655522d03385ca61698807a9428a13d9772fa545f91bf383412e1eb904a10"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "network_break-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "گزارش سالم ماند. ترافیک آن نشان می‌دهد ونگارد به سوی شهر می‌آید. مدرک داریم و وقت کم است.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/Voice/fa/network_break-debrief-samira.wav",
+      "durationSeconds": 8.64,
+      "sha256": "a3e27c1b0cee981f5b4dfacd19f914687642f08fa93c5e919c42789b3bcea25a",
+      "captionSha256": "888dcf01217e4dd565f951300596ce45a7cd4749692668d9a81307f824cdd805"
+    }
+  ]
+}

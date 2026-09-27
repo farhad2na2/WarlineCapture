@@ -55,3 +55,6 @@ MonoBehaviour:
   - missionId: saga.ch03.m04.evidence_chain
     definition: {fileID: 11400000, guid: 1f3b5ba452dde4f8987a9d463cca75f8, type: 2}
     scenario: {fileID: 11400000, guid: 7b7920159fb8046e3b304e81db1ab53c, type: 2}
+  - missionId: saga.ch03.m05.network_break
+    definition: {fileID: 11400000, guid: 61fa8036f27804b2592a2bbbf84b0731, type: 2}
+    scenario: {fileID: 11400000, guid: d201f4f3c46034232afbb5789e044212, type: 2}

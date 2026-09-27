@@ -572,6 +572,49 @@ namespace Game.Editor
             TMP_Text warningText = CreateText("Text", warning, "EMERGENCY: CIVILIANS AT RISK", 24f, boldFont, TextAlignmentOptions.MidlineLeft, Red);
             SetTopLeft(warningText.rectTransform, 70f, 5f, 392f, 49f);
             AddRouteHotspot(card, UIRoute.Campaign);
+            BindCampaignPlates(card.gameObject, art);
+        }
+
+        private static void BindCampaignPlates(GameObject card, Image art)
+        {
+            MainMenuCampaignCardView view = card.GetComponent<MainMenuCampaignCardView>() ?? card.AddComponent<MainMenuCampaignCardView>();
+            SerializedObject data = new(view);
+            data.FindProperty("art").objectReferenceValue = art;
+            (string id, string path, string sprite)[] entries =
+            {
+                ("saga.ch01.m01.first_contact", CampaignArtPath, null),
+                ("saga.ch01.m02.establish_base", "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png", null),
+                ("saga.ch01.m03.radar_warning", "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png", "M03-B01-16x9"),
+                ("saga.ch01.m04.airlift", "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png", "M04-B01-16x9"),
+                ("saga.ch01.m05.breach_assault", "Assets/Game/Art/Narrative/M05BreachAssault/Final/M05-B01.png", "M05-B01-16x9"),
+                ("saga.ch02.m01.gridlock", "Assets/Game/Art/Narrative/CH02M01Gridlock/Final/CH02-B01.png", "CH02-B01-16x9"),
+                ("saga.ch02.m02.supply_line", "Assets/Game/Art/Narrative/CH02M02SupplyLine/SupplyChain.png", "SupplyChain-16x9"),
+                ("saga.ch02.m03.market_lifeline", "Assets/Game/Art/Narrative/CH02M03MarketLifeline/OldMarket.png", "OldMarket-16x9"),
+                ("saga.ch02.m04.power_relay", "Assets/Game/Art/Narrative/CH02M04PowerRelay/BriefLinaShelter.png", "BriefLinaShelter-16x9"),
+                ("saga.ch02.m05.route_reopened", "Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefRoutingArchive.png", "BriefRoutingArchive-16x9"),
+                ("saga.ch03.m01.signal_trace", "Assets/Game/Art/Narrative/CH03M01SignalTrace/BriefThreeSignals.png", "BriefThreeSignals-16x9"),
+                ("saga.ch03.m02.safehouse_sweep", "Assets/Game/Art/Narrative/CH03M02SafehouseSweep/BriefVerifiedNode.png", "BriefVerifiedNode-16x9"),
+                ("saga.ch03.m03.false_front", "Assets/Game/Art/Narrative/CH03M03FalseFront/BriefEvacuationReport.png", "BriefEvacuationReport-16x9")
+            };
+            SerializedProperty plates = data.FindProperty("plates");
+            plates.arraySize = entries.Length;
+            for (int i = 0; i < entries.Length; i++)
+            {
+                SerializedProperty element = plates.GetArrayElementAtIndex(i);
+                element.FindPropertyRelative("missionId").stringValue = entries[i].id;
+                element.FindPropertyRelative("plate").objectReferenceValue = LoadPlate(entries[i].path, entries[i].sprite);
+            }
+            data.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        private static Sprite LoadPlate(string path, string spriteName)
+        {
+            if (string.IsNullOrEmpty(spriteName))
+                return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            foreach (UnityEngine.Object asset in AssetDatabase.LoadAllAssetsAtPath(path))
+                if (asset is Sprite sprite && sprite.name == spriteName)
+                    return sprite;
+            return null;
         }
 
         private static void BuildCompactModeCard(

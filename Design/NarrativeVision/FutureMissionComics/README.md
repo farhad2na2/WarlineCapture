@@ -21,6 +21,18 @@ COMING LATER**.
 - Mission beats and sequence IDs come from
   `Design/Campaign_Narrative_Sequence_And_Comic_Catalog.md`. Existing visual
   rules are in `Design/NarrativeVision/M3StyleAlignment/visual_direction.md`.
+- [bookends.json](../../../Assets/Game/Resources/FutureMissionComics/bookends.json)
+  carries the three remaining chapter openings, all five Protocol Fragment
+  closes, the canonical epilogue, three consequence emphasis records, and the
+  recovery postscript. The two prologue records and Chapter 1/2 openings
+  already have authored first-launch/Chapter 2 content. The preview reader
+  plays the Chapter 3 opening on its first chapter selection, Chapter 4/5
+  openings before M01, and Chapter 3/4/5 closes after M05;
+  Chapter 5 M05 continues through the epilogue and postscript. Chapter 1/2
+  closes play after the playable M05 result and debrief, before Continue returns
+  to Campaign. The three consequence sequences carry both high and low copy;
+  they remain separate from the Chapter 5 preview until gameplay supplies
+  Trust, Evidence, and Infrastructure state.
 
 ## Visual continuity
 
@@ -30,13 +42,34 @@ forests, or green mountains. Match the restrained faceted painterly rendering,
 moderate contrast, natural skin tones, warm sandstone light, and limited cyan
 interface glow of the corrected Chapter 3 panels.
 
-Use established character art as identity reference. ARIA has warm olive skin,
-dark brown hair in a low bun, dark wraparound glasses and a black over-ear
-headset. Laila's airfield reference is
+Use established character art as identity reference. **ARIA is the cyan
+hologram** in `Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png`:
+asymmetric side-swept short hair, angular oval face, almond eyes, straight
+nose and restrained lips. **Dalia** is the tan-uniformed field commander with
+dark tied hair, wraparound glasses and a headset in `M03-B02.png`. Never
+substitute Dalia's face or uniform for ARIA's hologram. Laila's airfield reference is
 `Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png`; Samira's is
 `Assets/Game/Art/Narrative/CH03M03FalseFront/CommsSamiraCorrection.png`.
 Keep the scene's principal character prominent; ARIA should not replace Laila,
 Samira or another speaker.
+
+For any new frame with a named character, supply that character's approved
+panel as the image-generation source, preserve the exact face and costume,
+and compare the result at face scale before importing. Reject unreferenced
+generations even when their city and lighting look attractive. The accepted
+Chapter 1/3/4/5 closes and epilogue derive from approved panels; the Chapter 2
+close uses an existing approved panel. `Bookends/CH04_Close.png` was normalized
+by one pixel to the standard canvas after generation.
+The Chapter 3 opening is edited from approved `M03-B01.png` ARIA art; do not
+replace it with a mission briefing UI capture or a newly invented ARIA face.
+
+The Chapter 5 M05 briefing, comms, and debrief originally showed an unrelated
+bare-haired woman in Laila's role. All three were corrected using the approved
+`M04-B01.png` Laila reference while preserving Samira and Dalia. The Chapter 5
+close and epilogue were then regenerated from that corrected debrief; do not
+use the earlier bare-haired candidates. Verify Samira's unheadseted scarf,
+Dalia's dark glasses and headset, Laila's scarf and aviation headset, and
+ARIA's separate cyan hologram at every future handoff.
 
 ## Gameplay handoff
 

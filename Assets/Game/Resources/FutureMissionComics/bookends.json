@@ -1,0 +1,108 @@
+{
+  "sequences": [
+    {
+      "id": "seq.ch03.open.hidden_network",
+      "pages": [
+        {"image":"Bookends/CH03_Open","speaker":"Samira","en":"The streets are moving again. Ordinary life and hidden hostile traffic now share the same blocks.","fa":"خیابان‌ها دوباره زنده‌اند. زندگی روزمره و ترافیک پنهان دشمن اکنون در یک محله جریان دارند."},
+        {"image":"Bookends/CH03_Open","speaker":"Aria","en":"A signal is not a target. I will separate verified evidence from uncertainty.","fa":"هر سیگنال یک هدف نیست. من مدرک تأییدشده را از عدم قطعیت جدا می‌کنم."},
+        {"image":"Bookends/CH03_Open","speaker":"Dalia","en":"Verify, isolate, act, and preserve the proof. We start with the moving Relay signature.","fa":"تأیید کن، جدا کن، اقدام کن و مدرک را حفظ کن. از رد متحرک رله آغاز می‌کنیم."}
+      ]
+    },
+    {
+      "id": "seq.ch04.open.air_and_armor",
+      "pages": [
+        {"image":"CH04M01_AirCorridor","speaker":"Laila","en":"These aircraft fly in disciplined formations. This is a coordinated military advance.","fa":"این هواپیماها با آرایش منظم پرواز می‌کنند. این یک پیشروی نظامی هماهنگ است."},
+        {"image":"CH04M01_AirCorridor","speaker":"Dalia","en":"Vanguard columns are working with Ash Line cells. We know the difference and will confirm each target.","fa":"ستون‌های ونگارد با گروه‌های خط خاکستر همکاری می‌کنند. تفاوتشان را می‌دانیم و هر هدف را تأیید می‌کنیم."},
+        {"image":"CH04M01_AirCorridor","speaker":"Samira","en":"Relief flights and Fuel sites are exposed. Protect the people those routes serve.","fa":"پروازهای امدادی و مراکز سوخت در خطرند. از مردمی که این مسیرها به آنان خدمت می‌کنند محافظت کنید."}
+      ]
+    },
+    {
+      "id": "seq.ch05.open.citywide_command",
+      "pages": [
+        {"image":"CH05M01_CitywideAlert","speaker":"Dalia","en":"Vanguard pressures the main corridors while Ash Line strikes local systems.","fa":"ونگارد به دالان‌های اصلی فشار می‌آورد و خط خاکستر به سامانه‌های محلی حمله می‌کند."},
+        {"image":"CH05M01_CitywideAlert","speaker":"Samira","en":"Shelters, clinics, roads, and workers must remain in the command picture.","fa":"پناهگاه‌ها، درمانگاه‌ها، جاده‌ها و کارگران باید در تصویر فرماندهی بمانند."},
+        {"image":"CH05M01_CitywideAlert","speaker":"Aria","en":"I can combine the reports. Facts, predictions, and recommendations will remain distinct; action still needs your approval.","fa":"می‌توانم گزارش‌ها را کنار هم بگذارم. واقعیت، پیش‌بینی و پیشنهاد جدا می‌مانند؛ اقدام همچنان به تأیید شما نیاز دارد."}
+      ]
+    },
+    {
+      "id": "seq.ch01.close.protocol_fragment_01",
+      "pages": [
+        {"image":"Bookends/CH01_Close","speaker":"Aria","en":"The recovered order used my obsolete credential. It was revoked when Civic Relay shut down.","fa":"دستور بازیابی‌شده از اعتبارنامهٔ قدیمی من استفاده کرده. هنگام خاموشی رلهٔ شهری باطل شده بود."},
+        {"image":"Bookends/CH01_Close","speaker":"Dalia","en":"Then someone knew the old command chain. We have evidence, but no identity yet.","fa":"پس کسی زنجیرهٔ فرماندهی قدیمی را می‌شناخته. مدرک داریم، اما هنوز هویتش را نمی‌دانیم."},
+        {"image":"Bookends/CH01_Close","speaker":"Qassem","en":"A city in crisis has already chosen emergency rule by needing you, Commander.","fa":"شهری که در بحران به تو نیاز دارد، فرمانده، فرمانروایی اضطراری را از پیش انتخاب کرده است."},
+        {"image":"Bookends/CH01_Close","speaker":"Samira","en":"Roads, Fuel, power, and clinics are failing now. The next response must keep the city alive.","fa":"جاده، سوخت، برق و درمانگاه‌ها همین حالا از کار می‌افتند. پاسخ بعدی باید شهر را زنده نگه دارد."}
+      ]
+    },
+    {
+      "id": "seq.ch02.close.protocol_fragment_02",
+      "pages": [
+        {"image":"Bookends/CH02_Close","speaker":"Aria","en":"Fuel, power, road diversions, and market storage all converge on dormant Relay nodes.","fa":"سوخت، برق، انحراف جاده‌ها و انبارهای بازار همگی به گره‌های خاموش رله می‌رسند."},
+        {"image":"Bookends/CH02_Close","speaker":"Samira","en":"Someone used people's need as activation traffic. They fed the network while we fought to restore it.","fa":"کسی نیاز مردم را به ترافیک فعال‌سازی تبدیل کرده. هنگامی که برای بازسازی تلاش می‌کردیم، شبکه را تغذیه می‌کرد."},
+        {"image":"Bookends/CH02_Close","speaker":"Qassem","en":"A city under strain will authorize what it rejected in peace.","fa":"شهری زیر فشار چیزی را مجاز می‌کند که در صلح رد کرده بود."},
+        {"image":"Bookends/CH02_Close","speaker":"Dalia","en":"An encrypted signal left the hub and entered a populated district. We follow it without treating civilians as targets.","fa":"یک سیگنال رمزگذاری‌شده از مرکز بیرون رفت و وارد محله‌ای مسکونی شد. دنبالش می‌رویم، بی‌آنکه غیرنظامیان را هدف بدانیم."}
+      ]
+    },
+    {
+      "id": "seq.ch03.close.protocol_fragment_03",
+      "pages": [
+        {"image":"Bookends/CH03_Close","speaker":"Aria","en":"The audit predates these attacks. Qassem designed the original override under his continuity authority.","fa":"گزارش بازرسی پیش از این حمله‌ها آغاز می‌شود. قاسم بازنویسی اصلی را با اختیار تداوم فرماندهی طراحی کرد."},
+        {"image":"Bookends/CH03_Close","speaker":"Aria","en":"I revoked the credentials I could reach, then sealed the remaining proof inside my own archive.","fa":"اعتبارنامه‌هایی را که در دسترسم بود باطل کردم و مدرک باقی‌مانده را در بایگانی خودم مهر کردم."},
+        {"image":"Bookends/CH03_Close","speaker":"Samira","en":"That protected the proof. It does not give any system unchecked authority over this city.","fa":"این کار از مدرک محافظت کرد. اما به هیچ سامانه‌ای اختیار بی‌نظارت بر شهر نمی‌دهد."},
+        {"image":"Bookends/CH03_Close","speaker":"Dalia","en":"Aircraft and armor are crossing into the operation area. The next fight is larger.","fa":"هواپیماها و زرهی‌ها وارد منطقهٔ عملیات می‌شوند. نبرد بعدی گسترده‌تر است."}
+      ]
+    },
+    {
+      "id": "seq.ch04.close.protocol_fragment_04",
+      "pages": [
+        {"image":"Bookends/CH04_Close","speaker":"Aria","en":"Vanguard hardware requests two keys: my restored archive and the Commander's live emergency credential.","fa":"تجهیزات ونگارد دو کلید می‌خواهند: بایگانی بازسازی‌شدهٔ من و اعتبارنامهٔ اضطراری فعال فرمانده."},
+        {"image":"Bookends/CH04_Close","speaker":"Dalia","en":"Neither key can complete the override alone. Keep the recovered package under guard.","fa":"هیچ‌کدام از کلیدها به‌تنهایی بازنویسی را کامل نمی‌کند. از بستهٔ بازیابی‌شده حفاظت کنید."},
+        {"image":"Bookends/CH04_Close","speaker":"Qassem","en":"Then I will make the whole city demand both keys at once.","fa":"پس کاری می‌کنم تمام شهر هر دو کلید را هم‌زمان بخواهد."},
+        {"image":"Bookends/CH04_Close","speaker":"Samira","en":"Warnings are lighting up across Sahrin. Every district needs a response.","fa":"هشدارها در سراسر سارین روشن می‌شوند. هر محله به پاسخ نیاز دارد."}
+      ]
+    },
+    {
+      "id": "seq.ch05.close.protocol_fragment_05",
+      "pages": [
+        {"image":"Bookends/CH05_Close","speaker":"Aria","en":"The complete audit connects the original override, my self-seal, the attacks, and Vanguard's hardware.","fa":"گزارش کامل، بازنویسی اولیه، مهر خودم، حمله‌ها و تجهیزات ونگارد را به هم پیوند می‌دهد."},
+        {"image":"Bookends/CH05_Close","speaker":"Dalia","en":"Qassem's force is defeated. Military emergency authority returns to a bounded mandate.","fa":"نیروی قاسم شکست خورده. اختیار اضطراری نظامی به مأموریتی محدود بازمی‌گردد."},
+        {"image":"Bookends/CH05_Close","speaker":"Samira","en":"District representatives and workers will share civilian oversight of the recovery.","fa":"نمایندگان محله‌ها و کارگران در نظارت مدنی بر بازسازی شریک خواهند بود."},
+        {"image":"Bookends/CH05_Close","speaker":"Aria","en":"My decisions remain visible, auditable, and subject to consent. The city controls its own future.","fa":"تصمیم‌هایم آشکار، قابل بازرسی و وابسته به رضایت می‌مانند. شهر آیندهٔ خود را کنترل می‌کند."}
+      ]
+    },
+    {
+      "id": "seq.campaign.epilogue.canonical",
+      "pages": [
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Dalia","en":"The Relay complex is secure. Ash Line command has collapsed and Vanguard is withdrawing.","fa":"مجموعهٔ رله امن است. فرماندهی خط خاکستر فروپاشیده و ونگارد عقب‌نشینی می‌کند."},
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Samira","en":"The complete audit belongs to the city. Crews are restoring clinics, roads, markets, and power.","fa":"گزارش کامل از آنِ شهر است. گروه‌ها درمانگاه‌ها، جاده‌ها، بازارها و برق را بازسازی می‌کنند."},
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Laila","en":"Relief aircraft can land again. There is still work on the ground.","fa":"هواپیماهای امدادی دوباره می‌توانند فرود بیایند. روی زمین هنوز کار بسیار است."},
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Aria","en":"My permissions are limited, my audit trail is open, and every action can be overridden.","fa":"اختیارهایم محدود است، رد بازرسی‌ام باز است و هر اقدامم را می‌توان لغو کرد."},
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Samira","en":"Emergency command has ended. Sahrin belongs to the people repairing it.","fa":"فرماندهی اضطراری پایان یافته. سارین از آنِ مردمی است که بازسازیش می‌کنند."}
+      ]
+    },
+    {
+      "id": "seq.campaign.epilogue.trust_emphasis",
+      "pages": [
+        {"image":"CH05M02_TrustUnderFire_Debrief","speaker":"Samira","en":"District councils and witnesses join the oversight. Trust will be rebuilt in public.","fa":"شوراهای محله و شاهدان به نظارت می‌پیوندند. اعتماد در برابر چشم مردم بازسازی می‌شود.","lowEn":"Residents join the oversight with hard questions. Trust will take longer to repair, and the councils will hear them openly.","lowFa":"ساکنان با پرسش‌های سخت به نظارت می‌پیوندند. بازسازی اعتماد زمان بیشتری می‌برد و شوراها آشکارا به آنان گوش می‌دهند."}
+      ]
+    },
+    {
+      "id": "seq.campaign.epilogue.evidence_emphasis",
+      "pages": [
+        {"image":"CH05M03_NetworkCollapse_Debrief","speaker":"Aria","en":"The audit proves Qassem's manufactured crisis. Investigators can follow the surviving records.","fa":"گزارش بازرسی بحران ساختگی قاسم را ثابت می‌کند. بازرسان می‌توانند اسناد باقی‌مانده را دنبال کنند.","lowEn":"The core audit proves Qassem's crisis, but parts of his support network remain contested. Investigators will keep those gaps visible.","lowFa":"گزارش اصلی بحران ساختگی قاسم را ثابت می‌کند، اما بخش‌هایی از شبکهٔ حامیانش هنوز محل اختلاف است. بازرسان این خلأها را آشکار نگه می‌دارند."}
+      ]
+    },
+    {
+      "id": "seq.campaign.epilogue.infrastructure_emphasis",
+      "pages": [
+        {"image":"CH05M04_LastCorridor_Debrief","speaker":"Samira","en":"Fuel, medicine, roads, and shelter remain hard work. Recovery is underway.","fa":"سوخت، دارو، جاده و پناهگاه هنوز به کار سخت نیاز دارند. بازسازی آغاز شده است.","lowEn":"Shortages and displacement make the repair slower. Crews keep clinics, shelter, and essential routes open while the city recovers.","lowFa":"کمبودها و آوارگی بازسازی را کند می‌کنند. گروه‌ها هنگام بهبود شهر، درمانگاه‌ها، پناهگاه‌ها و مسیرهای ضروری را باز نگه می‌دارند."}
+      ]
+    },
+    {
+      "id": "seq.campaign.postscript.recovery_watch",
+      "pages": [
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Aria","en":"Five Protocol Fragments are archived. External Vanguard links remain a future investigation.","fa":"پنج بخش پروتکل بایگانی شده‌اند. پیوندهای بیرونی ونگارد موضوع بررسی آینده‌اند."},
+        {"image":"Bookends/Campaign_Epilogue","speaker":"Samira","en":"The campaign is complete. The city can replay its history while rebuilding its future.","fa":"کارزار کامل شده است. شهر می‌تواند گذشته‌اش را مرور کند و آینده‌اش را بسازد."}
+      ]
+    }
+  ]
+}

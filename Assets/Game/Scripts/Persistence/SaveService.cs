@@ -163,7 +163,11 @@ namespace Game.Runtime
             profile.campaignMissionProgress = futureProfile
                 ? Array.Empty<CampaignMissionProgressSaveData>()
                 : profile.campaignMissionProgress ?? Array.Empty<CampaignMissionProgressSaveData>();
-            if(!futureProfile)SupportProfileMigration.Normalize(profile);
+            if(!futureProfile)
+            {
+                SupportProfileMigration.Normalize(profile);
+                MissionProductProfileMigration.Normalize(profile);
+            }
             profile.operations = Game.Operations.Contracts.OperationsSaveMigration.Migrate(profile.operations).Data;
             profile.operationsAttemptJson ??= string.Empty;
             return profile;

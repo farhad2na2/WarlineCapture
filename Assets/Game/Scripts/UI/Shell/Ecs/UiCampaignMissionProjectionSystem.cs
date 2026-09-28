@@ -325,6 +325,8 @@ namespace Game.UI.Shell.Ecs
             out ulong transitionToken)
         {
             transitionToken = 0;
+            if (Game.Runtime.ContentAccessRuntime.Evaluate(definition.MissionId.ToString(),
+                    progression: operations.Available != 0) != ContentAccessState.Allowed) return false;
             DynamicBuffer<CampaignMissionLaunchRequestElement> launches =
                 entityManager.GetBuffer<CampaignMissionLaunchRequestElement>(campaignRoot);
             if (launches.Length != 0)

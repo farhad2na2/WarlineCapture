@@ -113,7 +113,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             ref definition, in operations, false, default);
         Assert.That(briefing.MissionId.ToString(), Is.EqualTo(M02));
         Assert.That(briefing.OperationMapId.ToString(), Is.EqualTo(M02Map));
-        Assert.That(briefing.StartingCredits, Is.EqualTo(55000));
+        Assert.That(briefing.StartingCredits, Is.EqualTo(0));
         Assert.That(briefing.StartingMaterials, Is.EqualTo(120));
         Assert.That(briefing.AllowedBuildingConfigId.ToString(), Is.EqualTo(Barracks));
         Assert.That(briefing.AllowedBuildingCount, Is.EqualTo(1));
@@ -478,7 +478,7 @@ public sealed class M02EstablishBaseCampaignUiTests
             new UiMissionRewardModel(UiMissionRewardKind.None, "reward.ch01.m02.production_unlock",
                 "mission.m02.reward.barracks_unlock", 1)
         },
-        3, 55000, 120, Barracks, 1,
+        3, 0, 120, Barracks, 1,
         buildingDisabled: false, productionDisabled: false, economyDisabled: false,
         transportDisabled: true, airDisabled: true,
         replay: false, replayAllowed: true, replayTutorialEnabled: false,

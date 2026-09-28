@@ -389,6 +389,8 @@ namespace Game.Composition
 
         private void Deploy(bool restart, bool resume)
         {
+            if (Game.Runtime.ContentAccessRuntime.Evaluate("operation.o001") != Game.Missions.Contracts.ContentAccessState.Allowed)
+            { notice = "Content unavailable."; return; }
             if (definition == null || !definition.TryValidate(out _)) { notice = Copy("content_missing", "Street Signals content is unavailable."); return; }
             var save = commands.Read();
             if (!OperationsSaveMigration.HasActiveRun(save))
@@ -422,8 +424,8 @@ namespace Game.Composition
                 var archive = saves.LoadOperationsCheckpoint(attempt.sessionId);
                 string content = definition.operationMap.ContentHash;
                 if (archive == null || archive.content != content ||
-                    !OperationsReconCheckpointCodec.TryDecode(archive.current, attempt.sessionId, content, out pendingResume) &&
-                    !OperationsReconCheckpointCodec.TryDecode(archive.previous, attempt.sessionId, content, out pendingResume))
+                    !OperationsReconCheckpointCodec.TryDecode(archive.current, attempt.sessionId, content, out pendingResume, save.activeRun.scopeId) &&
+                    !OperationsReconCheckpointCodec.TryDecode(archive.previous, attempt.sessionId, content, out pendingResume, save.activeRun.scopeId))
                 {
                     if (commands.TrySubmit(Command(save, OperationsCommandKind.TechnicalFailure), out var refunded, out _) && refunded.Accepted)
                         notice = Copy("recovery_refunded", "The saved attempt is incompatible. Your action point was returned and recovery data was preserved.");
@@ -469,8 +471,9 @@ namespace Game.Composition
         {
             try
             {
-                string image = OperationsReconCheckpointCodec.Encode(
-                    OperationsReconCheckpointCodec.Capture(EntityManager, root, definition.operationMap.ContentHash));
+                var checkpoint = OperationsReconCheckpointCodec.Capture(EntityManager, root, definition.operationMap.ContentHash);
+                checkpoint.scopeId = commands.Read().activeRun.scopeId;
+                string image = OperationsReconCheckpointCodec.Encode(checkpoint);
                 if (saves.TrySaveOperationsCheckpoint(mission.SessionId.ToString(), image, out _)) return true;
                 notice = Copy("checkpoint_failed", "Could not save mission progress. Try again.");
             }
@@ -639,7 +642,7 @@ namespace Game.Composition
                 new[] { new OperationsObjectiveFact("recon_mastery", snapshot.mastery, !snapshot.mastery, snapshot.mastery ? 1 : 0) },
                 0, Array.Empty<OperationsObjectiveFact>(), Array.Empty<OperationsObjectiveFact>(),
                 outcome == OperationsOutcomeKind.Victory ? new[] { "evidence.d01.relay" } : Array.Empty<string>(),
-                Math.Max(0, initial - mission.SurvivingInfantry), initial, hash);
+                Math.Max(0, initial - mission.SurvivingInfantry), initial, hash, save.activeRun.scopeId);
             settlementCommand ??= Id();
             var command = new OperationsCommand(settlementCommand, save.profileRevision, OperationsCommandKind.Conclude, "", "", "");
             if (commands.TrySettle(command, result, json, out var committed, out notice) && committed.Accepted)

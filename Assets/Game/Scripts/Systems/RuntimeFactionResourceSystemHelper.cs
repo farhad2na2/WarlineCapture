@@ -11,6 +11,11 @@ namespace Game.Runtime
         private int _pendingInitialDollars;
         private bool _isConfigured;
 
+        public int VisibleConstructionMaterialsCost(int credits, int materials) =>
+            TryGetControlledFactionEconomy(out var economy) &&
+            Game.Tactical.Contracts.MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                credits, materials, out _, out int cost) ? cost : int.MaxValue;
+
         public int CurrentDollars => TryGetControlledFactionEconomy(out var economy) ? economy.Money : 0;
 
         public int CurrentMaterials => TryGetControlledFactionResources(out _, out FactionTacticalMaterialsComponent materials)

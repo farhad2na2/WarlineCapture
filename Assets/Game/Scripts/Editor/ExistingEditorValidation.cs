@@ -11,8 +11,12 @@ namespace Game.Editor
     // Wrapper-owned live validation: never opens, quits or changes projects.
     public static class ExistingEditorValidation
     {
+        public static bool IsRunning { get; private set; }
         public static async void Run(string executeMethod,string logFile)
         {
+            if (IsRunning) throw new InvalidOperationException("A wrapper validation is already running.");
+            IsRunning = true;
+            MissionEditorValidationExit.LastCompletion = null;
             int status=1;
             Directory.CreateDirectory(Path.GetDirectoryName(logFile));
             using var writer=new StreamWriter(logFile,false) {AutoFlush=true};
@@ -32,12 +36,21 @@ namespace Game.Editor
                 var exit=assemblies.Select(a=>a.GetType("ValidationExit",false)).FirstOrDefault(t=>t!=null);
                 exit?.GetMethod("ClearLastExitCode",BindingFlags.Public|BindingFlags.Static)?.Invoke(null,null);
                 Debug.Log("[ExistingEditorValidation] project="+Application.dataPath+" executeMethod="+executeMethod);
+                bool wasPlaying = EditorApplication.isPlayingOrWillChangePlaymode;
                 object invocation=method.Invoke(null,null);
                 if(invocation is Task<int> operation)status=await operation;
                 else
                 {
+                    if (!wasPlaying && EditorApplication.isPlayingOrWillChangePlaymode)
+                    {
+                        while (!MissionEditorValidationExit.LastCompletion.HasValue) await Task.Delay(100);
+                        status = MissionEditorValidationExit.LastCompletion.Value;
+                    }
+                    else
+                    {
                     object result=exit?.GetProperty("LastExitCode",BindingFlags.Public|BindingFlags.Static)?.GetValue(null);
                     status=result is int code?code:0;
+                    }
                 }
                 Debug.Log("[ExistingEditorValidation] result="+(status==0?"Passed":"Failed")+" executeMethod="+executeMethod);
             }
@@ -51,6 +64,7 @@ namespace Game.Editor
                 Application.logMessageReceivedThreaded-=capture;
                 lock(gate)writer.Flush();
                 File.WriteAllText(logFile+".exit",status.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                IsRunning = false;
             }
         }
     }

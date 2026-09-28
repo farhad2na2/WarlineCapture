@@ -24,6 +24,11 @@ namespace Game.Composition
             setup = null;
             payload = null;
             reasons = new List<SkirmishCompileReason>();
+            if (Game.Runtime.ContentAccessRuntime.Evaluate("skirmish." + (catalogId ?? string.Empty).ToLowerInvariant()) != Game.Missions.Contracts.ContentAccessState.Allowed)
+            {
+                reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "contentAccess", catalogId));
+                return false;
+            }
             if (!SkirmishExpansionCatalogFactory.TryGetDefinition(authored, catalogId, out SkirmishScenarioDefinitionConfig definition))
             {
                 reasons.Add(new SkirmishCompileReason(SkirmishReasonCode.MissingDefinition, "catalogId", catalogId));

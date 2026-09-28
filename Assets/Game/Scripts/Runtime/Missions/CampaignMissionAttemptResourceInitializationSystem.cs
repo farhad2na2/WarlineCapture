@@ -90,8 +90,10 @@ namespace Game.Runtime
                     out FactionTacticalMaterialsComponent nextMaterials))
                 return;
 
-            nextEconomy.MaterialsOnlyConstruction = (byte)(runtime.MissionId.Equals(
-                EstablishBaseResourceMissionId) ? 1 : 0);
+            nextEconomy.MaterialsOnlyConstruction = runtime.MissionId.Equals(EstablishBaseResourceMissionId) ? (byte)1 :
+                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning")) ||
+                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch04.m01.air_corridor")) ||
+                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch04.m02.steel_push")) ? (byte)2 : (byte)0;
             if (nextEconomy.MaterialsOnlyConstruction != 0) nextEconomy.Money = 0;
             entityManager.SetComponentData(playerResources, nextEconomy);
             entityManager.SetComponentData(playerResources, nextMaterials);
@@ -110,7 +112,7 @@ namespace Game.Runtime
             nextMaterials = currentMaterials;
             if (!FactionIdentity.IsPlayerControlled(currentEconomy.FactionId) ||
                 currentMaterials.FactionId != currentEconomy.FactionId ||
-                startingCredits <= 0 || startingMaterials <= 0)
+                startingCredits < 0 || startingMaterials <= 0)
                 return false;
 
             nextEconomy.Money = startingCredits;

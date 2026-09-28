@@ -1,0 +1,36 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.ImplementedMissionMonetizationBuilder.ApplyEconomy
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:38)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_fa60a9ce/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Main Object Name 'ScenarioSetup_Ch01_M02_EstablishBase' does not match filename 'ScenarioSetup_Ch01_M03_RadarWarning'
+UnityEngine.StackTraceUtility:ExtractStackTrace ()
+Game.Editor.ImplementedMissionMonetizationBuilder:ApplyEconomy () (at Assets/Game/Scripts/Editor/ImplementedMissionMonetizationBuilder.cs:16)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_fa60a9ce/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[ImplementedMissionEconomyAssets] result=Passed missions=4 credits=0 materials=120,140,140,200
+UnityEngine.Debug:Log (object)
+Game.Editor.ImplementedMissionMonetizationBuilder:ApplyEconomy () (at Assets/Game/Scripts/Editor/ImplementedMissionMonetizationBuilder.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_fa60a9ce/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.ImplementedMissionMonetizationBuilder.ApplyEconomy
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:54)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_fa60a9ce/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

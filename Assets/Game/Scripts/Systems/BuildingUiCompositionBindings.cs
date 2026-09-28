@@ -40,7 +40,9 @@ namespace Game.Runtime
                 () => source.BuildingPlacementLifecycleCompositionSystemHelper.CanConfirmBuildingPlacement,
                 () => source.BuildingPlacementQueryUiSystemHelper.GetPlacementStatusText(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
                 () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingLabel(createBuildingPlacementQueryContext(source)),
-                () => source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacementCost,
+                () => source.RuntimeFactionResourceSystemHelper.VisibleConstructionMaterialsCost(
+                    source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement?.Definition?.CreditsCost ?? 0,
+                    source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacementCost),
                 () => source.BuildingPlacementQueryUiSystemHelper.GetActivePlacementDurationSeconds(source.BuildingPlacementLifecycleCompositionSystemHelper.ActivePlacement),
                 () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDisplayName(createBuildingPlacementQueryContext(source)),
                 () => source.BuildingPlacementQueryUiSystemHelper.GetSelectedBuildingDescription(createBuildingPlacementQueryContext(source)),

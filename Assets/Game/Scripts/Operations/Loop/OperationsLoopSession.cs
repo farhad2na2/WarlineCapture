@@ -93,6 +93,8 @@ namespace Game.Operations.Loop
             _strategic.HasActiveRun ? _strategic.Save.activeRun.revision : -1;
         public string MapId => _store.Committed.MapId;
         public string OfferId => _store.Committed.OfferId;
+        public string ScopeId => OperationsContentScope.Normalize(_strategic.Save.activeRun?.scopeId);
+        public bool IntroCompleted => _strategic.IntroCompleted;
         public string RunId => _store.Committed.RunId;
         public string DistrictId => _store.Committed.DistrictId;
         public string ScenarioId => _store.Committed.ScenarioId;
@@ -109,14 +111,14 @@ namespace Game.Operations.Loop
         public byte[] CampaignEnvelope => _strategic.Store.CampaignEnvelope;
         public byte[] QuickGameEnvelope => _strategic.Store.QuickGameEnvelope;
 
-        public static OperationsLoopSession Create(int seed, byte[] campaignEnvelope, byte[] quickGameEnvelope)
+        public static OperationsLoopSession Create(int seed, byte[] campaignEnvelope, byte[] quickGameEnvelope, string scopeId = OperationsContentScope.Full)
         {
             OperationsStrategicSession strategic = OperationsStrategicSession.CreateNew(campaignEnvelope, quickGameEnvelope);
             string commandId = OperationsStableIds.Generated("cmd", 1);
             OperationsCommandResult created = strategic.SubmitNewRun(
                 new OperationsCommand(commandId, 0, OperationsCommandKind.NewRun, string.Empty, string.Empty, string.Empty),
                 seed,
-                OperationsDifficultyKind.Regular);
+                OperationsDifficultyKind.Regular, scopeId);
             if (!created.Accepted)
                 throw new InvalidOperationException("new_run:" + created.ReasonCode);
             return new OperationsLoopSession(strategic, new OperationsLoopStore());
@@ -274,7 +276,7 @@ namespace Game.Operations.Loop
                 return OperationsLoopStep.Reject("phase");
             if (_history.Length != 1 || _history[0] != OperationsShellNames.Operations)
                 return OperationsLoopStep.Reject("navigation");
-            if (number < 1 || number > OperationsIdentityRules.DistrictCount)
+            if (!OperationsContentScope.AllowsDistrict(ScopeId, number))
                 return OperationsLoopStep.Reject("district");
             _selectedDistrict = number;
             _history = new[] { OperationsShellNames.Operations, OperationsShellNames.DistrictDetail };
@@ -394,6 +396,7 @@ namespace Game.Operations.Loop
             next.Phase = OperationsLoopPhase.LaunchDispatched;
             next.Slot = OperationsMatchMode.Operations;
             next.RunId = _strategic.Save.activeRun.runId;
+            next.ScopeId = OperationsContentScope.Normalize(_strategic.Save.activeRun.scopeId);
             next.SessionId = attempt.sessionId;
             next.OfferId = attempt.offerId;
             next.MissionId = attempt.missionId;
@@ -477,7 +480,7 @@ namespace Game.Operations.Loop
                 return OperationsLoopStep.Reject("phase");
             OperationsLoopDocument document = _store.Committed;
             _stagedCheckpointId = "ckpt" + OperationsStableIds.Hex8(OperationsStableIds.Mix(2166136261u, document.CheckpointSequence + 1));
-            string text = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount);
+            string text = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount, document.ScopeId);
             _store.Stage(_stagedCheckpointId, text);
             return OperationsLoopStep.Ok();
         }
@@ -1098,6 +1101,8 @@ namespace Game.Operations.Loop
                 return;
             if (!_store.TryBlob(document.PublishedCheckpointId, out string text) ||
                 !OperationsCheckpointCodec.TryRead(text, out OperationsCheckpointImage image, out _) ||
+                OperationsContentScope.Normalize(image.ScopeId) != OperationsContentScope.Normalize(document.ScopeId) ||
+                OperationsContentScope.Normalize(document.ScopeId) != OperationsContentScope.Normalize(_strategic.Save.activeRun?.scopeId) ||
                 image.SessionId != document.SessionId ||
                 image.ContentHash != document.ContentHash)
             {
@@ -1112,7 +1117,7 @@ namespace Game.Operations.Loop
             _replaying = false;
             _orders.Clear();
             _orders.AddRange(image.Orders);
-            string rebuilt = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount);
+            string rebuilt = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount, document.ScopeId);
             if (!OperationsCheckpointCodec.TryRead(rebuilt, out OperationsCheckpointImage check, out _) || check.Checksum != image.Checksum)
             {
                 _mission = null;
@@ -1187,7 +1192,7 @@ namespace Game.Operations.Loop
                 document.SessionId,
                 document.AttemptOrdinal,
                 document.SnapshotHash,
-                document.Practice);
+                document.Practice, document.ScopeId);
         }
 
         bool ReceiptMatches(OperationsLoopDocument document)

@@ -958,6 +958,10 @@ PrefabInstance:
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
+    - target: {fileID: 1267875857172700845, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 1451825429031608952, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
@@ -1011,6 +1015,10 @@ PrefabInstance:
       value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 2587449238607535242, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 2673605164998044341, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
@@ -1091,6 +1099,10 @@ PrefabInstance:
       value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 3795403288471545942, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 3836993437276195650, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
@@ -1362,6 +1374,10 @@ PrefabInstance:
       propertyPath: m_TextStyleHashCode
       value: -1183493901
       objectReference: {fileID: 0}
+    - target: {fileID: 8373884741411801405, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
     - target: {fileID: 8433205493409500215, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_TextStyleHashCode
       value: -1183493901
@@ -1421,6 +1437,10 @@ PrefabInstance:
     - target: {fileID: 8589762395936982462, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8631571068572258880, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
       objectReference: {fileID: 0}
     - target: {fileID: 8805249055512452500, guid: 60cba169429584891a61ca1731ffa83c, type: 3}
       propertyPath: m_TextStyleHashCode

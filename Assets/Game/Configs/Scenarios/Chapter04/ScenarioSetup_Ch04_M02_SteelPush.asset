@@ -167,7 +167,7 @@ MonoBehaviour:
   ambientPresentations: []
   missionRuntime:
     enabled: 1
-    startingCredits: 50000
+    startingCredits: 0
     startingMaterials: 200
     buildCatalog:
     - buildingConfigId: Building_Barrack

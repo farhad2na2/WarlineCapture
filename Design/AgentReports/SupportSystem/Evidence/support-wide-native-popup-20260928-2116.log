@@ -1,0 +1,76 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SupportPopupNativeCapture.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:38)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportAbilityCatalogBuilder] result=Passed abilities=4 policies=25 productionEnabled=0 hash=34a07c6da8da9dcfe74d7b8ed284f3bd4a5bbeaa3bd913c197842f7a11b2e1c4
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportAbilityCatalogBuilder:Build () (at Assets/Game/Scripts/Editor/SupportAbilityCatalogBuilder.cs:72)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:27)
+Game.Editor.SupportPopupNativeCapture:Run () (at Assets/Game/Scripts/Editor/SupportPopupNativeCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.AssetImporter:SaveAndReimport ()
+Game.Editor.SupportPopupPrefabBuilder:ImportArtwork () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:206)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:28)
+Game.Editor.SupportPopupNativeCapture:Run () (at Assets/Game/Scripts/Editor/SupportPopupNativeCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportPopupRegistration] result=Passed shells=1
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Register () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:142)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:70)
+Game.Editor.SupportPopupNativeCapture:Run () (at Assets/Game/Scripts/Editor/SupportPopupNativeCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportPopupPrefabBuilder] result=Passed cards=4 artwork=wide-cover aria=HeaderStop popup=fullscreen
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:71)
+Game.Editor.SupportPopupNativeCapture:Run () (at Assets/Game/Scripts/Editor/SupportPopupNativeCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportPopupNativeCapture] result=Passed captures=10 evidence=native-prefab-only normalInput=unverified
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupNativeCapture:Run () (at Assets/Game/Scripts/Editor/SupportPopupNativeCapture.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:39)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.SupportPopupNativeCapture.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:54)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_021d179a/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

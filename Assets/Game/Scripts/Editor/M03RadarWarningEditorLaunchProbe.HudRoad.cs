@@ -72,7 +72,7 @@ namespace Game.Editor
                         throw new InvalidOperationException("Drag missed the actual road: "+volume.bounds);
                     if(command.CanConfirmBuildingPlacement || command.ConfirmBuildingPlacement())
                         throw new InvalidOperationException("Road placement was accepted.");
-                    AssertBudget(em,50000,100);
+                    AssertBudget(em,0,140);
                     var bar=UnityEngine.Object.FindAnyObjectByType<BuildPlacementConfirmationBarView>();
                     if(bar==null || bar.ConfirmButton.interactable) throw new InvalidOperationException("Road preview did not disable Place.");
                     NextHudRoad();break;
@@ -84,15 +84,15 @@ namespace Game.Editor
                     command.RotateBuildingPlacement();NextHudRoad();break;
                 case 8:
                     if(command.CanConfirmBuildingPlacement || command.ConfirmBuildingPlacement()) throw new InvalidOperationException("Rotated building accepted on road.");
-                    AssertBudget(em,50000,100);command.CancelBuildingPlacement();
+                    AssertBudget(em,0,140);command.CancelBuildingPlacement();
                     ReleaseRoadMouse();NextHudRoad();break;
                 case 9:
-                    BeginPaidPlacement(command,"Building_GuardTower",22000,50);NextHudRoad(2);break;
+                    BeginPaidPlacement(command,"Building_GuardTower",22000,70);NextHudRoad(2);break;
                 case 10:
                     StageLegalPlacementPreview(match.MatchBootstrap);NextHudRoad();break;
                 case 11:
                     if(!ConfirmPaidPlacement(command)) throw new InvalidOperationException("Legal tower placement failed: "+command.PlacementStatusText);
-                    AssertBudget(em,28000,50);ReleaseRoadMouse();NextHudRoad();break;
+                    AssertBudget(em,0,70);ReleaseRoadMouse();NextHudRoad();break;
                 case 12:
                     Debug.Log("[M03HudRoad] result=Passed roadRejected=bothRotations budgetUnchanged=true warningSteadyFrames="+steadyWarningFrames+" legalTowerPaid=true");
                     ScreenCapture.CaptureScreenshot(Output+"/hud-integrated-fa-20x9.png");

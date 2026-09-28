@@ -27,7 +27,7 @@ public sealed class M02EstablishBaseResourceTests
     private const string MissionId = "saga.ch01.m02.establish_base";
     private const string ScenarioId = "scenario.ch01.m02.establish_base";
     private const string MapId = "opmap.ch01.forward_post_01";
-    private const int StartingCredits = 55000;
+    private const int StartingCredits = 0;
     private const int StartingMaterials = 120;
 
     [MenuItem("Game/Validation/Run M02 Establish Base Resource Focused")]

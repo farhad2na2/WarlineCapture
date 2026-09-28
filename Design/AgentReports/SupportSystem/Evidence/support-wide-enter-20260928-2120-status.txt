@@ -1,0 +1,1 @@
+Wrapper exit 124: Play-mode domain reload lost callback/completion receipt. Transition is failed wrapper evidence. Existing Editor remained open and entered Play; no gameplay readiness inferred.

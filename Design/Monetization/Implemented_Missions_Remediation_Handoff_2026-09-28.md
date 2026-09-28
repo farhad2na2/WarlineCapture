@@ -6,6 +6,8 @@ Date: 2026-09-28. Status: implementation assignment prepared for another agent; 
 
 Bring already implemented missions into the adopted [mission product contract](Mission_Product_Contract_2026-09-28.md), preserving existing gameplay, story, earned ownership and the newly implemented Support system. Produce candidate-specific evidence for every affected behavior. The [readiness audit](../AgentReports/2026-09-28_monetization-mission-change-readiness.md) distinguishes complete recorded Editor journeys from incomplete coded candidates; the [205-entry policy register](Mission_Product_Policies_2026-09-28.csv) owns product membership and per-entry changes.
 
+Companion assignment: [menu and header remediation](Menu_Header_Remediation_Handoff_2026-09-28.md). This mission agent retains ownership of tactical costs/resources, reward settlement, content-access evaluation and Operations scope. The menu agent consumes those contracts and owns presentation; coordinate any shared match-header edits rather than creating duplicate logic or overwriting active changes.
+
 Included work:
 
 - Primary Campaign regression/remediation set: CH01-M01–M05, CH02-M02 Supply Line, CH04-M01 Air Corridor and CH04-M02 Steel Push.

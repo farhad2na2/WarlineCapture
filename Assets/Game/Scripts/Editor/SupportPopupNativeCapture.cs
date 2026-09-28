@@ -60,6 +60,17 @@ namespace Game.Editor
                 if(!UiShellRuntimeGateway.TryReadSupport(out var model))throw new InvalidOperationException("Native fixture read model missing.");
                 foreach(var binding in instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true))binding.ApplyLocalization();
                 instance.GetComponent<SupportPopupView>().Apply(model);Canvas.ForceUpdateCanvases();
+                var view=instance.GetComponent<SupportPopupView>();
+                if(view.AriaStopButton==null||instance.transform.Find("SupportFrame/ARIA")!=null)
+                    throw new InvalidOperationException("Support must expose one compact header Stop area.");
+                for(int i=1;i<=4;i++)
+                {
+                    var viewport=instance.transform.Find("SupportFrame/SupportCard"+i+"/Artwork") as RectTransform;
+                    var image=viewport.GetComponentInChildren<Image>();
+                    var imageRect=image.rectTransform;
+                    if(imageRect.rect.width+.1f<viewport.rect.width||imageRect.rect.height+.1f<viewport.rect.height)
+                        throw new InvalidOperationException("Support artwork leaves empty bars: "+i);
+                }
                 render=new RenderTexture(width,height,24,RenderTextureFormat.ARGB32);camera.targetTexture=render;
                 foreach(var text in instance.GetComponentsInChildren<TMP_Text>(true))
                 {text.ForceMeshUpdate();if(text.isTextTruncated)throw new InvalidOperationException(locale+" truncated text: "+text.name);}
@@ -70,7 +81,7 @@ namespace Game.Editor
                 {
                     RenderTexture.active=render;camera.Render();texture=new Texture2D(width,height,TextureFormat.RGBA32,false);
                     texture.ReadPixels(new Rect(0,0,width,height),0,0);texture.Apply();
-                    const string folder="Design/AgentReports/SupportSystem/Evidence/NativePopup";Directory.CreateDirectory(folder);
+                    const string folder="Design/AgentReports/SupportSystem/Evidence/NativePopup/WideArtworkV1";Directory.CreateDirectory(folder);
                     File.WriteAllBytes(Path.Combine(folder,"support-"+locale+"-"+width+"x"+height+(lesson?"-lesson-"+selected:"-final")+".png"),texture.EncodeToPNG());
                 }
                 finally{RenderTexture.active=previous;camera.targetTexture=null;}

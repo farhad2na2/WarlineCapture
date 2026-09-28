@@ -91,7 +91,7 @@ namespace Game.Operations.Loop
                 evidence.ToArray(),
                 losses,
                 initial,
-                hash);
+                hash, launch.ScopeId);
         }
 
         public static string Encode(OperationsMissionResult result)
@@ -137,7 +137,7 @@ namespace Game.Operations.Loop
                 Split(parts[11]),
                 int.Parse(parts[4]),
                 int.Parse(parts[5]),
-                Unescape(parts[6]));
+                Unescape(parts[6]), launch.ScopeId);
         }
 
         private static string Hash(

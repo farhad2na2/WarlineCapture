@@ -137,7 +137,7 @@ namespace Game.Editor
 
             SerializedProperty runtime = serialized.FindProperty("missionRuntime");
             Set(runtime, "enabled", true);
-            Set(runtime, "startingCredits", 55000);
+            Set(runtime, "startingCredits", 0);
             Set(runtime, "startingMaterials", 120);
             SerializedProperty buildCatalog = runtime.FindPropertyRelative("buildCatalog");
             buildCatalog.arraySize = 1;

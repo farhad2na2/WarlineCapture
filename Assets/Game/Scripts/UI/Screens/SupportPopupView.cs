@@ -11,27 +11,30 @@ namespace Game.UI.Runtime
         [SerializeField] private Sprite[] icons;
         [SerializeField] private Image detailArt;
         [SerializeField] private TMP_Text title,description,requirements,resources,mission,actionLabel;
-        [SerializeField] private Button close,begin,play,stop;
+        [SerializeField] private Button close,begin,stop;
+        public Button AriaStopButton=>stop;
+        internal static SupportPopupView Active {get;private set;}
         private UiSupportModel previous;private bool rendered,closing;
         public void Configure(SupportAbilityCardView[] cardViews,Sprite[] art,Image preview,TMP_Text nameText,TMP_Text body,TMP_Text facts,
-            TMP_Text resourceText,TMP_Text missionText,TMP_Text nextLabel,Button closeButton,Button next,Button ariaPlay,Button ariaStop)
+            TMP_Text resourceText,TMP_Text missionText,TMP_Text nextLabel,Button closeButton,Button next,Button ariaStop)
         {cards=cardViews;icons=art;detailArt=preview;title=nameText;description=body;requirements=facts;resources=resourceText;mission=missionText;
-         actionLabel=nextLabel;close=closeButton;begin=next;play=ariaPlay;stop=ariaStop;}
+         actionLabel=nextLabel;close=closeButton;begin=next;stop=ariaStop;}
         private void OnEnable()
         {
-            close.onClick.AddListener(Close);begin.onClick.AddListener(Begin);play.onClick.AddListener(Play);stop.onClick.AddListener(Stop);
+            Active=this;
+            close.onClick.AddListener(Close);begin.onClick.AddListener(Begin);stop.onClick.AddListener(Stop);
             UiShellRuntimeGateway.Localization.LocaleChanged+=LocaleChanged;rendered=closing=false;
             UiShellRuntimeGateway.SelectSupport(1);
         }
         private void OnDisable()
         {
-            close.onClick.RemoveListener(Close);begin.onClick.RemoveListener(Begin);play.onClick.RemoveListener(Play);stop.onClick.RemoveListener(Stop);
+            if(Active==this)Active=null;
+            close.onClick.RemoveListener(Close);begin.onClick.RemoveListener(Begin);stop.onClick.RemoveListener(Stop);
             UiShellRuntimeGateway.Localization.LocaleChanged-=LocaleChanged;
         }
         private void LocaleChanged()=>rendered=false;
         private void Close()=>closing=UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.CloseSupport);
         private void Begin(){if(previous.Selected==4&&previous.SupplyReady&&previous.SupplyStock>0)UiShellRuntimeGateway.BeginSupplyCollection();else UiShellRuntimeGateway.BeginSupportTargeting();}
-        private void Play()=>UiShellRuntimeGateway.TryStartAriaPlay();
         private void Stop(){UiShellRuntimeGateway.StopAriaPlay();UiShellRuntimeGateway.DeclineSupport();}
         private void Update()
         {
@@ -46,7 +49,9 @@ namespace Game.UI.Runtime
         {
             byte selected=model.Selected==0?(byte)1:model.Selected;
             for(int i=0;i<cards.Length;i++)cards[i].Render(model.Ability((byte)(i+1)),selected==i+1);
-            detailArt.sprite=icons[selected-1];UiLocalizedText.Set(title,UiShellRuntimeGateway.Localization.Get("support.name."+selected,""));
+            detailArt.sprite=icons[selected-1];
+            detailArt.GetComponent<AspectRatioFitter>().aspectRatio=detailArt.sprite.rect.width/detailArt.sprite.rect.height;
+            UiLocalizedText.Set(title,UiShellRuntimeGateway.Localization.Get("support.name."+selected,""));
             UiLocalizedText.Set(description,UiShellRuntimeGateway.Localization.Get(model.LessonKind==selected?"support.lesson."+selected:"support.description."+selected,""));
             var a=model.Ability(selected);
             UiLocalizedText.Set(requirements,UiShellRuntimeGateway.Localization.Format("support.detail.cost","{0} charges left · {1} Fuel\n{2}",a.Charges,a.FuelCost,

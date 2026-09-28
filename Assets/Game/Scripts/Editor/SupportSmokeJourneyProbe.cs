@@ -41,13 +41,16 @@ namespace Game.Editor
         private static InputSettings.EditorInputBehaviorInPlayMode oldInput;
         private static InputSettings.BackgroundBehavior oldBackground;
         private static string oldValidation;private static bool oldRunBackground;
-        public static void EnterPlay()
+        public static Task<int> EnterPlay()
         {
-            if(EditorApplication.isPlaying) return;
+            if(EditorApplication.isPlaying) return Task.FromResult(0);
             if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().path!="Assets/Game/Scenes/Menu.unity")
                 throw new InvalidOperationException("Open Menu scene in the existing project before this journey.");
             EditorApplication.EnterPlaymode();
             Debug.Log("[SupportSmokeJourney] enteringPlay=true acceptance=pending");
+            // Only acknowledge the transition here. The normal-input journey has
+            // its own async receipt after Play's domain reload is complete.
+            return Task.FromResult(0);
         }
         public static Task<int> RunEnglish()=>Begin("en",true);
         public static Task<int> RunPersian()=>Begin("fa-IR",true);
@@ -258,7 +261,8 @@ namespace Game.Editor
             if(!UiShellRuntimeGateway.TryReadSupport(out var model))throw new InvalidOperationException("Support read model missing.");
             using var zones=em.CreateEntityQuery(typeof(SupportSmokeZoneComponent));
             if(smokeStage==0){if(TapNamed("SupportCommand")){smokeStage=1;}return false;}
-            if(smokeStage==1){if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null)return false;Shot("support-popup");if(TapUnder<SupportPopupView>("Close")){smokeStage=2;}return false;}
+            if(smokeStage==1){if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null)return false;Shot("support-popup");if(TapUnder<SupportPopupView>("Stop")){smokeStage=18;}return false;}
+            if(smokeStage==18){RequireNoSpend(em);if(UiShellRuntimeGateway.ReadAriaPlay().Active)throw new InvalidOperationException("Header Stop did not restore player control.");if(TapUnder<SupportPopupView>("Close")){Debug.Log("[SupportPopupNormalInput] headerStop=touch close=touch spend=0");smokeStage=2;}return false;}
             if(smokeStage==2){RequireNoSpend(em);if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()!=null)throw new InvalidOperationException("Closed Support popup survived its hide transition.");if(TapNamed("SupportCommand"))smokeStage=3;return false;}
             if(smokeStage==3){if(TapUnder<SupportPopupView>("BeginTargeting"))smokeStage=4;return false;}
             if(smokeStage==4){if(model.Phase!=UiSupportPhase.Targeting)return false;if(TargetTap(em))smokeStage=5;return false;}

@@ -53,6 +53,7 @@ namespace Game.Configs
             ("support.show", "SHOW TARGET", "نمایش هدف"),
             ("support.play", "PLAY", "شروع"),
             ("support.stop", "STOP", "توقف"),
+            ("support.stop_aria", "Stop ARIA", "توقف آریا"),
             ("support.close", "CLOSE", "بستن"),
             ("support.reason.0", "Ready · Confirm to deploy", "آماده · برای اجرا تأیید کن"),
             ("support.reason.1", "This attempt has ended", "این تلاش تمام شده"),

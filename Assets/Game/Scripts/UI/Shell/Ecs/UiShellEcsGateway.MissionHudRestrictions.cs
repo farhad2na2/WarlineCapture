@@ -83,7 +83,7 @@ namespace Game.UI.Shell.Ecs
                     cinematicInteractionLocked,
                     definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush,
                     definition.MissionRuntimeEnabled != 0 && !defensePreparation,
-                    definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush,
+                    false,
                     defensePreparation ? 3 : ReadExtractionSquadMask(entityManager,root),
                     IsOpeningCinematicActive(entityManager,root,in runtime));
                 return true;

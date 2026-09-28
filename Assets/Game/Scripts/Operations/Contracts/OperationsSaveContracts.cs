@@ -34,6 +34,7 @@ namespace Game.Operations.Contracts
     [Serializable]
     public sealed class OperationsRunSaveData
     {
+        public string scopeId = OperationsContentScope.Full;
         public string runId = string.Empty;
         public int revision;
         public int day = OperationsCampaignSchema.StartingDay;
@@ -45,6 +46,7 @@ namespace Game.Operations.Contracts
         public int directorVersion = 1;
         public uint prngState;
         public bool cityCompleted;
+        public bool introCompleted;
         public int liveVictoriesToday;
         public OperationsDistrictSaveData[] districts = Array.Empty<OperationsDistrictSaveData>();
         public OperationsMilestoneSaveData[] milestones = Array.Empty<OperationsMilestoneSaveData>();
@@ -78,6 +80,7 @@ namespace Game.Operations.Contracts
     [Serializable]
     public sealed class OperationsRunSummarySaveData
     {
+        public string scopeId = OperationsContentScope.Full;
         public string runId = string.Empty;
         public bool cityCompleted;
         public int endedDay;
@@ -292,12 +295,13 @@ namespace Game.Operations.Contracts
                     "Missing Operations envelope initialized without touching Campaign or quick-game fields.");
             }
 
-            if (source.schemaVersion > CurrentSchemaVersion)
+            if (source.schemaVersion > CurrentSchemaVersion ||
+                source.activeRun != null && !OperationsContentScope.IsKnown(source.activeRun.scopeId))
             {
                 return new OperationsSaveMigrationResult(
                     CloneShallow(source),
                     OperationsSaveDispositionKind.ReadOnlyUnknown,
-                    "Unknown newer Operations schema is read-only and must not be overwritten.");
+                    "Unknown Operations schema or scope is read-only and must not be overwritten.");
             }
 
             if (source.schemaVersion < 1)
@@ -361,6 +365,9 @@ namespace Game.Operations.Contracts
 
         private static void CoalesceRun(OperationsRunSaveData run)
         {
+            run.scopeId = OperationsContentScope.Normalize(run.scopeId);
+            if (OperationsContentScope.IsIntro(run.scopeId))
+                run.cityCompleted = false;
             run.districts ??= Array.Empty<OperationsDistrictSaveData>();
             run.milestones ??= Array.Empty<OperationsMilestoneSaveData>();
             run.offers ??= Array.Empty<OperationsOfferSaveData>();

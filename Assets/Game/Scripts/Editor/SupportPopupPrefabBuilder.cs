@@ -17,13 +17,15 @@ namespace Game.Editor
     {
         public const string PopupPath="Assets/Game/Prefabs/UI/Shell/Popups/SupportPopup.prefab";
         public const string TargetingPath="Assets/Game/Prefabs/UI/Shell/SupportTargeting.prefab";
+        public const string ArtworkFolder="Assets/Game/Art/UI/Support";
+        private static readonly string[] ArtworkNames={"support-smoke-wide-v1.png","support-strike-wide-v1.png","support-paratroopers-wide-v1.png","support-supply-wide-v1.png"};
         private static readonly Color Dark=new Color32(12,23,29,250),Line=new Color32(107,126,137,255),Cyan=new Color32(0,178,222,255),Green=new Color32(42,174,55,255);
         private static TMP_FontAsset font;
         [MenuItem("Game/Support/Build Popup And Input")]
         public static void Build()
         {
             SupportAbilityCatalogBuilder.Build();
-            var catalog=AssetDatabase.LoadAssetAtPath<SupportAbilityCatalogConfig>(SupportAbilityCatalogBuilder.CatalogPath);
+            ImportArtwork();
             font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset");
             var root=new GameObject("SupportPopup",typeof(RectTransform),typeof(CanvasGroup));
             try
@@ -36,7 +38,8 @@ namespace Game.Editor
                 var header=Panel(frame,"Header",128,30,1416,82,Dark,Line);
                 Art(header,"Parachute",12,8,64,64,RequireSprite("Assets/Game/Art/UI/Icons/scn08_icon_support_parachute.png"));
                 Text(header,"Title",86,4,405,70,"support.title",54);
-                var resources=Text(header,"Resources",595,4,635,72,"support.fuel.available",30);
+                var resources=Text(header,"Resources",595,4,430,72,"support.fuel.available",30);
+                var stop=Button(header,"Stop",1050,8,260,64,"support.stop_aria",Cyan,24);
                 var close=Button(header,"Close",1330,8,72,64,"support.close",Line,20);
                 var mission=Text(Panel(frame,"Context",128,122,1416,50,Dark,Line),"Mission",18,4,1380,42,"support.optional",23);
                 var cards=new SupportAbilityCardView[4];var icons=new Sprite[4];
@@ -45,33 +48,27 @@ namespace Game.Editor
                     float x=128+(i%2)*500,y=184+(i/2)*307;
                     var card=Panel(frame,"SupportCard"+(i+1),x,y,488,293,Dark,Line);
                     var button=card.gameObject.AddComponent<Button>();button.targetGraphic=card.GetComponent<V3GradientGraphic>();
-                    icons[i]=catalog.Abilities[i].Icon;
-                    Art(card,"Artwork",8,44,472,187,icons[i]);
+                    icons[i]=RequireSprite(ArtworkFolder+"/"+ArtworkNames[i]);
+                    CoverArt(card,"Artwork",4,43,480,190,icons[i]);
                     Text(card,"Name",18,3,452,38,"support.name."+(i+1),29);
                     var status=Text(card,"Status",18,234,452,54,"support.card.status",19);
                     cards[i]=card.gameObject.AddComponent<SupportAbilityCardView>();cards[i].Configure((byte)(i+1),button,status,card.GetComponent<V3GradientGraphic>());
                 }
                 var detail=Panel(frame,"Detail",1128,184,416,600,Dark,Line);
                 var title=Text(detail,"Title",18,4,380,55,"support.name.1",30);
-                var preview=Art(detail,"Artwork",12,70,392,218,icons[0]);
+                var preview=CoverArt(detail,"Artwork",12,70,392,218,icons[0]);
                 var description=Text(detail,"Description",18,301,380,157,"support.description.1",23);
                 var requirements=Text(detail,"Requirements",18,475,380,110,"support.detail.cost",24);
-                Text(Panel(frame,"Instruction",128,798,408,106,Dark,Line),"Instruction",16,10,376,86,"support.instruction",23);
-                var aria=Panel(frame,"ARIA",548,798,552,106,Dark,Cyan);
-                Art(aria,"Portrait",8,3,90,100,RequireSprite("Assets/Game/Art/UI/V3Shared/Portraits/ARIA_MainMenu_V3.png"));
-                var ariaTitle=Text(aria,"Name",120,5,215,29,"",24);ariaTitle.text="ARIA";ariaTitle.color=Cyan;
-                Text(aria,"Waiting",120,39,215,55,"support.aria.wait",18);
-                var play=Button(aria,"Play",351,10,88,86,"support.play",Cyan,21);
-                var stop=Button(aria,"Stop",447,10,88,86,"support.stop",Line,21);
+                Text(Panel(frame,"Instruction",128,798,972,106,Dark,Line),"Instruction",16,10,940,86,"support.instruction",23);
                 var begin=Button(frame,"BeginTargeting",1112,798,432,106,"support.choose.area",Green,32);
                 var view=root.AddComponent<SupportPopupView>();view.Configure(cards,icons,preview,title,description,requirements,resources,mission,
-                    begin.GetComponentInChildren<TMP_Text>(),close,begin,play,stop);
+                    begin.GetComponentInChildren<TMP_Text>(),close,begin,stop);
                 UIPopupMotionView.Ensure(root);
                 PrefabUtility.SaveAsPrefabAsset(root,PopupPath);
             }
             finally {UnityEngine.Object.DestroyImmediate(root);}
             BuildTargeting();Register();InstallCopy();AssetDatabase.SaveAssets();
-            Debug.Log("[SupportPopupPrefabBuilder] result=Passed cards=4 sourceArt=existing aria=PlayStop popup=fullscreen");
+            Debug.Log("[SupportPopupPrefabBuilder] result=Passed cards=4 artwork=wide-cover aria=HeaderStop popup=fullscreen");
         }
         private static void BuildTargeting()
         {
@@ -151,7 +148,9 @@ namespace Game.Editor
             foreach(var locale in catalog.Locales)
             {
                 var records=new List<GameLocalizedStringRecord>();
-                foreach(var record in locale.Entries)if(!record.Key.StartsWith("support.",StringComparison.Ordinal))records.Add(record);
+                var managedKeys=new HashSet<string>(StringComparer.Ordinal);
+                foreach(var entry in SupportUiCopyCatalog.Entries)managedKeys.Add(entry.Key);
+                foreach(var record in locale.Entries)if(!managedKeys.Contains(record.Key))records.Add(record);
                 foreach(var entry in SupportUiCopyCatalog.Entries)records.Add(new GameLocalizedStringRecord(entry.Key,locale.LocaleCode=="fa-IR"?entry.Persian:entry.English));
                 tables.Add(new GameLocaleTable(locale.LocaleCode,locale.DisplayName,locale.ShortLabel,locale.RightToLeft,locale.FontAsset,records));
             }
@@ -175,6 +174,14 @@ namespace Game.Editor
         private static Image Art(Transform parent,string name,float x,float y,float w,float h,Sprite sprite)
         {var r=Rect(parent,name,x,y,w,h);r.pivot=new Vector2(.5f,.5f);r.anchoredPosition=new Vector2(x+w*.5f,-y-h*.5f);
          var image=r.gameObject.AddComponent<Image>();image.sprite=sprite;image.preserveAspect=true;image.raycastTarget=false;return image;}
+        private static Image CoverArt(Transform parent,string name,float x,float y,float w,float h,Sprite sprite)
+        {
+            var viewport=Rect(parent,name,x,y,w,h);viewport.gameObject.AddComponent<RectMask2D>();
+            var image=Art(viewport,"Image",0,0,w,h,sprite);image.preserveAspect=false;
+            var rect=image.rectTransform;rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f);rect.anchoredPosition=Vector2.zero;
+            var fitter=image.gameObject.AddComponent<AspectRatioFitter>();fitter.aspectMode=AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio=sprite.rect.width/sprite.rect.height;return image;
+        }
         private static Button Button(Transform parent,string name,float x,float y,float w,float h,string key,Color border,float size)
         {
             var r=Panel(parent,name,x,y,w,h,new Color(border.r*.25f,border.g*.25f,border.b*.25f,1),border);
@@ -183,6 +190,22 @@ namespace Game.Editor
         }
         private static Sprite RequireSprite(string path)
         {var sprite=AssetDatabase.LoadAssetAtPath<Sprite>(path);if(sprite==null)throw new FileNotFoundException(path);return sprite;}
+        private static void ImportArtwork()
+        {
+            foreach(var name in ArtworkNames)
+            {
+                string path=ArtworkFolder+"/"+name;
+                var importer=AssetImporter.GetAtPath(path) as TextureImporter;
+                if(importer==null)throw new FileNotFoundException(path);
+                if(importer.textureType==TextureImporterType.Sprite&&importer.spriteImportMode==SpriteImportMode.Single&&
+                    !importer.mipmapEnabled&&importer.wrapMode==TextureWrapMode.Clamp&&importer.maxTextureSize==2048)continue;
+                importer.textureType=TextureImporterType.Sprite;importer.spriteImportMode=SpriteImportMode.Single;
+                importer.mipmapEnabled=false;importer.wrapMode=TextureWrapMode.Clamp;importer.maxTextureSize=2048;
+                var settings=new TextureImporterSettings();importer.ReadTextureSettings(settings);
+                settings.spriteMeshType=SpriteMeshType.FullRect;importer.SetTextureSettings(settings);importer.alphaIsTransparency=false;
+                importer.SaveAndReimport();
+            }
+        }
     }
 }
 #endif

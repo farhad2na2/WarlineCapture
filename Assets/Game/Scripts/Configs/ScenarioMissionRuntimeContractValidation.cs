@@ -16,7 +16,7 @@ namespace Game.Configs
 
             ReadOnlySpan<ScenarioMissionBuildEntryConfig> buildCatalog = runtime.BuildCatalog;
             ScenarioRestrictionConfig restrictions = scenario.Restrictions;
-            if (runtime.StartingCredits <= 0 || runtime.StartingMaterials <= 0 ||
+            if (runtime.StartingCredits < 0 || runtime.StartingMaterials <= 0 ||
                 restrictions.BuildingDisabled || restrictions.ProductionDisabled || restrictions.EconomyDisabled ||
                 buildCatalog.Length == 0 ||
                 !IsGameplayConfigId(runtime.RequiredProducerConfigId, "Building_") ||

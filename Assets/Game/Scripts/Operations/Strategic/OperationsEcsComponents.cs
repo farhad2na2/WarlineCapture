@@ -9,6 +9,7 @@ namespace Game.Operations.Strategic
     /// </summary>
     public struct OperationsRunComponent
     {
+        public string ScopeId;
         public string RunId;
         public int Revision;
         public int Day;

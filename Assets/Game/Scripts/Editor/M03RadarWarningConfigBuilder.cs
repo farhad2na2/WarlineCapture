@@ -79,7 +79,7 @@ namespace Game.Editor
                 Strings(route.FindPropertyRelative("anchorIds"),routeAnchors);
             });
             SerializedProperty runtime = data.FindProperty("missionRuntime");
-            Set(runtime,"startingCredits",50000); Set(runtime,"startingMaterials",100);
+            Set(runtime,"startingCredits",0); Set(runtime,"startingMaterials",140);
             Set(runtime,"baseAnchorId",AnchorPrefix+"forward_post");
             SerializedProperty buildZone = runtime.FindPropertyRelative("buildZone");
             Set(buildZone,"anchorId",AnchorPrefix+"build_zone"); Set(buildZone,"halfWidthCells",105); Set(buildZone,"halfHeightCells",65);

@@ -114,6 +114,8 @@ namespace Game.Composition
                     return Reject("Campaign launch requires exactly one pending request.", out failureCode, out error);
 
                 CampaignMissionLaunchRequestElement request = requests[0];
+                if (ContentAccessRuntime.Evaluate(request.MissionId.ToString()) != ContentAccessState.Allowed)
+                    return Reject("Campaign content access denied.", out failureCode, out error);
                 if (!IsValidRequest(in request))
                     return Reject("Campaign launch request identity is invalid.", out failureCode, out error);
                 if (!entityManager.HasComponent<CampaignMissionCatalogComponent>(root) ||

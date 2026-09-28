@@ -1,0 +1,1 @@
+Wrapper dispatch exit 6. Runner started but concurrent source recompilation reset its static state; no completion receipt or gameplay acceptance. Full failed log retained.

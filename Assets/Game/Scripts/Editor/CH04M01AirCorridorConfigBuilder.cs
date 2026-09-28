@@ -41,6 +41,8 @@ namespace Game.Editor
             var scenario=Clone<ScenarioSetupConfig>(M03RadarWarningConfigBuilder.ScenarioPath,ScenarioPath);
             var sd=new SerializedObject(scenario);Replace(sd);
             S(sd.FindProperty("scenarioId"),ScenarioId);S(sd.FindProperty("operationMapId"),MapId);I(sd.FindProperty("deterministicSeed"),4001001);
+            I(sd.FindProperty("missionRuntime").FindPropertyRelative("startingCredits"),0);
+            I(sd.FindProperty("missionRuntime").FindPropertyRelative("startingMaterials"),140);
             S(sd.FindProperty("missionRuntime").FindPropertyRelative("baseMissionRoleId"),"role.friendly.ground_sensor");
             var groups=sd.FindProperty("unitGroups");groups.arraySize=6;
             Group(groups.GetArrayElementAtIndex(0),"launcher_west",1,"squad_a","role.friendly.launcher",new[]{"Veh_Missle_Launcher_Air"});

@@ -60,7 +60,7 @@ public sealed class M03CampaignEntryTests
         using var f=new Fixture(true); f.Project();
         Assert.IsTrue(f.Store.ReadAll().Single(p=>p.missionId==M3).available);
         Assert.AreEqual(M3,f.Card.SelectedMissionId.ToString()); Assert.AreEqual(4,f.Card.AvailableMissionMask&4);
-        Assert.AreEqual(50000,f.Briefing.StartingCredits); Assert.AreEqual(100,f.Briefing.StartingMaterials);
+        Assert.AreEqual(0,f.Briefing.StartingCredits); Assert.AreEqual(140,f.Briefing.StartingMaterials);
         Assert.AreEqual(7,f.Briefing.HostileUnitCount); Assert.AreEqual(4,f.Briefing.Rewards.Length);
         f.Request(UiCampaignMissionActionKind.Deploy,M3); f.Request(UiCampaignMissionActionKind.Deploy,M3); f.Project();
         Assert.AreEqual(1,f.Launches.Length);

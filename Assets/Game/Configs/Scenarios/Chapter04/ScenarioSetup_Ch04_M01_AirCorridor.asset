@@ -206,8 +206,8 @@ MonoBehaviour:
   ambientPresentations: []
   missionRuntime:
     enabled: 1
-    startingCredits: 50000
-    startingMaterials: 100
+    startingCredits: 0
+    startingMaterials: 140
     buildCatalog:
     - buildingConfigId: Building_Barrack
       maxCount: 1
@@ -224,9 +224,9 @@ MonoBehaviour:
       halfWidthCells: 105
       halfHeightCells: 65
     delayedWave:
-      unitGroupId:
-      routeId:
-      targetMissionRoleId:
+      unitGroupId: 
+      routeId: 
+      targetMissionRoleId: 
       warningAtMilliseconds: 0
       activationAtMilliseconds: 0
   defense:
@@ -338,12 +338,12 @@ MonoBehaviour:
       ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}
   extraction:
     enabled: 0
-    passengerRoleId:
-    carrierRoleId:
-    aircraftRoleId:
-    rescueAnchorId:
-    landingAnchorId:
-    departureAnchorId:
+    passengerRoleId: 
+    carrierRoleId: 
+    aircraftRoleId: 
+    rescueAnchorId: 
+    landingAnchorId: 
+    departureAnchorId: 
     requiredPassengers: 0
     secureHoldMilliseconds: 0
     deadlineMilliseconds: 0
@@ -361,14 +361,14 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   breach:
     enabled: 0
-    gateBuildingId:
-    coreBuildingId:
-    approachAnchorId:
-    gateAnchorId:
-    coreAnchorId:
-    archiveAnchorId:
-    supportRoleId:
-    counterattackRoleId:
+    gateBuildingId: 
+    coreBuildingId: 
+    approachAnchorId: 
+    gateAnchorId: 
+    coreAnchorId: 
+    archiveAnchorId: 
+    supportRoleId: 
+    counterattackRoleId: 
     gateHealth: 0
     coreHealth: 0
     secureHoldMilliseconds: 0
@@ -385,16 +385,16 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   gridlock:
     enabled: 0
-    siteAAnchorId:
-    siteBAnchorId:
-    hospitalAnchorId:
-    obstructionAAnchorId:
-    obstructionBAnchorId:
-    fadiRoleId:
-    workerRoleId:
-    vehicleRoleId:
-    counterattackRoleId:
-    obstructionBuildingId:
+    siteAAnchorId: 
+    siteBAnchorId: 
+    hospitalAnchorId: 
+    obstructionAAnchorId: 
+    obstructionBAnchorId: 
+    fadiRoleId: 
+    workerRoleId: 
+    vehicleRoleId: 
+    counterattackRoleId: 
+    obstructionBuildingId: 
     workMilliseconds: 0
     holdMilliseconds: 0
     deadlineMilliseconds: 0
@@ -404,22 +404,22 @@ MonoBehaviour:
     hospitalRadius: 0
   supplyLine:
     enabled: 0
-    oilAnchorId:
-    refineryAnchorId:
-    storageAnchorId:
-    alternateLaneAnchorId:
-    oilBuildingId:
-    refineryBuildingId:
-    storageBuildingId:
+    oilAnchorId: 
+    refineryAnchorId: 
+    storageAnchorId: 
+    alternateLaneAnchorId: 
+    oilBuildingId: 
+    refineryBuildingId: 
+    storageBuildingId: 
     reserveBarrels: 0
     civilianReserveBarrels: 0
     holdMilliseconds: 0
     deadlineMilliseconds: 0
   marketLifeline:
     enabled: 0
-    deliveryAnchorId:
-    manifestAnchorId:
-    corruptManifestAnchorId:
+    deliveryAnchorId: 
+    manifestAnchorId: 
+    corruptManifestAnchorId: 
     requiredDeliveries: 0
     manifestHoldMilliseconds: 0
     victoryHoldMilliseconds: 0
@@ -436,10 +436,10 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   powerRelay:
     enabled: 0
-    shortRouteAnchorId:
-    safeRouteAnchorId:
-    shelterAnchorId:
-    repairAnchorId:
+    shortRouteAnchorId: 
+    safeRouteAnchorId: 
+    shelterAnchorId: 
+    repairAnchorId: 
     repairHoldMilliseconds: 0
     victoryHoldMilliseconds: 0
     deadlineMilliseconds: 0
@@ -456,11 +456,11 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   routeReopened:
     enabled: 0
-    reliefGoalAnchorId:
-    fuelGoalAnchorId:
-    disruptedLinkAnchorId:
-    hubGateAnchorId:
-    recordsAnchorId:
+    reliefGoalAnchorId: 
+    fuelGoalAnchorId: 
+    disruptedLinkAnchorId: 
+    hubGateAnchorId: 
+    recordsAnchorId: 
     linkRepairHoldMilliseconds: 0
     recordsHoldMilliseconds: 0
     deadlineMilliseconds: 0

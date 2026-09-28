@@ -7,6 +7,7 @@ namespace Game.Operations.Loop
 {
     public sealed class OperationsCheckpointImage
     {
+        public string ScopeId = Game.Operations.Contracts.OperationsContentScope.Full;
         public string SessionId = string.Empty;
         public string ContentHash = string.Empty;
         public int Tick;
@@ -24,11 +25,12 @@ namespace Game.Operations.Loop
             IReadOnlyList<OperationsLoopOrder> orders,
             string sessionId,
             string contentHash,
-            int restartCount)
+            int restartCount, string scopeId = Game.Operations.Contracts.OperationsContentScope.Full)
         {
             var lines = new List<string>
             {
-                "schema=1",
+                "schema=2",
+                "scope=" + Game.Operations.Contracts.OperationsContentScope.Normalize(scopeId),
                 "session=" + sessionId,
                 "content=" + contentHash,
                 "tick=" + mission.Tick,
@@ -114,7 +116,9 @@ namespace Game.Operations.Loop
             for (int index = 0; index < lines.Length; index++)
             {
                 string line = lines[index];
-                if (line.StartsWith("session=", StringComparison.Ordinal))
+                if (line.StartsWith("scope=", StringComparison.Ordinal))
+                    parsed.ScopeId = line.Substring("scope=".Length);
+                else if (line.StartsWith("session=", StringComparison.Ordinal))
                     parsed.SessionId = line.Substring("session=".Length);
                 else if (line.StartsWith("content=", StringComparison.Ordinal))
                     parsed.ContentHash = line.Substring("content=".Length);

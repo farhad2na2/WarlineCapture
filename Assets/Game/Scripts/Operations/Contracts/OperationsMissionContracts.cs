@@ -47,8 +47,12 @@ namespace Game.Operations.Contracts
             string[] extractedEvidenceIds,
             int taskForceLosses,
             int initialTaskForceCount,
-            string resultHash)
+            string resultHash,
+            string scopeId = OperationsContentScope.Full)
         {
+            OperationsContentScope.Require(scopeId);
+            if (!OperationsContentScope.AllowsMission(scopeId, missionId)) throw new ArgumentException("Mission outside scope.");
+            ScopeId = OperationsContentScope.Normalize(scopeId);
             if (schemaVersion < 1)
                 throw new ArgumentOutOfRangeException(nameof(schemaVersion));
             OperationsContractText.RequireId(runId, nameof(runId), v => OperationsIdentityRules.IsValidGeneratedId(v, "run"));
@@ -90,6 +94,7 @@ namespace Game.Operations.Contracts
             ResultHash = resultHash;
         }
 
+        public string ScopeId { get; }
         public int SchemaVersion { get; }
         public string RunId { get; }
         public string OfferId { get; }
@@ -112,7 +117,7 @@ namespace Game.Operations.Contracts
 
         public bool Equals(OperationsMissionResult other)
         {
-            if (SchemaVersion != other.SchemaVersion ||
+            if (ScopeId != other.ScopeId || SchemaVersion != other.SchemaVersion ||
                 RunId != other.RunId ||
                 OfferId != other.OfferId ||
                 MissionId != other.MissionId ||

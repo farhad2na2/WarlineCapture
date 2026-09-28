@@ -94,7 +94,7 @@ public sealed class M02EstablishBaseCanonicalDataTests
         BuildingDefinitionAuthoringConfig barracks = Load<BuildingDefinitionAuthoringConfig>(
             M02EstablishBaseConfigBuilder.BarracksConfigPath);
         UnitGridAuthoringConfig rifle = Load<UnitGridAuthoringConfig>(RequiredUnitConfigPath);
-        Assert.AreEqual(55000, runtime.StartingCredits);
+        Assert.AreEqual(0, runtime.StartingCredits);
         Assert.AreEqual(120, runtime.StartingMaterials);
         Assert.AreEqual(5000, runtime.StartingCredits - barracks.Price - rifle.Price);
         Assert.AreEqual(10, runtime.StartingMaterials - barracks.MaterialsCost - rifle.MaterialsCost);

@@ -160,10 +160,7 @@ namespace Game.UI.Runtime
 
         private void ApplyNumericValues(in UiMatchHudResourceValuesModel values)
         {
-            // Steel Push has no oil network. Reuse the existing oil slot for
-            // production Credits so physical Fuel remains visible in its own slot.
-            bool steelPush = IsSteelPush();
-            int oilOrCredits = steelPush ? values.Credits : values.Oil;
+            int oilOrCredits = values.Oil;
             if (_oilSlotValue != null &&
                 (!_lastOilWasNumeric || _lastOilValue != oilOrCredits))
             {
@@ -220,8 +217,7 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                     out UiMissionHudRestrictionsModel restrictions) &&
                 restrictions.EconomyDisabled;
-            showOil |= restrictions.UsesMaterialsOnlyConstruction ||
-                restrictions.IsActive && restrictions.MissionId == "saga.ch01.m03.radar_warning" || IsSteelPush();
+            showOil |= restrictions.UsesMaterialsOnlyConstruction && !IsSteelPush();
             bool hideLogisticsResources = restrictions.IsActive && restrictions.HideLogisticsResources;
             bool showMissionCredits = restrictions.IsActive && restrictions.ShowMissionCredits;
             bool steelPush = IsSteelPush();
@@ -232,11 +228,9 @@ namespace Game.UI.Runtime
                 return;
 
             SetVisible(_materialsSlotRoot, true);
-            SetVisible(_oilSlotRoot, !hideLogisticsResources && (showOil || hideEconomyResources));
+            SetVisible(_oilSlotRoot, !IsSteelPush() && !hideLogisticsResources && (showOil || hideEconomyResources));
             if (_oilSlotIcon != null)
-                _oilSlotIcon.sprite = steelPush && _fuelSlotRoot != null &&
-                    _fuelSlotRoot.TryGetComponent(out MatchHudResourceIconView creditsSource)
-                    ? creditsSource.CreditsIcon : _oilSlotSprite;
+                _oilSlotIcon.sprite = _oilSlotSprite;
             SetVisible(_fuelSlotRoot, !hideLogisticsResources || showMissionCredits);
             if (_fuelSlotRoot != null && _fuelSlotRoot.TryGetComponent(out MatchHudResourceIconView resourceIcon))
                 resourceIcon.ShowMissionCredits(showMissionCredits);
@@ -290,8 +284,7 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.Localization.Get("ui.hud.materials", "Materials"));
             SetLabelIfChanged(
                 _oilSlotLabel,
-                IsSteelPush() ? UiShellRuntimeGateway.Localization.Get("ui.hud.credits", "Credits")
-                    : UiShellRuntimeGateway.Localization.Get("ui.hud.oil", "Oil"));
+                UiShellRuntimeGateway.Localization.Get("ui.hud.oil", "Oil"));
             string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
                 ? UiShellRuntimeGateway.Localization.Get("ui.hud.credits", "Credits")

@@ -18,7 +18,7 @@ public sealed class M02EstablishBaseScenarioTests
             tests.ValidMissionRuntimePasses();
             tests.MissionRuntimeRoundTripsDeterministically();
             tests.DisabledBuildingFailsClosed();
-            tests.NonPositiveStartingResourcesFailClosed();
+            tests.NegativeStartingCreditsFailClosed();
             tests.DuplicateBuildEntriesFailClosed();
             tests.MissingRequiredProducerFailsClosed();
             tests.WrongRequiredUnitPrefixFailsClosed();
@@ -110,12 +110,12 @@ public sealed class M02EstablishBaseScenarioTests
     }
 
     [Test]
-    public void NonPositiveStartingResourcesFailClosed()
+    public void NegativeStartingCreditsFailClosed()
     {
         ScenarioSetupConfig scenario = CreateValidScenario();
         try
         {
-            SetRuntime(scenario, Runtime(startingCredits: 0));
+            SetRuntime(scenario, Runtime(startingCredits: -1));
             AssertRejected(scenario, "mission economy, build, or base data");
         }
         finally { UnityEngine.Object.DestroyImmediate(scenario); }

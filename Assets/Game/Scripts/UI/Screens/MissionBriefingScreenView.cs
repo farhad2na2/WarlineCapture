@@ -112,7 +112,8 @@ namespace Game.UI.Runtime
                 v3TargetLayout && m02 ? "TUTORIAL CELL" : enemyIntelFallback));
             for (int index = 0; index < (rewardLabels?.Length ?? 0); index++)
             {
-                bool visible = index < model.Rewards.Length;
+                bool visible = index < model.Rewards.Length &&
+                    model.Rewards[index].RewardConfigId != "reward.ch01.m05.apc_armor_parts";
                 if (rewardRows != null && index < rewardRows.Length && rewardRows[index] != null)
                     rewardRows[index].gameObject.SetActive(visible);
                 if (!visible)
@@ -298,7 +299,7 @@ namespace Game.UI.Runtime
                     "mission.m02.resources.label", "STARTING RESOURCES"));
                 SetAt(conditionLabels, 0, _gameTextResolver.Get(
                     "mission.m02.resources.value",
-                    $"{model.StartingCredits:N0} CR / {model.StartingMaterials:N0} MAT"));
+                    $"{model.StartingMaterials:N0} MAT"));
                 SetAt(conditionNameLabels, 1, _gameTextResolver.Get(
                     "mission.m02.restrictions.label", "MISSION ACCESS"));
                 string build = string.IsNullOrWhiteSpace(model.AllowedBuildingConfigId)

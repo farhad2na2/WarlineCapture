@@ -7238,8 +7238,6 @@ MonoBehaviour:
       value: Ground vehicle attack detected
     - key: mission.reward.smoke_screen
       value: Smoke Screen unlocked
-    - key: mission.reward.smoke_screen
-      value: Smoke Screen unlocked
     - key: support.lesson.1
       value: 'Optional lesson: choose visible ground and confirm. Smoke reduces direct
         ranged damage to grounded units for 15 seconds. Close to skip.'
@@ -7351,6 +7349,8 @@ MonoBehaviour:
       value: PLAY
     - key: support.stop
       value: STOP
+    - key: support.stop_aria
+      value: Stop ARIA
     - key: support.close
       value: CLOSE
     - key: support.reason.0
@@ -18580,9 +18580,6 @@ MonoBehaviour:
     - key: mission.reward.smoke_screen
       value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u0627\u0632
         \u0634\u062F"
-    - key: mission.reward.smoke_screen
-      value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u0627\u0632
-        \u0634\u062F"
     - key: support.lesson.1
       value: "\u0622\u0645\u0648\u0632\u0634 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
         \u0632\u0645\u06CC\u0646 \u0642\u0627\u0628\u0644\u200C\u062F\u06CC\u062F
@@ -18773,6 +18770,8 @@ MonoBehaviour:
       value: "\u0634\u0631\u0648\u0639"
     - key: support.stop
       value: "\u062A\u0648\u0642\u0641"
+    - key: support.stop_aria
+      value: "\u062A\u0648\u0642\u0641 \u0622\u0631\u06CC\u0627"
     - key: support.close
       value: "\u0628\u0633\u062A\u0646"
     - key: support.reason.0

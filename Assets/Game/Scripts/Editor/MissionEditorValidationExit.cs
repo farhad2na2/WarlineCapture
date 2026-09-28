@@ -6,6 +6,7 @@ namespace Game.Editor
     [InitializeOnLoad]
     internal static class MissionEditorValidationExit
     {
+        internal static int? LastCompletion;
         private const string Pending = "Warline.MissionValidation.ExitPending";
         private const string Status = "Warline.MissionValidation.ExitStatus";
         private const string ResumeRefresh = "Warline.MissionValidation.ResumeRefresh";
@@ -37,6 +38,8 @@ namespace Game.Editor
             if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.timeSinceStartup < readyAt) return;
             int status = SessionState.GetInt(Status, 1);
             SessionState.SetBool(Pending, false);
+            LastCompletion = status;
+            if (ExistingEditorValidation.IsRunning) return;
             EditorApplication.Exit(status);
         }
     }

@@ -183,8 +183,11 @@ namespace Game.Operations.Contracts
             string sessionId,
             int attemptOrdinal,
             string launchSnapshotHash,
-            bool isPractice)
+            bool isPractice, string scopeId = OperationsContentScope.Full)
         {
+            OperationsContentScope.Require(scopeId);
+            if (!OperationsContentScope.AllowsMission(scopeId, missionId)) throw new ArgumentException("Mission outside scope.");
+            ScopeId = OperationsContentScope.Normalize(scopeId);
             if (schemaVersion < 1)
                 throw new ArgumentOutOfRangeException(nameof(schemaVersion));
             OperationsContractText.RequireId(runId, nameof(runId), v => OperationsIdentityRules.IsValidGeneratedId(v, "run"));
@@ -223,6 +226,7 @@ namespace Game.Operations.Contracts
             IsPractice = isPractice;
         }
 
+        public string ScopeId { get; }
         public int SchemaVersion { get; }
         public string RunId { get; }
         public string DistrictId { get; }
@@ -242,7 +246,7 @@ namespace Game.Operations.Contracts
         public bool IsPractice { get; }
 
         public bool Equals(OperationsLaunchPayload other) =>
-            SchemaVersion == other.SchemaVersion &&
+            ScopeId == other.ScopeId && SchemaVersion == other.SchemaVersion &&
             RunId == other.RunId &&
             DistrictId == other.DistrictId &&
             OfferId == other.OfferId &&

@@ -441,7 +441,7 @@ namespace Game.Runtime
                     definition.EconomyDisabled != 0 && definition.TransportDisabled == 0 && definition.AirDisabled == 0;
             if (definition.MissionRuntimeEnabled != 0)
             {
-                return definition.StartingCredits > 0 && definition.StartingMaterials > 0 &&
+                return definition.StartingCredits >= 0 && definition.StartingMaterials > 0 &&
                        definition.BuildingDisabled == 0 && definition.ProductionDisabled == 0 &&
                        definition.EconomyDisabled == 0 && definition.TransportDisabled != 0 &&
                        definition.AirDisabled != 0;

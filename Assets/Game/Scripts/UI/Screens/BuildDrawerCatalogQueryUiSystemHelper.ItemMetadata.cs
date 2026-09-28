@@ -7,6 +7,14 @@ namespace Game.UI.Runtime
 {
     public sealed partial class BuildDrawerCatalogQueryUiSystemHelper
     {
+        private static int VisibleMaterialsCost(int credits, int materials)
+        {
+            byte policy = UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions)
+                ? Game.Tactical.Contracts.MissionConstructionCostPolicy.ForMission(restrictions.MissionId) : (byte)0;
+            return Game.Tactical.Contracts.MissionConstructionCostPolicy.TryResolve(policy, credits, materials,
+                out _, out int cost) ? cost : int.MaxValue;
+        }
+
         private static int VisibleCreditsCost(int legacyCost) =>
             UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions) &&
             restrictions.UsesMaterialsOnlyConstruction ? 0 : legacyCost;
@@ -19,7 +27,7 @@ namespace Game.UI.Runtime
                 string.IsNullOrWhiteSpace(metadata.DisplayName) ? prefab.name : metadata.DisplayName,
                 ResolveBuildingTypeLabel(metadata),
                 ResolveBuildingDescription(metadata),
-                metadata.MaterialsCost,
+                VisibleMaterialsCost(metadata.Price, metadata.MaterialsCost),
                 0,
                 metadata.ProductionDurationSeconds,
                 metadata.FootprintCells,
@@ -41,7 +49,7 @@ namespace Game.UI.Runtime
                 ResolveUnitDisplayName(prefab, metadata),
                 ResolveUnitTypeLabel(prefab, metadata, isVehicle, isAir),
                 ResolveUnitDescription(prefab, metadata),
-                metadata.MaterialsCost,
+                VisibleMaterialsCost(metadata.CreditsCost, metadata.MaterialsCost),
                 0,
                 metadata.ProductionDurationSeconds,
                 metadata.FootprintCells,

@@ -18,6 +18,7 @@ namespace Game.Runtime
         public const int SchemaVersion = 2;
         [Serializable] public sealed class Image
         {
+            public string scopeId = Game.Operations.Contracts.OperationsContentScope.Full;
             public int schema = SchemaVersion;
             public string session, content, unityVersion;
             public string mission, evidence, waves;
@@ -47,7 +48,7 @@ namespace Game.Runtime
             string payload = JsonUtility.ToJson(image);
             return JsonUtility.ToJson(new Envelope { payload = payload, sha256 = Hash(payload) });
         }
-        public static bool TryDecode(string json, string session, string content, out Image image)
+        public static bool TryDecode(string json, string session, string content, out Image image, string scopeId = Game.Operations.Contracts.OperationsContentScope.Full)
         {
             image = null;
             try
@@ -56,6 +57,7 @@ namespace Game.Runtime
                 if (envelope == null || string.IsNullOrEmpty(envelope.payload) || Hash(envelope.payload) != envelope.sha256) return false;
                 var candidate = JsonUtility.FromJson<Image>(envelope.payload);
                 if (candidate == null || candidate.schema != SchemaVersion || candidate.session != session ||
+                    Game.Operations.Contracts.OperationsContentScope.Normalize(candidate.scopeId) != Game.Operations.Contracts.OperationsContentScope.Normalize(scopeId) ||
                     candidate.content != content || candidate.unityVersion != Application.unityVersion ||
                     candidate.actors == null || candidate.actors.Length != 36 || candidate.sites == null || candidate.sites.Length != 3) return false;
                 Validate(candidate);

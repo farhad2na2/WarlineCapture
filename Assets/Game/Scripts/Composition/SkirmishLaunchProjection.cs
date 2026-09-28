@@ -25,6 +25,11 @@ namespace Game.Composition
 
         public static bool TryQueue(EntityManager em, QuickGameConfig config)
         {
+            string canonicalId = config.ScenarioIndex == SkirmishPresetConfig.CityCrossroadsScenarioIndex ? "skirmish.s025" :
+                config.ScenarioIndex == SkirmishPresetConfig.IndustrialBasinScenarioIndex ? "skirmish.s073" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseEstablishedScenarioIndex ? "skirmish.s002" :
+                config.ScenarioIndex == SkirmishPresetConfig.DesertBaseAirMobileFieldScenarioIndex ? "skirmish.s003" : "skirmish.s001";
+            if (Game.Runtime.ContentAccessRuntime.Evaluate(canonicalId) != ContentAccessState.Allowed) return false;
             using var campaign = em.CreateEntityQuery(typeof(CampaignMissionLaunchRequestElement));
             using var roots = campaign.ToEntityArray(Allocator.Temp);
             foreach (var root in roots)

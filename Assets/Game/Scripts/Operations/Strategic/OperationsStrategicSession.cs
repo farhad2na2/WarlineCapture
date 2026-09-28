@@ -19,6 +19,10 @@ namespace Game.Operations.Strategic
         public int Day => HasActiveRun ? Save.activeRun.day : 0;
         public int ActionPoints => HasActiveRun ? Save.activeRun.actionPoints : 0;
         public OperationsRunPhaseKind Phase => HasActiveRun ? Save.activeRun.phase : OperationsRunPhaseKind.None;
+        public bool IntroCompleted => HasActiveRun && OperationsContentScope.IsIntro(Save.activeRun.scopeId) &&
+            OperationsCityWorld.FromSave(Save).HasVictory("operation.o001") &&
+            OperationsCityWorld.FromSave(Save).HasVictory("operation.o002") &&
+            OperationsCityWorld.FromSave(Save).HasVictory("operation.o003");
         public bool CityCompleted => HasActiveRun && Save.activeRun.cityCompleted;
         public int RewardCredits => Save.operationsRewardCredits;
         public int RewardCommanderXp => Save.operationsRewardCommanderXp;
@@ -69,8 +73,9 @@ namespace Game.Operations.Strategic
 
         public OperationsCommandResult SubmitLeavingPending(OperationsCommand command) => Submit(command, true);
 
-        public OperationsCommandResult SubmitNewRun(OperationsCommand command, int seed, OperationsDifficultyKind difficulty)
+        public OperationsCommandResult SubmitNewRun(OperationsCommand command, int seed, OperationsDifficultyKind difficulty, string scopeId = OperationsContentScope.Full)
         {
+            OperationsContentScope.Require(scopeId);
             if (command.Kind != OperationsCommandKind.NewRun)
                 throw new ArgumentException("New run confirmation requires OperationsCommandKind.NewRun.", nameof(command));
             if (seed == 0)
@@ -93,13 +98,14 @@ namespace Game.Operations.Strategic
                 grown[summaries.Length] = new OperationsRunSummarySaveData
                 {
                     runId = current.Run.RunId,
+                    scopeId = OperationsContentScope.Normalize(current.Run.ScopeId),
                     cityCompleted = current.Run.CityCompleted,
                     endedDay = current.Run.Day
                 };
                 working.runSummaries = grown;
             }
 
-            OperationsCityWorld created = OperationsRunInitializationSystem.Create(seed, difficulty);
+            OperationsCityWorld created = OperationsRunInitializationSystem.Create(seed, difficulty, scopeId);
             return Finish(command, working, created, true, OperationsReasonCode.None, string.Empty, string.Empty, string.Empty, "new-run", false);
         }
 
@@ -113,6 +119,10 @@ namespace Game.Operations.Strategic
 
             OperationsCityWorld world = OperationsCityWorld.FromSave(working);
             string key = SettlementKey(result);
+            if (OperationsContentScope.Normalize(world.Run.ScopeId) != result.ScopeId ||
+                !OperationsContentScope.AllowsMission(world.Run.ScopeId, result.MissionId))
+                return Finish(command, working, world, false, OperationsReasonCode.Conflict,
+                    string.Empty, key, result.ResultHash, "scope-conflict", leavePending);
             if (OpenAttemptSessionDiffers(world, result.SessionId))
             {
                 return Finish(
@@ -275,6 +285,13 @@ namespace Game.Operations.Strategic
                 return blocked;
 
             OperationsCityWorld world = OperationsCityWorld.FromSave(working);
+            if (!OperationsContentScope.IsKnown(world.Run.ScopeId) ||
+                world.TryOfferById(command.OfferId, out OperationsOfferComponent scopeOffer) &&
+                !OperationsContentScope.AllowsMission(world.Run.ScopeId, scopeOffer.MissionId) ||
+                OperationsIdentityRules.TryParseDistrictNumber(command.DistrictId, out int scopeDistrict) &&
+                !OperationsContentScope.AllowsDistrict(world.Run.ScopeId, scopeDistrict))
+                return Finish(command, working, world, false, OperationsReasonCode.PreconditionFailed,
+                    string.Empty, string.Empty, string.Empty, "scope-denied", leavePending);
             bool accepted = false;
             OperationsReasonCode reason = OperationsReasonCode.None;
             string transactionId = string.Empty;
@@ -625,6 +642,7 @@ namespace Game.Operations.Strategic
             uint hash = OperationsStableIds.Mix(2166136261u, world.Run.Seed);
             hash = OperationsStableIds.Mix(hash, world.Run.Day);
             hash = OperationsStableIds.Mix(hash, missionId);
+            hash = OperationsStableIds.Mix(hash, OperationsContentScope.Normalize(world.Run.ScopeId));
             for (int index = 0; index < world.Districts.Length; index++)
             {
                 hash = OperationsStableIds.Mix(hash, world.Districts[index].Security);

@@ -1,4 +1,5 @@
 using Game.Components;
+using Game.Tactical.Contracts;
 using ResourceResult = Game.Components.FactionConstructionResourceMutationResult;
 
 namespace Game.Runtime
@@ -11,10 +12,9 @@ namespace Game.Runtime
             int creditsCost,
             int materialsCost)
         {
-            if (creditsCost < 0 || materialsCost < 0 ||
-                economy.MaterialsOnlyConstruction != 0 && creditsCost > 0 && materialsCost == 0)
+            if (!MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                    creditsCost, materialsCost, out creditsCost, out materialsCost))
                 return ResourceResult.InvalidCost;
-            creditsCost = economy.MaterialsOnlyConstruction != 0 ? 0 : creditsCost;
             if (economy.FactionId != materials.FactionId ||
                 economy.Money < 0 ||
                 !FactionTacticalMaterialsUtilitySystemHelper.CanAfford(materials, 0))
@@ -39,6 +39,8 @@ namespace Game.Runtime
             if (evaluation != ResourceResult.Applied)
                 return evaluation;
 
+            MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                creditsCost, materialsCost, out creditsCost, out materialsCost);
             FactionTacticalMaterialsComponent nextMaterials = materials;
 
             if (materialsCost > 0 &&
@@ -49,7 +51,7 @@ namespace Game.Runtime
                 FactionTacticalMaterialsMutationResult.Applied)
                 return ResourceResult.InvalidState;
 
-            economy.Money -= economy.MaterialsOnlyConstruction != 0 ? 0 : creditsCost;
+            economy.Money -= creditsCost;
             materials = nextMaterials;
             return ResourceResult.Applied;
         }
@@ -60,10 +62,9 @@ namespace Game.Runtime
             int creditsCost,
             int materialsCost)
         {
-            if (creditsCost < 0 || materialsCost < 0 ||
-                economy.MaterialsOnlyConstruction != 0 && creditsCost > 0 && materialsCost == 0)
+            if (!MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                    creditsCost, materialsCost, out creditsCost, out materialsCost))
                 return ResourceResult.InvalidCost;
-            creditsCost = economy.MaterialsOnlyConstruction != 0 ? 0 : creditsCost;
             if (economy.FactionId != materials.FactionId ||
                 economy.Money < 0 ||
                 creditsCost > int.MaxValue - economy.Money)

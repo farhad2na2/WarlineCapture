@@ -34,6 +34,7 @@ namespace Game.Operations.Strategic
             world.Run = new OperationsRunComponent
             {
                 RunId = run.runId,
+                ScopeId = OperationsContentScope.Normalize(run.scopeId),
                 Revision = run.revision,
                 Day = run.day,
                 ActionPoints = run.actionPoints,
@@ -78,6 +79,7 @@ namespace Game.Operations.Strategic
             OperationsRunSaveData run = new()
             {
                 runId = Run.RunId ?? string.Empty,
+                scopeId = OperationsContentScope.Normalize(Run.ScopeId),
                 revision = Run.Revision,
                 day = Run.Day,
                 actionPoints = Run.ActionPoints,
@@ -88,6 +90,8 @@ namespace Game.Operations.Strategic
                 directorVersion = Run.DirectorVersion,
                 prngState = Run.PrngState,
                 cityCompleted = Run.CityCompleted,
+                introCompleted = OperationsContentScope.IsIntro(Run.ScopeId) && HasVictory("operation.o001") &&
+                    HasVictory("operation.o002") && HasVictory("operation.o003"),
                 liveVictoriesToday = Run.LiveVictoriesToday,
                 districts = new OperationsDistrictSaveData[Districts.Length],
                 milestones = new OperationsMilestoneSaveData[Milestones.Count],

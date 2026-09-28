@@ -71,8 +71,9 @@ namespace Game.Operations.Strategic
 
     public static class OperationsRunInitializationSystem
     {
-        public static OperationsCityWorld Create(int seed, OperationsDifficultyKind difficulty)
+        public static OperationsCityWorld Create(int seed, OperationsDifficultyKind difficulty, string scopeId = OperationsContentScope.Full)
         {
+            OperationsContentScope.Require(scopeId);
             if (seed == 0)
                 throw new ArgumentOutOfRangeException(nameof(seed));
 
@@ -80,7 +81,8 @@ namespace Game.Operations.Strategic
             {
                 Run = new OperationsRunComponent
                 {
-                    RunId = OperationsStableIds.RunId(seed),
+                    RunId = OperationsContentScope.IsIntro(scopeId) ? "run.operations." + OperationsStableIds.Hex8(OperationsStableIds.Mix((uint)seed, scopeId)) : OperationsStableIds.RunId(seed),
+                    ScopeId = scopeId,
                     Day = OperationsCampaignSchema.StartingDay,
                     ActionPoints = OperationsCampaignSchema.DefaultStartingActionPoints,
                     Difficulty = difficulty,
@@ -167,6 +169,7 @@ namespace Game.Operations.Strategic
             world.Offers.Clear();
             for (int number = 1; number <= OperationsIdentityRules.DistrictCount; number++)
             {
+                if (!OperationsContentScope.AllowsDistrict(world.Run.ScopeId, number)) continue;
                 string districtId = OperationsIdentityRules.DistrictId(number);
                 List<OperationsCatalogEntry> eligible = EligibleMissions(world, districtId);
                 eligible.Sort((left, right) => CompareOffer(world, left, right));
@@ -181,6 +184,9 @@ namespace Game.Operations.Strategic
 
         public static void TryCreateIncident(OperationsCityWorld world)
         {
+            // Intro recovery/reoffers are free; inaccessible city pressure cannot
+            // create obligations against missions outside the three-mission scope.
+            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) return;
             if (ActiveIncidentCount(world) >= 2 || CreatedToday(world) >= 1)
                 return;
 
@@ -269,7 +275,7 @@ namespace Game.Operations.Strategic
             for (int index = 0; index < OperationsCatalogIndex.Entries.Length; index++)
             {
                 OperationsCatalogEntry entry = OperationsCatalogIndex.Entries[index];
-                if (entry.DistrictId != districtId)
+                if (entry.DistrictId != districtId || !OperationsContentScope.AllowsMission(world.Run.ScopeId, entry.MissionId))
                     continue;
                 if (entry.LocalSlot == 10 && world.HasVictory(entry.MissionId))
                     continue;
@@ -740,7 +746,7 @@ namespace Game.Operations.Strategic
                 world.Run.ConsecutiveStableDays++;
             else
                 world.Run.ConsecutiveStableDays = 0;
-            if (world.Run.ConsecutiveStableDays >= RequiredStableDays)
+            if (!OperationsContentScope.IsIntro(world.Run.ScopeId) && world.Run.ConsecutiveStableDays >= RequiredStableDays)
                 world.Run.CityCompleted = true;
 
             int closedDay = world.Run.Day;
@@ -767,6 +773,7 @@ namespace Game.Operations.Strategic
 
         private static int ExpireIncidents(OperationsCityWorld world, OperationsSignedMetricDelta[] requested)
         {
+            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) { world.Incidents.Clear(); return 0; }
             int expired = 0;
             for (int index = world.Incidents.Count - 1; index >= 0; index--)
             {
@@ -795,6 +802,7 @@ namespace Game.Operations.Strategic
 
         private static void AccumulatePressure(OperationsCityWorld world, OperationsSignedMetricDelta[] requested)
         {
+            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) return;
             OperationsDistrictComponent[] snapshot = new OperationsDistrictComponent[world.Districts.Length];
             for (int index = 0; index < world.Districts.Length; index++)
             {
@@ -863,6 +871,7 @@ namespace Game.Operations.Strategic
 
         public static bool EvaluateStability(OperationsCityWorld world)
         {
+            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) return false;
             for (int index = 0; index < world.Districts.Length; index++)
             {
                 OperationsDistrictComponent district = world.Districts[index];

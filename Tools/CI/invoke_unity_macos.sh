@@ -118,7 +118,7 @@ if [[ "$REUSE_EDITOR" -eq 1 ]]; then
         exit 64
     fi
     execute_method="$2"
-    if [[ -e "$LOG_FILE" || -e "$LOG_FILE.exit" ]]; then
+    if [[ -e "$LOG_FILE" || -e "$LOG_FILE.exit" || -e "$LOG_FILE.dispatch.json" ]]; then
         echo "[UnityInvokeMac] ERROR: --reuse requires a new log path to preserve prior evidence." >&2
         exit 64
     fi
@@ -130,15 +130,37 @@ PY
     echo "[UnityInvokeMac] LicensingMode: existing GUI Editor; project=$PROJECT_PATH"
     echo "[UnityInvokeMac] Existing executeMethod: $execute_method; LogFile: $LOG_FILE; TimeoutSeconds: $TIMEOUT_SECONDS"
     # CLI targets the exact existing project. Failure never falls back to opening another Editor.
-    unity command eval --project-path "$PROJECT_PATH" --code "$live_code" --timeout "$TIMEOUT_SECONDS" --format json
-    elapsed_seconds=0
+    live_started_seconds=$SECONDS
+    dispatch_status=0
+    dispatch_output="$(unity command eval --project-path "$PROJECT_PATH" --code "$live_code" --timeout "$TIMEOUT_SECONDS" --format json)" || dispatch_status=$?
+    printf '%s\n' "$dispatch_output" > "$LOG_FILE.dispatch.json"
+    printf '%s\n' "$dispatch_output"
+    if [[ "$dispatch_status" -ne 0 ]]; then
+        # Pipeline can time out acknowledging a cold eval after the callback was
+        # scheduled. Accept ownership only from this new log's exact bridge header;
+        # a missing/mismatched header still fails, without opening another Editor.
+        handoff_started_seconds=$SECONDS
+        while ! python3 - "$LOG_FILE" "$PROJECT_PATH" "$execute_method" <<'PY'
+import pathlib,sys
+p=pathlib.Path(sys.argv[1])
+expected='[ExistingEditorValidation] project='+sys.argv[2]+'/Assets executeMethod='+sys.argv[3]
+sys.exit(0 if p.exists() and p.open().readline().rstrip('\r\n')==expected else 1)
+PY
+        do
+            if [[ "$((SECONDS - handoff_started_seconds))" -ge 15 || "$((SECONDS - live_started_seconds))" -ge "$TIMEOUT_SECONDS" ]]; then
+                echo "[UnityInvokeMac] ERROR: Pipeline dispatch failed without matching validation ownership; existing Editor preserved." >&2
+                exit "$dispatch_status"
+            fi
+            sleep 1
+        done
+        echo "[UnityInvokeMac] Pipeline acknowledgement failed (status $dispatch_status); exact validation log confirms ownership. Completion receipt remains required."
+    fi
     while [[ ! -f "$LOG_FILE.exit" ]]; do
-        if [[ "$elapsed_seconds" -ge "$TIMEOUT_SECONDS" ]]; then
+        if [[ "$((SECONDS - live_started_seconds))" -ge "$TIMEOUT_SECONDS" ]]; then
             echo "[UnityInvokeMac] ERROR: live validation timed out without a completion receipt; existing Editor preserved." >&2
             exit 124
         fi
         sleep 1
-        elapsed_seconds=$((elapsed_seconds + 1))
     done
     live_status="$(cat "$LOG_FILE.exit")"
     if [[ "$live_status" != "0" ]]; then

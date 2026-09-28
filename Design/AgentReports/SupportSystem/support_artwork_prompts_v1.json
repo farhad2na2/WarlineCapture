@@ -1,0 +1,35 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-09-28",
+  "purpose": "Wide Support popup cards and center-cover detail preview",
+  "prompts": [
+    {
+      "key": "smoke",
+      "refs": [
+        "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_Military.png"
+      ],
+      "prompt": "Create one finished landscape game UI artwork, edge-to-edge opaque composition, aspect ratio 2.52:1 (ideally 1512x600). Use case: stylized-concept. Intended for a wide Support ability card in WarlineCapture. Match the provided reference's faceted low-poly military game style, angular geometry, olive/tan materials and painterly polygon lighting. No UI, no text, no lettering, no icons/badges, no borders, no watermark, no blank margins. Main subject must fit completely inside the central 70% of the width and central 75% of height, so center-cover cropping to a 1.8:1 detail preview retains the subject. Background fills the whole image. Reference is the actual game's smoke grenade, preserve its identity: olive cylindrical canister, muted red band, angular metal top, side safety lever. A large grenade tilted diagonally across the middle of a dark blue-gray smoky atmosphere. Layered soft polygon smoke billows extend to every edge, crisp grenade readable against them, grounded cinematic lighting. Single grenade, no explosion or flames."
+    },
+    {
+      "key": "strike",
+      "refs": [
+        "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png"
+      ],
+      "prompt": "Create one finished landscape game UI artwork, edge-to-edge opaque composition, aspect ratio 2.52:1 (ideally 1512x600). Use case: stylized-concept. Intended for a wide Support ability card in WarlineCapture. Match the provided reference's faceted low-poly military game style, angular geometry, olive/tan materials and painterly polygon lighting. No UI, no text, no lettering, no icons/badges, no borders, no watermark, no blank margins. Main subject must fit completely inside the central 70% of the width and central 75% of height, so center-cover cropping to a 1.8:1 detail preview retains the subject. Background fills the whole image. Reference is the actual game's jet/action portrait; preserve its exact twin-tail fighter design and faceted tan/olive finish. Extend/recompose as a very wide landscape scene: complete fighter in a banking low approach above the same desert runway, angular distant mountain ridges, control tower and blue sky with polygon clouds. Main jet runs left to right, nose toward upper right; all wings and tails fit. No missiles, no salvo, no explosion."
+    },
+    {
+      "key": "paratroopers",
+      "refs": [
+        "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Plane_Transport_Card_512.png"
+      ],
+      "prompt": "Create one finished landscape game UI artwork, edge-to-edge opaque composition, aspect ratio 2.52:1 (ideally 1512x600). Use case: stylized-concept. Intended for a wide Support ability card in WarlineCapture. Match the provided reference's faceted low-poly military game style, angular geometry, olive/tan materials and painterly polygon lighting. No UI, no text, no lettering, no icons/badges, no borders, no watermark, no blank margins. Main subject must fit completely inside the central 70% of the width and central 75% of height, so center-cover cropping to a 1.8:1 detail preview retains the subject. Background fills the whole image. Reference is the actual game's transport portrait; preserve the exact four-engine cargo transport, straight wings and tall tail, tan/olive angular low-poly identity. Wide symmetric front view on the same desert airstrip; aircraft spans the central 70% width, whole wings, tail and landing wheels fit with comfortable headroom. Faceted desert mountains extend laterally, blue polygon sky. No additional aircraft, no soldiers, no text."
+    },
+    {
+      "key": "supply",
+      "refs": [
+        "Assets/Game/Art/UI/Icons/scn09_icon_supply_crate.png"
+      ],
+      "prompt": "Create one finished landscape game UI artwork, edge-to-edge opaque composition, aspect ratio 2.52:1 (ideally 1512x600). Use case: stylized-concept. Intended for a wide Support ability card in WarlineCapture. Match the provided reference's faceted low-poly military game style, angular geometry, olive/tan materials and painterly polygon lighting. No UI, no text, no lettering, no icons/badges, no borders, no watermark, no blank margins. Main subject must fit completely inside the central 70% of the width and central 75% of height, so center-cover cropping to a 1.8:1 detail preview retains the subject. Background fills the whole image. Reference is the existing supply crate icon; preserve the rectangular olive brown crate, thick ochre metal bands, inset panels and two front latches. A single large 3/4-view crate centered in a wide smoky dark blue-gray background like the Smoke Screen card; warm side lighting emphasizes faceted panels and readable shape. Entire crate with comfortable margins, shadow grounded, atmospheric smoke fills all edges. No parachute, no vehicles, no logos, no extra crates."
+    }
+  ]
+}

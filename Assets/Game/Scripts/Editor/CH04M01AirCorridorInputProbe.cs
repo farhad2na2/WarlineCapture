@@ -22,7 +22,8 @@ namespace Game.Editor
     [InitializeOnLoad]
     public static class CH04M01AirCorridorInputProbe
     {
-        private const string Active="Warline.AirCorridor.Input",Locale="Warline.AirCorridor.Locale",Output="/private/tmp/warline-air-corridor-input";
+        private const string Active="Warline.AirCorridor.Input",Locale="Warline.AirCorridor.Locale";
+        private static string Output;
         private static int stage,actions;private static double started,due,lastLog;private static bool projectileSeen,radarLinked;private static string error;
         private static CampaignMissionProgressStore store;
         private static readonly HashSet<string> voices=new(),panels=new();
@@ -44,6 +45,7 @@ namespace Game.Editor
         }
         private static void Run()
         {
+            Output="Design/AgentReports/ImplementedMissionMonetization/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-air-corridor-"+SessionState.GetString(Locale,"en");
             Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;projectileSeen=radarLinked=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
             engageStarted=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);AssetDatabase.DisallowAutoRefresh();

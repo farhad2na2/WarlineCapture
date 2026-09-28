@@ -110,6 +110,7 @@ namespace Game.Editor
             var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(MapPath);var required=data.FindProperty("requiredAnchors");required.arraySize=map.Anchors.Length;
             for(int i=0;i<required.arraySize;i++){var a=required.GetArrayElementAtIndex(i);S(a.FindPropertyRelative("anchorId"),map.Anchors[i].AnchorId);I(a.FindPropertyRelative("kind"),(int)map.Anchors[i].Kind);}
             var runtime=data.FindProperty("missionRuntime");S(runtime.FindPropertyRelative("baseMissionRoleId"),"role.friendly.fuel_reserve");
+            I(runtime.FindPropertyRelative("startingCredits"),0);
             I(runtime.FindPropertyRelative("startingMaterials"),200);
             var buildZone=runtime.FindPropertyRelative("buildZone");I(buildZone.FindPropertyRelative("halfWidthCells"),65);I(buildZone.FindPropertyRelative("halfHeightCells"),30);
             // Scripted starting buildings pass the same mission catalogue policy

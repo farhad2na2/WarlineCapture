@@ -22,7 +22,8 @@ namespace Game.Editor
     [InitializeOnLoad]
     public static class CH04M02SteelPushInputProbe
     {
-        private const string Active="Warline.SteelPush.Input",Locale="Warline.SteelPush.Locale",Output="/private/tmp/warline-steel-push-input";
+        private const string Active="Warline.SteelPush.Input",Locale="Warline.SteelPush.Locale";
+        private static string Output;
         private static int stage,actions;private static double started,due,lastLog;private static bool armorCombatSeen,fuelSpent;private static string error;
         private static CampaignMissionProgressStore store;
         private static readonly HashSet<string> voices=new(),panels=new();
@@ -44,6 +45,7 @@ namespace Game.Editor
         }
         private static void Run()
         {
+            Output="Design/AgentReports/ImplementedMissionMonetization/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-steel-push-"+SessionState.GetString(Locale,"en");
             Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;armorCombatSeen=fuelSpent=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
             engageStarted=comicAdvanceAt=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);AssetDatabase.DisallowAutoRefresh();

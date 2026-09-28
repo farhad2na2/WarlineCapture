@@ -98,6 +98,7 @@ namespace Game.Operations.Loop
     {
         public OperationsLoopPhase Phase;
         public OperationsMatchMode Slot = OperationsMatchMode.None;
+        public string ScopeId = Game.Operations.Contracts.OperationsContentScope.Full;
         public string RunId = string.Empty;
         public string SessionId = string.Empty;
         public string OfferId = string.Empty;
@@ -135,6 +136,7 @@ namespace Game.Operations.Loop
                 Phase = Phase,
                 Slot = Slot,
                 RunId = RunId,
+                ScopeId = ScopeId,
                 SessionId = SessionId,
                 OfferId = OfferId,
                 MissionId = MissionId,

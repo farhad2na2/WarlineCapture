@@ -71,7 +71,7 @@ namespace Game.Editor
                     throw new InvalidOperationException("Full Guidance did not complete through real defensive orders with the expected optional Ping budget.");
                 VerifyBattleClarity();
                 VerifyOptionalProduction(em);
-                AssertBudget(em,50000-tutorialCreditsSpent,100-tutorialMaterialsSpent); guidanceJourneyVerified=true;
+                AssertBudget(em,0,140-tutorialMaterialsSpent); guidanceJourneyVerified=true;
                 Debug.Log("[M03GuidanceJourney] result=Passed real Full Guidance buttons, defensive Hold victory, construction cost accounted for; Ping charges="+em.GetComponentData<RadarPingState>(root).Charges+"; visited="+string.Join(",",guidanceVisited.OrderBy(x=>x)));
                 return false;
             }
@@ -112,7 +112,7 @@ namespace Game.Editor
                 var drawer=UnityEngine.Object.FindAnyObjectByType<BuildDrawerView>();
                 if(drawer==null || !drawer.IsOpen)
                     throw new InvalidOperationException("SHOW ME did not open the optional build/production drawer.");
-                AssertBudget(em,50000,100);
+                AssertBudget(em,0,140);
                 if(match.MatchBootstrap.BuildingUiCommandContract.HasPendingBuildingPlacement)
                     throw new InvalidOperationException("SHOW ME started a paid placement without player choice.");
                 if(guidanceSubstep==1)

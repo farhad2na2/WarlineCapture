@@ -46,23 +46,23 @@ namespace Game.Editor
             {
                 case 0:
                     foreach(var building in buildings) originalBuildings.Add(building.Key);
-                    BeginPaidPlacement(command,"Building_GuardTower",22000,50);
-                    AssertBudget(em,50000,100); command.CancelBuildingPlacement(); AssertBudget(em,50000,100);
-                    BeginPaidPlacement(command,"Building_GuardTower",22000,50); NextConstruction(facts); break;
+                    BeginPaidPlacement(command,"Building_GuardTower",22000,70);
+                    AssertBudget(em,0,140); command.CancelBuildingPlacement(); AssertBudget(em,0,140);
+                    BeginPaidPlacement(command,"Building_GuardTower",22000,70); NextConstruction(facts); break;
                 case 1:
                     if(!ConfirmPaidPlacement(command)) return;
-                    AssertBudget(em,28000,50); NextConstruction(facts); break;
+                    AssertBudget(em,0,70); NextConstruction(facts); break;
                 case 2:
-                    BeginPaidPlacement(command,"Building_Road_Barrier",6000,15); NextConstruction(facts); break;
+                    BeginPaidPlacement(command,"Building_Road_Barrier",6000,20); NextConstruction(facts); break;
                 case 3:
                     if(!ConfirmPaidPlacement(command)) return;
-                    AssertBudget(em,22000,35); NextConstruction(facts); break;
+                    AssertBudget(em,0,50); NextConstruction(facts); break;
                 case 4:
                     var rifle=AssetDatabase.LoadAssetAtPath<GameObject>(M02EstablishBaseConfigBuilder.RequiredRiflePrefabPath);
                     var result=command.TryRequestCampItem(rifle,0,out string required,true);
                     if(result!=BuildingUiCommandFailure.None) throw new InvalidOperationException("Real rifle order rejected: "+result+" producer="+required);
                     var budget=ReadBudget(em);
-                    if(budget.Credits!=12000 || budget.Materials<0) throw new InvalidOperationException("Incorrect rifle transaction or negative reserve: "+budget);
+                    if(budget.Credits!=0 || budget.Materials!=20) throw new InvalidOperationException("Incorrect rifle transaction or negative reserve: "+budget);
                     Debug.Log($"[M03ConstructionProbe] actual reserve credits={budget.Credits} materials={budget.Materials}; cancel had no charge");
                     NextConstruction(facts); break;
                 case 5:
@@ -97,7 +97,7 @@ namespace Game.Editor
                     }
                     if(produced<4) break;
                     constructionVerified=true;
-                    Debug.Log($"[M03ConstructionProbe] result=Passed tower={tower.OriginCell} barrier={barrier.OriginCell} activeTowerWeapon=1 realRifles={produced} creditsReserve=12000");
+                    Debug.Log($"[M03ConstructionProbe] result=Passed tower={tower.OriginCell} barrier={barrier.OriginCell} activeTowerWeapon=1 realRifles={produced} creditsReserve=0 materialsReserve=20");
                     NextConstruction(facts); break;
             }
             if(constructionStep<6 && facts.ElapsedMilliseconds-constructionAt>85000)

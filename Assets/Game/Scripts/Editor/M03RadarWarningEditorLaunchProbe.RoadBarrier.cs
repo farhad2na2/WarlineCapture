@@ -48,7 +48,7 @@ namespace Game.Editor
                     NextRoadStep(); roadNextFrame=Time.frameCount+180; return true;
                 case 0:
                     foreach(var b in buildings) roadOriginalBuildings.Add(b.Key);
-                    BeginPaidPlacement(command,"Building_Road_Barrier",6000,15);
+                    BeginPaidPlacement(command,"Building_Road_Barrier",6000,20);
                     roadMouse=InputSystem.AddDevice<Mouse>("M3 road barrier QA");
                     NextRoadStep(); return true;
                 case 1:

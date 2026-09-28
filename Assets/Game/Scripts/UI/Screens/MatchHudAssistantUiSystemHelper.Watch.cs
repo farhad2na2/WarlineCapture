@@ -263,6 +263,15 @@ namespace Game.UI.Runtime
                 panelStopRect.TransformPoint(panelStopRect.rect.center));
             watchStop.gameObject.SetActive(!panelStop.IsActive() ||
                 !WatchTargetIsReachable(panelStopPoint, panelStop.GetEntityId().GetHashCode(), false));
+            // Support supplies the same modal stop affordance as Build. Do not
+            // cover its catalog with a second floating Stop while that button is reachable.
+            var supportStop=SupportPopupView.Active?.AriaStopButton;
+            if(supportStop!=null && supportStop.IsActive() && supportStop.IsInteractable())
+            {
+                var supportRect=(RectTransform)supportStop.transform;
+                var supportPoint=RectTransformUtility.WorldToScreenPoint(ResolveEventCamera(supportStop),supportRect.TransformPoint(supportRect.rect.center));
+                if(WatchTargetIsReachable(supportPoint,supportStop.GetEntityId().GetHashCode(),false))watchStop.gameObject.SetActive(false);
+            }
             if (watchOperations != null && watchOperations.AriaButton is Button operationStop &&
                 operationStop.IsActive() && operationStop.IsInteractable())
             {

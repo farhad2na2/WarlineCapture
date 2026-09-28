@@ -49,7 +49,11 @@ on 2026-09-28; generation and full playback checks are part of validation.
 - Separate user visual review, real-player acceptance and device testing; do not infer
   them from compilation or injected test outcomes. Retain failed candidate logs.
 
-Status: implementation started; no readiness claim.
+Status: implemented and validated for Unity Editor player acceptance on 2026-09-28.
+English 16:9 and Persian 20:9 automated normal-input journeys passed, including
+all fourteen local voice clips, live armor combat/Fuel use, three-star result,
+reward settlement and Campaign return. See `readiness.md` for exact markers,
+failed evidence, native visual review and remaining human/device gates.
 
 ## Support unlock dependency — approved design 2026-09-28
 

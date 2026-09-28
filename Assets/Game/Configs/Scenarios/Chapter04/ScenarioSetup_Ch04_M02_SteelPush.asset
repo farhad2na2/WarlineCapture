@@ -68,6 +68,12 @@ MonoBehaviour:
       spawnAnchorId: anchor.ch04.m02.squad_b
       missionRoleId: role.friendly.command_squad
       count: 1
+    - unitConfigKey: unit.ch04.m02.veh_tank_usa
+      runtimePrefabSourceKey: Unit_Veh_Tank_USA
+      expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
+      spawnAnchorId: anchor.ch04.m02.squad_b
+      missionRoleId: role.friendly.command_squad
+      count: 1
     - unitConfigKey: unit.ch04.m02.veh_apc_fast
       runtimePrefabSourceKey: Unit_Veh_APC_Fast
       expectedAssetGuid: 2cf8e4b8426144120a8e7033e5bee021

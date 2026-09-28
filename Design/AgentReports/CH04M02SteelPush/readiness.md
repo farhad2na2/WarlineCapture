@@ -1,13 +1,14 @@
-# CH04-M02 Steel Push — implementation and pending readiness
+# CH04-M02 Steel Push — Editor readiness evidence
 
-Status: **not player-ready yet**. Source implementation is in progress on `main`;
-the latest depot variant and voiced scenario have been generated; complete
-normal-input playthroughs and final native visual review are still pending.
+Status: **ready for Unity Editor player acceptance**. Latest three-tank candidate
+passed complete English and Persian normal-input automated journeys on `main`.
+Representative native screens have been visually reviewed. Human acceptance,
+packaged-player and physical-device gates are not claimed.
 
 ## Scope
 
 Story authority: Campaign high-level mission catalog, CH04 detailed design, and
-narrative sequence/comic catalog. Two tanks, an APC and four infantry defend a
+narrative sequence/comic catalog. Three tanks, an APC and four infantry defend a
 finite physical Fuel reserve against two Vanguard armor groups. Military movement
 uses 120 usable barrels; 40 remain protected for emergency civilian services.
 Normal selection, Move, Attack, Hold, barracks production and ARIA Play/Stop are
@@ -18,14 +19,32 @@ states have distinct authored 16:9 and 20:9 crops. English and Persian story/UI
 copy is written. On 2026-09-28 the user approved generation and validation.
 Fourteen ElevenLabs clips (seven English and seven Persian) were generated with
 the established cast, saved locally and bound to the authored dialogue states.
-Full in-mission playback is still pending; there is no runtime network TTS.
+All fourteen clips played fully in the two in-mission runs; there is no runtime
+network TTS.
 
 ## Evidence collected
 
+- `/private/tmp/warline-steel-push-input-fa-01.log`: wrapper exit 0;
+  `[SteelPushInput] result=Passed locale=fa-IR dialogue=7 armorCombat=live fuel=spent
+  ARIA-actions=5 victory=result=settlement=return`. Actual fight stopped 5/5 enemies
+  at 92.895 seconds; no friendly losses and the Fuel site stayed intact (3/3 stars).
+  All seven local Persian clips played fully. This is an automated normal-input
+  Editor journey at 2400×1080, not a human/device acceptance run.
+- `/private/tmp/warline-steel-push-input-en-13.log`: wrapper exit 0;
+  `[SteelPushInput] result=Passed locale=en dialogue=7 armorCombat=live fuel=spent
+  ARIA-actions=5 victory=result=settlement=return`. Actual fight stopped 5/5 enemies
+  at 93.887 seconds; no friendly losses and the Fuel site stayed intact (3/3 stars).
+  All seven local English clips played fully; no injected health, position or outcome.
+  This run rebuilt and passed the latest checkpoint before play and captured the
+  wide Persian briefing as a separate visual check.
 - `/private/tmp/warline-steel-push-build-04.log`: wrapper exit 0 and required
   `[SteelPushCheckpoint] result=Passed` marker. Latest native depot registration,
   ground-only guidance, previous radar-contract regression and finite Fuel rules pass.
   `[SteelPushMedia] result=Passed comics=3 dialogueCrops=7 voices=14 mode=voiced`.
+- `/private/tmp/warline-steel-push-build-05.log`: wrapper exit 0 and required
+  checkpoint/rule/media markers after finite Fuel scoping and counterforce spacing.
+  Rule checks explicitly add a 5,000-barrel ambient store: only the mission reserve
+  is spent, and its 40-barrel protected floor survives an oversized drain request.
 - Voice generation completed with
   `[SteelPushBilingualVoiceGeneration] result=Passed clips=14 narrative=7 locales=2 runtimeNetworkTts=0`;
   payload hashes and local file metadata are recorded in `steel_push_voice_manifest.json`.
@@ -39,7 +58,8 @@ Full in-mission playback is still pending; there is no runtime network TTS.
   both supported aspects. Seven new dialogue states have valid comic crops.
 - Native English briefing and Persian wide briefing were captured and inspected
   in `/private/tmp/warline-steel-push-input/`. One native Deploy control is present;
-  art contains no baked duplicate button. Final whole-mission visual review is pending.
+  art contains no baked duplicate button. Representative final native comics,
+  HUD, result and Campaign return were also reviewed; see `VisualReview/review.md`.
 - An old Air Corridor clear unlocked the new mission during the isolated normal
   launch. Campaign availability/completion masks were expanded from 16 to 32 bits.
 
@@ -65,14 +85,34 @@ Full logs remain under `/private/tmp/warline-steel-push-*`.
 - Input en-07 could not establish a fresh run while the failed en-06 Editor remained
   open. It is not passing evidence.
 - The safety review rejected remotely requesting that Editor's exit. No retry,
-  force-quit, licensing reset or IPC cleanup was performed. User closure is requested.
+  force-quit, licensing reset or IPC cleanup was performed. The user subsequently
+  closed the Editor before wrapper validation resumed.
+- Input en-08: test asserted mission availability before the replacement save's
+  native projection refreshed. A bounded wait was added without injecting availability.
+- Input en-09: real HUD ARIA Play was hidden because the new mission was missing
+  from the capability allow-list; added to the existing guided Campaign capability.
+- Input en-10: real combat and comms played, but inherited demo Fuel storage paid
+  movement instead of the mission reserve. Spending, move affordability, Fuel hold
+  and HUD now share the authored mission-reserve scope. The supporting tank starts
+  nearer the blocking position, and loss of the front tank no longer clears valid
+  hold guidance for the surviving counterforce. This run failed and is not readiness.
+- Input en-11 was attempted before the focused Editor fully finished shutdown;
+  it produced no input pass marker and is not accepted. En-12 starts only after
+  the focused wrapper reports exit 0.
+- Input en-12 spent the real finite reserve and played comms but lost the second
+  armor fight with two starting tanks. Starting counterforce was tuned to three
+  canonical tanks without changing unit stats, enemies, Fuel or failure rules.
+  Briefing/tutorial copy matches the actual force; story/voice payload is unchanged.
 
-## Pending gates
+## Completed Editor gates and remaining acceptance
 
-1. Complete normal-input English and Persian journeys: actual armor combat and Fuel
-   drain, all seven comic states, ARIA, victory, settlement and Campaign return.
-2. Review final native Campaign, briefing, comics, HUD and result/return captures.
-3. Verify full bilingual voice playback without early cutoff.
+Both complete normal-input automated journeys passed actual armor combat and Fuel
+drain, all seven comic states, ARIA, victory, settlement and Campaign return.
+Fourteen bilingual voice clips passed full playback without early cutoff.
+Representative native-screen review is recorded separately from those checks.
+One Persian intro capture caught early typewriter reveal, so that image is not
+evidence of complete caption fit; completed Persian ARIA and Samira debrief captions
+were inspected. No all-frame or every-line screenshot acceptance is claimed.
 
 User visual acceptance, real-player acceptance, packaged-player build and physical
 device testing are separate gates and have not been performed. Compilation and

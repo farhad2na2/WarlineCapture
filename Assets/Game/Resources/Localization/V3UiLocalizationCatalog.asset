@@ -2667,7 +2667,7 @@ MonoBehaviour:
       value: 'Two staged Vanguard groups: 5 armored vehicles. Command vehicles seek
         the Relay.'
     - key: mission.steel_push.forces
-      value: "2 tanks \xB7 APC \xB7 4 infantry \xB7 barracks"
+      value: "3 tanks \xB7 APC \xB7 4 infantry \xB7 barracks"
     - key: mission.steel_push.guide.diagram
       value: "ARMORED ROAD \u2192 TANKS + INFANTRY \u2192 FUEL / RELAY"
     - key: mission.steel_push.guide.example
@@ -2724,15 +2724,15 @@ MonoBehaviour:
         command vehicles away from the dormant Relay node. Use tanks, infantry and
         normal reinforcement controls; preserve the civilian allocation.
     - key: mission.steel_push.tutorial.1.body
-      value: Two tanks, an APC and infantry defend the reserve. Armor movement spends
-        finite military Fuel; infantry reinforcements use normal barracks resources.
-        Protect 40 barrels for hospitals and water pumps. Continue to inspect the
-        blocking position.
+      value: Three tanks, an APC and infantry defend the reserve. Armor movement
+        spends finite military Fuel; infantry reinforcements use normal barracks
+        resources. Protect 40 barrels for hospitals and water pumps. Continue to
+        inspect the blocking position.
     - key: mission.steel_push.tutorial.1.title
       value: Defend shared Fuel
     - key: mission.steel_push.tutorial.2.body
       value: Select the front battle tank using the normal selection control. Show
-        Me only moves the camera. Keep the second tank, APC and infantry guarding
+        Me only moves the camera. Keep the supporting tanks, APC and infantry guarding
         the Fuel yard.
     - key: mission.steel_push.tutorial.2.title
       value: Select the front tank
@@ -11915,7 +11915,7 @@ MonoBehaviour:
         \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC \u062F\u0646\u0628\u0627\u0644
         \u0631\u0644\u0647\u200C\u0627\u0646."
     - key: mission.steel_push.forces
-      value: "\u06F2 \u062A\u0627\u0646\u06A9 \xB7 \u0646\u0641\u0631\u0628\u0631
+      value: "\u06F3 \u062A\u0627\u0646\u06A9 \xB7 \u0646\u0641\u0631\u0628\u0631
         \xB7 \u06F4 \u067E\u06CC\u0627\u062F\u0647 \xB7 \u067E\u0627\u062F\u06AF\u0627\u0646"
     - key: mission.steel_push.guide.diagram
       value: "\u062C\u0627\u062F\u0647\u0654 \u0632\u0631\u0647\u06CC \u2190 \u062A\u0627\u0646\u06A9
@@ -12015,7 +12015,7 @@ MonoBehaviour:
         \u06A9\u0646\u061B \u0633\u0647\u0645 \u0645\u0631\u062F\u0645 \u0631\u0648
         \u0645\u062D\u0641\u0648\u0638 \u0646\u06AF\u0647 \u062F\u0627\u0631."
     - key: mission.steel_push.tutorial.1.body
-      value: "\u062F\u0648 \u062A\u0627\u0646\u06A9\u060C \u06CC\u06A9 \u0646\u0641\u0631\u0628\u0631
+      value: "\u0633\u0647 \u062A\u0627\u0646\u06A9\u060C \u06CC\u06A9 \u0646\u0641\u0631\u0628\u0631
         \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627 \u0627\u0632 \u0630\u062E\u06CC\u0631\u0647
         \u062F\u0641\u0627\u0639 \u0645\u06CC\u200C\u06A9\u0646\u0646. \u062D\u0631\u06A9\u062A
         \u0632\u0631\u0647\u06CC\u060C \u0633\u0648\u062E\u062A \u0645\u062D\u062F\u0648\u062F
@@ -12037,10 +12037,11 @@ MonoBehaviour:
         \u0631\u0648 \u0628\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u0639\u0645\u0648\u0644
         \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646
         \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
-        \u0631\u0648 \u0645\u06CC\u200C\u0628\u0631\u0647. \u062A\u0627\u0646\u06A9
-        \u062F\u0648\u0645\u060C \u0646\u0641\u0631\u0628\u0631 \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627
-        \u0631\u0648 \u0628\u0631\u0627\u06CC \u062D\u0641\u0627\u0638\u062A \u0645\u062D\u0648\u0637\u0647\u0654
-        \u0633\u0648\u062E\u062A \u0646\u06AF\u0647 \u062F\u0627\u0631."
+        \u0631\u0648 \u0645\u06CC\u200C\u0628\u0631\u0647. \u062A\u0627\u0646\u06A9\u200C\u0647\u0627\u06CC
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u060C \u0646\u0641\u0631\u0628\u0631
+        \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627 \u0631\u0648 \u0628\u0631\u0627\u06CC
+        \u062D\u0641\u0627\u0638\u062A \u0645\u062D\u0648\u0637\u0647\u0654 \u0633\u0648\u062E\u062A
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
     - key: mission.steel_push.tutorial.2.title
       value: "\u062A\u0627\u0646\u06A9 \u062C\u0644\u0648 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646"

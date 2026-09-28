@@ -26,7 +26,7 @@ namespace Game.Editor
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"})Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter04");
             AssetDatabase.Refresh();BuildReservePrefab();BuildMap();BuildScenario();BuildMission();
             M01FirstContactConfigBuilder.RefreshChapterCatalogs();AssetDatabase.SaveAssets();
-            Debug.Log("[SteelPushConfig] result=Passed chapter=4 mission=2 tanks=2 apc=1 infantry=4 hostiles=5 reserve=finite terrain=urban-fuel-yard");
+            Debug.Log("[SteelPushConfig] result=Passed chapter=4 mission=2 tanks=3 apc=1 infantry=4 hostiles=5 reserve=finite terrain=urban-fuel-yard");
         }
         private static void BuildReservePrefab()
         {
@@ -119,7 +119,7 @@ namespace Game.Editor
             I(buildCatalog.GetArrayElementAtIndex(3).FindPropertyRelative("maxCount"),1);
             var groups=data.FindProperty("unitGroups");groups.arraySize=5;
             Group(groups.GetArrayElementAtIndex(0),"tank_front",1,"squad_a","role.friendly.command_squad",new[]{"Veh_Tank_USA"});
-            Group(groups.GetArrayElementAtIndex(1),"armor_support",1,"squad_b","role.friendly.command_squad",new[]{"Veh_Tank_USA","Veh_APC_Fast"});
+            Group(groups.GetArrayElementAtIndex(1),"armor_support",1,"squad_b","role.friendly.command_squad",new[]{"Veh_Tank_USA","Veh_Tank_USA","Veh_APC_Fast"});
             Group(groups.GetArrayElementAtIndex(2),"infantry",1,"armor_support","role.friendly.command_squad",new[]{"Chr_Soldier_Male_02_Alt_02","Chr_Soldier_Male_02_Alt_04","Chr_Soldier_Female_01_Alt_01","Chr_Soldier_Female_02_Alt_01"});
             Group(groups.GetArrayElementAtIndex(3),"vanguard",2,"vanguard_spawn","role.hostile.convoy",new[]{"Veh_Light_Armored_Car","Veh_APC_Fast"});
             Group(groups.GetArrayElementAtIndex(4),"main_body",2,"main_spawn","role.hostile.convoy",new[]{"Veh_Tank_USA","Veh_Tank_USA","Veh_APC_Fast"});

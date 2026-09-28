@@ -32,6 +32,8 @@ namespace Game.Runtime
                 controlsReady = defense.OpeningComplete != 0 && defense.InitialProducerReady != 0;
                 if (facts.CommandSquadSpawned != 0)
                     ProjectDefenseRoster(em, root, in runtime, in defense, ref definition, ref facts);
+                if (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor)))
+                    ProjectAirCorridorProtection(em, root, ref facts);
                 if (controlsReady && runtime.Phase == MissionPhaseKind.Engage && (defense.AcknowledgedGuidanceMask & 0x1FFu)==0x1FFu)
                     facts.ElapsedMilliseconds = SaturatingAddMilliseconds(facts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                 em.SetComponentData(root, defense);
@@ -40,6 +42,18 @@ namespace Game.Runtime
             if (CampaignMissionDefenseRuleUtility.TryAdvance(in runtime, in facts, controlsReady, out CampaignMissionRuntimeComponent next))
                 em.SetComponentData(root, next);
             return true;
+        }
+
+        private static void ProjectAirCorridorProtection(EntityManager em,Entity root,ref CampaignMissionAttemptFactsComponent facts)
+        {
+            foreach(var member in em.GetBuffer<CampaignMissionDefenseMember>(root,true))
+            {
+                if(member.IsSensor==0)continue;
+                if(member.HealthInitialized!=0&&member.Defeated!=0){facts.CoreBreached=1;facts.ForwardPostDestroyed=1;}
+                if(em.Exists(member.Entity)&&em.HasComponent<UnitHealth>(member.Entity))
+                {var health=em.GetComponentData<UnitHealth>(member.Entity);if(health.Max>0){facts.ForwardPostBound=1;if(health.Current<health.Max)facts.ForwardPostDamaged=1;}}
+            }
+            if(facts.ElapsedMilliseconds>=240000)facts.CoreBreached=1;
         }
 
         private static void ProjectDefenseRoster(EntityManager em, Entity root,

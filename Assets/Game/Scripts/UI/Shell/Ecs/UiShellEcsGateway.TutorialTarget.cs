@@ -26,6 +26,14 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
+            if(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor)) &&
+                em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
+            {
+                target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
+                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity),
+                    battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:guidance.RecommendationKind==AssistantRecommendationKind.Move?UiTutorialBattleAction.Move:UiTutorialBattleAction.None);
+                return true;
+            }
             if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.FalseFront)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SafehouseSweep)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SignalTrace)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.RouteReopened)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.PowerRelay)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.MarketLifeline)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SupplyLine)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock))) &&
                 (guidance.GuidanceId>=75001 && guidance.GuidanceId<=75010 || guidance.GuidanceId>=76001 && guidance.GuidanceId<=76004 || guidance.GuidanceId>=77001 && guidance.GuidanceId<=77005 || guidance.GuidanceId>=78001 && guidance.GuidanceId<=78005 || guidance.GuidanceId>=79001 && guidance.GuidanceId<=79206 || guidance.GuidanceId>=80001 && guidance.GuidanceId<=80005 || guidance.GuidanceId>=81001 && guidance.GuidanceId<=81005 || guidance.GuidanceId>=82001 && guidance.GuidanceId<=82005) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {

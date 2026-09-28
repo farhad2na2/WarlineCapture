@@ -66,6 +66,7 @@ namespace Game.Runtime
             SystemAPI.TryGetSingleton(out settings);
             EntityManager em = state.EntityManager;
             CampaignMissionGuidanceProjectionComponent current = em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
+            if (TryUpdateAirCorridorGuidance(ref state, root, in runtime, in facts, in settings, in current)) return;
             if (TryUpdateRouteReopenedGuidance(ref state, root, in runtime, in settings, in current)) return;
             if (TryUpdatePowerRelayGuidance(ref state, root, in runtime, in settings, in current)) return;
             if (TryUpdateMarketLifelineGuidance(ref state, root, in runtime, in settings, in current)) return;

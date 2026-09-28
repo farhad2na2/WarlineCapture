@@ -1,0 +1,213 @@
+{
+  "schema": "WarlineCapture.AirCorridorBilingualVoice.v1",
+  "missionId": "saga.ch04.m01.air_corridor",
+  "generatedAtUtc": "2026-09-28T07:02:56.618794+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "air_corridor-brief-laila",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Those formations aren't Ash Line improvisation. Vanguard aircraft are approaching the relief corridor. Keep our radar and launchers covered so the medical flights can get through.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-laila.wav",
+      "durationSeconds": 10.0,
+      "sha256": "db18de1f0208ffa586f14dee7b00a47e471398a6c4e2ca19d8cec627adbb625c",
+      "captionSha256": "e52c9c2a64963f9837b7014d19035696d95987d913019ed172fa0a8e59efbacd"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-brief-laila",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "این آرایش پرواز کار خط خاکستر نیست. هواگردهای ونگارد دارن به مسیر امداد نزدیک می‌شن. رادار و پرتابگرها رو پوشش بدین تا پروازهای پزشکی رد بشن.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-laila.wav",
+      "durationSeconds": 12.16,
+      "sha256": "313452c3f613e9d2946c8031f1dece443fd104dbbbc456ad0fb685dd0cda9119",
+      "captionSha256": "a9caa37fa330b2f23a73d016a67ec40d1b1b1a877f2057da5a325425590ba568"
+    },
+    {
+      "kind": "narrative",
+      "id": "air_corridor-brief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Confirmed hostile aircraft approach from the west, followed by a northern strike. Keep the launchers near the radar. They acquire and fire automatically; use normal movement to manage their coverage.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-aria.wav",
+      "durationSeconds": 12.0,
+      "sha256": "bcac009535611b859d7f945c0e25a33cca889292adde881dacea3aefca1398cd",
+      "captionSha256": "f5415afc20596ff06451667bf2b755e81400972dfb38e9237f614695047c1364"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-brief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "هواگردهای دشمن از غرب نزدیک می‌شن؛ حملهٔ بعدی از شماله. پرتابگرها رو نزدیک رادار نگه دار. خودشون هدف رو می‌گیرن و شلیک می‌کنن؛ با فرمان معمول حرکت، پوشششون رو تنظیم کن.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-aria.wav",
+      "durationSeconds": 13.2,
+      "sha256": "f0ab5d42716ef6f721dd406e87aad2226076672ca3d27bcd65eca46250a20161",
+      "captionSha256": "aa83a565b02922a0bf78a159b8a8b4c3702a9011d71201919a1c3e1bda0b9dab"
+    },
+    {
+      "kind": "narrative",
+      "id": "air_corridor-comms-laila",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "The western probe is breaking up. Don't chase it. The main formation is turning in from the north, and our relief flights still need this corridor.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-laila.wav",
+      "durationSeconds": 8.8,
+      "sha256": "b6b5552d7b9523ebf2bbb6dc5a523a734ed56489fb7848b5a38a7d5e275e34e5",
+      "captionSha256": "cdd08f9b0becb324b3fa8731e4e4acb72e6d44ba712810ba7b4d81b84468a972"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-comms-laila",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "حملهٔ غربی داره از هم می‌پاشه. دنبالشون نرین. آرایش اصلی از شمال داره می‌پیچه؛ پروازهای امداد هنوز به این مسیر نیاز دارن.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-laila.wav",
+      "durationSeconds": 9.44,
+      "sha256": "2ad2cae48b12a97f45541a803e19d7986989e44eebd58b386c0ca5be99c5fa3f",
+      "captionSha256": "28d1ab425108010f523a9f18c8ea1265924d2d1bb6f93d1409538d32b83379db"
+    },
+    {
+      "kind": "narrative",
+      "id": "air_corridor-comms-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The next tracks are confirmed Vanguard attackers. Radar support improves range and tracking, but a displaced launcher can lose that support. Protect the radar and keep the coverage linked.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-aria.wav",
+      "durationSeconds": 11.68,
+      "sha256": "5d72cb8ce8516af8e58a7f25dd5bd8c1520b28c8af3817bc672f778a339f284a",
+      "captionSha256": "b4d9ac12a02c6df39b9cd7dd3759aa1da9b9e934bab13793f296b51dfcdeb110"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-comms-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "ردهای بعدی، مهاجم‌های تأییدشدهٔ ونگاردن. پشتیبانی رادار برد و دقت رو بهتر می‌کنه، ولی پرتابگری که دور بشه اون پشتیبانی رو از دست می‌ده. رادار رو حفظ کن و پوشش رو بهش وصل نگه دار.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-aria.wav",
+      "durationSeconds": 15.92,
+      "sha256": "9cdc59ddb8cd12bf76ba0df03eab7f1bf8550f7646b7bd68d9313cde68f9880f",
+      "captionSha256": "f961b16bdd3e0f76455bbc9ee441fe09c896646daad093ec07d5b5d1a5c310d1"
+    },
+    {
+      "kind": "narrative",
+      "id": "air_corridor-debrief-laila",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "The medical cargo and evacuees are through. These pilots flew a coordinated military plan. Vanguard isn't just supplying Qassem anymore; it's moving to take the Relay.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-laila.wav",
+      "durationSeconds": 11.44,
+      "sha256": "236107c479b5699656b0fa05f061a3ed44e0fec2e27289029378e6d1e8862c44",
+      "captionSha256": "a58e9db87f9049a43e9f9b64b0ef763a06e0c9cdf07d1940b1b1bb32b1d64886"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-debrief-laila",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "محمولهٔ پزشکی و تخلیه‌شده‌ها رد شدن. این خلبان‌ها با یک نقشهٔ نظامی هماهنگ پرواز می‌کردن. ونگارد دیگه فقط به قاسم تجهیزات نمی‌ده؛ اومده رله رو تصرف کنه.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Captain Laila Nasser",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-laila.wav",
+      "durationSeconds": 13.92,
+      "sha256": "23ec972961cf34d090083275d83f8d13d9ef9892f88068627da951393d5111f6",
+      "captionSha256": "6b3c9111a7e9b6a70ec4c847d04799a09712cb8d4ee1d97a66afc90f9af559f6"
+    },
+    {
+      "kind": "narrative",
+      "id": "air_corridor-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Recovered flight data confirms that assessment. Armored columns are now approaching the fuel reserves. The corridor is open, but the next defense will be on the ground.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-aria.wav",
+      "durationSeconds": 10.48,
+      "sha256": "6888c6cc43962308951924ceee0639eb72c3a1cf54e0bf56881691785be9e68c",
+      "captionSha256": "c875d0473077fa1f93a34c6b35df5481d9b29a093ca3cd47e3a0cfda47b95cbf"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "air_corridor-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "داده‌های پروازِ بازیابی‌شده این گزارش رو تأیید می‌کنه. ستون‌های زرهی دارن به ذخیره‌های سوخت نزدیک می‌شن. مسیر هوایی بازه، ولی دفاع بعدی روی زمینه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-aria.wav",
+      "durationSeconds": 12.48,
+      "sha256": "2fa2cd7d428477e93579091163e08f84c70c5cd3979247a4cdcf9bb3eb608e94",
+      "captionSha256": "faf6637448e763d6ba631cf5240facaa9d1e6f18bdc58a0cfcbfc689b7bb1214"
+    }
+  ]
+}

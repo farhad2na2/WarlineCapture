@@ -45,7 +45,7 @@ namespace Game.UI.Runtime
             else _highlightPresentationSystem.ShowTutorialWorld(position);
             if (_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(selection))
             {
-                _tutorialFocusPendingUntil=Time.unscaledTime+2f;
+                _tutorialFocusPendingUntil=Time.unscaledTime+(UiShellRuntimeGateway.IsAirCorridorGuideContext()?4f:2f);
                 _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
             }
         }

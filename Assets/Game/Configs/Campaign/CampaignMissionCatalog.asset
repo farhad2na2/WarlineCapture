@@ -58,3 +58,6 @@ MonoBehaviour:
   - missionId: saga.ch03.m05.network_break
     definition: {fileID: 11400000, guid: 61fa8036f27804b2592a2bbbf84b0731, type: 2}
     scenario: {fileID: 11400000, guid: d201f4f3c46034232afbb5789e044212, type: 2}
+  - missionId: saga.ch04.m01.air_corridor
+    definition: {fileID: 11400000, guid: c41b2c608e05f4b37a3f917afa1a759b, type: 2}
+    scenario: {fileID: 11400000, guid: d89c65c9468d548609b5d2de338f4ba1, type: 2}

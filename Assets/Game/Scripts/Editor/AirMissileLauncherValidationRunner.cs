@@ -94,6 +94,10 @@ namespace Game.Editor
 
             world.SetTime(new TimeData(0.1d, 0.1f));
             supportSystem.Update(world.Unmanaged);
+            em.AddComponent<CampaignMissionCombatSuppressedTag>(target);
+            acquisitionSystem.Update(world.Unmanaged);
+            Require(!em.HasComponent<AirMissileLauncherTargetComponent>(launcher), "Launcher acquired a dormant campaign air wave.");
+            em.RemoveComponent<CampaignMissionCombatSuppressedTag>(target);
             acquisitionSystem.Update(world.Unmanaged);
 
             AirMissileLauncherStateComponent launcherState = em.GetComponentData<AirMissileLauncherStateComponent>(launcher);

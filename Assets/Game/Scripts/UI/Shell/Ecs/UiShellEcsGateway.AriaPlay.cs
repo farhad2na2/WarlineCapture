@@ -42,7 +42,8 @@ namespace Game.UI.Shell.Ecs
             var mission = missions.GetSingleton<CampaignMissionRuntimeComponent>();
             if (mission.Outcome != Game.Missions.Contracts.MissionOutcomeKind.None) return AriaPlayCapability.None;
             string id = mission.MissionId.ToString();
-            if(id==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine ||
+            if(id==Game.Missions.Contracts.CampaignMissionSequence.AirCorridor ||
+                id==Game.Missions.Contracts.CampaignMissionSequence.SupplyLine ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.PowerRelay ||
                 id==Game.Missions.Contracts.CampaignMissionSequence.RouteReopened ||

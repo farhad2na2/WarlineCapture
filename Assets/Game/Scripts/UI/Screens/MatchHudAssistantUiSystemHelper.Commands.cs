@@ -44,6 +44,8 @@ namespace Game.UI.Runtime
         private void ExecuteRecommendation()
         {
             CaptureUiOnly();
+            if(UiShellRuntimeGateway.IsAirCorridorGuideContext() && _lastPanelModel.TutorialStep==1)
+            {UiShellRuntimeGateway.TryContinueBreachPlan();return;}
             if (_lastPanelModel.TutorialStepCount==8) {ExecuteBreachGuidance();return;}
             if (UiShellRuntimeGateway.TryReadMissionExtraction(out _)) { ExecuteExtractionGuidance(); return; }
             if (_lastPanelModel.TutorialStepCount==12) { ExecuteDefenseGuidance(); return; }

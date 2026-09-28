@@ -20,7 +20,7 @@ namespace Game.Editor
         public static void ValidateAll()
         {
             var failures=new List<string>();int sequences=0,dialogues=0;
-            foreach(string guid in AssetDatabase.FindAssets("t:NarrativeSequenceConfig",new[]{"Assets/Game/Configs/Narrative/Chapter02","Assets/Game/Configs/Narrative/Chapter03"}))
+            foreach(string guid in AssetDatabase.FindAssets("t:NarrativeSequenceConfig",new[]{"Assets/Game/Configs/Narrative/Chapter02","Assets/Game/Configs/Narrative/Chapter03","Assets/Game/Configs/Narrative/Chapter04"}))
             {
                 string path=AssetDatabase.GUIDToAssetPath(guid);
                 foreach(var sequence in AssetDatabase.LoadAllAssetsAtPath(path).OfType<NarrativeSequenceConfig>().Where(s=>s.SequenceId.StartsWith("seq.ch",StringComparison.Ordinal)))
@@ -41,6 +41,7 @@ namespace Game.Editor
             ValidateMissionDistinct(CH03M03FalseFrontNarrativeBuilder.Path,"seq.ch03.m03.");
             ValidateMissionDistinct(CH03M04EvidenceChainNarrativeBuilder.Path,"seq.ch03.m04.");
             ValidateMissionDistinct(CH03M05NetworkBreakNarrativeBuilder.Path,"seq.ch03.m05.");
+            ValidateMissionDistinct(CH04M01AirCorridorNarrativeBuilder.Path,"seq.ch04.m01.");
             Debug.Log($"[CampaignComicCoverage] result=Passed sequences={sequences} dialogueStates={dialogues} aspects=16x9,20x9 shipGate=enabled");
         }
 

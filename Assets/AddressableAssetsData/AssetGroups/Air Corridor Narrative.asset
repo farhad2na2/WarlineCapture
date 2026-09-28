@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Air Corridor Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Air Corridor Narrative
+  m_GUID: 42f4570d140fe4e968d586b0a033b8f3
+  m_SerializeEntries:
+  - m_GUID: 1e8883d6038a4ba98356b5ad0e2d5184
+    m_Address: narrative.air_corridor.ch04m01_aircorridor
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c22555caaf4498491135970b9c8971e
+    m_Address: narrative.air_corridor.ch04m01_aircorridor_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: edd02684dae74207a6745011ea1135c7
+    m_Address: narrative.air_corridor.ch04m01_aircorridor_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 9f29bd56b1145477d8a22d803cc69e39, type: 2}
+    - {fileID: 11400000, guid: f34f0451d424f47c4b42dffac5011509, type: 2}

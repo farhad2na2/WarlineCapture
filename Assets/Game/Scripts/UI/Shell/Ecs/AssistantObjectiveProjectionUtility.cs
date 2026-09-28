@@ -134,6 +134,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.AirCorridorPlan and <= CampaignMissionGuidancePromptKind.AirCorridorDefend => (byte)((int)prompt-74),
             >= CampaignMissionGuidancePromptKind.PowerRoute and <= CampaignMissionGuidancePromptKind.PowerHold => (byte)((int)prompt-63),
             >= CampaignMissionGuidancePromptKind.RouteRelief and <= CampaignMissionGuidancePromptKind.RouteRecords => (byte)((int)prompt-68),
             >= CampaignMissionGuidancePromptKind.MarketInspectLegitimate and <= CampaignMissionGuidancePromptKind.MarketHold => (byte)((int)prompt-58),
@@ -153,6 +154,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.AirCorridorPlan and <= CampaignMissionGuidancePromptKind.AirCorridorDefend ? (byte)4 :
             prompt is >= CampaignMissionGuidancePromptKind.RouteRelief and <= CampaignMissionGuidancePromptKind.RouteRecords ? (byte)6 :
             prompt is >= CampaignMissionGuidancePromptKind.PowerRoute and <= CampaignMissionGuidancePromptKind.PowerHold ? (byte)5 :
             prompt is >= CampaignMissionGuidancePromptKind.MarketInspectLegitimate and <= CampaignMissionGuidancePromptKind.MarketHold ? (byte)5 :

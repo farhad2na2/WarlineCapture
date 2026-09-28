@@ -117,7 +117,7 @@ namespace Game.UI.Runtime
                     projectionApplied = true; appliedVersion = campaign.Version; appliedLocale = locale;
                     missionId = campaign.SelectedMission.MissionId;
                     campaignOperationsView.Apply(campaign);
-                    campaignOperationsView.EnableFutureComicChapters(futureChapter);
+                    campaignOperationsView.EnableFutureComicChapters(campaignOperationsView.IsChapterFour ? 4 : futureChapter);
                     if (futureChapter >= 4)
                         campaignOperationsView.ApplyFutureComicMission(futureChapter,
                             Mathf.Max(1, futureMissionNumber));
@@ -171,7 +171,7 @@ namespace Game.UI.Runtime
             chapterThreeOpeningSeen = futureComicPreview != null &&
                 futureComicPreview.PlaySequence("seq.ch03.open.hidden_network");
         }
-        private void SelectChapterFour() => SelectFutureChapter(4);
+        private void SelectChapterFour(){SelectMission(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor);campaignOperationsView.ShowMissionSelect();}
         private void SelectChapterFive() => SelectFutureChapter(5);
         private void SelectM02()
         {
@@ -215,6 +215,9 @@ namespace Game.UI.Runtime
 
         private bool TrySelectFutureMission(int number)
         {
+            if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==1)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor); return true; }
+            if(campaignOperationsView.IsChapterFour)futureChapter=4;
             if (futureChapter < 4)
                 return false;
             futureMissionNumber = number;

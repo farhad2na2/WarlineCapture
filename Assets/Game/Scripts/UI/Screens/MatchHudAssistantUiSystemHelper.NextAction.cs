@@ -33,7 +33,18 @@ namespace Game.UI.Runtime
                 else ShowFirstContactNextAction(step);
                 return;
             }
-            if(_lastPanelModel.TutorialStepCount==4) {ShowSupplyLineNextAction();return;}
+            if(_lastPanelModel.TutorialStepCount==4)
+            {
+                if(UiShellRuntimeGateway.IsAirCorridorGuideContext())
+                {
+                    if(step==1)Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");
+                    else if(step==2)ShowSelectionTarget(default);
+                    else if(step==3)ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move);
+                    else WaitForTutorialArrival();
+                }
+                else ShowSupplyLineNextAction();
+                return;
+            }
             if(_lastPanelModel.TutorialStepCount==6) {ShowMarketLifelineNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==10) {ShowGridlockNextAction();return;}
             if(_lastPanelModel.TutorialStepCount==8) {ShowBreachNextAction(step);return;}

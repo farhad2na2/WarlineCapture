@@ -211,8 +211,8 @@ namespace Game.UI.Runtime
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
-                int contentIndex=IsChapterThree?index+10:IsChapterTwo?index+5:index;
-                bool available = !IsChapterTwo && !IsChapterThree && (index == 0 || index == 1 && m02Revealed ||
+                int contentIndex=IsChapterFour?index+15:IsChapterThree?index+10:IsChapterTwo?index+5:index;
+                bool available = !IsChapterTwo && !IsChapterThree && !IsChapterFour && (index == 0 || index == 1 && m02Revealed ||
                                  index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02);
                 if (availableMask != 0) available = contentIndex < Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount && (availableMask & (1 << contentIndex)) != 0;
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&

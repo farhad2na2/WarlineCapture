@@ -15,6 +15,8 @@ namespace Game.Runtime
         private static readonly FixedString128Bytes ExtractionBodyPrefix = "mission.m04.tutorial.";
         private static readonly FixedString64Bytes EvidenceChainTitlePrefix = "mission.evidence_chain.tutorial.";
         private static readonly FixedString128Bytes EvidenceChainBodyPrefix = "mission.evidence_chain.tutorial.";
+        private static readonly FixedString64Bytes EvidenceChainArmoredTitlePrefix = "mission.evidence_chain.tutorial.armored.";
+        private static readonly FixedString128Bytes EvidenceChainArmoredBodyPrefix = "mission.evidence_chain.tutorial.armored.";
         private static readonly FixedString32Bytes ExtractionTitleSuffix = ".title";
         private static readonly FixedString32Bytes ExtractionBodySuffix = ".body";
         private static readonly FixedString64Bytes ExtractionTargetPrefix = "tutorial.ch01.m04.";
@@ -73,8 +75,8 @@ namespace Game.Runtime
             var body=evidenceChain ? EvidenceChainBodyPrefix : ExtractionBodyPrefix;body.Append(chosen);body.Append(ExtractionBodySuffix);
             if (armored && chosen is 6 or 10 or 11)
             {
-                title = new FixedString64Bytes("mission.evidence_chain.tutorial.armored."); title.Append(chosen); title.Append(ExtractionTitleSuffix);
-                body = new FixedString128Bytes("mission.evidence_chain.tutorial.armored."); body.Append(chosen); body.Append(ExtractionBodySuffix);
+                title = EvidenceChainArmoredTitlePrefix; title.Append(chosen); title.Append(ExtractionTitleSuffix);
+                body = EvidenceChainArmoredBodyPrefix; body.Append(chosen); body.Append(ExtractionBodySuffix);
             }
             var targetId=evidenceChain ? EvidenceChainTargetPrefix : ExtractionTargetPrefix;targetId.Append(chosen);
             var next=new CampaignMissionGuidanceProjectionComponent {GuidanceId=55000+chosen,Version=Next(current.Version),MissionSourceVersion=runtime.Version,

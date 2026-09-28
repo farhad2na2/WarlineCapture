@@ -340,7 +340,7 @@ namespace Game.Editor
         private static string[] RegisteredChapterFolders(string category)
         {
             var folders = new List<string>();
-            foreach (string chapter in new[] { "Chapter01", "Chapter02", "Chapter03" })
+            foreach (string chapter in new[] { "Chapter01", "Chapter02", "Chapter03", "Chapter04" })
             {
                 string path = "Assets/Game/Configs/" + category + "/" + chapter;
                 if (AssetDatabase.IsValidFolder(path)) folders.Add(path);

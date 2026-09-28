@@ -53,7 +53,10 @@ namespace Game.Runtime
                 instance._active.Clear();
                 instance._pool.Clear();
                 instance._releaseScratch.Clear();
-                DestroyRuntimeObject(instance.gameObject);
+                // With domain reload disabled, the managed reference may survive
+                // destruction of its native component between Editor play sessions.
+                if (instance != null)
+                    DestroyRuntimeObject(instance.gameObject);
             }
 
             DestroyRuntimeMaterial(ref _smokeMaterial);

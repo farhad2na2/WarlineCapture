@@ -9,7 +9,6 @@ using Unity.Transforms;
 
 namespace Game.Runtime
 {
-    [BurstCompile]
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(UnitDeathSystem))]
     public partial struct CampaignMissionRuntimeSystem : ISystem
@@ -30,7 +29,7 @@ namespace Game.Runtime
             state.RequireForUpdate<CampaignMissionActionRequestElement>();
         }
 
-        [BurstCompile]
+        // Mission lifecycle includes managed parked-transport cleanup; it cannot run in Burst.
         public void OnUpdate(ref SystemState state)
         {
             if (SystemAPI.TryGetSingletonEntity<CampaignMissionRootComponent>(out Entity root) &&

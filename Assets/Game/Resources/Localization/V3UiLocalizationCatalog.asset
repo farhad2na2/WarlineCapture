@@ -230,6 +230,109 @@ MonoBehaviour:
       value: 'Blocked: civilian zone'
     - key: match.feedback.tactical_map_not_ready
       value: Tactical map is not ready.
+    - key: mission.air_corridor.deadline
+      value: Clear both waves within 4 minutes
+    - key: mission.air_corridor.defense.complete
+      value: AIR CORRIDOR SECURE
+    - key: mission.air_corridor.defense.countdown
+      value: "Cover approaches \xB7 contact in {0}"
+    - key: mission.air_corridor.defense.fighting
+      value: "Automatic defense \xB7 {0} aircraft left"
+    - key: mission.air_corridor.defense.wave
+      value: Air attack {0}/{1}
+    - key: mission.air_corridor.enemy_intel
+      value: 'Vanguard: 3 west, then 3 north. Confirmed jets/drones only; protect
+        relief flights.'
+    - key: mission.air_corridor.forces
+      value: "2 automatic launchers \xB7 radar \xB7 escort"
+    - key: mission.air_corridor.guide.diagram
+      value: "WEST + NORTH \u2192 LINKED LAUNCHERS + RADAR \u2192 RELIEF CORRIDOR"
+    - key: mission.air_corridor.guide.example
+      value: "Select \u2192 Move \u2192 Hold. Missile targeting is automatic; radar
+        support depends on distance."
+    - key: mission.air_corridor.guide.mistake
+      value: Do not send launchers chasing aircraft. Keep radar support and overlapping
+        approach coverage.
+    - key: mission.air_corridor.location
+      value: "Sahrin \xB7 relief airfield"
+    - key: mission.air_corridor.name
+      value: Air Corridor
+    - key: mission.air_corridor.objective.aircraft
+      value: Stop both air waves
+    - key: mission.air_corridor.objective.corridor
+      value: Keep corridor open
+    - key: mission.air_corridor.objective.radar
+      value: Protect the radar
+    - key: mission.air_corridor.resources
+      value: Radar improves range and tracking
+    - key: mission.air_corridor.result.damaged
+      value: DAMAGED
+    - key: mission.air_corridor.result.defeat
+      value: AIR CORRIDOR LOST
+    - key: mission.air_corridor.result.destroyed
+      value: LOST
+    - key: mission.air_corridor.result.intact
+      value: INTACT
+    - key: mission.air_corridor.result.loss
+      value: The radar or relief corridor was lost. Keep launchers in linked coverage
+        and stop confirmed attackers before they reach the inner airfield.
+    - key: mission.air_corridor.result.losses
+      value: Friendly losses
+    - key: mission.air_corridor.result.radar
+      value: Radar
+    - key: mission.air_corridor.result.success
+      value: Both Vanguard waves are stopped. Medical cargo and evacuees cleared
+        the relief corridor. Flight data warns of an armored advance toward the fuel
+        reserves.
+    - key: mission.air_corridor.result.victory
+      value: AIR CORRIDOR SECURE
+    - key: mission.air_corridor.reward.card
+      value: "1,800 Commander XP \xB7 8,500 Credits"
+    - key: mission.air_corridor.star.1
+      value: Complete the mission
+    - key: mission.air_corridor.star.2
+      value: No friendly losses
+    - key: mission.air_corridor.star.3
+      value: Radar undamaged
+    - key: mission.air_corridor.summary
+      value: Keep the medical flight corridor open. Link automatic missile launchers
+        to the radar, cover the west and north approaches, and stop both Vanguard
+        attack waves.
+    - key: mission.air_corridor.tutorial.1.body
+      value: Launchers fire automatically. Protect the radar to retain its range
+        and tracking bonus. Use normal Select, Move and Hold controls; Continue to
+        inspect the coverage position.
+    - key: mission.air_corridor.tutorial.1.title
+      value: Prepare linked air defense
+    - key: mission.air_corridor.tutorial.2.body
+      value: Select the west missile launcher with the standard selection control.
+        Show Me only focuses the camera; it does not move or order the launcher.
+    - key: mission.air_corridor.tutorial.2.title
+      value: Select the west launcher
+    - key: mission.air_corridor.tutorial.3.body
+      value: Use Move to position the west launcher at the marked coverage point.
+        Keep the north launcher and radar linked. The first wave begins after preparation.
+    - key: mission.air_corridor.tutorial.3.title
+      value: Cover the west approach
+    - key: mission.air_corridor.tutorial.4.body
+      value: West probes enter after 20 seconds. Launchers automatically acquire,
+        lock, fire and reload. Keep the radar alive; do not chase contacts away from
+        linked coverage.
+    - key: mission.air_corridor.tutorial.4.title
+      value: Protect the relief corridor
+    - key: mission.air_corridor.tutorial.main.body
+      value: 'Northern attack warning: the main wave enters at 65 seconds. Maintain
+        overlapping automatic coverage and protect the radar until all six attackers
+        are stopped.'
+    - key: mission.air_corridor.warning.north
+      value: "NORTHERN APPROACH \xB7 Two jets and one drone. Maintain overlapping
+        radar-linked coverage."
+    - key: mission.air_corridor.warning.prepare
+      value: "PREPARATION \xB7 Position the western launcher before the approach
+        clock starts."
+    - key: mission.air_corridor.warning.west
+      value: "WESTERN APPROACH \xB7 Two drones and one jet. Keep the radar protected;
+        launcher fire is automatic."
     - key: mission.evidence_chain.deadline
       value: 11 active minutes
     - key: mission.evidence_chain.enemy_intel
@@ -2651,6 +2754,29 @@ MonoBehaviour:
         pumps and JRC relief transport.
     - key: mission.supply_line.time_limit
       value: Time limit
+    - key: narrative.air_corridor.brief-aria
+      value: Confirmed hostile aircraft approach from the west, followed by a northern
+        strike. Keep the launchers near the radar. They acquire and fire automatically;
+        use normal movement to manage their coverage.
+    - key: narrative.air_corridor.brief-laila
+      value: Those formations aren't Ash Line improvisation. Vanguard aircraft are
+        approaching the relief corridor. Keep our radar and launchers covered so
+        the medical flights can get through.
+    - key: narrative.air_corridor.comms-aria
+      value: The next tracks are confirmed Vanguard attackers. Radar support improves
+        range and tracking, but a displaced launcher can lose that support. Protect
+        the radar and keep the coverage linked.
+    - key: narrative.air_corridor.comms-laila
+      value: The western probe is breaking up. Don't chase it. The main formation
+        is turning in from the north, and our relief flights still need this corridor.
+    - key: narrative.air_corridor.debrief-aria
+      value: Recovered flight data confirms that assessment. Armored columns are
+        now approaching the fuel reserves. The corridor is open, but the next defense
+        will be on the ground.
+    - key: narrative.air_corridor.debrief-laila
+      value: The medical cargo and evacuees are through. These pilots flew a coordinated
+        military plan. Vanguard isn't just supplying Qassem anymore; it's moving
+        to take the Relay.
     - key: narrative.evidence_chain.brief.01
       value: The archive custodian made it to my clinic. The witness has the physical
         record, and the roads outside are closing. They need a safe passage, not
@@ -7269,6 +7395,194 @@ MonoBehaviour:
     - key: match.feedback.tactical_map_not_ready
       value: "\u0646\u0642\u0634\u0647\u0654 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0647\u0646\u0648\u0632 \u0622\u0645\u0627\u062F\u0647 \u0646\u06CC\u0633\u062A."
+    - key: mission.air_corridor.deadline
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0648\u062C \u0631\u0648 \u062A\u0627
+        \u06F4 \u062F\u0642\u06CC\u0642\u0647 \u067E\u0627\u06A9 \u06A9\u0646"
+    - key: mission.air_corridor.defense.complete
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u0646
+        \u0634\u062F"
+    - key: mission.air_corridor.defense.countdown
+      value: "\u0645\u0633\u06CC\u0631\u0647\u0627 \u0631\u0648 \u067E\u0648\u0634\u0634
+        \u0628\u062F\u0647 \xB7 \u062A\u0645\u0627\u0633 \u062A\u0627 {0}"
+    - key: mission.air_corridor.defense.fighting
+      value: "\u062F\u0641\u0627\u0639 \u062E\u0648\u062F\u06A9\u0627\u0631 \xB7
+        {0} \u0647\u0648\u0627\u06AF\u0631\u062F \u0628\u0627\u0642\u06CC \u0645\u0648\u0646\u062F\u0647"
+    - key: mission.air_corridor.defense.wave
+      value: "\u062D\u0645\u0644\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC {0}/{1}"
+    - key: mission.air_corridor.enemy_intel
+      value: "\u0648\u0646\u06AF\u0627\u0631\u062F: \u06F3 \u0645\u0647\u0627\u062C\u0645
+        \u0627\u0632 \u063A\u0631\u0628\u060C \u0628\u0639\u062F \u06F3 \u0627\u0632
+        \u0634\u0645\u0627\u0644. \u0641\u0642\u0637 \u062C\u0646\u06AF\u0646\u062F\u0647
+        \u0648 \u067E\u0647\u067E\u0627\u062F \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u061B
+        \u067E\u0631\u0648\u0627\u0632\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.air_corridor.forces
+      value: "\u06F2 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631
+        \xB7 \u0631\u0627\u062F\u0627\u0631 \xB7 \u0647\u0645\u0631\u0627\u0647"
+    - key: mission.air_corridor.guide.diagram
+      value: "\u063A\u0631\u0628 + \u0634\u0645\u0627\u0644 \u2190 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627\u06CC
+        \u0645\u062A\u0635\u0644 + \u0631\u0627\u062F\u0627\u0631 \u2190 \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u062F\u0627\u062F"
+    - key: mission.air_corridor.guide.example
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u2190 \u062D\u0631\u06A9\u062A
+        \u2190 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0646. \u0647\u062F\u0641\u200C\u06AF\u06CC\u0631\u06CC
+        \u0645\u0648\u0634\u06A9 \u062E\u0648\u062F\u06A9\u0627\u0631\u0647\u061B
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0628\u0647 \u0641\u0627\u0635\u0644\u0647 \u0628\u0633\u062A\u06AF\u06CC
+        \u062F\u0627\u0631\u0647."
+    - key: mission.air_corridor.guide.mistake
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627 \u0631\u0648
+        \u062F\u0646\u0628\u0627\u0644 \u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627
+        \u0646\u0641\u0631\u0633\u062A. \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0631\u0627\u062F\u0627\u0631 \u0648 \u067E\u0648\u0634\u0634 \u0647\u0645\u200C\u067E\u0648\u0634\u0627\u0646
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.air_corridor.location
+      value: "\u0633\u0627\u0631\u06CC\u0646 \xB7 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u0627\u0645\u062F\u0627\u062F"
+    - key: mission.air_corridor.name
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.air_corridor.objective.aircraft
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0648\u062C \u0631\u0648 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646"
+    - key: mission.air_corridor.objective.corridor
+      value: "\u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631"
+    - key: mission.air_corridor.objective.radar
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.air_corridor.resources
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0628\u0631\u062F \u0648 \u062F\u0642\u062A
+        \u0631\u0648 \u0628\u0647\u062A\u0631 \u0645\u06CC\u200C\u06A9\u0646\u0647"
+    - key: mission.air_corridor.result.damaged
+      value: "\u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647"
+    - key: mission.air_corridor.result.defeat
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.air_corridor.result.destroyed
+      value: "\u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.air_corridor.result.intact
+      value: "\u0633\u0627\u0644\u0645"
+    - key: mission.air_corridor.result.loss
+      value: "\u0631\u0627\u062F\u0627\u0631 \u06CC\u0627 \u0645\u0633\u06CC\u0631
+        \u0627\u0645\u062F\u0627\u062F \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A.
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627 \u0631\u0648 \u062F\u0631
+        \u067E\u0648\u0634\u0634 \u0645\u062A\u0635\u0644 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u0648 \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u06CC \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u067E\u06CC\u0634 \u0627\u0632 \u0631\u0633\u06CC\u062F\u0646
+        \u0628\u0647 \u062F\u0627\u062E\u0644 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646."
+    - key: mission.air_corridor.result.losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u062E\u0648\u062F\u06CC"
+    - key: mission.air_corridor.result.radar
+      value: "\u0631\u0627\u062F\u0627\u0631"
+    - key: mission.air_corridor.result.success
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u0648\u062C \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0645\u062A\u0648\u0642\u0641 \u0634\u062F\u0646. \u0645\u062D\u0645\u0648\u0644\u0647\u0654
+        \u067E\u0632\u0634\u06A9\u06CC \u0648 \u062A\u062E\u0644\u06CC\u0647\u200C\u0634\u062F\u0647\u200C\u0647\u0627
+        \u0627\u0632 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u0639\u0628\u0648\u0631
+        \u06A9\u0631\u062F\u0646. \u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC
+        \u067E\u0631\u0648\u0627\u0632 \u0627\u0632 \u067E\u06CC\u0634\u0631\u0648\u06CC
+        \u0632\u0631\u0647\u06CC \u0628\u0647 \u0633\u0645\u062A \u0630\u062E\u06CC\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0633\u0648\u062E\u062A \u062E\u0628\u0631 \u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.air_corridor.result.victory
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u0646
+        \u0634\u062F"
+    - key: mission.air_corridor.reward.card
+      value: "\u06F1\u06F8\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F8\u06F5\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.air_corridor.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.air_corridor.star.2
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062E\u0648\u062F\u06CC \u0627\u0632
+        \u062F\u0633\u062A \u0646\u062F\u0647"
+    - key: mission.air_corridor.star.3
+      value: "\u0631\u0627\u062F\u0627\u0631 \u0622\u0633\u06CC\u0628 \u0646\u0628\u06CC\u0646\u0647"
+    - key: mission.air_corridor.summary
+      value: "\u0645\u0633\u06CC\u0631 \u067E\u0631\u0648\u0627\u0632\u0647\u0627\u06CC
+        \u067E\u0632\u0634\u06A9\u06CC \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627\u06CC
+        \u062E\u0648\u062F\u06A9\u0627\u0631 \u0631\u0648 \u0628\u0647 \u0631\u0627\u062F\u0627\u0631
+        \u0648\u0635\u0644 \u0646\u06AF\u0647 \u062F\u0627\u0631\u060C \u0645\u0633\u06CC\u0631\u0647\u0627\u06CC
+        \u063A\u0631\u0628\u06CC \u0648 \u0634\u0645\u0627\u0644\u06CC \u0631\u0648
+        \u067E\u0648\u0634\u0634 \u0628\u062F\u0647 \u0648 \u0647\u0631 \u062F\u0648
+        \u0645\u0648\u062C \u0648\u0646\u06AF\u0627\u0631\u062F \u0631\u0648 \u0645\u062A\u0648\u0642\u0641
+        \u06A9\u0646."
+    - key: mission.air_corridor.tutorial.1.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627 \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0646. \u0631\u0627\u062F\u0627\u0631
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646 \u062A\u0627 \u0628\u0631\u062F
+        \u0648 \u062F\u0642\u062A \u0628\u06CC\u0634\u062A\u0631 \u0628\u0627\u0642\u06CC
+        \u0628\u0645\u0648\u0646\u0647. \u0627\u0632 \u0627\u0646\u062A\u062E\u0627\u0628\u060C
+        \u062D\u0631\u06A9\u062A \u0648 \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0646
+        \u0645\u0639\u0645\u0648\u0644 \u0627\u0633\u062A\u0641\u0627\u062F\u0647
+        \u06A9\u0646\u061B \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC
+        \u062C\u0627\u06CC \u067E\u0648\u0634\u0634 \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u0647."
+    - key: mission.air_corridor.tutorial.1.title
+      value: "\u062F\u0641\u0627\u0639 \u0647\u0648\u0627\u06CC\u06CC \u0645\u062A\u0635\u0644
+        \u0631\u0648 \u0622\u0645\u0627\u062F\u0647 \u06A9\u0646"
+    - key: mission.air_corridor.tutorial.2.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0645\u0648\u0634\u06A9\u06CC
+        \u063A\u0631\u0628\u06CC \u0631\u0648 \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u0639\u0645\u0648\u0644 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0641\u0642\u0637
+        \u062F\u0648\u0631\u0628\u06CC\u0646 \u0631\u0648 \u0645\u06CC\u200C\u0628\u0631\u0647\u061B
+        \u0628\u0647 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0641\u0631\u0645\u0627\u0646
+        \u0646\u0645\u06CC\u200C\u062F\u0647."
+    - key: mission.air_corridor.tutorial.2.title
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u063A\u0631\u0628\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: mission.air_corridor.tutorial.3.body
+      value: "\u0628\u0627 \u062D\u0631\u06A9\u062A\u060C \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u063A\u0631\u0628\u06CC \u0631\u0648 \u0628\u0647 \u0646\u0642\u0637\u0647\u0654
+        \u067E\u0648\u0634\u0634 \u0639\u0644\u0627\u0645\u062A\u200C\u06AF\u0630\u0627\u0631\u06CC\u200C\u0634\u062F\u0647
+        \u0628\u0628\u0631. \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0634\u0645\u0627\u0644\u06CC
+        \u0648 \u0631\u0627\u062F\u0627\u0631 \u0631\u0648 \u0645\u062A\u0635\u0644
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0645\u0648\u062C \u0627\u0648\u0644
+        \u0628\u0639\u062F \u0627\u0632 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0634\u0631\u0648\u0639 \u0645\u06CC\u200C\u0634\u0647."
+    - key: mission.air_corridor.tutorial.3.title
+      value: "\u0645\u0633\u06CC\u0631 \u063A\u0631\u0628\u06CC \u0631\u0648 \u067E\u0648\u0634\u0634
+        \u0628\u062F\u0647"
+    - key: mission.air_corridor.tutorial.4.body
+      value: "\u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u06CC \u063A\u0631\u0628\u06CC
+        \u067E\u0633 \u0627\u0632 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0648\u0627\u0631\u062F
+        \u0645\u06CC\u200C\u0634\u0646. \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627
+        \u062E\u0648\u062F\u06A9\u0627\u0631 \u0647\u062F\u0641 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0646\u060C
+        \u0642\u0641\u0644 \u0645\u06CC\u200C\u06A9\u0646\u0646\u060C \u0634\u0644\u06CC\u06A9
+        \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u0622\u0645\u0627\u062F\u0647
+        \u0645\u06CC\u200C\u0634\u0646. \u0631\u0627\u062F\u0627\u0631 \u0631\u0648
+        \u0632\u0646\u062F\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631\u061B \u0627\u0632
+        \u067E\u0648\u0634\u0634 \u0645\u062A\u0635\u0644 \u062F\u0648\u0631 \u0646\u0634\u0648."
+    - key: mission.air_corridor.tutorial.4.title
+      value: "\u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F \u0631\u0648
+        \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.air_corridor.tutorial.main.body
+      value: "\u0647\u0634\u062F\u0627\u0631 \u062D\u0645\u0644\u0647\u0654 \u0634\u0645\u0627\u0644\u06CC:
+        \u0645\u0648\u062C \u0627\u0635\u0644\u06CC \u062F\u0631 \u062B\u0627\u0646\u06CC\u0647\u0654
+        \u06F6\u06F5 \u0648\u0627\u0631\u062F \u0645\u06CC\u200C\u0634\u0647. \u067E\u0648\u0634\u0634
+        \u062E\u0648\u062F\u06A9\u0627\u0631\u0650 \u0647\u0645\u200C\u067E\u0648\u0634\u0627\u0646
+        \u0631\u0648 \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u062A\u0627 \u062A\u0648\u0642\u0641
+        \u0647\u0631 \u0634\u0634 \u0645\u0647\u0627\u062C\u0645\u060C \u0631\u0627\u062F\u0627\u0631
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: mission.air_corridor.warning.north
+      value: "\u0645\u0633\u06CC\u0631 \u0634\u0645\u0627\u0644\u06CC \xB7 \u062F\u0648
+        \u062C\u0646\u06AF\u0646\u062F\u0647 \u0648 \u06CC\u06A9 \u067E\u0647\u067E\u0627\u062F.
+        \u067E\u0648\u0634\u0634 \u0647\u0645\u200C\u067E\u0648\u0634\u0627\u0646\u0650
+        \u0645\u062A\u0635\u0644 \u0628\u0647 \u0631\u0627\u062F\u0627\u0631 \u0631\u0648
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.air_corridor.warning.prepare
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u067E\u06CC\u0634
+        \u0627\u0632 \u0634\u0631\u0648\u0639 \u0632\u0645\u0627\u0646 \u062D\u0645\u0644\u0647\u060C
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u063A\u0631\u0628\u06CC \u0631\u0648
+        \u062F\u0631 \u062C\u0627\u06CC \u067E\u0648\u0634\u0634 \u0642\u0631\u0627\u0631
+        \u0628\u062F\u0647."
+    - key: mission.air_corridor.warning.west
+      value: "\u0645\u0633\u06CC\u0631 \u063A\u0631\u0628\u06CC \xB7 \u062F\u0648
+        \u067E\u0647\u067E\u0627\u062F \u0648 \u06CC\u06A9 \u062C\u0646\u06AF\u0646\u062F\u0647.
+        \u0631\u0627\u062F\u0627\u0631 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u061B
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631
+        \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0647."
     - key: mission.evidence_chain.deadline
       value: "\u06F1\u06F1 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -11640,6 +11954,65 @@ MonoBehaviour:
         \u0627\u0645\u062F\u0627\u062F \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
     - key: mission.supply_line.time_limit
       value: "\u0645\u0647\u0644\u062A"
+    - key: narrative.air_corridor.brief-aria
+      value: "\u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
+        \u0627\u0632 \u063A\u0631\u0628 \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646\u061B
+        \u062D\u0645\u0644\u0647\u0654 \u0628\u0639\u062F\u06CC \u0627\u0632 \u0634\u0645\u0627\u0644\u0647.
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627 \u0631\u0648 \u0646\u0632\u062F\u06CC\u06A9
+        \u0631\u0627\u062F\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631. \u062E\u0648\u062F\u0634\u0648\u0646
+        \u0647\u062F\u0641 \u0631\u0648 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u0646
+        \u0648 \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0646\u061B
+        \u0628\u0627 \u0641\u0631\u0645\u0627\u0646 \u0645\u0639\u0645\u0648\u0644
+        \u062D\u0631\u06A9\u062A\u060C \u067E\u0648\u0634\u0634\u0634\u0648\u0646
+        \u0631\u0648 \u062A\u0646\u0638\u06CC\u0645 \u06A9\u0646."
+    - key: narrative.air_corridor.brief-laila
+      value: "\u0627\u06CC\u0646 \u0622\u0631\u0627\u06CC\u0634 \u067E\u0631\u0648\u0627\u0632
+        \u06A9\u0627\u0631 \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0646\u06CC\u0633\u062A.
+        \u0647\u0648\u0627\u06AF\u0631\u062F\u0647\u0627\u06CC \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u062F\u0627\u0631\u0646 \u0628\u0647 \u0645\u0633\u06CC\u0631 \u0627\u0645\u062F\u0627\u062F
+        \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646. \u0631\u0627\u062F\u0627\u0631
+        \u0648 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u0647\u0627 \u0631\u0648
+        \u067E\u0648\u0634\u0634 \u0628\u062F\u06CC\u0646 \u062A\u0627 \u067E\u0631\u0648\u0627\u0632\u0647\u0627\u06CC
+        \u067E\u0632\u0634\u06A9\u06CC \u0631\u062F \u0628\u0634\u0646."
+    - key: narrative.air_corridor.comms-aria
+      value: "\u0631\u062F\u0647\u0627\u06CC \u0628\u0639\u062F\u06CC\u060C \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u06CC
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654 \u0648\u0646\u06AF\u0627\u0631\u062F\u0646.
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0631\u0627\u062F\u0627\u0631
+        \u0628\u0631\u062F \u0648 \u062F\u0642\u062A \u0631\u0648 \u0628\u0647\u062A\u0631
+        \u0645\u06CC\u200C\u06A9\u0646\u0647\u060C \u0648\u0644\u06CC \u067E\u0631\u062A\u0627\u0628\u06AF\u0631\u06CC
+        \u06A9\u0647 \u062F\u0648\u0631 \u0628\u0634\u0647 \u0627\u0648\u0646 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A \u0645\u06CC\u200C\u062F\u0647.
+        \u0631\u0627\u062F\u0627\u0631 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646
+        \u0648 \u067E\u0648\u0634\u0634 \u0631\u0648 \u0628\u0647\u0634 \u0648\u0635\u0644
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: narrative.air_corridor.comms-laila
+      value: "\u062D\u0645\u0644\u0647\u0654 \u063A\u0631\u0628\u06CC \u062F\u0627\u0631\u0647
+        \u0627\u0632 \u0647\u0645 \u0645\u06CC\u200C\u067E\u0627\u0634\u0647. \u062F\u0646\u0628\u0627\u0644\u0634\u0648\u0646
+        \u0646\u0631\u06CC\u0646. \u0622\u0631\u0627\u06CC\u0634 \u0627\u0635\u0644\u06CC
+        \u0627\u0632 \u0634\u0645\u0627\u0644 \u062F\u0627\u0631\u0647 \u0645\u06CC\u200C\u067E\u06CC\u0686\u0647\u061B
+        \u067E\u0631\u0648\u0627\u0632\u0647\u0627\u06CC \u0627\u0645\u062F\u0627\u062F
+        \u0647\u0646\u0648\u0632 \u0628\u0647 \u0627\u06CC\u0646 \u0645\u0633\u06CC\u0631
+        \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u0646."
+    - key: narrative.air_corridor.debrief-aria
+      value: "\u062F\u0627\u062F\u0647\u200C\u0647\u0627\u06CC \u067E\u0631\u0648\u0627\u0632\u0650
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647 \u0627\u06CC\u0646
+        \u06AF\u0632\u0627\u0631\u0634 \u0631\u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0633\u062A\u0648\u0646\u200C\u0647\u0627\u06CC
+        \u0632\u0631\u0647\u06CC \u062F\u0627\u0631\u0646 \u0628\u0647 \u0630\u062E\u06CC\u0631\u0647\u200C\u0647\u0627\u06CC
+        \u0633\u0648\u062E\u062A \u0646\u0632\u062F\u06CC\u06A9 \u0645\u06CC\u200C\u0634\u0646.
+        \u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0628\u0627\u0632\u0647\u060C
+        \u0648\u0644\u06CC \u062F\u0641\u0627\u0639 \u0628\u0639\u062F\u06CC \u0631\u0648\u06CC
+        \u0632\u0645\u06CC\u0646\u0647."
+    - key: narrative.air_corridor.debrief-laila
+      value: "\u0645\u062D\u0645\u0648\u0644\u0647\u0654 \u067E\u0632\u0634\u06A9\u06CC
+        \u0648 \u062A\u062E\u0644\u06CC\u0647\u200C\u0634\u062F\u0647\u200C\u0647\u0627
+        \u0631\u062F \u0634\u062F\u0646. \u0627\u06CC\u0646 \u062E\u0644\u0628\u0627\u0646\u200C\u0647\u0627
+        \u0628\u0627 \u06CC\u06A9 \u0646\u0642\u0634\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC
+        \u0647\u0645\u0627\u0647\u0646\u06AF \u067E\u0631\u0648\u0627\u0632 \u0645\u06CC\u200C\u06A9\u0631\u062F\u0646.
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u062F\u06CC\u06AF\u0647 \u0641\u0642\u0637
+        \u0628\u0647 \u0642\u0627\u0633\u0645 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0646\u0645\u06CC\u200C\u062F\u0647\u061B \u0627\u0648\u0645\u062F\u0647
+        \u0631\u0644\u0647 \u0631\u0648 \u062A\u0635\u0631\u0641 \u06A9\u0646\u0647."
     - key: narrative.evidence_chain.brief.01
       value: "\u0646\u06AF\u0647\u0628\u0627\u0646 \u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC
         \u062E\u0648\u062F\u0634 \u0631\u0648 \u0628\u0647 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647

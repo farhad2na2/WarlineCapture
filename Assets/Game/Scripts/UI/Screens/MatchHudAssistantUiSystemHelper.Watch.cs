@@ -88,7 +88,10 @@ namespace Game.UI.Runtime
                     // active; the subsequent tap remains a normal world-input gesture.
                     _highlightPresentationSystem.ShowTutorialWorld(tutorialTarget.Destination);
                     if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
-                       !UiShellRuntimeGateway.IsEvidenceChainGuideContext())
+                       !UiShellRuntimeGateway.IsEvidenceChainGuideContext() &&
+                       // Air Corridor observes and taps the existing Show Me control.
+                       // Do not give Watch a hidden camera shortcut around that input.
+                       !UiShellRuntimeGateway.IsAirCorridorGuideContext())
                         UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false);
                 }
             }

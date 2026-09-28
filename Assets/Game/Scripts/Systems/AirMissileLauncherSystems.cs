@@ -22,7 +22,7 @@ namespace Game.Runtime
 
             foreach (var (launcher, launcherState, launcherTransform, launcherFaction, entity) in SystemAPI
                          .Query<RefRO<AirMissileLauncherComponent>, RefRW<AirMissileLauncherStateComponent>, RefRO<LocalTransform>, RefRO<Faction>>()
-                         .WithNone<UnitDeathAnimationComponent>()
+                         .WithNone<UnitDeathAnimationComponent, CampaignMissionCombatSuppressedTag>()
                          .WithEntityAccess())
             {
                 float rangeBonus = 0f;
@@ -34,7 +34,7 @@ namespace Game.Runtime
 
                 foreach (var (support, supportTransform, supportFaction, supportEntity) in SystemAPI
                              .Query<RefRO<AirDefenseSupportProviderComponent>, RefRO<LocalTransform>, RefRO<Faction>>()
-                             .WithNone<UnitDeathAnimationComponent>()
+                             .WithNone<UnitDeathAnimationComponent, CampaignMissionCombatSuppressedTag>()
                              .WithEntityAccess())
                 {
                     if (supportFaction.ValueRO.Id != launcherFaction.ValueRO.Id)
@@ -109,7 +109,7 @@ namespace Game.Runtime
 
             foreach (var (launcher, launcherState, transform, faction, entity) in SystemAPI
                          .Query<RefRO<AirMissileLauncherComponent>, RefRO<AirMissileLauncherStateComponent>, RefRO<LocalTransform>, RefRO<Faction>>()
-                         .WithNone<UnitDeathAnimationComponent>()
+                         .WithNone<UnitDeathAnimationComponent, CampaignMissionCombatSuppressedTag>()
                          .WithEntityAccess())
             {
                 if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
@@ -150,7 +150,7 @@ namespace Game.Runtime
 
                 foreach (var (airMovement, targetTransform, targetFaction, targetHealth, targetEntity) in SystemAPI
                              .Query<RefRO<UnitAirMovement>, RefRO<LocalTransform>, RefRO<Faction>, RefRO<UnitHealth>>()
-                             .WithNone<UnitDeathAnimationComponent>()
+                             .WithNone<UnitDeathAnimationComponent, CampaignMissionCombatSuppressedTag>()
                              .WithEntityAccess())
                 {
                     if (targetEntity == entity ||
@@ -321,7 +321,7 @@ namespace Game.Runtime
 
             foreach (var (launcher, launcherState, launcherTransform, faction, entity) in SystemAPI
                          .Query<RefRO<AirMissileLauncherComponent>, RefRW<AirMissileLauncherStateComponent>, RefRO<LocalTransform>, RefRO<Faction>>()
-                         .WithNone<UnitDeathAnimationComponent>()
+                         .WithNone<UnitDeathAnimationComponent, CampaignMissionCombatSuppressedTag>()
                          .WithEntityAccess())
             {
                 ref AirMissileLauncherStateComponent stateRw = ref launcherState.ValueRW;

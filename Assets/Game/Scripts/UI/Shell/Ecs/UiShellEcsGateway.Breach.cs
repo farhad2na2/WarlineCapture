@@ -68,7 +68,7 @@ namespace Game.UI.Shell.Ecs
         }
         public bool TrySelectBreachActor()
         {
-            if(!TryGetMissionRoot(out var em,out var root) || !IsBreachMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId)) return false;
+            if(!TryGetMissionRoot(out var em,out var root) || !(IsBreachMission(em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId)||em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor)))) return false;
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             if(guidance.Active==0 || guidance.CanExecute==0 || !em.Exists(guidance.SourceEntity)) return false;
             using var query=em.CreateEntityQuery(typeof(RtsSelectionInputRequestQueueComponent),typeof(RtsSelectionCommandIntentRequestElement));
@@ -82,7 +82,7 @@ namespace Game.UI.Shell.Ecs
             if(!TryGetMissionRoot(out var em,out var root) || !em.HasComponent<CampaignMissionGuidanceProjectionComponent>(root)) return false;
             var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
-            if(!IsBreachMission(runtime.MissionId) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || guidance.Active==0 || guidance.GuidanceId!=65001) return false;
+            if(!(IsBreachMission(runtime.MissionId)||runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor))) || runtime.Phase!=MissionPhaseKind.Engage || runtime.Outcome!=MissionOutcomeKind.None || guidance.Active==0 || guidance.GuidanceId!=65001) return false;
             var requests=em.GetBuffer<CampaignMissionGuidanceAcknowledgementRequestElement>(root);
             if(requests.Length>=8) return false;
             requests.Add(new CampaignMissionGuidanceAcknowledgementRequestElement {SessionToken=runtime.SessionToken,AttemptOrdinal=runtime.AttemptOrdinal,GuidanceId=65001}); return true;

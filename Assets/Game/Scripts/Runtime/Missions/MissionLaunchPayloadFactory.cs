@@ -9,7 +9,7 @@ namespace Game.Runtime
         public const int CurrentSchemaVersion = 1;
         public static bool RequiresFullTutorial(string missionId) => missionId is
             "saga.ch01.m01.first_contact" or "saga.ch01.m02.establish_base" or
-            "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault" or CampaignMissionSequence.EvidenceChain or CampaignMissionSequence.NetworkBreak;
+            "saga.ch01.m03.radar_warning" or "saga.ch01.m04.airlift" or "saga.ch01.m05.breach_assault" or CampaignMissionSequence.EvidenceChain or CampaignMissionSequence.NetworkBreak or CampaignMissionSequence.AirCorridor;
 
         public static MissionLaunchPayload Create(
             string missionId,

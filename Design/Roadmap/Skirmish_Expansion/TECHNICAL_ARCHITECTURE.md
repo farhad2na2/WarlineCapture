@@ -1,5 +1,9 @@
 # Expanded Skirmish technical architecture
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Project verified content access and certified configuration availability before creating a match. Use the canonical S-ID to resolve core membership; do not infer identity from prototype dispatch indices. Entitlement state never enters combat arithmetic or funds Materials/Fuel. Keep product policy separate from the existing acceptance/publication status and from scenario setup.
+
 Implementation specification, 2026-09-21. Existing owners are identified in [IMPLEMENTATION_HANDOFF](IMPLEMENTATION_HANDOFF.md); all newly named types below are **proposed**, not assumed to exist. Follow [SOLID/ECS](../../Architecture/gameplay_solid_ecs_contract.md). Runtime gameplay belongs in ECS systems/data; views bind and forward input. No global manager/singleton or per-battle controller.
 
 ## Files, assemblies and ownership

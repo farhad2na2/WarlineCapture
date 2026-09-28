@@ -1,5 +1,9 @@
 # Expansion acceptance and performance plan
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 to each published entry: S001 works/replays without ownership; S002–S120 resolve to the same core entitlement; restore/offline access agrees with normal launch and resume. Zero/large account balances yield identical starts/costs. All required roster/research/ARIA works without another purchase. Preserve the existing normal-input, seed/difficulty, human and device gates.
+
 Updated 2026-09-21: expanded catalog cases remain pending; small-scenario Editor victories are separate evidence. Targets below are proposed unless explicitly inherited from the repository performance contract. No new Editor gameplay, Android performance or player-comprehension evidence was gathered for this planning task. The [programming handoff](IMPLEMENTATION_HANDOFF.md), [individual briefs](Scenarios/README.md) and [work-package suites/evidence schema](AGENT_WORK_PACKAGES.md) make these gates executable assignments.
 
 ## Gameplay acceptance matrix

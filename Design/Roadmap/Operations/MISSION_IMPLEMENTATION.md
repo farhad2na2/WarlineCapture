@@ -1,5 +1,9 @@
 # Shared mission implementation contract
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every O001–O060 graph keeps its mandatory/Partial/failure predicates, authored force budget, deadlines and local resource requirements. Add product/scope identity and MP01–MP08 to authoring validation. O001–O003 have the same tactical IDs in both scopes; their surrounding strategic state differs. In particular O003 supplies its authored 80 repair Materials locally. Account purchases cannot supply missing counters, heal civilian consequences or change the outcome graph.
+
 Proposed implementation, 2026-09-21. Read this with each [district brief](Missions/README.md). Parameters below are starting test values. Each mission inherits these exact defaults unless its brief gives an explicit override. A family reference is a shared implementation dependency, not proof that any current Campaign class already supports it.
 
 ## Rules and classes to implement once

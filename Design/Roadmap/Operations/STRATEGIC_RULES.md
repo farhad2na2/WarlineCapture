@@ -1,5 +1,9 @@
 # Persistent city and action rules
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). The six-district rules below describe full scope. Add `operations.sahrin.intro.v1` with O001–O003 only, scoped D01 consequences/offers/incident/day logic and local completion after all three Victories. Inaccessible districts cannot exert pressure or become completion requirements. Free retry/reoffer and player-driven End Day remain available; after completion retain recap and replay. No global stability claim is made by the introduction. Full scope preserves all six finales and both qualifying End Days.
+
 Proposal, 2026-09-21. Values below are initial balancing inputs. All policy belongs in versioned configs projected into ECS; no UI button computes these rules.
 
 ## Run and district state
@@ -40,7 +44,7 @@ Start on day 1 with **3 action points (AP)**. An accepted tactical deployment co
 
 No real-time regen, paid AP, automatic overnight advancement, or offline district damage. Block End Day during a pending deployment/result/save. If zero AP, offer End Day and practice; do not trap the player in a disabled menu. Recovery from failure remains available tomorrow.
 
-All baseline task forces, necessary counters, and critical mission tools are provided by the scenario. AP represents commitment; it is not cash or tactical population capacity. Trial version of this mode requires **zero Credit costs** for mandatory actions. Optional purchased supplies are outside the initial release gate and cannot unlock victory-only solutions.
+All baseline task forces, necessary counters, and critical mission tools are provided by the scenario. AP represents commitment; it is not cash or tactical population capacity. Both introduction and full theater require **zero account-Credit costs** for mandatory actions. No purchased supplies, AP, readiness, repair or recovery products are part of this mode; all required tools and tactical resources are scenario-provided.
 
 ## Six abstract actions (not tactical mission count)
 

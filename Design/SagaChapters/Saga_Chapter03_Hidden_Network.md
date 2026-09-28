@@ -1,5 +1,17 @@
 # WarlineCapture Campaign Chapter 3: Hidden Network
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.
+
+| Mission | Required planning change |
+|---|---|
+| CH03-M01 Signal Trace | Include scan/reveal and ARIA guidance; verification information must come from ordinary mission play. |
+| CH03-M02 Safehouse Sweep | Supply verification and squad roles; no paid dossier or Drone Scan parts prerequisite. |
+| CH03-M03 False Front | Explain objective changes with included guidance; no premium correct-target hint or paid decision reversal. |
+| CH03-M04 Evidence Chain | Supply required transport/cargo capacity; no purchased insurance, revive or evidence-delivery upgrade. |
+| CH03-M05 Network Break | Include revelation and next-chapter progression on ordinary completion; no fragment grind or paid Breach kit. |
+
 Date: 2026-07-10
 
 Status: Active detailed high-level chapter design. No step-by-step implementation content.
@@ -114,7 +126,7 @@ These references complete the one-per-mission high-level layer. Detailed impleme
 - Late: breach/evidence-extraction support and chapter recognition.
 - Completion: Protocol Fragment 3, Story Archive audit entry, and Chapter 4 access.
 
-No optional evidence, star, purchase, or Operations action may gate the identity of Qassem or ARIA's self-partition reveal.
+Within owned Campaign content, no optional evidence, star, additional purchase or Operations action may gate the identity of Qassem or ARIA's self-partition reveal.
 
 ## Presentation Direction
 

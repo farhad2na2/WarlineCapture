@@ -1,5 +1,9 @@
 # O001 player-ready implementation plan
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Preserve the approved native O001 objectives, controls, camera-only guidance and visible ARIA Play/Stop. Add intro/full scope to launch, checkpoints and settlement; no new tactical graph is required for monetization. The latest report records ARIA wins but pending full human Victory/player/device gates. Complete those before claiming player readiness. A new substantial screen redesign still requires the existing visual-review process.
+
 Date: 2026-09-22; updated 2026-09-24. Status: **Implementation in progress; O001 remains not player-ready.**
 
 **2026-09-24 player review supersedes the prototype UI:** the user rejected the deployed Mission Guide/ADVANCE experience despite the earlier technical playthroughs. The approved replacement and current-candidate evidence are in [the player-experience redesign report](../../AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/README.md). Its visible ARIA Play/Stop control is an explicit user requirement. The checkpoint below describes the earlier implementation; its screenshots and wins do not certify the redesigned UI or unfamiliar-player usability.

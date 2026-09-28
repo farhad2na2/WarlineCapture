@@ -1,5 +1,9 @@
 # Skirmish battles 4–120: implementation handoff
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Before coding any entry, resolve its policy row, proposed product ID, sample status and MP01–MP08 acceptance. All 120 belong to Campaign Edition; S001 alone is the initial free sample. Access checks belong at launch/resume boundaries, outside combat. Preserve current work ordinals, numeric setup matrices and evidence status.
+
 ## Support dependency — 2026-09-28
 
 Every S001–S120 assignment must read [Support rollout and X01–X03](../Support/PLAN.md) and its row in [SKIRMISH_SUPPORT.csv](../Support/SKIRMISH_SUPPORT.csv). Reuse the [ECS implementation](../../AgentReports/SupportSystem/IMPLEMENTATION.md); add versioned scenario grants/readiness and both-faction adapters, not a second executor. Add explicit Support policy/evidence to the existing content manifest/importer during implementation. Current CSVs and setup snapshots remain historical baseline inputs until that versioned migration. Baseline scenarios can ship without Support; adding it requires recertification and cannot borrow previous acceptance.

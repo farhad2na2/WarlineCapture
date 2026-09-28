@@ -2,6 +2,10 @@
 
 Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Existing small prototype evidence, if mentioned, is not acceptance of the expanded version. Use [technical architecture](../TECHNICAL_ARCHITECTURE.md), [objective rules](../OBJECTIVE_IMPLEMENTATION.md), [roster/economy](../ROSTER_AND_ECONOMY_IMPLEMENTATION.md), [map contract](../MAP_IMPLEMENTATION.md) and [work packages](../AGENT_WORK_PACKAGES.md).
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.desert_base_01`; layout `layout.skirmish.db.fc`. Three ground zones in order a/b/c: central crossroads; north ruins; south supply junction; player/enemy designated bases and independent infantry approaches.
@@ -22,6 +26,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Desert Base · Frontline Control · Ground Maneuver · Field Base** — handoff work ordinal **9**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S007`; definition `skirmish.s007`; scenario `scenario.skirmish.s007`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Send dismounted rifles toward two reachable zones and use the APC as movement support only. Two intended approaches: Hold the central and nearer side zone with gunner/rocketeer cover, or concede center and connect the two side zones. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -47,6 +53,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S008`; definition `skirmish.s008`; scenario `scenario.skirmish.s008`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Use starting armor to deny approaches while separate infantry squads capture. Two intended approaches: Build a two-zone ground defense with a reserve, or rotate armor along highway and retake a weak side zone. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.
@@ -70,6 +78,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Desert Base · Frontline Control · Air Mobile · Field Base** — handoff work ordinal **11**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S009`; definition `skirmish.s009`; scenario `scenario.skirmish.s009`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Capture with starting infantry before investing in air; obtain R1 AA if scouting reveals an air transition. Two intended approaches: Use APC rotations between ground points, or unlock transports and reposition infantry across north ruins. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -95,6 +105,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S010`; definition `skirmish.s010`; scenario `scenario.skirmish.s010`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Starting helicopter moves infantry; it never captures while passengers remain aboard. Two intended approaches: Hold two nearby zones with an air reserve, or rapidly reinforce the more exposed third point when ticket pressure warrants it. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** five infantry roles; car; fast/armored APC; radar; R1 AA; transport/attack helicopters; recon drone; fighter/strike jets; transport plane; logistics. Exclude tank, heavy APC and ground siege launcher. Counter contract: R1 ground AA before offensive helicopters; rocketeers handle enemy light armor; affordable air return/refuel is required. Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.
@@ -119,6 +131,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S011`; definition `skirmish.s011`; scenario `scenario.skirmish.s011`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Reserve funds for capture-capable infantry while selecting one vehicle/air development path. Two intended approaches: Use armor to screen two linked zones, or draw defense toward center and move infantry around south sweep. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** all certified ground, infantry, recon, transport, offensive-air, anti-air and siege roles; logistics. Exclude unsupported abilities and noncombatant models advertised as combat roles. Counter contract: early rocketeers and R1 AA; infantry screens tanks/launchers, air counters cannot replace objective infantry. Field begins R1: buy R2 facilities/readiness through normal costs.
@@ -142,6 +156,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Desert Base · Frontline Control · Combined Arms · Established Base** — handoff work ordinal **14**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S012`; definition `skirmish.s012`; scenario `scenario.skirmish.s012`; map `opmap.skirmish.desert_base_01`; objective `FC`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Assign tank and AA to separate approach protection roles; keep enough dismounted infantry for two zones. Two intended approaches: Maintain a stable majority with combined cover, or threaten the enemy base only while a reserve can preserve ticket control. These describe tactical options, not a mandatory click sequence or AI script.
 

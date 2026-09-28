@@ -1,5 +1,9 @@
 # Skirmish implementation work packages
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 to each package exit: product/sample access, zero-account-wallet parity, included ARIA/Support, exact settlement and complete core membership. Do not add per-scenario billing logic. Core content ownership must not change match costs/stats or certify an unfinished entry.
+
 Proposed programming assignments, 2026-09-21. Start at [IMPLEMENTATION_HANDOFF](IMPLEMENTATION_HANDOFF.md). These tickets make the existing E0–E8 milestones executable; they do not claim implementation or authorize unrelated changes. All named new classes are proposed. Read applicable repository instructions before editing source, assets or running Unity.
 
 ## Assignment boundaries and dependency order

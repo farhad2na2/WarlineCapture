@@ -1,5 +1,9 @@
 # WarlineCapture Store Catalog
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Mission_Product_Contract_2026-09-28.md) and [205-entry register](Mission_Product_Policies_2026-09-28.csv). The September 28 content-purchase plan now governs mission authoring for all 205 entries. The older consumable/resource/armory/OperationSupply/season/accelerator offers below are superseded proposals, retained for migration and visual-reference context; they are not active implementation instructions. Use the Campaign Edition (25 + 120) and separate complete Operations theater (60), with the five + one + three free samples and included ARIA. No actual product or price is approved/activated by this document update.
+
 Date: 2026-05-04
 
 This catalog is the design-facing source of truth for starter packs, featured offers, and shop items. It maps directly to future ScriptableObject or JSON data under gameplay configs using `RewardService`, profile persistence, and wallet systems.

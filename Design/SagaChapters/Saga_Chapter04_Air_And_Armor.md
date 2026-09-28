@@ -1,5 +1,17 @@
 # WarlineCapture Campaign Chapter 4: Air And Armor
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.
+
+| Mission | Required planning change |
+|---|---|
+| CH04-M01 Air Corridor | Migrate remaining Money/Credits costs to validated Materials; preserve supplied radar/anti-air counters and normal ARIA journey. |
+| CH04-M02 Steel Push | Migrate Money/Credits to tested Materials; preserve 120 military Fuel and protected 40 civilian barrels; earn Smoke after success. |
+| CH04-M03 Split Front | Implement scenario-funded force split/G2G with optional first Smoke; earn Strike after success; no paid targeting solution. |
+| CH04-M04 Grounded Signal | Provide ordinary specialist transport/cargo/extraction; optional first Strike; earn Paratroopers afterward. |
+| CH04-M05 Armor Break | Combine established systems with optional Paratroopers; include chapter clue; no new paid ability or finale toll. |
+
 Date: 2026-07-10
 
 Status: Active detailed high-level chapter design. No step-by-step implementation content.

@@ -2,6 +2,10 @@
 
 Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Existing small prototype evidence, if mentioned, is not acceptance of the expanded version. Use [technical architecture](../TECHNICAL_ARCHITECTURE.md), [objective rules](../OBJECTIVE_IMPLEMENTATION.md), [roster/economy](../ROSTER_AND_ECONOMY_IMPLEMENTATION.md), [map contract](../MAP_IMPLEMENTATION.md) and [work packages](../AGENT_WORK_PACKAGES.md).
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.airfield_plains`; layout `layout.skirmish.ap.ba`. Player/enemy bases and all three routes: middle logistics highway, northern cover line, southern armored sweep; both supply expansions and service pads.
@@ -22,6 +26,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Airfield Plains · Base Assault · Ground Maneuver · Field Base** — handoff work ordinal **97**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S097`; definition `skirmish.s097`; scenario `scenario.skirmish.s097`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Use initial infantry/car to scout middle logistics highway; recruit anti-armor before a tank commitment. Two intended approaches: Develop tanks for middle logistics highway with infantry cover, or use APC infantry through northern cover line while threatening supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -47,6 +53,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S098`; definition `skirmish.s098`; scenario `scenario.skirmish.s098`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Use the starting tank/APC to contest middle logistics highway, retaining one infantry squad at home. Two intended approaches: Press quickly with the established ground force, or invest in siege and attack via southern armored sweep after scouting. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.
@@ -70,6 +78,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Airfield Plains · Base Assault · Air Mobile · Field Base** — handoff work ordinal **99**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S099`; definition `skirmish.s099`; scenario `scenario.skirmish.s099`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Hold a cheap ground screen and build R2/Helipad only after the affordable counter window. Two intended approaches: Escort an APC ground push on northern cover line, or transition to attack/transport air while defending supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -95,6 +105,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S100`; definition `skirmish.s100`; scenario `scenario.skirmish.s100`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Scout with infantry and the initial transport helicopter; AA protects the staging area. Two intended approaches: Lift infantry behind an observed flank near northern cover line, or establish offensive air with an affordable ground reserve. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** five infantry roles; car; fast/armored APC; radar; R1 AA; transport/attack helicopters; recon drone; fighter/strike jets; transport plane; logistics. Exclude tank, heavy APC and ground siege launcher. Counter contract: R1 ground AA before offensive helicopters; rocketeers handle enemy light armor; affordable air return/refuel is required. Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.
@@ -119,6 +131,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 **Bind:** catalog `S101`; definition `skirmish.s101`; scenario `scenario.skirmish.s101`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
 **Opening and decisions:** Choose between earlier ground armor and the R2 air facility; do not buy every unlock before defending. Two intended approaches: Concentrate a tank/infantry push along middle logistics highway, or pressure southern armored sweep while air/recon supports the other approach. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** all certified ground, infantry, recon, transport, offensive-air, anti-air and siege roles; logistics. Exclude unsupported abilities and noncombatant models advertised as combat roles. Counter contract: early rocketeers and R1 AA; infantry screens tanks/launchers, air counters cannot replace objective infantry. Field begins R1: buy R2 facilities/readiness through normal costs.
@@ -142,6 +156,8 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 **Airfield Plains · Base Assault · Combined Arms · Established Base** — handoff work ordinal **102**. One of the 117 remaining new catalog combinations.
 
 **Bind:** catalog `S102`; definition `skirmish.s102`; scenario `scenario.skirmish.s102`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
+
+**Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
 **Opening and decisions:** Separate the starting tank/AA screen from transportable infantry; keep Fuel delivery protected. Two intended approaches: Make a coordinated ground-plus-lift assault, or raid exposed supply from northern cover line while armor holds middle logistics highway. These describe tactical options, not a mandatory click sequence or AI script.
 

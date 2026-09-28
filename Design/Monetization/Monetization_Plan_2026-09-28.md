@@ -1,11 +1,11 @@
 # WarlineCapture monetization plan and resource audit
 
 Date: 2026-09-28
-Status: Detailed proposal for product review; no billing, economy, mission, or entitlement changes activated.
+Status: Detailed monetization proposal; mission-planning application adopted on 2026-09-28 via the linked contract/register. Prices remain hypotheses; no billing, economy, mission or entitlement runtime changes activated.
 Audit baseline: working tree at `e3dd2bb726428d82f4a7010ce1291990ee851066`, including concurrent uncommitted Support work.
 Requested scope: re-audit menus, match resources and missions; recommend the business model and ARIA policy; specify implementation and validation work.
 
-This plan develops and corrects the [initial recommendation](../AgentReports/2026-09-28_pm_monetization-model-recommendation.md). It does not silently replace the current [strategy](Monetization_Strategy.md), [store catalog](Monetization_Store_Catalog.md), or [economy authority](../Economy_Reward_Design.md). Adoption requires the coordinated document changes in section 12. The approved September 28 Support scope remains intact.
+This plan develops and corrects the [initial recommendation](../AgentReports/2026-09-28_pm_monetization-model-recommendation.md). The owner subsequently requested application to all mission plans. The [mission product contract](Mission_Product_Contract_2026-09-28.md) and [205-entry register](Mission_Product_Policies_2026-09-28.csv) now govern those plans; dated amendments in the strategy/store/economy authorities supersede their conflicting consumable proposals for this scope. Runtime and commercial release work in section 12 remains pending. The approved September 28 Support scope remains intact.
 
 ## 1. Recommended business and player promise
 
@@ -156,7 +156,7 @@ The tradeoff is real: some players will watch most of the trial and some will wa
 
 1. A legitimate ARIA-assisted victory grants the same story progression, first-clear reward and earned stars as the same world outcome under manual control. No hidden reward haircut, extra grind or “pay to remove assisted” product.
 2. Keep a non-punitive assisted-run marker and aggregate active-control duration for QA/analytics. If competitive leaderboards are ever added, define separate comparable categories before launch; ordinary hints do not automatically make a run an autoplay run.
-3. Consent covers the current match only. No automatic next mission, replay loop, purchase, account spending, End Day, or permanent Operations decision. The player chooses the next activity.
+3. Tactical Watch consent covers the current match only; it does not authorize next-mission/replay loops, End Day or permanent Operations decisions. Separately opted-in Operations Run Watch follows its existing explicit strategic scope. Neither consent permits purchases or account spending. Preserve the distinction in both free introduction and owned theater.
 4. Stop cancels pending synthetic input, not previously accepted troop orders. A save/load restores manual control and requires fresh consent.
 5. ARIA uses the same displayed information, costs, cooldowns and outcome rules as the player. No hidden enemy knowledge, extra resources or guaranteed wins.
 6. Retain the approved Support-specific confirmation rules. Watch permission does not silently supersede fresh consent for the exact bounded Support action where that contract requires it.

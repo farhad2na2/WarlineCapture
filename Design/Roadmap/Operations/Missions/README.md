@@ -1,5 +1,9 @@
 # All 60 mission briefs
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). All 60 individually authored entries belong to the complete theater. O001–O003 additionally use the standalone free-intro scope. Each district brief now contains a product/scope and required-adjustment row per mission. Objectives, IDs, deadlines, force packages and existing acceptance fields remain unchanged.
+
 ## Support contract for every district brief
 
 Apply the September 28 [Support roadmap](../../Support/PLAN.md) and matching [O001–O060 policy row](../../Support/OPERATIONS_SUPPORT.csv) to every brief below. Family-based ceilings are optional tools; bind them to mission targets/resources/routes and narrow with a recorded reason where needed. A finale cannot introduce a tool for the first time. Support is not yet runtime-enabled or accepted.

@@ -1,6 +1,10 @@
 # D01 — Old Quarter: ten mission implementation briefs
 
-**O001–O003 are Authored prototypes with Regular EN automated Play Mode capture evidence. Normal player-flow and shipping-input ARIA acceptance remain Pending.** The catalog's existing `AriaWon` values refer to that capture milestone, not the complete ACCEPTANCE contract. [P4R](../O001_PLAYER_READY_IMPLEMENTATION.md) defines the O001 integration work and evidence still required. O004–O010 stay Planned, including ARIA certification. Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
+
+**Historical slice status:** O001–O003 were Authored prototypes with Regular EN model/capture evidence. O001 subsequently gained native shipping-flow ARIA wins and save/resume evidence; its [latest report](../../../AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/README.md) still leaves full human Victory and player/device acceptance pending. O002/O003 prototype captures do not certify those gates. The catalog's existing `AriaWon` values refer to that capture milestone, not the complete ACCEPTANCE contract. [P4R](../O001_PLAYER_READY_IMPLEMENTATION.md) defines the O001 integration work and evidence still required. O004–O010 stay Planned, including ARIA certification. Numeric timings/resources are initial test specifications. They inherit the force/enemy packages, rule semantics, global loss/terminal rules, harm penalties, and checkpoint protocol in [MISSION_IMPLEMENTATION](../MISSION_IMPLEMENTATION.md). Every Victory applies its family metric vector from [STRATEGIC_RULES](../STRATEGIC_RULES.md) plus the listed facts. Partial uses half that vector and no Success milestone; Defeat/Withdrawn/TechnicalFailure use their shared distinct rules.
 
 Planned map: `opmap.operations.old_quarter`. Reuse an existing published map ID instead only if the physical layout is identical; update the catalog and validate before accepting content. No map/mission asset is claimed to exist from these briefs.
 
@@ -19,6 +23,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o001` / `scenario.operations.o001` |
+| Product / scope | Free in standalone intro and included in full theater; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Add scope-aware launch/save/settlement; preserve recon/evidence/extraction and close manual Victory gate. |
 | Family / force / enemy | `RECON` / `FP_LIGHT` / `EP_CELL` |
 | Availability | Start: no mission prerequisite |
 | Pacing / deadline | Target 8–15 min; hard deadline 720 s after player control starts |
@@ -46,6 +52,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o002` / `scenario.operations.o002` |
+| Product / scope | Free in standalone intro and included in full theater; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Add scope-aware shipping integration; supply convoy and protect clinic; keep both authored routes. |
 | Family / force / enemy | `ESCORT` / `FP_SERVICE` / `EP_RAIDERS` |
 | Availability | Start: no mission prerequisite |
 | Pacing / deadline | Target 8–15 min; hard deadline 840 s after player control starts |
@@ -73,6 +81,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o003` / `scenario.operations.o003` |
+| Product / scope | Free in standalone intro and included in full theater; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Add intro completion after all three Victories; supply authored 80 Materials for repair; preserve both pumps and clinic. |
 | Family / force / enemy | `REPAIR` / `FP_SERVICE` / `EP_RAIDERS` |
 | Availability | Any attempt of local slot 1 or 2 |
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
@@ -100,6 +110,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o004` / `scenario.operations.o004` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `RAID` / `FP_LIGHT` / `EP_CELL` |
 | Availability | Any attempt of local slot 1 or 2; Intel confidence >=40 |
 | Pacing / deadline | Target 8–15 min; hard deadline 780 s after player control starts |
@@ -127,6 +139,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o005` / `scenario.operations.o005` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `RESCUE` / `FP_SERVICE` / `EP_RAIDERS` |
 | Availability | Any attempt of local slot 1 or 2 |
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
@@ -154,6 +168,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o006` / `scenario.operations.o006` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `BREACH` / `FP_GROUND` / `EP_RAIDERS` |
 | Availability | Two Victories among local slots 1–5; Intel confidence >=40 |
 | Pacing / deadline | Target 8–15 min; hard deadline 960 s after player control starts |
@@ -181,6 +197,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o007` / `scenario.operations.o007` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `PATROL` / `FP_LIGHT` / `EP_CELL` |
 | Availability | Two Victories among local slots 1–5 |
 | Pacing / deadline | Target 8–15 min; hard deadline 720 s after player control starts |
@@ -208,6 +226,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o008` / `scenario.operations.o008` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `INTERDICT` / `FP_GROUND` / `EP_RAIDERS` |
 | Availability | Two Victories among local slots 1–5 |
 | Pacing / deadline | Target 8–15 min; hard deadline 780 s after player control starts |
@@ -235,6 +255,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o009` / `scenario.operations.o009` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. |
 | Family / force / enemy | `DEFENSE` / `FP_GROUND` / `EP_RAIDERS` |
 | Availability | Two Victories among local slots 1–5 |
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
@@ -262,6 +284,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Contract | Implementation value |
 |---|---|
 | Identity | `operation.o010` / `scenario.operations.o010` |
+| Product / scope | Included in complete Sahrin Theater; no Campaign purchase dependency; ARIA included. [Contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Product-plan adjustment | Full-theater only; supply the authored task force/counters and preserve district prerequisites, outcomes and local-resource recovery. Keep finale included and compose only district-taught tools; no district purchase. |
 | Family / force / enemy | `FINALE` / `FP_COMBINED` / `EP_FINALE` |
 | Availability | Victory O003/O006/O009 |
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |

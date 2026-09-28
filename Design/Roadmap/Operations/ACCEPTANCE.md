@@ -1,5 +1,9 @@
 # Operations acceptance and required ARIA wins
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 plus free-intro and theater-only owner matrices. A free profile can finish all three intro Victories, see its local recap, decline purchase and replay without inaccessible pressure. Check Partial, loss, retry, zero AP, checkpoint, completion and upgrade; full ownership never duplicates O001–O003 first clears or imports intro state as full city state. Theater-only owners can finish all six districts without Campaign Edition. Retain separate tactical Watch and explicitly consented Operations Run Watch evidence.
+
 **User requirement, 2026-09-21: ARIA must be able to play and win.** This is a mandatory product acceptance criterion for **every Operations mission**, plus the complete persistent city run. The original planning task ran no sessions. Subsequent O001–O003 host and automated Play Mode captures verify the isolated model/presentation; their `AriaWon` badges do not fulfill this document's shipping visible-input gates. Normal manual play, shipping-input ARIA, durable profile and device acceptance remain pending. The next implementation is [P4R: O001 player-ready integration](O001_PLAYER_READY_IMPLEMENTATION.md).
 
 ## Non-negotiable mission gate

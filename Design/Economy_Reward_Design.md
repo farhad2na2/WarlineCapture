@@ -1,5 +1,9 @@
 # WarlineCapture Economy And Reward Design
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). For these mission plans, Credits are the sole active earned account-spend currency, used for optional cosmetics; XP/stars record progress. Required tools come from scenario grants or fixed progression. Retire Command/Rush as active planned wallets/products while preserving legacy saved records and verified ownership through explicit migration. Tactical resources stay local. Older paid-bundle, account-power and accelerator lifecycle proposals below are retained as migration/reference material and must not be implemented for these collections. Current reward amounts remain during technical migration pending an earn/spend study.
+
 Date: 2026-05-05
 
 ## Purpose
@@ -14,12 +18,12 @@ Unit, building, support ability, gear, and upgrade-part reward targets must reso
 
 ## Canonical Persistent Resources
 
-The persistent account economy has exactly two currencies. Neither currency is produced by battlefield Oil infrastructure, and neither has a second match-scoped balance with the same player-facing name.
+For the September 28 mission scope, Credits are the sole active spendable account currency and are earned, never sold. Command remains a preserved legacy field pending explicit migration. Neither value is produced by battlefield Oil infrastructure or read by active-match affordability. Historical lifecycle proposals later in this document are subordinate to the amendment above.
 
 | Resource | Gameplay Role | Primary Sources | Primary Sinks | UI Surfaces |
 |---|---|---|---|---|
-| `Credits` | Regular account progression currency earned primarily by playing. | Mission rewards, Operation end-of-day income, profile milestones, events, and capped store bundles. | Permanent upgrades, unlocks, normal account catalog items, and authored Operation actions. | Main Menu resource strip, Mission Result, Commander Profile, Operation Dashboard, Store. |
-| `Command` | Rare account currency for optional premium and convenience content. `CommandAuthority` is the legacy serialization/config identifier until migration is complete. | Major profile milestones, limited events, season rewards, and optional purchases. | Cosmetics, fixed-content bundles, Rush Tickets, and other non-victory convenience items. | Main Menu resource strip, Commander Profile, Store. |
+| `Credits` | Earned account collection currency. | Mission rewards, authored Operations income and earned milestones; no store bundles. | Optional account cosmetics; no required power, entry, retry or Operations-action costs. | Actual profile balance in menus and results; no purchase plus-button. |
+| `Command` / `CommandAuthority` | Preserved legacy serialization/history pending migration; inactive in the new plan. | No new grants or purchases for this scope. | No new spend or conversion into mission resources. | Legacy migration/history if needed; remove the active header/energy implication after migration. |
 
 `CommanderXP`, Campaign stars, Rush Tickets, unlocks, inventory items, and Operation metrics are progression or inventory values, not additional persistent currencies and not permanent main-menu header counters.
 

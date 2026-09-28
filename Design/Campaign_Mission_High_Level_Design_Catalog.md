@@ -1,5 +1,9 @@
 # WarlineCapture Campaign Mission High-Level Design Catalog
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. Campaign Edition includes all 25 missions and all 120 core Skirmish scenarios; the complete 60-mission Operations theater is separate. The per-mission rows below specify targeted changes. Preserve story/objectives and approved Support progression; tactical currencies and player readiness remain separate from product ownership.
+
 ## Support schedule amendment — approved 2026-09-28
 
 For Support specifically, the [approved product plan](AgentReports/SupportSystem/support_design_and_build_plan.md), [25 mission policies](Roadmap/Support/CAMPAIGN_SUPPORT.csv) and [cross-mode/future Campaign roadmap](Roadmap/Support/PLAN.md) supersede older Support exposure/reward statements below. Smoke unlocks after CH04-M02, Strike after CH04-M03, Paratroopers after CH04-M04 and Supply after CH05-M02; first uses are the following missions. All remain optional. Earlier missions keep Support hidden, and finales introduce no new ability. T01 synchronizes remaining canonical chapter/balance definitions; runtime readiness remains unproven. Future chapters must author explicit policies using certified mechanics rather than assuming all profile unlocks apply.
@@ -28,7 +32,7 @@ Each mission must:
 - guarantee its critical Protocol Fragment or story clue on completion;
 - use confirmed hostile identity and conduct, never civilian profiling;
 - provide a readiness fallback for any feature that is not campaign-ready;
-- lead into its next sequence without requiring optional stars, grinding, ads, or purchases.
+- lead into its next sequence within owned content without optional stars, grinding, ads or additional purchases; Chapter 1 is free and Chapter 2 requires Campaign Edition after ordinary M05 completion.
 
 ## Mission Contract Vocabulary
 
@@ -64,6 +68,8 @@ Chapter 1 is the first-player command arc. Its detailed objective, reward, balan
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch01.m01.first_contact` |
+| Product / access | Free Chapter 1; included in Campaign Edition; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Keep free opening/debrief and ARIA; bind real account rewards; no tactical redesign. |
 | Arc role | Introduce: immediate command under uncertainty. |
 | Content classification | Patrol Intercept; Tutorial Cell; Ash Line; Tutorial Band. |
 | Operation fantasy | Intercept a confirmed armed Ash Line patrol before it reaches people stranded by the Old Market bombing and blackout. |
@@ -81,6 +87,8 @@ Chapter 1 is the first-player command arc. Its detailed objective, reward, balan
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch01.m02.establish_base` |
+| Product / access | Free Chapter 1; included in Campaign Edition; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Retain Materials-only 120/90/20 budget and free replay; reject legacy Money/account-wallet costs. |
 | Arc role | Introduce: turn a surviving squad into a functioning response post. |
 | Content classification | Infrastructure Repair with supporting Base Defense pressure; Tutorial Cell; Ash Line; Tutorial Band. |
 | Operation fantasy | Reopen an abandoned JRC forward post before a second Ash Line cell reaches the district. |
@@ -98,6 +106,8 @@ Chapter 1 is the first-player command arc. Its detailed objective, reward, balan
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch01.m03.radar_warning` |
+| Product / access | Free Chapter 1; included in Campaign Edition; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Migrate tactical Money/Credits to validated Materials costs; retest preparation, shortage recovery, pacing and ARIA. |
 | Arc role | Reinforce: prepare from imperfect warning instead of reacting at contact range. |
 | Content classification | Base Defense; Armored Column; Ash Line; Standard Band. |
 | Operation fantasy | Defend the forward post from a stolen armored convoy approaching through a deliberately disabled warning sector. |
@@ -115,6 +125,8 @@ Chapter 1 is the first-player command arc. Its detailed objective, reward, balan
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch01.m04.airlift` |
+| Product / access | Free Chapter 1; included in Campaign Edition; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Keep supplied transport/extraction; audit reward labels/consumers; ordinary transport is not a paid Support charge. |
 | Arc role | Twist: victory requires moving and protecting people, not only defeating enemies. |
 | Content classification | Airlift Extraction; Hidden Cell / Air Assault; Ash Line; Standard Band. |
 | Operation fantasy | Reach a cut-off medical and engineering team, secure a landing zone, and extract them before the route collapses. |
@@ -132,6 +144,8 @@ Chapter 1 is the first-player command arc. Its detailed objective, reward, balan
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch01.m05.breach_assault` |
+| Product / access | Free Chapter 1; included in Campaign Edition; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Settle full story/rewards before the package offer; separate CH02 ownership from progression; resolve APC-parts target/consumer while preserving earned records. |
 | Arc role | Combine: use Chapter 1 command, production, warning, and transport knowledge in an offensive operation. |
 | Content classification | Breach Assault; Defensive Garrison; Ash Line; Standard Band. |
 | Operation fantasy | Assault the fortified Ash Line communications node coordinating attacks across the district. |
@@ -153,6 +167,8 @@ Chapter 2 makes logistics human. Roads, Oil, Fuel, hauling, trade, power, and di
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch02.m01.gridlock` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Require owned Campaign plus ordinary M05 clear only; supply engineers/tools without parts grind or wallet threshold. |
 | Arc role | Introduce: infrastructure is a battlefield and a life-support system. |
 | Content classification | Infrastructure Repair; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Reopen the blocked hospital and relief corridor while protecting road crews from coordinated sabotage. |
@@ -170,6 +186,8 @@ Chapter 2 makes logistics human. Roads, Oil, Fuel, hauling, trade, power, and di
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch02.m02.supply_line` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Preserve working authored Oil/refinery/Fuel chain and civilian reserve; verify owned access, zero-wallet completion and settlement. |
 | Arc role | Introduce: build and protect an Oil-to-Fuel service chain. |
 | Content classification | Infrastructure Repair; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Restore refinery output and keep Fuel moving to emergency vehicles, generators, and JRC transports. |
@@ -187,6 +205,8 @@ Chapter 2 makes logistics human. Roads, Oil, Fuel, hauling, trade, power, and di
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch02.m03.market_lifeline` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Keep authored delivery/manifest fallback; any later tactical exchange uses only local inputs and simulation queues, never Rush Tickets. |
 | Arc role | Twist: a supply shortage is also an information and corruption problem. |
 | Content classification | Convoy Defense; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Restore essential goods to Old Market while exposing manifests that conceal Ash Line transfers. |
@@ -204,6 +224,8 @@ Chapter 2 makes logistics human. Roads, Oil, Fuel, hauling, trade, power, and di
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch02.m04.power_relay` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Supply required repair/evacuation tools locally; preserve clue on success; no paid repairs or consequence reversal. |
 | Arc role | Combine: route, Fuel, defense, and displaced people compete for the same corridor. |
 | Content classification | Infrastructure Repair; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Reconnect a district substation while moving displaced families away from the fighting. |
@@ -221,6 +243,8 @@ Chapter 2 makes logistics human. Roads, Oil, Fuel, hauling, trade, power, and di
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch02.m05.route_reopened` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Validate one-clear progression and scenario-funded logistics alternatives; no purchased convoy or upgrade prerequisite. |
 | Arc role | Master: operate a connected logistics network while assaulting its hostile capture point. |
 | Content classification | Breach Assault; Defensive Garrison; Ash Line; Mastery Band. |
 | Operation fantasy | Keep relief and Fuel moving while breaching the Ash Line logistics hub that controls the district's stolen routes. |
@@ -242,6 +266,8 @@ Chapter 3 makes information a rule, not decoration. The player acts against conf
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch03.m01.signal_trace` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Include scan/reveal and ARIA guidance; verification information must come from ordinary mission play. |
 | Arc role | Introduce: locate a moving hostile cell without treating every transmitter as a target. |
 | Content classification | Patrol Intercept; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Track a Relay-linked signal through a populated district and intercept the confirmed Ash Line carrier. |
@@ -259,6 +285,8 @@ Chapter 3 makes information a rule, not decoration. The player acts against conf
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch03.m02.safehouse_sweep` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Supply verification and squad roles; no paid dossier or Drone Scan parts prerequisite. |
 | Arc role | Reinforce: conduct a verified raid where evidence and neighboring homes matter. |
 | Content classification | District Raid; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Isolate and clear a confirmed weapons node embedded beside occupied residential buildings. |
@@ -276,6 +304,8 @@ Chapter 3 makes information a rule, not decoration. The player acts against conf
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch03.m03.false_front` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Explain objective changes with included guidance; no premium correct-target hint or paid decision reversal. |
 | Arc role | Twist: a plausible report is planted to expose an evacuation route. |
 | Content classification | Civilian Evacuation; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Protect civilians from an ambush triggered by a false authority-channel report while identifying the real attack. |
@@ -293,6 +323,8 @@ Chapter 3 makes information a rule, not decoration. The player acts against conf
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch03.m04.evidence_chain` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Supply required transport/cargo capacity; no purchased insurance, revive or evidence-delivery upgrade. |
 | Arc role | Combine: move a witness and archive through an adaptive ambush. |
 | Content classification | Airlift Extraction; Hidden Cell; Ash Line; Standard Band. |
 | Operation fantasy | Extract the archive and its custodian from a compromised district without breaking custody or sacrificing the escort. |
@@ -310,6 +342,8 @@ Chapter 3 makes information a rule, not decoration. The player acts against conf
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch03.m05.network_break` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Include revelation and next-chapter progression on ordinary completion; no fragment grind or paid Breach kit. |
 | Arc role | Master: identify and break a hidden command network without destroying its proof. |
 | Content classification | Breach Assault; Defensive Garrison; Ash Line; Mastery Band. |
 | Operation fantasy | Penetrate the Ash Line audit bunker, disable verified nodes in the correct order, and extract the sealed archive. |
@@ -331,6 +365,8 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m01.air_corridor` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Migrate remaining Money/Credits costs to validated Materials; preserve supplied radar/anti-air counters and normal ARIA journey. |
 | Arc role | Introduce: defend airspace through preparation and coverage. |
 | Content classification | Base Defense; Air Assault; Vanguard Brigade; Standard Band. |
 | Operation fantasy | Keep the relief air corridor open against a coordinated Vanguard air attack. |
@@ -348,6 +384,8 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m02.steel_push` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Migrate Money/Credits to tested Materials; preserve 120 military Fuel and protected 40 civilian barrels; earn Smoke after success. |
 | Arc role | Reinforce: stop armor by treating Fuel, routes, and force composition as one problem. |
 | Content classification | Base Defense; Armored Column; Vanguard Brigade; Standard Band. |
 | Operation fantasy | Break a Vanguard armored column before it captures a Fuel reserve and dormant Relay node. |
@@ -365,6 +403,8 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m03.split_front` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Implement scenario-funded force split/G2G with optional first Smoke; earn Strike after success; no paid targeting solution. |
 | Arc role | Twist: long-range power is useful only when target confirmation and minimum range are respected. |
 | Content classification | Base Defense; Mixed Force; Vanguard Brigade with Ash Line diversion; Mastery Band. |
 | Operation fantasy | Neutralize a verified Vanguard battery while its diversion attacks the forward base. |
@@ -382,6 +422,8 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m04.grounded_signal` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Provide ordinary specialist transport/cargo/extraction; optional first Strike; earn Paratroopers afterward. |
 | Arc role | Combine: choose a safe or rapid insertion method from known operational conditions. |
 | Content classification | Airlift Extraction; Air Assault; Vanguard Brigade; Mastery Band. |
 | Operation fantasy | Insert specialists behind Vanguard lines, disable an air-support relay, recover its hardware, and extract. |
@@ -399,6 +441,8 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m05.armor_break` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Combine established systems with optional Paratroopers; include chapter clue; no new paid ability or finale toll. |
 | Arc role | Master: coordinate air, armor, logistics, radar, and long-range fire against a prepared military group. |
 | Content classification | Breach Assault; Mixed Force; Vanguard Brigade; Mastery Band. |
 | Operation fantasy | Destroy the Vanguard command group before it links heavy weapons to Sahrin's dormant Relay nodes. |
@@ -420,6 +464,8 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m01.citywide_alert` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Supply required multi-front forces and information; include ARIA; no purchased command slot or threat warnings. |
 | Arc role | Combine: command two visible fronts without surrendering authority to automation. |
 | Content classification | Base Defense; Mixed Force; Ash Line and Vanguard Brigade; upper Standard Band. |
 | Operation fantasy | Hold two critical districts against synchronized Ash Line sabotage and Vanguard pressure. |
@@ -437,6 +483,8 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m02.trust_under_fire` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Keep civilian/route consequences in gameplay; earn Supply afterward; no paid trust or evacuation. |
 | Arc role | Twist: Qassem attacks legitimacy and evacuation behavior while the military threat remains real. |
 | Content classification | Civilian Evacuation; Mixed Force; Ash Line and Vanguard Brigade; upper Standard Band. |
 | Operation fantasy | Keep evacuation and shelter routes open while exposing a broadcast that falsely claims JRC abandoned the city. |
@@ -454,6 +502,8 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m03.network_collapse` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Optional first Supply under approved 40-Materials provisional crate policy; required objectives work without it; no purchased replacement crate. |
 | Arc role | Combine: collapse verified command nodes while preserving the complete evidence chain. |
 | Content classification | District Raid; Mixed Force; Ash Line and Vanguard Brigade; Mastery Band. |
 | Operation fantasy | Strike Qassem's confirmed command network, neutralize its long-range weapons, and publish a defensible audit. |
@@ -471,6 +521,8 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m04.last_corridor` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Preserve finite transport/Fuel/logistics; only certified required mechanics; no paid deadline extension or priority queue. |
 | Arc role | Master: sustain a city-center route with every reliable mobility and logistics tool. |
 | Content classification | Convoy Defense; Mixed Force; Ash Line and Vanguard Brigade; Mastery Band. |
 | Operation fantasy | Move Fuel, medical supplies, engineers, reinforcements, and the physical authority keys through a collapsing network. |
@@ -488,6 +540,8 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m05.command_node` |
+| Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
+| Monetization-plan adjustment | Include canonical resolution and all earned clues on ordinary completion; no paid ending, additional chapter charge or new required ability. |
 | Arc role | Master: resolve the campaign through prioritization, combined arms, evidence, and bounded authority. |
 | Content classification | Breach Assault; Mixed Force; Ash Line and Vanguard Brigade; Mastery Band. |
 | Operation fantasy | Assault the Civic Relay command complex, defeat Qassem's mixed force, and protect the city systems wired into his defenses. |

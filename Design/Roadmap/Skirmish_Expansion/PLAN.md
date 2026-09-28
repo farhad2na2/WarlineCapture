@@ -1,5 +1,9 @@
 # Skirmish expansion: combined arms and large battles
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). All S001–S120 stay in Campaign Edition alongside the 25-mission story; S001 is the unlimited free sample. Later paid collections add to these 120. Preserve the five maps, objectives, armies, starts and release gates. Scenario-owned Materials/Oil/Fuel, readiness and research remain gameplay; no paid roster, capacity, resources, ARIA or time skips. This is a planning change, not a publication-status change.
+
 ## Support amendment — 2026-09-28
 
 Implement the [shared Support rollout](../Support/PLAN.md) and [all 120 explicit policies](../Support/SKIRMISH_SUPPORT.csv) alongside the existing scenario work. Ground Maneuver proposes Smoke/Supply; Air Mobile and Combined Arms propose all four. Grants are scenario-owned for both factions, with R1/R2/R3 gates and no Campaign grind, recharge or difficulty bonus. Charges do not scale with army size. Existing BT designated survivors and CE objective trucks cannot be replaced by Support. X01–X03 add adapters, pilots and per-entry recertification; keep all policies disabled until their gates pass.

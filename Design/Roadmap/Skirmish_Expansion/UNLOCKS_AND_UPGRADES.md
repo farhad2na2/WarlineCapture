@@ -1,5 +1,9 @@
 # Unit unlocks and upgrades
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Keep in-match Materials-funded readiness/category upgrades and their reset rules. No permanent account level, Credit spend, purchased unit or Campaign grind gates an included Skirmish roster. Deferred Campaign/Operations account-power proposals below do not authorize changes to the certified baseline; required tools are scenario-provided or fixed earned milestones.
+
 Recorded: 2026-09-18. Status: accepted design direction; implementation remains pending. Updated 2026-09-21: [MATCH_SETUP.md](MATCH_SETUP.md) supplies initial costs and packages; [ROSTER_AND_ECONOMY_IMPLEMENTATION](ROSTER_AND_ECONOMY_IMPLEMENTATION.md) resolves actual role sources, Ground Staging and other producers; [TECHNICAL_ARCHITECTURE](TECHNICAL_ARCHITECTURE.md) specifies `SkirmishResearchSystem`, receipts, prerequisites and persistence. These are implementation/tuning specifications, not measured balance. SK-02/03 in [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md) are ready for a programming assignment; this documentation update does not start that implementation.
 
 This document defines the unlock and upgrade direction for the [Skirmish expansion](PLAN.md). It separates match progression from future permanent Campaign/Operations progression.

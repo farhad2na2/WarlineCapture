@@ -1,5 +1,9 @@
 # WarlineCapture Level And Mission Content Plan
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). The mission template below must carry explicit product/free scope, local starting budgets, required tool/counter source, failure recovery, earned reward settlement and ARIA/Support consent. Apply MP01–MP08 to all 25 Campaign, 120 Skirmish and 60 Operations entries; keep their existing story/objective/readiness contracts.
+
 Date: 2026-05-21
 
 2026-07-10 narrative amendment: the 25-mission story map is owned by `Campaign_Narrative_Bible.md`; the complete one-per-mission high-level contracts are owned by `Campaign_Mission_High_Level_Design_Catalog.md`; and the exact first-Campaign story sequence inventory is owned by `Campaign_Narrative_Sequence_And_Comic_Catalog.md`. This document continues to own the shared mission authoring contract.
@@ -87,6 +91,10 @@ Every authored mission must use this structure.
 | Field | Requirement |
 |---|---|
 | `MissionId` | Stable id such as `saga.ch01.m01.first_contact`. |
+| `ProductMembership` / `FreeAccessScope` | Exact entry in the 205-row product-policy register; distinguish ownership, earned progression and readiness. |
+| `TacticalBudget` / `RequiredTools` | Scenario-local starting resources, required costs and source of every required tool/counter; no account-wallet dependency. |
+| `RecoveryAndSettlement` | Failure/retry/shortage path, first-clear/replay deduplication and scope-aware save behavior. |
+| `AriaAndSupportPolicy` | Included ARIA, existing consent scopes, explicit Support policy and MP01–MP08 evidence. |
 | `Title` | Player-facing mission title. |
 | `Mode` | Campaign, Operations, or Skirmish probe. |
 | `ChapterOrDay` | Campaign chapter/mission index or Operations day/event source. |
@@ -163,7 +171,7 @@ A mission is not design-ready until:
 - It identifies the named story faction and explains how hostile identity is confirmed.
 - It gives civilians agency/context and never uses civilian appearance as a hostility rule.
 - Every required mechanic is classified Ready or has an explicit prerequisite; scaffolded features are not hidden dependencies.
-- Story-critical information is available without optional stars, Operations grinding, or purchases.
+- Story-critical information is included within accessible content without optional stars, Operations grinding or additional purchases; Chapter 1 is free and Chapters 2–5 belong to Campaign Edition.
 - Required objectives, star goals, rewards, and consequences are authored.
 - Reward preview and reward grant use the same `RewardConfig`.
 - UI surfaces and element contracts are identified.

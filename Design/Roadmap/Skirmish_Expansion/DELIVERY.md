@@ -1,5 +1,9 @@
 # Delivery packages
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Development slices remain readiness milestones. The sold core collection contains all S001–S120, including free S001; no intermediate batch is a separately paid part of that promise. Close every advertised scenario gate before selling the complete package. Preserve unrelated Campaign/Operations production order.
+
 Updated 2026-09-21: expansion packages remain **planned**, not implemented or acceptance-tested. The three source prototype mappings are not expanded-content acceptance. [AGENT_WORK_PACKAGES](AGENT_WORK_PACKAGES.md) decomposes E0–E8 into fourteen concrete programming tickets with classes, dependencies, evidence and a copy-ready assignment. Use the [117 remaining work list](WORK_QUEUE_004_120.csv) and [twenty packets covering all 120 entries](Scenarios/README.md); no further mission-design choices are required from the owner. Follow [PLAN.md](PLAN.md) and close each package against [ACCEPTANCE.md](ACCEPTANCE.md).
 
 Maintain one issue ledger: `ID | reproduction/seed | expected | actual | severity | owner | narrow fix | impacted modes | evidence | status`. A screenshot, successful method call, or green unit test cannot alone close a player interaction bug.

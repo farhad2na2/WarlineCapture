@@ -1,5 +1,9 @@
 # WarlineCapture Campaign Narrative Bible
 
+## Mission product amendment — 2026-09-28
+
+The [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) applies to all 25 Campaign missions. Chapter 1 is free; Campaign Edition includes Chapters 2–5 and the complete canonical resolution, alongside all 120 core Skirmish scenarios. Story facts, sequence IDs and consequence variants are preserved. Within accessible content, no additional purchase, optional mastery or Operations grind gates a revelation.
+
 Date: 2026-07-10
 
 Status: Active high-level narrative authority
@@ -284,7 +288,7 @@ Three earned values alter the epilogue emphasis without creating incompatible pl
 | Evidence | Confirmed targets, recovered archives, protected witnesses, and Intel mastery. | Qassem's network is publicly dismantled and future cells lose political cover. |
 | Infrastructure | Roads, fuel, power, shelters, markets, and logistics preserved or rebuilt. | Sahrin recovers faster and JRC transitions out of emergency rule sooner. |
 
-Low values create sober recovery costs, not a hidden bad ending. The player always receives the complete revelation. Story-critical content is never gated by stars, purchases, ads, or Operations mode.
+Low values create sober recovery costs, not a hidden bad ending. Campaign Edition includes the complete revelation through ordinary completion. Within owned content, story-critical information is never gated by optional stars, additional purchases, ads or Operations mode.
 
 ## Future Campaign Lanes
 
@@ -325,7 +329,7 @@ A high-level mission is narratively ready only if the answer to each question is
 6. What new information advances the chapter question?
 7. Which current gameplay feature expresses the story beat?
 8. What city consequence appears in the result?
-9. Can a player understand the main story without optional mastery or purchases?
+9. Can a player understand the complete purchased story without optional mastery or additional purchases, and experience the free chapter without paying?
 10. Does the mission avoid direct reference to a real current conflict?
 
 ## Related Authorities

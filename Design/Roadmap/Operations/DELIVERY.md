@@ -1,5 +1,9 @@
 # Coding packages and agent handoff
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add a scope/intro integration package after shipping O001 integration and before publishing the free three-mission introduction. Finish O002/O003 through normal input, then test intro completion, free recovery/replay, upgrade-to-full save separation and first-clear deduplication. B12/B30 are development batches; B60 plus full-run acceptance is the paid theater gate. Preserve P0–P7 technical dependencies. Latest O001 evidence is in the September 24 player-experience report; older P4R labels below are historical milestones, not a claim that later work never occurred.
+
 ## Support work packages — 2026-09-28
 
 Add [X01, X04 and X05](../Support/PLAN.md) to shared tactical integration and mission production. Each O001–O060 authoring packet consumes its [Support policy row](../Support/OPERATIONS_SUPPORT.csv), then binds protected target eligibility, real Fuel/Materials, canonical rifle manifest/cap, route anchors and attempt/save cleanup. No Command/readiness-to-Fuel conversion or direct district recovery from a crate. Keep implementation and acceptance pending until real player/ARIA mission → result → dashboard and run/checkpoint tests pass.

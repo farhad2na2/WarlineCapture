@@ -1,5 +1,17 @@
 # WarlineCapture Campaign Chapter 2: Broken Grid
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.
+
+| Mission | Required planning change |
+|---|---|
+| CH02-M01 Gridlock | Require owned Campaign plus ordinary M05 clear only; supply engineers/tools without parts grind or wallet threshold. |
+| CH02-M02 Supply Line | Preserve working authored Oil/refinery/Fuel chain and civilian reserve; verify owned access, zero-wallet completion and settlement. |
+| CH02-M03 Market Lifeline | Keep authored delivery/manifest fallback; any later tactical exchange uses only local inputs and simulation queues, never Rush Tickets. |
+| CH02-M04 Power Relay | Supply required repair/evacuation tools locally; preserve clue on success; no paid repairs or consequence reversal. |
+| CH02-M05 Route Reopened | Validate one-clear progression and scenario-funded logistics alternatives; no purchased convoy or upgrade prerequisite. |
+
 Date: 2026-07-10
 
 Status: Active detailed high-level chapter design. No step-by-step implementation content.

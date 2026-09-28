@@ -1,5 +1,9 @@
 # Operations implementation architecture
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add versioned ScopeId/ScopeVersion to run state, immutable launch snapshots, checkpoint, result and commit validation. Compile permitted mission/district/site/incident sets from scope. Access is checked before AP reservation; unavailable content cannot consume AP. Intro/full mismatches fail recoverably. O001–O003 account first clears deduplicate by canonical mission ID across scopes; upgrade archives intro and creates a fresh full run without overwriting an existing run. These are planned additions, not claims of implemented API.
+
 All types below are **proposed**, except existing seams identified in [BASELINE](BASELINE.md). Build shared systems once; missions are validated assets, not 60 controllers. Follow the repository's ECS naming, dependency, allocation, and wrapper rules.
 
 ## Ownership and assembly placement
@@ -28,13 +32,13 @@ Suggested fields, not a claim of already compilable API:
 
 ```csharp
 OperationsLaunchPayload {
-  SchemaVersion; RunId; DistrictId; OfferId; MissionId; ScenarioId; OperationMapId;
+  SchemaVersion; ScopeId; ScopeVersion; RunId; DistrictId; OfferId; MissionId; ScenarioId; OperationMapId;
   RunRevision; DefinitionVersion; ContentHash; DifficultyId; Seed;
   TransactionId; SessionId; AttemptOrdinal; LaunchSnapshotHash; IsPractice;
 }
 OperationsOutcomeKind { None, Victory, Partial, Defeat, Withdrawn, TechnicalFailure }
 OperationsMissionResult {
-  SchemaVersion; RunId; OfferId; MissionId; SessionId; AttemptOrdinal;
+  SchemaVersion; ScopeId; ScopeVersion; RunId; OfferId; MissionId; SessionId; AttemptOrdinal;
   DefinitionVersion; Outcome; TerminalReason; ElapsedTicks;
   MandatoryObjectiveFacts; OptionalObjectiveFacts; CivilianDeaths;
   ProtectedSiteFacts; DeliveredCargoFacts; ExtractedEvidenceIds;

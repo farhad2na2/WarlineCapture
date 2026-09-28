@@ -1,5 +1,17 @@
 # WarlineCapture Campaign Chapter 5: Citywide Command
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.
+
+| Mission | Required planning change |
+|---|---|
+| CH05-M01 Citywide Alert | Supply required multi-front forces and information; include ARIA; no purchased command slot or threat warnings. |
+| CH05-M02 Trust Under Fire | Keep civilian/route consequences in gameplay; earn Supply afterward; no paid trust or evacuation. |
+| CH05-M03 Network Collapse | Optional first Supply under approved 40-Materials provisional crate policy; required objectives work without it; no purchased replacement crate. |
+| CH05-M04 Last Corridor | Preserve finite transport/Fuel/logistics; only certified required mechanics; no paid deadline extension or priority queue. |
+| CH05-M05 Command Node | Include canonical resolution and all earned clues on ordinary completion; no paid ending, additional chapter charge or new required ability. |
+
 Date: 2026-07-10
 
 Status: Active detailed high-level chapter and ending design. No step-by-step implementation content.
@@ -117,7 +129,7 @@ The full ending is guaranteed by Campaign completion:
 - The Civic Relay is restored only with bounded, transparent, shared authority.
 - Sahrin begins visible recovery.
 
-No star total, purchase, ad, Operations grind, or optional evidence is required to see these facts.
+Within Campaign Edition, no star total, additional purchase, ad, Operations grind or optional evidence is required to see these facts.
 
 ## Epilogue Variants
 

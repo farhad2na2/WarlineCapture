@@ -1,5 +1,9 @@
 # Operations: mode and mission production plan
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Preserve O001–O060 as one complete, independently purchased Sahrin Theater. O001–O003 additionally form a standalone free introduction with its own conclusion and replay, not a restricted six-district run. Implement scope-filtered offers/day pressure/checkpoints and account-wide first-clear deduplication. Keep full-city victory, all six finales, authored tactical graphs and existing Support rollout. No paid AP, supplies, recovery or ARIA. Production 3/12/30/60 gates remain internal; this edit does not certify any entry.
+
 ## Support amendment — 2026-09-28
 
 The [shared Support rollout](../Support/PLAN.md) and [60 mission policy rows](../Support/OPERATIONS_SUPPORT.csv) add optional Smoke, Strike, Paratroopers and Materials Supply according to each mission family. Mission task-force grants do not depend on Campaign unlocks or account purchases. Bind actual tactical resources, protect civilians/objective actors and keep city consequences in existing settlement. Finales may only combine tools already introduced in that district. X01/X04/X05 extend the existing player-ready and 3/12/30/60 gates; neither CSV coverage nor past model captures certify Support.

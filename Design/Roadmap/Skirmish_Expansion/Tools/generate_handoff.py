@@ -4,6 +4,7 @@
 Source identity: existing SCENARIO_CATALOG.csv. Numeric inputs below mirror
 MATCH_SETUP.md and the explicit September 21 implementation decisions.
 Run with --write to update derived docs, --check to verify committed artifacts.
+Use --packets-only for scenario prose updates without refreshing source inventory.
 """
 from pathlib import Path
 import argparse
@@ -182,10 +183,16 @@ def packet_roles(m,obj):
     if obj=='BT': return f'Alternative corridors a/b: {m["corridors"]}; muster, {m["exit"]}, two defender tower slots, twelve individual designation bindings.'
     return f'Three truck bays at {m["origin"]}; destination {m["destination"]}; routes a/b: {m["convoy_a"]} / {m["convoy_b"]}; two defender tower slots, holding pockets, repair service pads.'
 
-def build():
+def build(include_roster_audit=True):
     rows=list(csv.DictReader((ROOT/'SCENARIO_CATALOG.csv').open(encoding='utf-8')))
     assert len(rows)==120 and [r['scenario_id'] for r in rows]==[f'S{i:03}' for i in range(1,121)]
     assert len({(r['map_id'],r['objective_id'],r['army_profile'],r['start_profile']) for r in rows})==120
+    policy_path=REPO/'Design/Monetization/Mission_Product_Policies_2026-09-28.csv'
+    with policy_path.open(encoding='utf-8') as policy_file:
+        policies={r['code']:r for r in csv.DictReader(policy_file) if r['mode']=='Skirmish'}
+    assert set(policies)=={r['scenario_id'] for r in rows}
+    assert all(p['product_id']=='warline.campaign.shattered_relay' for p in policies.values())
+    assert {sid for sid,p in policies.items() if p['free_access_scope']!='none'}=={'S001'}
     for m in MAPS: assert sum(r['map_id']==m for r in rows)==24
     for o in OBJECTIVES:
         assert sum(r['objective_id']==o for r in rows)==30
@@ -198,6 +205,12 @@ def build():
       '**Status: Planned.** Twenty map/objective packets each contain six individually specified army/start variants. '
       'The [handoff](../IMPLEMENTATION_HANDOFF.md) explains the distinction between work ordinals 4–120 and stable S-IDs. '
       'Read the shared architecture, objectives, roster/economy and map contracts before the assigned packet.','',
+      '## Mission product amendment — 2026-09-28','',
+      'All S001–S120 belong to Campaign Edition, with S001 as the unlimited free sample. '
+      'Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) '
+      'and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). '
+      'ARIA is included; forces/resources/research remain scenario-owned. Later paid collections add to these 120. '
+      'Membership does not promote any implementation or acceptance status.','',
       '| Map | Base Assault | Frontline Control | Breakthrough | Convoy Escort |','|---|---|---|---|---|']
     for mid,m in MAPS.items():
         links=[]
@@ -209,6 +222,13 @@ def build():
               'if mentioned, is not acceptance of the expanded version. Use [technical architecture](../TECHNICAL_ARCHITECTURE.md), '
               '[objective rules](../OBJECTIVE_IMPLEMENTATION.md), [roster/economy](../ROSTER_AND_ECONOMY_IMPLEMENTATION.md), '
               '[map contract](../MAP_IMPLEMENTATION.md) and [work packages](../AGENT_WORK_PACKAGES.md).','',
+              '## Mission product amendment — 2026-09-28','',
+              'Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) '
+              'and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). '
+              'Every entry is included in the original 120-scenario core package. No account roster grind, '
+              'paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, '
+              'counter availability and normal tactical research. Historical prototype/Playable evidence '
+              'does not certify the expanded acceptance matrix.','',
               '## Shared packet implementation','',
               f'- Map: `{m["map_id"]}`; layout `layout.skirmish.{mid.lower()}.{obj.lower()}`. '+packet_roles(m,obj),
               f'- Objective owner: `{o["system"]}` with shared fact projection and `SkirmishOutcomeSystem`. Roles: `{o["roles"]}`.',
@@ -233,6 +253,9 @@ def build():
                   f'**{r["working_title_en"]}** — handoff work ordinal **{ordinals[sid]}**. '+('Prototype compatibility mapping exists; certify this expanded revision separately.' if sid in PROTOTYPES else 'One of the 117 remaining new catalog combinations.'),'',
                   f'**Bind:** catalog `{sid}`; definition `skirmish.{sid.lower()}`; scenario `scenario.skirmish.{sid.lower()}`; map `{m["map_id"]}`; objective `{obj}`; army `{army}`; start `{start}`. '
                   f'Prerequisite tickets: `{gates}`. Required capability tags: `{capabilities}`. Recommended later size `{r["recommended_size"]}` is gated; first visit remains Standard.','',
+                  '**Product contract:** '+('Unlimited free sample and included in Campaign Edition.' if policies[sid]['free_access_scope']!='none' else 'Included in Campaign Edition; no separate scenario purchase or Campaign grind.')+
+                  ' ARIA included; apply MP01–MP08. '+policies[sid]['required_adjustment']+' '
+                  '[Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).','',
                   f'**Opening and decisions:** {opening} Two intended approaches: {choice} These describe tactical options, not a mandatory click sequence or AI script.','',
                   f'**Roster:** {a["includes"]}. Exclude {a["excludes"]}. Counter contract: {a["counters"]}. '
                   +('Field begins R1: buy R2 facilities/readiness through normal costs.' if start=='F' else 'Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.'),'',
@@ -284,7 +307,8 @@ def build():
     outputs['IMPLEMENTATION_MANIFEST.csv']=csv_text(manifest)
     outputs['WORK_QUEUE_004_120.csv']=csv_text(work)
     outputs['INITIAL_SETUP_MATRIX.csv']=csv_text(matrix)
-    outputs['ROSTER_SOURCE_AUDIT.csv']=csv_text(roster_audit())
+    if include_roster_audit:
+        outputs['ROSTER_SOURCE_AUDIT.csv']=csv_text(roster_audit())
     return outputs
 
 def roster_audit():
@@ -336,15 +360,22 @@ def verify_links(outputs):
         assert '\n## '+anchor.upper()+'\n' in outputs[name]
 
 def main():
-    ap=argparse.ArgumentParser();g=ap.add_mutually_exclusive_group(required=True);g.add_argument('--write',action='store_true');g.add_argument('--check',action='store_true');args=ap.parse_args()
-    outputs=build();verify_links(outputs)
+    ap=argparse.ArgumentParser();g=ap.add_mutually_exclusive_group(required=True);g.add_argument('--write',action='store_true');g.add_argument('--check',action='store_true')
+    ap.add_argument('--packets-only',action='store_true',help='Only generate/check scenario Markdown; do not refresh roster inventory or CSV manifests.')
+    args=ap.parse_args()
+    outputs=build(include_roster_audit=not args.packets_only);verify_links(outputs)
+    if args.packets_only:
+        outputs={name:text for name,text in outputs.items() if name.startswith('Scenarios/') and name.endswith('.md')}
     if args.write:
         for name,text in outputs.items():
             p=ROOT/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(text,encoding='utf-8')
     else:
         drift=[name for name,text in outputs.items() if not (ROOT/name).exists() or (ROOT/name).read_text()!=text]
         if drift: raise SystemExit('Planning artifact drift; review inputs then regenerate: '+', '.join(drift))
-    print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=74 mode='+('write' if args.write else 'check'))
+    if args.packets_only:
+        print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
+    else:
+        print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=74 mode='+('write' if args.write else 'check'))
     print('Documentation generation/consistency only; no Unity, gameplay, ARIA or device acceptance was executed.')
 
 if __name__=='__main__': main()

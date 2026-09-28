@@ -1,5 +1,9 @@
 # WarlineCapture Campaign Narrative Sequence And Comic Catalog
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). Chapter 1 story, debrief and earned archive remain free. Chapters 2–5 and their complete canonical ending belong to Campaign Edition; after ownership, no optional star, fragment purchase or Operations grind gates narrative. Finish M05 debrief/Protocol Fragment before any purchase invitation. Preserve every sequence/panel ID and existing dialogue/art; this change does not add store dialogue inside missions.
+
 Date: 2026-07-10
 
 Status: Active high-level campaign sequence authority

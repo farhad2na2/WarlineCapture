@@ -1,5 +1,17 @@
 # WarlineCapture Saga Chapter 1: First Response
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions remain free, including story, replay and ARIA. Present the package offer only after M05 narrative and rewards settle. Existing objectives, readiness fallbacks and Support schedule are preserved.
+
+| Mission | Required planning change |
+|---|---|
+| CH01-M01 First Contact | Keep free opening/debrief and ARIA; bind real account rewards; no tactical redesign. |
+| CH01-M02 Establish The Base | Retain Materials-only 120/90/20 budget and free replay; reject legacy Money/account-wallet costs. |
+| CH01-M03 Radar Warning | Migrate tactical Money/Credits to validated Materials costs; retest preparation, shortage recovery, pacing and ARIA. |
+| CH01-M04 Airlift | Keep supplied transport/extraction; audit reward labels/consumers; ordinary transport is not a paid Support charge. |
+| CH01-M05 Breach Assault | Settle full story/rewards before the package offer; separate CH02 ownership from progression; resolve APC-parts target/consumer while preserving earned records. |
+
 Date: 2026-05-21
 
 Status: Active chapter content, updated for the 3D single-map direction. File names and some internal ids may keep `Saga` / `QuickCustom` for runtime compatibility, but player-facing language should be Campaign / Skirmish.
@@ -112,7 +124,7 @@ Command has failed during a coordinated attack. The player answers ARIA's emerge
 | M02 Establish The Base | Credits, `Building_Barrack` unlock, unlock Mission 3. |
 | M03 Radar Warning | Credits, `Building_GuardTower` unlock, `ability.radar_ping` support unlock, unlock Mission 4. |
 | M04 Airlift | Credits, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor` support unlock, unlock Mission 5. |
-| M05 Breach Assault | Chapter completion reward, `Unit_Chr_Ghillie_Male_01` unlock, `upgrade.vehicle.apc_armor` BlueprintParts, chapter reward threshold. |
+| M05 Breach Assault | Chapter completion reward, `Unit_Chr_Ghillie_Male_01` unlock, legacy APC BlueprintParts (target/consumer reconciliation required below), chapter reward threshold. |
 
 ## Level Library
 
@@ -148,7 +160,7 @@ Static background art must not include baked soldiers, vehicles, aircraft, playe
 | M02 Establish The Base | `opmap.ch01.forward_post_01` | Infrastructure Repair / Base Defense Lite | Tutorial Cell | Build, spend, produce. | Build forward barracks and produce squad. | Build under 5:00; keep civilians safe; no base breach. | CommanderXP, Credits, `Building_Barrack`. | Tutorial |
 | M03 Radar Warning | `opmap.ch01.convoy_approach_01` | Base Defense | Armored Column | Read warning, prepare defense, stop convoy. | Survive convoy attack and prevent core breach. | Build radar/guard tower; no civilian deaths; destroy convoy before base damage. | CommanderXP, Credits, `Building_GuardTower`, `ability.radar_ping`. | Standard |
 | M04 Airlift | `opmap.ch01.landing_zone_01` | Airlift Extraction | Hidden Cell / Air Assault | Use transport and landing-zone safety. | Extract endangered squad/civilians or reinforce landing zone. | No aircraft loss; complete under 6:00; low civilian loss. | CommanderXP, Credits, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor`. | Standard |
-| M05 Breach Assault | `opmap.ch01.fortified_node_01` | Breach Assault | Defensive Garrison | Combined arms, breach route, fortified target. | Destroy fortified enemy core. | Use breach route; vehicle survives; complete under 9:00. | CommanderXP, Credits, `Unit_Chr_Ghillie_Male_01`, `upgrade.vehicle.apc_armor` BlueprintParts. | Standard |
+| M05 Breach Assault | `opmap.ch01.fortified_node_01` | Breach Assault | Defensive Garrison | Combined arms, breach route, fortified target. | Destroy fortified enemy core. | Use breach route; vehicle survives; complete under 9:00. | CommanderXP, Credits, `Unit_Chr_Ghillie_Male_01`, legacy APC BlueprintParts (target/consumer reconciliation required below). | Standard |
 
 ## M01 Detailed Spec: First Contact
 
@@ -182,7 +194,7 @@ Implementation handoff: use `../M01_FirstContact_Production_Contract.md` for con
 | MinimapProjectionId | `minimap.ch01.first_contact` |
 | Player Start | One rifle squad near command point. |
 | Enemy Start | One small hostile patrol on a visible road route. |
-| Starting Credits | Low tutorial amount; no required spending. |
+| Starting tactical Credits | None; account Credits are rewards, never starting battle funds. |
 | Starting Materials | Hidden or zero. |
 | Starting Fuel | Hidden or zero. |
 | Allowed Build Catalog | None; Build Drawer disabled with tutorial reason. |
@@ -277,7 +289,7 @@ Do not grant match Materials, Fuel, Oil, Command, Rush Tickets, store items, Ope
 | ChapterOrDay | Chapter 1, Mission 2 |
 | MissionArchetype | Infrastructure Repair / Base Defense Lite |
 | ThreatFamily | Tutorial Cell |
-| TeachingGoal | Building placement, Credits/Materials spend, production queue, basic base defense. |
+| TeachingGoal | Building placement, Materials spend, production queue, basic base defense. |
 | CityContext | Command needs a forward operating point to stabilize the district edge and support civilian response. |
 
 ### Scenario Setup
@@ -290,8 +302,8 @@ Do not grant match Materials, Fuel, Oil, Command, Rush Tickets, store items, Ope
 | MinimapProjectionId | `minimap.ch01.establish_base` |
 | Player Start | One rifle squad, command point, one buildable forward lot. |
 | Enemy Start | Small delayed patrol wave entering from one approach lane. |
-| Starting Credits | Enough to place required barracks and queue one squad. |
-| Starting Materials | Enough for the required structure; no optional upgrades. |
+| Starting tactical Credits | Zero; no Credits affordability path. |
+| Starting Materials | 120; required Barracks 90 and squad 20 leave 10. Preserve this baseline until separately validated balance changes. |
 | Starting Fuel | Hidden or zero. |
 | Allowed Build Catalog | `Building_Barrack` as a mission-scoped producer; first-clear grants its permanent unlock. |
 | Allowed Commands | Select, Move, Attack, Stop, Hold, Build, Produce. |
@@ -363,7 +375,7 @@ Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or di
 |---|---|
 | Config sanity | Required building, producer, unit, objective, and reward ids exist. |
 | Objective test | Building placement and unit production complete objectives in order. |
-| Resource test | Required costs use Credits/Materials and do not require unavailable resources. |
+| Resource test | Required costs use only Materials, preserve the 120/90/20 baseline, and ignore account balances. |
 | Star test | Civilian-safe and under-time goals evaluate independently. |
 | Reward test | Unlock reward has duplicate fallback if it can be owned already. |
 | UI contract test | Build Drawer and Build Placement popup expose costs, locks, and invalid placement feedback. |
@@ -401,8 +413,8 @@ Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or di
 | MinimapProjectionId | `minimap.ch01.radar_warning` |
 | Player Start | Forward post, one or two rifle squads, existing build/defense anchor. |
 | Enemy Start | Armored convoy wave on road approach, light escort units. |
-| Starting Credits | Enough for one defensive preparation choice. |
-| Starting Materials | Enough to place `Building_GuardTower` and one `Building_Road_Barrier`. |
+| Starting tactical Credits | Target zero after migrating legacy Money costs to validated Materials budgets; current serialized values are migration debt. |
+| Starting Materials | Revalidate the authored preparation budget against actual required build/recruit costs during Money migration; no account currency or Rush fallback. |
 | Starting Fuel | Hidden or zero. |
 | Allowed Build Catalog | `Building_GuardTower`, `Building_Satelite_Dish`, `Building_Road_Barrier`, `Tent_Regular`, `Building_Barrack`. |
 | Allowed Commands | Select, Move, Attack, Stop, Hold, Build, Produce. |
@@ -514,7 +526,7 @@ Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or di
 | MinimapProjectionId | `minimap.ch01.airlift` |
 | Player Start | One rifle squad near landing zone, one transport helicopter or APC support path. |
 | Enemy Start | Hidden Cell ambush group plus light air/anti-transport warning. |
-| Starting Credits | Minimal; no required building. |
+| Starting tactical Credits | None; construction economy is disabled in the accepted transport baseline. |
 | Starting Materials | Hidden or zero. |
 | Starting Fuel | Enough to cover required tutorial transport/deploy action. |
 | Allowed Build Catalog | No building placement in this mission; Build Drawer remains hidden and POP-03 is unavailable. |
@@ -626,8 +638,8 @@ Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or di
 | MinimapProjectionId | `minimap.ch01.breach_assault` |
 | Player Start | Rifle squads, `Unit_Veh_APC_Heavy` mission support, forward staging point. |
 | Enemy Start | Defensive garrison, wall/gate breach target, core building, light counterattack wave. |
-| Starting Credits | Enough to reinforce or produce limited support if production is active. |
-| Starting Materials | Enough for limited defensive/build support, not enough to brute-force spam. |
+| Starting tactical Credits | None in the current economy-disabled breach baseline; any later production must use a validated local Materials budget. |
+| Starting Materials | No new production dependency for monetization; preserve the current supplied-force baseline. |
 | Starting Fuel | Optional transport/vehicle support budget if M04 systems are active. |
 | Allowed Build Catalog | Basic production/defense from prior missions; no new untaught systems. |
 | Allowed Commands | Select, Move, Attack, Stop, Hold, Build/Produce if active, Breach/Attack target, transport commands if active. |
@@ -664,7 +676,7 @@ Do not grant match Materials/Fuel/Oil, Command, Rush Tickets, store items, or di
 | `reward.ch01.m05.commander_xp.first_clear` | CommanderXP | Larger Chapter 1 XP grant. | First clear only. |
 | `reward.ch01.m05.credits.first_clear` | Credits | Chapter finale Credit grant. | First clear only. |
 | `reward.ch01.m05.unit_unlock.ghillie` | UnitUnlock | `Unit_Chr_Ghillie_Male_01`. | First clear only; duplicate fallback grants item-specific BlueprintParts. |
-| `reward.ch01.m05.apc_armor_parts` | BlueprintParts | `upgrade.vehicle.apc_armor` x35. | First clear only; item-specific parts. |
+| `reward.ch01.m05.apc_armor_parts` | Legacy BlueprintParts | Current runtime targets `Unit_Veh_APC_Heavy` x35; the older `upgrade.vehicle.apc_armor` label differs. | Resolve target/usable consumer before new presentation; preserve earned records. Never require these parts for CH02 entry or sell the missing amount. |
 | `reward.ch01.m05.campaign_stars` | CampaignStars / legacy `SagaStars` storage | Best star result for mission/chapter thresholds. | Stored as best result, never spent. |
 
 Do not grant Command, Rush Tickets, store items, or direct Operation metric rewards from the store path. Campaign stars come only from mission completion/star result.

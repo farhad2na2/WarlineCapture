@@ -1,5 +1,9 @@
 # Skirmish setup, difficulty and starting packages
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every scenario supplies its own starting resources, army and usable counters. Existing Materials costs, research, production times, Oil/Fuel logistics and capacity rules remain. All accepted configuration options of an included scenario are included; device readiness is not a purchase tier. The free S001 sample uses the same certified rules as the owned copy.
+
 Planning/balance specification, updated 2026-09-21. These values are concrete initial tuning inputs, not shipped values or measured balance. Preserve the three legacy prototype mappings until expanded configurations pass their gates. This document and [BATTLE_CATALOG.md](BATTLE_CATALOG.md) refine the original [plan](PLAN.md); no Operations progression is specified here.
 
 Implementation companions: [360 exact scenario/size vectors](INITIAL_SETUP_MATRIX.csv), [role/producer/economy contracts](ROSTER_AND_ECONOMY_IMPLEMENTATION.md), [objective algorithms](OBJECTIVE_IMPLEMENTATION.md) and [setup compiler architecture](TECHNICAL_ARCHITECTURE.md). Every infantry squad below has four individuals. Additional infantry/vehicle queues are capacity on the specified producer, not extra designated main bases; Ground Staging also has one separate logistics queue. September 21 economy corrections below replace the contradictory old recipe.

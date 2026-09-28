@@ -1,5 +1,9 @@
 # Skirmish battle catalog: 120, expandable to 200
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every listed S001–S120 entry belongs to the core package; S001 is free. The path beyond 120 may define additional products only after their complete contents are specified. Seeds, difficulty and army size remain replay options. Production batches never turn the original 120 into paid extras.
+
 Recorded 2026-09-20; technical handoff added 2026-09-21. This is the product planning target, not implemented content. Numerical balance values are initial test specifications. This supplement supersedes the conversational suggestions of six maps or twelve battles as the complete experience. Operations has its own separate planning package.
 
 Programming entry points: [implementation handoff](IMPLEMENTATION_HANDOFF.md), [twenty packets containing all 120 individual briefs](Scenarios/README.md), [implementation manifest](IMPLEMENTATION_MANIFEST.csv), [117 remaining work items](WORK_QUEUE_004_120.csv). Each brief names its asset identities, required classes/capabilities, starting forces, tactical alternatives, implementation sequence, edge cases and mandatory ARIA wins.

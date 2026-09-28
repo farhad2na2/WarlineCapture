@@ -1,5 +1,9 @@
 # WarlineCapture Resource Logistics Exchange Design
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). Retain tactical Oil/Materials/Fuel conversion, losses, transport and simulation-time queues. No persistent Rush Ticket, ad, premium skip or account-wallet access may accelerate a mission exchange. Scenario-local tactical costs and authored failure/cancellation rules still apply.
+
 Date: 2026-07-08
 Status: Design source of truth
 

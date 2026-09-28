@@ -1,5 +1,9 @@
 # WarlineCapture: AAA Mobile Game Design Document
 
+## Mission product amendment — 2026-09-28
+
+Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). For the initial collections, use free Chapter 1 + S001 + O001–O003 introduction; Campaign Edition contains 25 story missions and all 120 core Skirmish scenarios; the full 60-mission Operations theater is separate. Include ARIA, ordinary retries and complete purchased endings. No ads, paid currencies, tactical supplies, skips or paid power. Prices remain unvalidated. These planning rules supersede conflicting older commercial wording; implementation/acceptance is separate.
+
 Version: 0.2
 
 Date: 2026-07-10
@@ -48,7 +52,7 @@ Uncover a campaign mystery that changes what command means.
 | Precision Creates Legitimacy | Enemy defeat, civilian safety, evidence quality, and infrastructure recovery all define success. |
 | Systems Serve Story | Every major gameplay feature is introduced because the campaign creates a need for it. |
 | ARIA Assists; The Player Commands | ARIA explains, recommends, previews, and performs bounded approved actions. She never replaces player authority. |
-| Fair Completion | The full campaign story and canonical ending are available through play, never through payment, ads, or mastery grind. |
+| Fair Completion | Chapter 1 is free; Campaign Edition includes all 25 missions and the canonical ending through ordinary play, without additional purchases, ads or mastery grind. |
 
 ## Fiction And Campaign
 
@@ -189,7 +193,7 @@ The reusable mission grammar remains in `Gameplay_North_Star_And_Content_Grammar
 - Campaign progress follows first-clear mission completion, not star totals alone.
 - Stars reward mastery and may unlock optional rewards, challenges, or cosmetic recognition.
 - Story-critical Protocol Fragments are guaranteed by chapter completion.
-- CommanderXP, persistent Credits/Command, fixed unlocks, inventory items, and blueprint parts follow the canonical economy documents. Materials, Fuel, and Oil exist only inside a match.
+- CommanderXP, earned account Credits, fixed unlocks and preserved legacy inventory follow the September 28 mission product contract. Command/Rush and paid-power proposals are retired for this scope through explicit migration; Materials, Fuel and Oil exist only inside a match.
 - Trust, Evidence, and Infrastructure reflect authored outcomes and drive epilogue emphasis.
 - Premium resources, purchases, advertisements, and Rush Tickets never reveal story, complete objectives, or erase mission consequences.
 - Returning players receive a clear `Continue Campaign` route and optional recap.

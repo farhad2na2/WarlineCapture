@@ -1,0 +1,2 @@
+Wrapper exit: 1
+The bridge refused the run because the shared Editor was importing/compiling. No Support test executed; retry after compilation.

@@ -1,0 +1,2 @@
+Wrapper exit: 6
+Pipeline dispatch timed out; no matching validation ownership header or completion receipt. No test verdict. Existing Editor preserved.

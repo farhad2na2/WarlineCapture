@@ -262,7 +262,7 @@ namespace Game.Editor
             using var zones=em.CreateEntityQuery(typeof(SupportSmokeZoneComponent));
             if(smokeStage==0){if(TapNamed("SupportCommand")){smokeStage=1;}return false;}
             if(smokeStage==1){if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null)return false;Shot("support-popup");if(TapUnder<SupportPopupView>("Stop")){smokeStage=18;}return false;}
-            if(smokeStage==18){RequireNoSpend(em);if(UiShellRuntimeGateway.ReadAriaPlay().Active)throw new InvalidOperationException("Header Stop did not restore player control.");if(TapUnder<SupportPopupView>("Close")){Debug.Log("[SupportPopupNormalInput] headerStop=touch close=touch spend=0");smokeStage=2;}return false;}
+            if(smokeStage==18){RequireNoSpend(em);if(UiShellRuntimeGateway.ReadAriaPlay().Active)throw new InvalidOperationException("Header Stop did not restore player control.");if(TapUnder<SupportPopupView>("CloseButton")){Debug.Log("[SupportPopupNormalInput] headerStop=touch close=touch spend=0");smokeStage=2;}return false;}
             if(smokeStage==2){RequireNoSpend(em);if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()!=null)throw new InvalidOperationException("Closed Support popup survived its hide transition.");if(TapNamed("SupportCommand"))smokeStage=3;return false;}
             if(smokeStage==3){if(TapUnder<SupportPopupView>("BeginTargeting"))smokeStage=4;return false;}
             if(smokeStage==4){if(model.Phase!=UiSupportPhase.Targeting)return false;if(TargetTap(em))smokeStage=5;return false;}
@@ -309,7 +309,7 @@ namespace Game.Editor
                 Shot("smoke-combat");Debug.Log("[SupportNormalSmoke] commits=2 fuel=2 charges=0 openClosePreviewShowDecline=no-spend cooldown=real-time");
                 if(TapNamed("SupportCommand"))smokeStage=16;return false;
             }
-            if(smokeStage==16){if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null){if(model.Active)TapNamed("SupportCommand");return false;}if(model.Smoke.Available)throw new InvalidOperationException("Exhausted Smoke is enabled.");Shot("exhausted");if(TapUnder<SupportPopupView>("Close"))smokeStage=17;return false;}
+            if(smokeStage==16){if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null){if(model.Active)TapNamed("SupportCommand");return false;}if(model.Smoke.Available)throw new InvalidOperationException("Exhausted Smoke is enabled.");Shot("exhausted");if(TapUnder<SupportPopupView>("CloseButton"))smokeStage=17;return false;}
             return smokeStage==17;
         }
         private static bool HasKnownStrikeTarget(EntityManager em)
@@ -409,7 +409,7 @@ namespace Game.Editor
             if(smokeStage==213)
             {
                 if(UnityEngine.Object.FindAnyObjectByType<SupportPopupView>()==null){if(model.Active)TapNamed("SupportCommand");return false;}
-                if(model.Strike.Available)throw new InvalidOperationException("Exhausted Strike remains enabled.");Shot("strike-exhausted");if(TapUnder<SupportPopupView>("Close"))smokeStage=214;return false;
+                if(model.Strike.Available)throw new InvalidOperationException("Exhausted Strike remains enabled.");Shot("strike-exhausted");if(TapUnder<SupportPopupView>("CloseButton"))smokeStage=214;return false;
             }
             return smokeStage==214;
         }
@@ -546,7 +546,7 @@ namespace Game.Editor
             {
                 int remainder=40-math.min(40,em.GetComponentData<FactionTacticalMaterialsComponent>(SupportSupplyAdapterSystemHelper.MaterialsEntity(em,1)).Capacity-supplyMaterialsBefore);
                 if(model.SupplyStock!=remainder||!model.SupplyFull||model.SupplyClaimed||model.Supply.Available)throw new InvalidOperationException("Native retained/full-storage UI differs from crate state.");
-                Shot("supply-retained-full");if(TapUnder<SupportPopupView>("Close"))smokeStage=418;return false;
+                Shot("supply-retained-full");if(TapUnder<SupportPopupView>("CloseButton"))smokeStage=418;return false;
             }
             return smokeStage==418;
         }

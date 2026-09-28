@@ -61,10 +61,18 @@ namespace Game.Editor
                 foreach(var binding in instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true))binding.ApplyLocalization();
                 instance.GetComponent<SupportPopupView>().Apply(model);Canvas.ForceUpdateCanvases();
                 var view=instance.GetComponent<SupportPopupView>();
+                if(instance.transform.Find("SupportFrame/CloseButton/Stroke0")==null)throw new InvalidOperationException("Support must use Build-style X close.");
                 if(view.AriaStopButton==null||instance.transform.Find("SupportFrame/ARIA")!=null)
                     throw new InvalidOperationException("Support must expose one compact header Stop area.");
                 for(int i=1;i<=4;i++)
                 {
+                    var card=instance.transform.Find("SupportFrame/SupportCard"+i);
+                    var ability=model.Ability((byte)i);
+                    if(card.Find("CostPanel/Charges/Value").GetComponent<TMP_Text>().text!=ability.Charges.ToString() ||
+                       card.Find("CostPanel/FuelCost/Value").GetComponent<TMP_Text>().text!=ability.FuelCost.ToString())
+                        throw new InvalidOperationException("Support icon costs do not match the live read model: "+i);
+                    if(card.Find("Unavailable").gameObject.activeSelf==ability.Available)
+                        throw new InvalidOperationException("Support availability status does not match the live read model: "+i);
                     var viewport=instance.transform.Find("SupportFrame/SupportCard"+i+"/Artwork") as RectTransform;
                     var image=viewport.GetComponentInChildren<Image>();
                     var imageRect=image.rectTransform;
@@ -81,7 +89,7 @@ namespace Game.Editor
                 {
                     RenderTexture.active=render;camera.Render();texture=new Texture2D(width,height,TextureFormat.RGBA32,false);
                     texture.ReadPixels(new Rect(0,0,width,height),0,0);texture.Apply();
-                    const string folder="Design/AgentReports/SupportSystem/Evidence/NativePopup/WideArtworkV1";Directory.CreateDirectory(folder);
+                    const string folder="Design/AgentReports/SupportSystem/Evidence/NativePopup/BuildStyleV2";Directory.CreateDirectory(folder);
                     File.WriteAllBytes(Path.Combine(folder,"support-"+locale+"-"+width+"x"+height+(lesson?"-lesson-"+selected:"-final")+".png"),texture.EncodeToPNG());
                 }
                 finally{RenderTexture.active=previous;camera.targetTexture=null;}

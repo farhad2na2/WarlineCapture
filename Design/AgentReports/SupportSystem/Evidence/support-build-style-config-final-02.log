@@ -1,0 +1,61 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.SupportConfigValidation.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:38)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportAbilityCatalogBuilder] result=Passed abilities=4 policies=25 productionEnabled=0 hash=34a07c6da8da9dcfe74d7b8ed284f3bd4a5bbeaa3bd913c197842f7a11b2e1c4
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportAbilityCatalogBuilder:Build () (at Assets/Game/Scripts/Editor/SupportAbilityCatalogBuilder.cs:72)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:28)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportPopupRegistration] result=Passed shells=1
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Register () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:180)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:108)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportPopupPrefabBuilder] result=Passed cards=4 artwork=wide-cover aria=HeaderStop style=BuildDrawer cost=icon-slots popup=fullscreen
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:109)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportConfigValidation] result=Passed tests=2 catalog=4 policies=25
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:19)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.SupportConfigValidation.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:55)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_c1c20707/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

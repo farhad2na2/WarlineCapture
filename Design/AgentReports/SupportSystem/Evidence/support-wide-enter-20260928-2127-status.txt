@@ -1,0 +1,3 @@
+Wrapper exit: 124
+Completion receipt: missing
+Play transition failed. The log reports compiler errors prevented Play mode before the shared Editor recompiled. No normal-input acceptance is inferred. Existing Editor preserved.

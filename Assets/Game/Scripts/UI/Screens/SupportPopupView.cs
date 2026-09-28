@@ -12,6 +12,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Image detailArt;
         [SerializeField] private TMP_Text title,description,requirements,resources,mission,actionLabel;
         [SerializeField] private Button close,begin,stop;
+        [SerializeField] private TMP_Text chargesLeft,fuelCost,role;
         public Button AriaStopButton=>stop;
         internal static SupportPopupView Active {get;private set;}
         private UiSupportModel previous;private bool rendered,closing;
@@ -19,6 +20,8 @@ namespace Game.UI.Runtime
             TMP_Text resourceText,TMP_Text missionText,TMP_Text nextLabel,Button closeButton,Button next,Button ariaStop)
         {cards=cardViews;icons=art;detailArt=preview;title=nameText;description=body;requirements=facts;resources=resourceText;mission=missionText;
          actionLabel=nextLabel;close=closeButton;begin=next;stop=ariaStop;}
+        public void ConfigureStats(TMP_Text chargesText,TMP_Text fuelText,TMP_Text roleText)
+        {chargesLeft=chargesText;fuelCost=fuelText;role=roleText;}
         private void OnEnable()
         {
             Active=this;
@@ -54,9 +57,14 @@ namespace Game.UI.Runtime
             UiLocalizedText.Set(title,UiShellRuntimeGateway.Localization.Get("support.name."+selected,""));
             UiLocalizedText.Set(description,UiShellRuntimeGateway.Localization.Get(model.LessonKind==selected?"support.lesson."+selected:"support.description."+selected,""));
             var a=model.Ability(selected);
-            UiLocalizedText.Set(requirements,UiShellRuntimeGateway.Localization.Format("support.detail.cost","{0} charges left · {1} Fuel\n{2}",a.Charges,a.FuelCost,
-                UiShellRuntimeGateway.Localization.Get(a.ReasonKey,"")));
-            UiLocalizedText.Set(resources,UiShellRuntimeGateway.Localization.Format("support.fuel.available","Available Fuel: {0}",Mathf.FloorToInt(model.Fuel)));
+            UiLocalizedText.Set(chargesLeft,a.Charges.ToString());
+            UiLocalizedText.Set(fuelCost,a.FuelCost.ToString());
+            UiLocalizedText.Set(role,UiShellRuntimeGateway.Localization.Get("support.ui.role."+selected,""));
+            string reason=UiShellRuntimeGateway.Localization.Get(a.ReasonKey,"");
+            if(a.Cooldown>0)reason=UiShellRuntimeGateway.Localization.Format("support.ui.cooldown","Ready in {0}s",a.Cooldown);
+            UiLocalizedText.Set(requirements,reason);
+            requirements.color=a.Available?new Color32(79,199,73,255):new Color32(54,174,215,255);
+            UiLocalizedText.Set(resources,Mathf.FloorToInt(model.Fuel).ToString("N0"));
             UiLocalizedText.Set(mission,UiShellRuntimeGateway.Localization.Get("support.optional", "Optional support"));
             if(UiShellRuntimeGateway.TryReadMissionBriefing(out var briefing) && briefing.MissionId==model.MissionId)
             {

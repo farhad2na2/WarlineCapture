@@ -1,0 +1,2 @@
+Wrapper exit: 1
+Bridge refused the run while the shared Editor was importing/compiling; no Support assertions executed. Subsequent final-02 retry passed.

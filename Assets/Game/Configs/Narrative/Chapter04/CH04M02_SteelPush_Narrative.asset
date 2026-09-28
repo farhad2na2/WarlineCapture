@@ -1,0 +1,476 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M02_SteelPush_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m02.brief
+  entryStateId: SteelPush-brief-0
+  defaultSkipDestinationId: SteelPush-brief-complete
+  states:
+  - stateId: SteelPush-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-brief-dalia
+      textKey: narrative.steel_push.brief-dalia
+      englishFallback: Vanguard armor is coming down the service road. This is an
+        open military assault, not an Ash Line raid. Put our tanks across the approach
+        and keep infantry covering the reserve.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: e6477a611f6bb4d7292a5f4ba28d96ce, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.86
+      essentialCaption: 1
+    continueStateId: SteelPush-brief-1
+    skipStateId: SteelPush-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-brief-samira
+      textKey: narrative.steel_push.brief-samira
+      englishFallback: That Fuel also runs the hospital generators and water pumps.
+        The civilian allocation stays protected. Spend the military reserve on necessary
+        armor movement and reinforce through the barracks. We cannot burn the site
+        to deny it.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: 5692d846398684bd6aabd3c7c00f8b51, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 19.38
+      essentialCaption: 1
+    continueStateId: SteelPush-brief-2
+    skipStateId: SteelPush-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 19.38
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: ef3183cbf9a84e5196963a22a5e4969d
+      m_SubObjectName: CH04M02_SteelPush-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-brief-aria
+      textKey: narrative.steel_push.brief-aria
+      englishFallback: Two armored groups are confirmed. Stop their command vehicles
+        before they reach the dormant Relay node. Your existing Select, Move, Attack
+        and Hold controls are sufficient; I will show the route without issuing troop
+        orders.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: f2325041eb2e5425abad497de6531545, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.58
+      essentialCaption: 1
+    continueStateId: SteelPush-brief-complete
+    skipStateId: SteelPush-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.steel_push.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &2731935006209212911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M02_SteelPush_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m02.comms
+  entryStateId: SteelPush-comms-0
+  defaultSkipDestinationId: SteelPush-comms-complete
+  states:
+  - stateId: SteelPush-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 99d25f658ebe4927a88fe3f6dde6395c
+      m_SubObjectName: CH04M02_SteelPush_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 99d25f658ebe4927a88fe3f6dde6395c
+      m_SubObjectName: CH04M02_SteelPush_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-comms-dalia
+      textKey: narrative.steel_push.comms-dalia
+      englishFallback: "The lead command vehicle is disabled. Its orders mention
+        a final authority key. The main column is still moving\u2014keep our armor
+        on the approach and the Fuel reserve covered."
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: 69719136c7a5043dd901efc232999b00, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.86
+      essentialCaption: 1
+    continueStateId: SteelPush-comms-complete
+    skipStateId: SteelPush-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.86
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.steel_push.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &8289852692965079291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M02_SteelPush_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m02.debrief
+  entryStateId: SteelPush-debrief-0
+  defaultSkipDestinationId: SteelPush-debrief-complete
+  states:
+  - stateId: SteelPush-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-debrief-samira
+      textKey: narrative.steel_push.debrief-samira
+      englishFallback: The reserve is operating and the civilian allocation is intact.
+        Hospital generators and water pumps can keep running. Holding the site mattered
+        as much as breaking the column.
+      speaker: 2
+      voiceClip: {fileID: 8300000, guid: d970f090ec26e4e0ebee3472ef254f51, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.82
+      essentialCaption: 1
+    continueStateId: SteelPush-debrief-1
+    skipStateId: SteelPush-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.82
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-debrief-dalia
+      textKey: narrative.steel_push.debrief-dalia
+      englishFallback: Vanguard was not simply looking for Fuel. These orders tie
+        the seizure to Qassem's Relay access plan. We stopped the column, but their
+        long-range battery is now targeting the forward base.
+      speaker: 1
+      voiceClip: {fileID: 8300000, guid: f1ce29357d92343c5bc38d50a3c089fe, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 16.02
+      essentialCaption: 1
+    continueStateId: SteelPush-debrief-2
+    skipStateId: SteelPush-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 16.02
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 75a18f7e42964d4fbc7a627c38641227
+      m_SubObjectName: CH04M02_SteelPush_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: steel_push-debrief-aria
+      textKey: narrative.steel_push.debrief-aria
+      englishFallback: The recovered order names the final authority key, but its
+        meaning is not yet confirmed. I will preserve the evidence. The next defense
+        requires a verified battery target and enough forces to hold the base.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: 06b58d911f8dc43af922b26d892e8141, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 15.78
+      essentialCaption: 1
+    continueStateId: SteelPush-debrief-complete
+    skipStateId: SteelPush-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 15.78
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SteelPush-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.steel_push.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []

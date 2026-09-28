@@ -35,7 +35,7 @@ namespace Game.UI.Runtime
             }
             if(_lastPanelModel.TutorialStepCount==4)
             {
-                if(UiShellRuntimeGateway.IsAirCorridorGuideContext())
+                if(UiShellRuntimeGateway.IsDefensePreparationGuideContext())
                 {
                     if(step==1)Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");
                     else if(step==2)ShowSelectionTarget(default);

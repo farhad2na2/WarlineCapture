@@ -1,0 +1,40 @@
+using Game.Components;
+using Game.Missions.Contracts;
+using Unity.Entities;
+using Unity.Mathematics;
+
+namespace Game.Runtime
+{
+    /// <summary>The authored finite reserve, never inherited demo-map stock.</summary>
+    public static class CampaignSteelPushFuelScope
+    {
+        public static bool TryGet(EntityManager em, out Entity reserve, out CampaignMissionRuntimeComponent runtime)
+        {
+            reserve=Entity.Null;runtime=default;
+            using var missions=em.CreateEntityQuery(typeof(CampaignMissionRuntimeComponent));
+            if(missions.CalculateEntityCount()!=1)return false;
+            var root=missions.GetSingletonEntity();runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            if(runtime.Phase==MissionPhaseKind.None || runtime.MissionId.ToString()!=CampaignMissionSequence.SteelPush)return false;
+            if(em.HasComponent<CampaignMissionSteelPushState>(root))
+            {
+                var state=em.GetComponentData<CampaignMissionSteelPushState>(root);
+                if(state.SessionToken.Equals(runtime.SessionToken)&&state.AttemptOrdinal==runtime.AttemptOrdinal&&state.Initialized!=0)
+                    reserve=state.FuelReserve;
+            }
+            return true;
+        }
+        public static float Usable(EntityManager em, Entity reserve)
+        {
+            if(!em.Exists(reserve)||!em.HasComponent<BuildingResourceStorageComponent>(reserve))return 0;
+            var storage=em.GetComponentData<BuildingResourceStorageComponent>(reserve);
+            return math.max(0,storage.StoredFuelBarrels-storage.ReservedFuelOutboundBarrels-storage.CivilianFuelReserveBarrels);
+        }
+        public static void Drain(EntityManager em, Entity reserve, float requested)
+        {
+            float amount=math.min(Usable(em,reserve),math.max(0,requested));
+            if(amount<=0)return;
+            var storage=em.GetComponentData<BuildingResourceStorageComponent>(reserve);
+            storage.StoredFuelBarrels-=amount;storage.Version++;em.SetComponentData(reserve,storage);
+        }
+    }
+}

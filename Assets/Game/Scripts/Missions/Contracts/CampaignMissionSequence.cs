@@ -14,12 +14,13 @@ namespace Game.Missions.Contracts
         public const string EvidenceChain="saga.ch03.m04.evidence_chain";
         public const string NetworkBreak="saga.ch03.m05.network_break";
         public const string AirCorridor="saga.ch04.m01.air_corridor";
-        public const int RegisteredMissionCount=16;
+        public const string SteelPush="saga.ch04.m02.steel_push";
+        public const int RegisteredMissionCount=17;
         public static string IdAt(int index) => index switch
         {
             0=>"saga.ch01.m01.first_contact",1=>"saga.ch01.m02.establish_base",
             2=>"saga.ch01.m03.radar_warning",3=>"saga.ch01.m04.airlift",
-            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,10=>SignalTrace,11=>SafehouseSweep,12=>FalseFront,13=>EvidenceChain,14=>NetworkBreak,15=>AirCorridor,_=>string.Empty
+            4=>"saga.ch01.m05.breach_assault",5=>Gridlock,6=>SupplyLine,7=>MarketLifeline,8=>PowerRelay,9=>RouteReopened,10=>SignalTrace,11=>SafehouseSweep,12=>FalseFront,13=>EvidenceChain,14=>NetworkBreak,15=>AirCorridor,16=>SteelPush,_=>string.Empty
         };
         public static int IndexOf(string id)
         {

@@ -30,6 +30,12 @@ namespace Game.UI.Shell.Ecs
                 int credits = TryReadPlayerCredits(entityManager, out int resolvedCredits)
                     ? resolvedCredits
                     : 0;
+                if(CampaignSteelPushFuelScope.TryGet(entityManager,out var steelReserve,out _))
+                {
+                    values=UiMatchHudResourceValuesModel.FromValues(0,
+                        Mathf.Max(0,Mathf.FloorToInt(CampaignSteelPushFuelScope.Usable(entityManager,steelReserve))),false,credits);
+                    return true;
+                }
                 if (expandedSupplyWorld != entityManager.World)
                 {
                     expandedSupplyQuery = entityManager.CreateEntityQuery(

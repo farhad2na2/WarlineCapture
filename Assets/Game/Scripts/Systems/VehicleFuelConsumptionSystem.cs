@@ -21,6 +21,7 @@ namespace Game.Runtime
         {
             NativeArray<float> requestedFuelByFaction = new(FactionCapacity, Allocator.Temp);
             NativeArray<float> requestedExpandedFuelByFaction = new(FactionCapacity, Allocator.Temp);
+            bool steelPush=CampaignSteelPushFuelScope.TryGet(state.EntityManager,out var steelReserve,out var steelRuntime);
             ComponentLookup<UnitAirMovement> airMovementLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
             ComponentLookup<SkirmishAttemptOwnedComponent> attemptLookup =
                 SystemAPI.GetComponentLookup<SkirmishAttemptOwnedComponent>(true);
@@ -39,6 +40,9 @@ namespace Game.Runtime
                          .WithEntityAccess())
             {
                 if (consumption.ValueRO.Enabled == 0)
+                    continue;
+                if(steelPush && (!state.EntityManager.HasComponent<CampaignMissionUnitRoleComponent>(entity)||
+                    !state.EntityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity).SessionToken.Equals(steelRuntime.SessionToken)))
                     continue;
 
                 ref UnitFuelConsumptionState stateRw = ref consumptionState.ValueRW;
@@ -79,7 +83,8 @@ namespace Game.Runtime
                 stateRw.LastCell = cell;
             }
 
-            DrainRequestedFuel(ref state, requestedFuelByFaction);
+            if(steelPush)CampaignSteelPushFuelScope.Drain(state.EntityManager,steelReserve,requestedFuelByFaction[1]);
+            else DrainRequestedFuel(ref state, requestedFuelByFaction);
             if (hasExpanded)
                 DrainExpandedFuel(ref state, sessionEntity, requestedExpandedFuelByFaction);
             requestedFuelByFaction.Dispose();

@@ -215,6 +215,8 @@ namespace Game.UI.Runtime
 
         private bool TrySelectFutureMission(int number)
         {
+            if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==2)
+            { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.SteelPush); return true; }
             if ((futureChapter==4 || campaignOperationsView.IsChapterFour) && number==1)
             { SelectMission(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor); return true; }
             if(campaignOperationsView.IsChapterFour)futureChapter=4;

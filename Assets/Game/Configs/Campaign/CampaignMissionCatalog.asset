@@ -61,3 +61,6 @@ MonoBehaviour:
   - missionId: saga.ch04.m01.air_corridor
     definition: {fileID: 11400000, guid: c41b2c608e05f4b37a3f917afa1a759b, type: 2}
     scenario: {fileID: 11400000, guid: d89c65c9468d548609b5d2de338f4ba1, type: 2}
+  - missionId: saga.ch04.m02.steel_push
+    definition: {fileID: 11400000, guid: ea5ec61ae534a4edb9da9d456802fc28, type: 2}
+    scenario: {fileID: 11400000, guid: f7b62c45e7f714be88a0f8c7553b982a, type: 2}

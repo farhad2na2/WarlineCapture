@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.SteelPushBilingualVoice.v1",
+  "missionId": "saga.ch04.m02.steel_push",
+  "generatedAtUtc": "2026-09-28T12:08:26.067904+00:00",
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "steel_push-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Vanguard armor is coming down the service road. This is an open military assault, not an Ash Line raid. Put our tanks across the approach and keep infantry covering the reserve.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-dalia.wav",
+      "durationSeconds": 11.68,
+      "sha256": "22335adafd0abbaa403c364108c443358895f42022a496f63cea9de171de8f24",
+      "captionSha256": "416ae9a6ee2a923079a6faee88e4c68114c794316bba3146cc902b211ca3f16b"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "زرهی‌های ونگارد دارن از جادهٔ خدماتی میان. این دیگه یورش خط خاکستر نیست؛ حملهٔ نظامی آشکاره. تانک‌هامون رو سر راهشون بذارین و پیاده‌ها رو برای پوشش ذخیره نگه دارین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-dalia.wav",
+      "durationSeconds": 13.36,
+      "sha256": "cfeed5eb8f620f2b9b232ceeca7304aeec87e4de60ba93f2b0b31c6a7279f506",
+      "captionSha256": "50c8448f477d679f7e56eb8b319b2a9dea59c8a4c2a5678c41e71dd6e3f79114"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "That Fuel also runs the hospital generators and water pumps. The civilian allocation stays protected. Spend the military reserve on necessary armor movement and reinforce through the barracks. We cannot burn the site to deny it.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-samira.wav",
+      "durationSeconds": 13.68,
+      "sha256": "dce81d36ea47636bce9bf810372d64ac9956124e8b91b75e66d50fc6a5b84625",
+      "captionSha256": "41fdba478050633a0155ba5e96ee38c2f1ca3694428e30e7266c50814abc0b96"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "این سوخت، مولدهای بیمارستان و پمپ‌های آب رو هم راه می‌اندازه. سهم مردم باید محفوظ بمونه. ذخیرهٔ نظامی رو خرج حرکت ضروری زرهی‌ها کنین و از پادگان نیروی کمکی بیارین. قرار نیست برای محروم کردن دشمن، محوطه رو بسوزونیم.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-samira.wav",
+      "durationSeconds": 18.88,
+      "sha256": "1d028055dce465d3a4c656f58d3402926c5e5909931a743297521fa7396c6f71",
+      "captionSha256": "213cab347f5817bb58a36ddd15bfd41a4138c4349eb2caf1805db4746da2b7b1"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-brief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Two armored groups are confirmed. Stop their command vehicles before they reach the dormant Relay node. Your existing Select, Move, Attack and Hold controls are sufficient; I will show the route without issuing troop orders.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-brief-aria.wav",
+      "durationSeconds": 13.2,
+      "sha256": "386e04f6b022843e28ea4a5f520a11d8bb960f6e1288e5e981b51a6747eed2d8",
+      "captionSha256": "9402ed278c8d41a42fe4d53d7521cbd51cc995ec85ed244526358cb1f88966ff"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-brief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دو گروه زرهی تأیید شدن. خودروهای فرماندهی رو قبل از رسیدن به گره خاموش رله متوقف کن. انتخاب، حرکت، حمله و نگه داشتن معمول کافیه؛ مسیر رو نشون می‌دم، بدون اینکه به نیروها فرمان بدم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-brief-aria.wav",
+      "durationSeconds": 16.08,
+      "sha256": "d903e625bb41d966befff5fc9a3b9870c9bbaa99cb203544b3ae9fc0757bde66",
+      "captionSha256": "862bfbfe05ee7ce37b6d07a9d5667cbf45a7b4d79edd2c5608a1490c6a0ab60a"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-comms-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The lead command vehicle is disabled. Its orders mention a final authority key. The main column is still moving—keep our armor on the approach and the Fuel reserve covered.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-comms-dalia.wav",
+      "durationSeconds": 11.52,
+      "sha256": "e06a27966b3a52e8d69b885c2c95b1e4e3cd7715ca01eade50b10013ea4e6e8b",
+      "captionSha256": "978dfe7cb3cfee8c26839409aeaf774f697f3590d945bb64e9e78a099588ef68"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-comms-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "خودروی فرماندهی جلو از کار افتاد. توی دستورهاش از یک کلید نهایی اختیار اسم برده شده. ستون اصلی هنوز داره میاد؛ زرهی‌هامون رو روی مسیر و ذخیرهٔ سوخت رو زیر پوشش نگه دارین.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-comms-dalia.wav",
+      "durationSeconds": 15.36,
+      "sha256": "4c7b4f88d922a18312066f2e965f62a8884bb4f7c9b863e8e4dce404c4d4b5d1",
+      "captionSha256": "8fc804ec4406ea9c1d535b08abf54fb07dc60fc4b53456428ec72d633d904692"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The reserve is operating and the civilian allocation is intact. Hospital generators and water pumps can keep running. Holding the site mattered as much as breaking the column.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-samira.wav",
+      "durationSeconds": 10.24,
+      "sha256": "8359f78775b9ccfd99c0c7f4ffd33d0af0224e2a1f651a2647a7ab193d5b4c99",
+      "captionSha256": "8568d32f2918eeca32db4843adace865216a33b7e7fc128dce678934442ba0ce"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "ذخیره هنوز کار می‌کنه و سهم مردم محفوظ مونده. مولدهای بیمارستان و پمپ‌های آب می‌تونن روشن بمونن. حفظ این محوطه به اندازهٔ شکستن ستون مهم بود.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-samira.wav",
+      "durationSeconds": 12.32,
+      "sha256": "11e0654a94e1484280588b9a03c6bc6764b5cb43621a51035cc3aa7684366383",
+      "captionSha256": "45d0248cc18465afb20b3996a6d78897cc701b88103692ccce3a0d5b627d3114"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Vanguard was not simply looking for Fuel. These orders tie the seizure to Qassem's Relay access plan. We stopped the column, but their long-range battery is now targeting the forward base.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-dalia.wav",
+      "durationSeconds": 12.56,
+      "sha256": "6edef8b58f807007496dbf75621fbe5a048ebf888df89d0f3ddd23477eb357e0",
+      "captionSha256": "bc4850d9d98f4b11ebadc0a2ed39a981ff4c407b9b9bbebe3089d4f212f399de"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "ونگارد فقط دنبال سوخت نبود. این دستورها تصرف محوطه رو به نقشهٔ قاسم برای دسترسی به رله وصل می‌کنه. ستون رو متوقف کردیم، ولی حالا آتشبار دوربردشون پایگاه جلو رو هدف گرفته.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-dalia.wav",
+      "durationSeconds": 15.52,
+      "sha256": "4ababcfe8823ef10dca3a582be317922b00ca2ddcb413d2c26d98efc7b05b382",
+      "captionSha256": "7ca03051450578f12c7e0a785da8736af35937687fef3329539032976de4e348"
+    },
+    {
+      "kind": "narrative",
+      "id": "steel_push-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The recovered order names the final authority key, but its meaning is not yet confirmed. I will preserve the evidence. The next defense requires a verified battery target and enough forces to hold the base.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/en/steel_push-debrief-aria.wav",
+      "durationSeconds": 14.16,
+      "sha256": "97f90556a6d27d829ed70933daf1f2f4ee547b508a3f534165bd8a3d37621b50",
+      "captionSha256": "1bd9547eadd316e6c88d09644888fbeb5ef1db37295eaf0b813a8b3102dae634"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "steel_push-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "دستور بازیابی‌شده از کلید نهایی اختیار اسم می‌بره، ولی معنیش هنوز تأیید نشده. مدرک رو حفظ می‌کنم. دفاع بعدی هم هدف تأییدشدهٔ آتشبار می‌خواد، هم نیروی کافی برای نگه داشتن پایگاه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M02SteelPush/Voice/fa/steel_push-debrief-aria.wav",
+      "durationSeconds": 15.28,
+      "sha256": "2a81dc522bd8849c1d65ac7d2a337abfe17be01ba4679d831ea41ff0ecbde388",
+      "captionSha256": "45e374b0856a4efd139f818d74d2805feb955a3a0fd4ac62d5863f26b64779f3"
+    }
+  ]
+}

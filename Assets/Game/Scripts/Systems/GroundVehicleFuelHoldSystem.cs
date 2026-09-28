@@ -20,6 +20,7 @@ namespace Game.Runtime
         {
             NativeArray<float> usableFuelByFaction = new(FactionCapacity, Allocator.Temp);
             NativeArray<float> expandedFuelByFaction = new(FactionCapacity, Allocator.Temp);
+            bool steelPush=CampaignSteelPushFuelScope.TryGet(state.EntityManager,out var steelReserve,out var steelRuntime);
             foreach (RefRO<BuildingResourceStorageComponent> storageRef in SystemAPI.Query<RefRO<BuildingResourceStorageComponent>>())
             {
                 BuildingResourceStorageComponent storage = storageRef.ValueRO;
@@ -28,6 +29,7 @@ namespace Game.Runtime
 
                 usableFuelByFaction[storage.OwnerFactionId] += math.max(0f, storage.StoredFuelBarrels - storage.ReservedFuelOutboundBarrels - storage.CivilianFuelReserveBarrels);
             }
+            if(steelPush)usableFuelByFaction[1]=CampaignSteelPushFuelScope.Usable(state.EntityManager,steelReserve);
 
             using var expanded = state.EntityManager.CreateEntityQuery(
                 typeof(SkirmishExpandedSessionComponent), typeof(SkirmishResolvedSetupComponent),
@@ -63,6 +65,8 @@ namespace Game.Runtime
                          .WithNone<UnitAirMovement, UnitResourceHaulOrder>()
                          .WithEntityAccess())
             {
+                if(steelPush && (!state.EntityManager.HasComponent<CampaignMissionUnitRoleComponent>(entity)||
+                    !state.EntityManager.GetComponentData<CampaignMissionUnitRoleComponent>(entity).SessionToken.Equals(steelRuntime.SessionToken)))continue;
                 bool expandedUnit = hasExpanded && attemptLookup.HasComponent(entity) &&
                     attemptLookup[entity].SessionId.Equals(session.SessionId);
                 float availableFuel = expandedUnit

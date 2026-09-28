@@ -7,7 +7,7 @@ namespace Game.Configs
     {
         public static bool TryValidate(ScenarioSetupConfig scenario, out string error)
         {
-            error = "Defense requires a finite, uniquely identified convoy, valid contact timing, core and sensor.";
+            error = "Defense requires a finite, uniquely identified convoy, valid contact timing, core and valid optional radar support.";
             MissionDefenseDefinitionConfig defense = scenario.Defense;
             if (!scenario.MissionRuntime.Enabled || !defense.Enabled ||
                 defense.ConvoyElements.Length is < 1 or > 4 ||
@@ -15,16 +15,19 @@ namespace Game.Configs
                 !HasAnchor(scenario, defense.InnerCoreAnchorId) ||
                 !HasAnchor(scenario, defense.InitialProducerAnchorId) ||
                 !float.IsFinite(defense.InnerCoreRadius) || defense.InnerCoreRadius <= 0f ||
-                defense.RadarPingCharges is < 1 or > 8 || defense.RadarPingCooldownMilliseconds < 1000 ||
+                defense.RadarPingCharges is < 0 or > 8 || defense.RadarPingCooldownMilliseconds < 1000 ||
                 !string.IsNullOrEmpty(scenario.MissionRuntime.DelayedWave.UnitGroupId)) return false;
             bool sensorFound = false;
             foreach (ScenarioUnitGroupConfig group in scenario.UnitGroups)
                 foreach (ScenarioUnitEntryConfig unit in group.Units)
                     sensorFound |= group.FactionIndex == FactionIdentity.PlayerFactionId && unit.Count == 1 &&
                         unit.MissionRoleId == defense.SensorMissionRoleId;
-            if (!sensorFound) return false;
+            // Ground-only defenses can explicitly omit radar. Authored radar missions
+            // still require their real sensor and at least one charge.
+            bool radarEnabled = !string.IsNullOrWhiteSpace(defense.SensorMissionRoleId);
+            if (radarEnabled ? !sensorFound || defense.RadarPingCharges < 1 : defense.RadarPingCharges != 0) return false;
             if (!defense.CameraTour.IsValid) return false;
-            if (defense.GuidanceSteps.Length != 12) return false;
+            if (defense.GuidanceSteps.Length is < 4 or > 12) return false;
             for (int i=0;i<defense.GuidanceSteps.Length;i++)
             {
                 var step=defense.GuidanceSteps[i];

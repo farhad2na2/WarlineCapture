@@ -14,13 +14,13 @@ namespace Game.UI.Runtime
             bool persian = UiShellRuntimeGateway.Localization.IsRightToLeft;
             EnableFutureChapterCard(ChapterFourButton, 3, selectedChapter == 4,
                 persian ? "هوا و زره" : "AIR AND ARMOR",
-                persian ? "مأموریت اول آماده است" : "M01 READY");
+                persian ? "مأموریت‌های ۱ و ۲ آماده‌اند" : "M01–M02 READY");
             EnableFutureChapterCard(ChapterFiveButton, 4, selectedChapter == 5,
                 persian ? "فرماندهی شهر" : "CITYWIDE COMMAND",
                 persian ? "پیش‌نمایش داستان" : "STORY PREVIEW");
             // Keep previously available story previews reachable beside playable M01.
             if(selectedChapter==4&&IsChapterFour)
-                for(int index=1;index<5;index++)
+                for(int index=2;index<5;index++)
                 {
                     bool available=FutureMissionComicCatalog.Find(4,index+1)!=null;
                     if(missionNodeButtons!=null&&index<missionNodeButtons.Length&&missionNodeButtons[index]!=null)missionNodeButtons[index].interactable=available;

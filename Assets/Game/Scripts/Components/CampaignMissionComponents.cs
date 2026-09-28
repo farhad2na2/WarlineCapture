@@ -239,7 +239,8 @@ namespace Game.Components
         MarketInspectLegitimate = 59, MarketInspectCorrupt = 60, MarketEscort = 61, MarketDefend = 62, MarketHold = 63,
         PowerRoute = 64, PowerFuel = 65, PowerRepair = 66, PowerDefend = 67, PowerHold = 68,
         RouteRelief = 69, RouteFuel = 70, RouteRepair = 71, RouteBreach = 72, RouteGarrison = 73, RouteRecords = 74,
-        AirCorridorPlan = 75, AirCorridorSelect = 76, AirCorridorMove = 77, AirCorridorDefend = 78
+        AirCorridorPlan = 75, AirCorridorSelect = 76, AirCorridorMove = 77, AirCorridorDefend = 78,
+        SteelPushPlan = 79, SteelPushSelect = 80, SteelPushMove = 81, SteelPushDefend = 82
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

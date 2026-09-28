@@ -7,6 +7,7 @@ namespace Game.UI.Runtime
     {
         [SerializeField] private Image icon;
         [SerializeField] private Sprite fuel, credits;
+        public Sprite CreditsIcon => credits;
 
         public void ShowMissionCredits(bool active)
         {

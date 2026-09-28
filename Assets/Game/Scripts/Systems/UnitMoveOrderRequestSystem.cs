@@ -366,6 +366,8 @@ namespace Game.Runtime
 
         private static float CalculateUsableFuel(EntityManager em, byte factionId)
         {
+            if(factionId==1 && CampaignSteelPushFuelScope.TryGet(em,out var steelReserve,out _))
+                return CampaignSteelPushFuelScope.Usable(em,steelReserve);
             float usableFuel = 0f;
             using EntityQuery storageQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingResourceStorageComponent>());
             if (storageQuery.IsEmptyIgnoreFilter)

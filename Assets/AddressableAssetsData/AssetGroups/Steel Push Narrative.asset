@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Steel Push Narrative
+  m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
+  m_GroupName: Steel Push Narrative
+  m_GUID: 40ec77886a355474997886ec13e1d069
+  m_SerializeEntries:
+  - m_GUID: 75a18f7e42964d4fbc7a627c38641227
+    m_Address: narrative.steel_push.ch04m02_steelpush_debrief
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99d25f658ebe4927a88fe3f6dde6395c
+    m_Address: narrative.steel_push.ch04m02_steelpush_comms
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef3183cbf9a84e5196963a22a5e4969d
+    m_Address: narrative.steel_push.ch04m02_steelpush
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2e53d730da52a413e83b65f61154fbae, type: 2}
+    - {fileID: 11400000, guid: 4ff7846d9910f45db82dd45a45109dd5, type: 2}

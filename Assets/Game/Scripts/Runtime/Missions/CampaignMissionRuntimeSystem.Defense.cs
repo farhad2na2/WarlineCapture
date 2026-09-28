@@ -23,6 +23,10 @@ namespace Game.Runtime
                 CampaignMissionDefenseStateComponent defense = em.GetComponentData<CampaignMissionDefenseStateComponent>(root);
                 if (!defense.SessionToken.Equals(runtime.SessionToken) || defense.AttemptOrdinal != runtime.AttemptOrdinal ||
                     defense.SourceVersion != runtime.SourceVersion) return true;
+                // Reserve the fixed objective footprint before the relocatable
+                // producer is placed; neither may overlap the other.
+                if (runtime.MissionId.Equals(SteelPushMissionId))
+                    ProjectSteelPushProtection(em, root, in runtime, ref facts);
                 TryPrepareDefenseProducer(ref state, root, ref defense, ref definition, ref facts);
                 if (em.HasComponent<CampaignMissionOpeningPresentationComponent>(root))
                 {

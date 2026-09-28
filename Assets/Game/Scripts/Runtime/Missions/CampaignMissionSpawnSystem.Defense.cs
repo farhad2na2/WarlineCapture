@@ -65,7 +65,11 @@ namespace Game.Runtime
             in CampaignMissionForceUnitBlob unit)
         {
             if (definition.Defense.Enabled == 0) return;
-            if (definition.Defense.VehiclesSelfSupplied != 0 && em.HasComponent<UnitFuelConsumption>(instance))
+            // Vanguard brings its own logistics; Steel Push's player armor must
+            // consume the finite protected site's real shared Fuel supply.
+            if ((definition.Defense.VehiclesSelfSupplied != 0 ||
+                definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SteelPush)) && group.FactionId != 1)
+                && em.HasComponent<UnitFuelConsumption>(instance))
             {
                 UnitFuelConsumption fuel = em.GetComponentData<UnitFuelConsumption>(instance);
                 fuel.Enabled = 0;

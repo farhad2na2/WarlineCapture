@@ -13,6 +13,8 @@ namespace Game.UI.Runtime
         private GameObject _oilSlotRoot;
         private GameObject _fuelSlotRoot;
         private Button _resourceStripButton;
+        private Image _oilSlotIcon;
+        private Sprite _oilSlotSprite;
         private TMP_Text _materialsSlotLabel;
         private TMP_Text _materialsSlotValue;
         private TMP_Text _oilSlotLabel;
@@ -34,6 +36,7 @@ namespace Game.UI.Runtime
         private bool _lastHideEconomyResources;
         private bool _lastHideLogisticsResources;
         private bool _lastShowMissionCredits;
+        private bool _lastSteelPush;
         private bool _resourceVisibilityApplied;
         private bool _labelsApplied;
         private float _nextRefreshTime;
@@ -52,6 +55,8 @@ namespace Game.UI.Runtime
         {
             Clear();
             _oilSlotRoot = oilSlotRoot;
+            _oilSlotIcon = oilSlotRoot != null ? oilSlotRoot.transform.Find("Icon")?.GetComponent<Image>() : null;
+            _oilSlotSprite = _oilSlotIcon != null ? _oilSlotIcon.sprite : null;
             _materialsSlotLabel = materialsSlotLabel;
             _materialsSlotValue = materialsSlotValue;
             _oilSlotLabel = oilSlotLabel;
@@ -81,6 +86,8 @@ namespace Game.UI.Runtime
             _oilSlotRoot = null;
             _fuelSlotRoot = null;
             _resourceStripButton = null;
+            _oilSlotIcon = null;
+            _oilSlotSprite = null;
             _resourceStripCanvasGroup = null;
             _materialsSlotLabel = null;
             _materialsSlotValue = null;
@@ -102,6 +109,7 @@ namespace Game.UI.Runtime
             _lastHideEconomyResources = false;
             _lastHideLogisticsResources = false;
             _lastShowMissionCredits = false;
+            _lastSteelPush = false;
             _resourceVisibilityApplied = false;
             _labelsApplied = false;
             _nextRefreshTime = 0f;
@@ -152,11 +160,15 @@ namespace Game.UI.Runtime
 
         private void ApplyNumericValues(in UiMatchHudResourceValuesModel values)
         {
+            // Steel Push has no oil network. Reuse the existing oil slot for
+            // production Credits so physical Fuel remains visible in its own slot.
+            bool steelPush = IsSteelPush();
+            int oilOrCredits = steelPush ? values.Credits : values.Oil;
             if (_oilSlotValue != null &&
-                (!_lastOilWasNumeric || _lastOilValue != values.Oil))
+                (!_lastOilWasNumeric || _lastOilValue != oilOrCredits))
             {
-                SetCompactText(_oilSlotValue, values.Oil);
-                _lastOilValue = values.Oil;
+                SetCompactText(_oilSlotValue, oilOrCredits);
+                _lastOilValue = oilOrCredits;
                 _lastOilText = null;
                 _lastOilWasNumeric = true;
             }
@@ -209,17 +221,22 @@ namespace Game.UI.Runtime
                     out UiMissionHudRestrictionsModel restrictions) &&
                 restrictions.EconomyDisabled;
             showOil |= restrictions.UsesMaterialsOnlyConstruction ||
-                restrictions.IsActive && restrictions.MissionId == "saga.ch01.m03.radar_warning";
+                restrictions.IsActive && restrictions.MissionId == "saga.ch01.m03.radar_warning" || IsSteelPush();
             bool hideLogisticsResources = restrictions.IsActive && restrictions.HideLogisticsResources;
             bool showMissionCredits = restrictions.IsActive && restrictions.ShowMissionCredits;
+            bool steelPush = IsSteelPush();
             if (_resourceVisibilityApplied && _lastShowOil == showOil &&
                 _lastHideEconomyResources == hideEconomyResources &&
                 _lastHideLogisticsResources == hideLogisticsResources &&
-                _lastShowMissionCredits == showMissionCredits)
+                _lastShowMissionCredits == showMissionCredits && _lastSteelPush == steelPush)
                 return;
 
             SetVisible(_materialsSlotRoot, true);
             SetVisible(_oilSlotRoot, !hideLogisticsResources && (showOil || hideEconomyResources));
+            if (_oilSlotIcon != null)
+                _oilSlotIcon.sprite = steelPush && _fuelSlotRoot != null &&
+                    _fuelSlotRoot.TryGetComponent(out MatchHudResourceIconView creditsSource)
+                    ? creditsSource.CreditsIcon : _oilSlotSprite;
             SetVisible(_fuelSlotRoot, !hideLogisticsResources || showMissionCredits);
             if (_fuelSlotRoot != null && _fuelSlotRoot.TryGetComponent(out MatchHudResourceIconView resourceIcon))
                 resourceIcon.ShowMissionCredits(showMissionCredits);
@@ -229,13 +246,16 @@ namespace Game.UI.Runtime
                     _resourceStripButton,
                     UiDisabledVisualReason.MissionRestriction,
                     hideEconomyResources);
-                _resourceStripButton.interactable = !hideEconomyResources && !hideLogisticsResources;
+                // This operation is the authored fixed-reserve fallback, not a
+                // resource-exchange/network tutorial. Keep values readable but
+                // do not offer purchases that bypass its finite Fuel contract.
+                _resourceStripButton.interactable = !hideEconomyResources && !hideLogisticsResources && !steelPush;
             }
             if (_resourceStripCanvasGroup != null)
             {
                 _resourceStripCanvasGroup.alpha = 1f;
-                _resourceStripCanvasGroup.interactable = !hideEconomyResources && !hideLogisticsResources;
-                _resourceStripCanvasGroup.blocksRaycasts = !hideEconomyResources && !hideLogisticsResources;
+                _resourceStripCanvasGroup.interactable = !hideEconomyResources && !hideLogisticsResources && !steelPush;
+                _resourceStripCanvasGroup.blocksRaycasts = !hideEconomyResources && !hideLogisticsResources && !steelPush;
             }
             UiDisabledMaterialUtility.SetDisabled(
                 _materialsSlotRoot,
@@ -253,6 +273,7 @@ namespace Game.UI.Runtime
             _lastHideEconomyResources = hideEconomyResources;
             _lastHideLogisticsResources = hideLogisticsResources;
             _lastShowMissionCredits = showMissionCredits;
+            _lastSteelPush = steelPush;
             _resourceVisibilityApplied = true;
         }
 
@@ -269,7 +290,8 @@ namespace Game.UI.Runtime
                 UiShellRuntimeGateway.Localization.Get("ui.hud.materials", "Materials"));
             SetLabelIfChanged(
                 _oilSlotLabel,
-                UiShellRuntimeGateway.Localization.Get("ui.hud.oil", "Oil"));
+                IsSteelPush() ? UiShellRuntimeGateway.Localization.Get("ui.hud.credits", "Credits")
+                    : UiShellRuntimeGateway.Localization.Get("ui.hud.oil", "Oil"));
             string fuelLabel = UiShellRuntimeGateway.TryReadMissionHudRestrictions(
                 out UiMissionHudRestrictionsModel restrictions) && restrictions.ShowMissionCredits
                 ? UiShellRuntimeGateway.Localization.Get("ui.hud.credits", "Credits")
@@ -292,6 +314,10 @@ namespace Game.UI.Runtime
             else if (target.text != value)
                 target.text = value;
         }
+
+        private static bool IsSteelPush() =>
+            UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var mission) && mission.IsActive &&
+            mission.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SteelPush;
 
         private static void SetTextIfChanged(TMP_Text target, string value, ref string previousValue)
         {

@@ -22,7 +22,7 @@ namespace Game.UI.Runtime
         [SerializeField] private Image art;
         [SerializeField] private MissionPlate[] plates = Array.Empty<MissionPlate>();
         private Sprite _fallback;
-        private ushort _appliedMask = ushort.MaxValue;
+        private uint _appliedMask = uint.MaxValue;
 
         private void Awake()
         {
@@ -32,7 +32,7 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
-            _appliedMask = ushort.MaxValue;
+            _appliedMask = uint.MaxValue;
             ApplyLatestUnlocked();
         }
 
@@ -48,10 +48,10 @@ namespace Game.UI.Runtime
                 return;
 
             _appliedMask = campaign.AvailableMissionMask;
-            int count = Mathf.Min(CampaignMissionSequence.RegisteredMissionCount, 16);
+            int count = Mathf.Min(CampaignMissionSequence.RegisteredMissionCount, 32);
             for (int index = count - 1; index >= 0; index--)
             {
-                if ((_appliedMask & (1 << index)) == 0)
+                if ((_appliedMask & (1u << index)) == 0)
                     continue;
                 Sprite plate = FindPlate(CampaignMissionSequence.IdAt(index));
                 if (plate == null)
@@ -66,6 +66,9 @@ namespace Game.UI.Runtime
 
         private Sprite FindPlate(string missionId)
         {
+            if(missionId==CampaignMissionSequence.SteelPush)
+                foreach(var sprite in Resources.LoadAll<Sprite>("FutureMissionComics/CH04M02_SteelPush"))
+                    if(sprite.name=="CH04M02_SteelPush-a-16x9")return sprite;
             if (string.IsNullOrEmpty(missionId) || plates == null)
                 return null;
             for (int i = 0; i < plates.Length; i++)

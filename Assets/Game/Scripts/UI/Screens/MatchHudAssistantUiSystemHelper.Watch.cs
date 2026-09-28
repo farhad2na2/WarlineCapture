@@ -91,7 +91,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsEvidenceChainGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
-                       !UiShellRuntimeGateway.IsAirCorridorGuideContext())
+                       !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
                         UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false);
                 }
             }

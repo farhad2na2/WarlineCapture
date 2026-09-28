@@ -53,7 +53,7 @@ namespace Game.UI.Shell.Ecs
             uint settlementSourceVersion,
             ref CampaignMissionDefinitionBlob definition,
             CampaignMissionProgressSaveData[] progress,
-            in UiCampaignOperationsComponent current, ushort availableMissionMask)
+            in UiCampaignOperationsComponent current, uint availableMissionMask)
         {
             bool m01 = definition.MissionId.Equals(new FixedString64Bytes(M01MissionId));
             bool m03 = definition.Defense.Enabled != 0;
@@ -69,25 +69,25 @@ namespace Game.UI.Shell.Ecs
                 displayName, nextMissionId, progress, in current, availableMissionMask);
         }
 
-        private static ushort AvailableMissionMask(ref CampaignMissionCatalogBlob catalog, CampaignMissionProgressSaveData[] progress)
+        private static uint AvailableMissionMask(ref CampaignMissionCatalogBlob catalog, CampaignMissionProgressSaveData[] progress)
         {
-            ushort mask = 0;
+            uint mask = 0;
             for (int i = 0; i < catalog.Missions.Length; i++)
             {
                 ref CampaignMissionDefinitionBlob mission = ref catalog.Missions[i];
                 if (!IsDefinitionAvailable(ref mission, progress)) continue;
                 int index = CampaignMissionSequence.IndexOf(mission.MissionId.ToString());
-                if (index >= 0) mask |= (ushort)(1 << index);
+                if (index >= 0) mask |= (uint)(1u << index);
             }
             return mask;
         }
 
-        private static ushort CompletedMissionMask(CampaignMissionProgressSaveData[] progress)
+        private static uint CompletedMissionMask(CampaignMissionProgressSaveData[] progress)
         {
-            ushort mask = 0;
+            uint mask = 0;
             for (int i = 0; i < CampaignMissionSequence.RegisteredMissionCount; i++)
                 if (Find(progress, new FixedString64Bytes(CampaignMissionSequence.IdAt(i)))?.firstClearCompleted == true)
-                    mask |= (ushort)(1 << i);
+                    mask |= (uint)(1u << i);
             return mask;
         }
 
@@ -110,7 +110,7 @@ namespace Game.UI.Shell.Ecs
             FixedString64Bytes displayName,
             FixedString64Bytes nextMissionId,
             CampaignMissionProgressSaveData[] progress,
-            in UiCampaignOperationsComponent current, ushort availableMissionMask = 0)
+            in UiCampaignOperationsComponent current, uint availableMissionMask = 0)
         {
             CampaignMissionProgressSaveData entry = Find(progress, missionId);
             bool isM01 = missionId.Equals(new FixedString64Bytes(M01MissionId));

@@ -207,14 +207,14 @@ namespace Game.UI.Runtime
             return $"{mission.DisplayName}  |  {mission.PrimaryActionLabel}  |  {mission.BestStars}/3{time}";
         }
 
-        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, ushort availableMask, ushort completedMask)
+        private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, uint availableMask, uint completedMask)
         {
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
                 int contentIndex=IsChapterFour?index+15:IsChapterThree?index+10:IsChapterTwo?index+5:index;
                 bool available = !IsChapterTwo && !IsChapterThree && !IsChapterFour && (index == 0 || index == 1 && m02Revealed ||
                                  index == 1 && selectedMissionId == UiCampaignMissionProjectionIds.M02);
-                if (availableMask != 0) available = contentIndex < Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount && (availableMask & (1 << contentIndex)) != 0;
+                if (availableMask != 0) available = contentIndex < Game.Missions.Contracts.CampaignMissionSequence.RegisteredMissionCount && (availableMask & (1u << contentIndex)) != 0;
                 if (missionNodeButtons != null && index < missionNodeButtons.Length &&
                     missionNodeButtons[index] != null)
                     missionNodeButtons[index].interactable = available;
@@ -223,7 +223,7 @@ namespace Game.UI.Runtime
                     lockIcon.SetActive(!available);
                 bool selected = selectedMissionId == Game.Missions.Contracts.CampaignMissionSequence.IdAt(contentIndex);
                 if(nodeIdLabels!=null && index<nodeIdLabels.Length) Set(nodeIdLabels[index],"M"+(index+1).ToString("00"));
-                ApplyNodeAppearance(index, available, (completedMask & (1 << contentIndex)) != 0, selected);
+                ApplyNodeAppearance(index, available, (completedMask & (1u << contentIndex)) != 0, selected);
             }
         }
 

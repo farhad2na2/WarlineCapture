@@ -1,0 +1,44 @@
+using Game.Catalog.Contracts;
+
+namespace Game.Configs
+{
+    public readonly struct SteelPushNarrativeLine
+    {
+        public readonly string Id, English, Persian;
+        public readonly NarrativeSpeakerId Speaker;
+        public string Key => "narrative.steel_push." + Id.Substring("steel_push-".Length);
+        public SteelPushNarrativeLine(string id, NarrativeSpeakerId speaker, string english, string persian)
+        { Id = "steel_push-" + id; Speaker = speaker; English = english; Persian = persian; }
+    }
+
+    public static class CH04M02SteelPushCopy
+    {
+        public static readonly SteelPushNarrativeLine[] Brief = {
+            new("brief-dalia", NarrativeSpeakerId.Dalia,
+                "Vanguard armor is coming down the service road. This is an open military assault, not an Ash Line raid. Put our tanks across the approach and keep infantry covering the reserve.",
+                "زرهی‌های ونگارد دارن از جادهٔ خدماتی میان. این دیگه یورش خط خاکستر نیست؛ حملهٔ نظامی آشکاره. تانک‌هامون رو سر راهشون بذارین و پیاده‌ها رو برای پوشش ذخیره نگه دارین."),
+            new("brief-samira", NarrativeSpeakerId.Samira,
+                "That Fuel also runs the hospital generators and water pumps. The civilian allocation stays protected. Spend the military reserve on necessary armor movement and reinforce through the barracks. We cannot burn the site to deny it.",
+                "این سوخت، مولدهای بیمارستان و پمپ‌های آب رو هم راه می‌اندازه. سهم مردم باید محفوظ بمونه. ذخیرهٔ نظامی رو خرج حرکت ضروری زرهی‌ها کنین و از پادگان نیروی کمکی بیارین. قرار نیست برای محروم کردن دشمن، محوطه رو بسوزونیم."),
+            new("brief-aria", NarrativeSpeakerId.Aria,
+                "Two armored groups are confirmed. Stop their command vehicles before they reach the dormant Relay node. Your existing Select, Move, Attack and Hold controls are sufficient; I will show the route without issuing troop orders.",
+                "دو گروه زرهی تأیید شدن. خودروهای فرماندهی رو قبل از رسیدن به گره خاموش رله متوقف کن. انتخاب، حرکت، حمله و نگه داشتن معمول کافیه؛ مسیر رو نشون می‌دم، بدون اینکه به نیروها فرمان بدم.")
+        };
+        public static readonly SteelPushNarrativeLine[] Comms = {
+            new("comms-dalia", NarrativeSpeakerId.Dalia,
+                "The lead command vehicle is disabled. Its orders mention a final authority key. The main column is still moving—keep our armor on the approach and the Fuel reserve covered.",
+                "خودروی فرماندهی جلو از کار افتاد. توی دستورهاش از یک کلید نهایی اختیار اسم برده شده. ستون اصلی هنوز داره میاد؛ زرهی‌هامون رو روی مسیر و ذخیرهٔ سوخت رو زیر پوشش نگه دارین.")
+        };
+        public static readonly SteelPushNarrativeLine[] Debrief = {
+            new("debrief-samira", NarrativeSpeakerId.Samira,
+                "The reserve is operating and the civilian allocation is intact. Hospital generators and water pumps can keep running. Holding the site mattered as much as breaking the column.",
+                "ذخیره هنوز کار می‌کنه و سهم مردم محفوظ مونده. مولدهای بیمارستان و پمپ‌های آب می‌تونن روشن بمونن. حفظ این محوطه به اندازهٔ شکستن ستون مهم بود."),
+            new("debrief-dalia", NarrativeSpeakerId.Dalia,
+                "Vanguard was not simply looking for Fuel. These orders tie the seizure to Qassem's Relay access plan. We stopped the column, but their long-range battery is now targeting the forward base.",
+                "ونگارد فقط دنبال سوخت نبود. این دستورها تصرف محوطه رو به نقشهٔ قاسم برای دسترسی به رله وصل می‌کنه. ستون رو متوقف کردیم، ولی حالا آتشبار دوربردشون پایگاه جلو رو هدف گرفته."),
+            new("debrief-aria", NarrativeSpeakerId.Aria,
+                "The recovered order names the final authority key, but its meaning is not yet confirmed. I will preserve the evidence. The next defense requires a verified battery target and enough forces to hold the base.",
+                "دستور بازیابی‌شده از کلید نهایی اختیار اسم می‌بره، ولی معنیش هنوز تأیید نشده. مدرک رو حفظ می‌کنم. دفاع بعدی هم هدف تأییدشدهٔ آتشبار می‌خواد، هم نیروی کافی برای نگه داشتن پایگاه.")
+        };
+    }
+}

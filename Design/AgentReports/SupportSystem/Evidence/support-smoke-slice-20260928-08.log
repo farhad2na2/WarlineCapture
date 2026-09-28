@@ -1,0 +1,150 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.SupportSmokeSliceValidation.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:33)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportAbilityCatalogBuilder] result=Passed abilities=4 policies=25 productionEnabled=0 hash=34a07c6da8da9dcfe74d7b8ed284f3bd4a5bbeaa3bd913c197842f7a11b2e1c4
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportAbilityCatalogBuilder:Build () (at Assets/Game/Scripts/Editor/SupportAbilityCatalogBuilder.cs:62)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:25)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:16)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportPopupRegistration] result=Passed shells=1
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Register () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:138)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:73)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:16)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportPopupPrefabBuilder] result=Passed cards=4 sourceArt=existing aria=PlayStop popup=fullscreen
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportPopupPrefabBuilder:Build () (at Assets/Game/Scripts/Editor/SupportPopupPrefabBuilder.cs:74)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:16)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportConfigValidation] result=Passed tests=1 catalog=4 policies=25
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportConfigValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportConfigValidation.cs:17)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportRuntimeValidation] result=Passed tests=4
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportRuntimeValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportRuntimeValidation.cs:18)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:14)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportSmokeValidation] result=Passed tests=4
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportSmokeValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeValidation.cs:18)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:15)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportUiAriaValidation] result=Passed tests=5
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportUiAriaValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportUiAriaValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:15)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+AssertionException: `Game.UI.Runtime` and `Game.Composition` must not carry heavy runtime/rendering package references unless their source directly uses them.
+Assets/Game/Scripts/Composition/Game.Composition.asmdef references "sniveler-code.gpu-animation".
+NUnit.Framework.Assert.Fail (System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.Fail (System.String message) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+ScriptArchitectureAlignmentContractTests.AssertNoViolations (System.Collections.Generic.IReadOnlyCollection`1[T] violations, System.String header) (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:2000)
+ScriptArchitectureAlignmentContractTests.UiAndCompositionAssembliesMustNotReferenceUnusedHeavyPackages () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:959)
+ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:340)
+UnityEngine.Debug:LogException(Exception)
+ScriptArchitectureAlignmentContractTests:RunAssemblyBoundaryValidation() (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:376)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run(Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation() (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:16)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.<>c:<Execute>b__0_0()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[ScriptArchitectureBoundaryValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+ScriptArchitectureAlignmentContractTests:RunAssemblyBoundaryValidation () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:377)
+Game.Tests.Editor.SupportSmokeSliceValidation:Run (System.Action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:16)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+AssertionException:   ScriptArchitectureAlignmentContractTests
+  Expected: 0
+  But was:  1
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+Game.Tests.Editor.SupportSmokeSliceValidation.Run (System.Action action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation.RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:16)
+UnityEngine.Debug:LogException(Exception)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation() (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:20)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.<>c:<Execute>b__0_0()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[SupportSmokeSliceValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+Game.Tests.Editor.SupportSmokeSliceValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:20)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+AssertionException:   ScriptArchitectureAlignmentContractTests
+  Expected: 0
+  But was:  1
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.AreEqual (System.Object expected, System.Object actual, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+Game.Tests.Editor.SupportSmokeSliceValidation.Run (System.Action action) (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:23)
+Game.Tests.Editor.SupportSmokeSliceValidation.RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportSmokeSliceValidation.cs:20)
+System.Reflection.RuntimeMethodInfo.Invoke (System.Object obj, System.Reflection.BindingFlags invokeAttr, System.Reflection.Binder binder, System.Object[] parameters, System.Globalization.CultureInfo culture) (at <299d5c9ae27b4d27af003e5f456f4b13>:0)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.ExistingEditorValidation:Run(String, String) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:41)
+PipelineEvaluation.<>c:<Execute>b__0_0()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Tests.Editor.SupportSmokeSliceValidation.RunFocusedValidation
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation:Run (string,string) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+PipelineEvaluation.PipelineEval_cdb8e50a/<>c:<Execute>b__0_0 ()
+UnityEditor.EditorApplication:Internal_CallDelayFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:418)
+

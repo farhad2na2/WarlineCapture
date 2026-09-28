@@ -18,6 +18,7 @@ namespace Game.Runtime
                 context.TryGetEntityManager == null ||
                 !context.TryGetEntityManager(out EntityManager em) ||
                 !em.Exists(entity) ||
+                em.HasComponent<SupportPassengerOwnerComponent>(entity)&&em.GetComponentData<SupportPassengerOwnerComponent>(entity).Landed==0 ||
                 !em.HasComponent<Faction>(entity) ||
                 !em.HasComponent<UnitMove>(entity) ||
                 !FactionIdentity.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
@@ -66,6 +67,7 @@ namespace Game.Runtime
                     if (!MatchesMissionSelection(roles[i], representativeRole, sameMissionRole) ||
                         !FactionIdentity.IsPlayerControlled(factions[i].Id) ||
                         em.HasComponent<UnitTransportPassenger>(entities[i]) ||
+                        em.HasComponent<SupportPassengerOwnerComponent>(entities[i])&&em.GetComponentData<SupportPassengerOwnerComponent>(entities[i]).Landed==0 ||
                         (em.HasComponent<UnitHealth>(entities[i]) &&
                          em.GetComponentData<UnitHealth>(entities[i]).Current <= 0))
                     {

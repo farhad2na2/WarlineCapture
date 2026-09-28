@@ -8,7 +8,8 @@ namespace Game.UI.Contracts
         RewardUnlock,
         Settings,
         ResourceExchange,
-        MissionFieldGuide
+        MissionFieldGuide,
+        Support
     }
 
     public enum UiShellPopupIntent

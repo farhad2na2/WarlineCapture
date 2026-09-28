@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73fccb29c248a40d1aa5ede9a2015bd0, type: 3}
+  m_Name: SupportMissionPolicies
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportMissionPolicyConfig
+  Missions:
+  - MissionId: CH01-M01
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH01-M02
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH01-M03
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH01-M04
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH01-M05
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH02-M01
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH02-M02
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH02-M03
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH02-M04
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH02-M05
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH03-M01
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH03-M02
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH03-M03
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH03-M04
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH03-M05
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH04-M01
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH04-M02
+    AllowedMask: 0
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH04-M03
+    AllowedMask: 1
+    LessonKind: 1
+    PopulationCeiling: 0
+  - MissionId: CH04-M04
+    AllowedMask: 3
+    LessonKind: 2
+    PopulationCeiling: 0
+  - MissionId: CH04-M05
+    AllowedMask: 7
+    LessonKind: 3
+    PopulationCeiling: 0
+  - MissionId: CH05-M01
+    AllowedMask: 7
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH05-M02
+    AllowedMask: 7
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH05-M03
+    AllowedMask: 15
+    LessonKind: 4
+    PopulationCeiling: 0
+  - MissionId: CH05-M04
+    AllowedMask: 15
+    LessonKind: 0
+    PopulationCeiling: 0
+  - MissionId: CH05-M05
+    AllowedMask: 15
+    LessonKind: 0
+    PopulationCeiling: 0

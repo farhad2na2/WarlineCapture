@@ -10,6 +10,8 @@ namespace Game.Runtime
 {
     public sealed class RtsSelectionRuntimeInputCompositionSystemHelper
     {
+        private bool supportPanArmed;
+        private Vector2 supportPanStart, supportPanPrevious;
         public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
 
         public struct Context
@@ -176,6 +178,24 @@ namespace Game.Runtime
                 context.SetCameraDragging?.Invoke(false);
                 return;
             }
+
+            if (IsSupportTargeting(context) && context.IsGameplayInputLocked?.Invoke() != true)
+            {
+                input.ClearQueuedMoveOrder();input.ClearPendingMoveCommandRequests();input.ClearPointerReleaseState();
+                input.SelectionModeHoldArmed=false;runtime.SuppressNextWorldClick=true;
+                if(pointer.WasPressedThisFrame)
+                {supportPanArmed=context.IsPointerOverAnyUi?.Invoke(pointer.Position)!=true;supportPanStart=supportPanPrevious=pointer.Position;}
+                if(pointer.IsPressed && supportPanArmed)
+                {
+                    bool dragging=(pointer.Position-supportPanStart).sqrMagnitude>=context.DragThresholdPixels*context.DragThresholdPixels;
+                    context.SetCameraDragging?.Invoke(dragging);
+                    if(dragging)context.PanCamera?.Invoke(pointer.Position-supportPanPrevious);
+                    supportPanPrevious=pointer.Position;
+                }
+                if(pointer.WasReleasedThisFrame){supportPanArmed=false;context.SetCameraDragging?.Invoke(false);}
+                return;
+            }
+            supportPanArmed=false;
 
             if (IsGameplayInputLocked(context))
             {
@@ -814,7 +834,21 @@ namespace Game.Runtime
 
         private static bool IsGameplayInputLocked(Context context)
         {
-            return context.IsGameplayInputLocked?.Invoke() == true;
+            return IsSupportTargeting(context) || context.IsGameplayInputLocked?.Invoke() == true;
+        }
+
+        private static bool IsSupportTargeting(Context context)
+        {
+            if(context.TryGetDefaultEntityManager!=null && context.TryGetDefaultEntityManager(out var em))
+            {
+                using var query=em.CreateEntityQuery(ComponentType.ReadOnly<SupportInputStateComponent>());
+                if(query.CalculateEntityCount()==1)
+                {
+                    byte phase=query.GetSingleton<SupportInputStateComponent>().Phase;
+                    if(phase>=2) return true;
+                }
+            }
+            return false;
         }
 
         private static Rect GetScreenRect(Vector2 a, Vector2 b)

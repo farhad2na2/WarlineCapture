@@ -78,6 +78,10 @@ namespace Game.UI.Runtime
                 cinematicInteractionLocked = restrictions.CinematicInteractionLocked;
             }
 
+            bool supportVisible=UiShellRuntimeGateway.TryReadSupport(out var support) && support.Visible;
+            var supportCommand=FindCommandTabButton("SupportCommand");
+            if(supportCommand!=null && supportCommand.gameObject.activeSelf!=supportVisible)supportCommand.gameObject.SetActive(supportVisible);
+            supportDisabled=!supportVisible;
             _tutorialBuildAvailable = _tutorialBuildRequested && !cinematicInteractionLocked;
             ApplyMissionRestrictionState(buildDisabled, supportDisabled);
         }

@@ -1,0 +1,26 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Tests.Editor.SupportMissionIntegrationValidation.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5d858e56/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportMissionIntegrationValidation] result=Passed tests=4 future-missions=pending
+UnityEngine.Debug:Log (object)
+Game.Tests.Editor.SupportMissionIntegrationValidation:RunFocusedValidation () (at Assets/Tests/Editor/Support/SupportMissionIntegrationValidation.cs:16)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5d858e56/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Tests.Editor.SupportMissionIntegrationValidation.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5d858e56/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

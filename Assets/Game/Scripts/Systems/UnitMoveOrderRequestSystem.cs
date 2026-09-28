@@ -274,6 +274,8 @@ namespace Game.Runtime
             UnitMoveOrderSystem moveOrderSystem,
             UnitMoveOrderRequestElement request)
         {
+            if(em.HasComponent<SupportPassengerOwnerComponent>(request.Entity)&&em.GetComponentData<SupportPassengerOwnerComponent>(request.Entity).Landed==0&&request.Kind!=UnitMoveOrderRequestKind.ClearMovement)
+                return default;
             if (request.Kind == UnitMoveOrderRequestKind.GroupedManual &&
                 ShouldRejectManualMoveForFuel(em, request.Entity, request.Goal, out TacticalCommandReasonCode fuelReason))
             {

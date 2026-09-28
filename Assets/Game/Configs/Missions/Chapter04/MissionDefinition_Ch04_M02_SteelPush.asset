@@ -66,6 +66,10 @@ MonoBehaviour:
     rewardConfigId: 
     displayTextKey: mission.reward.credits
     amount: 9000
+  - kind: 0
+    rewardConfigId: reward.ch04.m02.smoke_screen_unlock
+    displayTextKey: mission.reward.smoke_screen
+    amount: 1
   replayRewards:
   - kind: 1
     rewardConfigId: 

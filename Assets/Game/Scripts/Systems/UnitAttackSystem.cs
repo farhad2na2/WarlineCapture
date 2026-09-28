@@ -140,7 +140,7 @@ namespace Game.Runtime
             using NativeList<StandardAttackCandidate> standardAttackCandidates = new(InitialAttackScratchCapacity, Allocator.TempJob);
             foreach (var (engage, attackState, attackTraceState, attackAnimationState, selfTransform, attack, selfHealth, entity) in SystemAPI
                          .Query<RefRW<EngageTarget>, RefRW<UnitAttackCooldownComponent>, RefRW<UnitAttackTraceComponent>, RefRW<UnitAttackAnimationComponent>, RefRO<LocalTransform>, RefRO<UnitAttack>, RefRO<UnitHealth>>()
-                         .WithNone<StaticGridBlocker, CampaignMissionCombatSuppressedTag>()
+                         .WithNone<StaticGridBlocker, CampaignMissionCombatSuppressedTag,SupportPassengerTransitTag>()
                          .WithNone<UnitDeathAnimationComponent>()
                          .WithEntityAccess())
             {
@@ -324,11 +324,12 @@ namespace Game.Runtime
                 if (attackRo.Damage <= 0)
                     continue;
 
+                int shotDamage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, engageRw.Target, attackRo.Damage);
                 int2 attackerCell = GridUtils.WorldToCell(grid, selfTransform.ValueRO.Position);
-                _predictedHealth[engageRw.Target] = math.max(0, targetPredictedHealth - attackRo.Damage);
+                _predictedHealth[engageRw.Target] = math.max(0, targetPredictedHealth - shotDamage);
                 if (_aggregatedEffects.TryGetValue(engageRw.Target, out AggregatedTargetEffect effect))
                 {
-                    effect.TotalDamage += attackRo.Damage;
+                    effect.TotalDamage += shotDamage;
                     if (effect.ObservationSource != entity)
                         effect.HasMixedObservationSources = 1;
                     effect.Attacker = entity;
@@ -341,7 +342,7 @@ namespace Game.Runtime
                 {
                     _aggregatedEffects.Add(engageRw.Target, new AggregatedTargetEffect
                     {
-                        TotalDamage = attackRo.Damage,
+                        TotalDamage = shotDamage,
                         Attacker = entity,
                         AttackerCell = attackerCell,
                         AttackerPosition = selfTransform.ValueRO.Position,
@@ -659,10 +660,11 @@ namespace Game.Runtime
                 if (plan.Damage <= 0)
                     continue;
 
-                _predictedHealth[candidate.Target] = math.max(0, targetPredictedHealth - plan.Damage);
+                int shotDamage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, candidate.Target, plan.Damage);
+                _predictedHealth[candidate.Target] = math.max(0, targetPredictedHealth - shotDamage);
                 if (_aggregatedEffects.TryGetValue(candidate.Target, out AggregatedTargetEffect effect))
                 {
-                    effect.TotalDamage += plan.Damage;
+                    effect.TotalDamage += shotDamage;
                     if (effect.ObservationSource != candidate.Attacker)
                         effect.HasMixedObservationSources = 1;
                     effect.Attacker = candidate.Attacker;
@@ -675,7 +677,7 @@ namespace Game.Runtime
                 {
                     _aggregatedEffects.Add(candidate.Target, new AggregatedTargetEffect
                     {
-                        TotalDamage = plan.Damage,
+                        TotalDamage = shotDamage,
                         Attacker = candidate.Attacker,
                         AttackerCell = plan.AttackerCell,
                         AttackerPosition = candidate.AttackerPosition,

@@ -4799,10 +4799,9 @@
       ],
       "visualCatalogId": "visual.ability.drone.scan",
       "availability": {
-        "unlockMoment": "saga.ch03.m02.safehouse_sweep.reward",
+        "unlockMoment": "modeSpecificDeferredSupport",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
           "QuickCustom",
           "PersistentOperationTactical",
           "PersistentOperation"
@@ -4814,7 +4813,7 @@
           "POP-08_IntelReveal"
         ],
         "precondition": "Owned support ability, valid scan area, and Intel cost paid.",
-        "lockedOrDisabledState": "Locked: Earn Chapter 3 Drone Scan reward.",
+        "lockedOrDisabledState": "Deferred in this mode; excluded from the approved Campaign Support roster.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
@@ -4999,10 +4998,9 @@
       ],
       "visualCatalogId": "visual.ability.harbor.scan",
       "availability": {
-        "unlockMoment": "saga.ch04.m04.grounded_signal.reward",
+        "unlockMoment": "modeSpecificDeferredSupport",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
           "QuickCustom",
           "PersistentOperationTactical",
           "PersistentOperation"
@@ -5013,7 +5011,7 @@
           "POP-08_IntelReveal"
         ],
         "precondition": "Owned support ability, valid water lane/harbor zone, and Intel cost paid.",
-        "lockedOrDisabledState": "Locked: Earn Chapter 4 Harbor Scan reward.",
+        "lockedOrDisabledState": "Deferred in this mode; excluded from the approved Campaign Support roster.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
@@ -5050,10 +5048,9 @@
       ],
       "visualCatalogId": "visual.ability.naval.fire.support",
       "availability": {
-        "unlockMoment": "saga.ch04.m05.armor_break.reward",
+        "unlockMoment": "modeSpecificDeferredSupport",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
           "QuickCustom",
           "PersistentOperationTactical"
         ],
@@ -5063,7 +5060,7 @@
           "SCN-10_UnitCommandWheel"
         ],
         "precondition": "Owned support ability, visible coastal target, sea support range, and Fuel cost paid.",
-        "lockedOrDisabledState": "Locked: Earn Chapter 4 Naval Fire Support reward.",
+        "lockedOrDisabledState": "Deferred in this mode; excluded from the approved Campaign Support roster.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
@@ -5130,12 +5127,11 @@
       "kind": "supportAbility",
       "implementationStatus": "designReadyNeedsCode",
       "resourceCost": {
-        "fuel": 4,
-        "commandAuthority": 0
+        "fuel": 4
       },
       "cooldownSeconds": 120,
       "chargesPerMission": 1,
-      "effect": "Air unit strikes one visible armored or fortified target; cannot hit hidden targets or mission objectives until revealed.",
+      "effect": "One confirmed hostile military ground target receives 250 raw damage after a safe three-second aircraft approach.",
       "validTargets": [
         "visibleEnemyVehicle",
         "visibleEnemyBuilding"
@@ -5146,25 +5142,23 @@
       ],
       "visualCatalogId": "visual.ability.precision.strike",
       "availability": {
-        "unlockMoment": "saga.ch04.m03.split_front.reward",
+        "unlockMoment": "CH04-M03",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
-          "QuickCustom",
-          "PersistentOperationTactical"
+          "SagaCampaign"
         ],
         "uiSurfaces": [
           "SCN-07_LoadoutSquadPrep",
           "SCN-08_RTSBattleHUD",
           "SCN-10_UnitCommandWheel"
         ],
-        "precondition": "Owned support ability, visible enemy vehicle/building target, and Fuel cost paid.",
+        "precondition": "Owned unlock, accepted mission policy, production readiness, visible valid target, physical Fuel and explicit confirmation.",
         "lockedOrDisabledState": "Locked: Earn Chapter 4 Precision Strike reward.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
-        "runtimeOwner": "SupportAbilityService",
-        "stateOwner": "PlayerInventory",
+        "runtimeOwner": "SupportAbilityRequestSystem",
+        "stateOwner": "Attempt ECS state and permanent profile ownership",
         "configSource": "Design/BalanceConfigs/Combat_Balance_Config_v0_1.json",
         "visualSource": "Design/VisualConfigs/Combat_Visual_Config_v0_1.json",
         "telemetryEvent": "combat_ability_used",
@@ -5172,6 +5166,16 @@
           "CombatAbilityConfig_ability_precision_strike_HasAvailabilitySpec",
           "CombatAbilityConfig_ability_precision_strike_RejectsInvalidTargetOrCost"
         ]
+      },
+      "productionReady": false,
+      "supportDefinition": {
+        "targetKind": "ConfirmedHostileEntity",
+        "rawDamage": 250,
+        "approachSeconds": 3,
+        "areaDamage": false,
+        "unlockMission": "CH04-M03",
+        "firstUseMission": "CH04-M04",
+        "rewardId": "reward.ch04.m03.precision_strike_unlock"
       }
     },
     {
@@ -5415,7 +5419,7 @@
       },
       "cooldownSeconds": 35,
       "chargesPerMission": 2,
-      "effect": "Temporarily reduces incoming ranged accuracy for units inside the smoke area.",
+      "effect": "Fixed ground smoke grants 650-permille incoming direct-ranged damage for ground units of either side inside 12 metres for 15 seconds; strongest single modifier only.",
       "validTargets": [
         "mapArea",
         "selectedVehicle"
@@ -5425,25 +5429,23 @@
       ],
       "visualCatalogId": "visual.ability.smoke.screen",
       "availability": {
-        "unlockMoment": "saga.ch04.m02.steel_push.reward",
+        "unlockMoment": "CH04-M02",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
-          "QuickCustom",
-          "PersistentOperationTactical"
+          "SagaCampaign"
         ],
         "uiSurfaces": [
           "SCN-07_LoadoutSquadPrep",
           "SCN-08_RTSBattleHUD",
           "SCN-10_UnitCommandWheel"
         ],
-        "precondition": "Owned support ability, selected vehicle or map area, and Fuel cost paid.",
+        "precondition": "Owned unlock, accepted mission policy, production readiness, visible valid target, physical Fuel and explicit confirmation.",
         "lockedOrDisabledState": "Locked: Earn Chapter 4 Smoke Screen reward.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
-        "runtimeOwner": "SupportAbilityService",
-        "stateOwner": "PlayerInventory",
+        "runtimeOwner": "SupportAbilityRequestSystem",
+        "stateOwner": "Attempt ECS state and permanent profile ownership",
         "configSource": "Design/BalanceConfigs/Combat_Balance_Config_v0_1.json",
         "visualSource": "Design/VisualConfigs/Combat_Visual_Config_v0_1.json",
         "telemetryEvent": "combat_ability_used",
@@ -5451,6 +5453,16 @@
           "CombatAbilityConfig_ability_smoke_screen_HasAvailabilitySpec",
           "CombatAbilityConfig_ability_smoke_screen_RejectsInvalidTargetOrCost"
         ]
+      },
+      "productionReady": false,
+      "supportDefinition": {
+        "targetKind": "GroundArea",
+        "radiusMeters": 12,
+        "durationSeconds": 15,
+        "incomingDirectRangedDamagePermille": 650,
+        "unlockMission": "CH04-M02",
+        "firstUseMission": "CH04-M03",
+        "rewardId": "reward.ch04.m02.smoke_screen_unlock"
       }
     },
     {
@@ -5463,7 +5475,7 @@
       },
       "cooldownSeconds": 100,
       "chargesPerMission": 1,
-      "effect": "Adds a small tactical Credits/Materials cache at a secured drop zone.",
+      "effect": "Transport delivers one crate of 40 tactical Materials; explicit friendly collection, partial transfer, no account resources.",
       "validTargets": [
         "securedDropZone"
       ],
@@ -5473,25 +5485,23 @@
       ],
       "visualCatalogId": "visual.ability.supply.drop",
       "availability": {
-        "unlockMoment": "saga.ch05.m04.last_corridor.reward",
+        "unlockMoment": "CH05-M02",
         "availabilityType": "rewardUnlockedSupport",
         "availableModes": [
-          "SagaCampaign",
-          "QuickCustom",
-          "PersistentOperationTactical"
+          "SagaCampaign"
         ],
         "uiSurfaces": [
           "SCN-07_LoadoutSquadPrep",
           "SCN-08_RTSBattleHUD",
           "SCN-10_UnitCommandWheel"
         ],
-        "precondition": "Owned support ability, secured drop zone, and Fuel cost paid.",
+        "precondition": "Owned unlock, accepted mission policy, production readiness, visible valid target, physical Fuel and explicit confirmation.",
         "lockedOrDisabledState": "Locked: Earn Chapter 5 Supply Drop reward.",
         "activeCombatAllowed": true
       },
       "implementationSpec": {
-        "runtimeOwner": "SupportAbilityService",
-        "stateOwner": "PlayerInventory",
+        "runtimeOwner": "SupportAbilityRequestSystem",
+        "stateOwner": "Attempt ECS state and permanent profile ownership",
         "configSource": "Design/BalanceConfigs/Combat_Balance_Config_v0_1.json",
         "visualSource": "Design/VisualConfigs/Combat_Visual_Config_v0_1.json",
         "telemetryEvent": "combat_ability_used",
@@ -5499,6 +5509,73 @@
           "CombatAbilityConfig_ability_supply_drop_HasAvailabilitySpec",
           "CombatAbilityConfig_ability_supply_drop_RejectsInvalidTargetOrCost"
         ]
+      },
+      "productionReady": false,
+      "supportDefinition": {
+        "targetKind": "VisibleLandingZone",
+        "approachSeconds": 5,
+        "materialsAmount": 40,
+        "collectionPolicy": "ExplicitGroundUnitPartialTransfer",
+        "unlockMission": "CH05-M02",
+        "firstUseMission": "CH05-M03",
+        "rewardId": "reward.ch05.m02.supply_drop_unlock",
+        "collectionDistanceMeters": 2
+      }
+    },
+    {
+      "id": "ability.paratrooper_reinforcements",
+      "displayName": "Paratroopers",
+      "kind": "supportAbility",
+      "implementationStatus": "designReadyNeedsCode",
+      "resourceCost": {
+        "fuel": 6
+      },
+      "cooldownSeconds": 0,
+      "chargesPerMission": 1,
+      "effect": "One existing mission-approved rifle squad delivered by transport and existing parachute descent.",
+      "validTargets": [
+        "securedDropZone"
+      ],
+      "balanceTags": [
+        "Reinforcements",
+        "FuelSink"
+      ],
+      "visualCatalogId": "visual.ability.paratrooper.reinforcements",
+      "availability": {
+        "unlockMoment": "CH04-M04",
+        "availabilityType": "rewardUnlockedSupport",
+        "availableModes": [
+          "SagaCampaign"
+        ],
+        "uiSurfaces": [
+          "SCN-07_LoadoutSquadPrep",
+          "SCN-08_RTSBattleHUD",
+          "SCN-10_UnitCommandWheel"
+        ],
+        "precondition": "Owned unlock, accepted mission policy, production readiness, visible valid target, physical Fuel and explicit confirmation.",
+        "lockedOrDisabledState": "Locked: Complete Chapter 4 Mission 4 to earn Paratroopers.",
+        "activeCombatAllowed": true
+      },
+      "implementationSpec": {
+        "runtimeOwner": "SupportAbilityRequestSystem",
+        "stateOwner": "Attempt ECS state and permanent profile ownership",
+        "configSource": "Design/BalanceConfigs/Combat_Balance_Config_v0_1.json",
+        "visualSource": "Design/VisualConfigs/Combat_Visual_Config_v0_1.json",
+        "telemetryEvent": "combat_ability_used",
+        "validationTests": [
+          "SupportParatrooperValidation_ManifestAndLanding",
+          "SupportParatrooperValidation_AtomicReservations"
+        ]
+      },
+      "productionReady": false,
+      "supportDefinition": {
+        "targetKind": "VisibleLandingZone",
+        "approachSeconds": 5,
+        "payloadPolicy": "OneExistingMissionApprovedRifleSquad",
+        "descentPolicy": "ExistingUnitTransportAirdropSystem",
+        "unlockMission": "CH04-M04",
+        "firstUseMission": "CH04-M05",
+        "rewardId": "reward.ch04.m04.paratrooper_reinforcements_unlock"
       }
     },
     {

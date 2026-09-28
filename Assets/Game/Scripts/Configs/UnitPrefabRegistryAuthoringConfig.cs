@@ -39,6 +39,13 @@ namespace Game.Configs
         public GameObject UnitSelectionMarkerPrefab => unitSelectionMarkerPrefab;
         public GameObject UnitHealthBarPrefab => unitHealthBarPrefab;
 
+        [SerializeField] private GameObject supportInfantryPrefab,supportParachutePrefab,supportCratePrefab;
+        [SerializeField] private int supportInfantryCount;
+        public GameObject SupportInfantryPrefab => supportInfantryPrefab;
+        public GameObject SupportParachutePrefab => supportParachutePrefab;
+        public GameObject SupportCratePrefab => supportCratePrefab;
+        public int SupportInfantryCount => supportInfantryCount;
+
         IReadOnlyList<GameObject> ICatalogPrefabSource.UnitSpawnPrefabs => unitSpawnPrefabs;
         IReadOnlyList<GameObject> ICatalogPrefabSource.BuildingSpawnPrefabs => null;
     }

@@ -308,6 +308,10 @@ namespace Game.UI.Runtime
             bool hideUnrelatedControls = false)
         {
             ResolveZoomButtonsFromChildren();
+            bool supportVisible=UiShellRuntimeGateway.TryReadSupport(out var support) && support.Visible;
+            supportDisabled=!supportVisible;
+            bool ownsSupport=_supportButton!=null && _supportButton.GetComponentInParent<MatchOverlayCommandControlsView>()==null;
+            if(ownsSupport && _supportButton.gameObject.activeSelf!=supportVisible)_supportButton.gameObject.SetActive(supportVisible);
             if (_missionRestrictionVisibilityApplied &&
                 _lastBuildDisabled == buildDisabled && _lastSupportDisabled == supportDisabled &&
                 _lastHideUnrelatedControls == hideUnrelatedControls)
@@ -317,7 +321,7 @@ namespace Game.UI.Runtime
             // This legacy rail must not reapply a conflicting disabled appearance.
             if (buildButton == null || buildButton.GetComponentInParent<MatchOverlayCommandControlsView>() == null)
                 SetButtonDisabled(buildButton, buildDisabled, outsideMissionScope: false);
-            if (_supportButton == null || _supportButton.GetComponentInParent<MatchOverlayCommandControlsView>() == null)
+            if (supportVisible && (_supportButton == null || _supportButton.GetComponentInParent<MatchOverlayCommandControlsView>() == null))
                 SetButtonDisabled(_supportButton, supportDisabled, hideUnrelatedControls && supportDisabled);
             _lastBuildDisabled = buildDisabled;
             _lastSupportDisabled = supportDisabled;

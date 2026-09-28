@@ -148,6 +148,8 @@ namespace Game.Editor
             ImportUiStringConfigs(english, persian, keysByEnglish);
             foreach (var entry in M03RadarWarningUiCopyCatalog.Entries)
             { english[entry.Key] = entry.English; persian[entry.Key] = entry.Persian; }
+            foreach (var entry in SupportUiCopyCatalog.Entries)
+            { english[entry.Key] = entry.English; persian[entry.Key] = entry.Persian; }
             GameLocalizationCatalog catalog = BuildCatalog(english, persian);
             RebuildAndPersistPersianFontCoverage(
                 catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset,

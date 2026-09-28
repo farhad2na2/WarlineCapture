@@ -79,6 +79,13 @@ namespace Game.Runtime
             for (int i = 0; i < definition.Defense.Elements.Length; i++)
                 if (definition.Defense.Elements[i].UnitGroupId.Equals(group.GroupId)) elementIndex = i;
             if (elementIndex >= 0) em.AddComponent<CampaignMissionConvoyRouteProgress>(instance);
+            var attempt=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+            em.AddComponentData(instance,new SupportTargetEligibilityComponent
+            {
+                SessionToken=attempt.SessionToken,AttemptOrdinal=attempt.AttemptOrdinal,SourceVersion=1,
+                IsMilitaryTarget=(byte)(elementIndex>=0 && group.FactionId!=FactionIdentity.PlayerFactionId && group.FactionId!=FactionIdentity.NeutralFactionId?1:0),
+                Protected=(byte)(elementIndex<0?1:0)
+            });
             em.GetBuffer<CampaignMissionDefenseMember>(root).Add(new CampaignMissionDefenseMember
             {
                 Entity = instance, ElementIndex = elementIndex, FactionId = group.FactionId,

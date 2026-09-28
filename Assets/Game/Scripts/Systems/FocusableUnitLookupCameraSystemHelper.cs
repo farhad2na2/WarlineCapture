@@ -358,6 +358,7 @@ namespace Game.Runtime
 
         private static bool IsFocusableUnitCandidate(EntityManager em, Entity entity)
         {
+            if(em.HasComponent<SupportPassengerOwnerComponent>(entity)&&em.GetComponentData<SupportPassengerOwnerComponent>(entity).Landed==0)return false;
             bool isOperationMapBuilding =
                 em.Exists(entity) &&
                 em.HasComponent<OperationMapBuildingComponent>(entity);
@@ -486,7 +487,7 @@ namespace Game.Runtime
             return (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
         }
 
-        internal static bool TryGetSelectionHitboxScreenDistanceSq(
+        public static bool TryGetSelectionHitboxScreenDistanceSq(
             Camera worldCamera,
             float4x4 localToWorld,
             UnitSelectionHitbox hitbox,

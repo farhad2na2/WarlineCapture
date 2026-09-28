@@ -1,0 +1,6 @@
+[UnityInvokeMac] LicensingMode: gui (batchmode disabled on macOS)
+[UnityInvokeMac] UnityExe: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+[UnityInvokeMac] ProjectPath: /Users/farhad/Projects/WarlineCapture
+[UnityInvokeMac] LogFile: /private/tmp/support-config-T01-20260928-03.log
+[UnityInvokeMac] TimeoutSeconds: 600
+[UnityInvokeMac] Arguments: -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/support-config-T01-20260928-03.log -quit -executeMethod Game.Tests.Editor.SupportConfigValidation.RunFocusedValidation

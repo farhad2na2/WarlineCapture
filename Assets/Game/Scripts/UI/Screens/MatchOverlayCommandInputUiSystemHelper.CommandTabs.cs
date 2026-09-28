@@ -22,8 +22,8 @@ namespace Game.UI.Runtime
                         continue;
 
                     Button capturedButton = button;
-                    bool scanAlias = IsScanAliasCommandButton(capturedButton);
-                    UnityEngine.Events.UnityAction action = () => OnCommandTabRuntimeClick(capturedButton, scanAlias);
+                    bool supportButton = IsSupportCommandButton(capturedButton);
+                    UnityEngine.Events.UnityAction action = () => OnCommandTabRuntimeClick(capturedButton, supportButton);
                     capturedButton.onClick.AddListener(action);
                     _commandTabRuntimeListeners.Add((capturedButton, action));
                 }
@@ -37,9 +37,9 @@ namespace Game.UI.Runtime
                 _commandTabRuntimeListeners.Clear();
             }
 
-            private void OnCommandTabRuntimeClick(Button button, bool scanAlias)
+            private void OnCommandTabRuntimeClick(Button button, bool supportButton)
             {
-                if (scanAlias)
+                if (supportButton)
                 {
                     CaptureCommandUiClick();
                     UiShellRuntimeGateway.TryEnqueueUiAction(UiActionKind.Support, 0);
@@ -51,6 +51,7 @@ namespace Game.UI.Runtime
 
             private void OnScanButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 if (TryRequestMissionScan()) return;
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Scan))
@@ -85,7 +86,7 @@ namespace Game.UI.Runtime
                 return true;
             }
 
-            private bool IsScanAliasCommandButton(Button button)
+            private bool IsSupportCommandButton(Button button)
             {
                 return button != null &&
                        !IsKnownCommandButton(button) &&

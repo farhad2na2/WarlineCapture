@@ -15,7 +15,8 @@ namespace Game.UI.Runtime
         Assistant = 0,
         BuildDrawer = 1,
         FullMap = 2,
-        ResourceExchange = 3
+        ResourceExchange = 3,
+        Support = 4
     }
 
     public sealed partial class MainMenuPlayUI : IMatchRuntimeUi

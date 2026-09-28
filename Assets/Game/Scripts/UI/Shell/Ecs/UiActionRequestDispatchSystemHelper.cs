@@ -35,6 +35,7 @@ namespace Game.UI.Shell.Ecs
             switch (request.Kind)
             {
                 case UiActionKind.MatchMenu:
+                    UiShellRuntimeGateway.CancelSupport();
                     if (UiShellRuntimeGateway.TryReadOperationsMission(out var operation) && operation.InMission)
                     {
                         UiShellRuntimeGateway.TryRequestOperationsMission(operation.Finished
@@ -67,15 +68,18 @@ namespace Game.UI.Shell.Ecs
                     });
                     break;
                 case UiActionKind.Pause:
+                    UiShellRuntimeGateway.CancelSupport();
                     EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Show, request.PayloadId);
                     break;
                 case UiActionKind.ClosePause:
                     EnqueuePopup(popupRequests, UiShellPopupKind.Pause, UiShellPopupIntent.Hide, request.PayloadId);
                     break;
                 case UiActionKind.OpenSettings:
+                    UiShellRuntimeGateway.CancelSupport();
                     EnqueuePopup(popupRequests, UiShellPopupKind.Settings, UiShellPopupIntent.Show, request.PayloadId);
                     break;
                 case UiActionKind.OpenResourceExchange:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     if (canPresentResourceExchange)
                         EnqueuePopup(popupRequests, UiShellPopupKind.ResourceExchange, UiShellPopupIntent.Show, request.PayloadId);
@@ -86,6 +90,7 @@ namespace Game.UI.Shell.Ecs
                     break;
                 case UiActionKind.RightBuild:
                 case UiActionKind.Build:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueuePopup(popupRequests, UiShellPopupKind.BuildDrawer, UiShellPopupIntent.Show, request.PayloadId);
                     break;
@@ -194,6 +199,7 @@ namespace Game.UI.Shell.Ecs
                     }
                     break;
                 case UiActionKind.Select:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(
                         ref queue,
@@ -204,24 +210,47 @@ namespace Game.UI.Shell.Ecs
                         frame);
                     break;
                 case UiActionKind.Move:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.EnterMoveTargetMode, frame);
                     break;
                 case UiActionKind.Attack:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.EnterAttackTargetMode, frame);
                     break;
                 case UiActionKind.Hold:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.HoldPosition, frame);
                     break;
                 case UiActionKind.Stop:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.Stop, frame);
                     break;
-                case UiActionKind.Scan:
                 case UiActionKind.Support:
                 case UiActionKind.RightSupport:
+                    if(!UiShellRuntimeGateway.TryReadSupport(out var support) || !support.Visible)break;
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    UiShellRuntimeGateway.CancelSupport();
+                    EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame);
+                    EnqueuePopup(popupRequests, UiShellPopupKind.Support, UiShellPopupIntent.Show, request.PayloadId);
+                    break;
+                case UiActionKind.CloseSupport:
+                case UiActionKind.CancelSupport:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    UiShellRuntimeGateway.CancelSupport();
+                    EnqueuePopup(popupRequests, UiShellPopupKind.Support, UiShellPopupIntent.Hide, 0);
+                    break;
+                case UiActionKind.CollectSupply:
+                case UiActionKind.BeginSupportTargeting:
+                    CaptureUiClickSequence(ref inputState, commandRequests, frame);
+                    EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame);
+                    EnqueuePopup(popupRequests, UiShellPopupKind.Support, UiShellPopupIntent.Hide, 0);
+                    break;
+                case UiActionKind.Scan:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.EnterScanTargetMode, frame);
                     break;
@@ -234,14 +263,17 @@ namespace Game.UI.Shell.Ecs
                     squadTrayState.SelectedSlot = ToSquadTraySlot(request.Kind);
                     break;
                 case UiActionKind.ReturnSelection:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.ReturnToBase, frame);
                     break;
                 case UiActionKind.DestroySelection:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.DestroyFocusedUnit, frame);
                     break;
                 case UiActionKind.BoardSelection:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.EnterBoardTargetMode, frame);
                     break;
@@ -256,16 +288,19 @@ namespace Game.UI.Shell.Ecs
                     EmitDrawerAudio(world, open: false);
                     break;
                 case UiActionKind.ExitAllPassengers:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     passengerDrawerState.Visible = 0;
                     EmitDrawerAudio(world, open: false);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.DisembarkTransportPassenger, frame);
                     break;
                 case UiActionKind.BoardAll:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.BoardAllSelectedTransport, frame);
                     break;
                 case UiActionKind.CancelFeedback:
+                    UiShellRuntimeGateway.CancelSupport();
                     CaptureUiClickSequence(ref inputState, commandRequests, frame);
                     EnqueueSelectionIntent(ref queue, commandRequests, RtsSelectionCommandIntentKind.CancelActiveCommandMode, frame);
                     break;

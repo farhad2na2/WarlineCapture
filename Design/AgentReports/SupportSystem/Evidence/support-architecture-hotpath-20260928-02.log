@@ -1,0 +1,74 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=EcsBurstHotPathArchitectureTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_390f75f6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Top ToEntityArray/ToComponentDataArray sources:
+Assets/Game/Scripts/Systems/SkirmishWorldSetup.cs: 7
+Assets/Game/Scripts/Systems/SkirmishCombatPolicy.cs: 6
+Assets/Game/Scripts/Systems/Support/SupportLandingUtilitySystemHelper.cs: 4
+Assets/Game/Scripts/Systems/Support/SupportSupplyAdapterSystemHelper.cs: 4
+Assets/Game/Scripts/Systems/AttackMoveSystem.cs: 2
+Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandCompositionSystemHelper.cs: 2
+Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.cs: 2
+Assets/Game/Scripts/Systems/SkirmishCombatApproachSystem.cs: 2
+Assets/Game/Scripts/Systems/SkirmishRulesSystem.cs: 2
+Assets/Game/Scripts/Systems/SkirmishStressCensus.cs: 2
+Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs: 1
+Assets/Game/Scripts/Systems/BuildingPlacementAuthoredRoadCache.cs: 1
+Assets/Game/Scripts/Systems/BuildingRuntimeEntityCompositionSystemHelper.Removal.cs: 1
+Assets/Game/Scripts/Systems/DynamicBlockerInitSystem.cs: 1
+Assets/Game/Scripts/Systems/FactionTacticalMaterialsStartupSystemHelper.cs: 1
+Assets/Game/Scripts/Systems/MatchHudSquadTraySelectionUiSystemHelper.cs: 1
+Assets/Game/Scripts/Systems/RuntimeGridStorageCleanupSystem.cs: 1
+Assets/Game/Scripts/Systems/SkirmishLayoutAudit.cs: 1
+Assets/Game/Scripts/Systems/SkirmishPopulationPolicy.cs: 1
+Assets/Game/Scripts/Systems/SkirmishSquadAssignment.cs: 1
+UnityEngine.Debug:Log (object)
+EcsBurstHotPathArchitectureTests:HotPathArraySnapshotDebtMustNotIncrease () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:352)
+EcsBurstHotPathArchitectureTests:RunFocusedValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:238)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_390f75f6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Hot-path ECS array snapshot debt increased from the roadmap baseline. Current=45, ceiling=0. Reduce existing debt or update the roadmap with an approved performance report before raising this ceiling.
+  Expected: less than or equal to 0
+  But was:  45
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.LessOrEqual (System.Int32 arg1, System.Int32 arg2, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+EcsBurstHotPathArchitectureTests.HotPathArraySnapshotDebtMustNotIncrease () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:354)
+EcsBurstHotPathArchitectureTests.RunFocusedValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:238)
+UnityEngine.Debug:LogException(Exception)
+EcsBurstHotPathArchitectureTests:RunFocusedValidation() (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:255)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.<Run>d__0:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[EcsBurstHotPathArchitectureValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+EcsBurstHotPathArchitectureTests:RunFocusedValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:256)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_390f75f6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=EcsBurstHotPathArchitectureTests.RunFocusedValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_390f75f6/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

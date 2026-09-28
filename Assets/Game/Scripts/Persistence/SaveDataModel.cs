@@ -39,6 +39,7 @@ namespace Game.Runtime
         public BlueprintPartSaveData[] blueprintParts = Array.Empty<BlueprintPartSaveData>();
         public string[] ownedUnitUnlocks = Array.Empty<string>();
         public string[] ownedBuildingUnlocks = Array.Empty<string>();
+        public int supportMigrationVersion;
         public string[] ownedSupportAbilityUnlocks = Array.Empty<string>();
         public string[] ownedCosmetics = Array.Empty<string>();
         public string firstLaunchStatus = FirstLaunchProfileState.NotStarted;

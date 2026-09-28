@@ -185,12 +185,29 @@
       "artBrief": "Supply Route: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
     },
     {
+      "visualCatalogId": "visual.ability.paratrooper.reinforcements",
+      "entityId": "ability.paratrooper_reinforcements",
+      "entityKind": "supportAbility",
+      "displayName": "Paratroopers",
+      "visualProductionStatus": "existingProjectAssetsNativeReviewPending",
+      "uiIconPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Plane_Transport_Card_512.png",
+      "vfxCueId": "vfx.ability.paratrooper_reinforcements",
+      "audioCueId": "sfx.ability.paratrooper_reinforcements",
+      "silhouetteRules": [
+        "iconReadableAt48px",
+        "cooldownOverlayCompatible",
+        "colorDoesNotImplyUnavailableState"
+      ],
+      "artBrief": "Use the approved existing project assets. No generated substitute aircraft, soldier or weapon geometry.",
+      "sourcePrefabPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab"
+    },
+    {
       "visualCatalogId": "visual.ability.precision.strike",
       "entityId": "ability.precision_strike",
       "entityKind": "supportAbility",
       "displayName": "Precision Strike",
-      "visualProductionStatus": "needsProductionAsset",
-      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.precision_strike_Icon.png",
+      "visualProductionStatus": "existingProjectAssetsNativeReviewPending",
+      "uiIconPath": "Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Veh_Jet_01_Action_512.png",
       "vfxCueId": "vfx.ability.precision_strike",
       "audioCueId": "sfx.ability.precision_strike",
       "silhouetteRules": [
@@ -198,7 +215,8 @@
         "cooldownOverlayCompatible",
         "colorDoesNotImplyUnavailableState"
       ],
-      "artBrief": "Precision Strike: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+      "artBrief": "Use the approved existing project assets. No generated substitute aircraft, soldier or weapon geometry.",
+      "sourcePrefabPath": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab"
     },
     {
       "visualCatalogId": "visual.ability.produce.unit",
@@ -285,8 +303,8 @@
       "entityId": "ability.smoke_screen",
       "entityKind": "supportAbility",
       "displayName": "Smoke Screen",
-      "visualProductionStatus": "needsProductionAsset",
-      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.smoke_screen_Icon.png",
+      "visualProductionStatus": "existingProjectAssetsNativeReviewPending",
+      "uiIconPath": "Assets/Synty/InterfaceMilitaryCombatHUD/Sprites/Icons_Resources/ICON_SM_Wep_Grenade_Smoke_01_Military.png",
       "vfxCueId": "vfx.ability.smoke_screen",
       "audioCueId": "sfx.ability.smoke_screen",
       "silhouetteRules": [
@@ -294,15 +312,16 @@
         "cooldownOverlayCompatible",
         "colorDoesNotImplyUnavailableState"
       ],
-      "artBrief": "Smoke Screen: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+      "artBrief": "Use the approved existing project assets. No generated substitute aircraft, soldier or weapon geometry.",
+      "sourcePrefabPath": "Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Medium_01.prefab"
     },
     {
       "visualCatalogId": "visual.ability.supply.drop",
       "entityId": "ability.supply_drop",
       "entityKind": "supportAbility",
       "displayName": "Supply Drop",
-      "visualProductionStatus": "needsProductionAsset",
-      "uiIconPath": "Assets/Game/Art/UI/Generated/CombatCatalog/AbilityIcons/ability.supply_drop_Icon.png",
+      "visualProductionStatus": "existingProjectAssetsNativeReviewPending",
+      "uiIconPath": "Assets/Game/Art/UI/Icons/scn09_icon_supply_crate.png",
       "vfxCueId": "vfx.ability.supply_drop",
       "audioCueId": "sfx.ability.supply_drop",
       "silhouetteRules": [
@@ -310,7 +329,8 @@
         "cooldownOverlayCompatible",
         "colorDoesNotImplyUnavailableState"
       ],
-      "artBrief": "Supply Drop: tactical command/support icon with WarlineCapture cyan/amber military UI language and no numeric balance values in the image."
+      "artBrief": "Use the approved existing project assets. No generated substitute aircraft, soldier or weapon geometry.",
+      "sourcePrefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_Crate_01.prefab"
     },
     {
       "visualCatalogId": "visual.building.airport",

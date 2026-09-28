@@ -53,6 +53,7 @@ namespace Game.Runtime
 
                 int count = reader.BeginForEachIndex(i);
                 int start = pool.Cells.Length;
+                int2 pathEnd = default;
                 bool writePathSurfaceMetadata = entityHasMatchingRequest && status[i] == 1 && count > 0;
                 DynamicBuffer<UnitPathSurfaceNode> surfaceBuffer = default;
                 UnitSurfaceComponent currentSurface = default;
@@ -68,6 +69,7 @@ namespace Game.Runtime
                     for (int j = 0; j < count; j++)
                     {
                         int2 pathCell = reader.Read<int2>();
+                        pathEnd = pathCell;
                         pool.Cells.Add(pathCell);
                         if (writePathSurfaceMetadata)
                             surfaceMetadata.Append(surfaceBuffer, surfaceContext.Surface, surfaceContext.HasSurfaceData, pathCell, currentSurface);
@@ -92,6 +94,14 @@ namespace Game.Runtime
 
                 if (!entityHasMatchingRequest)
                     continue;
+
+                if (em.HasComponent<SupportCollectOrderComponent>(entity) &&
+                    !SupportSupplyAdapterSystemHelper.ValidateCollectionPathResult(em, entity, em.GetComponentData<GridConfig>(gridEntity), pathEnd, status[i] == 1 && count > 0, segmented[i] != 0))
+                {
+                    surfaceMetadata.ClearIfPresent(em, entity);
+                    abandonedCount++;
+                    continue;
+                }
 
                 if (status[i] == 1 && count > 0)
                 {

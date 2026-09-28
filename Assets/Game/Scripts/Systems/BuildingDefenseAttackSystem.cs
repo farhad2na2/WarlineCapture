@@ -278,7 +278,7 @@ namespace Game.Runtime
                 EnqueueAttackVfxRequest(ecb, em, UnitAttackVfxRequestKind.MuzzleFlash, source, target, sourcePosition, targetPosition);
             }
 
-            int damage = math.max(0, weapon.Damage);
+            int damage = SupportDamageUtilitySystemHelper.ApplyToTarget(em, target, math.max(0, weapon.Damage));
             if (damage > 0)
                 GameplayAudioFeedbackSystemHelper.TryEmitWeaponFireAudio(em, source, now, sourcePosition);
 

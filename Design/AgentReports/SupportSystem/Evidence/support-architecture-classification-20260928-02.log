@@ -1,0 +1,63 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=EcsBurstHotPathArchitectureTests.RunNoBurstISystemClassificationValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_11f1fa67/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Runtime ISystem Burst classification: noBurst=110 classified=101 unclassified=9
+UnityEngine.Debug:Log (object)
+EcsBurstHotPathArchitectureTests:NoBurstISystemFilesMustBeClassified () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:534)
+EcsBurstHotPathArchitectureTests:RunNoBurstISystemClassificationValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:334)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_11f1fa67/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   Runtime ISystem files without [BurstCompile] must be classified before landing. Either make the system Burst-compatible or document why it is a managed/presentation/bootstrap boundary:
+Assets/Game/Scripts/Systems/AttackMoveSystem.cs
+Assets/Game/Scripts/Systems/GroundVehicleFuelHoldSystem.cs
+Assets/Game/Scripts/Systems/RuntimeGridStorageCleanupSystem.cs
+Assets/Game/Scripts/Systems/SkirmishCombatApproachSystem.cs
+Assets/Game/Scripts/Systems/SkirmishRulesSystem.cs
+Assets/Game/Scripts/Systems/SkirmishStressDirector.cs
+Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs
+Assets/Game/Scripts/UI/Shell/Ecs/GridlockRadioReportProjectionSystem.cs
+Assets/Game/Scripts/UI/Shell/Ecs/SupplyLineRadioReportProjectionSystem.cs
+  Expected: <empty>
+  But was:  < "Assets/Game/Scripts/Systems/AttackMoveSystem.cs", "Assets/Game/Scripts/Systems/GroundVehicleFuelHoldSystem.cs", "Assets/Game/Scripts/Systems/RuntimeGridStorageCleanupSystem.cs", "Assets/Game/Scripts/Systems/SkirmishCombatApproachSystem.cs", "Assets/Game/Scripts/Systems/SkirmishRulesSystem.cs", "Assets/Game/Scripts/Systems/SkirmishStressDirector.cs", "Assets/Game/Scripts/Systems/VehicleFuelConsumptionSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/GridlockRadioReportProjectionSystem.cs", "Assets/Game/Scripts/UI/Shell/Ecs/SupplyLineRadioReportProjectionSystem.cs" >
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.IsEmpty (System.Collections.IEnumerable collection, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+EcsBurstHotPathArchitectureTests.NoBurstISystemFilesMustBeClassified () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:537)
+EcsBurstHotPathArchitectureTests.RunNoBurstISystemClassificationValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:334)
+UnityEngine.Debug:LogException(Exception)
+EcsBurstHotPathArchitectureTests:RunNoBurstISystemClassificationValidation() (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:340)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.<Run>d__0:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[EcsNoBurstISystemClassificationValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+EcsBurstHotPathArchitectureTests:RunNoBurstISystemClassificationValidation () (at Assets/Tests/Editor/EcsBurstHotPathArchitectureTests.cs:341)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_11f1fa67/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=EcsBurstHotPathArchitectureTests.RunNoBurstISystemClassificationValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_11f1fa67/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

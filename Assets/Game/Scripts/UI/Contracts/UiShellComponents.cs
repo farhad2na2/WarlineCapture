@@ -103,7 +103,8 @@ namespace Game.UI.Contracts
         ResourceExchangeClearCompleted,
         ResourceExchangeQueueRush,
         ResourceExchangeQueueCancel,
-        ClosePause
+        ClosePause,
+        CloseSupport, SelectSupport, BeginSupportTargeting, ConfirmSupport, CancelSupport, ApproveSupport, DeclineSupport, CollectSupply
     }
 
     public enum UiBuildProductionActionKind : byte

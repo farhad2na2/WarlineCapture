@@ -152,7 +152,7 @@ namespace Game.Runtime
                     {
                         commanderXp = checked(commanderXp + reward.Amount);
                     }
-                    else if (TryApplyRadarWarningUnlock(profile, reward) || TryApplyAirliftUnlock(profile, reward) || TryApplyBreachReward(profile, reward))
+                    else if (TryApplySupportUnlock(profile, reward) || TryApplyRadarWarningUnlock(profile, reward) || TryApplyAirliftUnlock(profile, reward) || TryApplyBreachReward(profile, reward))
                     {
                         // Named grants settle in the same profile transaction as the mission receipt.
                     }
@@ -305,7 +305,7 @@ namespace Game.Runtime
                 if (reward.Kind == MissionRewardKind.None && identity != CommanderXpRewardId &&
                     !(identity == M02ProductionUnlockRewardId && missionId == M02MissionId &&
                       firstClear && reward.Amount == 1) && !IsRadarWarningUnlock(missionId, firstClear, reward) &&
-                    !IsAirliftUnlock(missionId, firstClear, reward) && !IsBreachReward(missionId, firstClear, reward))
+                    !IsAirliftUnlock(missionId, firstClear, reward) && !IsBreachReward(missionId, firstClear, reward) && !IsSupportUnlock(missionId, firstClear, reward))
                     throw new ArgumentException("Unsupported custom Campaign settlement reward.", nameof(rewards));
                 if (!identities.Add(identity))
                     throw new ArgumentException("Duplicate settlement reward identity.", nameof(rewards));

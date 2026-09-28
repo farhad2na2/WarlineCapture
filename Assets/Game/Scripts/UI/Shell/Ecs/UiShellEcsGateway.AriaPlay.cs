@@ -98,6 +98,7 @@ namespace Game.UI.Shell.Ecs
         }
         void IUiAriaPlayGateway.StopAriaPlay()
         {
+            ((IUiSupportGateway)this).DeclineSupport();
             World.DefaultGameObjectInjectionWorld?.GetExistingSystemManaged<AriaPlayInputSystem>()?.Cancel();
             if (TryGetBoundary(out var em, out var boundary))
             {

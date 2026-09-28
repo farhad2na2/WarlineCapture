@@ -95,6 +95,7 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedPresentationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/Rendering/Systems/SupportSmokePresentationSystem.cs"] = "existing GameObject particle presentation bridge; instantiates smoke art once per authoritative ECS zone, caches instances, and destroys them at zone expiry without gameplay decisions.",
         ["Assets/Game/Scripts/Rendering/Systems/OperationMapVehicleVisualOwnershipSystem.cs"] = "one-time render ownership boundary; compares managed Unity Mesh identities from RenderMeshArray to retire coincident authored vehicle copies and transfer faction tint. Cached query excludes repaired units; no gameplay decisions or recurring simulation loop.",
         ["Assets/Game/Scripts/Systems/AudioEventRequestSystem.cs"] = "audio presentation request boundary; recurring queue/state systems share managed World caching and one-time audio singleton creation before presentation consumes requests.",
         ["Assets/Game/Scripts/Systems/MissileFlightAudioSystem.cs"] = "spatial audio presentation bridge; missile-flight ticks route configured managed-string event identifiers through the shared audio request singleton.",
@@ -121,6 +122,7 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedUiShellNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/UI/Shell/Ecs/AssistantSupportIntentSystem.cs"] = "low-cardinality assistant consent boundary; consumes explicit proposal, approval, decline and camera intents and forwards one exact approved action to the simulation request owner.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/M03RadioReportProjectionSystem.cs"] = "localized radio presentation bridge; resolves managed catalog strings and routes voice event identifiers to the existing assistant speech queue.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/M04RadioReportProjectionSystem.cs"] = "localized extraction radio presentation bridge; formats managed captions for the assistant queue while mission facts remain ECS owned.",
         ["Assets/Game/Scripts/UI/Shell/Ecs/MissionDefensePauseSystem.cs"] = "UI pause bridge; reconciles popup intent with managed Unity Time.timeScale and restores the captured simulation pause state on close or teardown.",
@@ -154,6 +156,9 @@ public sealed class EcsBurstHotPathArchitectureTests
 
     private static readonly Dictionary<string, string> ManagedGameplayOrchestrationNonBurstOnUpdateFiles = new(StringComparer.Ordinal)
     {
+        ["Assets/Game/Scripts/Systems/Support/SupportFlightSystem.cs"] = "bounded committed-flight orchestration; revalidates low-cardinality routes and payload releases using existing transport, physical Fuel and combat boundaries. No recurring managed snapshots are taken by OnUpdate.",
+        ["Assets/Game/Scripts/Systems/Support/SupportSupplySystem.cs"] = "explicit collection command boundary; delegates ordinary movement only on new requests and projects stock through typed ECS queries. Recurring transfer uses the already-resolved tactical store, without query snapshots or string formatting.",
+        ["Assets/Game/Scripts/Systems/Support/SupportAbilityRequestSystem.cs"] = "low-cardinality Support command boundary; drains explicit confirmed actions, validates physical storage copies atomically, and records bounded receipts. Recurring cover and clocks remain Burst systems.",
         ["Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs"] = "selection command boundary; consumes low-cardinality attack command requests and writes command state.",
         ["Assets/Game/Scripts/Systems/AICombatOrderSystem.cs"] = "budgeted AI combat orchestration boundary; owns diagnostics, breach targeting, command-buffer order writes, and caps work by interval, squads, and unit writes.",
         ["Assets/Game/Scripts/Systems/AIProductionSystem.cs"] = "budgeted AI production orchestration boundary; interval-gated production planning, economy writes, production requests, and diagnostics stay managed.",

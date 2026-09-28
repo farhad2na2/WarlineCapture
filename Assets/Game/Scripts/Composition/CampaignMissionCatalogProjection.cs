@@ -114,6 +114,7 @@ namespace Game.Composition
 
             root = roots.Length == 1 ? roots[0] : CreateRoot(entityManager);
             EnsureProgressStore(entityManager, root);
+            EnsureSupport(entityManager, root, missions[0].MissionId);
             EnsureOperationMapReference(entityManager, root);
             EnsureAttemptResourceState(entityManager, root);
             EnsureAttemptFactProjectionState(entityManager, root);

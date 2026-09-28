@@ -73,6 +73,7 @@ namespace Game.Runtime
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity) ? 1 : 0;
+                result.StructuralRemoves += RemoveComponentIfPresent<SupportCollectOrderComponent>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity) ? 1 : 0;
 
                 if (!entityManager.HasComponent<ManualMoveGroupMemberTag>(entity))
@@ -149,6 +150,7 @@ namespace Game.Runtime
                 RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
+                RemoveComponentIfPresent<SupportCollectOrderComponent>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
 
                 SetOrAdd(entityManager, ecb, entity, new UnitTarget { Cell = goal });
@@ -186,6 +188,7 @@ namespace Game.Runtime
                 RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
+                RemoveComponentIfPresent<SupportCollectOrderComponent>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
                 if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
                     ecb.AddComponent<ManualMoveOrderTag>(entity);
@@ -233,6 +236,7 @@ namespace Game.Runtime
             RemoveComponentIfPresent<UnitTransportDeployOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportRopeDisembarkRequest>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitTransportAirdropRequest>(entityManager, ecb, entity);
+            RemoveComponentIfPresent<SupportCollectOrderComponent>(entityManager, ecb, entity);
             RemoveComponentIfPresent<UnitResourceHaulOrder>(entityManager, ecb, entity);
         }
 

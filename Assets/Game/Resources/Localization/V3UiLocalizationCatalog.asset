@@ -2712,7 +2712,7 @@ MonoBehaviour:
     - key: mission.steel_push.result.victory
       value: FUEL RESERVE SECURE
     - key: mission.steel_push.reward.card
-      value: "2,000 Commander XP \xB7 9,000 Credits"
+      value: "2,000 Commander XP \xB7 9,000 Credits \xB7 Smoke Screen"
     - key: mission.steel_push.star.1
       value: Complete the mission
     - key: mission.steel_push.star.2
@@ -7236,6 +7236,167 @@ MonoBehaviour:
       value: '{0} - ETA {1}s'
     - key: warning_ground_attack_type
       value: Ground vehicle attack detected
+    - key: mission.reward.smoke_screen
+      value: Smoke Screen unlocked
+    - key: mission.reward.smoke_screen
+      value: Smoke Screen unlocked
+    - key: support.lesson.1
+      value: 'Optional lesson: choose visible ground and confirm. Smoke reduces direct
+        ranged damage to grounded units for 15 seconds. Close to skip.'
+    - key: support.lesson.2
+      value: 'Optional lesson: select a confirmed hostile vehicle or military building.
+        Review the target and cost before confirming. Close to skip.'
+    - key: support.lesson.3
+      value: 'Optional lesson: choose a clear visible landing zone. Four rifle soldiers
+        join normal command after landing. Close to skip.'
+    - key: support.lesson.4
+      value: 'Optional lesson: land the crate, select a friendly ground unit, choose
+        Collect, then tap the crate. Full storage keeps remaining stock. Close to
+        skip.'
+    - key: support.supply.unreachable
+      value: Cannot reach this crate. Select another ground unit and try Collect
+        again.
+    - key: support.supply.collect
+      value: COLLECT SUPPLIES
+    - key: support.supply.stock
+      value: "{0} Materials remain \xB7 {1}"
+    - key: support.supply.full
+      value: "Storage full \u2014 stock stays in the crate"
+    - key: support.supply.claimed
+      value: Collection in progress
+    - key: support.supply.select
+      value: Select a friendly ground unit, then collect
+    - key: support.supply.target
+      value: Tap the landed supply crate to collect. A new order cancels collection.
+    - key: support.title
+      value: SUPPORT
+    - key: support.name.1
+      value: SMOKE SCREEN
+    - key: support.name.2
+      value: PRECISION STRIKE
+    - key: support.name.3
+      value: PARATROOPERS
+    - key: support.name.4
+      value: SUPPLY DROP
+    - key: support.description.1
+      value: Protect ground units inside a fixed 12 m area for 15 seconds. Incoming
+        direct ranged damage is reduced by 35%. Smoke protects either side.
+    - key: support.description.2
+      value: One strike against a visible, confirmed hostile ground vehicle or military
+        building. Requires a safe air route.
+    - key: support.description.3
+      value: Call one rifle squad to a visible, clear landing zone. Requires population
+        space and a safe air route.
+    - key: support.description.4
+      value: Deliver 40 Materials in one crate. Select a friendly ground unit to
+        collect it. Uncollected Materials remain in the crate.
+    - key: support.card.status
+      value: "{0} charges left \xB7 Cost: 1 charge + {1} Fuel"
+    - key: support.detail.cost
+      value: '{0} charges left
+
+        Cost: 1 charge + {1} Fuel
+
+        {2}'
+    - key: support.fuel.available
+      value: 'Available Fuel: {0}'
+    - key: support.choose.area
+      value: CHOOSE AREA
+    - key: support.choose.zone
+      value: CHOOSE LANDING ZONE
+    - key: support.optional
+      value: "Optional support \xB7 Keep your mission objective in view"
+    - key: support.instruction
+      value: Choose support, then select a target on the battlefield.
+    - key: support.aria.wait
+      value: I will wait for your confirmation.
+    - key: support.target.instruction
+      value: Tap a visible ground area. Drag to inspect; confirm to deploy.
+    - key: support.consent
+      value: ARIA proposes {0} for {1} Fuel and 1 charge. Approve this exact action?
+    - key: support.choose.target
+      value: CHOOSE HOSTILE TARGET
+    - key: support.target.strike
+      value: Tap a visible, confirmed hostile vehicle or military building. Confirm
+        to strike.
+    - key: support.target.landing
+      value: Tap a visible, clear landing zone. Confirm to call the transport.
+    - key: support.flight.approaching
+      value: "{0} approaching \xB7 {1} Fuel reserved \xB7 release in {2}s"
+    - key: support.flight.resolved
+      value: '{0} deployed'
+    - key: support.flight.deploying
+      value: "{0} releasing troops \xB7 select them after landing"
+    - key: support.flight.partial
+      value: "{0} partially deployed \xB7 {1}"
+    - key: support.flight.aborted
+      value: "{0} cancelled \xB7 {1}"
+    - key: support.confirm
+      value: DEPLOY
+    - key: support.confirm.smoke
+      value: DEPLOY SMOKE
+    - key: support.preview.cost
+      value: "Cost: 1 charge + {0} Fuel \xB7 {1}"
+    - key: support.cancel
+      value: CANCEL
+    - key: support.propose
+      value: ASK ARIA
+    - key: support.approve
+      value: APPROVE
+    - key: support.decline
+      value: DECLINE
+    - key: support.show
+      value: SHOW TARGET
+    - key: support.play
+      value: PLAY
+    - key: support.stop
+      value: STOP
+    - key: support.close
+      value: CLOSE
+    - key: support.reason.0
+      value: "Ready \xB7 Confirm to deploy"
+    - key: support.reason.1
+      value: This attempt has ended
+    - key: support.reason.2
+      value: Unavailable during pause or results
+    - key: support.reason.3
+      value: Earn this support in Campaign
+    - key: support.reason.4
+      value: Unavailable in this mission
+    - key: support.reason.5
+      value: Support is not available yet
+    - key: support.reason.6
+      value: No charges remaining
+    - key: support.reason.7
+      value: Cooling down
+    - key: support.reason.8
+      value: Choose ground inside the battlefield
+    - key: support.reason.9
+      value: Choose a visible area
+    - key: support.reason.10
+      value: Confirm this hostile contact first
+    - key: support.reason.11
+      value: Protected area or target
+    - key: support.reason.12
+      value: Choose a valid target
+    - key: support.reason.13
+      value: Target is no longer available
+    - key: support.reason.14
+      value: No safe air route
+    - key: support.reason.15
+      value: Landing zone is blocked
+    - key: support.reason.16
+      value: No room for more troops
+    - key: support.reason.17
+      value: Not enough available Fuel
+    - key: support.reason.18
+      value: Select the target again
+    - key: support.reason.19
+      value: This action requires your approval
+    - key: support.reason.20
+      value: Proposal expired; select the target again
+    - key: support.reason.21
+      value: This action was already processed
   - localeCode: fa-IR
     displayName: "\u0641\u0627\u0631\u0633\u06CC"
     shortLabel: FA
@@ -11993,7 +12154,8 @@ MonoBehaviour:
         \u0634\u062F"
     - key: mission.steel_push.reward.card
       value: "\u06F2\u06F0\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
-        \xB7 \u06F9\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631"
+        \xB7 \u06F9\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u067E\u0631\u062F\u0647\u0654
+        \u062F\u0648\u062F"
     - key: mission.steel_push.star.1
       value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
         \u06A9\u0646"
@@ -18415,3 +18577,269 @@ MonoBehaviour:
     - key: warning_ground_attack_type
       value: "\u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u062F\u0634\u0645\u0646
         \u062F\u0627\u0631\u0646 \u062D\u0645\u0644\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0646"
+    - key: mission.reward.smoke_screen
+      value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u0627\u0632
+        \u0634\u062F"
+    - key: mission.reward.smoke_screen
+      value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u0627\u0632
+        \u0634\u062F"
+    - key: support.lesson.1
+      value: "\u0622\u0645\u0648\u0632\u0634 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u0632\u0645\u06CC\u0646 \u0642\u0627\u0628\u0644\u200C\u062F\u06CC\u062F
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u0648 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646\u06CC\u062F. \u062F\u0648\u062F \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647
+        \u0622\u0633\u06CC\u0628 \u062A\u06CC\u0631\u0627\u0646\u062F\u0627\u0632\u06CC
+        \u0645\u0633\u062A\u0642\u06CC\u0645 \u0628\u0647 \u0648\u0627\u062D\u062F\u0647\u0627\u06CC
+        \u0632\u0645\u06CC\u0646\u06CC \u0631\u0627 \u06A9\u0627\u0647\u0634 \u0645\u06CC\u200C\u062F\u0647\u062F.
+        \u0628\u0631\u0627\u06CC \u0631\u062F \u0622\u0645\u0648\u0632\u0634 \u0628\u0628\u0646\u062F\u06CC\u062F."
+    - key: support.lesson.2
+      value: "\u0622\u0645\u0648\u0632\u0634 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u062E\u0648\u062F\u0631\u0648\u06CC \u062F\u0634\u0645\u0646 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u06CC\u0627 \u0633\u0627\u062E\u062A\u0645\u0627\u0646 \u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u06CC\u062F.
+        \u067E\u06CC\u0634 \u0627\u0632 \u062A\u0623\u06CC\u06CC\u062F\u060C \u0647\u062F\u0641
+        \u0648 \u0647\u0632\u06CC\u0646\u0647\u0654 \u06F4 \u0633\u0648\u062E\u062A
+        \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F. \u0628\u0631\u0627\u06CC
+        \u0631\u062F \u0622\u0645\u0648\u0632\u0634 \u0628\u0628\u0646\u062F\u06CC\u062F."
+    - key: support.lesson.3
+      value: "\u0622\u0645\u0648\u0632\u0634 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u062E\u0627\u0644\u06CC \u0648
+        \u0642\u0627\u0628\u0644\u200C\u062F\u06CC\u062F \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F. \u0628\u0627 \u06F6 \u0633\u0648\u062E\u062A \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646\u06CC\u062F\u061B \u0686\u0647\u0627\u0631 \u0633\u0631\u0628\u0627\u0632
+        \u067E\u06CC\u0627\u062F\u0647 \u067E\u0633 \u0627\u0632 \u0641\u0631\u0648\u062F
+        \u0641\u0631\u0645\u0627\u0646\u200C\u067E\u0630\u06CC\u0631 \u0645\u06CC\u200C\u0634\u0648\u0646\u062F.
+        \u0628\u0631\u0627\u06CC \u0631\u062F \u0622\u0645\u0648\u0632\u0634 \u0628\u0628\u0646\u062F\u06CC\u062F."
+    - key: support.lesson.4
+      value: "\u0622\u0645\u0648\u0632\u0634 \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC:
+        \u067E\u0633 \u0627\u0632 \u0641\u0631\u0648\u062F\u060C \u0648\u0627\u062D\u062F
+        \u0632\u0645\u06CC\u0646\u06CC \u062E\u0648\u062F\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F \u0648 \u0635\u0646\u062F\u0648\u0642
+        \u0631\u0627 \u0644\u0645\u0633 \u06A9\u0646\u06CC\u062F. \u062F\u0631 \u0627\u0646\u0628\u0627\u0631
+        \u067E\u0631\u060C \u0628\u0627\u0642\u06CC \u0645\u0635\u0627\u0644\u062D
+        \u062D\u0641\u0638 \u0645\u06CC\u200C\u0634\u0648\u062F. \u0628\u0631\u0627\u06CC
+        \u0631\u062F \u0622\u0645\u0648\u0632\u0634 \u0628\u0628\u0646\u062F\u06CC\u062F."
+    - key: support.supply.unreachable
+      value: "\u0627\u06CC\u0646 \u0648\u0627\u062D\u062F \u0628\u0647 \u0635\u0646\u062F\u0648\u0642
+        \u0646\u0645\u06CC\u200C\u0631\u0633\u062F. \u0648\u0627\u062D\u062F \u0632\u0645\u06CC\u0646\u06CC
+        \u062F\u06CC\u06AF\u0631\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC
+        \u0631\u0627 \u0628\u0632\u0646\u06CC\u062F."
+    - key: support.supply.collect
+      value: "\u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC \u062A\u062F\u0627\u0631\u06A9\u0627\u062A"
+    - key: support.supply.stock
+      value: "{0} \u0645\u0635\u0627\u0644\u062D \u0628\u0627\u0642\u06CC \u0645\u0627\u0646\u062F\u0647
+        \xB7 {1}"
+    - key: support.supply.full
+      value: "\u0627\u0646\u0628\u0627\u0631 \u067E\u0631 \u0627\u0633\u062A\u061B
+        \u0645\u0648\u062C\u0648\u062F\u06CC \u062F\u0631 \u0635\u0646\u062F\u0648\u0642
+        \u0645\u06CC\u200C\u0645\u0627\u0646\u062F"
+    - key: support.supply.claimed
+      value: "\u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC \u062F\u0631 \u062D\u0627\u0644
+        \u0627\u0646\u062C\u0627\u0645 \u0627\u0633\u062A"
+    - key: support.supply.select
+      value: "\u06CC\u06A9 \u0648\u0627\u062D\u062F \u0632\u0645\u06CC\u0646\u06CC
+        \u062E\u0648\u062F\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u06CC\u062F\u060C \u0633\u067E\u0633 \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC
+        \u06A9\u0646\u06CC\u062F"
+    - key: support.supply.target
+      value: "\u0628\u0631\u0627\u06CC \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC\u060C
+        \u0635\u0646\u062F\u0648\u0642 \u0641\u0631\u0648\u062F\u0622\u0645\u062F\u0647
+        \u0631\u0627 \u0644\u0645\u0633 \u06A9\u0646\u06CC\u062F. \u062F\u0633\u062A\u0648\u0631
+        \u062C\u062F\u06CC\u062F \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC
+        \u0631\u0627 \u0644\u063A\u0648 \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: support.title
+      value: "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC"
+    - key: support.name.1
+      value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F"
+    - key: support.name.2
+      value: "\u062D\u0645\u0644\u0647\u0654 \u062F\u0642\u06CC\u0642"
+    - key: support.name.3
+      value: "\u0686\u062A\u0631\u0628\u0627\u0632\u0627\u0646"
+    - key: support.name.4
+      value: "\u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0647\u0648\u0627\u06CC\u06CC"
+    - key: support.description.1
+      value: "\u0627\u0632 \u0646\u06CC\u0631\u0648\u0647\u0627\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u062F\u0631 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062B\u0627\u0628\u062A
+        \u06F1\u06F2 \u0645\u062A\u0631\u06CC \u0628\u0631\u0627\u06CC \u06F1\u06F5
+        \u062B\u0627\u0646\u06CC\u0647 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646.
+        \u0622\u0633\u06CC\u0628 \u0634\u0644\u06CC\u06A9 \u0645\u0633\u062A\u0642\u06CC\u0645
+        \u06F3\u06F5\u066A \u06A9\u0645\u062A\u0631 \u0645\u06CC\u200C\u0634\u0648\u062F.
+        \u062F\u0648\u062F \u0627\u0632 \u0647\u0631 \u062F\u0648 \u0637\u0631\u0641
+        \u0645\u062D\u0627\u0641\u0638\u062A \u0645\u06CC\u200C\u06A9\u0646\u062F."
+    - key: support.description.2
+      value: "\u06CC\u06A9 \u062D\u0645\u0644\u0647 \u0628\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0632\u0645\u06CC\u0646\u06CC \u06CC\u0627 \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u0646\u0638\u0627\u0645\u06CC \u062F\u0634\u0645\u0646\u0650 \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0648 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647. \u0645\u0633\u06CC\u0631
+        \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u0646 \u0644\u0627\u0632\u0645
+        \u0627\u0633\u062A."
+    - key: support.description.3
+      value: "\u06CC\u06A9 \u06AF\u0631\u0648\u0647 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0628\u0647 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F\u0650 \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0648 \u0628\u0627\u0632 \u0641\u0631\u0627\u062E\u0648\u0627\u0646. \u0638\u0631\u0641\u06CC\u062A
+        \u0646\u06CC\u0631\u0648 \u0648 \u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC
+        \u0627\u0645\u0646 \u0644\u0627\u0632\u0645 \u0627\u0633\u062A."
+    - key: support.description.4
+      value: "\u06F4\u06F0 \u0645\u0635\u0627\u0644\u062D \u062F\u0631 \u06CC\u06A9
+        \u0635\u0646\u062F\u0648\u0642 \u062A\u062D\u0648\u06CC\u0644 \u0628\u06AF\u06CC\u0631.
+        \u06CC\u06A9 \u0646\u06CC\u0631\u0648\u06CC \u0632\u0645\u06CC\u0646\u06CC
+        \u062E\u0648\u062F\u06CC \u0631\u0627 \u0628\u0631\u0627\u06CC \u062C\u0645\u0639\u200C\u0622\u0648\u0631\u06CC
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0645\u0635\u0627\u0644\u062D
+        \u0628\u0627\u0642\u06CC\u0645\u0627\u0646\u062F\u0647 \u062F\u0631 \u0635\u0646\u062F\u0648\u0642
+        \u0645\u06CC\u200C\u0645\u0627\u0646\u062F."
+    - key: support.card.status
+      value: "{0} \u0628\u0627\u0631 \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0647\u0632\u06CC\u0646\u0647: \u06F1 \u0628\u0627\u0631 + {1} \u0633\u0648\u062E\u062A"
+    - key: support.detail.cost
+      value: "{0} \u0628\u0627\u0631 \u0628\u0627\u0642\u06CC\u200C\u0645\u0627\u0646\u062F\u0647\n\u0647\u0632\u06CC\u0646\u0647:
+        \u06F1 \u0628\u0627\u0631 + {1} \u0633\u0648\u062E\u062A\n{2}"
+    - key: support.fuel.available
+      value: "\u0633\u0648\u062E\u062A \u062F\u0631 \u062F\u0633\u062A\u0631\u0633:
+        {0}"
+    - key: support.choose.area
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062D\u062F\u0648\u062F\u0647"
+    - key: support.choose.zone
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062D\u0644 \u0641\u0631\u0648\u062F"
+    - key: support.optional
+      value: "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC
+        \xB7 \u0647\u062F\u0641 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0627
+        \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646"
+    - key: support.instruction
+      value: "\u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u061B \u0633\u067E\u0633 \u0647\u062F\u0641 \u0631\u0627 \u062F\u0631
+        \u0645\u06CC\u062F\u0627\u0646 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646."
+    - key: support.aria.wait
+      value: "\u0645\u0646\u062A\u0638\u0631 \u062A\u0623\u06CC\u06CC\u062F \u062A\u0648
+        \u0645\u06CC\u200C\u0645\u0627\u0646\u0645."
+    - key: support.target.instruction
+      value: "\u06CC\u06A9 \u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u0632\u0645\u06CC\u0646\u06CC
+        \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647 \u0631\u0627 \u0644\u0645\u0633
+        \u06A9\u0646. \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC \u0628\u06A9\u0634\u061B
+        \u0628\u0631\u0627\u06CC \u0627\u062C\u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646."
+    - key: support.consent
+      value: "\u0622\u0631\u06CC\u0627 {0} \u0631\u0627 \u0628\u0627 {1} \u0633\u0648\u062E\u062A
+        \u0648 \u06F1 \u0628\u0627\u0631 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F
+        \u0645\u06CC\u200C\u06A9\u0646\u062F. \u0647\u0645\u06CC\u0646 \u0627\u0642\u062F\u0627\u0645
+        \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u0645\u06CC\u200C\u06A9\u0646\u06CC\u061F"
+    - key: support.choose.target
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0647\u062F\u0641 \u062F\u0634\u0645\u0646"
+    - key: support.target.strike
+      value: "\u062E\u0648\u062F\u0631\u0648 \u06CC\u0627 \u0633\u0627\u062E\u062A\u0645\u0627\u0646
+        \u0646\u0638\u0627\u0645\u06CC \u062F\u0634\u0645\u0646\u0650 \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0648 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0631\u0627 \u0644\u0645\u0633
+        \u06A9\u0646. \u0628\u0631\u0627\u06CC \u062D\u0645\u0644\u0647 \u062A\u0623\u06CC\u06CC\u062F
+        \u06A9\u0646."
+    - key: support.target.landing
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F\u0650 \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0648 \u0628\u0627\u0632 \u0631\u0627 \u0644\u0645\u0633 \u06A9\u0646. \u0628\u0631\u0627\u06CC
+        \u0641\u0631\u0627\u062E\u0648\u0627\u0646 \u0647\u0648\u0627\u067E\u06CC\u0645\u0627
+        \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646."
+    - key: support.flight.approaching
+      value: "{0} \u062F\u0631 \u0631\u0627\u0647 \u0627\u0633\u062A \xB7 {1} \u0633\u0648\u062E\u062A
+        \u0631\u0632\u0631\u0648 \u0634\u062F \xB7 \u0631\u0647\u0627\u0633\u0627\u0632\u06CC
+        \u062A\u0627 {2} \u062B\u0627\u0646\u06CC\u0647"
+    - key: support.flight.resolved
+      value: "{0} \u0627\u062C\u0631\u0627 \u0634\u062F"
+    - key: support.flight.deploying
+      value: "{0} \u062F\u0631 \u062D\u0627\u0644 \u0631\u0647\u0627\u0633\u0627\u0632\u06CC
+        \u0646\u06CC\u0631\u0648 \xB7 \u067E\u0633 \u0627\u0632 \u0641\u0631\u0648\u062F
+        \u0627\u0646\u062A\u062E\u0627\u0628\u0634\u0627\u0646 \u06A9\u0646"
+    - key: support.flight.partial
+      value: "{0} \u0628\u062E\u0634\u06CC \u0627\u0632 \u0646\u06CC\u0631\u0648
+        \u0631\u0627 \u062A\u062D\u0648\u06CC\u0644 \u062F\u0627\u062F \xB7 {1}"
+    - key: support.flight.aborted
+      value: "{0} \u0644\u063A\u0648 \u0634\u062F \xB7 {1}"
+    - key: support.confirm
+      value: "\u0627\u062C\u0631\u0627"
+    - key: support.confirm.smoke
+      value: "\u0627\u062C\u0631\u0627\u06CC \u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F"
+    - key: support.preview.cost
+      value: "\u0647\u0632\u06CC\u0646\u0647: \u06F1 \u0628\u0627\u0631 + {0} \u0633\u0648\u062E\u062A
+        \xB7 {1}"
+    - key: support.cancel
+      value: "\u0644\u063A\u0648"
+    - key: support.propose
+      value: "\u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0622\u0631\u06CC\u0627"
+    - key: support.approve
+      value: "\u062A\u0623\u06CC\u06CC\u062F"
+    - key: support.decline
+      value: "\u0631\u062F"
+    - key: support.show
+      value: "\u0646\u0645\u0627\u06CC\u0634 \u0647\u062F\u0641"
+    - key: support.play
+      value: "\u0634\u0631\u0648\u0639"
+    - key: support.stop
+      value: "\u062A\u0648\u0642\u0641"
+    - key: support.close
+      value: "\u0628\u0633\u062A\u0646"
+    - key: support.reason.0
+      value: "\u0622\u0645\u0627\u062F\u0647 \xB7 \u0628\u0631\u0627\u06CC \u0627\u062C\u0631\u0627
+        \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646"
+    - key: support.reason.1
+      value: "\u0627\u06CC\u0646 \u062A\u0644\u0627\u0634 \u062A\u0645\u0627\u0645
+        \u0634\u062F\u0647"
+    - key: support.reason.2
+      value: "\u0647\u0646\u06AF\u0627\u0645 \u0645\u06A9\u062B \u06CC\u0627 \u0646\u062A\u06CC\u062C\u0647
+        \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: support.reason.3
+      value: "\u0627\u06CC\u0646 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0631\u0627 \u062F\u0631 \u06A9\u0627\u0631\u0632\u0627\u0631 \u06A9\u0633\u0628
+        \u06A9\u0646"
+    - key: support.reason.4
+      value: "\u062F\u0631 \u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: support.reason.5
+      value: "\u0627\u06CC\u0646 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0647\u0646\u0648\u0632 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A"
+    - key: support.reason.6
+      value: "\u0628\u0627\u0631 \u062F\u06CC\u06AF\u0631\u06CC \u0628\u0627\u0642\u06CC
+        \u0646\u0645\u0627\u0646\u062F\u0647"
+    - key: support.reason.7
+      value: "\u062F\u0631 \u062D\u0627\u0644 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u062F\u0648\u0628\u0627\u0631\u0647"
+    - key: support.reason.8
+      value: "\u0632\u0645\u06CC\u0646 \u062F\u0627\u062E\u0644 \u0645\u06CC\u062F\u0627\u0646
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: support.reason.9
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647\u0654 \u062F\u06CC\u062F\u0647\u200C\u0634\u062F\u0647
+        \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: support.reason.10
+      value: "\u0627\u0628\u062A\u062F\u0627 \u0627\u06CC\u0646 \u062A\u0645\u0627\u0633
+        \u062F\u0634\u0645\u0646 \u0631\u0627 \u062A\u0623\u06CC\u06CC\u062F \u06A9\u0646"
+    - key: support.reason.11
+      value: "\u0645\u062D\u062F\u0648\u062F\u0647 \u06CC\u0627 \u0647\u062F\u0641
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647"
+    - key: support.reason.12
+      value: "\u0647\u062F\u0641 \u0645\u062C\u0627\u0632 \u0631\u0627 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646"
+    - key: support.reason.13
+      value: "\u0647\u062F\u0641 \u062F\u06CC\u06AF\u0631 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
+        \u0646\u06CC\u0633\u062A"
+    - key: support.reason.14
+      value: "\u0645\u0633\u06CC\u0631 \u0647\u0648\u0627\u06CC\u06CC \u0627\u0645\u0646
+        \u0646\u06CC\u0633\u062A"
+    - key: support.reason.15
+      value: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0645\u0633\u062F\u0648\u062F
+        \u0627\u0633\u062A"
+    - key: support.reason.16
+      value: "\u0638\u0631\u0641\u06CC\u062A \u0646\u06CC\u0631\u0648\u06CC \u0628\u06CC\u0634\u062A\u0631
+        \u0646\u06CC\u0633\u062A"
+    - key: support.reason.17
+      value: "\u0633\u0648\u062E\u062A \u062F\u0631 \u062F\u0633\u062A\u0631\u0633
+        \u06A9\u0627\u0641\u06CC \u0646\u06CC\u0633\u062A"
+    - key: support.reason.18
+      value: "\u0647\u062F\u0641 \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: support.reason.19
+      value: "\u0627\u06CC\u0646 \u0627\u0642\u062F\u0627\u0645 \u0628\u0647 \u062A\u0623\u06CC\u06CC\u062F
+        \u062A\u0648 \u0646\u06CC\u0627\u0632 \u062F\u0627\u0631\u062F"
+    - key: support.reason.20
+      value: "\u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0645\u0646\u0642\u0636\u06CC
+        \u0634\u062F\u061B \u0647\u062F\u0641 \u0631\u0627 \u062F\u0648\u0628\u0627\u0631\u0647
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646"
+    - key: support.reason.21
+      value: "\u0627\u06CC\u0646 \u0627\u0642\u062F\u0627\u0645 \u0642\u0628\u0644\u0627\u064B
+        \u067E\u0631\u062F\u0627\u0632\u0634 \u0634\u062F\u0647"

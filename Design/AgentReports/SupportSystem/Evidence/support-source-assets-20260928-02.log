@@ -1,0 +1,136 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SupportSourceAssetCapture.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportSourceAsset] prefab=Assets/Game/Prefabs/Vehicles/Unit_Veh_Jet_01.prefab guid=bff0a8791ec564632b7bddbe3e544ac4 output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046/strike-jet.png
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:60)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Releasing render texture that is set as Camera.targetTexture!
+UnityEngine.Object:DestroyImmediate (UnityEngine.Object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:64)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:17)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SupportSourceAsset] prefab=Assets/Game/Prefabs/Vehicles/Unit_Veh_Plane_Transport.prefab guid=c0213638ba0c6466fadcd5bbe8fe0149 output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046/transport.png
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:60)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Releasing render texture that is set as Camera.targetTexture!
+UnityEngine.Object:DestroyImmediate (UnityEngine.Object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:64)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:18)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SupportSourceAsset] prefab=Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_EmergencyDrop_Crate_01.prefab guid=4a304209bbfe02249bd92db44aa22f94 output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046/crate.png
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:60)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:19)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Releasing render texture that is set as Camera.targetTexture!
+UnityEngine.Object:DestroyImmediate (UnityEngine.Object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:64)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:19)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SupportSourceAsset] prefab=Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_Parachute_01.prefab guid=a567fd209adc22643bffbc9030f3005a output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046/parachute.png
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:60)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:20)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Releasing render texture that is set as Camera.targetTexture!
+UnityEngine.Object:DestroyImmediate (UnityEngine.Object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:64)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:20)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SupportSourceAsset] prefab=Assets/PolygonMilitary/Prefabs/FX/FX_Smoke_Medium_01.prefab guid=2455f9e97989bb34b863456d2c2f67de output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046/smoke-established.png
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:60)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Releasing render texture that is set as Camera.targetTexture!
+UnityEngine.Object:DestroyImmediate (UnityEngine.Object)
+Game.Editor.SupportSourceAssetCapture:Capture (string,string,bool) (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:64)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:21)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions ()
+
+[SupportSourceAssetCapture] result=Rendered assets=5 visualReview=pending output=Design/AgentReports/SupportSystem/Evidence/SourceAssets/20260928-163046
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSourceAssetCapture:Run () (at Assets/Game/Scripts/Editor/SupportSourceAssetCapture.cs:22)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.SupportSourceAssetCapture.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_a65dd3b5/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

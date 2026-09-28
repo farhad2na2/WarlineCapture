@@ -147,7 +147,7 @@ namespace Game.UI.Runtime
                     10 => _commandControlsView?.CommandWheelPanel?.IsOpen == true
                         ? _commandControlsView.CommandWheelStopButton
                         : _commandControlsView?.CommandWheelPanel?.OpenButton,
-                    6 => _commandControlsView?.SupportButton,
+                    6 => _commandControlsView?.ScanButton,
                     BuildRecommendationKind => _buildGuidanceButton,
                     SelectRecommendationKind => ResolveBarracksGuidanceButton(),
                     _ => null

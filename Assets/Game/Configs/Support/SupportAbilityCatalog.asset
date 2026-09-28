@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74d450d4733ff4a05842215df20ce426, type: 3}
+  m_Name: SupportAbilityCatalog
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportAbilityCatalogConfig
+  Revision: 1
+  SourceHash: 34a07c6da8da9dcfe74d7b8ed284f3bd4a5bbeaa3bd913c197842f7a11b2e1c4
+  Abilities:
+  - Kind: 1
+    Id: ability.smoke_screen
+    NameKey: support.name.1
+    DescriptionKey: support.description.1
+    UnlockMission: CH04-M02
+    Charges: 2
+    FuelCost: 1
+    Damage: 0
+    Materials: 0
+    CooldownSeconds: 35
+    Radius: 12
+    DurationSeconds: 15
+    ApproachSeconds: 0
+    DirectDamagePermille: 650
+    ProductionReady: 0
+    Icon: {fileID: 21300000, guid: 960601e98d6f4534ab88664e2545cea1, type: 3}
+    SourcePrefab: {fileID: 1506195013956270, guid: 2455f9e97989bb34b863456d2c2f67de, type: 3}
+  - Kind: 2
+    Id: ability.precision_strike
+    NameKey: support.name.2
+    DescriptionKey: support.description.2
+    UnlockMission: CH04-M03
+    Charges: 1
+    FuelCost: 4
+    Damage: 250
+    Materials: 0
+    CooldownSeconds: 120
+    Radius: 0
+    DurationSeconds: 0
+    ApproachSeconds: 3
+    DirectDamagePermille: 1000
+    ProductionReady: 0
+    Icon: {fileID: 21300000, guid: b3809cc008414643923e6edc5ead3fcf, type: 3}
+    SourcePrefab: {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
+  - Kind: 3
+    Id: ability.paratrooper_reinforcements
+    NameKey: support.name.3
+    DescriptionKey: support.description.3
+    UnlockMission: CH04-M04
+    Charges: 1
+    FuelCost: 6
+    Damage: 0
+    Materials: 0
+    CooldownSeconds: 0
+    Radius: 0
+    DurationSeconds: 0
+    ApproachSeconds: 5
+    DirectDamagePermille: 1000
+    ProductionReady: 0
+    Icon: {fileID: 21300000, guid: 6455878afb7941fe834c74282e480c6d, type: 3}
+    SourcePrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
+  - Kind: 4
+    Id: ability.supply_drop
+    NameKey: support.name.4
+    DescriptionKey: support.description.4
+    UnlockMission: CH05-M02
+    Charges: 1
+    FuelCost: 3
+    Damage: 0
+    Materials: 40
+    CooldownSeconds: 100
+    Radius: 0
+    DurationSeconds: 0
+    ApproachSeconds: 5
+    DirectDamagePermille: 1000
+    ProductionReady: 0
+    Icon: {fileID: 21300000, guid: b74a3407e59a42559801fe0dc2d18141, type: 3}
+    SourcePrefab: {fileID: 1029301884381818, guid: 4a304209bbfe02249bd92db44aa22f94, type: 3}

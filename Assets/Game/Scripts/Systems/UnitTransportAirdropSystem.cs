@@ -11,6 +11,7 @@ namespace Game.Runtime
 {
     [UpdateInGroup(typeof(SimulationSystemGroup))]
     [UpdateAfter(typeof(UnitAirMovementSystem))]
+    [UpdateAfter(typeof(SupportFlightSystem))]
     public partial struct UnitTransportAirdropSystem : ISystem
     {
         private const int LandingSearchRadius = 14;
@@ -156,6 +157,7 @@ namespace Game.Runtime
             in NativeBitArray blocked,
             in NativeBitArray occupied)
         {
+            bool support=em.HasComponent<SupportFlightComponent>(transport)&&em.GetComponentData<SupportFlightComponent>(transport).Request.Kind==SupportAbilityKind.Paratroopers;
             if (passengers.Length <= 0 || request.DroppedCount >= request.DropCount)
             {
                 FinishAirdropRequest(em, ecb, transport);
@@ -171,6 +173,7 @@ namespace Game.Runtime
             int passengerIndex = FindExistingPassenger(em, passengers);
             if (passengerIndex < 0)
             {
+                if(support){SupportParatrooperAdapterSystemHelper.BeforeDrop(em,ecb,transport,Entity.Null,grid,_gridQuery.GetSingletonEntity(),out _,SupportRejectionReason.TargetGone);return;}
                 passengers.Clear();
                 FinishAirdropRequest(em, ecb, transport);
                 return;
@@ -179,12 +182,18 @@ namespace Game.Runtime
             Entity passenger = passengers[passengerIndex].Passenger;
             byte passengerKind = ResolveLoadedPassengerKind(em, transport, passenger);
             if (!TryResolveDropVisualPrefab(em, ecb, transport, passengerKind, out Entity visualPrefab))
+            {
+                if(support){SupportParatrooperAdapterSystemHelper.BeforeDrop(em,ecb,transport,passenger,grid,_gridQuery.GetSingletonEntity(),out _,SupportRejectionReason.NotReady);return;}
                 throw new InvalidOperationException(CreateMissingAirdropVisualPrefabMessage(em, transport, passengerKind));
+            }
 
             int2 passengerFootprint = em.HasComponent<UnitFootprint>(passenger)
                 ? em.GetComponentData<UnitFootprint>(passenger).Size
                 : new int2(1, 1);
-            if (!TryFindLandingCell(
+            int2 landingCell;
+            if(support)
+            {if(!SupportParatrooperAdapterSystemHelper.BeforeDrop(em,ecb,transport,passenger,grid,_gridQuery.GetSingletonEntity(),out landingCell))return;}
+            else if (!TryFindLandingCell(
                     grid,
                     walkable,
                     blocked,
@@ -192,7 +201,7 @@ namespace Game.Runtime
                     request.DropReferenceCell,
                     passengerFootprint,
                     request.DroppedCount + passenger.Index,
-                    out int2 landingCell))
+                    out landingCell))
             {
                 throw new InvalidOperationException(CreateNoAirdropLandingCellMessage(em, transport, request.DropReferenceCell, passenger, passengerFootprint));
             }
@@ -235,6 +244,8 @@ namespace Game.Runtime
 
             RestorePassengerForDrop(em, ecb, passenger, landingCell, startPosition);
             Entity visualEntity = SpawnDropVisual(em, ecb, visualPrefab, passengerKind, startPosition);
+            if (em.HasComponent<SupportPassengerOwnerComponent>(passenger))
+                ecb.AddComponent(passenger, new SupportPassengerCleanupComponent {Canopy = visualEntity});
             if (passengerKind == UnitTransportPassengerKind.Vehicle)
             {
                 SetOrAdd(em, ecb, passenger, new UnitTransportCargoDropComponent
@@ -636,7 +647,7 @@ namespace Game.Runtime
             return false;
         }
 
-        private static bool IsValidLandingCell(
+        internal static bool IsValidLandingCell(
             in GridConfig grid,
             in NativeArray<GridWalkable> walkable,
             in NativeBitArray blocked,
@@ -793,6 +804,8 @@ namespace Game.Runtime
             float3 localAnchor = new(0f, -0.5f, -4f);
             if (em.HasComponent<UnitTransportPlaneDoorReference>(transport))
                 localAnchor = em.GetComponentData<UnitTransportPlaneDoorReference>(transport).DoorLocalPosition;
+            if (em.HasComponent<SupportFlightComponent>(transport))
+                localAnchor *= transportTransform.Scale;
 
             return transportTransform.Position + math.rotate(transportTransform.Rotation, localAnchor);
         }

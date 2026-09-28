@@ -71,7 +71,8 @@ namespace Game.Components
         AttackEntity = 4,
         FocusCamera = 5,
         StopAssistantControl = 6,
-        CancelPreview = 7
+        CancelPreview = 7,
+        ProposeSupport = 8, ApproveSupport = 9, DeclineSupport = 10, ShowSupportTarget = 11
     }
 
     public enum AssistantTargetKind : byte
@@ -310,6 +311,10 @@ namespace Game.Components
         public float3 WorldPosition;
         public FixedString64Bytes TargetId;
         public byte FromTakeover;
+        public SupportAbilityKind SupportKind;
+        public FixedString64Bytes SupportSessionToken;
+        public int SupportAttemptOrdinal, SupportFuelCost;
+        public uint SupportPreviewId, SupportAbilityVersion, SupportProposalId, SupportConsentVersion, SupportCatalogRevision;
     }
 
     [InternalBufferCapacity(0)]

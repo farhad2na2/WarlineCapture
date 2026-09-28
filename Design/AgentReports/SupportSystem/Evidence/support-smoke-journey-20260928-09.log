@@ -1,0 +1,910 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SupportSmokeJourneyProbe.RunWithoutSupport
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_34c99af8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=20
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:375)
+Game.Editor.SupportSmokeJourneyProbe:Begin (string,bool) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:64)
+Game.Editor.SupportSmokeJourneyProbe:RunWithoutSupport () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:51)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_34c99af8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportSmokeJourney] started locale=en testGrant=False normalInput=touch save=isolated
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Begin (string,bool) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:68)
+Game.Editor.SupportSmokeJourneyProbe:RunWithoutSupport () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:51)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_34c99af8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportNativeInputContext] loop=player-update screen=1920x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:84)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SupportJourneyTouch] phase=Began point=(238.72, 440.72) hit=ChapterCard_4
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(238.72, 440.72) hit=ChapterCard_4
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Began point=(841.79, 499.26) hit=MissionNode_2
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(841.79, 499.26) hit=MissionNode_2
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Began point=(1349.08, 87.80) hit=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1349.08, 87.80) hit=LaunchMissionButton
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SupportJourneyTouch] phase=Began point=(1330.71, 93.54) hit=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=None outcome=None gestures=3 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyTouch] phase=Ended point=(1330.71, 93.54) hit=DeployOperationButton
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch04.m02.steel_push scenario=scenario.ch04.m02.steel_push operationMap=opmap.ch04.steel_push_01
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:377)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:314)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[FrameRateDiag:PreGame] fps=34.0 avgFrame=29.4ms updateAvg=0.0ms updateMax=0.0ms cpuFrame=25.5ms cpuMain=2.9ms cpuRender=1.2ms gpu=2.3ms drawCalls=14 batches=0 setPass=36 tris=2150 verts=6002 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset,scale=0.50,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=3450MB reserved=4723MB mono=3160MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.0ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=7529 source=profilerCounters drawCalls=14 batches=0 setPass=36 tris=2150 verts=6002 topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, Metadata, MapSurface, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:277)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=329 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FrameRateDiag:PreGame] fps=8.8 avgFrame=113.0ms updateAvg=0.2ms updateMax=0.5ms cpuFrame=29.4ms cpuMain=12.0ms cpuRender=0.9ms gpu=3.0ms drawCalls=15 batches=0 setPass=37 tris=2152 verts=6006 units=0 models=0 sourceKeys=0 sourceKeyFallbackVisuals=0 initialSpawnConfigs=0 impostors=0 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=4235MB reserved=5356MB mono=3544MB focused=1 playRequested=0 simulationActive=0 lastSteps=MainMenu=0.5ms stepStats=none topSystems=disabled markers=disabled
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:277)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=None outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapBuildingPlacement] no baked map building placements configured.
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:WarnOnce (bool&,Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context,string) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:815)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:SpawnPlacements (Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:93)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:Update (Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:86)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_1:<Initialize>b__58 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:552)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:119)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:607)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=7539 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=7540 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapVehicleOwnershipRuntime] phase=LiveContractObserved configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 authoredVehicles=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:622)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Update hitch frame=7541 BuildingPlacement=1798.9ms, GC=0/0/0, Total=1803.4ms
+[PerfDiag] slowUpdate frame=7541 total=1803.4ms gc=0/0/0 cpuFrame=14.5ms cpuMain=12.1ms cpuRender=2.5ms gpu=8.2ms steps=RoadBuild=1.0ms, BuildingPlacement=1798.9ms, Selection=3.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.3ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=801 batches=0 setPass=60 tris=1750299 verts=3238471 memory=alloc=4292MB reserved=5373MB mono=3549MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=1.8 avgFrame=570.3ms updateAvg=202.9ms updateMax=1803.4ms cpuFrame=14.5ms cpuMain=12.1ms cpuRender=2.5ms gpu=8.2ms drawCalls=801 batches=0 setPass=60 tris=1750299 verts=3238471 units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=4 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=4292MB reserved=5373MB mono=3549MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[SteelPushReserve] initialized origin=int2(796, 450) footprint=int2(24, 23) stored=160 civilian=40 usable=120
+UnityEngine.Debug:Log (object)
+Game.Runtime.CampaignMissionRuntimeSystem:ProjectSteelPushProtection (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionRuntimeComponent&,Game.Components.CampaignMissionAttemptFactsComponent&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SteelPush.cs:63)
+Game.Runtime.CampaignMissionRuntimeSystem:TryAdvanceDefense (Unity.Entities.SystemState&,Unity.Entities.Entity,Game.Components.CampaignMissionRuntimeComponent&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Defense.cs:29)
+Game.Runtime.CampaignMissionRuntimeSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs:52)
+Game.Runtime.CampaignMissionRuntimeSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[FreezeDetect] Frame gap frame=7542 Gap=1848.2ms GC=0/0/0 LastSteps=RoadBuild=1.0ms, BuildingPlacement=1798.9ms, Selection=3.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.3ms
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object '<null>') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'BuildCommand') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'BuildCommand') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'BuildCommand') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'BuildCommand') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Icon') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Icon') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Frame') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Frame') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'V3GradientLayer') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Label') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+The referenced script on this Behaviour (Game Object 'Label') is missing!
+UnityEngine.Object:Instantiate<UnityEngine.GameObject> (UnityEngine.GameObject,UnityEngine.Transform,bool)
+Game.UI.Runtime.UIShellContentView:InstallSection (UnityEngine.GameObject,Game.UI.Runtime.UIShellContentSectionId,Game.UI.Runtime.UIShellRegionId) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:643)
+Game.UI.Runtime.UIShellContentView:InstallMatchHud () (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:365)
+Game.UI.Runtime.UIShellContentView:PrepareForCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>) (at Assets/Game/Scripts/UI/Shell/UIShellContentView.cs:169)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:76)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch04.m02.brief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:167)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[PerfDiag:PreGame] slowUpdate frame=7588 total=41.9ms gc=0/0/0 cpuFrame=12.4ms cpuMain=9.8ms cpuRender=0.5ms gpu=0.4ms steps=BuildingStartup=0.1ms, MainMenu=41.8ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=758 batches=0 setPass=74 tris=1581276 verts=2923512 memory=alloc=4314MB reserved=5398MB mono=3131MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=0 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag:PreGame] fps=23.8 avgFrame=42.0ms updateAvg=1.7ms updateMax=41.9ms cpuFrame=18.7ms cpuMain=14.2ms cpuRender=3.8ms gpu=9.3ms drawCalls=758 batches=0 setPass=74 tris=1581276 verts=2923512 units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=4 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=4331MB reserved=5412MB mono=3131MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=3.1ms stepStats=none topSystems=disabled markers=disabled
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[FrameRateDiag:PreGame] fps=52.5 avgFrame=19.1ms updateAvg=1.9ms updateMax=7.2ms cpuFrame=27.9ms cpuMain=20.5ms cpuRender=1.4ms gpu=0.3ms drawCalls=759 batches=0 setPass=74 tris=1581320 verts=2923600 units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=4 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=5076MB reserved=6115MB mono=3137MB focused=1 playRequested=1 simulationActive=0 lastSteps=BuildingStartup=0.2ms, MainMenu=3.7ms stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=9310 source=profilerCounters drawCalls=759 batches=0 setPass=74 tris=1581320 verts=2923600 topSystems=disabled markers=disabled
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[Command Cache] Cleaned 60 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportJourneyState] stage=3 smokeStage=0 phase=InteractiveBrief outcome=None gestures=4 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyTouch] phase=Began point=(956.78, 543.31) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=10870 total=97.2ms gc=0/0/0 cpuFrame=21.8ms cpuMain=17.9ms cpuRender=0.6ms gpu=10.3ms steps=RoadBuild=0.0ms, BuildingPlacement=83.4ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=13.6ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=752 batches=0 setPass=68 tris=1580514 verts=2921988 memory=alloc=4322MB reserved=5568MB mono=3150MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Ended point=(956.78, 543.31) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Began point=(1033.25, 538.35) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1033.25, 538.35) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=10930 Selection=219.7ms, GC=0/0/0, Total=222.3ms
+[PerfDiag] slowUpdate frame=10930 total=222.3ms gc=0/0/0 cpuFrame=11.0ms cpuMain=8.6ms cpuRender=2.2ms gpu=8.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=219.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.6ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=751 batches=0 setPass=68 tris=1605636 verts=2972934 memory=alloc=4345MB reserved=5559MB mono=3176MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=10931 Gap=255.0ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=219.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.6ms
+[SupportJourneyTouch] phase=Began point=(1314.27, 523.17) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1314.27, 523.17) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=10970 total=132.2ms gc=0/0/0 cpuFrame=11.5ms cpuMain=9.1ms cpuRender=2.4ms gpu=8.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=131.0ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=843 batches=0 setPass=135 tris=1595198 verts=2971176 memory=alloc=4365MB reserved=5552MB mono=3197MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=10971 Gap=152.7ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=131.0ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms
+[SupportJourneyState] stage=3 smokeStage=0 phase=FindSquad outcome=None gestures=7 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyTouch] phase=Began point=(1545.26, 516.54) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1545.26, 516.54) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11021 total=100.7ms gc=0/0/0 cpuFrame=11.5ms cpuMain=9.1ms cpuRender=0.5ms gpu=0.5ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=99.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=0.9ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=844 batches=0 setPass=134 tris=1577669 verts=2955957 memory=alloc=4384MB reserved=5541MB mono=3222MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(1688.73, 517.29) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1688.73, 517.29) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11077 total=109.8ms gc=0/0/0 cpuFrame=12.1ms cpuMain=9.6ms cpuRender=0.5ms gpu=0.2ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=108.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.4ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=885 batches=0 setPass=134 tris=1586386 verts=2976609 memory=alloc=4416MB reserved=5541MB mono=3247MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(1634.23, 555.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1634.23, 555.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11121 total=119.3ms gc=0/0/0 cpuFrame=15.3ms cpuMain=11.2ms cpuRender=0.7ms gpu=8.0ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=117.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.3ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=880 batches=0 setPass=134 tris=1594960 verts=3000755 memory=alloc=4450MB reserved=5541MB mono=3272MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(1683.33, 558.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1683.33, 558.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11162 total=110.1ms gc=0/0/0 cpuFrame=13.9ms cpuMain=11.2ms cpuRender=3.0ms gpu=11.7ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=108.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.6ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=781 batches=0 setPass=137 tris=1531633 verts=2855182 memory=alloc=4482MB reserved=5541MB mono=3297MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(1710.37, 560.65) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1710.37, 560.65) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11211 total=109.0ms gc=0/0/0 cpuFrame=12.3ms cpuMain=9.7ms cpuRender=0.5ms gpu=0.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=107.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=757 batches=0 setPass=133 tris=1483456 verts=2749110 memory=alloc=4516MB reserved=5555MB mono=3322MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(1714.05, 500.39) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(1714.05, 500.39) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[PerfDiag] slowUpdate frame=11260 total=114.2ms gc=0/0/0 cpuFrame=18.5ms cpuMain=11.9ms cpuRender=0.6ms gpu=10.7ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=112.8ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=764 batches=0 setPass=131 tris=1482936 verts=2748462 memory=alloc=4548MB reserved=5587MB mono=3346MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyState] stage=3 smokeStage=0 phase=FindSquad outcome=None gestures=13 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11308 Selection=213.9ms, GC=0/0/0, Total=215.2ms
+[PerfDiag] slowUpdate frame=11308 total=215.2ms gc=0/0/0 cpuFrame=14.7ms cpuMain=12.1ms cpuRender=0.5ms gpu=0.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=213.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=764 batches=0 setPass=131 tris=1509687 verts=2794202 memory=alloc=4612MB reserved=5650MB mono=3395MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=11309 Gap=227.8ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=213.9ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms
+[FrameRateDiag] fps=54.3 avgFrame=18.4ms updateAvg=5.0ms updateMax=215.2ms cpuFrame=13.3ms cpuMain=10.5ms cpuRender=0.5ms gpu=0.4ms drawCalls=764 batches=0 setPass=131 tris=1509415 verts=2793352 units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=4 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=4613MB reserved=5652MB mono=3396MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[RenderSceneDiag] frame=11326 source=profilerCounters drawCalls=764 batches=0 setPass=131 tris=1509415 verts=2793352 topSystems=disabled markers=disabled
+[PerfDiag] slowUpdate frame=11337 total=66.9ms gc=0/0/0 cpuFrame=12.3ms cpuMain=9.6ms cpuRender=2.7ms gpu=8.0ms steps=RoadBuild=0.0ms, BuildingPlacement=64.7ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.0ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=764 batches=0 setPass=131 tris=1501712 verts=2779726 memory=alloc=4619MB reserved=5658MB mono=3400MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11343 Selection=188.7ms, GC=0/0/0, Total=190.8ms
+[FreezeDetect] Frame gap frame=11344 Gap=205.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=188.7ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.0ms
+[PerfDiag] slowUpdate frame=11370 total=31.0ms gc=0/0/0 cpuFrame=10.5ms cpuMain=8.3ms cpuRender=2.4ms gpu=6.4ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=30.7ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=768 batches=0 setPass=131 tris=1510305 verts=2794031 memory=alloc=4684MB reserved=5724MB mono=3448MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11391 Selection=184.3ms, GC=0/0/0, Total=185.5ms
+[FreezeDetect] Frame gap frame=11392 Gap=197.0ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=184.3ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.2ms
+[PerfDiag] slowUpdate frame=11418 total=33.6ms gc=0/0/0 cpuFrame=11.8ms cpuMain=9.4ms cpuRender=2.5ms gpu=8.1ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=0.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=33.3ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=767 batches=0 setPass=131 tris=1505346 verts=2785830 memory=alloc=4748MB reserved=5786MB mono=3497MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11436 Selection=701.2ms, GC=0/0/0, Total=708.0ms
+[PerfDiag] slowUpdate frame=11436 total=708.0ms gc=0/0/0 cpuFrame=12.5ms cpuMain=9.8ms cpuRender=2.8ms gpu=6.3ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=701.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=6.6ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=770 batches=0 setPass=131 tris=1505750 verts=2786435 memory=alloc=4812MB reserved=5848MB mono=3545MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=11437 Gap=785.6ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=701.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=6.6ms
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11441 Selection=481.2ms, GC=1/1/1, Total=484.0ms
+[PerfDiag] slowUpdate frame=11441 total=484.0ms gc=1/1/1 cpuFrame=79.0ms cpuMain=55.4ms cpuRender=0.7ms gpu=0.7ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=481.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.7ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=768 batches=0 setPass=131 tris=1510962 verts=2795569 memory=alloc=4870MB reserved=5910MB mono=3188MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=11442 Gap=507.1ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=481.2ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=2.7ms
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11460 Selection=197.5ms, GC=0/0/0, Total=198.6ms
+[PerfDiag] slowUpdate frame=11460 total=198.6ms gc=0/0/0 cpuFrame=11.6ms cpuMain=9.1ms cpuRender=2.2ms gpu=8.9ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=197.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.0ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=769 batches=0 setPass=131 tris=1503197 verts=2781055 memory=alloc=4934MB reserved=5975MB mono=3221MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=11461 Gap=208.2ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=197.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.0ms
+[SupportJourneyState] stage=3 smokeStage=0 phase=FindSquad outcome=None gestures=19 covered=False damage=0
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:106)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportJourneyTouch] phase=Began point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SupportJourneyTouch] phase=Ended point=(960.00, 594.00) hit=
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:TouchEvidence (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:303)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=11512 Selection=184.5ms, GC=0/0/0, Total=185.9ms
+[PerfDiag] slowUpdate frame=11512 total=185.9ms gc=0/0/0 cpuFrame=11.1ms cpuMain=9.0ms cpuRender=2.2ms gpu=8.7ms steps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=184.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.4ms units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 drawCalls=733 batches=0 setPass=131 tris=1418236 verts=2636398 memory=alloc=4997MB reserved=6036MB mono=3270MB uiToolkit=0 gameplayInitialized=1 playRequested=1 simulationActive=1 focused=1 vSync=0 targetFps=-1 topSystems=disabled markers=disabled
+[FrameRateDiag] fps=29.9 avgFrame=33.4ms updateAvg=13.7ms updateMax=484.0ms cpuFrame=11.1ms cpuMain=9.0ms cpuRender=2.2ms gpu=8.7ms drawCalls=733 batches=0 setPass=131 tris=1418236 verts=2636398 units=4946 models=13 sourceKeys=4946 sourceKeyFallbackVisuals=0 initialSpawnConfigs=1 impostors=4 render=screen=1920x1080,batch=0,quality=1:Mobile,vSync=0,targetFps=-1,pipeline=Mobile_RPAsset_MobileCandidate,scale=0.75,msaa=0,camera=Main Camera,cameraData=post:1,aa:FastApproximateAntialiasing,stack:0 memory=alloc=4997MB reserved=6036MB mono=3270MB focused=1 playRequested=1 simulationActive=1 stepStats=none topSystems=disabled markers=disabled
+[FreezeDetect] Frame gap frame=11513 Gap=199.9ms GC=0/0/0 LastSteps=RoadBuild=0.0ms, BuildingPlacement=0.1ms, Selection=184.5ms, DayNight=0.0ms, CitizenPopulation=0.0ms, MainMenu=1.4ms
+[SupportSmokeJourney] result=Failed Native driver needs a visible narrative hit point and must yield comics to active ARIA; aborted before gameplay acceptance. evidence=Design/AgentReports/SupportSystem/Evidence/SmokeJourney/20260928-160644-en-without-support
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:326)
+System.Reflection.MethodBase:Invoke (object,object[])
+PipelineEvaluation.PipelineEval_d07e74f5:Execute ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.Compilation.EvalCodeCompiler:ExecuteCompiledAssembly (System.Reflection.Assembly) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:190)
+Unity.Pipeline.Compilation.EvalCodeCompiler:CompileAndExecuteOnMainThread (string,int,System.Diagnostics.Stopwatch) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:54)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateSource (string,int,string) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:112)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateCode (string,int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:24)
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.BasePipelineServer:ExecuteCommandDirect (Unity.Pipeline.Commands.CommandInfo,object[]) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2632)
+Unity.Pipeline.BasePipelineServer/<>c__DisplayClass134_0:<ExecuteCommand>b__1 () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2508)
+Unity.Pipeline.Threading.Dispatcher/WorkItem`1<object>:ExecuteCore () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:284)
+Unity.Pipeline.Threading.Dispatcher/WorkItem:Execute () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:229)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue (int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:195)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:210)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.SupportSmokeJourneyProbe.RunWithoutSupport
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Threading.Tasks.TaskCompletionSource`1<int>:TrySetResult (int)
+Game.Editor.SupportSmokeJourneyProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:327)
+System.Reflection.MethodBase:Invoke (object,object[])
+PipelineEvaluation.PipelineEval_d07e74f5:Execute ()
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.Compilation.EvalCodeCompiler:ExecuteCompiledAssembly (System.Reflection.Assembly) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:190)
+Unity.Pipeline.Compilation.EvalCodeCompiler:CompileAndExecuteOnMainThread (string,int,System.Diagnostics.Stopwatch) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Compilation/EvalCodeCompiler.cs:54)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateSource (string,int,string) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:112)
+Unity.Pipeline.Runtime.Commands.CodeEvalCommand:EvaluateCode (string,int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Commands/CodeEvalCommand.cs:24)
+System.Reflection.MethodBase:Invoke (object,object[])
+Unity.Pipeline.BasePipelineServer:ExecuteCommandDirect (Unity.Pipeline.Commands.CommandInfo,object[]) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2632)
+Unity.Pipeline.BasePipelineServer/<>c__DisplayClass134_0:<ExecuteCommand>b__1 () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/BasePipelineServer.cs:2508)
+Unity.Pipeline.Threading.Dispatcher/WorkItem`1<object>:ExecuteCore () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:284)
+Unity.Pipeline.Threading.Dispatcher/WorkItem:Execute () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:229)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue (int) (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:195)
+Unity.Pipeline.Threading.Dispatcher:ProcessWorkQueue () (at ./Library/PackageCache/com.unity.pipeline@9bb4172c603c/Runtime/Common/Dispatcher.cs:210)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

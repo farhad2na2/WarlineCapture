@@ -1,6 +1,6 @@
 # Ordered implementation tasks
 
-Approval recorded: 2026-09-28. Overall state: READY TO IMPLEMENT, NOT IMPLEMENTED. Do not equate task planning, mockup approval or passing compilation with player readiness.
+Approval recorded: 2026-09-28. Overall state: FEATURE IMPLEMENTED; available native evidence complete; external readiness gates pending. Current evidence and failures are recorded in `implementation_progress.md`; production/device readiness is not yet established. Do not equate task planning, mockup approval or passing compilation with player readiness.
 
 Read [IMPLEMENTATION.md](IMPLEMENTATION.md) for exact contracts and verified code paths. The old S0–S8 product packets remain useful grouping; the tasks below are the executable work order. Work sequentially unless the owner explicitly assigns separate agents. Keep one owner for shared enums, dispatch, catalog and settlement files.
 
@@ -8,19 +8,19 @@ Read [IMPLEMENTATION.md](IMPLEMENTATION.md) for exact contracts and verified cod
 
 | ID | Status | Depends on | Deliverable |
 |---|---|---|---|
-| T00 | TODO | None | Baseline and resolved integration inventory |
-| T01 | TODO | T00 | Canonical design/config synchronization and importer |
-| T02 | TODO | T01 | Attempt state, target validation, requests and receipts |
-| T03 | TODO | T02 | Atomic Fuel reservation and charge lifecycle |
-| T04 | TODO | T03 | Smoke effect and real damage integration |
-| T05 | TODO | T04 | Native full-screen popup and battlefield targeting |
-| T06 | TODO | T05 | ARIA exact-action consent |
-| T07 | TODO | T06 | Smoke normal-input vertical-slice acceptance |
-| T08 | TODO | T07 | Precision Strike and aircraft presentation |
-| T09 | TODO | T08 | Paratroopers using existing airborne runtime |
-| T10 | TODO | T09 | Supply crate delivery and explicit collection |
-| T11 | TODO | T07–T10 | Campaign grants, migration and mission exposure |
-| T12 | TODO | T11 | Native visual, full mission and device evidence |
+| T00 | DONE | None | Baseline and resolved integration inventory |
+| T01 | DONE | T00 | Canonical design/config synchronization and importer |
+| T02 | DONE | T01 | Attempt state, target validation, requests and receipts |
+| T03 | DONE | T02 | Atomic Fuel reservation and charge lifecycle |
+| T04 | DONE | T03 | Smoke effect and real damage integration |
+| T05 | DONE | T04 | Native full-screen popup and battlefield targeting |
+| T06 | DONE | T05 | ARIA exact-action consent |
+| T07 | DONE | T06 | Smoke normal-input vertical-slice acceptance |
+| T08 | DONE | T07 | Precision Strike and aircraft presentation |
+| T09 | DONE | T08 | Paratroopers using existing airborne runtime |
+| T10 | DONE | T09 | Supply crate delivery and explicit collection |
+| T11 | IMPLEMENTED (future content pending) | T07–T10 | Campaign grants, migration and mission exposure |
+| T12 | EVIDENCE/HANDOFF COMPLETE (external gates pending) | T11 | Native visual, full mission and device evidence |
 
 T11 may integrate Smoke after T07 while later abilities are built, but each later ability stays production-disabled until its own acceptance passes. A later task cannot be marked done by disabling its feature.
 
@@ -138,13 +138,13 @@ Tests: first-clear/duplicate reward, old profile migration, early replay, retry,
 
 ## T12 — readiness evidence and handoff
 
-Keep six independent statuses: approved design, native visual review, automated checks, complete normal-input journeys, real-player acceptance, device acceptance. Only the first is complete today. For every production-exposed mission collect both Support and no-Support completion, ARIA rejection, results/reward and return. No injected outcome, old candidate capture or compile-only substitute.
+Keep six independent statuses: approved design, native visual review, automated checks, complete normal-input journeys, real-player acceptance, device acceptance. Report each independently in IMPLEMENTED_FEATURE_HANDOFF.md; the original planning baseline is not the current acceptance status. For every production-exposed mission collect both Support and no-Support completion, ARIA rejection, results/reward and return. No injected outcome, old candidate capture or compile-only substitute.
 
 Test on the normal target device and measure UI/input responsiveness plus allocations. Architecture contract targets 0 B/frame recurring managed allocation after warmup; no per-frame LINQ/snapshot arrays. Don't claim measured performance without profiler evidence. If future missions or real devices are unavailable, report those gates pending with exact missing evidence, not “ready”.
 
 ## Validation runners and command contract
 
-Create these **new** static runners under namespace `Game.Tests.Editor` in the Support test folder; methods must execute assertions and emit the marker only after all assertions finish. They do not exist yet.
+Create these **new** static runners under namespace `Game.Tests.Editor` in the Support test folder; methods must execute assertions and emit the marker only after all assertions finish. The implemented runners and current evidence are indexed in Evidence/VALIDATION_INDEX.md.
 
 | Runner method to implement | Required log marker |
 |---|---|

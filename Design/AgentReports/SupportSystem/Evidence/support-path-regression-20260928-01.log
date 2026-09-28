@@ -1,0 +1,62 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=UnitPathfindingFocusedPerformanceValidation.RunBatchValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitPathfindingFocusedPerformanceValidation] report=/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json updates=9 elapsedMs=17.60 allocatedBytes=0 pathPoolCells=10 remainingRequests=0
+UnityEngine.Debug:Log (object)
+UnitPathfindingFocusedPerformanceValidation:WriteReport (UnitPathfindingFocusedPerformanceValidation/ScenarioResult) (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:561)
+UnitPathfindingFocusedPerformanceValidation:ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:93)
+UnitPathfindingFocusedPerformanceValidation:RunBatchValidation () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:39)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitPathfindingFocusedPerformanceValidation] mixedGroup updates=9 elapsedMs=10.81 allocatedBytes=0 pathPoolCells=8 remainingRequests=0
+UnityEngine.Debug:Log (object)
+UnitPathfindingFocusedPerformanceValidation:RunMixedInfantryVehicleScenario (bool) (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:313)
+UnitPathfindingFocusedPerformanceValidation:MixedInfantryVehicleGroupPathingCompletes () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:99)
+UnitPathfindingFocusedPerformanceValidation:RunBatchValidation () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:40)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitPathfindingFocusedPerformanceValidation] report=/private/tmp/warlinecapture-unit-pathfinding-focused-performance.json averageMs=9.31 p95Ms=9.58 p99Ms=9.58 maxMs=9.58 maxAllocatedBytes=0
+UnityEngine.Debug:Log (object)
+UnitPathfindingFocusedPerformanceValidation:WritePerformanceReport (double,double,double,double,long,int,int) (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:583)
+UnitPathfindingFocusedPerformanceValidation:RepeatedFocusedPathfindingDoesNotAllocateOrRegress () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:132)
+UnitPathfindingFocusedPerformanceValidation:RunBatchValidation () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:41)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UnitPathfindingFocusedPerformanceValidation] result=Passed tests=3
+UnityEngine.Debug:Log (object)
+UnitPathfindingFocusedPerformanceValidation:RunBatchValidation () (at Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs:42)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=UnitPathfindingFocusedPerformanceValidation.RunBatchValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_5c85daf2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

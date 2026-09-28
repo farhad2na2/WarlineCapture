@@ -204,6 +204,7 @@ namespace Game.UI.Runtime
 
             private void OnBuildButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 if (_showBuildDrawer != null)
                 {
@@ -220,6 +221,7 @@ namespace Game.UI.Runtime
 
             private void OnBoardButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 CloseBuildDrawerIfOpen();
                 bool queued = _selectionUiCommandSystem != null &&
@@ -277,6 +279,7 @@ namespace Game.UI.Runtime
 
             private void OnHoldButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Hold))
                     return;
@@ -292,6 +295,7 @@ namespace Game.UI.Runtime
 
             private void OnStopButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Stop))
                     return;
@@ -307,6 +311,7 @@ namespace Game.UI.Runtime
 
             private void OnCommandWheelStopButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 if (!TryAcceptCapability(CommandCapability.Stop))
                     return;
@@ -323,6 +328,7 @@ namespace Game.UI.Runtime
 
             private void OnBoardAllFeedbackClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestBoardAllSelectedTransport();
 
@@ -334,6 +340,7 @@ namespace Game.UI.Runtime
 
             private void OnCancelFeedbackClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 bool queued = _selectionUiCommandSystem != null &&
                     _selectionUiCommandSystem.RequestCancelActiveCommandMode();
 

@@ -1,0 +1,43 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_794ed29c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+AssertionException:   `Game.UI.Runtime` must not reference `Game.Components`. Composition owns ECS component reads and maps them into UI contracts.
+  Expected: False
+  But was:  True
+
+NUnit.Framework.Assert.That[TActual] (TActual actual, NUnit.Framework.Constraints.IResolveConstraint expression, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+NUnit.Framework.Assert.IsFalse (System.Boolean condition, System.String message, System.Object[] args) (at <8b63e8ac0a4746599ed207982825ae6c>:0)
+ScriptArchitectureAlignmentContractTests.UiRuntimeAssemblyMustNotReferenceComponentsAssembly () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:585)
+ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:357)
+UnityEngine.Debug:LogException(Exception)
+ScriptArchitectureAlignmentContractTests:RunAssemblyBoundaryValidation() (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:376)
+System.Reflection.MethodBase:Invoke(Object, Object[])
+Game.Editor.<Run>d__0:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ScriptArchitectureBoundaryValidation] result=Failed
+UnityEngine.Debug:LogError (object)
+ScriptArchitectureAlignmentContractTests:RunAssemblyBoundaryValidation () (at Assets/Tests/Editor/ScriptArchitectureAlignmentContractTests.cs:377)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_794ed29c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=ScriptArchitectureAlignmentContractTests.RunAssemblyBoundaryValidation
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_794ed29c/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

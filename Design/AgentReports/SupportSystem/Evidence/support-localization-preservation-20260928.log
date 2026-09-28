@@ -1,0 +1,4 @@
+Localization preservation check result=Passed
+HEAD 3202 unique keys per locale; repaired 3274 unique keys per locale.
+All HEAD blocks byte-preserved except intentional Steel Push Smoke reward text.
+English/Persian key sets equal; one Smoke reward key per locale.

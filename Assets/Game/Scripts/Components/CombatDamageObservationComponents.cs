@@ -10,7 +10,8 @@ namespace Game.Components
         BuildingDefense = 2,
         GroundMissile = 3,
         AirMissile = 4,
-        Explosion = 5
+        Explosion = 5,
+        SupportStrike = 6
     }
 
     public struct CombatDamageObservationQueueComponent : IComponentData

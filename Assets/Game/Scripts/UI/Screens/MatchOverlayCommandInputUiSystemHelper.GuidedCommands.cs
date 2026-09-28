@@ -8,6 +8,7 @@ namespace Game.UI.Runtime
         {
             private void OnSelectButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 bool enterSelectionMode = !IsCommandModePresented(TacticalCommandMode.Select);
                 bool queued = _selectionUiCommandSystem != null &&
@@ -24,6 +25,7 @@ namespace Game.UI.Runtime
 
             private void OnMoveButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 LogMoveCommandTrace(
                     $"moveButtonClicked view={_view.name} hasSelectionUi={_selectionUiCommandSystem != null}");
@@ -44,6 +46,7 @@ namespace Game.UI.Runtime
 
             private void OnAttackButtonClicked()
             {
+                UiShellRuntimeGateway.CancelSupport();
                 CaptureCommandUiClick();
                 if (_selectionUiReadModel != null && !_selectionUiReadModel.HasAnySelectedUnits)
                 {

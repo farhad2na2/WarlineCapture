@@ -27,6 +27,7 @@ namespace Game.UI.Runtime
         [SerializeField] private GameObject rankingContentPrefab;
         [SerializeField] private GameObject matchHudContentPrefab;
         [SerializeField] private GameObject buildDrawerPopupPrefab;
+        [SerializeField] private GameObject supportPopupPrefab;
         [SerializeField] private GameObject fullMapPopupPrefab;
         [SerializeField] private GameObject resourceExchangePopupPrefab;
         [SerializeField] private GameObject ariaCommandAssistantPopupPrefab;
@@ -57,6 +58,7 @@ namespace Game.UI.Runtime
         private Button _buildDrawerPopupCloseButton;
         private UnityEngine.Events.UnityAction _buildDrawerPopupCloseButtonListener;
         private GameObject _buildDrawerPopupInstance;
+        private GameObject _supportPopupInstance;
         private GameObject _fullMapPopupInstance;
         private MatchHudFullMapPopupView _fullMapPopupView;
         private int _contentVersion;
@@ -176,6 +178,7 @@ namespace Game.UI.Runtime
                             ClosePauseMenuPopup();
                         else if (commands[i].PopupKind == UiShellPopupKind.ThreatAlert) CloseThreatAlertPopup();
                         else if (commands[i].PopupKind == UiShellPopupKind.MissionFieldGuide) CloseMissionFieldGuide();
+                        else if (commands[i].PopupKind == UiShellPopupKind.Support) CloseSupportPopup();
                         break;
                 }
             }
@@ -385,6 +388,11 @@ namespace Game.UI.Runtime
             {
                 case UiShellPopupKind.ThreatAlert: InstallThreatAlertPopup(); break;
                 case UiShellPopupKind.MissionFieldGuide: InstallMissionFieldGuide(); break;
+                case UiShellPopupKind.Support:
+                    _mainMenuPlayUi?.PrepareToOpenLargeTacticalPopup(MatchHudLargeTacticalPopup.Support);
+                    _supportPopupInstance=InstallRoot(supportPopupPrefab, UIShellRegionId.PopupLayer);
+                    UiChromeStack.RaiseAboveTutorial(_supportPopupInstance);
+                    break;
                 case UiShellPopupKind.BuildDrawer:
                     InstallBuildDrawerPopup();
                     break;
@@ -407,6 +415,15 @@ namespace Game.UI.Runtime
                 _mainMenuPlayUi,
                 resourceExchangePopupPrefab,
                 RequestCloseResourceExchangePopup);
+        }
+
+        private void CloseSupportPopup()
+        {
+            if(_supportPopupInstance==null)return;
+            _supportPopupInstance.SetActive(false);
+            DestroyRegionObject(_supportPopupInstance);
+            _supportPopupInstance=null;
+            MarkContentChanged();
         }
 
         private void OpenFullMapPopup()
@@ -648,6 +665,7 @@ namespace Game.UI.Runtime
             }
             else if (regionId == UIShellRegionId.PopupLayer)
             {
+                _supportPopupInstance = null;
                 UnbindBuildDrawerPopupCloseButton();
                 _mainMenuPlayUi?.BindBuildDrawer(null);
                 _mainMenuPlayUi?.BindMatchHudFullMapPopup(null);

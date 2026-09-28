@@ -80,6 +80,16 @@ namespace Game.Runtime
                 if (health.Max > 0) member.HealthInitialized = 1;
                 if (member.HealthInitialized != 0 && health.Current <= 0) member.Defeated = 1;
                 members[i] = member;
+                // Authored defense elements are positively identified only when their
+                // real wave owner has released suppression. Camera visibility is irrelevant.
+                if(exists && em.HasComponent<SupportTargetEligibilityComponent>(member.Entity))
+                {
+                    var knowledge=em.GetComponentData<SupportTargetEligibilityComponent>(member.Entity);
+                    byte known=(byte)(runtime.Phase==MissionPhaseKind.Engage && member.ElementIndex>=0 && member.Defeated==0 &&
+                        !em.HasComponent<CampaignMissionCombatSuppressedTag>(member.Entity)?1:0);
+                    if(knowledge.CurrentlyVisible!=known || knowledge.HostileConfirmed!=known)
+                    {knowledge.CurrentlyVisible=knowledge.HostileConfirmed=known;knowledge.SourceVersion++;em.SetComponentData(member.Entity,knowledge);}
+                }
                 if (member.ElementIndex >= 0)
                 {
                     defeated += member.Defeated;

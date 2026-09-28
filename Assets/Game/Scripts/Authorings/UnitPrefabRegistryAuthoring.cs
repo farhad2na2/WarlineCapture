@@ -35,7 +35,7 @@ namespace Game.Authoring
                 unitHealthBarPrefab = config.UnitHealthBarPrefab;
         }
 
-        [BakingVersion("WarlineCapture", 1)]
+        [BakingVersion("WarlineCapture", 2)]
         private sealed class BakerImpl : Baker<UnitPrefabRegistryAuthoring>
         {
             public override void Bake(UnitPrefabRegistryAuthoring authoring)
@@ -47,6 +47,17 @@ namespace Game.Authoring
 
                 Entity entity = GetEntity(TransformUsageFlags.None);
                 AddComponent<UnitPrefabRegistryTag>(entity);
+
+                if(authoring.config!=null&&authoring.config.SupportInfantryPrefab!=null&&authoring.config.SupportParachutePrefab!=null)
+                {
+                    DependsOn(authoring.config.SupportInfantryPrefab);DependsOn(authoring.config.SupportParachutePrefab);
+                    if(authoring.config.SupportCratePrefab!=null)DependsOn(authoring.config.SupportCratePrefab);
+                    AddComponent(entity,new SupportPayloadRegistryComponent {
+                        InfantryPrefab=GetEntity(authoring.config.SupportInfantryPrefab,TransformUsageFlags.Dynamic),
+                        ParachutePrefab=GetEntity(authoring.config.SupportParachutePrefab,TransformUsageFlags.Dynamic|TransformUsageFlags.Renderable),
+                        CratePrefab=authoring.config.SupportCratePrefab==null?Entity.Null:GetEntity(authoring.config.SupportCratePrefab,TransformUsageFlags.Dynamic|TransformUsageFlags.Renderable),
+                        InfantryCount=authoring.config.SupportInfantryCount });
+                }
 
                 DynamicBuffer<UnitPrefabRegistryEntry> buffer = AddBuffer<UnitPrefabRegistryEntry>(entity);
                 DynamicBuffer<UnitTransportAirdropVisualPrefabRegistryEntry> airdropVisualRegistry =

@@ -34,7 +34,7 @@ namespace Game.Editor
                 ("resources","120 military Fuel · 40 protected for civilians","۱۲۰ سوخت نظامی · ۴۰ سهم محفوظ مردم"),
                 ("forces","3 tanks · APC · 4 infantry · barracks","۳ تانک · نفربر · ۴ پیاده · پادگان"),
                 ("deadline","Stop the column within 4 minutes","ستون رو تا ۴ دقیقه متوقف کن"),
-                ("reward.card","2,000 Commander XP · 9,000 Credits","۲۰۰۰ تجربهٔ فرمانده · ۹۰۰۰ اعتبار"),
+                ("reward.card","2,000 Commander XP · 9,000 Credits · Smoke Screen","۲۰۰۰ تجربهٔ فرمانده · ۹۰۰۰ اعتبار · پردهٔ دود"),
                 ("result.victory","FUEL RESERVE SECURE","ذخیرهٔ سوخت امن شد"),
                 ("result.defeat","RESERVE DEFENSE FAILED","دفاع از ذخیره شکست خورد"),
                 ("result.success","The column is stopped and civilian Fuel remains protected. Recovered orders name a final authority key. A Vanguard battery now threatens the forward base.","ستون متوقف شده و سهم سوخت مردم محفوظ مونده. دستورهای بازیابی‌شده از کلید نهایی اختیار اسم می‌برن. حالا یک آتشبار ونگارد پایگاه جلو رو تهدید می‌کنه."),

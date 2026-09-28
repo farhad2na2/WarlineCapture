@@ -1,0 +1,57 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.SupportSmokeJourneyProbe.RunStrikeAria
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3799c2fa/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=1920x1080 selectedIndex=20
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:375)
+Game.Editor.SupportSmokeJourneyProbe:Begin (string,bool,Game.Components.SupportAbilityKind,bool) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:70)
+Game.Editor.SupportSmokeJourneyProbe:RunStrikeAria () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:55)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3799c2fa/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SupportSmokeJourney] started locale=en testGrant=True normalInput=touch save=isolated
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Begin (string,bool,Game.Components.SupportAbilityKind,bool) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:74)
+Game.Editor.SupportSmokeJourneyProbe:RunStrikeAria () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:55)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:35)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__0> (Game.Editor.ExistingEditorValidation/<Run>d__0&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_3799c2fa/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignMissionBootstrap] catalog=Mission 'saga.ch04.m02.steel_push' has invalid first-clear reward definition at index 2.
+UnityEngine.Debug:LogError (object)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Prepare (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:78)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:34)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+InvalidOperationException: [CampaignMissionBootstrap] catalog=Mission 'saga.ch04.m02.steel_push' has invalid first-clear reward definition at index 2.
+Game.Editor.SupportSmokeJourneyProbe.Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:82)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.SupportSmokeJourneyProbe:Tick() (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:175)
+Game.Editor.NativeInputUpdateHost:Update() (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[SupportSmokeJourney] result=Failed [CampaignMissionBootstrap] catalog=Mission 'saga.ch04.m02.steel_push' has invalid first-clear reward definition at index 2. evidence=Design/AgentReports/SupportSystem/Evidence/SmokeJourney/20260928-165839-en-strike-aria
+UnityEngine.Debug:Log (object)
+Game.Editor.SupportSmokeJourneyProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:447)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:175)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+
+[ExistingEditorValidation] result=Failed executeMethod=Game.Editor.SupportSmokeJourneyProbe.RunStrikeAria
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__0:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:42)
+System.Threading.Tasks.TaskCompletionSource`1<int>:TrySetResult (int)
+Game.Editor.SupportSmokeJourneyProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:448)
+Game.Editor.SupportSmokeJourneyProbe:Tick () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:175)
+Game.Editor.SupportSmokeJourneyProbe/NativeInputUpdateHost:Update () (at Assets/Game/Scripts/Editor/SupportSmokeJourneyProbe.cs:30)
+

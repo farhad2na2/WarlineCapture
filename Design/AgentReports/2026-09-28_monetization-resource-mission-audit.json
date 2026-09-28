@@ -1,0 +1,2287 @@
+{
+  "auditDate": "2026-09-28",
+  "snapshotUtc": "2026-09-28T13:36:18.335941+00:00",
+  "gitHead": "e3dd2bb726428d82f4a7010ce1291990ee851066",
+  "auditMethod": "Read-only source/config audit and review of pre-existing native screenshots/reports; no new runtime, purchase or device validation. Working tree included concurrent edits.",
+  "registeredMissionCount": 17,
+  "firstClearCreditsAllRegistered": 83700,
+  "firstClearCreditsChapter1": 11200,
+  "sourceHashes": {
+    "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset": "ad92999d18ac29477f9f61e6c5a3184fa3306e72ff8d1726e2b045b257bee7f2",
+    "Assets/Game/Scripts/Missions/Contracts/CampaignMissionSequence.cs": "adee1292f95bb2c7d2627a179c72410b88b2b268536651d29511e279823ddb5a",
+    "Assets/Game/Scripts/UI/Screens/StoreCommandExchangeV3View.cs": "14e7af0bf90c461a76bab348a26ff3a69841633d6c9987bc07466041c51dcd5c",
+    "Assets/Game/Scripts/Persistence/SaveDataModel.cs": "587b81a818e500d2bf6320fefa4637286797df60f85c62acc7ef4f73767dd351",
+    "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.cs": "89b75982704f7bd865742a9e3253fcd0b0f4418bc4c2eaab9a1439ac90096bbc",
+    "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.Breach.cs": "e5554b50dfec45903748c72fa102622577d3832378b65417450d1c383e525e49",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs": "b2b488f99eb4bf8f5cd9ae9fb6c5cb215639c22cc2dd1abb13b8cac4775536b7",
+    "Assets/Game/Scripts/UI/Screens/MatchHudResourceHeaderPresentation.cs": "f0a4b9d4090f569e9abd0eea7d5ee18e468955beb2d4cf5b902b2a2f3c2cb2e0",
+    "Assets/Game/Scripts/Systems/FactionConstructionResourceUtilitySystemHelper.cs": "d2d2d841e246417ae7a31c90f2fe7cea79c8e65e68588bbbd4cd5e12e605eabd",
+    "Assets/Game/Scripts/Operations/Contracts/OperationsConfigSchemas.cs": "dbcb52621093c9e1b23c97422216c7e6538634795306afaa6faa2596e5dcf709",
+    "Assets/Game/Scripts/Persistence/SaveService.Operations.cs": "6acf85bf0a56646cc3790aeaa5ae98e174a522cd2eaf24b0e97910ddc73dec9e",
+    "Assets/Game/Scripts/UI/Shell/Ecs/AriaPlayDecisionSystem.cs": "faf25399c1021148a1a0f9e011f5bd113b15109ed674ef308cd81fc97d8b24a8",
+    "Assets/Game/Configs/SkirmishExpansion/Shared/SkirmishPublicationManifest.asset": "6fbf4011eb2ba5ac8f660baff24a63827a9a3c582b3dd006841b21f751387a23",
+    "Design/Roadmap/Operations/MISSION_CATALOG.csv": "9dc5562f8d5ddb3d8953b1452ab44d79ffce194001b04c1838baf4fd6269506e",
+    "Design/Roadmap/Operations/STRATEGIC_RULES.md": "f83909eb018d35d810f5450b50775d682a60ac94aee77ae69f3319e8ca18b6df",
+    "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+    "Packages/manifest.json": "6ed24229bb0eaf72dd0b654ab6f985b4eb25293c3e9cb0336a759352e3fe7683"
+  },
+  "missions": [
+    {
+      "missionId": "saga.ch01.m01.first_contact",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M01_FirstContact.asset",
+      "definitionSha256": "b029211c747e5b9f9e9c3c655f2264da38b65bfbcfca13fac80b26cb4f886ca7",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M01_FirstContact.asset",
+      "scenarioSha256": "ef2e767388074d9925ee27fc3ebf7bfb5f221f0cf421c9cd5219f8633039bfd3",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 260
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 1200
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 250
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch01.m02.establish_base",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M02_EstablishBase.asset",
+      "definitionSha256": "9cc24c0afa637c340d7bcacf45d19b9a5e2c85f28d26750d0d66e99a6a6d2194",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M02_EstablishBase.asset",
+      "scenarioSha256": "9f9124022510f5acd4f9411f7f14631538c69f251d0ced3ec4c34f0b2fb678e2",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 320
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 1500
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m02.production_unlock",
+          "amount": 1
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "1",
+        "startingCredits": "55000",
+        "startingMaterials": "120"
+      },
+      "restrictions": {
+        "buildingDisabled": "0",
+        "productionDisabled": "0",
+        "economyDisabled": "0",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch01.m03.radar_warning",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M03_RadarWarning.asset",
+      "definitionSha256": "0a42080d251d3e8dd2c2431bc233d703b7ff24370173b8b190fe630a4fd97845",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M03_RadarWarning.asset",
+      "scenarioSha256": "41fd20fce6f542eff11839e18f25980f8070657ae7f6ab48cc0d71372ea6fc8a",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 400
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 2000
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m03.guard_tower_unlock",
+          "amount": 1
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m03.radar_ping_unlock",
+          "amount": 1
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "1",
+        "startingCredits": "50000",
+        "startingMaterials": "100"
+      },
+      "restrictions": {
+        "buildingDisabled": "0",
+        "productionDisabled": "0",
+        "economyDisabled": "0",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch01.m04.airlift",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M04_Airlift.asset",
+      "definitionSha256": "36a5b216e812448002044db8d8bde21110c56551e3c17e65452ec09fea0847e3",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M04_Airlift.asset",
+      "scenarioSha256": "50134204c0cb8c7572e307743f63d1db08b5813e549371f125a51848ab29c360",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 500
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 2500
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m04.laila_unlock",
+          "amount": 1
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m04.transport_unlock",
+          "amount": 1
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "0",
+        "airDisabled": "0"
+      }
+    },
+    {
+      "missionId": "saga.ch01.m05.breach_assault",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M05_BreachAssault.asset",
+      "definitionSha256": "60675e59bcc20c2f0b58748af68dea4c966dea3886d67e9423bd584c149bdce1",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M05_BreachAssault.asset",
+      "scenarioSha256": "1f07eacbb9a77f86e96e92e0ce0faec8708766eef2313360004d80b2fc61a371",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 750
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 4000
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m05.ghillie_unlock",
+          "amount": 1
+        },
+        {
+          "kind": 0,
+          "id": "reward.ch01.m05.apc_armor_parts",
+          "amount": 35
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "0",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch02.m01.gridlock",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M01_Gridlock.asset",
+      "definitionSha256": "762274173d3abec43d3d40317fe6143dd62aa0270c2080b39d04dff015dcea7d",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M01_Gridlock.asset",
+      "scenarioSha256": "d754a9be26b771d4d4ba8334d3a2ee3b9c2e9b032c878a136cc767f618da99a2",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 800
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 4000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch02.m02.supply_line",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M02_SupplyLine.asset",
+      "definitionSha256": "ac73f6db9995ee317a0eb85f36e5550ea307e935148119a8fe3dce17e025860f",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M02_SupplyLine.asset",
+      "scenarioSha256": "02ef1890bec81d0b65f75aed770d4d050783db0cda93396b96ff5e4e02a610a5",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 800
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 4000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch02.m03.market_lifeline",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M03_MarketLifeline.asset",
+      "definitionSha256": "8185247a312bc2fad1b2eefa33210488d7e405c44584db159c504f4cd4596e01",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M03_MarketLifeline.asset",
+      "scenarioSha256": "2a8b9c3640435b21f99a4d777db320648b31ec5d3b7efc2f7f90b3998d6f6d0e",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 900
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 4500
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 350
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch02.m04.power_relay",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M04_PowerRelay.asset",
+      "definitionSha256": "1233c0a811dd53f795c0314bb1f4347ba0bd749d9ad6670530c831024a4d7ba3",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M04_PowerRelay.asset",
+      "scenarioSha256": "9788518a0b5620c5205ac37c1296970038851debec99219bcbcc05c9f6f5244e",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1000
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 5000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 400
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch02.m05.route_reopened",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M05_RouteReopened.asset",
+      "definitionSha256": "a7002c696036ba60d42e14c6881ca2433b7106bc54d5883583cea922cd162cc1",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M05_RouteReopened.asset",
+      "scenarioSha256": "634395d774cdce1080c9ff01ff1be302316db745b1e302cdb5d23490e045734b",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1200
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 6000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 500
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch03.m01.signal_trace",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M01_SignalTrace.asset",
+      "definitionSha256": "67c038d4bcc4436ba40aa4672f2ebc77f6d294c4e9af520670ec5b5ebf6a9e7c",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter03/ScenarioSetup_Ch03_M01_SignalTrace.asset",
+      "scenarioSha256": "36bc55fa3777fbe5ef943a68f5e4e76064fb57156515c3b9c1ff07e4eb06bd65",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1000
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 5000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 350
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch03.m02.safehouse_sweep",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M02_SafehouseSweep.asset",
+      "definitionSha256": "2e47cd2cdeaa3b3fbcc377d5ab000b16fe604bc51bee09032b2f43f9853929ae",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter03/ScenarioSetup_Ch03_M02_SafehouseSweep.asset",
+      "scenarioSha256": "9b99ab1ee35a43d88c79a6a02819d3604ed2358985b1340b40b4ccdae752e6bb",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1200
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 6000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 350
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch03.m03.false_front",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M03_FalseFront.asset",
+      "definitionSha256": "8ba6a73a4ea33390fd595aae9fdf95b2f60cb13e9183107402f1426d7e55b949",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter03/ScenarioSetup_Ch03_M03_FalseFront.asset",
+      "scenarioSha256": "4dac7fbb8b992eb987087f29bfc2b9c39a2192af5fbc06fc6c083dc20f57f9f7",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1300
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 6500
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 350
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch03.m04.evidence_chain",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M04_EvidenceChain.asset",
+      "definitionSha256": "da3bb340c00fb63e0d6642368635a95f0607a135033392eca55abc58c999c34f",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter03/ScenarioSetup_Ch03_M04_EvidenceChain.asset",
+      "scenarioSha256": "2dc77379cfae75df39060d79eb955d96b2fafb35e41412715aece043d6fd1808",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1500
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 7000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "0",
+        "airDisabled": "0"
+      }
+    },
+    {
+      "missionId": "saga.ch03.m05.network_break",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter03/MissionDefinition_Ch03_M05_NetworkBreak.asset",
+      "definitionSha256": "6559e0cd55497453a85cda683406bf94818459321542dfc5e55f8a5c32f954c9",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter03/ScenarioSetup_Ch03_M05_NetworkBreak.asset",
+      "scenarioSha256": "c20c80f9cb334e5fc3af12fdb55768c329c5cba5abb468c3fd805f7df7da733b",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1500
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 7000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "0",
+        "startingCredits": "0",
+        "startingMaterials": "0"
+      },
+      "restrictions": {
+        "buildingDisabled": "1",
+        "productionDisabled": "1",
+        "economyDisabled": "1",
+        "transportDisabled": "0",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch04.m01.air_corridor",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M01_AirCorridor.asset",
+      "definitionSha256": "416bb368de32d51f93c5fb238b1844db6dc4f4a8e319b0b2dd9e3a4656b99d26",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M01_AirCorridor.asset",
+      "scenarioSha256": "78387b8f3cc7cc8b779bf724d5b7e19ec40bf04da8f40b1644aab7910a44f8e3",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 1800
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 8500
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "1",
+        "startingCredits": "50000",
+        "startingMaterials": "100"
+      },
+      "restrictions": {
+        "buildingDisabled": "0",
+        "productionDisabled": "0",
+        "economyDisabled": "0",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    },
+    {
+      "missionId": "saga.ch04.m02.steel_push",
+      "definitionPath": "Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M02_SteelPush.asset",
+      "definitionSha256": "d4aff59e2dbca50b611ef0c5094f841c2a07891b9e41828fec656f548f58d14f",
+      "scenarioPath": "Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M02_SteelPush.asset",
+      "scenarioSha256": "4fcc9ac159a4b12394dcd4f80c5df986945e969cd871c20cc95809158c99ff5e",
+      "firstClearRewards": [
+        {
+          "kind": 0,
+          "id": "reward.commander_xp",
+          "amount": 2000
+        },
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 9000
+        }
+      ],
+      "replayRewards": [
+        {
+          "kind": 1,
+          "id": "",
+          "amount": 300
+        }
+      ],
+      "missionRuntime": {
+        "enabled": "1",
+        "startingCredits": "50000",
+        "startingMaterials": "200"
+      },
+      "restrictions": {
+        "buildingDisabled": "0",
+        "productionDisabled": "0",
+        "economyDisabled": "0",
+        "transportDisabled": "1",
+        "airDisabled": "1"
+      }
+    }
+  ],
+  "membershipStatus": "Proposal only; all S001–S120 belong to Campaign Edition alongside 25 campaign missions. One Skirmish sample remains free. Later paid Skirmish packs must add to these 120. Catalog rows and hashes do not certify playability or authorize sales.",
+  "proposedCoreSkirmishMembership": [
+    {
+      "scenario_id": "S001",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Base Assault · Ground Maneuver · Field Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S002",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Base Assault · Ground Maneuver · Established Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S003",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Base Assault · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S004",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Base Assault · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S005",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Base Assault · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S006",
+      "map_id": "DB",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Base Assault · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S007",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Frontline Control · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S008",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Frontline Control · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S009",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Frontline Control · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S010",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Frontline Control · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S011",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Frontline Control · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S012",
+      "map_id": "DB",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Frontline Control · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S013",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Breakthrough · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S014",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Breakthrough · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S015",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Breakthrough · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S016",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Breakthrough · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S017",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Breakthrough · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S018",
+      "map_id": "DB",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Breakthrough · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S019",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Convoy Escort · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S020",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Convoy Escort · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S021",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Convoy Escort · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S022",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Convoy Escort · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S023",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Desert Base · Convoy Escort · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S024",
+      "map_id": "DB",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Desert Base · Convoy Escort · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S025",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Base Assault · Ground Maneuver · Field Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S026",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Base Assault · Ground Maneuver · Established Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S027",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Base Assault · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S028",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Base Assault · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S029",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Base Assault · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S030",
+      "map_id": "CC",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Base Assault · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S031",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Frontline Control · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S032",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Frontline Control · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S033",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Frontline Control · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S034",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Frontline Control · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S035",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Frontline Control · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S036",
+      "map_id": "CC",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Frontline Control · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S037",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Breakthrough · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S038",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Breakthrough · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S039",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Breakthrough · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S040",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Breakthrough · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S041",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Breakthrough · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S042",
+      "map_id": "CC",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Breakthrough · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S043",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Convoy Escort · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S044",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Convoy Escort · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S045",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Convoy Escort · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S046",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Convoy Escort · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S047",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "City Crossroads · Convoy Escort · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S048",
+      "map_id": "CC",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "City Crossroads · Convoy Escort · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S049",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Base Assault · Ground Maneuver · Field Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S050",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Base Assault · Ground Maneuver · Established Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S051",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Base Assault · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S052",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Base Assault · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S053",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Base Assault · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S054",
+      "map_id": "MP",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Base Assault · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S055",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Frontline Control · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S056",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Frontline Control · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S057",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Frontline Control · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S058",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Frontline Control · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S059",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Frontline Control · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S060",
+      "map_id": "MP",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Frontline Control · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S061",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Breakthrough · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S062",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Breakthrough · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S063",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Breakthrough · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S064",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Breakthrough · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S065",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Breakthrough · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S066",
+      "map_id": "MP",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Breakthrough · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S067",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Convoy Escort · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S068",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Convoy Escort · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S069",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Convoy Escort · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S070",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Convoy Escort · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S071",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Mountain Pass · Convoy Escort · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S072",
+      "map_id": "MP",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Mountain Pass · Convoy Escort · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S073",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Base Assault · Ground Maneuver · Field Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S074",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Base Assault · Ground Maneuver · Established Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S075",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Base Assault · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S076",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Base Assault · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S077",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Base Assault · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S078",
+      "map_id": "IB",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Base Assault · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S079",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Frontline Control · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S080",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Frontline Control · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S081",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Frontline Control · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S082",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Frontline Control · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S083",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Frontline Control · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S084",
+      "map_id": "IB",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Frontline Control · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S085",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Breakthrough · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S086",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Breakthrough · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S087",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Breakthrough · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S088",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Breakthrough · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S089",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Breakthrough · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S090",
+      "map_id": "IB",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Breakthrough · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S091",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Convoy Escort · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S092",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Convoy Escort · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S093",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Convoy Escort · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S094",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Convoy Escort · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S095",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Industrial Basin · Convoy Escort · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S096",
+      "map_id": "IB",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Industrial Basin · Convoy Escort · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S097",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Base Assault · Ground Maneuver · Field Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S098",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Base Assault · Ground Maneuver · Established Base",
+      "recommended_size": "Standard",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S099",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Base Assault · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S100",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Base Assault · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S101",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Base Assault · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S102",
+      "map_id": "AP",
+      "objective_id": "BA",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Base Assault · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S103",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Frontline Control · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S104",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Frontline Control · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S105",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Frontline Control · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S106",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Frontline Control · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S107",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Frontline Control · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S108",
+      "map_id": "AP",
+      "objective_id": "FC",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Frontline Control · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "symmetric",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S109",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Breakthrough · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S110",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Breakthrough · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S111",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Breakthrough · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S112",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Breakthrough · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S113",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Breakthrough · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S114",
+      "map_id": "AP",
+      "objective_id": "BT",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Breakthrough · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_attacker",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S115",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Convoy Escort · Ground Maneuver · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S116",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "G",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Convoy Escort · Ground Maneuver · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "ground_transport_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S117",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Convoy Escort · Air Mobile · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S118",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "A",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Convoy Escort · Air Mobile · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "air_intel",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S119",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "F",
+      "working_title_en": "Airfield Plains · Convoy Escort · Combined Arms · Field Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    },
+    {
+      "scenario_id": "S120",
+      "map_id": "AP",
+      "objective_id": "CE",
+      "army_profile": "C",
+      "start_profile": "E",
+      "working_title_en": "Airfield Plains · Convoy Escort · Combined Arms · Established Base",
+      "recommended_size": "War",
+      "default_difficulty": "Regular",
+      "side_rule": "player_escort",
+      "roster_requirement": "full_combined_arms",
+      "status": "Planned"
+    }
+  ],
+  "proposedCoreSkirmishCount": 120,
+  "membershipRevision": {
+    "date": "2026-09-28",
+    "reason": "Preserve the owner-confirmed 120-scenario core roadmap; remove the unjustified 12-scenario commercial subset. Historical mission audit records remain unchanged.",
+    "catalogPath": "Design/Roadmap/Skirmish_Expansion/SCENARIO_CATALOG.csv",
+    "catalogSha256": "4013c2dfa2bb961a94439344d560e4e7716be13762436f1c30ec3384c87f524f",
+    "priceHypothesesUsd": [
+      9.99,
+      12.99,
+      14.99
+    ],
+    "priceStatus": "Unvalidated candidates; no final price approved."
+  }
+}

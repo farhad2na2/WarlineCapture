@@ -1,5 +1,9 @@
 # Operations: mode and mission production plan
 
+## Support amendment — 2026-09-28
+
+The [shared Support rollout](../Support/PLAN.md) and [60 mission policy rows](../Support/OPERATIONS_SUPPORT.csv) add optional Smoke, Strike, Paratroopers and Materials Supply according to each mission family. Mission task-force grants do not depend on Campaign unlocks or account purchases. Bind actual tactical resources, protect civilians/objective actors and keep city consequences in existing settlement. Finales may only combine tools already introduced in that district. X01/X04/X05 extend the existing player-ready and 3/12/30/60 gates; neither CSV coverage nor past model captures certify Support.
+
 Recorded 2026-09-21; implementation status clarified 2026-09-22. **Design and implementation handoff.** P0–P4 now provide Operations-owned contracts, strategic/tactical/loop models, O001–O003 graphs and Play Mode capture tooling. Shipping UI, shared gameplay and durable profile integration are still incomplete; a model/capture win is not player readiness. The next delivery is [P4R: O001 player-ready implementation](O001_PLAYER_READY_IMPLEMENTATION.md), which closes the original integration requirements before content expansion. See the [review evidence](../../AgentReports/Operations/O001_READINESS_REVIEW_20260922.md).
 
 This package targets the existing **Operations game mode** on SCN-11/SCN-12. Working district/mission names are supplemental fiction, subject to narrative and EN/FA copy review. See [P0_BASELINE_RECHECK.md](P0_BASELINE_RECHECK.md), [P0_SHARED_SEAMS.md](P0_SHARED_SEAMS.md), and [P0_SHADOW_PROJECT.md](P0_SHADOW_PROJECT.md). Windows Operations Unity work uses `D:\Projects\WarlineCapture-Operations`; all platforms follow current root AGENTS.md and project-ownership rules.

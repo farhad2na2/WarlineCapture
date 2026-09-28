@@ -1,5 +1,9 @@
 # Skirmish battles 4–120: implementation handoff
 
+## Support dependency — 2026-09-28
+
+Every S001–S120 assignment must read [Support rollout and X01–X03](../Support/PLAN.md) and its row in [SKIRMISH_SUPPORT.csv](../Support/SKIRMISH_SUPPORT.csv). Reuse the [ECS implementation](../../AgentReports/SupportSystem/IMPLEMENTATION.md); add versioned scenario grants/readiness and both-faction adapters, not a second executor. Add explicit Support policy/evidence to the existing content manifest/importer during implementation. Current CSVs and setup snapshots remain historical baseline inputs until that versioned migration. Baseline scenarios can ship without Support; adding it requires recertification and cannot borrow previous acceptance.
+
 Updated 2026-09-21. **Documentation only. Expanded scenarios remain Planned.** This supplement closes the source/schema/per-battle handoff gaps in the September 20 design. Numeric tuning is an executable starting specification for future implementation, not measured balance. It preserves 120 stable catalog IDs and the accepted five-map/four-objective/three-army/two-start design.
 
 ## Audit result

@@ -102,3 +102,8 @@ For any scenario using the adapted kit, require [D2-V1–V6](../../Demo2_Asset_I
 - [Unity Profiler documentation](https://docs.unity.com/en-us/engine/6000.0/manual/analysis/profiler) supports using device captures and custom profiling markers. Project-specific capacity still requires measurement.
 - [Android power-efficiency guidance](https://developer.android.com/games/optimize/power) explains thermal throttling and adapting workload. It supports sustained-session testing, not a universal safe unit cap.
 - [Android Dynamic Performance Framework](https://developer.android.com/games/optimize/adpf) describes thermal/CPU feedback for sustainable performance. Adopt only the integration relevant to supported devices after profiling.
+
+
+## Support acceptance amendment — 2026-09-28
+
+Follow the [shared Support roadmap](../Support/PLAN.md) and its mode CSV. Verify per-entry limits, affordability, denied/hidden targets, no-spend cancellation, duplicate prevention, aircraft/landing failures, cap/storage boundaries, ARIA approve/decline/Stop and attempt/reload cleanup. Collect a full normal-input win with Support and a no-Support win for every exposed entry; retain the existing difficulty/seed/device coverage. Operations additionally proves protected objective/consequence integrity and city return; Skirmish proves both-side legality and BT/CE scoring integrity. Existing pre-Support acceptance remains historical; planned CSV rows do not close these gates.

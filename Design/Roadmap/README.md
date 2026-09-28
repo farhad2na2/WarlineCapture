@@ -1,5 +1,9 @@
 # Warline development roadmap
 
+## Support rollout — 2026-09-28
+
+The owner approved Smoke Screen, Precision Strike, Paratroopers and Supply Drop with a full-screen Build-style popup using existing game assets. Build the [shared implementation plan](../AgentReports/SupportSystem/AGENT_START.md), then follow the [cross-mode roadmap](Support/PLAN.md): approved Campaign unlocks and future-mission rules, [120 Skirmish policies](Support/SKIRMISH_SUPPORT.csv) and [60 Operations policies](Support/OPERATIONS_SUPPORT.csv). Use T00–T12 for the shared Campaign slice and X01–X05 for mode integration and coverage. Support is optional, finite per attempt and subject to separate runtime, native input, player and device gates. These are planned additions, not newly accepted missions. Existing content counts, identities and no-Support completion paths remain intact.
+
 Owner: project owner with Codex implementation and validation. Updated: 2026-09-21.
 Status: M1–M5 internal baseline and the two small Skirmish Base Assaults have EN/FA Editor evidence. ARIA has guided campaign and small-Skirmish baseline wins, with broader release gates open. The owner clarified the expanded Skirmish target: **120 distinct selectable battles across five maps, expandable to 200**, alongside full unit roles and larger armies. Detailed scenario, map, difficulty, starting-package and AI/ARIA plans are documented; they are not implemented content. The separate [Operations plan](Operations/PLAN.md) targets **60 authored tactical missions across six district arcs**. Operations P0–P4 models and O001–O003 prototypes now exist, with automated Regular EN Play Mode captures; shipping player-flow integration remains incomplete. The next step is [P4R: O001 player-ready implementation](Operations/O001_PLAYER_READY_IMPLEMENTATION.md). Device/player acceptance remains separate.
 

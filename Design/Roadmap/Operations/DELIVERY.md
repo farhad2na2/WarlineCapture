@@ -1,5 +1,9 @@
 # Coding packages and agent handoff
 
+## Support work packages — 2026-09-28
+
+Add [X01, X04 and X05](../Support/PLAN.md) to shared tactical integration and mission production. Each O001–O060 authoring packet consumes its [Support policy row](../Support/OPERATIONS_SUPPORT.csv), then binds protected target eligibility, real Fuel/Materials, canonical rifle manifest/cap, route anchors and attempt/save cleanup. No Command/readiness-to-Fuel conversion or direct district recovery from a crate. Keep implementation and acceptance pending until real player/ARIA mission → result → dashboard and run/checkpoint tests pass.
+
 P0 contracts and the P1–P4 Operations-owned models/content are **implemented within their prototype scope**. P3 does not invoke the shipping scene/save path; P4's automated Play Mode capture does not establish a manual player journey. The next package is **P4R — O001 player-ready integration**, documented in [O001_PLAYER_READY_IMPLEMENTATION.md](O001_PLAYER_READY_IMPLEMENTATION.md). P4R, P5 and later remain **Planned**. The original architecture/acceptance requirements still apply. The implementation lead owns shared integration, scope and evidence; content-only work must not independently modify shared contracts.
 
 ## Dependency sequence

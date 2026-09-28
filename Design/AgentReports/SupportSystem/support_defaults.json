@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "status": "ApprovedInitialImplementationDefaults_NotBalanceAcceptance",
+  "approvedOn": "2026-09-28",
+  "runtimeLoadAllowed": false,
+  "productionReadyDefault": false,
+  "supportedProductionModes": [
+    "Campaign"
+  ],
+  "fuelPolicy": "ReserveOnAcceptance_ConsumeAtEffectOrFirstPayloadRelease",
+  "noAutomaticRecharge": true,
+  "ariaProposalExpirySimulationSeconds": 15,
+  "abilities": [
+    {
+      "id": "ability.smoke_screen",
+      "name": "Smoke Screen",
+      "chargesPerAttempt": 2,
+      "fuelCost": 1,
+      "cooldownSeconds": 35,
+      "targetKind": "GroundArea",
+      "radiusMeters": 12,
+      "durationSeconds": 15,
+      "incomingDirectRangedDamagePermille": 650,
+      "unlockMission": "CH04-M02",
+      "firstUseMission": "CH04-M03",
+      "rewardId": "reward.ch04.m02.smoke_screen_unlock"
+    },
+    {
+      "id": "ability.precision_strike",
+      "name": "Precision Strike",
+      "chargesPerAttempt": 1,
+      "fuelCost": 4,
+      "cooldownSeconds": 120,
+      "targetKind": "ConfirmedHostileEntity",
+      "rawDamage": 250,
+      "approachSeconds": 3,
+      "areaDamage": false,
+      "unlockMission": "CH04-M03",
+      "firstUseMission": "CH04-M04",
+      "rewardId": "reward.ch04.m03.precision_strike_unlock"
+    },
+    {
+      "id": "ability.paratrooper_reinforcements",
+      "name": "Paratroopers",
+      "chargesPerAttempt": 1,
+      "fuelCost": 6,
+      "cooldownSeconds": 0,
+      "targetKind": "VisibleLandingZone",
+      "approachSeconds": 5,
+      "payloadPolicy": "OneExistingMissionApprovedRifleSquad",
+      "descentPolicy": "ExistingUnitTransportAirdropSystem",
+      "unlockMission": "CH04-M04",
+      "firstUseMission": "CH04-M05",
+      "rewardId": "reward.ch04.m04.paratrooper_reinforcements_unlock"
+    },
+    {
+      "id": "ability.supply_drop",
+      "name": "Supply Drop",
+      "chargesPerAttempt": 1,
+      "fuelCost": 3,
+      "cooldownSeconds": 100,
+      "targetKind": "VisibleLandingZone",
+      "approachSeconds": 5,
+      "materialsAmount": 40,
+      "collectionPolicy": "ExplicitGroundUnitPartialTransfer",
+      "unlockMission": "CH05-M02",
+      "firstUseMission": "CH05-M03",
+      "rewardId": "reward.ch05.m02.supply_drop_unlock",
+      "collectionDistanceMeters": 2
+    }
+  ],
+  "missionPolicies": [
+    {
+      "mission": "CH01-M01",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH01-M02",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH01-M03",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH01-M04",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH01-M05",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH02-M01",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH02-M02",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH02-M03",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH02-M04",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH02-M05",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH03-M01",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH03-M02",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH03-M03",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH03-M04",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH03-M05",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH04-M01",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH04-M02",
+      "allowedAbilities": [],
+      "exposure": "Hidden"
+    },
+    {
+      "mission": "CH04-M03",
+      "allowedAbilities": [
+        "ability.smoke_screen"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH04-M04",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH04-M05",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH05-M01",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH05-M02",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH05-M03",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements",
+        "ability.supply_drop"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH05-M04",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements",
+        "ability.supply_drop"
+      ],
+      "exposure": "Optional"
+    },
+    {
+      "mission": "CH05-M05",
+      "allowedAbilities": [
+        "ability.smoke_screen",
+        "ability.precision_strike",
+        "ability.paratrooper_reinforcements",
+        "ability.supply_drop"
+      ],
+      "exposure": "Optional"
+    }
+  ],
+  "deferredAbilities": [
+    "EvacuationCorridor",
+    "FieldRepair",
+    "CasualtyStabilize",
+    "DroneScan",
+    "BreachCharge",
+    "HarborScan",
+    "NavalFire",
+    "AreaBombing"
+  ]
+}

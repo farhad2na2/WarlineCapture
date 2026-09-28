@@ -1,5 +1,9 @@
 # WarlineCapture Gameplay Feature Maturity And Campaign Exposure Matrix
 
+## Support amendment — 2026-09-28
+
+Four-ability design and visual direction are owner-approved; runtime maturity remains **Designed / not validated**. Use the [Support technical tasks](AgentReports/SupportSystem/TASKS.md) and [Campaign/120-Skirmish/60-Operations rollout](Roadmap/Support/PLAN.md). This amendment supersedes older Support-specific unlock/exposure claims below; no existing Scan maturity or unrelated feature classification changes. Publish each ability only with real effects, native UI, normal-input complete missions and separate player/device evidence.
+
 Date: 2026-07-14
 
 Status: Active high-level campaign exposure authority

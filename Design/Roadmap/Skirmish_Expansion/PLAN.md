@@ -1,5 +1,9 @@
 # Skirmish expansion: combined arms and large battles
 
+## Support amendment — 2026-09-28
+
+Implement the [shared Support rollout](../Support/PLAN.md) and [all 120 explicit policies](../Support/SKIRMISH_SUPPORT.csv) alongside the existing scenario work. Ground Maneuver proposes Smoke/Supply; Air Mobile and Combined Arms propose all four. Grants are scenario-owned for both factions, with R1/R2/R3 gates and no Campaign grind, recharge or difficulty bonus. Charges do not scale with army size. Existing BT designated survivors and CE objective trucks cannot be replaced by Support. X01–X03 add adapters, pilots and per-entry recertification; keep all policies disabled until their gates pass.
+
 Updated: 2026-09-21. Status: expanded scenarios remain **Planned**, not runtime-accepted. The [implementation handoff for battles 4–120](IMPLEMENTATION_HANDOFF.md) adds a fresh source audit, exact class/asset contracts, fourteen programming packages, and individual briefs for all 120 stable catalog IDs. Three prototype mappings now exist in source; their evidence does not certify expanded scenarios.
 Historical source review: `c69865400` on `codex/m03-radar-warning`; September 21 inspection includes current uncommitted Industrial Basin/library work and is explicitly source-only.
 

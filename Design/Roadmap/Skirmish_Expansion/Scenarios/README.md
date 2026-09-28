@@ -1,5 +1,9 @@
 # All 120 Skirmish programming briefs
 
+## Support contract for every packet
+
+The September 28 [Support roadmap](../../Support/PLAN.md) and [120 policy rows](../../Support/SKIRMISH_SUPPORT.csv) apply to every packet below, including prototype recertification. Read the matching stable S-ID; work ordinal is not a policy key. Policies are planned ceilings with runtime disabled, not evidence of available functionality.
+
 **Status: Planned.** Twenty map/objective packets each contain six individually specified army/start variants. The [handoff](../IMPLEMENTATION_HANDOFF.md) explains the distinction between work ordinals 4–120 and stable S-IDs. Read the shared architecture, objectives, roster/economy and map contracts before the assigned packet.
 
 | Map | Base Assault | Frontline Control | Breakthrough | Convoy Escort |

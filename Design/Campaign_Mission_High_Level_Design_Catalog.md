@@ -1,5 +1,9 @@
 # WarlineCapture Campaign Mission High-Level Design Catalog
 
+## Support schedule amendment — approved 2026-09-28
+
+For Support specifically, the [approved product plan](AgentReports/SupportSystem/support_design_and_build_plan.md), [25 mission policies](Roadmap/Support/CAMPAIGN_SUPPORT.csv) and [cross-mode/future Campaign roadmap](Roadmap/Support/PLAN.md) supersede older Support exposure/reward statements below. Smoke unlocks after CH04-M02, Strike after CH04-M03, Paratroopers after CH04-M04 and Supply after CH05-M02; first uses are the following missions. All remain optional. Earlier missions keep Support hidden, and finales introduce no new ability. T01 synchronizes remaining canonical chapter/balance definitions; runtime readiness remains unproven. Future chapters must author explicit policies using certified mechanics rather than assuming all profile unlocks apply.
+
 Date: 2026-07-10
 
 Status: Active high-level mission authority

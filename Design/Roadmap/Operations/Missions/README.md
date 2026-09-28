@@ -1,5 +1,9 @@
 # All 60 mission briefs
 
+## Support contract for every district brief
+
+Apply the September 28 [Support roadmap](../../Support/PLAN.md) and matching [O001–O060 policy row](../../Support/OPERATIONS_SUPPORT.csv) to every brief below. Family-based ceilings are optional tools; bind them to mission targets/resources/routes and narrow with a recorded reason where needed. A finale cannot introduce a tool for the first time. Support is not yet runtime-enabled or accepted.
+
 Status: **O001–O003 authored prototypes; O004–O060 planned.** O001–O003 have automated Regular EN Play Mode captures, but each entry still needs normal manual and shipping-input ARIA acceptance before release. Start with [O001 player-ready integration](../O001_PLAYER_READY_IMPLEMENTATION.md). Read [shared implementation](../MISSION_IMPLEMENTATION.md), [strategic rules](../STRATEGIC_RULES.md) and [acceptance](../ACCEPTANCE.md) first. All target names in graphs are scenario role aliases to bind to typed map anchors/entities, not existing GameObject names.
 
 | District | Mission IDs | Detailed briefs |

@@ -1,5 +1,14 @@
 # WarlineCapture Campaign Chapter 4: Air And Armor
 
+## Future-map planning amendment — 2026-09-29
+
+Apply the [future content map plan](../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) after the [preparation handoff](../MapVariants/HANDOFF_Map_Preparation.md). These are authoring assignments for uncoded missions, not qualified runtime bindings. Preserve story, objectives, resources, Support and approved command controls. Existing coded missions remain under the [rework handoff](../MapVariants/HANDOFF_Existing_Mission_Rework.md).
+
+| Future mission | Planned physical foundation | Required authoring |
+|---|---|---|
+| CH04-M04 | Prepared CityEdgeAirfield derivative: runway, relay and extraction apron. | Author continuous operational runway/flight clearance, specialist insertion and hardware recovery, protected civilian infrastructure and a ground-accessible extraction route; preserve the existing transport/fallback contract. |
+| CH04-M05 | Prepared Frontier derivative: bounded refinery-to-airfield military sector; conditional on device qualification. | Author command compound, heavy-asset approaches, Fuel staging and protected relief corridor. If Frontier cannot qualify, build an independently versioned smaller industrial/airfield derivative with the same contract; no new finale mechanic. |
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.

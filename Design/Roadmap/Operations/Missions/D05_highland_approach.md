@@ -1,5 +1,11 @@
 # D05 — Highland Approach: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O041–O050**. Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -31,6 +37,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1142`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(overlook_a,overlook_b,relay_approach) -> INTERACT(ridge_log,15) -> EXTRACT(squad,exit.ground). Ground paths to every point are certified.
 
 **Partial / failure:** Partial when Two points scanned and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -59,6 +67,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
 | Canonical fixture | Seed `1143`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(lower_bend,middle_bend,upper_bend,aid_post) -> CLEAR(road_patrol) -> HOLD(aid_post,45). PROTECT(aid_post_site,alive).
 
@@ -89,6 +99,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1144`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(service_guards) -> (REPAIR(hill_relay) AND REPAIR(road_station)) -> HOLD(upper_junction,60). Both sites must survive; 80 Materials.
 
 **Partial / failure:** Partial when One site restored and alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -117,6 +129,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1145`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(pass_junction) -> ESCORT(supply_trucks,2,route.main OR route.safe) -> HOLD(aid_post,45). Three friendly cargo trucks; PROTECT(aid_post_site,alive).
 
@@ -147,6 +161,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1146`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(lz_threats) -> HOLD(hill_lz,30) -> AIRLIFT(outpost_personnel,8,hill_lz,exit.air). Twelve passengers; PROTECT(aid_post_site,alive).
 
 **Partial / failure:** Partial when Four personnel delivered and aid post alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -175,6 +191,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1080 s after player control starts |
 | Canonical fixture | Seed `1147`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(compound) -> BREACH(compound_gate) -> CLEAR(compound_guards) -> INTERACT(relay_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(service_transmitter,alive).
 
@@ -205,6 +223,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1148`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(upper_staging) -> STOP(pass_trucks,2) -> HOLD(lower_junction,45). Three hostile cargo trucks, release 150 s, earliest exit 300 s; retain 30 s minimum warning.
 
 **Partial / failure:** Partial when One hostile truck stopped. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -233,6 +253,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1149`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(post_west,75) AND HOLD(post_east,75)) -> CLEAR(counterattack). Both zones use ground-reachable plateau footprints.
 
@@ -263,6 +285,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1150`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(aid_post,240) AND CLEAR(assault_groups). PROTECT(aid_post_site,alive); PROTECT(road_station,alive). A arrives at 90 s via switchback, B at 180 s via outer track with 30/45 s warnings.
 
 **Partial / failure:** Partial when Both sites alive and half the assault combat entities destroyed. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +315,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1151`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Dedicated highland source using qualified Mountain Pass modules when available, independent of Skirmish catalog completion. Author switchback, truck-safe bypass, grounded overlooks/relay, aid post, LZ and two ground exits. A Frontier ridge alone does not qualify. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (REPAIR(backup_relay) AND ESCORT(relief_trucks,2,route.safe)) -> HOLD(outpost_exit,90) -> EXTRACT(squad,exit.ground). Three friendly trucks; PROTECT(aid_post_site,alive). Helicopters are optional mobility.
 

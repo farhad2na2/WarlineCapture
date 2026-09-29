@@ -1,5 +1,11 @@
 # Operations acceptance and required ARIA wins
 
+## Future-map planning amendment — 2026-09-29
+
+Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
+
+For each future mission pin physical/logical map hashes in launch/checkpoint evidence; validate protected-object/destruction ownership, complete role-to-anchor mapping, legal routes and actual travel deadlines. D04 requires two independently traversable land crossings sampled at deck height; D05 all mandatory sites remain ground-reachable; D06 uses certified ground/LZ/air exits. Prove complete normal manual/ARIA outcomes, Partial/Defeat/Withdraw/recovery, exact-once district settlement and return, with separate human/device acceptance. Preserve failed evidence and original catalog status until per-entry gates pass.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 plus free-intro and theater-only owner matrices. A free profile can finish all three intro Victories, see its local recap, decline purchase and replay without inaccessible pressure. Check Partial, loss, retry, zero AP, checkpoint, completion and upgrade; full ownership never duplicates O001–O003 first clears or imports intro state as full city state. Theater-only owners can finish all six districts without Campaign Edition. Retain separate tactical Watch and explicitly consented Operations Run Watch evidence.

@@ -6,6 +6,12 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
 
+## Future-map amendment — 2026-09-29
+
+Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations.
+
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; record actual source hashes and ground/air capacity for every exposed size.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.industrial_basin`; layout `layout.skirmish.ib.fc`. Three ground zones in order a/b/c: rail junction; refinery entrance; warehouse square; player/enemy designated bases and independent infantry approaches.
@@ -23,11 +29,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S079
 
-**Industrial Basin · Frontline Control · Ground Maneuver · Field Base** — handoff work ordinal **79**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Ground Maneuver · Field Base** — handoff work ordinal **79**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S079`; definition `skirmish.s079`; scenario `scenario.skirmish.s079`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Send dismounted rifles toward two reachable zones and use the APC as movement support only. Two intended approaches: Hold the central and nearer side zone with gunner/rocketeer cover, or concede center and connect the two side zones. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -49,11 +57,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S080
 
-**Industrial Basin · Frontline Control · Ground Maneuver · Established Base** — handoff work ordinal **80**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Ground Maneuver · Established Base** — handoff work ordinal **80**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S080`; definition `skirmish.s080`; scenario `scenario.skirmish.s080`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use starting armor to deny approaches while separate infantry squads capture. Two intended approaches: Build a two-zone ground defense with a reserve, or rotate armor along freight avenue and retake a weak side zone. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -75,11 +85,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S081
 
-**Industrial Basin · Frontline Control · Air Mobile · Field Base** — handoff work ordinal **81**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Air Mobile · Field Base** — handoff work ordinal **81**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S081`; definition `skirmish.s081`; scenario `scenario.skirmish.s081`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Capture with starting infantry before investing in air; obtain R1 AA if scouting reveals an air transition. Two intended approaches: Use APC rotations between ground points, or unlock transports and reposition infantry across service ring. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -101,11 +113,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S082
 
-**Industrial Basin · Frontline Control · Air Mobile · Established Base** — handoff work ordinal **82**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Air Mobile · Established Base** — handoff work ordinal **82**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S082`; definition `skirmish.s082`; scenario `scenario.skirmish.s082`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Starting helicopter moves infantry; it never captures while passengers remain aboard. Two intended approaches: Hold two nearby zones with an air reserve, or rapidly reinforce the more exposed third point when ticket pressure warrants it. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -127,11 +141,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S083
 
-**Industrial Basin · Frontline Control · Combined Arms · Field Base** — handoff work ordinal **83**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Combined Arms · Field Base** — handoff work ordinal **83**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S083`; definition `skirmish.s083`; scenario `scenario.skirmish.s083`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Reserve funds for capture-capable infantry while selecting one vehicle/air development path. Two intended approaches: Use armor to screen two linked zones, or draw defense toward center and move infantry around warehouse lane. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -153,11 +169,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S084
 
-**Industrial Basin · Frontline Control · Combined Arms · Established Base** — handoff work ordinal **84**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Frontline Control · Combined Arms · Established Base** — handoff work ordinal **84**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S084`; definition `skirmish.s084`; scenario `scenario.skirmish.s084`; map `opmap.skirmish.industrial_basin`; objective `FC`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-07;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_fc`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve capture-capable infantry and ticket control; no paid tickets. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Author three distinct ground-infantry capture areas and measure both-side travel and rotations. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Assign tank and AA to separate approach protection roles; keep enough dismounted infantry for two zones. Two intended approaches: Maintain a stable majority with combined cover, or threaten the enemy base only while a reserve can preserve ticket control. These describe tactical options, not a mandatory click sequence or AI script.
 

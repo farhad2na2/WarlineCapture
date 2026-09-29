@@ -17,6 +17,30 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 REPO = ROOT.parents[2]
 PROTOTYPES = {'S001': (1, 0), 'S025': (2, 1), 'S073': (3, 3)}
+# September 29 source checkpoint. This is a planning scope exclusion, not readiness.
+CODED_MAP_EXCLUSIONS = set(PROTOTYPES) | {'S002', 'S003', 'S004'}
+FUTURE_MAP_SOURCES = {
+ 'DB': 'Existing desert source with an independent expanded layout/derivative; preserve open highway, two bases and three approaches without changing S001–S004.',
+ 'CC': 'Existing urban source with an independent north/south layout/derivative; repair the floating shelf and vehicle turns without changing S025.',
+ 'MP': 'Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient.',
+ 'IB': 'Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area.',
+ 'AP': 'Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target.',
+}
+FUTURE_OBJECTIVE_GEOMETRY = {
+ 'BA': 'Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base.',
+ 'FC': 'Author three distinct ground-infantry capture areas and measure both-side travel and rotations.',
+ 'BT': 'Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery.',
+ 'CE': 'Author two truck routes with holding, turning, repair and dwell clearance; neither alternative may depend on the same sole choke.',
+}
+
+def future_map_plan(mid, objective, sid):
+    link = '[Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md)'
+    if sid in CODED_MAP_EXCLUSIONS:
+        return ('Existing coded entry excluded from this future-map update; preserve its current source/version and publication evidence. '
+                'Any expansion or relocation needs a separate current-candidate re-audit. '+link+'.')
+    return (FUTURE_MAP_SOURCES[mid]+' '+FUTURE_OBJECTIVE_GEOMETRY[objective]+
+            ' Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. '+link+'.')
+
 MAPS = {
  'DB': dict(name='Desert Base', map_id='opmap.skirmish.desert_base_01', main='highway',
             a='north ruins', b='south sweep', convoy_a='highway', convoy_b='southern service road',
@@ -187,6 +211,8 @@ def build(include_roster_audit=True):
     rows=list(csv.DictReader((ROOT/'SCENARIO_CATALOG.csv').open(encoding='utf-8')))
     assert len(rows)==120 and [r['scenario_id'] for r in rows]==[f'S{i:03}' for i in range(1,121)]
     assert len({(r['map_id'],r['objective_id'],r['army_profile'],r['start_profile']) for r in rows})==120
+    assert CODED_MAP_EXCLUSIONS <= {r['scenario_id'] for r in rows}
+    assert len(rows)-len(CODED_MAP_EXCLUSIONS)==114
     policy_path=REPO/'Design/Monetization/Mission_Product_Policies_2026-09-28.csv'
     with policy_path.open(encoding='utf-8') as policy_file:
         policies={r['code']:r for r in csv.DictReader(policy_file) if r['mode']=='Skirmish'}
@@ -211,6 +237,12 @@ def build(include_roster_audit=True):
       'and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). '
       'ARIA is included; forces/resources/research remain scenario-owned. Later paid collections add to these 120. '
       'Membership does not promote any implementation or acceptance status.','',
+      '## Future-map amendment — 2026-09-29','',
+      'Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to the 114 uncoded combinations: '
+      'S005–S024, S026–S072 and S074–S120. Preserve coded S001/S002/S003/S004/S025/S073 bindings and evidence. '
+      'The historical 117-row work queue includes S002–S004; it is not the current uncoded count. '
+      'IB derives from prepared RefineryDistrict; AP from prepared CityEdgeAirfield; DB/CC retain their setting and MP needs new mountain geometry. '
+      'Five map identities and all catalog/setup/publication data remain unchanged.','',
       '| Map | Base Assault | Frontline Control | Breakthrough | Convoy Escort |','|---|---|---|---|---|']
     for mid,m in MAPS.items():
         links=[]
@@ -229,6 +261,13 @@ def build(include_roster_audit=True):
               'paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, '
               'counter availability and normal tactical research. Historical prototype/Playable evidence '
               'does not certify the expanded acceptance matrix.','',
+              '## Future-map amendment — 2026-09-29','',
+              FUTURE_MAP_SOURCES[mid]+' '+FUTURE_OBJECTIVE_GEOMETRY[obj], '',
+              'Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and '
+              '[preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). '
+              'This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. '
+              'Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; '
+              'record actual source hashes and ground/air capacity for every exposed size.','',
               '## Shared packet implementation','',
               f'- Map: `{m["map_id"]}`; layout `layout.skirmish.{mid.lower()}.{obj.lower()}`. '+packet_roles(m,obj),
               f'- Objective owner: `{o["system"]}` with shared fact projection and `SkirmishOutcomeSystem`. Roles: `{o["roles"]}`.',
@@ -250,12 +289,13 @@ def build(include_roster_audit=True):
                 capabilities=a['capabilities']+';objective_'+obj.lower()+(';vehicle_repair' if obj=='CE' else '')
                 anchor=sid.lower()
                 lines += [f'## {sid}','',
-                  f'**{r["working_title_en"]}** — handoff work ordinal **{ordinals[sid]}**. '+('Prototype compatibility mapping exists; certify this expanded revision separately.' if sid in PROTOTYPES else 'One of the 117 remaining new catalog combinations.'),'',
+                  f'**{r["working_title_en"]}** — handoff work ordinal **{ordinals[sid]}**. '+('Prototype compatibility mapping exists; certify this expanded revision separately.' if sid in PROTOTYPES else 'Expanded candidate already coded; preserve current evidence and re-audit before changes.' if sid in CODED_MAP_EXCLUSIONS else 'One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.'),'',
                   f'**Bind:** catalog `{sid}`; definition `skirmish.{sid.lower()}`; scenario `scenario.skirmish.{sid.lower()}`; map `{m["map_id"]}`; objective `{obj}`; army `{army}`; start `{start}`. '
                   f'Prerequisite tickets: `{gates}`. Required capability tags: `{capabilities}`. Recommended later size `{r["recommended_size"]}` is gated; first visit remains Standard.','',
                   '**Product contract:** '+('Unlimited free sample and included in Campaign Edition.' if policies[sid]['free_access_scope']!='none' else 'Included in Campaign Edition; no separate scenario purchase or Campaign grind.')+
                   ' ARIA included; apply MP01–MP08. '+policies[sid]['required_adjustment']+' '
                   '[Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).','',
+                  '**Map preparation:** '+future_map_plan(mid,obj,sid),'',
                   f'**Opening and decisions:** {opening} Two intended approaches: {choice} These describe tactical options, not a mandatory click sequence or AI script.','',
                   f'**Roster:** {a["includes"]}. Exclude {a["excludes"]}. Counter contract: {a["counters"]}. '
                   +('Field begins R1: buy R2 facilities/readiness through normal costs.' if start=='F' else 'Established begins R2 with Helipad/intel and the table’s forces; category upgrades remain level zero and Airport remains unbuilt.'),'',
@@ -373,7 +413,7 @@ def main():
         drift=[name for name,text in outputs.items() if not (ROOT/name).exists() or (ROOT/name).read_text()!=text]
         if drift: raise SystemExit('Planning artifact drift; review inputs then regenerate: '+', '.join(drift))
     if args.packets_only:
-        print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
+        print('[SkirmishPacketValidation] result=Passed scenarios=120 packets=20 productPolicies=120 futureMapPlans=114 codedMapExclusions=6 sourceInventory=NotChecked manifests=NotWritten mode='+('write' if args.write else 'check'))
     else:
         print('[SkirmishHandoffValidation] result=Passed scenarios=120 remainingWorkItems=117 packets=20 setupRows=360 sourceConfigs=74 mode='+('write' if args.write else 'check'))
     print('Documentation generation/consistency only; no Unity, gameplay, ARIA or device acceptance was executed.')

@@ -1,5 +1,11 @@
 # D02 — Civic Center: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O011–O020**. New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -31,6 +37,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1112`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(plaza_antenna,annex_antenna,clinic_antenna) -> INTERACT(service_log,15) -> EXTRACT(squad,exit.ground). Three distinct search positions and one carried log.
 
 **Partial / failure:** Partial when Two antennas scanned and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -59,6 +67,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 780 s after player control starts |
 | Canonical fixture | Seed `1113`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(shelter,plaza_corner,clinic_entry) -> CLEAR(route_guards) -> HOLD(clinic_entry,45). PROTECT(shelter,alive).
 
@@ -89,6 +99,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1114`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(service_guards) -> (REPAIR(annex_generator) AND REPAIR(clinic_generator)) -> HOLD(service_lane,60). PROTECT(clinic,alive); 80 Materials.
 
 **Partial / failure:** Partial when One generator restored and clinic alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -117,6 +129,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 840 s after player control starts |
 | Canonical fixture | Seed `1115`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(annex_loading,30) -> ESCORT(record_trucks,2,route.main OR route.safe) -> HOLD(storage_entry,30). PROTECT(storage,alive).
 
@@ -147,6 +161,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1116`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(shelter_guards) -> RESCUE(shelter_residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve civilians; PROTECT(shelter,alive).
 
 **Partial / failure:** Partial when Four residents delivered and shelter alive, with two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -175,6 +191,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 960 s after player control starts |
 | Canonical fixture | Seed `1117`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(annex_target) -> CLEAR(command_post_guards) -> INTERACT(command_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(records_wing,alive).
 
@@ -205,6 +223,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1118`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** (HOLD(square_west,60) AND HOLD(square_east,60)) -> HOLD(service_lane,90). PROTECT(annex_generator,alive).
 
 **Partial / failure:** Partial when Either square zone secured and annex_generator alive; final lane hold incomplete. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -233,6 +253,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1119`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(lz_threats) -> HOLD(clinic_lz,30) -> AIRLIFT(clinic_staff,8,clinic_lz,exit.air). Twelve passengers; PROTECT(clinic_lz_site,alive). No free rooftop climbing.
 
@@ -263,6 +285,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1120`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(hospital_lane,210) AND CLEAR(assault_groups). PROTECT(hospital,alive); PROTECT(clinic_generator,alive). A arrives 75 s after warning at 45 s; B arrives 150 s after warning at 105 s.
 
 **Partial / failure:** Partial when Both protected sites alive and half the assault combat entities destroyed. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +315,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1121`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** New civic layout from qualified urban modules. Author plaza, hospital/clinic, annex, shelter and two distinct hold zones. O018 needs an elevated LZ with a certified ground ramp and flight clearance; no free rooftop climbing. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (REPAIR(emergency_service) AND ESCORT(service_trucks,2,route.safe)) -> (HOLD(square_west,60) AND HOLD(square_east,60)) -> EXTRACT(squad,exit.ground). Three trucks; PROTECT(hospital,alive).
 

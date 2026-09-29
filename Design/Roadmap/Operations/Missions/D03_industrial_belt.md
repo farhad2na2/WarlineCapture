@@ -1,5 +1,11 @@
 # D03 — Industrial Belt: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O021–O030**. Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -31,6 +37,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1122`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(bay_north,bay_east,bay_south) -> INTERACT(freight_ledger,20) -> EXTRACT(squad,exit.ground). Each loading bay binds a distinct recon site.
 
 **Partial / failure:** Partial when Two bays scanned and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -59,6 +67,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
 | Canonical fixture | Seed `1123`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(freight_junction) -> ESCORT(workshop_trucks,2,route.main OR route.safe) -> HOLD(workshop,45). Three cargo trucks; PROTECT(workshop_site,alive).
 
@@ -89,6 +99,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1124`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(station_guards) -> (REPAIR(station_a) AND REPAIR(station_b) AND REPAIR(station_c)) -> HOLD(workshop_lane,60). Three stations must remain alive; 120 Materials total.
 
 **Partial / failure:** Partial when At least one station restored and alive; not all three complete. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -117,6 +129,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
 | Canonical fixture | Seed `1125`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** (HOLD(pocket_a,30) AND HOLD(pocket_b,30)) -> RESCUE(workers,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve workers, six in each pocket; both rescue interactions required.
 
@@ -147,6 +161,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1126`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(cargo_approach) -> STOP(fuel_trucks,2) -> HOLD(depot_road,45). Three hostile cargo trucks; PROTECT(service_depot,alive).
 
 **Partial / failure:** Partial when One truck stopped and service_depot alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -175,6 +191,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1127`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(depot) -> BREACH(depot_gate) -> CLEAR(dispatch_guards) -> INTERACT(dispatch_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(workshop_site,alive).
 
@@ -205,6 +223,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1128`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** (HOLD(road_junction,75) AND HOLD(loading_apron,75)) -> CLEAR(counterattack). Wave B targets whichever zone was captured first through a reachable public approach.
 
 **Partial / failure:** Partial when One zone completed and at least half of counterattack combat entities destroyed. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -233,6 +253,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 840 s after player control starts |
 | Canonical fixture | Seed `1129`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(supply_office) -> CLEAR(record_guards) -> (INTERACT(office_record,15) AND INTERACT(hut_record,15)) -> EXTRACT(squad,exit.ground). Both evidence objects required; PROTECT(supply_office,alive).
 
@@ -263,6 +285,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1130`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(workshop_lane,240) AND CLEAR(assault_groups). PROTECT(workshop_site,alive); PROTECT(station_a,alive). A arrives 90 s via freight spine; B 180 s via ring road, with 30/45 s warnings.
 
 **Partial / failure:** Partial when Both protected sites survive and half of assault combat entities destroyed. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +315,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1131`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared RefineryDistrict derivative with freight spine, independent ring, three separated service sites, two worker pockets, office records and depot breach. Decorative pumps/tanks do not add production or Oil-chain objectives. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** BREACH(freight_barrier) -> (REPAIR(backup_station) AND ESCORT(restart_trucks,2,route.main)) -> HOLD(freight_junction,90) -> EXTRACT(squad,exit.ground). Three trucks; PROTECT(workshop_site,alive).
 

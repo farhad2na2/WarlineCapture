@@ -1,5 +1,11 @@
 # Map, anchor and route implementation packets
 
+## Future-map planning amendment — 2026-09-29
+
+Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+
+Pin independent physical manifest/hash plus logical map/layout version. The source table below records historical bindings; future IB/AP authoring now consumes prepared variants, not the old prototype source. Preserve prototype rollback and coded entries. Build real connected geometry for all twenty objective layouts and device-qualified sizes, then regenerate surfaces, blockers, presentation, minimap and typed anchors together.
+
 2026-09-21. Supplements the five authored briefs in [MAPS](MAPS.md). These are authoring targets; this task did not generate geometry or run navigation. Use Unity Editor APIs/checked builders and the Unity CLI skill when implementing; preserve current map-source/presentation/addressable contracts and Campaign anchors.
 
 ## Existing vs new map identities
@@ -9,8 +15,8 @@
 | DB | `opmap.skirmish.desert_base_01` | Existing shared Desert Base; expand its certified layout, keeping legacy snapshot/regression variant |
 | CC | `opmap.skirmish.city_crossroads` | Existing `Configs/Skirmish/CityCrossroads/OperationMap_CityCrossroads.asset` with source binding to Desert Base; certify the distinct north/south logical region and repair the documented floating shelf |
 | MP | `opmap.skirmish.mountain_pass` | Proposed new map definition/layout; author two valleys, pass and vehicle bypass before accepting any MP entry |
-| IB | `opmap.skirmish.industrial_basin` | In-progress `Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset` with shared source binding; preserve owner work and certify expanded industrial route geometry |
-| AP | `opmap.skirmish.airfield_plains` | Proposed new map definition/layout; two runway compounds and ground-accessible objectives required |
+| IB | `opmap.skirmish.industrial_basin` | Existing prototype `Configs/Skirmish/IndustrialBasin/OperationMap_IndustrialBasin.asset` remains preserved for S073; future S074–S096 use a prepared RefineryDistrict-derived expanded source with two bases and all route/air clearances |
+| AP | `opmap.skirmish.airfield_plains` | New layout on a prepared CityEdgeAirfield-derived expanded source; author two runway compounds and ground-accessible objectives, not a direct prototype rebind |
 
 Asset paths in this table are relative to `Assets/Game/`. An existing logical/source binding is not proof the full target layout is built. If a physical/logical definition is reused unchanged, retain its stable ID; scenario army/start/size changes belong in layout/setup references. Do not publish a new map by relabeling the same inaccessible region.
 

@@ -1,5 +1,11 @@
 # Expansion acceptance and performance plan
 
+## Future-map planning amendment — 2026-09-29
+
+Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+
+Add physical-source acceptance to X26/SK-11 and each future SK-13 record: independent manifest/hash, one building owner, clean intact/destroyed/attachments, final surface-height and blocker parity, two bases and all objective routes, full aircraft clearance, packed load/unload and measured peak-size performance. Keep manual/ARIA/locale/recovery/device gates per scenario and exposed configuration. A prepared Campaign-sized map or regenerated planning packet does not publish a Skirmish entry.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 to each published entry: S001 works/replays without ownership; S002–S120 resolve to the same core entitlement; restore/offline access agrees with normal launch and resume. Zero/large account balances yield identical starts/costs. All required roster/research/ARIA works without another purchase. Preserve the existing normal-input, seed/difficulty, human and device gates.

@@ -6,6 +6,12 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
 
+## Future-map amendment — 2026-09-29
+
+Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base.
+
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; record actual source hashes and ground/air capacity for every exposed size.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.mountain_pass`; layout `layout.skirmish.mp.ba`. Player/enemy bases and all three routes: central pass, west vehicle bypass, east infantry trail; both supply expansions and service pads.
@@ -23,11 +29,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S049
 
-**Mountain Pass · Base Assault · Ground Maneuver · Field Base** — handoff work ordinal **50**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Ground Maneuver · Field Base** — handoff work ordinal **50**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S049`; definition `skirmish.s049`; scenario `scenario.skirmish.s049`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use initial infantry/car to scout central pass; recruit anti-armor before a tank commitment. Two intended approaches: Develop tanks for central pass with infantry cover, or use APC infantry through west vehicle bypass while threatening supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -49,11 +57,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S050
 
-**Mountain Pass · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **51**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **51**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S050`; definition `skirmish.s050`; scenario `scenario.skirmish.s050`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use the starting tank/APC to contest central pass, retaining one infantry squad at home. Two intended approaches: Press quickly with the established ground force, or invest in siege and attack via east infantry trail after scouting. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -75,11 +85,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S051
 
-**Mountain Pass · Base Assault · Air Mobile · Field Base** — handoff work ordinal **52**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Air Mobile · Field Base** — handoff work ordinal **52**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S051`; definition `skirmish.s051`; scenario `scenario.skirmish.s051`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Hold a cheap ground screen and build R2/Helipad only after the affordable counter window. Two intended approaches: Escort an APC ground push on west vehicle bypass, or transition to attack/transport air while defending supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -101,11 +113,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S052
 
-**Mountain Pass · Base Assault · Air Mobile · Established Base** — handoff work ordinal **53**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Air Mobile · Established Base** — handoff work ordinal **53**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S052`; definition `skirmish.s052`; scenario `scenario.skirmish.s052`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Scout with infantry and the initial transport helicopter; AA protects the staging area. Two intended approaches: Lift infantry behind an observed flank near west vehicle bypass, or establish offensive air with an affordable ground reserve. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -127,11 +141,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S053
 
-**Mountain Pass · Base Assault · Combined Arms · Field Base** — handoff work ordinal **54**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Combined Arms · Field Base** — handoff work ordinal **54**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S053`; definition `skirmish.s053`; scenario `scenario.skirmish.s053`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Choose between earlier ground armor and the R2 air facility; do not buy every unlock before defending. Two intended approaches: Concentrate a tank/infantry push along central pass, or pressure east infantry trail while air/recon supports the other approach. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -153,11 +169,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S054
 
-**Mountain Pass · Base Assault · Combined Arms · Established Base** — handoff work ordinal **55**. One of the 117 remaining new catalog combinations.
+**Mountain Pass · Base Assault · Combined Arms · Established Base** — handoff work ordinal **55**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S054`; definition `skirmish.s054`; scenario `scenario.skirmish.s054`; map `opmap.skirmish.mountain_pass`; objective `BA`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Dedicated new mountain source: two valleys, pass, heavy-vehicle bypass and infantry trail. None of the four map prototypes qualifies; a Frontier ridge crop is insufficient. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Separate the starting tank/AA screen from transportable infantry; keep Fuel delivery protected. Two intended approaches: Make a coordinated ground-plus-lift assault, or raid exposed supply from west vehicle bypass while armor holds central pass. These describe tactical options, not a mandatory click sequence or AI script.
 

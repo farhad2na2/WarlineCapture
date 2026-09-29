@@ -1,5 +1,11 @@
 # WarlineCapture Level And Mission Content Plan
 
+## Future-map planning amendment — 2026-09-29
+
+Use the [future content map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) for the seven uncoded Campaign missions, 114 uncoded Skirmish combinations and O004–O060. Its physical-source assignments supplement the existing logical identities and mission contracts; maps must pass [preparation](MapVariants/HANDOFF_Map_Preparation.md) before content qualification. Existing Campaign rework has a [separate handoff](MapVariants/HANDOFF_Existing_Mission_Rework.md). Preserve catalog counts, gameplay and readiness evidence.
+
+Each future spec must name the planned physical foundation/derivative, prepared manifest/hash, missing geometry, owner of each functional building, coordinate/bounds/surface contract and mode-specific normal-input/device gates. A visual scene, module or shared-map pass is not mission acceptance.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](Monetization/Mission_Product_Policies_2026-09-28.csv). The mission template below must carry explicit product/free scope, local starting budgets, required tool/counter source, failure recovery, earned reward settlement and ARIA/Support consent. Apply MP01–MP08 to all 25 Campaign, 120 Skirmish and 60 Operations entries; keep their existing story/objective/readiness contracts.

@@ -1,5 +1,11 @@
 # Five Skirmish battlefield briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+
+The following source choices supersede older source-sourcing proposals only; all envelope, transit, objective and capability requirements below remain in force. Reuse Demo 2 modules as complementary qualified art. Never enlarge only camera bounds or rescale aircraft/buildings to fit a prototype.
+
 Planning specification, updated 2026-09-21. Each battlefield hosts 24 candidate scenarios from [BATTLE_CATALOG.md](BATTLE_CATALOG.md). Dimensions and travel times below are authoring targets requiring real navigation measurements. These are not claims about current baked geometry. DB/CC reuse the existing environment, and IB prototype map assets/wiring are now present in the working tree; none certifies the expanded layouts. MP/AP remain new authoring work. A logical battlefield may reuse a shared scene region only if its complete playable geometry meets this brief.
 
 Use [MAP_IMPLEMENTATION](MAP_IMPLEMENTATION.md) for exact proposed builders, typed anchors/routes, normalized placement candidates, five map IDs, twenty objective layouts, defender allocation and geometry tests. The [battle packets](Scenarios/README.md) bind every S-ID to those layouts. Geometry adjustments must be measured in the real map; planning coordinates are not baked-navigation evidence.
@@ -16,6 +22,8 @@ Standard, War and Large War use the same connected map identity with separately 
 
 ## DB — Desert Base
 
+**Physical-source plan (2026-09-29):** Existing desert foundation with an independent expanded layout/derivative; preserve S001–S004. Retain open highway and both rear base/air logistics areas, not refinery density.
+
 - **Identity:** expanded version of the existing west/east Base Assault. Broad open desert with a highway, low ruins and dispersed cover. Best entry point for mixed ground tactics, not a permanent rifle-only map.
 - **Envelope target:** roughly 600 × 420 usable metres, subject to shared-scene placement. Infantry first contact 45–75 seconds from Field Base; slower flank 75–105 seconds. Scale staging for 116/224/340-unit limits before exposing them.
 - **Bases:** west and east on flat pads off the highway. Each has a rear logistics/air strip and side exit so deliveries do not cross the assault route. Supply expansions are southwest and northeast; avoid free protected income immediately beside both HQs.
@@ -25,6 +33,8 @@ Standard, War and Large War use the same connected map identity with separately 
 - **Quality gates:** preserve campaign anchors; verify existing gate placement and full rotated footprints; confirm surface visuals match collision. No tree/rock dressing inside authored producer clearance.
 
 ## CC — City Crossroads
+
+**Physical-source plan (2026-09-29):** Existing urban foundation with independent north/south layout/derivative; preserve S025. Correct the floating shelf without changing the frozen shared source beneath existing consumers.
 
 - **Identity:** existing Skirmish 2's north/south approach through the city, expanded with deliberate side routes. Player stages north, enemy south. Retain the distinct orientation without reusing DB's west/east strategy coordinates.
 - **Envelope target:** existing logical window is approximately 400 × 615 metres; first attempt to satisfy the brief inside it. Widen only after scene/navigation review. Field first contact 55–85 seconds; viable flank 85–120 seconds.
@@ -37,6 +47,8 @@ Standard, War and Large War use the same connected map identity with separately 
 
 ## MP — Mountain Pass
 
+**Physical-source plan (2026-09-29):** Dedicated new mountain terrain remains required. None of RefineryDistrict, AshLinePort, CityEdgeAirfield or Frontier supplies two valleys and an independent truck bypass; qualified modules may be reused.
+
 - **Identity:** two valleys separated by a rocky ridge, with a central pass and two meaningful alternatives. Terrain is restrictive but cannot reduce every battle to an immovable doorway.
 - **Envelope target:** roughly 650 × 550 metres. Field first contact 60–90 seconds, longer ground flank 90–135 seconds. Use ridgeline separation for air/recon value, not arbitrary path length padding.
 - **Bases:** southwest and northeast valley floors, with buildable terraces connected to logistics roads. Runway pads lie along the outer valley axes; helipads and helicopter drop sites sit clear of cliff geometry.
@@ -47,6 +59,8 @@ Standard, War and Large War use the same connected map identity with separately 
 
 ## IB — Industrial Basin
 
+**Physical-source plan (2026-09-29):** Use a prepared RefineryDistrict-derived expanded source for S074–S096. Preserve coded S073. Build northwest/southeast base compounds, freight spine, ring/warehouse alternatives and rear air infrastructure; the 600×400 prototype must be expanded and rebaked against the 700×550 target.
+
 - **Identity:** refineries, warehouses, rail/service corridors and exposed supply infrastructure. Economy and protected advances matter as much as raw unit count.
 - **Envelope target:** roughly 700 × 550 metres. Field first contact 50–85 seconds; alternate industrial ring 85–120 seconds. Build density must fit the rendering budget without hiding small troops.
 - **Bases:** northwest and southeast industrial yards, each with a separated truck depot, production yard and rear runway strip. Expansion supply sites on opposite sides create a choice between secure income and pressure.
@@ -56,6 +70,8 @@ Standard, War and Large War use the same connected map identity with separately 
 - **Quality gates:** no decorative pipes blocking all exits, no indestructible scenery advertised as a target, no accidental chain-explosion mechanic. Industrial hazards remain cosmetic unless explicitly designed and exposed in a later rules version.
 
 ## AP — Airfield Plains
+
+**Physical-source plan (2026-09-29):** Use a prepared CityEdgeAirfield-derived expanded source for S097–S120. Build TWO operational runway compounds, highway and independent flanks against the 850×650 target; a single 600×400 airfield prototype is not this complete battlefield.
 
 - **Identity:** broad plains, two airfield bases, dispersed low structures and contested forward landing grounds. Designed for full combined arms, while G variants remain winnable without offensive aircraft.
 - **Envelope target:** roughly 850 × 650 metres. Field first contact 60–90 seconds; long vehicle sweep 90–135 seconds. Validate strategic distance at normal unit speeds; do not force a five-minute empty march.

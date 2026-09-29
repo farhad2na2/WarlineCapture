@@ -6,6 +6,12 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
 
+## Future-map amendment — 2026-09-29
+
+Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery.
+
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; record actual source hashes and ground/air capacity for every exposed size.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.airfield_plains`; layout `layout.skirmish.ap.bt`. Alternative corridors a/b: north radar-road; south apron corridor; muster, east perimeter exit, two defender tower slots, twelve individual designation bindings.
@@ -23,11 +29,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S109
 
-**Airfield Plains · Breakthrough · Ground Maneuver · Field Base** — handoff work ordinal **109**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Ground Maneuver · Field Base** — handoff work ordinal **109**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S109`; definition `skirmish.s109`; scenario `scenario.skirmish.s109`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Protect the three designated rifle squads; buy specialist support rather than spending them as the only assault group. Two intended approaches: Open corridor A with ground force and escort the eight survivors, or scout corridor B and use APCs for the longer approach. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -49,11 +57,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S110
 
-**Airfield Plains · Breakthrough · Ground Maneuver · Established Base** — handoff work ordinal **110**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Ground Maneuver · Established Base** — handoff work ordinal **110**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S110`; definition `skirmish.s110`; scenario `scenario.skirmish.s110`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Starting tank and specialist infantry clear a corridor while designated rifles remain protected. Two intended approaches: Push armor through the broad corridor, or screen one approach and evacuate via the alternate ground route. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -75,11 +85,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S111
 
-**Airfield Plains · Breakthrough · Air Mobile · Field Base** — handoff work ordinal **111**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Air Mobile · Field Base** — handoff work ordinal **111**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S111`; definition `skirmish.s111`; scenario `scenario.skirmish.s111`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Recruit a ground screen and choose APC evacuation or a later unarmed airlift; the corridor still needs a ground hold. Two intended approaches: Open the safer corridor with ordinary infantry and drive designated squads through, or unlock transport air and unload at a certified far-side pocket. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -101,11 +113,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S112
 
-**Airfield Plains · Breakthrough · Air Mobile · Established Base** — handoff work ordinal **112**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Air Mobile · Established Base** — handoff work ordinal **112**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S112`; definition `skirmish.s112`; scenario `scenario.skirmish.s112`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use starting transport for staging, retaining designated squad identities and an AA-protected return route. Two intended approaches: Lift after a ground team opens the exit, or keep helicopters in reserve and escort designated troops along corridor B. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -127,11 +141,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S113
 
-**Airfield Plains · Breakthrough · Combined Arms · Field Base** — handoff work ordinal **113**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Combined Arms · Field Base** — handoff work ordinal **113**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S113`; definition `skirmish.s113`; scenario `scenario.skirmish.s113`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Choose armor to force a corridor or R2 transport to shorten the final movement; protect all twelve identities initially. Two intended approaches: Punch corridor A with ground support, or stage a split approach with a separate capture group and protected evacuees. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -153,11 +169,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S114
 
-**Airfield Plains · Breakthrough · Combined Arms · Established Base** — handoff work ordinal **114**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Breakthrough · Combined Arms · Established Base** — handoff work ordinal **114**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S114`; definition `skirmish.s114`; scenario `scenario.skirmish.s114`; map `opmap.skirmish.airfield_plains`; objective `BT`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-08;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_bt`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated survivors and both corridors; no purchased replacements. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Author two independent corridors plus a reachable designated-survivor exit; preserve ground-only completion and wreck recovery. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Separate tank/AA cover, the corridor-capture squad and the designated evacuation group. Two intended approaches: Cover a ground evacuation with armor, or combine an infantry-held corridor with legal air transport/unload near the exit. These describe tactical options, not a mandatory click sequence or AI script.
 

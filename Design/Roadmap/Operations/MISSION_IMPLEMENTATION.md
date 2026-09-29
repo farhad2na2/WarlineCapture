@@ -1,5 +1,11 @@
 # Shared mission implementation contract
 
+## Future-map planning amendment — 2026-09-29
+
+Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
+
+P6 consumes the [prepared-source manifest](../../MapVariants/HANDOFF_Map_Preparation.md) and owns district role/route layouts. Reuse modules without waiting for every Skirmish scenario to be accepted and without inheriting Campaign resource or production state. Preserve one authoritative owner per functional structure. New physical geometry receives an independent source identity; retain existing logical district IDs and protect active sources. No naval, bridge-collapse or arbitrary rooftop mechanic is added.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every O001–O060 graph keeps its mandatory/Partial/failure predicates, authored force budget, deadlines and local resource requirements. Add product/scope identity and MP01–MP08 to authoring validation. O001–O003 have the same tactical IDs in both scopes; their surrounding strategic state differs. In particular O003 supplies its authored 80 repair Materials locally. Account purchases cannot supply missing counters, heal civilian consequences or change the outcome graph.

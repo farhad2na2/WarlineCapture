@@ -1,5 +1,11 @@
 # Skirmish implementation work packages
 
+## Future-map planning amendment — 2026-09-29
+
+Apply [future content map planning](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../MapVariants/HANDOFF_Map_Preparation.md) to S005–S024, S026–S072 and S074–S120 (114 combinations). Preserve existing coded S001/S002/S003/S004/S025/S073 bindings, publication and evidence. The historical 117-item queue includes S002–S004; it is not the current uncoded count. Keep five logical maps and every objective/army/start/numeric setup unchanged. IB uses a prepared RefineryDistrict derivative, AP a prepared CityEdgeAirfield derivative, DB/CC independent layouts of their existing settings, and MP new mountain terrain. No automatic sixth port or seventh Frontier map is added.
+
+SK-11 owns mode-specific geometry after source preparation; SK-13 retains per-entry acceptance. IB/AP prototypes are only 600×400 playable metres and require actual expanded connected layouts, two bases and air infrastructure under the existing map briefs. Retain the first DB gameplay-slice priority and current coded work. Do not mutate the shared dense-city source to implement future layouts.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Add MP01–MP08 to each package exit: product/sample access, zero-account-wallet parity, included ARIA/Support, exact settlement and complete core membership. Do not add per-scenario billing logic. Core content ownership must not change match costs/stats or certify an unfinished entry.

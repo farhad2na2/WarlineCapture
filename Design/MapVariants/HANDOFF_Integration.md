@@ -8,6 +8,8 @@
 > not 17. See [Integration_Assessment_2026-09-29.md](Integration_Assessment_2026-09-29.md) for mission recommendations.
 > After map preparation, use [HANDOFF_Existing_Mission_Rework.md](HANDOFF_Existing_Mission_Rework.md)
 > for the seven existing-mission migrations and regression of the eleven retained missions.
+> For uncoded Campaign, Skirmish and Operations content, use
+> [FUTURE_CONTENT_MAP_PLAN.md](FUTURE_CONTENT_MAP_PLAN.md) and its updated mode/chapter packets.
 
 Status: **visual prototypes, not integrated.** No mission, catalog, Addressables group or test references these
 scenes yet. They were built to break the repetition of the 17 campaign missions, which all frame small windows of

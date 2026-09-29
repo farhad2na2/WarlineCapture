@@ -18,6 +18,8 @@ This handoff supersedes the simplified preparation recipe in [HANDOFF_Integratio
 
 The subsequent mission assignment is [HANDOFF_Existing_Mission_Rework.md](HANDOFF_Existing_Mission_Rework.md): seven migrations, eleven retained-map regression entries, and candidate-specific mission acceptance. Supply it with the prepared-source manifest; this preparation assignment does not change mission bindings.
 
+Future uncoded content consumes the same foundations through [FUTURE_CONTENT_MAP_PLAN.md](FUTURE_CONTENT_MAP_PLAN.md). Skirmish requires larger two-base derivatives; Operations requires district-specific roles/routes. Those mode-specific expansions are subsequent authoring work, not evidence that the prototype's initial preparation already satisfies them.
+
 ## Read first and preserve
 
 Read the repository `AGENTS.md`, the two linked documents, and the relevant source below before editing. Follow the current Unity execution contract in AGENTS.md; do not copy an obsolete command from a report.

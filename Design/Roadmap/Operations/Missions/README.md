@@ -1,5 +1,9 @@
 # All 60 mission briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Use the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) for all 57 uncoded entries O004–O060. The six district packets now assign physical-source foundations and each future entry carries a map-preparation requirement. O001–O003 retain their current bindings. D03/D04/D06 derive from prepared RefineryDistrict/AshLinePort/CityEdgeAirfield; D01/D02 use urban layouts and D05 needs new highland terrain. Graphs, catalog IDs, budgets and evidence remain unchanged.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). All 60 individually authored entries belong to the complete theater. O001–O003 additionally use the standalone free-intro scope. Each district brief now contains a product/scope and required-adjustment row per mission. Objectives, IDs, deadlines, force packages and existing acceptance fields remain unchanged.

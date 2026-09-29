@@ -6,6 +6,12 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
 
+## Future-map amendment — 2026-09-29
+
+Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base.
+
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; record actual source hashes and ground/air capacity for every exposed size.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.industrial_basin`; layout `layout.skirmish.ib.ba`. Player/enemy bases and all three routes: freight avenue, service ring, warehouse lane; both supply expansions and service pads.
@@ -29,6 +35,8 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
 
+**Map preparation:** Existing coded entry excluded from this future-map update; preserve its current source/version and publication evidence. Any expansion or relocation needs a separate current-candidate re-audit. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
+
 **Opening and decisions:** Use initial infantry/car to scout freight avenue; recruit anti-armor before a tank commitment. Two intended approaches: Develop tanks for freight avenue with infantry cover, or use APC infantry through service ring while threatening supply. These describe tactical options, not a mandatory click sequence or AI script.
 
 **Roster:** five infantry roles; car; fast/armored/heavy APC; tank; radar; ground siege; transport helicopter; recon drone; logistics. Exclude attack helicopters, fighter/strike jets and transport plane. Counter contract: rocketeer squads before tanks; rifle/gunner support for anti-armor; optional unarmed transport/recon does not add offensive air. Field begins R1: buy R2 facilities/readiness through normal costs.
@@ -49,11 +57,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S074
 
-**Industrial Basin · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **74**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **74**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S074`; definition `skirmish.s074`; scenario `scenario.skirmish.s074`; map `opmap.skirmish.industrial_basin`; objective `BA`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use the starting tank/APC to contest freight avenue, retaining one infantry squad at home. Two intended approaches: Press quickly with the established ground force, or invest in siege and attack via warehouse lane after scouting. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -75,11 +85,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S075
 
-**Industrial Basin · Base Assault · Air Mobile · Field Base** — handoff work ordinal **75**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Base Assault · Air Mobile · Field Base** — handoff work ordinal **75**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S075`; definition `skirmish.s075`; scenario `scenario.skirmish.s075`; map `opmap.skirmish.industrial_basin`; objective `BA`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Hold a cheap ground screen and build R2/Helipad only after the affordable counter window. Two intended approaches: Escort an APC ground push on service ring, or transition to attack/transport air while defending supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -101,11 +113,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S076
 
-**Industrial Basin · Base Assault · Air Mobile · Established Base** — handoff work ordinal **76**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Base Assault · Air Mobile · Established Base** — handoff work ordinal **76**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S076`; definition `skirmish.s076`; scenario `scenario.skirmish.s076`; map `opmap.skirmish.industrial_basin`; objective `BA`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Scout with infantry and the initial transport helicopter; AA protects the staging area. Two intended approaches: Lift infantry behind an observed flank near service ring, or establish offensive air with an affordable ground reserve. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -127,11 +141,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S077
 
-**Industrial Basin · Base Assault · Combined Arms · Field Base** — handoff work ordinal **77**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Base Assault · Combined Arms · Field Base** — handoff work ordinal **77**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S077`; definition `skirmish.s077`; scenario `scenario.skirmish.s077`; map `opmap.skirmish.industrial_basin`; objective `BA`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Choose between earlier ground armor and the R2 air facility; do not buy every unlock before defending. Two intended approaches: Concentrate a tank/infantry push along freight avenue, or pressure warehouse lane while air/recon supports the other approach. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -153,11 +169,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S078
 
-**Industrial Basin · Base Assault · Combined Arms · Established Base** — handoff work ordinal **78**. One of the 117 remaining new catalog combinations.
+**Industrial Basin · Base Assault · Combined Arms · Established Base** — handoff work ordinal **78**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S078`; definition `skirmish.s078`; scenario `scenario.skirmish.s078`; map `opmap.skirmish.industrial_basin`; objective `BA`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared RefineryDistrict-derived expanded industrial source; add two base yards, freight spine, independent service ring, warehouse flank and air infrastructure without changing S073. Author and measure the 700×550 target beyond the prototype 600×400 playable area. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Separate the starting tank/AA screen from transportable infantry; keep Fuel delivery protected. Two intended approaches: Make a coordinated ground-plus-lift assault, or raid exposed supply from service ring while armor holds freight avenue. These describe tactical options, not a mandatory click sequence or AI script.
 

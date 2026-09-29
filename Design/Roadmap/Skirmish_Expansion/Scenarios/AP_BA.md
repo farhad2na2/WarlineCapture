@@ -6,6 +6,12 @@ Proposed content, 2026-09-21. **All expanded entries below remain Planned.** Exi
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv). Every entry is included in the original 120-scenario core package. No account roster grind, paid tactical resources, paid capacity, ads or time skips. Preserve the objective, setup numbers, counter availability and normal tactical research. Historical prototype/Playable evidence does not certify the expanded acceptance matrix.
 
+## Future-map amendment — 2026-09-29
+
+Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base.
+
+Apply the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [preparation handoff](../../../MapVariants/HANDOFF_Map_Preparation.md). This source direction applies only to uncoded entries; S001/S002/S003/S004/S025/S073 keep their existing bindings. Physical preparation is not scenario acceptance. Keep logical IDs, numeric setup, objective rules and Support/product policy unchanged; record actual source hashes and ground/air capacity for every exposed size.
+
 ## Shared packet implementation
 
 - Map: `opmap.skirmish.airfield_plains`; layout `layout.skirmish.ap.ba`. Player/enemy bases and all three routes: middle logistics highway, northern cover line, southern armored sweep; both supply expansions and service pads.
@@ -23,11 +29,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S097
 
-**Airfield Plains · Base Assault · Ground Maneuver · Field Base** — handoff work ordinal **97**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Ground Maneuver · Field Base** — handoff work ordinal **97**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S097`; definition `skirmish.s097`; scenario `scenario.skirmish.s097`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `G`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use initial infantry/car to scout middle logistics highway; recruit anti-armor before a tank commitment. Two intended approaches: Develop tanks for middle logistics highway with infantry cover, or use APC infantry through northern cover line while threatening supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -49,11 +57,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S098
 
-**Airfield Plains · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **98**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Ground Maneuver · Established Base** — handoff work ordinal **98**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S098`; definition `skirmish.s098`; scenario `scenario.skirmish.s098`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `G`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;advanced_ground;objective_ba`. Recommended later size `Standard` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Use the starting tank/APC to contest middle logistics highway, retaining one infantry squad at home. Two intended approaches: Press quickly with the established ground force, or invest in siege and attack via southern armored sweep after scouting. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -75,11 +85,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S099
 
-**Airfield Plains · Base Assault · Air Mobile · Field Base** — handoff work ordinal **99**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Air Mobile · Field Base** — handoff work ordinal **99**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S099`; definition `skirmish.s099`; scenario `scenario.skirmish.s099`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `A`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Hold a cheap ground screen and build R2/Helipad only after the affordable counter window. Two intended approaches: Escort an APC ground push on northern cover line, or transition to attack/transport air while defending supply. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -101,11 +113,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S100
 
-**Airfield Plains · Base Assault · Air Mobile · Established Base** — handoff work ordinal **100**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Air Mobile · Established Base** — handoff work ordinal **100**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S100`; definition `skirmish.s100`; scenario `scenario.skirmish.s100`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `A`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Scout with infantry and the initial transport helicopter; AA protects the staging area. Two intended approaches: Lift infantry behind an observed flank near northern cover line, or establish offensive air with an affordable ground reserve. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -127,11 +141,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S101
 
-**Airfield Plains · Base Assault · Combined Arms · Field Base** — handoff work ordinal **101**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Combined Arms · Field Base** — handoff work ordinal **101**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S101`; definition `skirmish.s101`; scenario `scenario.skirmish.s101`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `C`; start `F`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain Materials-funded readiness development. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Choose between earlier ground armor and the R2 air facility; do not buy every unlock before defending. Two intended approaches: Concentrate a tank/infantry push along middle logistics highway, or pressure southern armored sweep while air/recon supports the other approach. These describe tactical options, not a mandatory click sequence or AI script.
 
@@ -153,11 +169,13 @@ Apply the [mission product contract](../../../Monetization/Mission_Product_Contr
 
 ## S102
 
-**Airfield Plains · Base Assault · Combined Arms · Established Base** — handoff work ordinal **102**. One of the 117 remaining new catalog combinations.
+**Airfield Plains · Base Assault · Combined Arms · Established Base** — handoff work ordinal **102**. One of the 114 uncoded combinations at the September 29 checkpoint; historical work ordinal retained.
 
 **Bind:** catalog `S102`; definition `skirmish.s102`; scenario `scenario.skirmish.s102`; map `opmap.skirmish.airfield_plains`; objective `BA`; army `C`; start `E`. Prerequisite tickets: `SK-00;SK-01;SK-02;SK-03;SK-04;SK-05;SK-06;SK-10;SK-11;SK-12;SK-13`. Required capability tags: `ground;intel;transport;offensive_air;advanced_ground;advanced_air;objective_ba`. Recommended later size `War` is gated; first visit remains Standard.
 
 **Product contract:** Included in Campaign Edition; no separate scenario purchase or Campaign grind. ARIA included; apply MP01–MP08. Include in core S001-S120; Retain starting grants with no second charge; research begins at authored level. Preserve designated-base outcome and both viable attack approaches. [Policy](../../../Monetization/Mission_Product_Contract_2026-09-28.md).
+
+**Map preparation:** Prepared CityEdgeAirfield-derived expanded plains source; author two opposing operational runway compounds and three ground approaches. The single 600×400 prototype is insufficient for the 850×650 target. Prove designated-base ownership and direct/flank assault after destruction; no duplicate decorative base. Pin the qualified physical manifest/hash, retain logical identity/setup budgets and certify each exposed size. [Future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md).
 
 **Opening and decisions:** Separate the starting tank/AA screen from transportable infantry; keep Fuel delivery protected. Two intended approaches: Make a coordinated ground-plus-lift assault, or raid exposed supply from northern cover line while armor holds middle logistics highway. These describe tactical options, not a mandatory click sequence or AI script.
 

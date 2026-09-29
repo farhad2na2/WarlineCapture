@@ -1,5 +1,11 @@
 # D04 — River Crossing: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O031–O040**. Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -31,6 +37,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1132`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(crossing_west,crossing_east,quay_road) -> INTERACT(crossing_log,15) -> EXTRACT(squad,exit.ground). Three ground-accessible recon sites.
 
 **Partial / failure:** Partial when Two sites scanned and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -59,6 +67,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 960 s after player control starts |
 | Canonical fixture | Seed `1133`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(quay_shelter,30) -> RESCUE(quay_residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve residents; route.safe stays entirely on land.
 
@@ -89,6 +99,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1134`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(post_guards) -> (REPAIR(west_service_post) AND REPAIR(east_service_post)) -> HOLD(crossing_midpoint,60). Both posts alive; 80 Materials.
 
 **Partial / failure:** Partial when One post restored and alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -117,6 +129,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 960 s after player control starts |
 | Canonical fixture | Seed `1135`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(far_approach) -> ESCORT(aid_trucks,2,route.main OR route.safe) -> HOLD(aid_depot,45). Three trucks; PROTECT(aid_depot_site,alive).
 
@@ -147,6 +161,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1136`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** VISIT(west_post,quay_steps,warehouse_corner,east_post) -> CLEAR(quay_patrol) -> HOLD(east_post,45). Steps are a certified infantry path; route.safe avoids them.
 
 **Partial / failure:** Partial when Three waypoints visited and quay_patrol cleared. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -175,6 +191,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1137`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(warehouse) -> BREACH(warehouse_gate) -> CLEAR(warehouse_guards) -> INTERACT(route_records,20) -> EXTRACT(squad,exit.ground). PROTECT(aid_depot_site,alive).
 
@@ -205,6 +223,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1138`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** (HOLD(west_exit,75) AND HOLD(east_exit,75)) -> CLEAR(counterattack). PROTECT(west_service_post,alive); PROTECT(east_service_post,alive).
 
 **Partial / failure:** Partial when One exit secured and both posts alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -233,6 +253,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
 | Canonical fixture | Seed `1139`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(enemy_staging) -> STOP(cargo_trucks,2) -> HOLD(road_junction,45). Three hostile cargo trucks; exit route chosen and saved at launch, observable through scouting.
 
@@ -263,6 +285,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1140`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(near_approach,45) -> ESCORT(relief_trucks,2,route.main OR route.safe) -> HOLD(far_approach,60). Three friendly cargo trucks; PROTECT(aid_depot_site,alive).
 
 **Partial / failure:** Partial when One truck delivered and depot alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +315,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1141`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared AshLinePort derivative with two independent traversable land crossings, near/far approaches, protected aid depot and quay shelter. Adapt orientation and bind west/east aliases explicitly; deck heights override canal-bed sampling. Boats are scenery, no bridge-collapse/naval mechanic. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(west_exit,60) -> (REPAIR(evac_service) AND RESCUE(trapped_residents,8,exit.ground)) -> HOLD(east_exit,90) -> EXTRACT(squad,exit.ground). Twelve residents; PROTECT(aid_depot_site,alive).
 

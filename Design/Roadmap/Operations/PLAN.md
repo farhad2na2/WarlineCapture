@@ -1,5 +1,11 @@
 # Operations: mode and mission production plan
 
+## Future-map planning amendment — 2026-09-29
+
+Apply the [future content map plan](../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) to O004–O060 only; preserve coded O001–O003 bindings and evidence. D03 consumes a prepared RefineryDistrict derivative, D04 an AshLinePort derivative and D06 a CityEdgeAirfield derivative. D01 uses compatible urban extensions, D02 requires a civic layout and D05 dedicated highland geometry. Keep six district identities, all graphs/budgets/deadlines, strategic consequences, Support policies and B12/B30/B60 membership unchanged. Physical qualification does not certify a mission.
+
+P6 consumes the [prepared-source manifest](../../MapVariants/HANDOFF_Map_Preparation.md) and owns district role/route layouts. Reuse modules without waiting for every Skirmish scenario to be accepted and without inheriting Campaign resource or production state. Preserve one authoritative owner per functional structure. New physical geometry receives an independent source identity; retain existing logical district IDs and protect active sources. No naval, bridge-collapse or arbitrary rooftop mechanic is added.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry register](../../Monetization/Mission_Product_Policies_2026-09-28.csv). Preserve O001–O060 as one complete, independently purchased Sahrin Theater. O001–O003 additionally form a standalone free introduction with its own conclusion and replay, not a restricted six-district run. Implement scope-filtered offers/day pressure/checkpoints and account-wide first-clear deduplication. Keep full-city victory, all six finales, authored tactical graphs and existing Support rollout. No paid AP, supplies, recovery or ARIA. Production 3/12/30/60 gates remain internal; this edit does not certify any entry.

@@ -1,5 +1,17 @@
 # WarlineCapture Campaign Chapter 5: Citywide Command
 
+## Future-map planning amendment — 2026-09-29
+
+Apply the [future content map plan](../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) after the [preparation handoff](../MapVariants/HANDOFF_Map_Preparation.md). These are authoring assignments for uncoded missions, not qualified runtime bindings. Preserve story, objectives, resources, Support and approved command controls. Existing coded missions remain under the [rework handoff](../MapVariants/HANDOFF_Existing_Mission_Rework.md).
+
+| Future mission | Planned physical foundation | Required authoring |
+|---|---|---|
+| CH05-M01 | Urban source derivative: two distinct civic fronts. | Author clinic and power/water service landmarks, connected response lanes, separate staging and readable warnings. Industrial acreage alone does not supply two civic districts. |
+| CH05-M02 | Prepared AshLinePort derivative: populated quay edge and city approaches. | Add shelters, two protected evacuation/boarding routes and a verified broadcast compound; certify both land crossings. Preserve civilian/route consequences, not a port-capture substitute. |
+| CH05-M03 | Urban source derivative: communications and evidence district. | Author separately verified nodes, protected structures, evidence-team approaches and safe/unsafe long-range geometry. Preserve audit custody and objective ordering with current command controls. |
+| CH05-M04 | Prepared Frontier derivative: bounded logistics-to-city corridor; conditional on device qualification. | Add civic receiving point, two connected ground delivery choices, supply origins, key custody and certified optional air access. A smaller independently authored logistics/urban derivative is the fallback if Frontier cannot qualify; preserve delivery categories and deadlines. |
+| CH05-M05 | New Civic Relay complex in an urban source derivative. | Author recognizable perimeter/core, controlled breach lanes, protected city-service interfaces and specialist/evidence access. The four visual prototypes do not supply this finale complex as-is; no new finale mechanic. |
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All five missions belong to Campaign Edition. Ordinary prior-mission completion and ownership are separate gates; no additional chapter purchase, wallet threshold or parts grind. Existing objectives, readiness fallbacks and Support schedule are preserved.

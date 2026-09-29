@@ -1,5 +1,11 @@
 # D01 — Old Quarter: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O004–O010 only; O001–O003 keep existing bindings**. Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -118,6 +124,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1105`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(archive) -> CLEAR(archive_guards) -> INTERACT(archive_evidence,20) -> EXTRACT(squad,exit.ground). PROTECT(archive,alive); evidence pickup requires the building to survive.
 
 **Partial / failure:** Partial when Archive confirmed and guards cleared, archive alive, two original infantry extracted; evidence not delivered. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -146,6 +154,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 900 s after player control starts |
 | Canonical fixture | Seed `1106`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(rescue_court,30) -> RESCUE(residents,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve civilian identities at rescue_court; route.safe is walkable and vehicle-compatible.
 
@@ -176,6 +186,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1107`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(yard) -> BREACH(yard_gate) -> CLEAR(cell_hq_guards) -> INTERACT(cell_roster,20) -> EXTRACT(squad,exit.ground). PROTECT(market_service,alive).
 
 **Partial / failure:** Partial when Gate traversed and cell guards cleared, market_service survives, two original infantry extracted; roster missing. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -204,6 +216,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 720 s after player control starts |
 | Canonical fixture | Seed `1108`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Both approaches must reach the ordered visit sites without skipping them; preserve protected service access. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** VISIT(patrol_start,clinic_corner,relay_corner,patrol_end) -> CLEAR(route_patrol) -> HOLD(patrol_end,45). route.main and route.flank reach the same ordered points by different approaches.
 
@@ -234,6 +248,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1109`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Place observed cargo staging, interception lanes, stopping space and valid exits; preserve original truck identities and warning/escape timing. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(cargo_approach) -> STOP(courier_trucks,2) -> INTERACT(dispatch_case,15) -> EXTRACT(squad,exit.ground). Three hostile cargo trucks on route.enemy_cargo; dispatch_case drops from the first stopped truck.
 
 **Partial / failure:** Partial when At least one courier truck stopped and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -263,6 +279,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1110`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(clinic,180) AND CLEAR(assault_groups). PROTECT(clinic,alive). A warns at elapsed 30 s and arrives at 60 s via route.main; B warns at 90 s and arrives at 135 s via route.flank. All EP combat units belong to assault_groups.
 
 **Partial / failure:** Partial when Clinic alive at deadline and at least half the assault combat entities destroyed; continuous hold or full clearance incomplete. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +309,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1111`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Existing urban source with compatible extension or independent derivative. Preserve established clinic/courtyard geography; add archive, market gate, cargo path, two pedestrian loops and safe rescue exit. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** BREACH(roadblock_gate) -> (REPAIR(service_backup) AND ESCORT(reopening_trucks,2,route.safe)) -> HOLD(market_square,90) -> EXTRACT(squad,exit.ground). Three friendly cargo trucks; PROTECT(clinic,alive).
 

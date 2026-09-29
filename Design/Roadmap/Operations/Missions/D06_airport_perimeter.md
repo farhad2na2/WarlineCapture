@@ -1,5 +1,11 @@
 # D06 — Airport Perimeter: ten mission implementation briefs
 
+## Future-map planning amendment — 2026-09-29
+
+Scope: **O051–O060**. Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads.
+
+Follow the [future map plan](../../../MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](../../../MapVariants/HANDOFF_Map_Preparation.md). Keep the district logical ID below, bind a qualified physical manifest/hash, and author every graph role/route on that source. This updates source selection, not mission graphs, numerical values, acceptance or publication. Demo 2 art remains complementary. Do not mutate a physical source used by coded content or import another mode’s garrisons/resources.
+
 ## Mission product amendment — 2026-09-28
 
 Apply the [mission product contract](../../../Monetization/Mission_Product_Contract_2026-09-28.md) and [205-entry policy register](../../../Monetization/Mission_Product_Policies_2026-09-28.csv) before implementation. These are adopted planning requirements; no runtime acceptance or purchase activation is implied. All ten entries belong to the complete O001–O060 theater. Task forces, required counters, Materials/Fuel and optional Support are scenario-provided; account purchases never alter tactical or district outcomes. Preserve every graph, prerequisite, deadline and numerical budget. O001–O003 also use the separately finishable free-intro scope; no other district mission is a trial-completion requirement.
@@ -31,6 +37,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1152`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B12; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Keep each scan site spatially distinct and ground-accessible; extraction must carry the required evidence. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(radar_north,radar_south,terminal_relay) -> INTERACT(radar_log,15) -> EXTRACT(squad,exit.ground). Three recon sites; no automatic global radar reveal.
 
 **Partial / failure:** Partial when Two sites scanned and two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -59,6 +67,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1153`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Reserve space for every original civilian identity, release/boarding and the safe ground exit; no protected group inside static blockers. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** HOLD(terminal_entry,30) -> RESCUE(terminal_staff,8,exit.ground) -> EXTRACT(squad,exit.ground). Twelve staff; PROTECT(terminal_service,alive).
 
@@ -89,6 +99,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1154`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Separate all named repair sites, engineer access and final hold area; bind repair state to real entities and preserve the authored Materials cost. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(service_guards) -> (REPAIR(runway_service) AND REPAIR(hangar_service)) -> HOLD(service_road,60). Both sites alive; 80 Materials. These are repairable service props, not runway mesh construction.
 
 **Partial / failure:** Partial when One service node restored and alive. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -117,6 +129,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1020 s after player control starts |
 | Canonical fixture | Seed `1155`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Provide two truck-compatible alternatives, turning/holding/unload space and the live protected destination; no single shared choke as both routes. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(perimeter_junction) -> ESCORT(equipment_trucks,2,route.main OR route.safe) -> HOLD(hangar_apron,45). Three trucks; PROTECT(hangar_service,alive).
 
@@ -147,6 +161,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1156`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B30; P0–P4, P6; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Preserve separate verified target, guard and evidence roles plus a safe ground exit; protected evidence buildings must survive. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** SCAN(control_office) -> CLEAR(office_guards) -> INTERACT(access_records,20) -> EXTRACT(squad,exit.ground). PROTECT(navigation_service,alive).
 
 **Partial / failure:** Partial when Office guards cleared and navigation service alive, two original infantry extracted. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -175,6 +191,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1080 s after player control starts |
 | Canonical fixture | Seed `1157`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Map the gate to a real supported breach interaction with a usable opening; preserve protected neighbors, records and extraction. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** SCAN(hangar_target) -> BREACH(hangar_gate) -> CLEAR(strongpoint_guards) -> INTERACT(airfield_orders,20) -> EXTRACT(squad,exit.ground). PROTECT(hangar_service,alive).
 
@@ -205,6 +223,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1158`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Give both hold areas independent ground access and a reachable counterattack approach; one overlapping zone cannot satisfy both roles. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** CLEAR(aa_teams) -> (HOLD(lz_north,75) AND HOLD(lz_south,75)) -> CLEAR(counterattack). All four aa_teams infantry spawn initially as an explicit EP_AIRFIELD subset, not an additional budget. Remaining EP entities bind counterattack; its initial guards and later reserves all count.
 
 **Partial / failure:** Partial when All aa_teams cleared and one landing zone held. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -233,6 +253,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 8–15 min; hard deadline 1080 s after player control starts |
 | Canonical fixture | Seed `1159`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Certify ground access, boarding space, LZ protection, aircraft approach and live air exit for all required passenger identities. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(lz_threats) -> HOLD(apron_lz,30) -> AIRLIFT(evacuees,8,apron_lz,exit.air). Twelve passengers; PROTECT(terminal_service,alive).
 
@@ -263,6 +285,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Canonical fixture | Seed `1160`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
 
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Measure incoming approach travel against existing warning/arrival times and keep both protected-object access and command visibility. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
+
 **Mandatory graph and authored entities:** HOLD(runway_service_zone,240) AND CLEAR(assault_groups). PROTECT(runway_service,alive); PROTECT(terminal_service,alive). A arrives at 90 s via perimeter road, B at 180 s via service lane with 30/45 s warnings.
 
 **Partial / failure:** Partial when Both service sites alive and half the assault combat entities destroyed. Otherwise deadline is Defeat. Loss of a mandatory protected site, impossible required survivor/cargo/evidence minimum, or all eligible player units is immediate Defeat under the shared terminal order. Conclude appears only when the Partial predicate is true; Withdraw remains a separate confirmation.
@@ -291,6 +315,8 @@ Follow the [integration guide](../../../Demo2_Asset_Integration_Guide.md) and [v
 | Pacing / deadline | Target 15–20 min; hard deadline 1200 s after player control starts |
 | Canonical fixture | Seed `1161`, Regular, immutable launch snapshot; evidence also needs perturbation seeds |
 | Delivery / gates | B60; P0–P4, P6, P5; per-entry acceptance and ARIA win required |
+
+**Map preparation:** Prepared CityEdgeAirfield derivative with perimeter and service alternatives, terminal service, hangar breach, separate north/south LZs and boarding/ground/air exits. O053 repairs service entities, not runway mesh construction; remove decorative aircraft from active pads. Keep parallel task sites and exits reachable together under the existing finite force budget; combine only district-proven mechanics. Pin the prepared source and exact role/route manifest for this entry; preserve its graph and deadline below.
 
 **Mandatory graph and authored entities:** CLEAR(apron_guards) -> (REPAIR(backup_service) AND AIRLIFT(final_passengers,8,apron_lz,exit.air)) -> HOLD(public_access,90) -> EXTRACT(squad,exit.ground). Twelve passengers; PROTECT(terminal_service,alive); secure apron_lz with HOLD(apron_lz,30) before boarding.
 

@@ -422,6 +422,7 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m04.grounded_signal` |
+| Planned map foundation (2026-09-29) | Prepared CityEdgeAirfield derivative: runway, relay and extraction apron. Author continuous operational runway/flight clearance, specialist insertion and hardware recovery, protected civilian infrastructure and a ground-accessible extraction route; preserve the existing transport/fallback contract. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Provide ordinary specialist transport/cargo/extraction; optional first Strike; earn Paratroopers afterward. |
 | Arc role | Combine: choose a safe or rapid insertion method from known operational conditions. |
@@ -441,6 +442,7 @@ Chapter 4 changes the silhouette of the conflict. Vanguard Brigade uses organize
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch04.m05.armor_break` |
+| Planned map foundation (2026-09-29) | Prepared Frontier derivative: bounded refinery-to-airfield military sector; conditional on device qualification. Author command compound, heavy-asset approaches, Fuel staging and protected relief corridor. If Frontier cannot qualify, build an independently versioned smaller industrial/airfield derivative with the same contract; no new finale mechanic. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Combine established systems with optional Paratroopers; include chapter clue; no new paid ability or finale toll. |
 | Arc role | Master: coordinate air, armor, logistics, radar, and long-range fire against a prepared military group. |
@@ -464,6 +466,7 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m01.citywide_alert` |
+| Planned map foundation (2026-09-29) | Urban source derivative: two distinct civic fronts. Author clinic and power/water service landmarks, connected response lanes, separate staging and readable warnings. Industrial acreage alone does not supply two civic districts. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Supply required multi-front forces and information; include ARIA; no purchased command slot or threat warnings. |
 | Arc role | Combine: command two visible fronts without surrendering authority to automation. |
@@ -483,6 +486,7 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m02.trust_under_fire` |
+| Planned map foundation (2026-09-29) | Prepared AshLinePort derivative: populated quay edge and city approaches. Add shelters, two protected evacuation/boarding routes and a verified broadcast compound; certify both land crossings. Preserve civilian/route consequences, not a port-capture substitute. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Keep civilian/route consequences in gameplay; earn Supply afterward; no paid trust or evacuation. |
 | Arc role | Twist: Qassem attacks legitimacy and evacuation behavior while the military threat remains real. |
@@ -502,6 +506,7 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m03.network_collapse` |
+| Planned map foundation (2026-09-29) | Urban source derivative: communications and evidence district. Author separately verified nodes, protected structures, evidence-team approaches and safe/unsafe long-range geometry. Preserve audit custody and objective ordering with current command controls. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Optional first Supply under approved 40-Materials provisional crate policy; required objectives work without it; no purchased replacement crate. |
 | Arc role | Combine: collapse verified command nodes while preserving the complete evidence chain. |
@@ -521,6 +526,7 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m04.last_corridor` |
+| Planned map foundation (2026-09-29) | Prepared Frontier derivative: bounded logistics-to-city corridor; conditional on device qualification. Add civic receiving point, two connected ground delivery choices, supply origins, key custody and certified optional air access. A smaller independently authored logistics/urban derivative is the fallback if Frontier cannot qualify; preserve delivery categories and deadlines. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Preserve finite transport/Fuel/logistics; only certified required mechanics; no paid deadline extension or priority queue. |
 | Arc role | Master: sustain a city-center route with every reliable mobility and logistics tool. |
@@ -540,6 +546,7 @@ Chapter 5 introduces no major mechanic. It combines only campaign-ready systems 
 | Field | High-level contract |
 |---|---|
 | Mission ID | `saga.ch05.m05.command_node` |
+| Planned map foundation (2026-09-29) | New Civic Relay complex in an urban source derivative. Author recognizable perimeter/core, controlled breach lanes, protected city-service interfaces and specialist/evidence access. The four visual prototypes do not supply this finale complex as-is; no new finale mechanic. Follow [future map plan](MapVariants/FUTURE_CONTENT_MAP_PLAN.md) and [map preparation](MapVariants/HANDOFF_Map_Preparation.md); source choice is not runtime acceptance. |
 | Product / access | Included in Campaign Edition; ownership plus ordinary prior-mission progression; ARIA included. [Shared contract](Monetization/Mission_Product_Contract_2026-09-28.md). |
 | Monetization-plan adjustment | Include canonical resolution and all earned clues on ordinary completion; no paid ending, additional chapter charge or new required ability. |
 | Arc role | Master: resolve the campaign through prioritization, combined arms, evidence, and bounded authority. |

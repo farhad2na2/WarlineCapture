@@ -1,5 +1,14 @@
 # Map Variants — Integration Handoff
 
+> **Preparation update (2026-09-29):** Before integration, follow
+> [HANDOFF_Map_Preparation.md](HANDOFF_Map_Preparation.md). It specifies dense-city-style entity ownership,
+> intact/destroyed cleanup, surfaces, blockers and validation, and corrects the simplified guidance below.
+> In particular, `Reserved` is not a gameplay-blocker flag, bridge anchors need deck heights, and the medium
+> maps' full world bounds do not fit the simulation grid. The current checkout has 18 mission definitions,
+> not 17. See [Integration_Assessment_2026-09-29.md](Integration_Assessment_2026-09-29.md) for mission recommendations.
+> After map preparation, use [HANDOFF_Existing_Mission_Rework.md](HANDOFF_Existing_Mission_Rework.md)
+> for the seven existing-mission migrations and regression of the eleven retained missions.
+
 Status: **visual prototypes, not integrated.** No mission, catalog, Addressables group or test references these
 scenes yet. They were built to break the repetition of the 17 campaign missions, which all frame small windows of
 the same dense-city subscene (`opmap_skirmish_desert_base_01_entity_presentation_dense_city_candidate.unity`).

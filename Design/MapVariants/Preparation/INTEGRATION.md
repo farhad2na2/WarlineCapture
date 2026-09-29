@@ -15,6 +15,7 @@ content outputs. A content-build report alone does not certify loading or moveme
 | RefineryDistrict | `Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset` | `Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/RuntimeBinding.unity` | `Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity` |
 | CityEdgeAirfield | `Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset` | `Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity` | `Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/PreparedEntities.unity` |
 | AshLinePort | `Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Definition.asset` | `Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/RuntimeBinding.unity` | `Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/PreparedEntities.unity` |
+| Frontier | `Assets/Game/GeneratedOperationMaps/Variants/Frontier/Candidate/Definition.asset` | `Assets/Game/Scenes/OperationMaps/Variants/Frontier/RuntimeBinding.unity` | `Assets/Game/Scenes/OperationMaps/Variants/Frontier/PreparedEntities.unity` |
 
 Bind an OperationMapDefinition through the existing OperationMap loading helper. Its source-scene reference
 points to the runtime binding; its navigation metadata points to the entity source. Load one presentation,
@@ -35,18 +36,35 @@ Use the repository wrapper with explicit logs and timeouts, never batchmode or a
 rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-medium-authoring.log -- \
   -quit -executeMethod MapVariantPreparedCandidateTests.RunMediumPreparation
 rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-integration-content.log -- \
-  -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent
+  -quit -executeMethod MapVariantPreparedCandidateTests.RunIntegrationContent
 rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-medium-packed.log -- \
-  -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests \
+  -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes \
   -assemblyNames Game.Tests.MapPreparation.Native \
   -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app \
   -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json \
   -playerHeartbeatTimeout 600 -testResults /private/tmp/map-medium-packed.xml
+rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-frontier-authoring.log -- \
+  -quit -executeMethod MapVariantPreparedCandidateTests.RunFrontierPreparationAndContent
+rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-frontier-packed.log -- \
+  -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests.Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes \
+  -assemblyNames Game.Tests.MapPreparation.Native \
+  -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app \
+  -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json \
+  -playerHeartbeatTimeout 1200 -testResults /private/tmp/map-frontier-packed.xml
+rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-frontier-switch.log -- \
+  -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests.Frontier_SwitchWithExistingDenseCity \
+  -assemblyNames Game.Tests.MapPreparation.Native \
+  -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app \
+  -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json \
+  -playerHeartbeatTimeout 900 -testResults /private/tmp/map-frontier-switch.xml
 ```
 
 Candidate content is built explicitly for StandaloneOSX into `Library/MapVariantPreparedContent/<Map>/`.
 These rebuildable output catalogs contain local machine paths and are not distribution artifacts.
 Acceptance requires the standalone player: Editor SceneSystem resolves Editor artifacts.
+The scoped test-player build packages the medium EntityScenes set for medium and old-map switching,
+or only Frontier's EntityScenes set for Frontier tests. Their catalogs may reuse an EntityScene filename
+with different bytes, so one player build cannot bundle both sets under the same loose filename.
 The dedicated native assembly uses a test-player build define only beneath
 `Build/MapVariantPreparedPlayer/` to exclude legacy suites that use Editor-only APIs. Normal Editor
 regression builds keep those suites enabled. The native map fixtures retain their full assertions.
@@ -88,7 +106,7 @@ No CRC check was disabled and no shared application cache was deleted. Integrato
 versioned catalog and retain bundle CRC checks.
 
 The isolated native test assembly records the actual NUnit tree through TestRunCallback. The test player
-quits after writing that result; the Editor watcher copies it to the requested testResults path and exits
+exits after atomically writing that result; the Editor watcher copies it to the requested testResults path and exits
 with 0 only when every executed test passed and none were skipped. This file channel avoids a lost
 PlayerConnection concealing results. It is scoped to Game.Tests.MapPreparation.Native, StandaloneOSX
 and Build/MapVariantPreparedPlayer; other test runs keep their usual behavior. Full Editor/player logs,

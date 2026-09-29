@@ -47,6 +47,25 @@ namespace Game.Editor.MapVariants
         public static void BuildRefinery() => Build("RefineryDistrict");
         public static void BuildAirfield() => Build("CityEdgeAirfield");
         public static void BuildPort() => Build("AshLinePort");
+        public static void BuildFrontier() { RequireMediumRuntimeProof(); Build("Frontier"); }
+
+        internal static void RequireMediumRuntimeProof()
+        {
+            foreach (string map in MediumMaps)
+            {
+                string root = MapVariantPreparationInventory.ReportRoot + "/" + map + "/Candidate/";
+                var current = JsonUtility.FromJson<PreparedCandidateOutput>(File.ReadAllText(root + "output-manifest.json"));
+                var proof = JsonUtility.FromJson<MediumRuntimeProof>(File.ReadAllText(root + "packed-runtime-evidence.json"));
+                if (proof.result != "Passed" || proof.contentHash != current.semanticHash)
+                    throw new InvalidOperationException("Frontier requires current medium runtime proof: " + map);
+            }
+            var switching = JsonUtility.FromJson<MediumRuntimeProof>(File.ReadAllText(
+                MapVariantPreparationInventory.ReportRoot + "/Evidence/existing-map-switch-result.json"));
+            if (switching.result != "Passed")
+                throw new InvalidOperationException("Frontier requires successful existing-map switching.");
+        }
+
+        [Serializable] private sealed class MediumRuntimeProof { public string result, contentHash; }
 
         internal static void Build(string map)
         {
@@ -73,7 +92,7 @@ namespace Game.Editor.MapVariants
                     sourceToRuntimeTranslation = MapVariantPreparationSchema.Offset(map),
                     runtimePlayableMin = inventory.runtimePlayableMin, playableSize = inventory.playableSize,
                     regenerationMethod = "Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder.Build" +
-                        (map == "RefineryDistrict" ? "Refinery" : map == "CityEdgeAirfield" ? "Airfield" : "Port")
+                        (map == "RefineryDistrict" ? "Refinery" : map == "CityEdgeAirfield" ? "Airfield" : map == "Frontier" ? "Frontier" : "Port")
                 };
                 var rows = inventory.placements.ToDictionary(p => p.stableKey, StringComparer.Ordinal);
                 var keys = b.Placements.ToDictionary(p => p, p => Key(map, p));
@@ -146,7 +165,7 @@ namespace Game.Editor.MapVariants
                 foreach (var owner in owners) owner.DestroyedVisualRoot.transform.localScale = Vector3.zero;
                 var view = MapVariantView.Battle("", b.Playable.center + new Vector2(output.sourceToRuntimeTranslation.x, output.sourceToRuntimeTranslation.z), 0f, 180f);
                 MapVariantRefineryPreparationSlice.Capture(scene, view, report + "/battle-authoring-reference.png");
-                var top = new MapVariantView("Top", new Vector3(b.Playable.center.x, 600f, b.Playable.center.y) + output.sourceToRuntimeTranslation, new Vector3(90f, 0f, 0f), 60f);
+                var top = new MapVariantView("Top", new Vector3(b.Playable.center.x, map == "Frontier" ? 1200f : 600f, b.Playable.center.y) + output.sourceToRuntimeTranslation, new Vector3(90f, 0f, 0f), 60f);
                 MapVariantRefineryPreparationSlice.Capture(scene, top, report + "/top-authoring-reference.png");
                 foreach (var owner in owners) owner.DestroyedVisualRoot.transform.localScale = Vector3.one;
                 MapVariantBuilder.EnsureFolder(Path.GetDirectoryName(ScenePath(map)).Replace('\\', '/'));

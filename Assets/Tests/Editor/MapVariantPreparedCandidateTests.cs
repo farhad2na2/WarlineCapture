@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -16,14 +17,41 @@ using UnityEngine.SceneManagement;
 
 public sealed class MapVariantPreparedCandidateTests
 {
+    public static void RunFrontierPreparationAndContent()
+    {
+        MapVariantPreparedCandidateBuilder.RequireMediumRuntimeProof();
+        // GUI-licensed executeMethod starts with an unsaved Untitled scene;
+        // Unity refuses to add a preparation scene until a saved scene is open.
+        EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
+        MapVariantPreparedCandidateBuilder.Build("Frontier");
+        MapVariantPreparedCandidateBuilder.Build("Frontier");
+        Validate("Frontier");
+        Debug.Log("[MapPreparedValidation] result=Passed map=Frontier deterministicRebuild=Passed fullBake=Passed fullPlayable=2048x1024");
+        MapVariantCandidateRuntimeBuilder.BuildFrontierContent();
+    }
+
+    public static void RunFrontierContent()
+    {
+        EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
+        MapVariantCandidateRuntimeBuilder.BuildFrontierContent();
+        Debug.Log("[MapFrontierContent] result=Passed scope=IsolatedCandidate");
+    }
+
     public static void RunMediumPreparationAndContent()
     {
         RunMediumPreparation();
         MapVariantCandidateRuntimeBuilder.BuildMediumContent();
     }
 
+    public static void RunIntegrationContent()
+    {
+        EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
+        MapVariantCandidateRuntimeBuilder.BuildIntegrationContent();
+    }
+
     public static void RunMediumPreparation()
     {
+        EditorSceneManager.OpenScene("Assets/Game/Scenes/Menu.unity", OpenSceneMode.Single);
         foreach (string map in MapVariantPreparedCandidateBuilder.MediumMaps)
         {
             MapVariantPreparedCandidateBuilder.Build(map);
@@ -59,7 +87,13 @@ public sealed class MapVariantPreparedCandidateTests
             Assert.That(blob.Dimensions, Is.EqualTo(new int2(2048, 1024)));
             Assert.That(MapSurfaceBlobAccess.SurfaceCount(ref blob), Is.EqualTo(2048 * 1024));
             Assert.That(MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref blob, 0, out var outside), Is.True);
-            Assert.That(outside.MovementMask, Is.EqualTo(MapSurfaceMovementMask.None));
+            if (map != "Frontier") Assert.That(outside.MovementMask, Is.EqualTo(MapSurfaceMovementMask.None));
+            else
+            {
+                Assert.That(output.runtimePlayableMin, Is.EqualTo(Vector2.zero));
+                Assert.That(output.playableSize, Is.EqualTo(new Vector2(2048, 1024)));
+                Assert.That(output.sourceToRuntimeTranslation, Is.EqualTo(new Vector3(-176, 0, -176)));
+            }
             foreach (var zone in output.zones.Where(z => z.id is "Anchor_MainBridge" or "Anchor_SouthBridge"))
             {
                 int x = Mathf.FloorToInt(zone.runtimeCenter.x), z = Mathf.FloorToInt(zone.runtimeCenter.z);
@@ -106,7 +140,13 @@ public sealed class MapVariantPreparedCandidateTests
             using var surfaceQuery = em.CreateEntityQuery(typeof(MapSurfaceComponent));
             Assert.That(surfaceQuery.CalculateEntityCount(), Is.EqualTo(1));
             MapVariantPreparationTests.Update(world);
-            foreach (var owner in owners) MapVariantPreparationTests.RequireState(em, owner, false);
+            foreach (var owner in owners)
+            {
+                var expected = output.owners.Single(o => o.stableId == em.GetComponentData<OperationMapBuildingIdentity>(owner).StableId.ToString());
+                Assert.That(math.distance(em.GetComponentData<LocalTransform>(owner).Position, (float3)expected.position),
+                    Is.LessThan(.01f), "Baked owner pose differs from translated manifest");
+                MapVariantPreparationTests.RequireState(em, owner, false);
+            }
             for (int i = 0; i < owners.Length; i += Math.Max(1, owners.Length / 5))
             {
                 var health = em.GetComponentData<UnitHealth>(owners[i]); health.Current = 0; em.SetComponentData(owners[i], health);

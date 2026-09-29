@@ -30,10 +30,13 @@ namespace Game.Editor.MapVariants
                !Path.GetFullPath(player).StartsWith(Path.GetFullPath("Build/MapVariantPreparedPlayer")+Path.DirectorySeparatorChar,StringComparison.Ordinal)) return;
 
             var files=new SortedDictionary<string,string>(StringComparer.Ordinal);
-            foreach(string map in new[]{"RefineryDistrict","CityEdgeAirfield","AshLinePort","Frontier"})
+            string filter=Value("-testFilter") ?? "";
+            bool frontierOnly=filter.Contains("Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes") ||
+                filter.Contains("Frontier_SwitchWithExistingDenseCity");
+            string[] maps=frontierOnly ? new[]{"Frontier"} : MapVariantPreparedCandidateBuilder.MediumMaps;
+            foreach(string map in maps)
             {
                 string reportPath=Path.GetFullPath("Design/MapVariants/Preparation/"+map+"/Candidate/runtime-content.json");
-                if(map=="Frontier" && !File.Exists(reportPath)) continue;
                 if(!File.Exists(reportPath)) throw new FileNotFoundException("Prepared native content report missing",reportPath);
                 var report=JsonUtility.FromJson<Report>(File.ReadAllText(reportPath));
                 if(string.IsNullOrWhiteSpace(report.entitySceneGuid) || string.IsNullOrWhiteSpace(report.entityContentPath))
@@ -57,7 +60,7 @@ namespace Game.Editor.MapVariants
             }
             foreach(var file in files)
                 context.AddAdditionalPathToStreamingAssets(file.Value,file.Key);
-            Debug.Log("[MapVariantNativeScenes] result=Passed files="+files.Count+" scope=PreparedNativePlayer");
+            Debug.Log("[MapVariantNativeScenes] result=Passed files="+files.Count+" scope="+(frontierOnly?"FrontierNativePlayer":"MediumNativePlayer"));
         }
 
         private static byte[] Hash(string path)

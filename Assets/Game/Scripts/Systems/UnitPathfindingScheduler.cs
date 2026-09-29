@@ -168,7 +168,17 @@ namespace Game.Runtime
                             hierarchicalEligibleCount++;
                     }
 
-                    int2 pathGoal = GetSegmentGoalHierarchical(
+                    // A long order to an invalid surface must not start moving
+                    // toward a valid intermediate segment. Let goal assignment
+                    // search near the requested cell first; if it finds none,
+                    // the request remains at its start cell.
+                    bool requestedSurfaceValid = GridUtils.InBounds(requestedGoal, grid.Width, grid.Height) &&
+                        new MapSurfaceTraversalValidation().CanTraverseFootprint(
+                            surfaceContext.Surface, surfaceContext.HasSurfaceData, grid,
+                            requestedGoal, footprintSize, isVehicle);
+                    bool usedHierarchicalWaypoint = false;
+                    bool hierarchicalFallback = false;
+                    int2 pathGoal = requestedSurfaceValid ? GetSegmentGoalHierarchical(
                         grid,
                         walkable.AsNativeArray(),
                         dynamicBlockers,
@@ -181,8 +191,8 @@ namespace Game.Runtime
                         isManualMove,
                         isVehicle,
                         requestFactions[i],
-                        out bool usedHierarchicalWaypoint,
-                        out bool hierarchicalFallback);
+                        out usedHierarchicalWaypoint,
+                        out hierarchicalFallback) : requestedGoal;
                     // The prototype's bases fit inside a single bounded detailed
                     // search. Coarse sector representatives can sit across narrow
                     // ruined alleys that a vehicle cannot traverse, causing the
@@ -237,7 +247,11 @@ namespace Game.Runtime
                         footprintSize,
                         requestFactions[i],
                         startIndex);
-                    if (assignedGoal.Equals(start) && !pathGoal.Equals(start))
+                    if (assignedGoal.Equals(start) && !pathGoal.Equals(start) &&
+                        GridUtils.InBounds(pathGoal, grid.Width, grid.Height) &&
+                        new MapSurfaceTraversalValidation().CanTraverseFootprint(
+                            surfaceContext.Surface, surfaceContext.HasSurfaceData, grid,
+                            pathGoal, footprintSize, isVehicle))
                         assignedGoal = pathGoal;
                     assignedGoals[i] = assignedGoal;
 

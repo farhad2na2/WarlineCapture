@@ -6,10 +6,10 @@ Updated: 2026-09-29. Work is in progress; no map foundation is qualified.
 
 | Map | Status | Authoring, deterministic replay, full bake | Packed runtime and actual routes | Visual and device acceptance |
 |---|---|---|---|---|
-| RefineryDistrict | In progress | Passed: 217 independent neutral building owners | Packed scene loads and all nine gate/depot/ridge unit routes passed in Native15; outside-destination rejection and full reload pending | Authoring reviewed; native and device pending |
-| CityEdgeAirfield | In progress | Passed: 344 independent neutral building owners | Clean content build and ambient/fog parity passed; per-map native routes pending | Authoring reviewed; native and device pending |
-| AshLinePort | In progress | Passed: 232 independent neutral building owners | Clean content build and ambient/fog parity passed; per-map native routes pending | Authoring reviewed; native and device pending |
-| Frontier | In progress | Deterministic inventory exported; conversion supports explicit offset | Full candidate waits for the three medium maps to pass runtime gates | Pending |
+| RefineryDistrict | Prepared candidate; pending device/visual acceptance | Passed: 217 independent neutral building owners | Native21: packed load/reload, damage, nine routes and outside rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
+| CityEdgeAirfield | Prepared candidate; pending device/visual acceptance | Passed: 344 independent neutral building owners | Native21: packed load/reload, damage, nine routes and outside rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
+| AshLinePort | Prepared candidate; pending device/visual acceptance | Passed: 232 independent neutral building owners | Native21: packed load/reload, damage, nine routes, outside and canal rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
+| Frontier | Prepared candidate; pending device/visual acceptance | Passed: full 2048×1024 derivative, deterministic replay, 3,444 independent owners and translated full bake | Native24: packed load/reload, damage, 12 routes and outside rejection passed; Native25: old-map switching passed | Native overview is legible but foggy; device and player review pending |
 
 The first inventory and 24-house fixture stage was committed and pushed as `5154a7717`.
 The historical stage report is retained in `Evidence/inventory-stage-status.md`; its outstanding items
@@ -43,8 +43,9 @@ The Port bridge deck sample is 0.08 m; canal ground is -4 m.
 
 All seven known boundary exceptions retain their source bounds and explicit candidate decisions in the
 output manifest. These are district/location proposals, not accepted mission deployment footprints.
-Spawn/build radius and actual movement remain runtime gates. Frontier conversion exports (-176,0,-176)
-and preserves separate source/runtime coordinates; full translated candidate validation is pending.
+Spawn/build radius remains a later mission integration gate. Actual movement passed the native
+candidate fixtures. Frontier conversion exports (-176,0,-176) and preserves separate source/runtime
+coordinates; full translated candidate validation passed in the authoring and native fixture lanes.
 
 ## Evidence and reproduction
 
@@ -73,7 +74,7 @@ The next definition check required one typed anchor; only a camera reference anc
 The first native bundle build then exposed a target-output path error: it tried the active Android folder
 instead of explicit OSX. The publication transaction now protects the full shared `aa` tree and copies the
 requested OSX catalog. Android output was restored; the failed run's OSX scratch output is retained and
-included in the next preservation snapshot. Pending runtime packing must prove complete source-hierarchy
+included in the next preservation snapshot. The later runtime packing proved complete source-hierarchy
 exclusion, content publication and shared-output preservation. Run 08 built Refinery native content but
 failed the protected production-settings check because temporary groups leaked into the default
 Addressables settings. Its failed log is retained; the verified original settings bytes were restored.
@@ -87,11 +88,16 @@ Editor SceneSystem resolves Editor artifacts. Content builds do not establish ru
 
 ## Visual review and budgets
 
-The three full authoring battle and top-down reference captures were inspected. Industrial landmarks,
-runways/helipads/parked aircraft, canal bridges and cargo yards remain distinct. These are authoring
-captures and do not establish native runtime visuals or player acceptance.
-Native packed battle frames, damage pairs, moving units, reload/unload, existing-map switching and actual
-routes are pending. Desktop profiler samples are diagnostic. Device acceptance must use existing mobile
+The four full authoring and native battle/top-down captures were inspected. Industrial landmarks,
+runways/helipads/parked aircraft, canal bridges and cargo yards remain distinct in the native battle views.
+The original Frontier 1,200 m perspective overview was nearly blank under fog. Native24 uses a 600 m
+orthographic full-map overview: all sectors are visible, but contrast remains low. Native damage pairs,
+moving units and bridge captures exist; player visual acceptance remains pending.
+Desktop p95 idle/moving frame samples (ms) were Refinery 16.99/23.37, Airfield 16.54/19.49,
+Port 26.34/29.45 and Frontier 34.00/51.50. These are diagnostic samples from a macOS native test,
+not Android budget evidence. Frontier's 76,700 render entities and elevated moving-frame time make
+sector culling or chunked residency the first performance investigation if the target device misses budget.
+Device acceptance must use existing mobile
 budgets: baseline Android p95 <33 ms; recommended p95 <25 ms over the prescribed steady ten-minute run.
 No passing device measurements or normal-input mission evidence has been claimed.
 
@@ -107,7 +113,8 @@ full-map Editor and PlayMode checks, zero-active-vehicle readiness support and s
 Rollback reverts only these owned code changes and removes their candidate derivatives; never reset or
 clean the shared checkout. Production bindings require no rollback switch because they were not changed.
 
-Continue packed/native/movement and existing-map switching gates before full Frontier generation.
+The packed/native/movement and existing-map switching gates passed before and after full Frontier generation.
+Next qualify the exact candidates through player visual review and target-device measurements.
 Mission migration must consume accepted physical source manifests and separately author mission anchors,
 objectives and complete normal-input mission acceptance. Prepared candidates do not qualify missions.
 
@@ -116,7 +123,7 @@ objectives and complete normal-input mission acceptance. Prepared candidates do 
 Run 12 passed clean transactional content builds for all three maps and the existing map.
 Run 13 preserved the entity archives and repacked the bindings with matching prototype ambient/fog
 settings and explicit metadata-based packed ownership. The standalone ARM64/Metal/Mono validation
-player built in Native03, but runtime catalog loading failed against stale cached catalog bytes. Its runtime pass markers and NUnit results remain pending. Editor runs cannot
+player built in Native03, but runtime catalog loading failed against stale cached catalog bytes. That run's runtime pass markers and NUnit results were absent; later native runs passed. Editor runs cannot
 certify the packed entity archives because Editor SceneSystem resolves Editor artifacts.
 
 Native fixture settings and build identity are recorded in `Evidence/native-test-settings.json` and
@@ -128,15 +135,32 @@ Native03 built successfully, but loaded an older cached catalog while startup ca
 Published bundle/catalog CRCs agree. The cache diagnosis and failed full logs are retained. The runner then
 lost PlayerConnection and timed out; the user explicitly authorized recovery of only this failed Editor/player.
 Native04 enables current catalog hash checks, separates providers by published hash, adds native top-down/
-bridge captures and writes real NUnit results through a local callback. Runtime gates remain pending.
+bridge captures and writes real NUnit results through a local callback. Later native gates passed.
 
 Native15 packaged the loose EntityScenes files and reached all nine Refinery unit routes, but outside-playable
 destination rejection changed the test unit's grid cell. Its full native NUnit XML is failed; the following
 switching test inherited the failed map scene and produced Entities Graphics errors. Isolated native switching
-passed all seven variant/existing loads and unloads in Native08 and again in Native16. Native16 exited 0 with
-1/1 NUnit passed and no new macOS crash report. Earlier players generated `SIGSEGV` reports in Unity's
-`AssetBundleAnalytics::UnregisterAnalyticsEvents` on `Application.Quit`. The scoped native test callback now
-atomically writes actual NUnit XML and exits the disposable test player without entering that crashing native
-shutdown path; the Editor watcher still requires every test to pass. The crash and failed evidence are retained.
+passed all seven variant/existing loads and unloads in Native08, Native16 and Native17. Native16's wrapper
+exited 0 with 1/1 NUnit passed, but its player remained stuck inside Mono's `Environment.Exit`; the scoped
+recovery terminated that verified orphan. Earlier players generated `SIGSEGV` reports in Unity's
+`AssetBundleAnalytics::UnregisterAnalyticsEvents` on `Application.Quit`. Native17 uses macOS `_exit` after
+atomically writing actual NUnit XML. It passed 1/1, the player disappeared, and no new crash report appeared.
+Native18 failed the outside destination assertion after its unit moved one cell. Crash reports from the early
+failing runs remain in the evidence; no new Warline report has appeared after 19:44 local. The Editor watcher
+still requires every test to pass. Crash and failed evidence are retained.
+Native20 traced the invalid outside order to a two-node path and 16-cell move. Its callback then failed replacing
+an existing XML result and left the runner waiting; the scoped failed Editor/player were recovered. Native21 fixed
+both issues: the requested surface is checked before long-path segmentation, and the callback atomically replaces
+prior XML. Native21 passed all 27 medium routes, four invalid destinations, full packed load/reload and damage with
+wrapper exit 0, real NUnit 1/1 passed, a clean player exit and no new crash report. The Native21 logs/XML are retained.
+Frontier authoring run 02 passed deterministic replay and full bake; its content phase failed a planning-camera
+bounds check. Content run 03 passed after the camera was placed inside bounds. Native22 failed at test-player
+build because Frontier and medium EntityScenes reused a filename with different bytes; the scoped player now
+packages only the scene set for the exact native test filter. Native23 passed the first full-map runtime gate.
+Content run 04 and Native24 passed with the lower planning camera and orthographic overview. Native24 passed
+all 12 routes including three 1.83 km full-width traverses, one outside-grid rejection, packed load/reload
+and damage, wrapper exit 0 and real NUnit 1/1 passed. Native25 passed Frontier → existing dense city →
+Frontier switching across three loads and unloads, with wrapper exit 0 and real NUnit 1/1 passed.
+Failed logs remain retained.
 The launcher-compound/substation traversal remains an unresolved route finding; the defined gate, depot-road,
-and ridge-zone fixtures passed in Native15. Full medium reload, all-map route, and Frontier gates remain pending.
+and ridge-zone fixtures passed in Native21. It is not part of the declared depot-road/ridge route gate.

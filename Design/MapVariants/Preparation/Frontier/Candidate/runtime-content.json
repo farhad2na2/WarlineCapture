@@ -1,0 +1,23 @@
+{
+    "unitFixtureSceneGuid": "1035720b7b9c8426999ddbdf7cd40bce",
+    "variant": "Frontier",
+    "mapId": "opmap.skirmish.frontier_prepared",
+    "semanticHash": "e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "d6338fc481d5340b59f36572e3473656",
+    "entityContentPath": "Library/MapVariantPreparedContent/Frontier/Entities",
+    "entityCatalogPath": "Library/MapVariantPreparedContent/Frontier/Entities/ContentArchives/archive_dependencies.bin",
+    "entityCatalogHash": "be1259cc004d301b1aa16ff025b9a63ef76ae4783d5da78f0242f58d343894b8",
+    "definitionPath": "Assets/Game/GeneratedOperationMaps/Variants/Frontier/Candidate/Definition.asset",
+    "definitionGuid": "e9d53c6dc9b7e429db15c520ce338e3a",
+    "bindingPath": "Assets/Game/Scenes/OperationMaps/Variants/Frontier/RuntimeBinding.unity",
+    "bindingGuid": "2ab3a43bbddc348a7bf50c265bd41c4d",
+    "status": "Content built; packed load/unload, graphics, actual movement and device performance pending",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/Frontier/Addressables/catalog.bin",
+    "addressablesCatalogHash": "3bd468c1effb6880db465b3fc5db188675bd500b19d6ef8797962012cc5d9a42",
+    "definitionAddress": "map-variant-candidate/Frontier/definition",
+    "entityFileSetHash": "75aa7de1bb4cd7e4b22adbec050ecdf0843312b33f35a90461171f38cc53f0b5",
+    "definitionHash": "aaaa53263cfd17e032b01db9c5bc65492df0ab11f81bb7d9a03d5533e64df167",
+    "bindingHash": "e2d3acbd08c99e51536f11af061158f4d98231b8aeef1f2b1ff56828db9ac428",
+    "entityContentBytes": 144372512
+}

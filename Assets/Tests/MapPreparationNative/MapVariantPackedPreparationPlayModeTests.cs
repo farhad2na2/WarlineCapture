@@ -30,6 +30,14 @@ using Object = UnityEngine.Object;
 
 public sealed class MapVariantPackedPreparationPlayModeTests
 {
+    [UnityTest, Timeout(2400000)]
+    public IEnumerator Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes()
+    {
+        Assert.That(Application.isEditor, Is.False, "Frontier acceptance requires the StandaloneOSX test player.");
+        yield return Run("Frontier");
+        Debug.Log("[MapVariantFrontierRuntime] result=Passed fullPlayable=2048x1024 scope=DesktopPackedRuntime");
+    }
+
     [UnityTest, Timeout(850000)]
     public IEnumerator MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes()
     {
@@ -37,14 +45,25 @@ public sealed class MapVariantPackedPreparationPlayModeTests
         foreach (string map in new[] { "RefineryDistrict", "CityEdgeAirfield", "AshLinePort" }) yield return Run(map);
         Debug.Log("[MapVariantPackedRuntime] result=Passed maps=3 reload=Passed independentDamage=Passed actualUnits=Passed scope=DesktopPackedRuntime");
     }
-        [UnityTest, Timeout(600000)]
+    [UnityTest, Timeout(600000)]
     public IEnumerator PreparedVariants_SwitchWithExistingDenseCity()
+        => SwitchWithExistingDenseCity(
+            new[]{"RefineryDistrict","ExistingDenseCity","CityEdgeAirfield","ExistingDenseCity","AshLinePort","ExistingDenseCity","RefineryDistrict"},
+            "existing-map-switch-result.json", "MapVariantSwitch");
+
+    [UnityTest, Timeout(600000)]
+    public IEnumerator Frontier_SwitchWithExistingDenseCity()
+        => SwitchWithExistingDenseCity(
+            new[]{"Frontier","ExistingDenseCity","Frontier"},
+            "frontier-switch-result.json", "MapVariantFrontierSwitch");
+
+    private static IEnumerator SwitchWithExistingDenseCity(string[] maps, string resultFile, string marker)
     {
         Assert.That(Application.isEditor,Is.False,"Packed switching requires the StandaloneOSX test player.");
         var world = World.DefaultGameObjectInjectionWorld;
         Assert.That(world,Is.Not.Null);
         var em = world.EntityManager;
-        foreach (string map in new[]{"RefineryDistrict","ExistingDenseCity","CityEdgeAirfield","ExistingDenseCity","AshLinePort","ExistingDenseCity","RefineryDistrict"})
+        foreach (string map in maps)
         {
             string path = "Design/MapVariants/Preparation/" + map + (map == "ExistingDenseCity" ? "/runtime-content.json" : "/Candidate/runtime-content.json");
             var packed = JsonUtility.FromJson<Packed>(File.ReadAllText(Resolve(path)));
@@ -106,8 +125,9 @@ public sealed class MapVariantPackedPreparationPlayModeTests
                 RuntimeContentManager.Cleanup(out _);
             }
         }
-        File.WriteAllText(Resolve("Design/MapVariants/Preparation/Evidence/existing-map-switch-result.json"), "{\"result\":\"Passed\",\"scope\":\"StandaloneOSX native packed switching\",\"loads\":7}");
-        Debug.Log("[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7");
+        File.WriteAllText(Resolve("Design/MapVariants/Preparation/Evidence/"+resultFile),
+            "{\"result\":\"Passed\",\"scope\":\"StandaloneOSX native packed switching\",\"loads\":"+maps.Length+"}");
+        Debug.Log("["+marker+"] result=Passed variantToExisting=Passed existingToVariant=Passed loads="+maps.Length);
     }
 
     private static IEnumerator Run(string map)
@@ -218,7 +238,7 @@ public sealed class MapVariantPackedPreparationPlayModeTests
                             yield return null; yield return null;
                         }
                     }
-                    yield return RejectInvalidDestination(em, candidate, units.InfantryPrefab, "OutsidePlayable", new int2(0,0), result);
+                    yield return RejectInvalidDestination(em, candidate, units.InfantryPrefab, "OutsidePlayable", map == "Frontier" ? new int2(-50,-50) : new int2(0,0), result);
                     if(map == "AshLinePort") yield return RejectInvalidDestination(em,candidate,units.InfantryPrefab,"CanalWithoutCrossing",new int2(680,445),result);
                     Time.timeScale = originalScale; em.SetComponentData(gameplay, originalGameplay);
                     SceneSystem.UnloadScene(world.Unmanaged, fixtureScene, SceneSystem.UnloadParameters.DestroyMetaEntities);
@@ -288,6 +308,13 @@ public sealed class MapVariantPackedPreparationPlayModeTests
             yield return ("HelipadApproach", new int2(730,600), new int2(780,648));
             yield return ("HospitalAccess", new int2(780,648), new int2(875,650));
         }
+        else if(map == "Frontier")
+        {
+            yield return ("CanalBridge",new int2(324,529),new int2(404,529));
+            yield return ("RefineryAccess",new int2(874,529),new int2(1124,529));
+            yield return ("AirfieldAccess",new int2(1594,529),new int2(1834,464));
+            yield return ("FullWidthHighway",new int2(144,529),new int2(1974,529));
+        }
         else
         {
             yield return ("MainBridge", new int2(640,505), new int2(720,505));
@@ -323,7 +350,7 @@ public sealed class MapVariantPackedPreparationPlayModeTests
             using var movingMain = ProfilerRecorder.StartNew(ProfilerCategory.Internal,"Main Thread");
             using var movingRender = ProfilerRecorder.StartNew(ProfilerCategory.Internal,"Render Thread");
             using var movingDraws = ProfilerRecorder.StartNew(ProfilerCategory.Render,"Draw Calls Count");
-            float started = Time.realtimeSinceStartup, deadline = started + 90;
+            float started = Time.realtimeSinceStartup, deadline = started + (candidate.playableSize.x > 600 ? 600 : 90);
             float distance = 0; float3 previous = transform.Position; bool captured = false;
             while (Time.realtimeSinceStartup < deadline && em.Exists(unit))
             {
@@ -350,18 +377,23 @@ public sealed class MapVariantPackedPreparationPlayModeTests
         using var gridQuery=em.CreateEntityQuery(typeof(GridConfig),typeof(GridWalkable));
         using var surfaceQuery=em.CreateEntityQuery(typeof(MapSurfaceComponent));
         Entity grid=gridQuery.GetSingletonEntity(); var surface=surfaceQuery.GetSingleton<MapSurfaceComponent>();
+        bool goalInGrid=goal.x>=0 && goal.y>=0 && goal.x<2048 && goal.y<1024;
         // Outside-playable exclusion is represented by a baked static blocker;
         // water is excluded by the surface mask. GridWalkable alone is not the
         // full movement contract for either case.
-        if(name=="OutsidePlayable")
+        if(name=="OutsidePlayable" && goalInGrid)
         {
             using var outside=em.CreateEntityQuery(typeof(StaticGridBlocker),typeof(UnitGrid),typeof(GridBlockerSize));
             using var cells=outside.ToComponentDataArray<UnitGrid>(Allocator.Temp);
             using var sizes=outside.ToComponentDataArray<GridBlockerSize>(Allocator.Temp);
             Assert.That(Enumerable.Range(0,cells.Length).Any(i=>goal.x>=cells[i].Cell.x && goal.x<cells[i].Cell.x+sizes[i].Size.x && goal.y>=cells[i].Cell.y && goal.y<cells[i].Cell.y+sizes[i].Size.y),Is.True,"Outside destination needs a baked blocker");
         }
-        Assert.That(MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref surface.SurfaceBlob.Value,goal.y*2048+goal.x,out var invalid),Is.True);
-        Assert.That((invalid.MovementMask & MapSurfaceMovementMask.Infantry)==0,Is.True);
+        if(goalInGrid)
+        {
+            Assert.That(MapSurfaceBlobAccess.TryGetSurfaceByIndex(ref surface.SurfaceBlob.Value,goal.y*2048+goal.x,out var invalid),Is.True);
+            Assert.That((invalid.MovementMask & MapSurfaceMovementMask.Infantry)==0,Is.True);
+        }
+        else Assert.That(name,Is.EqualTo("OutsidePlayable"));
         int2 requestedStart=new((int)candidate.runtimePlayableMin.x+40,(int)candidate.runtimePlayableMin.y+45);
         var footprint=em.GetComponentData<UnitFootprint>(prefab).Size;
         int2 start=ClearApproach(em,grid,surface,requestedStart,footprint,candidate,MapSurfaceMovementMask.Infantry);
@@ -373,19 +405,30 @@ public sealed class MapVariantPackedPreparationPlayModeTests
             em.SetComponentData(unit,new UnitGrid{Cell=start});
             var behavior=em.GetComponentData<UnitMovementBehavior>(unit);behavior.AllowIdleWander=0;em.SetComponentData(unit,behavior);
             if(em.HasComponent<Faction>(unit))em.SetComponentData(unit,new Faction{Id=1});
+            // Prefabs can carry movement orders from authoring. Start this
+            // invalid-goal check with an idle unit, as a player-issued order would.
+            Assert.That(UnitMoveOrderRequestSystem.EnqueueAndProcessClearMovementOrder(em,unit),Is.True);
             // Let the freshly instantiated prefab settle onto its grid cell
             // before measuring the effect of the invalid order itself.
             yield return null; yield return null;
             transform=em.GetComponentData<LocalTransform>(unit);
             int2 settledCell=em.GetComponentData<UnitGrid>(unit).Cell;
+            Assert.That(settledCell,Is.EqualTo(start),"Invalid-order fixture moved before the order; prefab contains active movement state");
             UnitMoveOrderRequestSystem.EnqueueAndProcessImmediateMoveOrder(em,unit,goal);
+            float maxDisplacement=0;
+            int maxPathLength=0;
+            int2 finalCell=settledCell;
             for(int frame=0;frame<60;frame++)
             {
                 yield return null;
-                Assert.That(em.GetComponentData<UnitGrid>(unit).Cell,Is.EqualTo(settledCell),"Invalid destination changed occupied grid cell; requestedStart="+start+" settled="+settledCell+" goal="+goal+" frame="+frame);
-                Assert.That(math.distance(em.GetComponentData<LocalTransform>(unit).Position.xz,transform.Position.xz),Is.LessThan(1f),"Invalid destination moved beyond its starting cell");
+                finalCell=em.GetComponentData<UnitGrid>(unit).Cell;
+                maxDisplacement=math.max(maxDisplacement,math.distance(em.GetComponentData<LocalTransform>(unit).Position.xz,transform.Position.xz));
+                if(em.HasComponent<UnitPathRange>(unit))maxPathLength=math.max(maxPathLength,em.GetComponentData<UnitPathRange>(unit).Length);
             }
-            if(em.HasComponent<UnitPathRange>(unit))Assert.That(em.GetComponentData<UnitPathRange>(unit).Length,Is.LessThanOrEqualTo(1));
+            Debug.Log("[MapPreparationInvalidDestinationTrace] case="+name+" start="+settledCell+" goal="+goal+" final="+finalCell+" maxDisplacement="+maxDisplacement+" maxPathLength="+maxPathLength);
+            Assert.That(finalCell,Is.EqualTo(settledCell),"Invalid destination moved unit; goal="+goal+" maxDisplacement="+maxDisplacement+" maxPathLength="+maxPathLength);
+            Assert.That(maxDisplacement,Is.LessThan(1f),"Invalid destination moved beyond starting cell");
+            Assert.That(maxPathLength,Is.LessThanOrEqualTo(1),"Invalid destination produced a usable path");
             result.rejectedDestinations.Add(name+": normal order acknowledged; invalid destination retains start cell and yields no usable path");
             Debug.Log("[MapPreparationInvalidDestination] result=Passed case="+name+" path=Rejected");
         }
@@ -447,10 +490,15 @@ public sealed class MapVariantPackedPreparationPlayModeTests
     private static void Capture(Candidate c, string path, float3? focus = null, bool topDown=false)
     {
         float3 target = focus ?? new float3(c.runtimePlayableMin.x + c.playableSize.x * .5f, 0, c.runtimePlayableMin.y + c.playableSize.y * .5f);
-        float height = topDown ? (c.playableSize.x>600 ? 1200 : 600) : focus.HasValue ? 64 : 180;
+        float height = topDown ? 600 : focus.HasValue ? 64 : 180;
         var go = new GameObject("PreparedRuntimeEvidenceCamera", typeof(Camera)); var cam = go.GetComponent<Camera>();
         cam.transform.SetPositionAndRotation(new Vector3(target.x, target.y + height, topDown ? target.z : target.z - height / Mathf.Tan(51.6f * Mathf.Deg2Rad)), Quaternion.Euler(topDown ? 90 : 51.6f,0,0));
-        cam.fieldOfView = topDown ? 60 : 55; cam.farClipPlane = 4000;
+        cam.fieldOfView = 55; cam.farClipPlane = 4000;
+        if(topDown)
+        {
+            cam.orthographic = true;
+            cam.orthographicSize = Mathf.Max(c.playableSize.y * .5f, c.playableSize.x / (2f * (1920f / 1080f))) * 1.05f;
+        }
         var rt = new RenderTexture(1920,1080,24); var pixels = new Texture2D(1920,1080,TextureFormat.RGB24,false); var old = RenderTexture.active;
         try { cam.targetTexture = rt; cam.Render(); RenderTexture.active = rt; pixels.ReadPixels(new Rect(0,0,1920,1080),0,0); pixels.Apply(); File.WriteAllBytes(path,pixels.EncodeToPNG()); }
         finally { RenderTexture.active = old; Object.Destroy(go); Object.Destroy(rt); Object.Destroy(pixels); }

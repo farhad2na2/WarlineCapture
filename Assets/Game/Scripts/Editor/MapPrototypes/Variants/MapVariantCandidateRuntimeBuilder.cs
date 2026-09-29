@@ -37,6 +37,12 @@ namespace Game.Editor.MapVariants
             foreach (string map in MapVariantPreparedCandidateBuilder.MediumMaps) Build(map);
             Debug.Log("[MapVariantPackedContent] result=Passed maps=3 productionSettings=Unchanged scope=ContentBuildOnly");
         }
+        public static void BuildFrontierContent()
+        {
+            MapVariantPreparedCandidateBuilder.RequireMediumRuntimeProof();
+            Build("Frontier");
+            BuildFrontierPrototypeReference();
+        }
         public static void BuildIntegrationContent() { BuildMediumContent(); BuildComparisonContentAndReferences(); }
         public static void BuildExistingMapComparison()
         {
@@ -78,10 +84,16 @@ namespace Game.Editor.MapVariants
             BuildMatchingPrototypeReferences(); BuildExistingMapComparison();
         }
         public static void BuildMatchingPrototypeReferences()
+            => BuildPrototypeReferences(MapVariantPreparedCandidateBuilder.MediumMaps);
+
+        public static void BuildFrontierPrototypeReference()
+            => BuildPrototypeReferences(new[] { "Frontier" });
+
+        private static void BuildPrototypeReferences(string[] maps)
         {
             var protectedHashes = MapVariantPreparationInventory.ProtectedHashes();
             Scene previous = SceneManager.GetActiveScene();
-            foreach(string map in MapVariantPreparedCandidateBuilder.MediumMaps)
+            foreach(string map in maps)
             {
                 Scene source = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);
                 try
@@ -90,7 +102,7 @@ namespace Game.Editor.MapVariants
                     var b = MapVariantPreparedCandidateBuilder.BuildSource(map);
                     string report = MapVariantPreparationInventory.ReportRoot + "/" + map + "/Candidate";
                     MapVariantRefineryPreparationSlice.Capture(source,MapVariantView.Battle("",b.Playable.center,0,180), report+"/battle-prototype-reference.png");
-                    MapVariantRefineryPreparationSlice.Capture(source,new MapVariantView("Top",new Vector3(b.Playable.center.x,600,b.Playable.center.y),new Vector3(90,0,0),60),report+"/top-prototype-reference.png");
+                    MapVariantRefineryPreparationSlice.Capture(source,new MapVariantView("Top",new Vector3(b.Playable.center.x,map == "Frontier" ? 1200 : 600,b.Playable.center.y),new Vector3(90,0,0),60),report+"/top-prototype-reference.png");
                 }
                 finally
                 {
@@ -102,7 +114,7 @@ namespace Game.Editor.MapVariants
                 }
             }
             MapVariantPreparationInventory.RequireProtected(protectedHashes);
-            Debug.Log("[MapVariantPrototypeReferences] result=Passed maps=3 protectedSources=Unchanged camera=Matched");
+            Debug.Log("[MapVariantPrototypeReferences] result=Passed maps="+maps.Length+" protectedSources=Unchanged camera=Matched");
         }
 
         public static void RefreshBindingEnvironmentsAndAddressables()
@@ -199,7 +211,8 @@ namespace Game.Editor.MapVariants
                 Set(definition, "cameras", new[]
                 {
                     new OperationMapCameraConfig("camera.skirmish.battle", view.Position, view.Euler, false, view.FieldOfView, 0, true),
-                    new OperationMapCameraConfig("camera.skirmish.planning", new Vector3(center.x, 600, center.y), new Vector3(90,0,0), true, 60, 220, true)
+                    new OperationMapCameraConfig("camera.skirmish.planning", new Vector3(center.x, 600, center.y), new Vector3(90,0,0), true, 60,
+                        Mathf.Max(220, o.playableSize.y * .55f, o.playableSize.x / (2f * (1920f / 1080f)) * 1.05f), true)
                 });
                 Set(definition, "planningCameraId", "camera.skirmish.planning"); Set(definition, "battleCameraId", "camera.skirmish.battle");
                 Set(definition, "minimap", new OperationMapMinimapConfig("minimap.skirmish.main", new Vector3(min.x,0,min.z), o.playableSize, 0));

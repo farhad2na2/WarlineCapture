@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using NUnit.Framework.Interfaces;
 using UnityEngine;
 using UnityEngine.TestRunner;
@@ -10,6 +11,9 @@ using UnityEngine.Scripting;
 [Preserve]
 public sealed class MapPreparationNativeResultCallback : ITestRunCallback
 {
+    [DllImport("libSystem.B.dylib", EntryPoint = "_exit")]
+    private static extern void ExitImmediately(int status);
+
     private string rootId;
     private string root;
     public void RunStarted(ITest tests)
@@ -35,12 +39,16 @@ public sealed class MapPreparationNativeResultCallback : ITestRunCallback
         run.SetAttribute("total",(result.PassCount+result.FailCount+result.SkipCount+result.InconclusiveCount).ToString());run.SetAttribute("passed",result.PassCount.ToString());run.SetAttribute("failed",result.FailCount.ToString());run.SetAttribute("skipped",result.SkipCount.ToString());
         var node=new System.Xml.XmlDocument();node.LoadXml(result.ToXml(true).OuterXml);run.AppendChild(document.ImportNode(node.DocumentElement,true));
         string output=Path.Combine(root,"Library/MapVariantNativeRun/result.xml");
-        Directory.CreateDirectory(Path.GetDirectoryName(output));document.Save(output+".tmp");File.Move(output+".tmp",output);
+        Directory.CreateDirectory(Path.GetDirectoryName(output));
+        string temporary=output+".tmp";
+        document.Save(temporary);
+        if(File.Exists(output)) File.Replace(temporary,output,null);
+        else File.Move(temporary,output);
         Debug.Log("[MapPreparationNativeNUnit] result="+result.ResultState.Status+" tests="+(result.PassCount+result.FailCount+result.SkipCount+result.InconclusiveCount)+" passed="+result.PassCount+" failed="+result.FailCount);
-        // The scoped macOS test player crashes in Unity's native
-        // AssetBundleAnalytics shutdown after Application.Quit. NUnit has
-        // already been written atomically; the Editor watcher checks that XML.
-        // Exit this disposable test process without the crashing Unity quit path.
-        Environment.Exit(result.FailCount==0 && result.PassCount==(result.PassCount+result.FailCount+result.SkipCount+result.InconclusiveCount) ? 0 : 2);
+        // This disposable macOS test player crashes in Unity's native
+        // AssetBundleAnalytics shutdown on Application.Quit, while Mono's
+        // Environment.Exit hangs trying to suspend its threads. NUnit is
+        // already written atomically for the Editor watcher to verify.
+        ExitImmediately(result.FailCount==0 && result.PassCount==(result.PassCount+result.FailCount+result.SkipCount+result.InconclusiveCount) ? 0 : 2);
     }
 }

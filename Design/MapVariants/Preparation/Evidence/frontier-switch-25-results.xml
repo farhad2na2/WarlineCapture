@@ -1,0 +1,46 @@
+<test-run result="Passed" total="1" passed="1" failed="0" skipped="0">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-29 18:51:52Z" end-time="2026-09-29 18:51:57Z" duration="4.628668" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1006" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-29 18:51:52Z" end-time="2026-09-29 18:51:57Z" duration="4.610200" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="70301" />
+        <property name="_APPDOMAIN" value="Unity Root Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <output><![CDATA[[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+]]></output>
+      <test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-09-29 18:51:52Z" end-time="2026-09-29 18:51:57Z" duration="4.604899" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+]]></output>
+        <test-case id="1005" name="Frontier_SwitchWithExistingDenseCity" fullname="MapVariantPackedPreparationPlayModeTests.Frontier_SwitchWithExistingDenseCity" methodname="Frontier_SwitchWithExistingDenseCity" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="342475098" result="Passed" start-time="2026-09-29 18:51:52Z" end-time="2026-09-29 18:51:57Z" duration="4.586087" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="600000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.Frontier_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=Frontier load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=Frontier load=Passed unload=Passed grids=Single
+[MapVariantFrontierSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=3
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.Frontier_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

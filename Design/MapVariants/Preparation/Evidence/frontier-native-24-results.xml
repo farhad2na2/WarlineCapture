@@ -1,0 +1,65 @@
+<test-run result="Passed" total="1" passed="1" failed="0" skipped="0">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-29 18:43:07Z" end-time="2026-09-29 18:48:25Z" duration="317.769864" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <test-suite type="Assembly" id="1005" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-29 18:43:07Z" end-time="2026-09-29 18:48:25Z" duration="317.753222" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="69044" />
+        <property name="_APPDOMAIN" value="Unity Root Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <output><![CDATA[[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+]]></output>
+      <test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-09-29 18:43:07Z" end-time="2026-09-29 18:48:25Z" duration="317.749801" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+]]></output>
+        <test-case id="1002" name="Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes" fullname="MapVariantPackedPreparationPlayModeTests.Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes" methodname="Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="1131378425" result="Passed" start-time="2026-09-29 18:43:07Z" end-time="2026-09-29 18:48:25Z" duration="317.737198" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="2400000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=CanalBridge unit=Infantry seconds=4.19 distance=77.7
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=CanalBridge unit=Hauler seconds=2.71 distance=77.8
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=CanalBridge unit=Armor seconds=2.59 distance=78.2
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=RefineryAccess unit=Infantry seconds=13.00 distance=248.1
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=RefineryAccess unit=Hauler seconds=8.18 distance=248.0
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=RefineryAccess unit=Armor seconds=7.65 distance=248.3
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=AirfieldAccess unit=Infantry seconds=14.00 distance=265.9
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=AirfieldAccess unit=Hauler seconds=9.41 distance=269.3
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=AirfieldAccess unit=Armor seconds=8.92 distance=269.5
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=FullWidthHighway unit=Infantry seconds=95.65 distance=1828.3
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=FullWidthHighway unit=Hauler seconds=58.62 distance=1828.4
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf route=FullWidthHighway unit=Armor seconds=54.90 distance=1828.9
+[MapPreparationInvalidDestinationTrace] case=OutsidePlayable start=int2(40, 45) goal=int2(-50, -50) final=int2(40, 45) maxDisplacement=0 maxPathLength=0
+[MapPreparationInvalidDestination] result=Passed case=OutsidePlayable path=Rejected
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantPackedRuntime] result=Passed map=Frontier owners=3444 reload=Passed actualUnitRoutes=12 contentHash=e2d40d5eea9a0b81a1500cd14040329fc638b7909249ddf095ea3e5d9c6d54cf
+[MapVariantFrontierRuntime] result=Passed fullPlayable=2048x1024 scope=DesktopPackedRuntime
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.Frontier_PackedFullMapLoadReloadDamageAndActualUnitRoutes result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

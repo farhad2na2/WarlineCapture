@@ -2,7 +2,7 @@
 
 Date: 2026-09-29
 
-Status: **execution in progress. Inventories and three complete authoring candidates have passed deterministic replay, surfaces, baking and independent destruction checks. Packed runtime, routes and acceptance gates are tracked in [Preparation/STATUS.md](Preparation/STATUS.md). No map foundation is qualified yet.**
+Status: **four isolated prepared candidates have passed deterministic authoring, full bake, packed native runtime, actual unit routes and invalid-goal checks. Medium and Frontier old-map switching passed separately. Native overview contrast, target-device performance and player acceptance remain open; no map foundation is qualified yet. Current hashes and evidence are tracked in [Preparation/STATUS.md](Preparation/STATUS.md) and [Preparation/prepared-source-manifest.json](Preparation/prepared-source-manifest.json).**
 
 ## Objective and authorization boundary
 

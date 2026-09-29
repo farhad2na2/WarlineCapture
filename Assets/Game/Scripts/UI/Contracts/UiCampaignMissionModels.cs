@@ -100,7 +100,8 @@ namespace Game.UI.Contracts
     {
         public UiCampaignOperationsModel(
             uint version, uint catalogSourceVersion, uint progressSourceVersion,
-            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed, uint availableMissionMask = 0, uint completedMissionMask = 0)
+            UiCampaignMissionModel selectedMission, string nextMissionId, bool nextMissionRevealed, uint availableMissionMask = 0, uint completedMissionMask = 0,
+            uint requiredMissionMask = 0, uint readyMissionMask = 0, bool fullCampaignRegistered = false)
         {
             Version = version;
             CatalogSourceVersion = catalogSourceVersion;
@@ -110,6 +111,9 @@ namespace Game.UI.Contracts
             NextMissionRevealed = nextMissionRevealed;
             AvailableMissionMask = availableMissionMask;
             CompletedMissionMask = completedMissionMask;
+            RequiredMissionMask = requiredMissionMask;
+            ReadyMissionMask = readyMissionMask;
+            FullCampaignRegistered = fullCampaignRegistered;
         }
 
         public uint Version { get; }
@@ -120,6 +124,12 @@ namespace Game.UI.Contracts
         public bool NextMissionRevealed { get; }
         public uint AvailableMissionMask { get; }
         public uint CompletedMissionMask { get; }
+        public uint RequiredMissionMask { get; }
+        public uint ReadyMissionMask { get; }
+        public bool FullCampaignRegistered { get; }
+        public bool AllRequiredMissionsCompleted => RequiredMissionMask != 0 &&
+            (CompletedMissionMask & RequiredMissionMask) == RequiredMissionMask &&
+            (ReadyMissionMask & RequiredMissionMask) == RequiredMissionMask && !SelectedMission.PendingResume;
         public bool IsValid => Version != 0 && !string.IsNullOrWhiteSpace(SelectedMission.MissionId);
     }
 

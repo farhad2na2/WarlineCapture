@@ -28,6 +28,9 @@ namespace Game.UI.Shell.Contracts.Ecs
         public byte NextMissionRevealed;
         public uint AvailableMissionMask;
         public uint CompletedMissionMask;
+        public uint RequiredMissionMask;
+        public uint ReadyMissionMask;
+        public byte FullCampaignRegistered;
     }
 
     public struct UiMissionObjectiveProjectionData

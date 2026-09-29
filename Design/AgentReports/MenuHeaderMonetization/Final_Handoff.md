@@ -1,6 +1,6 @@
 # Menu/header implementation handoff
 
-Updated 2026-09-29. **Partial implementation; full handoff acceptance remains open.** Changes are uncommitted in the shared checkout. Concurrent mission, Operations, portrait and validation work is preserved. Baseline for this task: d3d4c5824.
+Updated 2026-09-29. **Partial implementation; full handoff acceptance remains open.** Menu revisions are committed separately from concurrent mission, Operations, portrait and validation work. Baseline for this task: d3d4c5824.
 
 ## Implemented
 
@@ -63,4 +63,6 @@ M05 candidate audit: candidate-before-m05-input-01.json and candidate-after-m05-
 
 ## 2026-09-29 panel/icon correction
 
-Credits containment and native Store/Armory emblems are implemented and validated. Full ARIA and six commander comic scene panels await visual-direction review. See [revision evidence](Panel_Icon_Revision_2026-09-29.md).
+Credits containment and native Store/Armory emblems were committed and pushed in a5c936c28. The user subsequently approved the full-panel direction, and full ARIA plus six saved commander comic scene panels are implemented and natively validated. See [revision evidence](Panel_Icon_Revision_2026-09-29.md).
+
+The supplied completed-Campaign handoff is also integrated: aggregate ready/first-clear projection, three stable scene/caption pairs, distinct available-content/full-campaign endings, pending-resume precedence and an earned-story chooser on the existing narrative canvas. Today's 18-mission completion is not the authored Chapter V ending. See [completion integration evidence](Campaign_Completion_Integration_2026-09-29.md). Broader acceptance gates above remain open.

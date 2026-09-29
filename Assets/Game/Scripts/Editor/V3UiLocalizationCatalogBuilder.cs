@@ -248,6 +248,19 @@ namespace Game.Editor
             AddRuntimeText("ui.home.progression", "Complete the previous mission first.", "ابتدا مأموریت قبلی را کامل کنید.");
             AddRuntimeText("ui.home.download", "Content download required.", "دانلود محتوا لازم است.");
             AddRuntimeText("ui.home.unavailable", "This mission is currently unavailable.", "این مأموریت اکنون در دسترس نیست.");
+            AddRuntimeText("ui.home.available_complete", "ALL AVAILABLE MISSIONS COMPLETED", "همهٔ مأموریت‌های موجود کامل شدند");
+            AddRuntimeText("ui.home.complete", "CAMPAIGN COMPLETE", "کارزار کامل شد");
+            AddRuntimeText("ui.home.complete_summary", "The city is rebuilding. Your command made the difference.", "شهر دوباره ساخته می‌شه. فرماندهی تو این تغییر رو رقم زد.");
+            AddRuntimeText("ui.home.aftermath.rebuilding", "Secured districts are rebuilding. Your command made the difference.", "محله‌های امن‌شده دارن دوباره ساخته می‌شن. فرماندهی تو این تغییر رو رقم زد.");
+            AddRuntimeText("ui.home.aftermath.supply", "Supplies are reaching the people you protected.", "تدارکات به دست مردمی می‌رسه که ازشون محافظت کردی.");
+            AddRuntimeText("ui.home.aftermath.watch", "Your team stands watch over the districts you secured.", "گروهت مراقب محله‌هاییه که امن کردی.");
+            AddRuntimeText("ui.home.story_archive", "STORY ARCHIVE", "بایگانی داستان");
+            AddRuntimeText("ui.home.archive.close", "CLOSE", "بستن");
+            AddRuntimeText("ui.home.archive.brief", "BRIEFING", "توجیه مأموریت");
+            AddRuntimeText("ui.home.archive.comms", "RADIO", "رادیو");
+            AddRuntimeText("ui.home.archive.debrief", "DEBRIEF", "گزارش پایانی");
+            AddRuntimeText("ui.home.archive.chapter_close", "CHAPTER {0} • CONCLUSION", "پایان فصل {0}");
+            AddRuntimeText("ui.home.archive.chapter_open", "CHAPTER {0} • OPENING", "آغاز فصل {0}");
         }
 
         public static int BindExistingCatalog(GameObject root)

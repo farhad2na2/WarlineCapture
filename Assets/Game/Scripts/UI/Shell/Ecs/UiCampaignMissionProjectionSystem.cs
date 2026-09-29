@@ -131,7 +131,7 @@ namespace Game.UI.Shell.Ecs
             ref CampaignMissionDefinitionBlob definition = ref catalogBlob.Missions[definitionIndex];
             UiCampaignOperationsComponent next = ProjectDefinition(
                 catalog.SourceVersion, settlementSourceVersion, ref definition, progress, in current,
-                AvailableMissionMask(ref catalogBlob, progress));
+                AvailableMissionMask(ref catalogBlob, progress), RequiredMissionMask(), ReadyMissionMask(ref catalogBlob, progress));
             bool replayTutorial = currentBriefing.Version != 0 &&
                                   currentBriefing.MissionId.Equals(definition.MissionId)
                 ? currentBriefing.ReplayTutorialEnabled != 0
@@ -432,7 +432,8 @@ namespace Game.UI.Shell.Ecs
             left.SuccessfulReplayCount == right.SuccessfulReplayCount &&
             left.ContentReady == right.ContentReady && left.LastAttemptOrdinal == right.LastAttemptOrdinal && left.Available == right.Available &&
             left.FirstClearCompleted == right.FirstClearCompleted && left.PendingResume == right.PendingResume &&
-            left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask && left.CompletedMissionMask == right.CompletedMissionMask;
+            left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask && left.CompletedMissionMask == right.CompletedMissionMask &&
+            left.RequiredMissionMask == right.RequiredMissionMask && left.ReadyMissionMask == right.ReadyMissionMask && left.FullCampaignRegistered == right.FullCampaignRegistered;
 
         private static bool SameBriefing(
             in UiMissionBriefingComponent left, in UiMissionBriefingComponent right)

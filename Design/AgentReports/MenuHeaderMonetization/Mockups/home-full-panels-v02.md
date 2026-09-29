@@ -1,6 +1,6 @@
 # Full-panel ARIA and commander scenes — v02 review
 
-Date: 2026-09-29. Status: awaiting user visual-direction review; scene assets are not implemented.
+Date: 2026-09-29. Status: approved by the user on 2026-09-29: “looks good implement that”. Native integration and validation in progress.
 
 ![Review board](home-full-panels-v02.png)
 
@@ -17,4 +17,4 @@ ARIA and Commander receive illustrated backgrounds covering each whole panel. Si
 - Six canonical commanders: `Assets/Game/Art/Narrative/FirstLaunch/Commander/commander_portrait_choices.png`
 - Campaign comic style: `Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png`
 
-The exact generation prompt is preserved in [home-full-panels-v02.prompt.txt](home-full-panels-v02.prompt.txt). The board is a visual proposal, not native runtime or device evidence. Full-panel scene implementation awaits review under the handoff visual gate. Original home approval remains valid.
+The exact generation prompt is preserved in [home-full-panels-v02.prompt.txt](home-full-panels-v02.prompt.txt). The board is a visual proposal, not native runtime or device evidence. Full-panel direction review is satisfied by the user’s implementation instruction. Original home approval remains valid.

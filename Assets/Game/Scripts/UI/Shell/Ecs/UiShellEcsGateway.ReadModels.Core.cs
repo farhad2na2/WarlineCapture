@@ -301,7 +301,8 @@ namespace Game.UI.Shell.Ecs
                 (UiContentAccessState)Game.Runtime.ContentAccessRuntime.Evaluate(component.SelectedMissionId.ToString(), ready: component.ContentReady != 0, progression: component.Available != 0));
             campaign = new UiCampaignOperationsModel(
                 component.Version, component.CatalogSourceVersion, component.ProgressSourceVersion,
-                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask, component.CompletedMissionMask);
+                selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask, component.CompletedMissionMask,
+                component.RequiredMissionMask, component.ReadyMissionMask, component.FullCampaignRegistered != 0);
             return campaign.IsValid;
         }
 

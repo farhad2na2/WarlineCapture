@@ -1,9 +1,11 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using Game.Configs;
+using Game.Composition;
 using Game.UI.Contracts;
 using Game.UI.Runtime;
 using TMPro;
@@ -20,6 +22,11 @@ namespace Game.Editor
     public static class MainMenuV3PrefabBuilder
     {
         private const string PrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
+        public const string PanelArtDirectory = "Assets/Game/Art/UI/MainMenuPanels/V02/";
+        public const string AriaBackdropPath = PanelArtDirectory + "aria-command-room-v02.png";
+        public const string CompletionArtDirectory = "Assets/Game/Art/UI/V3Shared/MainMenuPlates/CampaignCompletion/";
+        private static readonly string[] CompletionIds = { "rebuilding", "supply", "watch" };
+        public static string CommanderPanelPath(int portraitIndex) => PanelArtDirectory + "commander-" + portraitIndex + "-scene-v02.png";
         private const string CommanderScenePath = "Assets/Game/Art/UI/V3Shared/CommanderScenes/SCN02_FieldCommander_01_Scene_V3.png";
         private const string SceneAtlasPath = "Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_MainMenuScenes_01.spriteatlas";
         private const string AriaAtlasPath = "Assets/Game/Art/UI/V3Shared/Atlases/UI_V3_Assistants_01.spriteatlas";
@@ -70,6 +77,9 @@ namespace Game.Editor
             ConfigureTexture(CampaignArtPath, false, 2048);
             ConfigureTexture(OperationsArtPath, false, 2048);
             ConfigureTexture(SkirmishArtPath, false, 2048);
+            ConfigureTexture(AriaBackdropPath, false, 2048);
+            for (int i = 0; i < 6; i++) ConfigureTexture(CommanderPanelPath(i), false, 2048);
+            foreach (string id in CompletionIds) ConfigureTexture(CompletionArtDirectory + "home-aftermath-" + id + "-v01.png", false, 2048);
             ConfigureTexture(CampaignIconPath, true, 512);
             ConfigureTexture(OperationsIconPath, true, 512);
             ConfigureTexture(SkirmishIconPath, true, 512);
@@ -124,6 +134,17 @@ namespace Game.Editor
             if (prefab.transform.Find("HeaderContent/CommandVisualPanel") != null || prefab.transform.Find("HeaderContent/HeaderResourceArea") != null)
                 throw new InvalidOperationException("Retired Command/header purchase routes must be absent.");
             Require(prefab.transform, "LeftContent/Card_Campaign/ContinueButton");
+            var archive=Require(prefab.transform,"LeftContent/Card_Campaign").GetComponent<MainMenuStoryArchiveView>();
+            if(archive==null)throw new MissingComponentException("Completed Campaign requires earned-story playback.");
+            var archiveData=new SerializedObject(archive);
+            var supplemental=archiveData.FindProperty("supplementalSequences");
+            foreach(string stage in new[]{"brief","comms","debrief"})
+            {
+                bool found=false;
+                for(int i=0;i<supplemental.arraySize;i++)
+                    if(supplemental.GetArrayElementAtIndex(i).objectReferenceValue is NarrativeSequenceConfig sequence && sequence.SequenceId=="seq.ch01.m01."+stage)found=true;
+                if(!found)throw new MissingReferenceException("Story Archive must include M01 "+stage);
+            }
             Require(prefab.transform, "LeftContent/Card_Operations/Hotspot");
             Require(prefab.transform, "LeftContent/Card_Skirmish/Hotspot");
             Require(prefab.transform, "RightContent/CommanderPanel/ViewCommanderButton/CommanderPanelHotspot");
@@ -132,7 +153,16 @@ namespace Game.Editor
 
             Transform commanderTransform=Require(prefab.transform,"RightContent/CommanderPanel/CommanderSceneVariant");
             var commanderView=commanderTransform.GetComponent<MainMenuCommanderVariantView>();
-            if(commanderView == null || commanderView.Variants.Length < 6) throw new MissingReferenceException("Commander must bind saved identity portraits.");
+            if(commanderView == null || commanderView.Variants.Length != 6) throw new MissingReferenceException("Commander must bind all six saved identity scenes.");
+            for (int i = 0; i < 6; i++)
+                if (commanderView.Variants[i].CommanderId != i.ToString() || AssetDatabase.GetAssetPath(commanderView.Variants[i].Sprite) != CommanderPanelPath(i))
+                    throw new InvalidOperationException("Commander scene must match its canonical saved portrait index: " + i);
+            var commanderRect = commanderTransform.GetComponent<RectTransform>();
+            if (commanderRect.anchorMin != Vector2.zero || commanderRect.anchorMax != Vector2.one || commanderRect.sizeDelta != Vector2.zero)
+                throw new InvalidOperationException("Commander illustration must cover the full panel.");
+            var backdrop = Require(prefab.transform,"RightContent/AriaPanel/SceneBackground").GetComponent<Image>();
+            if (AssetDatabase.GetAssetPath(backdrop.sprite) != AriaBackdropPath)
+                throw new InvalidOperationException("ARIA must have the approved full-panel command room.");
             var aria=Require(prefab.transform,"RightContent/AriaPanel/Portrait").GetComponent<Image>();
             if(AssetDatabase.GetAssetPath(aria.sprite)!=V3UiFoundationBuilder.SharedAriaPortraitPath || !aria.preserveAspect)
                 throw new InvalidOperationException("ARIA must retain her exact native portrait and proportions.");
@@ -165,6 +195,7 @@ namespace Game.Editor
                 OperationsArtPath,
                 SkirmishArtPath,
                 V3UiFoundationBuilder.SharedAriaPortraitPath,
+                AriaBackdropPath,
                 CampaignIconPath,
                 OperationsIconPath,
                 SkirmishIconPath,
@@ -175,6 +206,8 @@ namespace Game.Editor
                 V3UiFoundationBuilder.SettingsIconPath,
                 V3UiFoundationBuilder.MainMenuLogoPath
             };
+            for (int i = 0; i < 6; i++) allowedRasterPaths.Add(CommanderPanelPath(i));
+            foreach (string id in CompletionIds) allowedRasterPaths.Add(CompletionArtDirectory + "home-aftermath-" + id + "-v01.png");
             foreach (Image image in prefab.GetComponentsInChildren<Image>(true))
             {
                 if (image.sprite == null)
@@ -516,6 +549,7 @@ namespace Game.Editor
             SetTopLeft(title.rectTransform, 32, 357, 1170, 68);
             ExpandTextWithParent(title.rectTransform, 1268);
             title.enableAutoSizing=true; title.fontSizeMin=32; title.fontSizeMax=52;
+            title.textWrappingMode=TextWrappingModes.Normal;
             TMP_Text purpose = CreateText("Purpose", card, "Review your Campaign missions.", 27f, mediumFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
             SetTopLeft(purpose.rectTransform, 32, 426, 1170, 54);
             ExpandTextWithParent(purpose.rectTransform, 1268);
@@ -528,6 +562,29 @@ namespace Game.Editor
             Stretch(actionLabel.rectTransform); actionLabel.enableAutoSizing=true; actionLabel.fontSizeMin=24; actionLabel.fontSizeMax=36;
             BindCampaignPlates(card.gameObject, art);
             card.GetComponent<MainMenuCampaignCardView>().Configure(title,chapter,purpose,actionLabel,button);
+            RectTransform archive=CreateTopLeftRect("StoryArchiveButton",card,710,487,360,82);
+            var archiveFill=archive.gameObject.AddComponent<V3GradientGraphic>();
+            archiveFill.Configure(new Color32(6,105,172,255),new Color32(4,38,89,255),Cyan,2);
+            var archiveButton=archive.gameObject.AddComponent<Button>(); archiveButton.targetGraphic=archiveFill; archiveButton.colors=ButtonColors();
+            TMP_Text archiveLabel=CreateText("Label",archive,"STORY ARCHIVE",30,boldFont,TextAlignmentOptions.Center,TextPrimary); Stretch(archiveLabel.rectTransform);
+            archiveLabel.enableAutoSizing=true; archiveLabel.fontSizeMin=22; archiveLabel.fontSizeMax=30;
+            card.gameObject.AddComponent<MainMenuStoryArchiveView>().Configure(archiveButton,mediumFont,
+                AssetDatabase.LoadAllAssetsAtPath(M01FirstContactNarrativeConfigBuilder.NarrativePath)
+                    .OfType<NarrativeSequenceConfig>().ToArray());
+            var data=new SerializedObject(card.GetComponent<MainMenuCampaignCardView>());
+            data.FindProperty("archiveButton").objectReferenceValue=archiveButton;
+            data.FindProperty("epilogue").objectReferenceValue=LoadPlate("Assets/Game/Resources/FutureMissionComics/Bookends/Campaign_Epilogue.png", null);
+            var scenes=data.FindProperty("aftermathScenes"); scenes.arraySize=3;
+            string[] captions={"Secured districts are rebuilding. Your command made the difference.","Supplies are reaching the people you protected.","Your team stands watch over the districts you secured."};
+            for(int i=0;i<3;i++)
+            {
+                var scene=scenes.GetArrayElementAtIndex(i);
+                scene.FindPropertyRelative("plate").objectReferenceValue=AssetDatabase.LoadAssetAtPath<Sprite>(CompletionArtDirectory+"home-aftermath-"+CompletionIds[i]+"-v01.png");
+                scene.FindPropertyRelative("captionKey").stringValue="ui.home.aftermath."+CompletionIds[i];
+                scene.FindPropertyRelative("captionFallback").stringValue=captions[i];
+            }
+            data.ApplyModifiedPropertiesWithoutUndo();
+            archive.gameObject.SetActive(false);
         }
 
 
@@ -640,16 +697,18 @@ namespace Game.Editor
             RectTransform panel = CreateTopLeftRect("AriaPanel", root, 1296f, 108f, 360f, 285f);
             V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(2, 18, 28, 252), new Color32(2, 24, 36, 252), new Color32(0, 7, 12, 254), new Color32(1, 12, 18, 254), Cyan, 3f);
-            TMP_Text title = CreateText("Title", panel, "ARIA", 44f, boldFont, TextAlignmentOptions.MidlineLeft, Cyan);
-            SetTopLeft(title.rectTransform, 20f, 3f, 160f, 62f);
-            Image portrait = CreateImage("Portrait", panel, ariaPortrait, new Color32(112, 224, 255, 255), false);
-            portrait.color = Color.white;
-            SetTopLeft(portrait.rectTransform, 110f, 39f, 235f, 242f);
+            Image backdrop = CreateImage("SceneBackground", panel, AssetDatabase.LoadAssetAtPath<Sprite>(AriaBackdropPath), Color.white, false);
+            Stretch(backdrop.rectTransform);
+            Image portrait = CreateImage("Portrait", panel, ariaPortrait, Color.white, false);
+            SetTopLeft(portrait.rectTransform, 126f, 12f, 230f, 270f);
             portrait.preserveAspect = true;
-            V3GradientGraphic scan = CreateGradient("PortraitScan", panel, new Color(0f, 0.65f, 1f, 0.025f), new Color(0f, 0.17f, 0.28f, 0.14f), Color.clear, 0f);
-            SetTopLeft(scan.rectTransform, 108f, 37f, 240f, 244f);
+            var shade = CreateTopLeftRect("CopyShade", panel, 0, 0, 180, 285).gameObject.AddComponent<V3GradientGraphic>();
+            shade.ConfigureCorners(new Color(0, .035f, .055f, .95f), Color.clear, new Color(0, .035f, .055f, .95f), Color.clear, Color.clear, 0);
+            TMP_Text title = CreateText("Title", panel, "ARIA", 44f, boldFont, TextAlignmentOptions.MidlineLeft, Cyan);
+            SetTopLeft(title.rectTransform, 20f, 3f, 110f, 62f);
             TMP_Text description=CreateText("Description", panel, "Tactical assistant", 23, mediumFont, TextAlignmentOptions.TopLeft, Cyan);
-            SetTopLeft(description.rectTransform, 20, 66, 95, 135); description.textWrappingMode=TextWrappingModes.Normal;
+            SetTopLeft(description.rectTransform, 20, 66, 98, 135); description.textWrappingMode=TextWrappingModes.Normal;
+            Stretch(CreateGradient("Frame", panel, Color.clear, Color.clear, Cyan, 3).rectTransform);
         }
 
         private static void BuildCommanderPanel(Transform root)
@@ -657,19 +716,18 @@ namespace Game.Editor
             RectTransform panel=CreateTopLeftRect("CommanderPanel", root, 1296,405,360,288);
             var fill=panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.Configure(GraphiteTop,GraphiteBottom,Border,3);
+            Image portrait=CreateImage("CommanderSceneVariant",panel,null,Color.white,false);
+            Stretch(portrait.rectTransform);
+            var variants=new List<MainMenuCommanderVariantView.CommanderVariant>();
+            for(int i=0;i<6;i++) variants.Add(new MainMenuCommanderVariantView.CommanderVariant(i.ToString(),AssetDatabase.LoadAssetAtPath<Sprite>(CommanderPanelPath(i))));
+            var shade=CreateTopLeftRect("IdentityShade",panel,0,0,184,288).gameObject.AddComponent<V3GradientGraphic>();
+            shade.ConfigureCorners(new Color(0,0,0,.82f),Color.clear,new Color(0,0,0,.9f),Color.clear,Color.clear,0);
+            Stretch(CreateGradient("HeadingShade",panel,new Color(0,0,0,.65f),Color.clear,Color.clear,0).rectTransform);
             TMP_Text heading=CreateText("Title",panel,"COMMANDER",32,boldFont,TextAlignmentOptions.MidlineLeft,TextPrimary);
             SetTopLeft(heading.rectTransform,18,8,324,48);
             TMP_Text name=CreateText("IdentityName",panel,"Commander",23,mediumFont,TextAlignmentOptions.MidlineLeft,TextPrimary);
             SetTopLeft(name.rectTransform,18,56,140,140); name.textWrappingMode=TextWrappingModes.Normal;
             name.enableAutoSizing=true; name.fontSizeMin=16; name.fontSizeMax=23;
-            Image portrait=CreateImage("CommanderSceneVariant",panel,null,Color.white,false);
-            SetTopLeft(portrait.rectTransform,160,55,186,150); portrait.preserveAspect=true;
-            var variants=new List<MainMenuCommanderVariantView.CommanderVariant>();
-            var portraits=new List<Sprite>();
-            foreach(var asset in AssetDatabase.LoadAllAssetRepresentationsAtPath(FirstLaunchNarrativeDialogueAssetImporter.CommanderPortraitSheetPath))
-                if(asset is Sprite sprite && sprite.name.StartsWith("commander_",StringComparison.Ordinal)) portraits.Add(sprite);
-            portraits.Sort((a,b)=>string.CompareOrdinal(a.name,b.name));
-            for(int i=0;i<portraits.Count;i++) variants.Add(new MainMenuCommanderVariantView.CommanderVariant(i.ToString(),portraits[i]));
             var view=portrait.gameObject.AddComponent<MainMenuCommanderVariantView>();
             view.Configure(portrait,variants.ToArray(),"0"); view.ConfigureIdentity(name);
             RectTransform action=CreateTopLeftRect("ViewCommanderButton",panel,12,206,336,80);
@@ -677,6 +735,7 @@ namespace Game.Editor
             TMP_Text actionText=CreateText("Label",action,"VIEW COMMANDER   ›",27,boldFont,TextAlignmentOptions.Center,TextPrimary); Stretch(actionText.rectTransform);
             actionText.enableAutoSizing=true; actionText.fontSizeMin=20; actionText.fontSizeMax=27;
             AddRouteHotspot(action,UIRoute.CommanderProfile,"CommanderPanelHotspot");
+            Stretch(CreateGradient("Frame",panel,Color.clear,Color.clear,Border,3).rectTransform);
         }
 
 
@@ -1025,6 +1084,9 @@ namespace Game.Editor
         }
 
         private static void Capture(string outputPath, int width, int height)
+            => CaptureConfigured(outputPath,width,height,null);
+
+        public static void CaptureConfigured(string outputPath,int width,int height,Action<GameObject> configure)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath);
             if (prefab == null)
@@ -1077,6 +1139,7 @@ namespace Game.Editor
             foreach(var view in instance.GetComponentsInChildren<MainMenuAccountHeaderView>(true)) view.Refresh();
             foreach(var view in instance.GetComponentsInChildren<MainMenuCommanderVariantView>(true)) view.RefreshIdentity();
             foreach(var view in instance.GetComponentsInChildren<MainMenuDisclosureView>(true)) view.Refresh();
+            configure?.Invoke(instance);
             Canvas.ForceUpdateCanvases();
             // The shell stretches content after component OnEnable. Mirror that runtime
             // ordering in QA captures so every section resolves against the final canvas

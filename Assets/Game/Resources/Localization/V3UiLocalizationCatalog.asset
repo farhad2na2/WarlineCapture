@@ -4858,10 +4858,30 @@ MonoBehaviour:
       value: Tap Commands below the selected unit portrait.
     - key: ui.help.select_squad_card
       value: Tap a squad card to select its units.
+    - key: ui.home.aftermath.rebuilding
+      value: Secured districts are rebuilding. Your command made the difference.
+    - key: ui.home.aftermath.supply
+      value: Supplies are reaching the people you protected.
+    - key: ui.home.aftermath.watch
+      value: Your team stands watch over the districts you secured.
+    - key: ui.home.archive.brief
+      value: BRIEFING
+    - key: ui.home.archive.chapter_close
+      value: "CHAPTER {0} \u2022 CONCLUSION"
+    - key: ui.home.archive.chapter_open
+      value: "CHAPTER {0} \u2022 OPENING"
+    - key: ui.home.archive.close
+      value: CLOSE
+    - key: ui.home.archive.comms
+      value: RADIO
+    - key: ui.home.archive.debrief
+      value: DEBRIEF
     - key: ui.home.aria
       value: Tactical assistant
     - key: ui.home.armory
       value: "ARMORY   \u203A"
+    - key: ui.home.available_complete
+      value: ALL AVAILABLE MISSIONS COMPLETED
     - key: ui.home.briefing
       value: Review the mission briefing.
     - key: ui.home.chapter_mission
@@ -4872,6 +4892,10 @@ MonoBehaviour:
       value: "VIEW COMMANDER   \u203A"
     - key: ui.home.commander_default
       value: Commander
+    - key: ui.home.complete
+      value: CAMPAIGN COMPLETE
+    - key: ui.home.complete_summary
+      value: The city is rebuilding. Your command made the difference.
     - key: ui.home.continue
       value: "CONTINUE CAMPAIGN   \u203A"
     - key: ui.home.download
@@ -4888,6 +4912,8 @@ MonoBehaviour:
       value: Standalone tactical battles
     - key: ui.home.store
       value: "STORE   \u203A"
+    - key: ui.home.story_archive
+      value: STORY ARCHIVE
     - key: ui.home.unavailable
       value: This mission is currently unavailable.
     - key: ui.hud.aria_target
@@ -16055,10 +16081,38 @@ MonoBehaviour:
       value: "\u06A9\u0627\u0631\u062A \u06AF\u0631\u0648\u0647 \u0631\u0648 \u0628\u0632\u0646
         \u062A\u0627 \u0646\u06CC\u0631\u0648\u0647\u0627\u0634 \u0627\u0646\u062A\u062E\u0627\u0628
         \u0628\u0634\u0646."
+    - key: ui.home.aftermath.rebuilding
+      value: "\u0645\u062D\u0644\u0647\u200C\u0647\u0627\u06CC \u0627\u0645\u0646\u200C\u0634\u062F\u0647
+        \u062F\u0627\u0631\u0646 \u062F\u0648\u0628\u0627\u0631\u0647 \u0633\u0627\u062E\u062A\u0647
+        \u0645\u06CC\u200C\u0634\u0646. \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u062A\u0648 \u0627\u06CC\u0646 \u062A\u063A\u06CC\u06CC\u0631 \u0631\u0648
+        \u0631\u0642\u0645 \u0632\u062F."
+    - key: ui.home.aftermath.supply
+      value: "\u062A\u062F\u0627\u0631\u06A9\u0627\u062A \u0628\u0647 \u062F\u0633\u062A
+        \u0645\u0631\u062F\u0645\u06CC \u0645\u06CC\u200C\u0631\u0633\u0647 \u06A9\u0647
+        \u0627\u0632\u0634\u0648\u0646 \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0631\u062F\u06CC."
+    - key: ui.home.aftermath.watch
+      value: "\u06AF\u0631\u0648\u0647\u062A \u0645\u0631\u0627\u0642\u0628 \u0645\u062D\u0644\u0647\u200C\u0647\u0627\u06CC\u06CC\u0647
+        \u06A9\u0647 \u0627\u0645\u0646 \u06A9\u0631\u062F\u06CC."
+    - key: ui.home.archive.brief
+      value: "\u062A\u0648\u062C\u06CC\u0647 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A"
+    - key: ui.home.archive.chapter_close
+      value: "\u067E\u0627\u06CC\u0627\u0646 \u0641\u0635\u0644 {0}"
+    - key: ui.home.archive.chapter_open
+      value: "\u0622\u063A\u0627\u0632 \u0641\u0635\u0644 {0}"
+    - key: ui.home.archive.close
+      value: "\u0628\u0633\u062A\u0646"
+    - key: ui.home.archive.comms
+      value: "\u0631\u0627\u062F\u06CC\u0648"
+    - key: ui.home.archive.debrief
+      value: "\u06AF\u0632\u0627\u0631\u0634 \u067E\u0627\u06CC\u0627\u0646\u06CC"
     - key: ui.home.aria
       value: "\u062F\u0633\u062A\u06CC\u0627\u0631 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC"
     - key: ui.home.armory
       value: "\u062A\u0633\u0644\u06CC\u062D\u0627\u062A   \u203A"
+    - key: ui.home.available_complete
+      value: "\u0647\u0645\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u200C\u0647\u0627\u06CC
+        \u0645\u0648\u062C\u0648\u062F \u06A9\u0627\u0645\u0644 \u0634\u062F\u0646\u062F"
     - key: ui.home.briefing
       value: "\u062A\u0648\u062C\u06CC\u0647 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
         \u0631\u0627 \u0628\u0631\u0631\u0633\u06CC \u06A9\u0646\u06CC\u062F."
@@ -16073,6 +16127,13 @@ MonoBehaviour:
         \u203A"
     - key: ui.home.commander_default
       value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647"
+    - key: ui.home.complete
+      value: "\u06A9\u0627\u0631\u0632\u0627\u0631 \u06A9\u0627\u0645\u0644 \u0634\u062F"
+    - key: ui.home.complete_summary
+      value: "\u0634\u0647\u0631 \u062F\u0648\u0628\u0627\u0631\u0647 \u0633\u0627\u062E\u062A\u0647
+        \u0645\u06CC\u200C\u0634\u0647. \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u062A\u0648 \u0627\u06CC\u0646 \u062A\u063A\u06CC\u06CC\u0631 \u0631\u0648
+        \u0631\u0642\u0645 \u0632\u062F."
     - key: ui.home.continue
       value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u06A9\u0627\u0631\u0632\u0627\u0631  
         \u203A"
@@ -16097,6 +16158,8 @@ MonoBehaviour:
         \u0645\u0633\u062A\u0642\u0644"
     - key: ui.home.store
       value: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647   \u203A"
+    - key: ui.home.story_archive
+      value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062F\u0627\u0633\u062A\u0627\u0646"
     - key: ui.home.unavailable
       value: "\u0627\u06CC\u0646 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0627\u06A9\u0646\u0648\u0646
         \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A."

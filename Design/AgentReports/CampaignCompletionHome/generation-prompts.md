@@ -1,0 +1,21 @@
+# Completion artwork generation prompts
+
+Generator: built-in ImageGen. Each input is the existing Campaign_Epilogue comic used for art style and character identity. Each result is a standalone text-free illustration, not a flattened home screen.
+
+## rebuilding
+
+```text
+Use case: illustration-story. Asset type: text-free landscape 16:9 home menu hero for WARLINE CAPTURE after all currently available missions have been cleared. Input image is a style and team identity reference only, not an edit target. Primary request: A protected neighborhood rebuilding: aid crates and a restored civilian market in a small previously secured district, a few local volunteers repairing stone storefronts, two familiar female field team members in tan tactical clothing at the upper right quietly watching, low buildings and distant mountains. Do not imply citywide victory. Match the reference's distinctive low-poly faceted painterly comic art, realistic stylized proportions, tan tactical outfits, ochre stone architecture, warm sunlight, muted military browns and greens. Composition: readable large scene, human subjects in the upper center/right, bottom left 40 percent remains calm and darker uncluttered terrain or wall for native UI overlay; no extreme closeup. All meaningful faces above the lower 35 percent. Restrained optimistic aftermath, no grand victory announcement. No text, UI, logos, badges, flags, speech bubbles, watermarks, rewards, explosions, blood, enemy troops or future mission clues. This is a generic secured district, safe for reuse between current-content completion and final campaign completion. Generate one standalone finished image.
+```
+
+## supply
+
+```text
+Use case: illustration-story. Asset type: text-free landscape 16:9 home menu hero for WARLINE CAPTURE after all currently available missions have been cleared. Input image is a style and team identity reference only, not an edit target. Primary request: A quiet secured aid depot: organized supplies beside a parked logistics truck, aid workers unloading crates, familiar tan-clad field team member monitoring on radio at the upper right, warm morning light, stone buildings, calm purposeful activity. Match the reference's distinctive low-poly faceted painterly comic art, realistic stylized proportions, tan tactical outfits, ochre stone architecture, warm sunlight, muted military browns and greens. Composition: readable large scene, human subjects in the upper center/right, bottom left 40 percent remains calm and darker uncluttered terrain or wall for native UI overlay; no extreme closeup. All meaningful faces above the lower 35 percent. Restrained optimistic aftermath, no grand victory announcement. No text, UI, logos, badges, flags, speech bubbles, watermarks, rewards, explosions, blood, enemy troops or future mission clues. This is a generic secured district, safe for reuse between current-content completion and final campaign completion. Generate one standalone finished image.
+```
+
+## watch
+
+```text
+Use case: illustration-story. Asset type: text-free landscape 16:9 home menu hero for WARLINE CAPTURE after all currently available missions have been cleared. Input image is a style and team identity reference only, not an edit target. Primary request: A calm command outpost overlooking a protected district: field radio and folded map on the foreground table, familiar female team members in tan tactical gear at the upper right looking across rooftops, civilians returning to daily routines below, warm afternoon light, no battle or new threat. Match the reference's distinctive low-poly faceted painterly comic art, realistic stylized proportions, tan tactical outfits, ochre stone architecture, warm sunlight, muted military browns and greens. Composition: readable large scene, human subjects in the upper center/right, bottom left 40 percent remains calm and darker uncluttered terrain or wall for native UI overlay; no extreme closeup. All meaningful faces above the lower 35 percent. Restrained optimistic aftermath, no grand victory announcement. No text, UI, logos, badges, flags, speech bubbles, watermarks, rewards, explosions, blood, enemy troops or future mission clues. This is a generic secured district, safe for reuse between current-content completion and final campaign completion. Generate one standalone finished image.
+```

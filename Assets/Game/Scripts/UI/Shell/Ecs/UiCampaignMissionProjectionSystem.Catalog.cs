@@ -33,6 +33,9 @@ namespace Game.UI.Shell.Ecs
             ref CampaignMissionCatalogBlob catalog,
             CampaignMissionProgressSaveData[] progress)
         {
+            for (int index = 0; index < catalog.Missions.Length; index++)
+                if (Find(progress, catalog.Missions[index].MissionId)?.pendingResume == true)
+                    return index;
             int latestAvailableIndex = -1;
             for (int index = 0; index < catalog.Missions.Length; index++)
             {
@@ -53,7 +56,7 @@ namespace Game.UI.Shell.Ecs
             uint settlementSourceVersion,
             ref CampaignMissionDefinitionBlob definition,
             CampaignMissionProgressSaveData[] progress,
-            in UiCampaignOperationsComponent current, uint availableMissionMask)
+            in UiCampaignOperationsComponent current, uint availableMissionMask, uint requiredMissionMask, uint readyMissionMask)
         {
             bool m01 = definition.MissionId.Equals(new FixedString64Bytes(M01MissionId));
             bool m03 = definition.Defense.Enabled != 0;
@@ -66,7 +69,32 @@ namespace Game.UI.Shell.Ecs
             return ProjectMission(
                 catalogSourceVersion, settlementSourceVersion,
                 definition.MissionId, definition.ScenarioId, definition.OperationMapId,
-                displayName, nextMissionId, progress, in current, availableMissionMask, definition.MissionRuntimeEnabled != 0);
+                displayName, nextMissionId, progress, in current, availableMissionMask, DefinitionHasRuntime(ref definition),
+                requiredMissionMask, readyMissionMask, CampaignMissionSequence.IndexOf("saga.ch05.m05.command_node") >= 0);
+        }
+
+        private static uint RequiredMissionMask() => CampaignMissionSequence.RegisteredMissionCount >= 32
+            ? uint.MaxValue : (1u << CampaignMissionSequence.RegisteredMissionCount) - 1;
+
+        // Older validated launch units use dedicated runtimes rather than MissionRuntime.
+        private static bool DefinitionHasRuntime(ref CampaignMissionDefinitionBlob definition) =>
+            definition.MissionId.Equals(new FixedString64Bytes(M01MissionId)) || definition.MissionRuntimeEnabled != 0 ||
+            definition.Defense.Enabled != 0 || definition.Extraction.Enabled != 0 || definition.Breach.Enabled != 0 ||
+            definition.Gridlock.Enabled != 0 || definition.SupplyLine.Enabled != 0 || definition.MarketLifeline.Enabled != 0 ||
+            definition.PowerRelay.Enabled != 0 || definition.RouteReopened.Enabled != 0;
+
+        private static uint ReadyMissionMask(ref CampaignMissionCatalogBlob catalog, CampaignMissionProgressSaveData[] progress)
+        {
+            uint mask = 0;
+            for (int i = 0; i < catalog.Missions.Length; i++)
+            {
+                ref var definition = ref catalog.Missions[i];
+                int index = CampaignMissionSequence.IndexOf(definition.MissionId.ToString());
+                if (index >= 0 && ContentAccessRuntime.Evaluate(definition.MissionId.ToString(),
+                    ready: DefinitionHasRuntime(ref definition), progression: IsDefinitionAvailable(ref definition, progress)) == ContentAccessState.Allowed)
+                    mask |= 1u << index;
+            }
+            return mask;
         }
 
         private static uint AvailableMissionMask(ref CampaignMissionCatalogBlob catalog, CampaignMissionProgressSaveData[] progress)
@@ -110,7 +138,8 @@ namespace Game.UI.Shell.Ecs
             FixedString64Bytes displayName,
             FixedString64Bytes nextMissionId,
             CampaignMissionProgressSaveData[] progress,
-            in UiCampaignOperationsComponent current, uint availableMissionMask = 0, bool contentReady = true)
+            in UiCampaignOperationsComponent current, uint availableMissionMask = 0, bool contentReady = true,
+            uint requiredMissionMask = 0, uint readyMissionMask = 0, bool fullCampaignRegistered = false)
         {
             CampaignMissionProgressSaveData entry = Find(progress, missionId);
             bool isM01 = missionId.Equals(new FixedString64Bytes(M01MissionId));
@@ -152,6 +181,9 @@ namespace Game.UI.Shell.Ecs
                 PendingResume = pending ? (byte)1 : (byte)0,
                 AvailableMissionMask = availableMissionMask,
                 CompletedMissionMask = CompletedMissionMask(progress),
+                RequiredMissionMask = requiredMissionMask,
+                ReadyMissionMask = readyMissionMask,
+                FullCampaignRegistered = fullCampaignRegistered ? (byte)1 : (byte)0,
                 NextMissionRevealed = !nextMissionId.IsEmpty &&
                                       Find(progress, nextMissionId)?.available == true
                     ? (byte)1

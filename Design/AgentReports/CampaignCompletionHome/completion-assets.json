@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "generator": "built-in ImageGen",
+  "status": "Prepared for main-menu integration; runtime validation pending",
+  "reference": "Assets/Game/Resources/FutureMissionComics/Bookends/Campaign_Epilogue.png",
+  "suggestedUnityFolder": "Assets/Game/Art/UI/V3Shared/MainMenuPlates/CampaignCompletion",
+  "states": {
+    "availableComplete": {
+      "titleKey": "ui.home.available_complete",
+      "titleEn": "ALL AVAILABLE MISSIONS COMPLETED",
+      "titleFa": "همهٔ مأموریت‌های موجود کامل شدند"
+    },
+    "campaignComplete": {
+      "titleKey": "ui.home.complete",
+      "titleEn": "CAMPAIGN COMPLETE",
+      "titleFa": "کارزار کامل شد",
+      "defaultCaptionKey": "ui.home.complete_summary",
+      "defaultCaptionEn": "The city is rebuilding. Your command made the difference.",
+      "defaultCaptionFa": "شهر دوباره ساخته می‌شه. فرماندهی تو این تغییر رو رقم زد.",
+      "canonicalEpilogue": "Assets/Game/Resources/FutureMissionComics/Bookends/Campaign_Epilogue.png"
+    }
+  },
+  "actions": [
+    {
+      "key": "ui.home.choose",
+      "en": "CHOOSE MISSION   ›",
+      "fa": "انتخاب مأموریت   ›",
+      "destination": "Campaign selection for replay; do not deploy directly"
+    },
+    {
+      "key": "ui.home.story_archive",
+      "en": "STORY ARCHIVE",
+      "fa": "بایگانی داستان",
+      "destination": "Completed story content only; see handoff for current archive limitations"
+    }
+  ],
+  "rotation": {
+    "when": "new home visit",
+    "avoidImmediateRepeat": true,
+    "stableDuringVisit": true,
+    "keepImageCaptionPaired": true
+  },
+  "scenes": [
+    {
+      "id": "rebuilding",
+      "source": "Assets/home-aftermath-rebuilding-v01.png",
+      "captionKey": "ui.home.aftermath.rebuilding",
+      "en": "Secured districts are rebuilding. Your command made the difference.",
+      "fa": "محله‌های امن‌شده دارن دوباره ساخته می‌شن. فرماندهی تو این تغییر رو رقم زد."
+    },
+    {
+      "id": "supply",
+      "source": "Assets/home-aftermath-supply-v01.png",
+      "captionKey": "ui.home.aftermath.supply",
+      "en": "Supplies are reaching the people you protected.",
+      "fa": "تدارکات به دست مردمی می‌رسه که ازشون محافظت کردی."
+    },
+    {
+      "id": "watch",
+      "source": "Assets/home-aftermath-watch-v01.png",
+      "captionKey": "ui.home.aftermath.watch",
+      "en": "Your team stands watch over the districts you secured.",
+      "fa": "گروهت مراقب محله‌هاییه که امن کردی."
+    }
+  ]
+}

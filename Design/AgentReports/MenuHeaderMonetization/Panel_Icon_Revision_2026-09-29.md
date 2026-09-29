@@ -8,8 +8,12 @@ Checked macOS wrapper run: `Logs/menu-header-icons-01.log`, exit 0. Builder, loc
 
 Native visual inspection covered English wide, Persian wide, English 32-character name and maximum balance at 16:9, and Persian 32-character name and maximum balance at 16:9. Icons and balances remain contained. No new gameplay or physical-device acceptance was performed for these presentation corrections. Source/prefab/capture hashes: `candidate-icons-01.json`.
 
-## Pending full-panel artwork
+## Implemented full-panel artwork
 
-[ARIA plus six commander scene review](Mockups/home-full-panels-v02.md) awaits the user's visual-direction decision under the handoff gate. The generated board is not shipping art. ARIA will retain the exact original face asset over a separately authored room background. Six commander panels will bind to the saved canonical selection. Current native right-side panels still use portrait cutouts until this review is satisfied.
+[ARIA plus six commander scene review](Mockups/home-full-panels-v02.md) was approved by the user: “looks good implement that.” Seven separate shipping images were then generated from the canonical references. ARIA retains the exact original face asset over a full command-room background. Six commander scenes bind to the saved canonical selection, with native labels, shading, frames and controls.
+
+Checked wrapper run `Logs/menu-header-panels-02.log` passed the native builder, localization, focused suite, eight normal/stress captures and six saved-identity captures. All six native commander captures were visually inspected: faces remain clear, art fills the panels and identity/CTA labels are readable. `Logs/menu-header-panels-01.log.dispatch.json` retains the failed initial Pipeline dispatch.
+
+The completed-Campaign package was integrated subsequently. See [completion integration evidence](Campaign_Completion_Integration_2026-09-29.md) for its separate state, visual and input evidence.
 
 Previous captures are retained in `After/before-panel-revision/`. Broader pending acceptance gates in `Final_Handoff.md` remain open.

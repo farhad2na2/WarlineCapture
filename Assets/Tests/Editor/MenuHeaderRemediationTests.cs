@@ -43,6 +43,7 @@ public sealed class MenuHeaderRemediationTests
         RunFocusedValidation();
         if(ValidationExit.LastExitCode != 0) return;
         CapturePresentationFixtures();
+        CaptureCompletionFixtures();
     }
     public static void RunFocusedValidation()
     {
@@ -54,6 +55,7 @@ public sealed class MenuHeaderRemediationTests
             new MenuHeaderRemediationTests().AccountProjectionRefreshesAndSurvivesRecreation();
             new MenuHeaderRemediationTests().HomeArtAndContinueShareTargetAndMissingArtIsNeutral();
             new MenuHeaderRemediationTests().HomeTargetTracksClearReloadAndCompletion();
+            new MenuHeaderRemediationTests().CompletionHomeRequiresTheWholeReadyCatalogAndKeepsScenePairsStable();
             MainMenuV3PrefabBuilder.Validate();
             Debug.Log("[MenuHeaderRemediation] result=Passed accountRefresh=True utf8PlayerName=True targetRouting=True missingArt=True clearReloadCompletion=True duplicateTap=True disclosure=True");
             ValidationExit.Passed();
@@ -164,14 +166,14 @@ public sealed class MenuHeaderRemediationTests
             Assert.AreEqual(CampaignMissionSequence.IdAt(1), ProjectHomeTarget(reopened));
             for(int i=1; i<CampaignMissionSequence.RegisteredMissionCount; i++)
                 Assert.IsTrue(store.Settle(CampaignMissionSequence.IdAt(i), "home-all-clear-"+i, i, true, 3, 60000, null));
-            string last = ProjectHomeTarget(store);
+            string last = ProjectHomeTarget(store,true);
             Assert.AreEqual(CampaignMissionSequence.IdAt(CampaignMissionSequence.RegisteredMissionCount-1), last);
             Assert.IsTrue(System.Array.Exists(store.ReadAll(), entry => entry.missionId == last && entry.firstClearCompleted));
         }
         finally { if(Directory.Exists(directory)) Directory.Delete(directory, true); }
     }
 
-    private static string ProjectHomeTarget(CampaignMissionProgressStore store)
+    private static string ProjectHomeTarget(CampaignMissionProgressStore store,bool allCompleted=false)
     {
         using var world = new World("home-progression-projection");
         var em = world.EntityManager;
@@ -187,7 +189,16 @@ public sealed class MenuHeaderRemediationTests
             ref var state = ref world.Unmanaged.ResolveSystemStateRef(handle);
             ref var system = ref world.Unmanaged.GetUnsafeSystemRef<UiCampaignMissionProjectionSystem>(handle);
             system.OnUpdate(ref state); state.Dependency.Complete(); em.CompleteAllTrackedJobs();
-            return em.GetComponentData<UiCampaignOperationsComponent>(ui).SelectedMissionId.ToString();
+            var projection=em.GetComponentData<UiCampaignOperationsComponent>(ui);
+            if(allCompleted)
+            {
+                uint required=(1u << CampaignMissionSequence.RegisteredMissionCount)-1;
+                Assert.AreEqual(required,projection.RequiredMissionMask);
+                Assert.AreEqual(required,projection.CompletedMissionMask);
+                Assert.AreEqual(required,projection.ReadyMissionMask);
+                Assert.AreEqual(0,projection.FullCampaignRegistered);
+            }
+            return projection.SelectedMissionId.ToString();
         }
         finally
         {
@@ -195,6 +206,100 @@ public sealed class MenuHeaderRemediationTests
             var catalog = em.GetComponentData<CampaignMissionCatalogComponent>(campaignRoot);
             if(catalog.Blob.IsCreated) catalog.Blob.Dispose();
             catalog.Blob=default; catalog.OwnsBlob=0; em.SetComponentData(campaignRoot,catalog);
+        }
+    }
+
+    [Test] public void CompletionHomeRequiresTheWholeReadyCatalogAndKeepsScenePairsStable()
+    {
+        World previous=World.DefaultGameObjectInjectionWorld;
+        string locale=GameLocalization.CurrentLocaleCode;
+        using var world=new World("completion-home-boundary");
+        GameObject instance=null;
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;UiShellEcsGateway.RegisterAsRuntimeGateway();
+            uint required=(1u << CampaignMissionSequence.RegisteredMissionCount)-1;
+            var root=CreatePresentation(world,CampaignMissionSequence.SplitFront,true,required);
+            var model=world.EntityManager.GetComponentData<UiCampaignOperationsComponent>(root);
+            model.RequiredMissionMask=model.ReadyMissionMask=required;
+            model.CompletedMissionMask=required & ~(1u << (CampaignMissionSequence.RegisteredMissionCount-1));
+            world.EntityManager.SetComponentData(root,model);
+            instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath));
+            var view=instance.GetComponentInChildren<MainMenuCampaignCardView>();view.Refresh();Assert.IsFalse(view.CompletionVisible);
+            model.CompletedMissionMask=required;world.EntityManager.SetComponentData(root,model);view.Refresh();Assert.IsTrue(view.CompletionVisible);
+            var art=instance.transform.Find("LeftContent/Card_Campaign/CampaignArt").GetComponent<Image>();
+            Assert.That(AssetDatabase.GetAssetPath(art.sprite),Does.Contain("CampaignCompletion"));
+            var initial=art.sprite;int first=view.AftermathIndex;
+            view.Refresh();view.Refresh();Assert.AreSame(initial,art.sprite);
+            var catalog=AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
+            GameLocalization.Initialize(catalog,"fa-IR",persist:false);view.Refresh();Assert.AreSame(initial,art.sprite);
+            Assert.IsFalse(instance.transform.Find("LeftContent/Card_Campaign/Chapter").gameObject.activeSelf);
+            typeof(MainMenuCampaignCardView).GetMethod("OnDisable",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(view,null);
+            typeof(MainMenuCampaignCardView).GetMethod("OnEnable",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(view,null);
+            view.Refresh();Assert.AreEqual(first,view.AftermathIndex,"Overlay must not rotate a home visit.");
+            world.EntityManager.SetComponentData(root,new UiShellStateComponent{ActiveRoute=UIRoute.Campaign});view.Refresh();
+            world.EntityManager.SetComponentData(root,new UiShellStateComponent{ActiveRoute=UIRoute.MainMenu});view.Refresh();
+            Assert.AreNotEqual(first,view.AftermathIndex);
+            model.ReadyMissionMask=required & ~1u;world.EntityManager.SetComponentData(root,model);view.Refresh();Assert.IsFalse(view.CompletionVisible);
+            model.ReadyMissionMask=required;model.PendingResume=1;world.EntityManager.SetComponentData(root,model);view.Refresh();Assert.IsFalse(view.CompletionVisible);
+            model.PendingResume=0;model.RequiredMissionMask=model.ReadyMissionMask=model.CompletedMissionMask=(1u<<25)-1;model.FullCampaignRegistered=1;
+            world.EntityManager.SetComponentData(root,model);view.Refresh();Assert.IsTrue(view.CompletionVisible);
+            Assert.That(AssetDatabase.GetAssetPath(art.sprite),Does.EndWith("Campaign_Epilogue.png"));
+            Assert.IsFalse(MainMenuStoryArchiveView.IsChapterEarned(required,4));Assert.IsTrue(MainMenuStoryArchiveView.IsChapterEarned(required,3));
+            Assert.IsFalse(MainMenuStoryArchiveView.IsMissionEarned(required,18));
+            var requests=world.EntityManager.GetBuffer<UiCampaignMissionActionRequestElement>(root);requests.Clear();
+            typeof(MainMenuCampaignCardView).GetMethod("OpenCampaign",BindingFlags.NonPublic|BindingFlags.Instance).Invoke(view,null);
+            foreach(var request in requests)Assert.AreNotEqual(UiCampaignMissionActionKind.Deploy,request.Action);
+            Assert.AreEqual(UIRoute.Campaign,world.EntityManager.GetBuffer<UiShellRouteRequestComponent>(root)[0].Route);
+            Debug.Log("[CampaignCompletionHome] result=Passed wholeCatalog=True savedReload=True missingReady=True pendingResume=True stablePairs=True localeStable=True overlayStable=True noRepeat=True fullEndingDistinct=True archiveGates=True chooseDoesNotDeploy=True");
+        }
+        finally
+        {
+            if(instance!=null)UnityEngine.Object.DestroyImmediate(instance);
+            GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath),locale,persist:false);
+            World.DefaultGameObjectInjectionWorld=previous;UiShellEcsGateway.RegisterAsRuntimeGateway();
+        }
+    }
+
+    public static void CaptureCompletionFixtures()
+    {
+        World previous=World.DefaultGameObjectInjectionWorld;string locale=GameLocalization.CurrentLocaleCode;
+        using var world=new World("completion-home-native-fixtures");
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;UiShellEcsGateway.RegisterAsRuntimeGateway();
+            uint required=(1u << CampaignMissionSequence.RegisteredMissionCount)-1;
+            var root=CreatePresentation(world,CampaignMissionSequence.SplitFront,true,required);
+            var model=world.EntityManager.GetComponentData<UiCampaignOperationsComponent>(root);model.RequiredMissionMask=model.ReadyMissionMask=required;
+            world.EntityManager.SetComponentData(root,model);
+            Directory.CreateDirectory("Design/AgentReports/MenuHeaderMonetization/After/completion");
+            var catalog=AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath);
+            foreach(string code in new[]{"en","fa-IR"})
+            {
+                GameLocalization.Initialize(catalog,code,persist:false);
+                foreach(int width in new[]{1920,2400})for(int scene=0;scene<3;scene++)
+                {
+                    int target=scene;
+                    MainMenuV3PrefabBuilder.CaptureConfigured($"Design/AgentReports/MenuHeaderMonetization/After/completion/home-{scene}-{code}-{width}.png",width,1080,instance=>
+                    {
+                        var view=instance.GetComponentInChildren<MainMenuCampaignCardView>();
+                        for(int attempt=0;attempt<3 && view.AftermathIndex!=target;attempt++){view.BeginHomeVisit();view.Refresh();}
+                        Assert.AreEqual(target,view.AftermathIndex);
+                    });
+                }
+            }
+            model.RequiredMissionMask=model.ReadyMissionMask=model.CompletedMissionMask=(1u<<25)-1;model.FullCampaignRegistered=1;world.EntityManager.SetComponentData(root,model);
+            foreach(string code in new[]{"en","fa-IR"})
+            {
+                GameLocalization.Initialize(catalog,code,persist:false);
+                foreach(int width in new[]{1920,2400})MainMenuV3PrefabBuilder.CaptureConfigured($"Design/AgentReports/MenuHeaderMonetization/After/completion/home-full-{code}-{width}.png",width,1080,null);
+            }
+            Debug.Log("[CampaignCompletionCaptures] result=Passed aftermathPairs=3 nativeCaptures=16 fullEndingIsFutureProjectionFixture=True gameplayAcceptance=False");
+        }
+        finally
+        {
+            GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath),locale,persist:false);
+            World.DefaultGameObjectInjectionWorld=previous;UiShellEcsGateway.RegisterAsRuntimeGateway();
         }
     }
 
@@ -226,6 +331,22 @@ public sealed class MenuHeaderRemediationTests
                     capture.Invoke(null,new object[]{"Design/AgentReports/MenuHeaderMonetization/After/home-long-name-"+code+"-"+width+".png",width,1080});
             }
             Debug.Log("[MenuHeaderStressFixtures] result=Passed captures=4 names=32Characters credits=Int32Max gameplayAcceptance=False");
+            GameLocalization.Initialize(catalog,"en",persist:false);
+            Directory.CreateDirectory("Design/AgentReports/MenuHeaderMonetization/After/commander-scenes");
+            for (int index = 0; index < 6; index++)
+            {
+                world.EntityManager.SetComponentData(root,new UiShellCommanderProfileComponent{Name=new FixedString128Bytes("Commander"),PortraitClass=new FixedString64Bytes(index.ToString())});
+                var instance=UnityEngine.Object.Instantiate(AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath));
+                try
+                {
+                    var view=instance.GetComponentInChildren<MainMenuCommanderVariantView>(true);
+                    view.RefreshIdentity();
+                    Assert.AreEqual(MainMenuV3PrefabBuilder.CommanderPanelPath(index),AssetDatabase.GetAssetPath(view.Target.sprite));
+                }
+                finally { UnityEngine.Object.DestroyImmediate(instance); }
+                capture.Invoke(null,new object[]{"Design/AgentReports/MenuHeaderMonetization/After/commander-scenes/home-commander-"+index+".png",1920,1080});
+            }
+            Debug.Log("[MenuHeaderCommanderScenes] result=Passed savedIndices=6 fullPanel=True nativeCaptures=6");
         }
         finally
         { GameLocalization.Initialize(AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(V3UiLocalizationCatalogBuilder.CatalogPath),locale,persist:false); World.DefaultGameObjectInjectionWorld=previous; UiShellEcsGateway.RegisterAsRuntimeGateway(); }

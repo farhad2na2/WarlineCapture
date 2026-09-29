@@ -2906,7 +2906,7 @@ MonoBehaviour:
       value: "OIL PUMP \u2192 TRAY TRUCK \u2192 REFINERY \u2192 TANKER \u2192 RESERVE"
     - key: mission.supply_line.guide.example
       value: Select rifles, press Move, then tap the threatened site. Trucks haul
-        automatically. At 20 stored barrels, press Reserve civilian Fuel.
+        automatically. The first 20 stored Fuel barrels are protected for civilians.
     - key: mission.supply_line.guide.mistake
       value: Do not send unarmed trucks into the sabotage teams. A stopped truck
         may be waiting for a full load; inspect its status before changing orders.
@@ -2934,9 +2934,9 @@ MonoBehaviour:
     - key: mission.supply_line.objective.reserve
       value: Protect 40 barrels and hold for 20 seconds
     - key: mission.supply_line.objective.reserve.body
-      value: Reroute the Oil truck through the southern lane, allocate 20 civilian
-        barrels, keep 40 in storage and hold the intact chain for 20 seconds after
-        defeating the attackers.
+      value: Reroute the Oil truck through the southern lane. The first 20 Fuel barrels
+        are protected for civilians; keep 40 in storage and hold the intact chain
+        for 20 seconds after defeating the attackers.
     - key: mission.supply_line.reserve.allocate
       value: Reserve 20 civilian Fuel
     - key: mission.supply_line.reserve.allocated
@@ -12756,10 +12756,10 @@ MonoBehaviour:
         \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0631\u0648\u06CC \u0645\u062D\u0644
         \u062F\u0631 \u062E\u0637\u0631 \u0628\u0632\u0646. \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627
         \u062E\u0648\u062F\u06A9\u0627\u0631 \u0628\u0627\u0631 \u0645\u06CC\u200C\u0628\u0631\u0646.
-        \u0648\u0642\u062A\u06CC \u0630\u062E\u06CC\u0631\u0647 \u0628\u0647 \u06F2\u06F0
-        \u0628\u0634\u06A9\u0647 \u0631\u0633\u06CC\u062F\u060C \u062F\u06A9\u0645\u0647\u0654
-        \u0630\u062E\u06CC\u0631\u0647\u0654 \u0645\u0631\u062F\u0645 \u0631\u0648
-        \u0628\u0632\u0646."
+        \u0646\u062E\u0633\u062A\u06CC\u0646 \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654
+        \u0633\u0648\u062E\u062A\u0650 \u0630\u062E\u06CC\u0631\u0647\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u0645\u06CC\u200C\u0634\u0648\u062F."
     - key: mission.supply_line.guide.mistake
       value: "\u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC \u0628\u06CC\u200C\u0633\u0644\u0627\u062D
         \u0631\u0648 \u0628\u0647 \u0633\u0645\u062A \u062E\u0631\u0627\u0628\u06A9\u0627\u0631\u0647\u0627
@@ -12812,12 +12812,16 @@ MonoBehaviour:
         \u06A9\u0646 \u0648 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u0646\u06AF\u0647
         \u062F\u0627\u0631"
     - key: mission.supply_line.objective.reserve.body
-      value: "\u06F2\u06F0 \u0628\u0634\u06A9\u0647 \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645
-        \u06A9\u0646\u0627\u0631 \u0628\u0630\u0627\u0631\u060C \u06F4\u06F0 \u0628\u0634\u06A9\u0647
-        \u062F\u0631 \u0627\u0646\u0628\u0627\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631
-        \u0648 \u0628\u0639\u062F \u0627\u0632 \u0634\u06A9\u0633\u062A \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627\u060C
-        \u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0633\u0627\u0644\u0645 \u0631\u0648
-        \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \u062D\u0641\u0638 \u06A9\u0646."
+      value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0646\u0641\u062A \u0631\u0627
+        \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062C\u0646\u0648\u0628\u06CC \u0628\u0641\u0631\u0633\u062A.
+        \u0646\u062E\u0633\u062A\u06CC\u0646 \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654
+        \u0633\u0648\u062E\u062A \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645
+        \u0645\u062D\u0627\u0641\u0638\u062A \u0645\u06CC\u200C\u0634\u0648\u062F\u061B
+        \u06F4\u06F0 \u0628\u0634\u06A9\u0647 \u0631\u0627 \u062F\u0631 \u0627\u0646\u0628\u0627\u0631
+        \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u067E\u0633 \u0627\u0632 \u0634\u06A9\u0633\u062A
+        \u0645\u0647\u0627\u062C\u0645\u0627\u0646\u060C \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
+        \u0633\u0627\u0644\u0645 \u0631\u0627 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647
+        \u062D\u0641\u0638 \u06A9\u0646."
     - key: mission.supply_line.reserve.allocate
       value: "\u06F2\u06F0 \u0628\u0634\u06A9\u0647 \u0628\u0631\u0627\u06CC \u0645\u0631\u062F\u0645
         \u0630\u062E\u06CC\u0631\u0647 \u06A9\u0646"

@@ -1,0 +1,199 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f935472054514bc4baed4554d4d90758, type: 3}
+  m_Name: OperationMap_Ch02M02_RefineryReview
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapDefinition
+  operationMapId: opmap.ch02.supply_line_refinery_review
+  schemaVersion: 1
+  contentVersion: 1
+  sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
+  contentHash: bc6497811db55fee93ea0d1e573857349bc08700b2236ea41d02742fc39c3731
+  generatedMetadataHash: bc6497811db55fee93ea0d1e573857349bc08700b2236ea41d02742fc39c3731
+  sourceBinding:
+    sourceOperationMapId: opmap.skirmish.refinerydistrict_prepared
+    sourceIdentityHash: f558e507314f08165054ed580ef0c2b278a4ba683d73130bc3ae44828b75047d
+    sourceContentHash: 2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778
+  bounds:
+    worldMin: {x: 0, y: -20, z: 0}
+    worldMax: {x: 2048, y: 1000, z: 1024}
+    playableMin: {x: 500, y: -20, z: 400}
+    playableMax: {x: 980, y: 980, z: 580}
+    cameraMin: {x: 400, y: -20, z: 300}
+    cameraMax: {x: 1000, y: 980, z: 700}
+  gridMetadata:
+    assetGuid: 03f9142d229da40d5b8bd1f51d2a5dac
+    contentHash: 0044ec7726416f0569393b9da8c19550c40c946181020cc25bac4ec1511b945a
+    origin: {x: 0, y: 0, z: 0}
+    dimensions: {x: 2048, y: 1024}
+    cellSize: 1
+    authoredBlockedCellCount: 39968
+  surfaceMetadata:
+    assetGuid: fe018ff5c0c344309bdd39bf67ac4e44
+    contentHash: 02bd6bb3b7e623daf5358247a562d963653a4199b1e2d8a8df639a764fa03e2b
+    runtimeBlobHash: 76afb33ae75baa09cb0f653099906201
+    surfaceCount: 2097152
+    payloadVersion: 3
+    payloadEncoding: 1
+    minimumHeight: 0
+    maximumHeight: 9
+  navigationMetadata:
+    authoredSubSceneGuid: 4f2791431607a46dba63d71c60633f71
+    gridAuthoringLocalId: 805044683
+    staticGridBlockerCount: 221
+    usesSurfaceMovementMetadata: 1
+    supportsDynamicBlockers: 1
+    supportsDynamicOccupancy: 1
+  cameras:
+  - cameraId: camera.ch02.m02.overview
+    position: {x: 745, y: 230, z: 390}
+    eulerAngles: {x: 62.44719, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 55
+    orthographicSize: 0
+    clampToCameraBounds: 1
+  - cameraId: camera.ch02.m02.battle
+    position: {x: 734, y: 110, z: 440}
+    eulerAngles: {x: 59.420776, y: 0, z: 0}
+    orthographic: 0
+    fieldOfView: 55
+    orthographicSize: 220
+    clampToCameraBounds: 1
+  planningCameraId: camera.ch02.m02.overview
+  battleCameraId: camera.ch02.m02.battle
+  minimap:
+    minimapId: minimap.ch02.m02.supply_yard
+    projectionOrigin: {x: 500, y: 0, z: 400}
+    projectionSize: {x: 480, y: 180}
+    orientationDegrees: 0
+  anchors:
+  - anchorId: anchor.ch02.m02.oil
+    kind: 2
+    position: {x: 573, y: 0.03, z: 520}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.refinery
+    kind: 2
+    position: {x: 740, y: 0.03, z: 475}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.storage
+    kind: 2
+    position: {x: 941, y: 0, z: 540}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.squad_a
+    kind: 3
+    position: {x: 585, y: 0, z: 505}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.squad_b
+    kind: 3
+    position: {x: 905, y: 0, z: 540}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.oil_hauler
+    kind: 3
+    position: {x: 580, y: 0, z: 505}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.fuel_hauler
+    kind: 3
+    position: {x: 765, y: 0, z: 505}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 1
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.screen_a
+    kind: 1
+    position: {x: 650, y: 0.03, z: 536}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.screen_b
+    kind: 1
+    position: {x: 860, y: 0.03, z: 550}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 3
+    factionId: 2
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.return_rts
+    kind: 12
+    position: {x: 750, y: 0, z: 505}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 2
+    factionId: 1
+    laneIndex: 0
+  - anchorId: anchor.ch02.m02.alternate_lane
+    kind: 11
+    position: {x: 660, y: 0.03, z: 460}
+    eulerAngles: {x: 0, y: 0, z: 0}
+    radius: 5
+    factionId: 1
+    laneIndex: 0
+  presentationKind: 1
+  renderResidencyMode: 0
+  sourceSceneReference:
+    m_AssetGUID: 2f9acf3e55e194fb8941de959613dd4f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  optionalHeavyMetadataReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  staticPresentationManifestReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  mapSurfaceDataReference:
+    m_AssetGUID: fe018ff5c0c344309bdd39bf67ac4e44
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  minimapRasterReference:
+    m_AssetGUID: d2ad78baaf12c4b538ece6f7e53ecd58
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  buildingPlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  vehiclePlacementsReference:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  additionalBuildingPlacements: {fileID: 11400000, guid: 492a7c1a2dfe348208e5b4c41ae8b82b, type: 2}

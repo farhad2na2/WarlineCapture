@@ -1,25 +1,32 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Components;
+using Game.Authoring;
+using Game.Composition;
 using Game.Configs;
 using Game.Missions.Contracts;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Game.Editor
 {
     public static class CH02M02SupplyLineConfigBuilder
     {
         public const string MissionId="saga.ch02.m02.supply_line", ScenarioId="scenario.ch02.m02.supply_line";
-        public const string MapId="opmap.ch02.supply_yard_01", Prefix="anchor.ch02.m02.";
+        public const string MapId="opmap.ch02.supply_line_refinery_review", Prefix="anchor.ch02.m02.";
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M02_SupplyLine.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M02_SupplyLine.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_SupplyYard01.asset";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_SupplyYard01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M02_RefineryReview.asset";
+        private const string PreparedMapPath="Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset";
         public static void Build()
         {
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"}) Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter02");
@@ -32,30 +39,41 @@ namespace Game.Editor
 
         private static void BuildMap()
         {
-            var map=Clone<OperationMapDefinition>(M03RadarWarningMapBuilder.Path,MapPath);
+            var physical=Load<OperationMapDefinition>(PreparedMapPath);
+            Require(physical.ContentHash=="2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778","Prepared Refinery source hash changed; re-audit mission anchors.");
+            RequirePumpTruckAccess();
+            var map=Clone<OperationMapDefinition>(PreparedMapPath,MapPath);
             var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
-            Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Gridlock surface unavailable");
+            Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Refinery surface unavailable");
             using(blob)
             {
                 (string name,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] anchors={
-                    ("oil",684,450,OperationMapAnchorKind.Objective,1,5),
-                    ("refinery",737,457,OperationMapAnchorKind.Objective,1,5),
-                    ("storage",796,450,OperationMapAnchorKind.Objective,1,5),
-                    ("squad_a",695,426,OperationMapAnchorKind.Deployment,1,3),
-                    ("squad_b",760,426,OperationMapAnchorKind.Deployment,1,3),
-                    ("oil_hauler",704,426,OperationMapAnchorKind.Deployment,1,1),
-                    ("fuel_hauler",779,426,OperationMapAnchorKind.Deployment,1,1),
-                    ("screen_a",715,475,OperationMapAnchorKind.Spawn,2,3),
-                    ("screen_b",785,475,OperationMapAnchorKind.Spawn,2,3),
-                    ("return_rts",735,426,OperationMapAnchorKind.Camera,1,2),
-                    ("alternate_lane",750,426,OperationMapAnchorKind.Lane,1,5)};
+                    ("oil",573,520,OperationMapAnchorKind.Objective,1,5),
+                    // Keep the 25x15 refinery south of the prepared z=494 fence.
+                    // The enclosed strip itself is an authored road, not a build pad.
+                    ("refinery",740,475,OperationMapAnchorKind.Objective,1,5),
+                    ("storage",941,540,OperationMapAnchorKind.Objective,1,5),
+                    ("squad_a",585,505,OperationMapAnchorKind.Deployment,1,3),
+                    ("squad_b",905,540,OperationMapAnchorKind.Deployment,1,3),
+                    ("oil_hauler",580,505,OperationMapAnchorKind.Deployment,1,1),
+                    ("fuel_hauler",765,505,OperationMapAnchorKind.Deployment,1,1),
+                    ("screen_a",650,536,OperationMapAnchorKind.Spawn,2,3),
+                    ("screen_b",860,550,OperationMapAnchorKind.Spawn,2,3),
+                    ("return_rts",750,505,OperationMapAnchorKind.Camera,1,2),
+                    ("alternate_lane",660,460,OperationMapAnchorKind.Lane,1,5)};
                 var data=new SerializedObject(map);S(data,"operationMapId",MapId);
+                var sourceBinding=data.FindProperty("sourceBinding");
+                S(sourceBinding,"sourceOperationMapId",physical.OperationMapId);
+                S(sourceBinding,"sourceIdentityHash",physical.SourceIdentityHash);
+                S(sourceBinding,"sourceContentHash",physical.ContentHash);
                 data.FindProperty("additionalBuildingPlacements").objectReferenceValue=Load<MapBuildingPlacementConfig>(CH02M02SupplyLineEnvironmentBuilder.PlacementsPath);
                 S(data,"planningCameraId","camera.ch02.m02.overview");S(data,"battleCameraId","camera.ch02.m02.battle");
-                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(665,0,410);
-                bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(830,100,490);MissionCameraBoundsAuthoring.Apply(bounds);
+                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(500,-20,400);
+                bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(980,980,580);
+                bounds.FindPropertyRelative("cameraMin").vector3Value=new Vector3(400,-20,300);
+                bounds.FindPropertyRelative("cameraMax").vector3Value=new Vector3(1000,980,700);
                 var minimap=data.FindProperty("minimap");S(minimap,"minimapId","minimap.ch02.m02.supply_yard");
-                minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(665,0,410);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(165,80);
+                minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(500,0,400);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(480,180);
                 A(data.FindProperty("anchors"),anchors.Length,(entry,i)=>
                 {
                     var seed=anchors[i];Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new int2(seed.x,seed.z),out var sample),seed.name);
@@ -66,10 +84,15 @@ namespace Game.Editor
                 A(data.FindProperty("cameras"),2,(entry,i)=>
                 {
                     S(entry,"cameraId",i==0?"camera.ch02.m02.overview":"camera.ch02.m02.battle");
-                    Vector3 focus=i==0?new Vector3(748,0,435):new Vector3(735,0,426);Vector3 position=focus+new Vector3(0,70,-40);
+                    Vector3 focus=i==0?new Vector3(745,0,510):new Vector3(734,0,505);Vector3 position=focus+new Vector3(0,i==0?230:110,i==0?-120:-65);
                     entry.FindPropertyRelative("position").vector3Value=position;entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;
+                    entry.FindPropertyRelative("orthographic").boolValue=false;
                     entry.FindPropertyRelative("fieldOfView").floatValue=55;
                 });
+                data.ApplyModifiedPropertiesWithoutUndo();
+                // A mission clone retains the prepared map's physical source binding. The loader
+                // validates that source scene against the physical id before applying mission metadata.
+                data.FindProperty("sourceSceneReference").FindPropertyRelative("m_AssetGUID").stringValue=physical.SourceSceneReference.AssetGUID;
                 S(data,"contentHash",string.Empty);S(data,"generatedMetadataHash",string.Empty);
                 data.ApplyModifiedPropertiesWithoutUndo();
                 using var sha=SHA256.Create();string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(EditorJsonUtility.ToJson(map)))).Replace("-","").ToLowerInvariant();
@@ -77,6 +100,40 @@ namespace Game.Editor
                 S(data,"contentHash",hash);S(data,"generatedMetadataHash",hash);data.ApplyModifiedPropertiesWithoutUndo();
                 Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);AssetDatabase.SaveAssets();
             }
+        }
+        private static void RequirePumpTruckAccess()
+        {
+            const string gridPath="Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Grid.asset";
+            const string pumpPath="Assets/Game/Prefabs/Buildings/CH02M02SupplyLine/SupplyLine_Building_OilPump.prefab";
+            var grid=Load<GridAuthoringSceneConfigAsset>(gridPath);
+            var footprint=Load<GameObject>(pumpPath).GetComponent<BuildingDefinitionAuthoring>().ConfiguredFootprintCells;
+            var blocked=new HashSet<Vector2Int>(grid.BlockedCells);
+            var pump=new RectInt(573,520,footprint.x,footprint.y);
+            bool Fits(Vector2Int cell)
+            {
+                if(cell.x<550 || cell.x>620 || cell.y<490 || cell.y>540)return false;
+                for(int dz=-2;dz<=2;dz++)for(int dx=-2;dx<=2;dx++)
+                {
+                    var occupied=new Vector2Int(cell.x+dx,cell.y+dz);
+                    if(blocked.Contains(occupied) || pump.Contains(occupied))return false;
+                }
+                return true;
+            }
+            var start=new Vector2Int(580,505);var goal=new Vector2Int(591,520);
+            Require(Fits(start)&&Fits(goal),"Pump truck access endpoint blocked");
+            var queue=new Queue<Vector2Int>();var visited=new HashSet<Vector2Int>{start};queue.Enqueue(start);
+            var steps=new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right};
+            while(queue.Count>0 && !visited.Contains(goal))
+            {
+                var cell=queue.Dequeue();
+                foreach(var step in steps)
+                {
+                    var next=cell+step;
+                    if(Fits(next) && visited.Add(next))queue.Enqueue(next);
+                }
+            }
+            Require(visited.Contains(goal),"Pump truck cannot pass the south fence with two-cell clearance");
+            Debug.Log("[SupplyLinePumpAccess] result=Passed from=(580,505) to=(591,520) clearance=2");
         }
         private static void BuildScenario()
         {

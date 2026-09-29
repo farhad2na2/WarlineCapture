@@ -27,7 +27,13 @@ namespace Game.UI.Shell.Ecs
             if (!math.all(math.isfinite(target))) return false;
             using var focus = em.CreateEntityQuery(typeof(RuntimeCameraFocusRequestComponent));
             if (focus.CalculateEntityCount()!=1) return false;
-            em.SetComponentData(focus.GetSingletonEntity(),CreateMissionTutorialFocusRequest(target,height));
+            var request=CreateMissionTutorialFocusRequest(target,height);
+            // The Oil hauler crosses this map while it is the selection target.
+            // A long pan leaves its cue behind the HUD before a normal tap lands.
+            if(selection && TryGetMissionRoot(out var missionManager,out var missionRoot) &&
+               missionManager.GetComponentData<CampaignMissionRuntimeComponent>(missionRoot).MissionId.Equals(Game.Missions.Contracts.CampaignMissionSequence.SupplyLine))
+                request.SmoothTimeSeconds=.65f;
+            em.SetComponentData(focus.GetSingletonEntity(),request);
             return true;
         }
 

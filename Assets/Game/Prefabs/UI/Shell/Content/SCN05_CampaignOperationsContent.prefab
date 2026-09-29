@@ -153,6 +153,8 @@ MonoBehaviour:
   localizationKey: ui.v3.breach_assault.1cb418c69e
   englishFallback: BREACH ASSAULT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &80868358043616828
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,6 +308,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_i.d0e5cb42d9
   englishFallback: CHAPTER I
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &83982356011380609
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,6 +463,8 @@ MonoBehaviour:
   localizationKey: ui.v3.objectives.3f8152da90
   englishFallback: OBJECTIVES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &167667367143579023
 GameObject:
   m_ObjectHideFlags: 0
@@ -818,6 +824,8 @@ MonoBehaviour:
   localizationKey: ui.v3.samira.7a806e0882
   englishFallback: SAMIRA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &312517716743762227
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,6 +979,8 @@ MonoBehaviour:
   localizationKey: ui.v3.no_unit_losses.92ace245d5
   englishFallback: NO UNIT LOSSES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &343485948381500695
 GameObject:
   m_ObjectHideFlags: 0
@@ -1199,6 +1209,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m02.03864c101b
   englishFallback: M02
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &524548625677503508
 GameObject:
   m_ObjectHideFlags: 0
@@ -1530,6 +1542,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m02.03864c101b
   englishFallback: M02
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &653658943019874105
 GameObject:
   m_ObjectHideFlags: 0
@@ -2574,6 +2588,8 @@ MonoBehaviour:
   localizationKey: narrative.first_launch.speaker.aria.name
   englishFallback: ARIA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &942999095723522442
 GameObject:
   m_ObjectHideFlags: 0
@@ -2840,6 +2856,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapters.498bff2b2a
   englishFallback: CHAPTERS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1076975830098176378
 GameObject:
   m_ObjectHideFlags: 0
@@ -2993,6 +3011,8 @@ MonoBehaviour:
   localizationKey: ui.v3.completed.c48179f524
   englishFallback: COMPLETED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1096324443454288445
 GameObject:
   m_ObjectHideFlags: 0
@@ -3146,6 +3166,8 @@ MonoBehaviour:
   localizationKey: ui.v3.v.de5a6f7811
   englishFallback: V
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1233905570599894918
 GameObject:
   m_ObjectHideFlags: 0
@@ -3372,6 +3394,8 @@ MonoBehaviour:
   localizationKey: ui.v3.mission_select.ea3ce01e84
   englishFallback: MISSION SELECT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1330821659785748289
 GameObject:
   m_ObjectHideFlags: 0
@@ -4127,6 +4151,8 @@ MonoBehaviour:
   localizationKey: ui.v3.first_response.f035a79b54
   englishFallback: FIRST RESPONSE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1626162012629020059
 GameObject:
   m_ObjectHideFlags: 0
@@ -4625,6 +4651,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m02.03864c101b
   englishFallback: M02
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1850350036598188781
 GameObject:
   m_ObjectHideFlags: 0
@@ -4853,6 +4881,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_v.fd890be9c8
   englishFallback: CHAPTER V
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2032467335420870303
 GameObject:
   m_ObjectHideFlags: 0
@@ -5281,6 +5311,8 @@ MonoBehaviour:
   localizationKey: ui.v3.current.e3cc57e193
   englishFallback: CURRENT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2206217432877892087
 GameObject:
   m_ObjectHideFlags: 0
@@ -5675,6 +5707,8 @@ MonoBehaviour:
   localizationKey: ui.v3.first_response.f035a79b54
   englishFallback: FIRST RESPONSE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2380465751083052359
 GameObject:
   m_ObjectHideFlags: 0
@@ -5832,6 +5866,8 @@ MonoBehaviour:
 
     BARRACK'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2398967428116422701
 GameObject:
   m_ObjectHideFlags: 0
@@ -6212,6 +6248,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.m02_name
   englishFallback: ESTABLISH THE BASE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2510141135278950842
 GameObject:
   m_ObjectHideFlags: 0
@@ -6440,6 +6478,8 @@ MonoBehaviour:
   localizationKey: ui.v3.aria_protocol.a3f06a2c52
   englishFallback: ARIA PROTOCOL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2588794477966529828
 GameObject:
   m_ObjectHideFlags: 0
@@ -7028,6 +7068,8 @@ MonoBehaviour:
   localizationKey: ui.v3.continue_campaign.7d6ad88b88
   englishFallback: CONTINUE CAMPAIGN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2771499307334423628
 GameObject:
   m_ObjectHideFlags: 0
@@ -8001,6 +8043,8 @@ MonoBehaviour:
   localizationKey: ui.v3.hidden_network.4fe39d6e8e
   englishFallback: HIDDEN NETWORK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3106336467595707492
 GameObject:
   m_ObjectHideFlags: 0
@@ -8229,6 +8273,8 @@ MonoBehaviour:
   localizationKey: ui.v3.story_archive.c5a205a275
   englishFallback: STORY ARCHIVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3296133896222410372
 GameObject:
   m_ObjectHideFlags: 0
@@ -8382,6 +8428,8 @@ MonoBehaviour:
   localizationKey: ui.v3.dalia.d96b9125f3
   englishFallback: DALIA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3338787668064426109
 GameObject:
   m_ObjectHideFlags: 0
@@ -8917,6 +8965,8 @@ MonoBehaviour:
   localizationKey: ui.v3.iii.399dbc8659
   englishFallback: III
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3601266941396952671
 GameObject:
   m_ObjectHideFlags: 0
@@ -9070,6 +9120,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_iii.be02024366
   englishFallback: CHAPTER III
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3679933673861161558
 GameObject:
   m_ObjectHideFlags: 0
@@ -9432,6 +9484,8 @@ MonoBehaviour:
   localizationKey: ui.v3.air_and_armor.c017879e06
   englishFallback: AIR AND ARMOR
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3816630110481485784
 GameObject:
   m_ObjectHideFlags: 0
@@ -9585,6 +9639,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_ii.5e3969b3a1
   englishFallback: CHAPTER II
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3997248707098201324
 GameObject:
   m_ObjectHideFlags: 0
@@ -9738,6 +9794,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_iii.be02024366
   englishFallback: CHAPTER III
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4140267948409028875
 GameObject:
   m_ObjectHideFlags: 0
@@ -9891,6 +9949,8 @@ MonoBehaviour:
   localizationKey: ui.v3.broken_grid.58d805bed0
   englishFallback: BROKEN GRID
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4168396569607364576
 GameObject:
   m_ObjectHideFlags: 0
@@ -10378,6 +10438,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_ii.5e3969b3a1
   englishFallback: CHAPTER II
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4292630261284756873
 GameObject:
   m_ObjectHideFlags: 0
@@ -10771,6 +10833,8 @@ MonoBehaviour:
   localizationKey: ui.v3.xp_150_1_500_credits_barrack_unl.0cce7705bd
   englishFallback: XP 150  |  1,500 CREDITS  |  BARRACK UNLOCK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4530689404225948534
 GameObject:
   m_ObjectHideFlags: 0
@@ -10924,6 +10988,8 @@ MonoBehaviour:
   localizationKey: ui.v3.i.a83dd0ccbf
   englishFallback: I
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4556970185085258548
 GameObject:
   m_ObjectHideFlags: 0
@@ -11480,6 +11546,8 @@ MonoBehaviour:
   localizationKey: ui.v3.complete_mission.aea12b0474
   englishFallback: COMPLETE MISSION
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4750250972297972168
 GameObject:
   m_ObjectHideFlags: 0
@@ -12449,6 +12517,8 @@ MonoBehaviour:
   localizationKey: ui.v3.radar_warning.3f7fa22693
   englishFallback: RADAR WARNING
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5235453071990263890
 GameObject:
   m_ObjectHideFlags: 0
@@ -12653,6 +12723,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.m01_name
   englishFallback: FIRST CONTACT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5271851635804483741
 GameObject:
   m_ObjectHideFlags: 0
@@ -13008,6 +13080,8 @@ MonoBehaviour:
   localizationKey: ui.v3.mission_goals.becf785fe8
   englishFallback: MISSION GOALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5403930629309606165
 GameObject:
   m_ObjectHideFlags: 0
@@ -13488,6 +13562,8 @@ MonoBehaviour:
   localizationKey: ui.v3.under_15_00.19b5fe34c1
   englishFallback: UNDER 15:00
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5523577944744994862
 GameObject:
   m_ObjectHideFlags: 0
@@ -13850,6 +13926,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.start_briefing
   englishFallback: START BRIEFING
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5656280352061653803
 GameObject:
   m_ObjectHideFlags: 0
@@ -14120,6 +14198,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rewards.0e39d2e701
   englishFallback: REWARDS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5732728498456530563
 GameObject:
   m_ObjectHideFlags: 0
@@ -14584,6 +14664,8 @@ MonoBehaviour:
   localizationKey: ui.v3.broken_grid.58d805bed0
   englishFallback: BROKEN GRID
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6090823693522679653
 GameObject:
   m_ObjectHideFlags: 0
@@ -14737,6 +14819,8 @@ MonoBehaviour:
   localizationKey: ui.v3.iv.2c65a48513
   englishFallback: IV
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6114917725900635982
 GameObject:
   m_ObjectHideFlags: 0
@@ -14965,6 +15049,8 @@ MonoBehaviour:
   localizationKey: ui.v3.back.639807a2e0
   englishFallback: BACK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6170255901924495265
 GameObject:
   m_ObjectHideFlags: 0
@@ -15268,6 +15354,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m05.c0f6c7e3ae
   englishFallback: M05
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6312094638122016955
 GameObject:
   m_ObjectHideFlags: 0
@@ -15421,6 +15509,8 @@ MonoBehaviour:
   localizationKey: ui.v3.credits.4325a27b45
   englishFallback: CREDITS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6312707295015666641
 GameObject:
   m_ObjectHideFlags: 0
@@ -15574,6 +15664,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.m02_name
   englishFallback: ESTABLISH THE BASE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6398927398485036771
 GameObject:
   m_ObjectHideFlags: 0
@@ -15802,6 +15894,8 @@ MonoBehaviour:
   localizationKey: ui.v3.hidden_network.4fe39d6e8e
   englishFallback: HIDDEN NETWORK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6578690953475196840
 GameObject:
   m_ObjectHideFlags: 0
@@ -16721,6 +16815,8 @@ MonoBehaviour:
   localizationKey: ui.v3.protocol_fragment_0_5.91a5e5eb28
   englishFallback: PROTOCOL FRAGMENT  0/5
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6922408714320151416
 GameObject:
   m_ObjectHideFlags: 0
@@ -16874,6 +16970,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.title
   englishFallback: CAMPAIGN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6950015556594048213
 GameObject:
   m_ObjectHideFlags: 0
@@ -17331,6 +17429,8 @@ MonoBehaviour:
 
     PERIMETER'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7290170580549615674
 GameObject:
   m_ObjectHideFlags: 0
@@ -17608,6 +17708,8 @@ MonoBehaviour:
   localizationKey: ui.campaign.title
   englishFallback: CAMPAIGN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7354485172989728727
 GameObject:
   m_ObjectHideFlags: 0
@@ -17898,6 +18000,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m04.55b69f4a08
   englishFallback: M04
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7395824894728013497
 GameObject:
   m_ObjectHideFlags: 0
@@ -18390,6 +18494,8 @@ MonoBehaviour:
   localizationKey: ui.v3.airlift.45ae7d20ab
   englishFallback: AIRLIFT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7553948096279094673
 GameObject:
   m_ObjectHideFlags: 0
@@ -18693,6 +18799,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m01.d968fce424
   englishFallback: M01
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7676577111861220287
 GameObject:
   m_ObjectHideFlags: 0
@@ -18846,6 +18954,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_iv.2d020cbd4c
   englishFallback: CHAPTER IV
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7693416124765891601
 GameObject:
   m_ObjectHideFlags: 0
@@ -19149,6 +19259,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapters.498bff2b2a
   englishFallback: CHAPTERS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7793119704716368165
 GameObject:
   m_ObjectHideFlags: 0
@@ -19430,6 +19542,8 @@ MonoBehaviour:
   localizationKey: ui.v3.ii.2e561ff235
   englishFallback: II
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7918827430077802486
 GameObject:
   m_ObjectHideFlags: 0
@@ -19583,6 +19697,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_v.fd890be9c8
   englishFallback: CHAPTER V
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7992943811154517910
 GameObject:
   m_ObjectHideFlags: 0
@@ -20079,6 +20195,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_i.d0e5cb42d9
   englishFallback: CHAPTER I
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8279806901275234721
 GameObject:
   m_ObjectHideFlags: 0
@@ -20236,6 +20354,8 @@ MonoBehaviour:
 
     THE BASE'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8315925990283613886
 GameObject:
   m_ObjectHideFlags: 0
@@ -20389,6 +20509,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m03.a678755b34
   englishFallback: M03
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8319382182853753205
 GameObject:
   m_ObjectHideFlags: 0
@@ -20542,6 +20664,8 @@ MonoBehaviour:
   localizationKey: ui.v3.citywide_command.d092702868
   englishFallback: CITYWIDE COMMAND
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8374420109355803575
 GameObject:
   m_ObjectHideFlags: 0
@@ -20904,6 +21028,8 @@ MonoBehaviour:
   localizationKey: ui.v3.back.639807a2e0
   englishFallback: BACK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8431663761906590857
 GameObject:
   m_ObjectHideFlags: 0
@@ -21251,6 +21377,8 @@ MonoBehaviour:
   englishFallback: Reopen an abandoned JRC forward post and establish our foothold
     in Sahrin.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8456011550300020112
 GameObject:
   m_ObjectHideFlags: 0
@@ -21404,6 +21532,8 @@ MonoBehaviour:
   localizationKey: ui.v3.air_and_armor.c017879e06
   englishFallback: AIR AND ARMOR
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8468746521340162798
 GameObject:
   m_ObjectHideFlags: 0
@@ -21929,6 +22059,8 @@ MonoBehaviour:
   localizationKey: ui.v3.story_archive.c5a205a275
   englishFallback: STORY ARCHIVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8772236641064895605
 GameObject:
   m_ObjectHideFlags: 0
@@ -22086,6 +22218,8 @@ MonoBehaviour:
 
     SQUAD'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8790088533395588826
 GameObject:
   m_ObjectHideFlags: 0
@@ -22239,6 +22373,8 @@ MonoBehaviour:
   localizationKey: ui.v3.citywide_command.d092702868
   englishFallback: CITYWIDE COMMAND
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8884909601485621144
 GameObject:
   m_ObjectHideFlags: 0
@@ -22392,6 +22528,8 @@ MonoBehaviour:
   localizationKey: ui.v3.current_mission.10cee13e7f
   englishFallback: CURRENT MISSION
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8961522808902861881
 GameObject:
   m_ObjectHideFlags: 0
@@ -23130,6 +23268,8 @@ MonoBehaviour:
   localizationKey: ui.v3.m01.d968fce424
   englishFallback: M01
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9185521296302632056
 GameObject:
   m_ObjectHideFlags: 0
@@ -23358,6 +23498,8 @@ MonoBehaviour:
   localizationKey: ui.v3.chapter_iv.2d020cbd4c
   englishFallback: CHAPTER IV
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1001 &4636230175210322841
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,12 +1,12 @@
 # Map preparation status
 
-Updated: 2026-09-29. Work is in progress; no map foundation is qualified.
+Updated: 2026-09-30. Work is in progress; no map foundation is qualified.
 
 ## Current gates
 
 | Map | Status | Authoring, deterministic replay, full bake | Packed runtime and actual routes | Visual and device acceptance |
 |---|---|---|---|---|
-| RefineryDistrict | Prepared candidate; pending device/visual acceptance | Passed: 217 independent neutral building owners | Native21: packed load/reload, damage, nine routes and outside rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
+| RefineryDistrict | Revised pump gate candidate at hash `2d4fd91a`; previous native proof is stale | Current candidate generation passed: 217 independent owners; unchanged-input replay pending | Current packed content build passed; renewed native packed load/reload, damage, routes and old-map switching pending. Mission pump truck grid clearance passed. | New native pump/gate view awaits review; device pending |
 | CityEdgeAirfield | Prepared candidate; pending device/visual acceptance | Passed: 344 independent neutral building owners | Native21: packed load/reload, damage, nine routes and outside rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
 | AshLinePort | Prepared candidate; pending device/visual acceptance | Passed: 232 independent neutral building owners | Native21: packed load/reload, damage, nine routes, outside and canal rejection passed; isolated old-map switching passed in Native17 | Native captures require review; device pending |
 | Frontier | Prepared candidate; pending device/visual acceptance | Passed: full 2048×1024 derivative, deterministic replay, 3,444 independent owners and translated full bake | Native24: packed load/reload, damage, 12 routes and outside rejection passed; Native25: old-map switching passed | Native overview is legible but foggy; device and player review pending |

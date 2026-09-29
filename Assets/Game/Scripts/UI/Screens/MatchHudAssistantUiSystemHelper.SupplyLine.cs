@@ -5,12 +5,6 @@ namespace Game.UI.Runtime
     {
         private void ShowSupplyLineNextAction()
         {
-            if(UiShellRuntimeGateway.TryReadSupplyLine(out _,out _,out bool canAllocate) && canAllocate)
-            {
-                var hud=Object.FindAnyObjectByType<MissionDefenseHudView>();
-                if(hud!=null && hud.SupplyReserveButton!=null && hud.SupplyReserveButton.isActiveAndEnabled)
-                {Cue(hud.SupplyReserveButton,"mission.supply_line.reserve.allocate");return;}
-            }
             ShowGridlockNextAction();
         }
     }

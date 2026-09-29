@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch02_M02_SupplyLine
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch02.m02.supply_line
-  operationMapId: opmap.ch02.supply_yard_01
+  operationMapId: opmap.ch02.supply_line_refinery_review
   requiredAnchors:
   - anchorId: anchor.ch02.m02.oil
     kind: 2

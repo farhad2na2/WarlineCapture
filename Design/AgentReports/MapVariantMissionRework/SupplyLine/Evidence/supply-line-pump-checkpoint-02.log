@@ -1,0 +1,908 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-09-29T22:19:43Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-09-29T22:19:43.89719Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture
+-logFile
+/private/tmp/supply-line-pump-checkpoint-02.log
+-quit
+-executeMethod
+Game.Editor.CH02M02SupplyLinePresentationBuilder.BuildCheckpoint
+Successfully changed project path to: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture
+/Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55505 [Flags] 2 [Guid] 1415500459 [EditorId] 1415500459 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55505 [Flags] 2 [Guid] 1415500459 [EditorId] 1415500459 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Package Manager] Connected to IPC stream "Upm-7050" after 0.1 seconds.
+[Licensing::Module] Licensing is not yet initialized.
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              20e1143457e444e788bc3fc526611747
+  Correlation Id:          a12e24994cdf1129b78ddeb885cfe210
+  External correlation Id: 1894457858672196005
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.45s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-09-29T22:19:44.344372Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.45s
+[Licensing::Module] Licensing is initialized (took 0.06s).
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Artifact Garbage Collection - Removed 6 unused hashed content files
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56050
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.005041 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:False
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.379 seconds
+Domain Reload Profiling: 828ms
+	BeginReloadAssembly (86ms)
+	RebuildCommonClasses (5ms)
+	RebuildNativeTypeToScriptingClass (21ms)
+	initialDomainReloadingComplete (59ms)
+	LoadAllAssembliesAndSetupDomain (275ms)
+		LoadAssemblies (84ms)
+		AnalyzeDomain (207ms)
+			TypeCache.Refresh (205ms)
+				TypeCache.ScanAssembly (189ms)
+	FinalizeReload (381ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (77ms)
+			BeforeProcessingInitializeOnLoad (70ms)
+			ProcessInitializeOnLoadAttributes (83ms)
+			ProcessInitializeOnLoadMethodAttributes (75ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-51c8d0f2d25291022a6969385b8862b7
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 22.7311ms
+Refreshing native plugins compatible for Editor in 2.32 ms, found 3 plugins.
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 29.4339ms
+ExitCode: 0 Duration: 0s739ms
+[1451/2004  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.72 seconds), 1 items updated, 2004 evaluated
+AssetDatabase: script compilation time: 1.250055s
+Total cache size 268044014
+Total cache size after purge 268044014, took 00:00:00.3260943
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 391ms
+The assembly Game.Authoring is using the BakingVersion attribute. But the following Baker/Baking systems/EntitySceneOptimizations systems are missing the attribute:
+Game.Authoring.SupportAbilityCatalogAuthoring+SupportBaker.
+
+Updating these bakers/systems won't trigger a scene import automatically. Please add a BakingVersion attribute on them and update their version number everytime you want them to be rerun before an import. 
+Or don't use the attribute at all in their assembly to trigger scene import automatically after each changes in the assembly.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Scenes.Editor.TypeDependencyCache:PrintMissingBakingVersionAttributesWarning (System.Collections.Generic.Dictionary`2<string, System.Collections.Generic.List`1<System.Type>>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:305)
+Unity.Scenes.Editor.TypeDependencyCache:RegisterBakingAssemblies () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:284)
+Unity.Scenes.Editor.TypeDependencyCache:.cctor () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:61)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+Start HTTP server: port:7801
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in 12.160 seconds
+Domain Reload Profiling: 13385ms
+	BeginReloadAssembly (152ms)
+		DisableScriptedObjects (14ms)
+		CreateAndSetChildDomain (30ms)
+	RebuildCommonClasses (7ms)
+	RebuildNativeTypeToScriptingClass (16ms)
+	initialDomainReloadingComplete (67ms)
+	LoadAllAssembliesAndSetupDomain (982ms)
+		LoadAssemblies (344ms)
+		AnalyzeDomain (558ms)
+			TypeCache.Refresh (452ms)
+				TypeCache.ScanAssembly (417ms)
+			BuildScriptInfoCaches (98ms)
+			ResolveRequiredComponents (6ms)
+	FinalizeReload (12161ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (12ms)
+			BeforeProcessingInitializeOnLoad (95ms)
+			ProcessInitializeOnLoadAttributes (6301ms)
+			ProcessInitializeOnLoadMethodAttributes (5309ms)
+			AfterProcessingInitializeOnLoad (3ms)
+			EditorAssembliesLoaded (4ms)
+		AwakeInstancesAfterBackupRestoration (19ms)
+Starting new worker id: 0 with log in /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=2e744601c2384413283e7ffc6d328bab): Total: 18.229 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=15524 ms
+		Asset DB Callback time: managed=56 ms, native=8 ms
+		Scripting: domain reloads=1, domain reload time=1274 ms, compile time=1253 ms, other=110 ms
+		Project Asset Count: scripts=3419, non-scripts=20761
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 10.682ms
+	ApplyChangesToAssetFolders: 0.615ms
+	Scan: 1991.435ms
+	Collect global state as custom dependencies: 7.374ms
+	CategorizeScriptCompilationAssets: 136.614ms
+	ProcessAssetsWithTransientArtifactChanges: 138.870ms
+	CategorizeAssets: 364.331ms
+	CompileScripts: 1253.299ms
+	ImportOutOfDateAssets: 12562.856ms (12209.700ms without children)
+		ReloadNativeAssets: 0.505ms
+		UnloadImportedAssets: 17.794ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 3.820ms
+		ImportSchedulerStart: 331.034ms
+	PostProcessAllAssets: 56.499ms
+		MonoPostProcessAllAssets: 56.450ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 13.839ms
+			SyncVS.PostprocessSyncProject 12.770ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 2.240ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 2.146ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 1.744ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.905ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.737ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.344ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.296ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.284ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.236ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.190ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.137ms
+	UnloadStreamsBegin: 1.473ms
+	PersistCurrentRevisions: 0.983ms
+	GenerateScriptTypeHashes: 9.596ms
+	GenerateScriptTypeSerializationHashes: 13.795ms
+	Untracked: 1701.322ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.06 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.148ms
+Initializing Unity extensions:
+Worker ready: AssetImportWorkerHW0 0
+2026-09-30 00:20:07.319 Unity[7050:38573262] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x7b08a46e0 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-09-30 00:20:07.320 Unity[7050:38573262] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x7b08a4820 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-09-30 00:20:07.320 Unity[7050:38573262] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x7b08a48c0 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-09-30 00:20:07.327 Unity[7050:38573262] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0x7b0918280 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 1860 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            2743.136 ms
+	Integration:            2129.050 ms
+	Integration of assets:  1151.135 ms
+	Thread Wait Time:       404.623 ms
+	Total Operation Time:   6427.944 ms
+Unloading 15121 unused Assets / (49.1 MB). Loaded Objects now: 45459.
+Memory consumption went from 1.22 GB to 1.17 GB.
+Total: 213.056209 ms (FindLiveObjects: 42.668166 ms CreateObjectMapping: 19.339834 ms MarkObjects: 105.787125 ms  DeleteObjects: 45.256500 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+[SupplyLineRules] result=Passed groups=14 rerouteOrder=Passed reserveRegression=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineRulesValidation.cs:32)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineRulesValidation.cs Line: 32)
+
+./Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections/FixedStringAppendMethods.cs(423,17): Burst error BC1016: The managed function `System.String.get_Length(System.String* this)` is not supported
+
+ at Unity.Collections.FixedStringMethods.CopyFromTruncated(ref Unity.Collections.FixedString64Bytes fs, System.String s) (at ./Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections/FixedStringAppendMethods.cs:423)
+ at Unity.Collections.FixedString64Bytes.Initialize(Unity.Collections.FixedString64Bytes* this, System.String source) (at ./Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections/FixedString.gen.cs:3007)
+ at Unity.Collections.FixedString64Bytes..ctor(Unity.Collections.FixedString64Bytes* this, System.String source) (at ./Library/PackageCache/com.unity.collections@a43cabe808ca/Unity.Collections/FixedString.gen.cs:2995)
+ at Game.Runtime.CampaignMissionAttemptResourceInitializationSystem.OnUpdate(Game.Runtime.CampaignMissionAttemptResourceInitializationSystem* this, ref Unity.Entities.SystemState state) (at /Users/farhad/.codex/worktrees/supply-line-refinery/WarlineCapture/Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs:93)
+ at Game.Runtime.CampaignMissionAttemptResourceInitializationSystem.__codegen__OnUpdate$BurstManaged(System.IntPtr self, System.IntPtr state)
+ at Game.Runtime.CampaignMissionAttemptResourceInitializationSystem.Game.Runtime.__codegen__OnUpdate_000005E0$BurstDirectCall.Invoke(System.IntPtr self, System.IntPtr state)
+ at Game.Runtime.CampaignMissionAttemptResourceInitializationSystem.__codegen__OnUpdate(System.IntPtr self, System.IntPtr state)
+
+
+While compiling job:
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectIncomingMissileVisualPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectIncomingMissileVisualPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionCatalogDisposalSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnDestroy(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconWaveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAmbientCivilianMotionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAttemptResourceInitializationSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.AISquadSystem+ResolveInitialTargetCellJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.AISquadSystem+ResolveInitialTargetCellJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionGuidanceProjectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BuildingResourceHaulerTransferEcsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.StaticGridBlockerUpdateSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BuildingResourceHaulerTransferEcsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconPatrolSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MaterialFabricationSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeAIRecoverySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::ShouldRequestImport(Game.Components.AIMaterialsRecoveryNeedComponent&, Game.Components, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|Game.Runtime.ResourceExchangeAIRecoverySystem+LocalRecoverySummary&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Single, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.GroundMissileFlyingRocketVisualSystem+FlyingRocketVisualJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.GroundMissileFlyingRocketVisualSystem+FlyingRocketVisualJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.PathPoolMaintenanceSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.SelectionMarkerVisibilitySystem+UpdateSelectionMarkerJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.SelectionMarkerVisibilitySystem+UpdateSelectionMarkerJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.AISquadSystem+CountActiveSquadsJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.AISquadSystem+CountActiveSquadsJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.EngageTargetValidateSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.InitialUnitsBlockerChurnSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.AircraftFuelSafetyReturnSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.MatchHudMinimapMarkerSystem+PruneDeadMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.MatchHudMinimapMarkerSystem+PruneDeadMarkersJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAmbientCivilianMotionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.UnitAirMovementSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BuildingResourceProductionEcsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.EngageTargetSyncSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BaseBreachOrderSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeAIRecoverySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnDestroy(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.GroundMissileFlyingRocketVisualSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MaterialFabricationSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.GroundMissileProjectileFlightSystem+ProjectileFlightJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.GroundMissileProjectileFlightSystem+ProjectileFlightJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MapSurfaceDiagnosticsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.PathPoolMaintenanceSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.AirMissileHomingProjectileSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SelectionMarkerVisibilitySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.MapSurfaceDiagnosticsSystem+BuildDiagnosticsJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.MapSurfaceDiagnosticsSystem+BuildDiagnosticsJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MapSurfaceDiagnosticsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportAttemptCleanupSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BaseBreachOrderSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.MatchHudMinimapMarkerSystem+CollectMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.MatchHudMinimapMarkerSystem+CollectMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportAbilityStartupSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.ThreatDetectionWarningSystem+ThreatScanJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.ThreatDetectionWarningSystem+ThreatScanJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.EngageTargetSyncSystem+SyncJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.EngageTargetSyncSystem+SyncJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.RadarPingRequestSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionCatalogDisposalSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.EngageTargetValidateSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.FocusableUnitLookupCameraSystemHelper+CollectFocusableScreenDistanceCandidatesJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.FocusableUnitLookupCameraSystemHelper+CollectFocusableScreenDistanceCandidatesJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeAIRecoverySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeAIRecoverySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportPassengerLifecycleSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.MatchHudMinimapMarkerSystem+CollectScanIntelMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.MatchHudMinimapMarkerSystem+CollectScanIntelMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAttemptResourceInitializationSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.GroundMissileProjectileFlightSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportAirdropPauseSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.AIEconomySystem+ResolveEconomyDecisionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.AIEconomySystem+ResolveEconomyDecisionJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionCatalogDisposalSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.OperationMapBuildingDestructionSystem+ApplyVirtualizedBuildingStateJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.OperationMapBuildingDestructionSystem+ApplyVirtualizedBuildingStateJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportSmokeSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.StaticGridBlockerUpdateSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationMapBuildingDestructionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ThreatWarningResolveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionGuidanceProjectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAttemptFactProjectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconObjectiveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.BaseBreachOrderSystem+ProcessBaseBreachOrderJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.BaseBreachOrderSystem+ProcessBaseBreachOrderJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.EngageTargetValidateSystem+ValidateEngageTargetJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.EngageTargetValidateSystem+ValidateEngageTargetJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectIncomingMissileTargetPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectIncomingMissileTargetPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconWaveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationMapBuildingDestructionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconObjectiveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.CampaignMissionAmbientCivilianMotionSystem+MoveJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.CampaignMissionAmbientCivilianMotionSystem+MoveJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionRuntimeSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportMissionContextProjectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AIFactionControlSystem+ApplyFactionControlJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AIFactionControlSystem+ApplyFactionControlJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AirMissileHomingProjectileSystem+HomingProjectileJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AirMissileHomingProjectileSystem+HomingProjectileJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.SkirmishPopulationPolicy+SpawnConnectivityJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.SkirmishPopulationPolicy+SpawnConnectivityJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.BuildingResourceProductionEcsSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.RadarPingRequestSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconStartupSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionTutorialProtectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AITargetingSystem+AssignTargetsJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AITargetingSystem+AssignTargetsJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeAIRecoverySystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::TryResolveInputAmount(Game.Components.ResourceExchangeRecipeComponent&, Game.Components, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Int32&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Int32&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.Single&, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportCatalogDisposalSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnDestroy(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ThreatWarningResolveSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobForExtensions+ForJobStruct`1[[Game.Runtime.PathfindBatchJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.PathfindBatchJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionAttemptFactProjectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MaterialFabricationSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnDestroy(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.OperationMapBuildingDestructionSystem+ApplyResidentBuildingVisualStateJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.OperationMapBuildingDestructionSystem+ApplyResidentBuildingVisualStateJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectAirTargetPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.AirMissileHomingProjectileSystem+CollectAirTargetPositionJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MissionDefenseInteractionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Entities.JobChunkExtensions+JobChunkProducer`1[[Game.Runtime.SelectionMarkerVisibilitySystem+UpdateSelectionObjectOutlineJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Entities.JobChunkExtensions+JobChunkWrapper`1[[Game.Runtime.SelectionMarkerVisibilitySystem+UpdateSelectionObjectOutlineJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]]&, Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.DynamicOccupancyRebuildSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.CampaignMissionTutorialProtectionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnCreate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.MatchHudMinimapMarkerSystem+PublishMarkersJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.MatchHudMinimapMarkerSystem+PublishMarkersJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconPatrolSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.ResourceExchangeVisualCueSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.MissionDefenseInteractionSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.SupportCatalogDisposalSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.GroundMissileFlyingRocketVisualSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Game.Runtime.OperationsReconStartupSystem, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::__codegen__OnUpdate(System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+Unity.Jobs.IJobExtensions+JobStruct`1[[Game.Runtime.AISquadSystem+BuildAvailableUnitCandidatesJob, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Game.Runtime.AISquadSystem+BuildAvailableUnitCandidatesJob&, Game.Runtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)
+
+Asset Pipeline Refresh (id=de98219f57db44f7f9060b229fe3b926): Total: 1.208 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=1207 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3419, non-scripts=20761
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.266ms
+	Scan: 727.387ms
+	Collect global state as custom dependencies: 0.146ms
+	ProcessAssetsWithTransientArtifactChanges: 0.654ms
+	CategorizeAssets: 190.518ms
+	ImportOutOfDateAssets: 226.874ms (28.207ms without children)
+		ReloadNativeAssets: 0.915ms
+		UnloadImportedAssets: 0.113ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 3.207ms
+		ImportSchedulerStart: 194.429ms
+	GatherAllCurrentPrimaryImportResultRevisions: 2.570ms
+	UnloadStreamsBegin: 8.555ms
+	PersistCurrentRevisions: 0.863ms
+	Untracked: 48.124ms
+
+Asset Pipeline Refresh (id=5f11f83d98565459b98efee8ef56c19f): Total: 0.293 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=19e285051bebd4f099bc77856c78f7b0): Total: 0.292 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=8730ad83ddd5b4318b4918d6057f1c39): Total: 0.009 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=fb3fa1bc91cf84265828676958c83133): Total: 0.273 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=a6964c8d6754d4bf88038e76af643c2e): Total: 0.009 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=bd81d90f55235420ea0ab5e592c3bcbb): Total: 0.008 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=d4b0d18e613ce4ef29092c565a9a47e9): Total: 0.010 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=0954caf33df994efa8b87f3d511bedb2): Total: 0.008 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=682a5b3f68c6f427385f774fe69eb6b4): Total: 0.008 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=9f6e6e8f3e03b4457879994bf037abc4): Total: 0.008 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 492a7c1a2dfe348208e5b4c41ae8b82b - Path: Assets/Game/Configs/OperationMaps/Chapter02/SupplyLinePlacements.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 492a7c1a2dfe348208e5b4c41ae8b82b' -> (Import Result ID: '229fefab59603d81e82a08d79a9c5fc7') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=641fcaea25a9d86de672671d225bb9b9 DependenciesID=fd31833b28938ba5825b2937ff893161 StaticDependenciesID=8977d7c5208d9b7d3f3560fbdf0390e8 
+
+Asset Pipeline Refresh (id=151c959f0ecc84beb9214b238ec244da): Total: 0.663 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=1 ms, native=219 ms
+		Asset DB Callback time: managed=436 ms, native=5 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3419, non-scripts=20761
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 6
+	ApplyChangesToAssetFolders: 0.094ms
+	Scan: 6.176ms
+	CategorizeAssets: 7.141ms
+	ImportOutOfDateAssets: 196.514ms (20.653ms without children)
+		ImportManagerImport: 5.657ms (1.668ms without children)
+		ReloadNativeAssets: 0.600ms
+		UnloadImportedAssets: 0.090ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.194ms
+		InitializingProgressBar: 2.393ms
+		ImportSchedulerStart: 164.924ms
+	PostProcessAllAssets: 438.971ms
+		XRBuildSystem.XRAssetImported 1.532ms
+		PostProcessCallbackCreateDeferredMaterials 0.192ms
+		MonoPostProcessAllAssets: 436.639ms
+			AssetPostprocessor.OnPostprocessAllAssets 280.810ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 17.232ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 4.623ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 2.993ms
+			AssetChangedListener.OnPostprocessAllAssets 2.404ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 2.250ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 2.051ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 1.398ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.115ms
+			SyncVS.PostprocessSyncProject 0.971ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.703ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.669ms
+			PostProcessor.OnPostprocessAllAssets 0.650ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.572ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.467ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.419ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.377ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.315ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.270ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.208ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.197ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.183ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.166ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 0.128ms
+			AssetEvents.OnPostprocessAllAssets 0.121ms
+			ConfigAssetsTracker.OnPostprocessAllAssets 0.086ms
+			ScenarioDriftAssetsTracker.OnPostprocessAllAssets 0.079ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.079ms
+			SpeedTreePostProcessor.OnPostprocessAllAssets 0.076ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.063ms
+			TrackSelectedAssetsProcessor.OnPostprocessAllAssets 0.054ms
+	PostAssetChangesProfiler: 3.226ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.714ms
+	PersistCurrentRevisions: 0.751ms
+	Untracked: 9.148ms
+
+[SupplyLineEnvironment] result=Passed authored=4 owner=ReserveDepot acceptance=Pending
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineEnvironmentBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineEnvironmentBuilder.cs:74)
+Game.Editor.CH02M02SupplyLineConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:34)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineEnvironmentBuilder.cs Line: 74)
+
+[SupplyLinePumpAccess] result=Passed from=(580,505) to=(591,520) clearance=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineConfigBuilder:RequirePumpTruckAccess () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:136)
+Game.Editor.CH02M02SupplyLineConfigBuilder:BuildMap () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:44)
+Game.Editor.CH02M02SupplyLineConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:34)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs Line: 136)
+
+Importing 'GUID: 175a9270403f042998aa354cc89d26fe - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M02_RefineryReview.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 175a9270403f042998aa354cc89d26fe' -> (Import Result ID: '1a34309bf9b8e98fe0ddbce5a7c72fe1') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=cd876fa2936417bb6add12a45eb484c5 DependenciesID=972036bf30b5b5b46aec34a77d18f136 StaticDependenciesID=90a549baa65dbbcf0315d3fb7feac75f 
+Asset Pipeline Refresh (id=a1c5a35f8fb8242c29b849a63616ae09): Total: 0.183 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 363014a9e51e449568e0f567bea3bc4d - Path: Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M02_SupplyLine.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 363014a9e51e449568e0f567bea3bc4d' -> (Import Result ID: 'f90d347a11b4a26ab0b7f475cf0316fe') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=cb6fc6adb330bd1045c1e598d0521d1e DependenciesID=019caa0a73029610e19a0eefbecc5b77 StaticDependenciesID=7727696c4bee82f2d20aff696bd93079 
+Asset Pipeline Refresh (id=d1d69996780af46608ca83077d72a9bd): Total: 0.153 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f8a8115efb86240289c13f3b7b592750 - Path: Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M02_SupplyLine.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f8a8115efb86240289c13f3b7b592750' -> (Import Result ID: 'ea3bbca3d8639d25c9b0595ced88e6d1') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=94809e776b29898606492294a58fdca0 DependenciesID=36ddce2681e7469d37afc6438bdc00e7 StaticDependenciesID=ae7297e91befe1c7e3adafef5fded9c3 
+Asset Pipeline Refresh (id=964164242effa440f934ed131c144e0b): Total: 0.157 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f5eb5c2d2e932c548a01876109d52b46 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f5eb5c2d2e932c548a01876109d52b46' -> (Import Result ID: '4b2df44806d3dd4a69fda5a30c0f1fb5') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a208e1f320389ca7eb6a0eb9964aacf7 DependenciesID=4faefa1ca14eb200b39022cfa55094cf StaticDependenciesID=0ddbd920cef5174cdec805f7ea1cd9a2 
+Importing 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0 - Path: Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0' -> (Import Result ID: '2a1092250bd152cfac6c70c407441169') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=b13a4c76d4d28e874607acc5b7e5a933 DependenciesID=1abec5566432fde144a268aa20320e44 StaticDependenciesID=db7280134245c256051d256aaf8de3a9 
+Asset Pipeline Refresh (id=eccba1f9d07744604befc239fdbf25f3): Total: 0.181 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=f513d4687cf9b4d7b81a9b6652c036ae): Total: 0.217 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=19
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M01FirstContactConfigBuilder:RefreshChapterCatalogs () (at Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs:75)
+Game.Editor.CH02M02SupplyLineConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:35)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs Line: 75)
+
+[SupplyLineConfig] result=Passed chapter=2 mission=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs:37)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineConfigBuilder.cs Line: 37)
+
+Importing 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc' -> (Import Result ID: 'ed5f58f10b89d59d49e7ec4953abfcb7') in 0.004 seconds [static dependencies only]. Details - ImportResultOutputID=62d630281ea5878bf5aa058de937a29c DependenciesID=0578097a853a58c46d3618714768894c StaticDependenciesID=656dd5d33ad38c43b0a2b54656e3a8f4 
+Asset Pipeline Refresh (id=54b00ae4113034df59626a7e12295fdb): Total: 0.177 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/79d9291cdee0b44be8da0c68414000e2'
+	Deserialize:            22.841 ms
+	Integration:            18.032 ms
+	Integration of assets:  0.006 ms
+	Thread Wait Time:       0.001 ms
+	Total Operation Time:   40.880 ms
+Asset Pipeline Refresh (id=79be133e8928646819cde08b733d06fe): Total: 0.007 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/3d9decd51e2f0454488dd7bbba3a9e19'
+	Deserialize:            3.204 ms
+	Integration:            3.294 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.007 ms
+	Total Operation Time:   6.506 ms
+Asset Pipeline Refresh (id=aeccf883cb57b407bb65878da7a20ac3): Total: 0.007 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: eeb9b9d9eb8e844fca83d63a4095b52e - Path: Assets/Game/Configs/Missions/Chapter02/CH02M02_SupplyLine_FieldGuide.asset' with importer (NativeFormatImporter)
+Imported 'GUID: eeb9b9d9eb8e844fca83d63a4095b52e' -> (Import Result ID: 'fdc92119dad2c4d7ef77a06e760e0a48') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=3501cba800c88c625f72f435be747399 DependenciesID=6012ce0be8733f576cba86d7001c4e60 StaticDependenciesID=92d9338270a5dfdf0d0d2c785ae2fbf0 
+Asset Pipeline Refresh (id=b9d853826ad3e4c4bb953250dad91347): Total: 0.212 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/232099b00d82e4c938e3c9fd509a8a92'
+	Deserialize:            10.908 ms
+	Integration:            9.979 ms
+	Integration of assets:  0.003 ms
+	Thread Wait Time:       0.004 ms
+	Total Operation Time:   20.895 ms
+Asset Pipeline Refresh (id=8a70263e5d0a54e1cbe9ef3fb5e53763): Total: 0.007 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/d89e2b88d991e46cbbab066b4037e596'
+	Deserialize:            6.103 ms
+	Integration:            5.839 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.005 ms
+	Total Operation Time:   11.950 ms
+Asset Pipeline Refresh (id=63158af09aeda4c56a9f4ad11fe972b3): Total: 0.007 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[SupplyLinePresentation] result=Passed scope=CaptionedCopy locales=en,fa-IR
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:71)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs Line: 71)
+
+Asset Pipeline Refresh (id=517859d6263da4325aa754dfa083e886): Total: 0.237 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: b99d871cee7b64c25a2a9970a28c409f - Path: Assets/Game/Art/Narrative/CH02M02SupplyLine/SupplyChain.png' with importer (TextureImporter)
+Imported 'GUID: b99d871cee7b64c25a2a9970a28c409f' -> (Import Result ID: 'bccf9e5a987e0fe6c238fa589055bb4f') in 0.150 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=24d6b0762f7524c537411f2243a9dcf3 DependenciesID=b978d0dc1dabf361ccaefd1e3e8fe9a0 StaticDependenciesID=1214e9c86a490512982ac059d171ef6b 
+
+Asset Pipeline Refresh (id=7c98de0f51be940d89ff993edfd543eb): Total: 0.342 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=3 ms, native=325 ms
+		Asset DB Callback time: managed=9 ms, native=3 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3419, non-scripts=20761
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 6
+	ApplyChangesToAssetFolders: 0.082ms
+	Scan: 5.610ms
+	CategorizeAssets: 6.814ms
+	ImportOutOfDateAssets: 306.872ms (19.520ms without children)
+		ImportManagerImport: 153.622ms (1.097ms without children)
+		ReloadNativeAssets: 0.584ms
+		UnloadImportedAssets: 0.239ms
+		ReloadImportedAssets: 1.309ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 2.104ms
+		ImportSchedulerStart: 130.798ms
+	PostProcessAllAssets: 9.777ms
+		XRBuildSystem.XRAssetImported 0.127ms
+		MonoPostProcessAllAssets: 9.585ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 4.387ms
+			SyncVS.PostprocessSyncProject 1.550ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.325ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 0.754ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.591ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.203ms
+			AssetPostprocessor.OnPostprocessAllAssets 0.086ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.071ms
+			AssetChangedListener.OnPostprocessAllAssets 0.058ms
+	PostAssetChangesProfiler: 3.422ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.633ms
+	PersistCurrentRevisions: 0.626ms
+	Untracked: 8.037ms
+
+Importing 'GUID: 55284eefef03342618d99c0681d06369 - Path: Assets/Game/Art/Narrative/CH02M02SupplyLine/Manifest.png' with importer (TextureImporter)
+Imported 'GUID: 55284eefef03342618d99c0681d06369' -> (Import Result ID: '7d70e88698fd9eecc210c747eb545eb0') in 0.109 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=612a31214a18ba705898e20f9639255d DependenciesID=7ca724c446f160e5aca9a159d3e391fb StaticDependenciesID=71dc9fe3d27d336b129821e1ae2c04f1 
+Asset Pipeline Refresh (id=71a768f98639044f6a9117a0b44aab4e): Total: 0.276 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: b6da42e7f14c44f5e9cce53a75f6ce55 - Path: Assets/Game/Art/Narrative/CH02M02SupplyLine/EmergencyServices.png' with importer (TextureImporter)
+Imported 'GUID: b6da42e7f14c44f5e9cce53a75f6ce55' -> (Import Result ID: 'd0cb6c9b04285961819b11436896ea0c') in 0.111 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=956ec5e1b59483711ee5760bb150ced6 DependenciesID=182f5b57baf9da33a1473898ff251495 StaticDependenciesID=1a1a67dcff5ba3631594a0a7d8acb6fd 
+Asset Pipeline Refresh (id=c3e5c40418443421ba2769b4ef9bc30c): Total: 0.290 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[SupplyLineComicArt] result=Passed sources=3 authoredCrops=6 bilingualTextFree=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineMediaImporter:ConfigureArt () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineMediaImporter.cs:49)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:27)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:24)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineMediaImporter.cs Line: 49)
+
+Asset Pipeline Refresh (id=572e10f731f0f458e891cf1c8120c92a): Total: 0.210 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: 31560552772f24f968c4d0a4455df49d - Path: Assets/AddressableAssetsData/AssetGroups/Supply Line Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 31560552772f24f968c4d0a4455df49d' -> (Import Result ID: '7a2bce2282a6e683962b0aad9de4ef07') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4ead0a72cf34f60c2682e06823268c91 DependenciesID=69716ecfbad85ec72096e4f7f3f64a0d StaticDependenciesID=4d5e48ee031ed3abdb6206367fe04844 
+Importing 'GUID: 222efe1f5b2c14c879bfcdd7d605166c - Path: Assets/AddressableAssetsData/AssetGroups/Schemas/Supply Line Narrative_BundledAssetGroupSchema.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 222efe1f5b2c14c879bfcdd7d605166c' -> (Import Result ID: '832e427f377fdf5db5b0ef441ebd6de0') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=3292eb9d5b9bd2bb580573556c9319f9 DependenciesID=e4945d8b490b87ffa60e67aceb3e9806 StaticDependenciesID=889b277ae2f14114a63889b591352fcc 
+Importing 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a - Path: Assets/AddressableAssetsData/AddressableAssetSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a' -> (Import Result ID: '30daf186fcd0b2e038755729aadd6455') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=03e1ac9578e9f5a0dcb1fc28a175ee06 DependenciesID=e56a6154ab6f035c9e36ec86f7be3256 StaticDependenciesID=08a02df1845cc1da3f26f76c5b7f7841 
+Importing 'GUID: 3e4f81374873b4c4ea3044a2dbeaca17 - Path: Assets/Game/Configs/Narrative/Chapter02/CH02M02_SupplyLine_Narrative.asset' with importer (NativeFormatImporter)
+Main Object Name 'CH02M02_SupplyLine_brief' does not match filename 'CH02M02_SupplyLine_Narrative'
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:33)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:24)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+[Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs line 33]
+
+Imported 'GUID: 3e4f81374873b4c4ea3044a2dbeaca17' -> (Import Result ID: 'e311943cc26bac9983be6cfcbeaf4bcf') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=fd499f655a18c0cdd37129b78d4d550f DependenciesID=8b186d9019e068df93bc8562846a46f7 StaticDependenciesID=479dfee5de076cfee1002864f82585a1 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: '86d9a1a9bc86c57812e60af298752e0e') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=aac4890fffe275f399e450849fe8c5d8 StaticDependenciesID=9887059e6c87f17fdda63fb6c80345f5 
+Asset Pipeline Refresh (id=eac3ac32bcdd545a3a4fcf6d394647d1): Total: 0.209 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            3.380 ms
+	Integration:            415.081 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.009 ms
+	Total Operation Time:   418.471 ms
+Unloading 44 unused Assets / (12.5 KB). Loaded Objects now: 46043.
+Memory consumption went from 1.24 GB to 1.24 GB.
+Total: 44.366125 ms (FindLiveObjects: 0.942958 ms CreateObjectMapping: 6.151000 ms MarkObjects: 37.148334 ms  DeleteObjects: 0.123542 ms)
+
+Importing 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e - Path: Assets/Game/Scenes/Menu.unity' with importer (DefaultImporter)
+Imported 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e' -> (Import Result ID: '52773ff349842ec2ead28eb7a568d9e8') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=400b224708e4470bb8f670c7ab291fe5 DependenciesID=34bcf059de88941e104d9a6f2cb704e1 StaticDependenciesID=4dc6483a1b812b40d0172b63018d6fbf 
+Asset Pipeline Refresh (id=c3391450996904d41a6e228eee5b7ba9): Total: 0.140 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[CH02M02SupplyLineNarrativeBuilder] result=Passed sequences=3 presentation=CaptionedCheckpoint locales=en,fa-IR voices=False
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:43)
+Game.Editor.CH02M02SupplyLineNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs:24)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:131)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLineNarrativeBuilder.cs Line: 43)
+
+[SupplyLineCheckpoint] result=Passed scope=CaptionedConfiguration gameplay=Pending
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M02SupplyLinePresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs:132)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M02SupplyLinePresentationBuilder.cs Line: 132)
+
+Batchmode quit successfully invoked - shutting down!
+Pipeline Server stopped
+Unloading 21 Unused Serialized files (Serialized files now loaded: 0)
+Killing ADB server in 0.189809 seconds.
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Unloading 159 unused Assets / (105.0 KB). Loaded Objects now: 46054.
+Memory consumption went from 1.27 GB to 1.27 GB.
+Total: 57.138542 ms (FindLiveObjects: 1.003958 ms CreateObjectMapping: 6.930417 ms MarkObjects: 48.372083 ms  DeleteObjects: 0.831625 ms)
+
+Thread 0x372e07000 may have been prematurely finalized
+VB/C# compiler server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+MSBuild server shut down successfully.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+Thread 0x16eb83000 may have been prematurely finalized
+Thread 0x16ec0f000 may have been prematurely finalized
+Thread 0x16ec9b000 may have been prematurely finalized
+Thread 0x16ed27000 may have been prematurely finalized
+Thread 0x16edb3000 may have been prematurely finalized
+Thread 0x16ee3f000 may have been prematurely finalized
+Thread 0x16eecb000 may have been prematurely finalized
+Thread 0x16ef57000 may have been prematurely finalized
+Thread 0x16efe3000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x179ef3000 may have been prematurely finalized
+Cleanup mono
+CodeReloadManager destroyed
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+debugger-agent: Unable to listen on 38
+Exiting batchmode successfully now!
+[Package Manager] Server process was shutdown

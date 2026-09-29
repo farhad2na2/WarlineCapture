@@ -24,11 +24,10 @@ namespace Game.Editor
                 ("guide.4.body","Defeat the sabotage teams and keep all links intact. Hold the full reserve for twenty seconds.","خرابکارها رو شکست بده و همهٔ حلقه‌ها رو سالم نگه دار. ذخیرهٔ کامل رو بیست ثانیه حفظ کن."),
                 ("guide.recovery.title","Use the southern haul lane","از مسیر باربری جنوبی برو"),
                 ("guide.recovery.body","Select the Oil truck, press Move and send it to the marked southern road. Automatic hauling resumes after arrival. Defend this alternate lane around the ruined block.","کامیون نفت رو انتخاب کن، حرکت رو بزن و به جادهٔ جنوبیِ مشخص‌شده بفرست. بعد از رسیدن، باربری خودکار ادامه پیدا می‌کنه. از این مسیر جایگزین کنار بلوک ویران‌شده محافظت کن."),
-                ("reserve.allocate","Reserve 20 civilian Fuel","۲۰ بشکه برای مردم ذخیره کن"),
                 ("reserve.allocated","Civilian reserve protected","ذخیرهٔ مردم محافظت می‌شه"),
                 ("reserve.status","Fuel: {0}/40 | Civilian reserve: {1}/20","سوخت: {0}/۴۰ | ذخیرهٔ مردم: {1}/۲۰"),
                 ("guide.title","Supply Line field guide","راهنمای خط تدارکات"),
-                ("guide.example","Select rifles, press Move, then tap the threatened site. Trucks haul automatically. At 20 stored barrels, press Reserve civilian Fuel.","تفنگدارها رو انتخاب کن، حرکت رو بزن و روی محل در خطر بزن. کامیون‌ها خودکار بار می‌برن. وقتی ذخیره به ۲۰ بشکه رسید، دکمهٔ ذخیرهٔ مردم رو بزن."),
+                ("guide.example","Select rifles, press Move, then tap the threatened site. Trucks haul automatically. The first 20 stored Fuel barrels are protected for civilians.","تفنگدارها رو انتخاب کن، حرکت رو بزن و روی محل در خطر بزن. کامیون‌ها خودکار بار می‌برن. نخستین ۲۰ بشکهٔ سوختِ ذخیره‌شده برای مردم محافظت می‌شود."),
                 ("guide.mistake","Do not send unarmed trucks into the sabotage teams. A stopped truck may be waiting for a full load; inspect its status before changing orders.","کامیون‌های بی‌سلاح رو به سمت خرابکارها نفرست. ممکنه کامیون متوقف‌شده منتظر بار کامل باشه؛ قبل از عوض کردن دستور، وضعیتش رو بررسی کن."),
                 ("guide.diagram","OIL PUMP → TRAY TRUCK → REFINERY → TANKER → RESERVE","پمپ نفت ← کامیون کفی ← پالایشگاه ← تانکر ← ذخیره"),
                 ("result.victory","Supply line restored","خط تدارکات برقرار شد"),
@@ -39,7 +38,7 @@ namespace Game.Editor
                 ("failure.link","A critical supply building was destroyed. Protect the pump, refinery and reserve depot.","یکی از ساختمان‌های ضروری نابود شد. از پمپ، پالایشگاه و انبار ذخیره محافظت کن."),
                 ("failure.deadline","The reserve was not secured within twelve minutes.","ذخیره تا پایان دوازده دقیقه امن نشد."),
                 ("failure.integrity","The supply chain could not initialize safely. Exit and retry; no result or reward has been recorded.","زنجیرهٔ تدارکات درست راه‌اندازی نشد. خارج شو و دوباره تلاش کن؛ نتیجه یا پاداشی ثبت نشده."),
-                ("objective.reserve.body","Reroute the Oil truck through the southern lane, allocate 20 civilian barrels, keep 40 in storage and hold the intact chain for 20 seconds after defeating the attackers.","۲۰ بشکه برای مردم کنار بذار، ۴۰ بشکه در انبار نگه دار و بعد از شکست مهاجم‌ها، زنجیرهٔ سالم رو ۲۰ ثانیه حفظ کن."),
+                ("objective.reserve.body","Reroute the Oil truck through the southern lane. The first 20 Fuel barrels are protected for civilians; keep 40 in storage and hold the intact chain for 20 seconds after defeating the attackers.","کامیون نفت را از مسیر جنوبی بفرست. نخستین ۲۰ بشکهٔ سوخت برای مردم محافظت می‌شود؛ ۴۰ بشکه را در انبار نگه دار و پس از شکست مهاجمان، زنجیرهٔ سالم را ۲۰ ثانیه حفظ کن."),
                 ("name","Supply Line","خط تدارکات"),
                 ("summary","Restore the Oil-to-Fuel chain and protect the reserve for clinics, water pumps and JRC relief transport.","زنجیرهٔ نفت تا سوخت رو راه بنداز و از ذخیرهٔ درمانگاه‌ها، پمپ‌های آب و ترابری امداد محافظت کن."),
                 ("location","Industrial supply yard","محوطهٔ تدارکات صنعتی"),
@@ -84,28 +83,12 @@ namespace Game.Editor
                     var parent=data.FindProperty("actions").objectReferenceValue as GameObject;
                     if(parent==null)throw new InvalidOperationException("Mission action area missing.");
                     var obsolete=warning.transform.parent.Find("SupplyLineReserve");if(obsolete!=null)UnityEngine.Object.DestroyImmediate(obsolete.gameObject);
-                    var existing=parent.transform.Find("SupplyLineReserve");
-                    var button=existing!=null?existing.GetComponent<Button>():UnityEngine.Object.Instantiate(warning,parent.transform);
-                    button.name="SupplyLineReserve";button.onClick=new Button.ButtonClickedEvent();
-                    var surface=button.GetComponent<Image>()??button.gameObject.AddComponent<Image>();surface.color=new Color(.04f,.35f,.43f,1f);surface.enabled=true;surface.raycastTarget=true;button.targetGraphic=surface;
-                    foreach(Transform child in button.transform.Cast<Transform>().ToArray())UnityEngine.Object.DestroyImmediate(child.gameObject);
-                    var rect=(RectTransform)button.transform;rect.anchorMin=rect.anchorMax=rect.pivot=new Vector2(0,1);rect.anchoredPosition=new Vector2(0,-80);rect.sizeDelta=new Vector2(360,56);
-                    var textObject=new GameObject("Label",typeof(RectTransform),typeof(RTLTMPro.RTLTextMeshPro));textObject.transform.SetParent(button.transform,false);
-                    var text=textObject.GetComponent<RTLTMPro.RTLTextMeshPro>();
-                    text.font=root.GetComponentsInChildren<TMPro.TMP_Text>(true).First(t=>t.font!=null).font;
-                    text.text="Reserve civilian Fuel";text.color=Color.white;text.raycastTarget=false;text.alignment=TMPro.TextAlignmentOptions.Center;
-                    text.enableAutoSizing=true;text.fontSizeMin=12;text.fontSizeMax=18;
-                    text.rectTransform.anchorMin=Vector2.zero;text.rectTransform.anchorMax=Vector2.one;text.rectTransform.offsetMin=new Vector2(6,2);text.rectTransform.offsetMax=new Vector2(-6,-2);
-                    var label=textObject.AddComponent<V3LocalizedTextBindingView>();label.Configure("mission.supply_line.reserve.allocate","Reserve civilian Fuel",false);
-                    data.FindProperty("supplyReserveButton").objectReferenceValue=button;data.FindProperty("supplyReserveLabel").objectReferenceValue=label;
+                    var existing=parent.transform.Find("SupplyLineReserve");if(existing!=null)UnityEngine.Object.DestroyImmediate(existing.gameObject);
+                    data.FindProperty("supplyReserveButton").objectReferenceValue=null;
+                    data.FindProperty("supplyReserveLabel").objectReferenceValue=null;
                     var existingStatus=parent.transform.Find("SupplyLineReserveStatus");if(existingStatus!=null)UnityEngine.Object.DestroyImmediate(existingStatus.gameObject);
-                    var status=UnityEngine.Object.Instantiate(text,parent.transform);status.name="SupplyLineReserveStatus";
-                    status.rectTransform.anchorMin=status.rectTransform.anchorMax=status.rectTransform.pivot=new Vector2(0,1);
-                    status.rectTransform.anchoredPosition=new Vector2(0,-140);status.rectTransform.sizeDelta=new Vector2(360,40);
-                    status.fontSizeMax=16;status.text="Fuel: 0/40 | Civilian reserve: 0/20";
-                    var statusBinding=status.GetComponent<V3LocalizedTextBindingView>();statusBinding.Configure("",status.text,true);
-                    data.FindProperty("supplyReserveStatus").objectReferenceValue=statusBinding;
-                    data.ApplyModifiedPropertiesWithoutUndo();button.gameObject.SetActive(false);status.gameObject.SetActive(false);
+                    data.FindProperty("supplyReserveStatus").objectReferenceValue=null;
+                    data.ApplyModifiedPropertiesWithoutUndo();
                 }
                 MissionUiSerializedBindingsAuthoring.Apply(root);PrefabUtility.SaveAsPrefabAsset(root,hud);
             }

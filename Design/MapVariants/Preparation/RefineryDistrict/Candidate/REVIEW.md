@@ -4,11 +4,11 @@ Status: In progress. Authoring and surface artifacts only; runtime packing, actu
 
 - Independent neutral building owners: 217; original duplicates: 0.
 - Static alternatives removed by mapped branch provenance: 1968.
-- Static movement cells: 40008; water/static exclusion cells: 40008; bridge deck cells: 0.
+- Static movement cells: 39968; water/static exclusion cells: 39968; bridge deck cells: 0.
 - Unsupported industrial/civic destruction pairs explicitly become non-destructible scenery. No unrelated rubble substitution.
 - Rotated static footprints include partial boundary intersections. Gameplay owners use the existing conservative AABB runtime blocker contract.
 - Surface build exclusion is separate from movement exclusion. Dynamic building footprints are blocked by owners, not duplicated as grid static blockers.
-- Semantic hash: `722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab`; regeneration: `Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder.BuildRefinery`; replay: Passed.
+- Semantic hash: `2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778`; regeneration: `Game.Editor.MapVariants.MapVariantPreparedCandidateBuilder.BuildRefinery`; replay: InputsChanged.
 
 ## Bounds decisions
 

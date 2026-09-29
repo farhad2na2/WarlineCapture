@@ -21,7 +21,7 @@ namespace Game.Editor
     {
         private const string Active="Warline.SupplyLine.InputProbe",Mode="Warline.SupplyLine.InputMode";
         private static string Output=>System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"../../"))+"/"+new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(Application.dataPath)).Name+"-evidence";
-        private static bool seeded,finished,watchStarted,won,sawDebrief;
+        private static bool seeded,finished,watchStarted,won,sawDebrief,checkedMap,checkedSites;
         private static int winningClock;
         private static double started,lastInput,lastCapture,lastLog;
         private static AriaTouchInputUiSystemHelper touch;
@@ -35,7 +35,7 @@ namespace Game.Editor
         {
             try{CH02M02SupplyLinePresentationBuilder.BuildCheckpoint();}
             catch(Exception e){Debug.LogException(e);Complete(false,e.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=false;winningClock=0;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=checkedMap=checkedSites=false;winningClock=0;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -61,14 +61,53 @@ namespace Game.Editor
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                 var state=em.HasComponent<CampaignMissionSupplyLineState>(root)?em.GetComponentData<CampaignMissionSupplyLineState>(root):default;
+                if(!checkedSites && state.Ready!=0)
+                {
+                    using var boundaries=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
+                    if(boundaries.CalculateEntityCount()==1 && em.HasBuffer<BuildingRuntimeSpawnRequest>(boundaries.GetSingletonEntity()))
+                    {
+                        foreach(var request in em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaries.GetSingletonEntity()))
+                            if(request.BuildingId.ToString().StartsWith("SupplyLine_"))
+                                Debug.Log($"[SupplyLineInput] site={request.BuildingId} preferred={request.PreferredOrigin} actual={request.ActualOrigin} status={request.Status}");
+                        checkedSites=true;
+                    }
+                }
+                if(!checkedMap && runtime.MissionId.Equals(CampaignMissionSequence.SupplyLine) && runtime.Phase>=MissionPhaseKind.InteractiveBrief)
+                {
+                    using var maps=em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+                    if(maps.CalculateEntityCount()!=1)throw new InvalidOperationException("Expected one active operation map.");
+                    var metadata=maps.GetSingleton<OperationMapMetadataComponent>();
+                    var expected=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.MapPath);
+                    if(expected==null || !metadata.Blob.IsCreated || metadata.PhysicalSourceValidated==0 ||
+                       metadata.Blob.Value.OperationMapId.ToString()!=expected.OperationMapId ||
+                       metadata.Blob.Value.SourceContentHash.ToString()!=expected.SourceBinding.SourceContentHash ||
+                       metadata.Blob.Value.ContentHash.ToString()!=expected.ContentHash)
+                        throw new InvalidOperationException("Supply Line did not load the validated refinery mission map.");
+                    checkedMap=true;
+                    Debug.Log("[SupplyLineInput] map=Passed logical="+expected.OperationMapId+" physical="+expected.SourceBinding.SourceOperationMapId+" hash="+expected.SourceBinding.SourceContentHash);
+                }
                 if(EditorApplication.timeSinceStartup-lastCapture>5)
                 {ScreenCapture.CaptureScreenshot(Output+"/input-current.png");lastCapture=EditorApplication.timeSinceStartup;}
                 if(EditorApplication.timeSinceStartup-lastLog>10)
                 {
-                    Debug.Log($"[SupplyLineInput] mode={(Manual?"Manual":"Watch")} phase={runtime.Phase} ready={state.Ready} clock={state.ElapsedMilliseconds} route={state.RouteRecovered} fuel={state.StoredFuel} allocated={state.AllocatedCivilianBarrels} watch={UiShellRuntimeGateway.ReadAriaPlay().Phase}");
+                    bool hasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target);
+                    var aria=UiShellRuntimeGateway.ReadAriaPlay();
+                    var camera=Camera.main;
+                    Debug.Log($"[SupplyLineInput] mode={(Manual?"Manual":"Watch")} phase={runtime.Phase} ready={state.Ready} clock={state.ElapsedMilliseconds} route={state.RouteRecovered} fuel={state.StoredFuel} allocated={state.AllocatedCivilianBarrels} watch={aria.Phase} actions={aria.Actions} target={hasTarget}:{target.BattleAction}:{target.NeedsSelection}:{target.Moving}:selection={target.Selection}:destination={target.Destination}:selectionScreen={(camera!=null?camera.WorldToScreenPoint(target.Selection):Vector3.zero)}:destinationScreen={(camera!=null?camera.WorldToScreenPoint(target.Destination):Vector3.zero)}:camera={(camera!=null?camera.transform.position:Vector3.zero)}");
                     lastLog=EditorApplication.timeSinceStartup;
                 }
-                if(state.Failure!=SupplyLineFailure.None)throw new InvalidOperationException("Mission failed: "+state.Failure);
+                if(state.Failure!=SupplyLineFailure.None)
+                {
+                    var detail="";
+                    using var boundaries=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
+                    if(boundaries.CalculateEntityCount()==1 && em.HasBuffer<BuildingRuntimeSpawnRequest>(boundaries.GetSingletonEntity()))
+                    {
+                        foreach(var request in em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaries.GetSingletonEntity()))
+                            if(request.BuildingId.ToString().StartsWith("SupplyLine_"))
+                                detail+=$" {request.BuildingId}@{request.PreferredOrigin}:status={request.Status},code={request.ResultCode}";
+                    }
+                    throw new InvalidOperationException("Mission failed: "+state.Failure+detail);
+                }
                 if(runtime.Outcome==MissionOutcomeKind.Victory)
                 {
                     if(state.RouteRecovered==0 || state.AllocatedCivilianBarrels<20 || state.StoredFuel<40 || state.HoldMilliseconds<20000)throw new InvalidOperationException("Victory lacks required facts.");
@@ -81,7 +120,9 @@ namespace Game.Editor
                 {
                     using var sessions=em.CreateEntityQuery(typeof(Game.UI.Shell.Contracts.Ecs.AriaPlaySessionComponent));
                     var stopped=sessions.GetSingleton<Game.UI.Shell.Contracts.Ecs.AriaPlaySessionComponent>();
-                    throw new InvalidOperationException("Watch stopped before outcome: "+watch.Phase+" reason="+stopped.StopReason);
+                    bool hasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target);
+                    var camera=Camera.main;
+                    throw new InvalidOperationException("Watch stopped before outcome: "+watch.Phase+" reason="+stopped.StopReason+" actions="+watch.Actions+" target="+hasTarget+":"+target.BattleAction+":"+target.NeedsSelection+":"+target.Moving+":selection="+target.Selection+":destination="+target.Destination+":screen="+(camera!=null?camera.WorldToScreenPoint(target.Selection):Vector3.zero));
                 }
                 EnsureTouch();touch.Tick(Time.unscaledTime);
                 if(touch.IsBusy || EditorApplication.timeSinceStartup-lastInput<1)return;
@@ -119,6 +160,12 @@ namespace Game.Editor
                     if(!campaign.IsChapterTwo){Tap(Ready(campaign.ChapterTwoButton)?campaign.ChapterTwoButton:campaign.ChapterTwoOverviewButton);return;}
                     if(model.SelectedMission.MissionId!=CampaignMissionSequence.SupplyLine){Tap(campaign.MissionNodeButtons[1]);return;}
                     Tap(campaign.LaunchMissionButton);return;
+                }
+                var mainMenu=UnityEngine.Object.FindAnyObjectByType<MainMenuCampaignCardView>();
+                if(mainMenu!=null)
+                {
+                    Tap(typeof(MainMenuCampaignCardView).GetField("continueButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(mainMenu) as Button);
+                    return;
                 }
                 foreach(var route in UnityEngine.Object.FindObjectsByType<UIShellRouteButtonView>(FindObjectsInactive.Exclude,FindObjectsSortMode.None))
                     if(route.Route==UIRoute.Campaign && Ready(route.GetComponent<Button>())){Tap(route.GetComponent<Button>());return;}

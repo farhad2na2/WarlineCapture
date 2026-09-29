@@ -37,8 +37,25 @@ namespace Game.UI.Shell.Ecs
             if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.FalseFront)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SafehouseSweep)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SignalTrace)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.RouteReopened)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.PowerRelay)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.MarketLifeline)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SupplyLine)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock))) &&
                 (guidance.GuidanceId>=75001 && guidance.GuidanceId<=75010 || guidance.GuidanceId>=76001 && guidance.GuidanceId<=76004 || guidance.GuidanceId>=77001 && guidance.GuidanceId<=77005 || guidance.GuidanceId>=78001 && guidance.GuidanceId<=78005 || guidance.GuidanceId>=79001 && guidance.GuidanceId<=79206 || guidance.GuidanceId>=80001 && guidance.GuidanceId<=80005 || guidance.GuidanceId>=81001 && guidance.GuidanceId<=81005 || guidance.GuidanceId>=82001 && guidance.GuidanceId<=82005) && em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
+                bool selected=em.HasComponent<SelectedUnitTag>(guidance.SourceEntity);
+                if(!selected && runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SupplyLine)) &&
+                   em.HasComponent<CampaignMissionUnitRoleComponent>(guidance.SourceEntity))
+                {
+                    var sourceRole=em.GetComponentData<CampaignMissionUnitRoleComponent>(guidance.SourceEntity);
+                    if(!sourceRole.UnitGroupId.IsEmpty)
+                    {
+                        using var selectedUnits=em.CreateEntityQuery(typeof(SelectedUnitTag),typeof(CampaignMissionUnitRoleComponent));
+                        using var entities=selectedUnits.ToEntityArray(Unity.Collections.Allocator.Temp);
+                        foreach(var unit in entities)
+                        {
+                            var role=em.GetComponentData<CampaignMissionUnitRoleComponent>(unit);
+                            if(role.SessionToken.Equals(sourceRole.SessionToken) && role.UnitGroupId.Equals(sourceRole.UnitGroupId) && role.MissionRoleId.Equals(sourceRole.MissionRoleId))
+                            {selected=true;break;}
+                        }
+                    }
+                }
                 target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
-                    !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),
+                    !selected,
                     IsTutorialActorMoving(em,guidance.SourceEntity) && (!em.HasComponent<UnitResourceHauler>(guidance.SourceEntity) || em.HasComponent<ManualMoveOrderTag>(guidance.SourceEntity)),
                     battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:
                         guidance.RecommendationKind==AssistantRecommendationKind.Attack?UiTutorialBattleAction.Attack:UiTutorialBattleAction.Move,

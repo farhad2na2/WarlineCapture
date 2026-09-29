@@ -22,7 +22,11 @@ namespace Game.Runtime
             bool recovery=supply.OilTransferred!=0 && supply.RouteRecovered==0;
             int step=supply.OilTransferred==0?1:recovery || supply.FuelTransferred==0?2:supply.StoredFuel<40 || supply.AllocatedCivilianBarrels==0?3:4;
             int linkIndex=step==1?0:step==2?1:2;
-            Entity actor=Entity.Null;float3 destination=new float3(links[linkIndex].Origin.x,0,links[linkIndex].Origin.y-8);
+            // Keep the guidance destination beside the working building and in the
+            // playable center lane. The left squad panel obscures the west side of
+            // the Oil Pump on this refinery camera.
+            int lateralOffset=step==1?10:step==3?-15:0;
+            Entity actor=Entity.Null;float3 destination=new float3(links[linkIndex].Origin.x+lateralOffset,0,links[linkIndex].Origin.y-8);
             var members=em.GetBuffer<CampaignMissionSupplyLineMember>(root,true);
             // Friendly chain facts and public objective locations only. No enemy roster or hidden schedule.
             bool wait=true;

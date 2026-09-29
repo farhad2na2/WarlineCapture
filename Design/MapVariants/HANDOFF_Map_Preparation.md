@@ -2,7 +2,7 @@
 
 Date: 2026-09-29
 
-Status: **four isolated prepared candidates have passed deterministic authoring, full bake, packed native runtime, actual unit routes and invalid-goal checks. Medium and Frontier old-map switching passed separately. Native overview contrast, target-device performance and player acceptance remain open; no map foundation is qualified yet. Current hashes and evidence are tracked in [Preparation/STATUS.md](Preparation/STATUS.md) and [Preparation/prepared-source-manifest.json](Preparation/prepared-source-manifest.json).**
+Status: **the RefineryDistrict candidate was revised for the CH02-M02 pump service gate on 2026-09-30. Candidate generation and packed content build passed at the new hash; earlier packed native route and switching evidence applies to the previous hash and must be rerun. The other three prepared candidates retain their earlier evidence. Native overview contrast, target-device performance and player acceptance remain open; no map foundation is qualified yet. Current candidate hashes are tracked in [Preparation/STATUS.md](Preparation/STATUS.md), the per-map Candidate manifests, and [Preparation/prepared-source-manifest.json](Preparation/prepared-source-manifest.json).**
 
 ## Objective and authorization boundary
 

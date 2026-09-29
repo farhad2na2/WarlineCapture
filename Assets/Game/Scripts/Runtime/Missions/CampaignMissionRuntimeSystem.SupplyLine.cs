@@ -74,6 +74,21 @@ namespace Game.Runtime
                 }
                 if(i==2){s.StoredFuel=storage.StoredFuelBarrels;if(s.StoredFuel>10 && s.OilTransferred!=0)s.FuelTransferred=1;}
             }
+            // Protect civilian fuel when enough reaches the depot. The player uses
+            // existing movement and defense controls to complete the supply chain.
+            if(s.AllocatedCivilianBarrels==0 && s.Ready!=0 && s.Failure==SupplyLineFailure.None &&
+               runtime.Phase==MissionPhaseKind.Engage && s.StoredFuel>=rules.CivilianReserveBarrels &&
+               links.Length==3 && em.Exists(links[2].Entity))
+            {
+                var storage=em.GetComponentData<BuildingResourceStorageComponent>(links[2].Entity);
+                if(storage.StoredFuelBarrels-storage.ReservedFuelOutboundBarrels>=rules.CivilianReserveBarrels)
+                {
+                    storage.CivilianFuelReserveBarrels=rules.CivilianReserveBarrels;
+                    storage.Version++;
+                    em.SetComponentData(links[2].Entity,storage);
+                    s.AllocatedCivilianBarrels=rules.CivilianReserveBarrels;
+                }
+            }
             if(em.HasComponent<CampaignMissionSupplyLineAllocationRequest>(root))
             {
                 var request=em.GetComponentData<CampaignMissionSupplyLineAllocationRequest>(root);

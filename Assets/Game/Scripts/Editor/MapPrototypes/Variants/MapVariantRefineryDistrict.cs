@@ -144,6 +144,8 @@ namespace Game.Editor.MapVariants
         private static void BuildRefinery(MapVariantBuilder b)
         {
             b.FencedCompound(RefinerySite, MapVariantKits.Fence,
+                // A service entrance from the main road reaches the west pump pad.
+                new MapVariantGate(MapVariantSide.South, 25f, 20f),
                 new MapVariantGate(MapVariantSide.South, 150f, 16f),
                 new MapVariantGate(MapVariantSide.West, 48f, 12f),
                 new MapVariantGate(MapVariantSide.East, 48f, 12f));

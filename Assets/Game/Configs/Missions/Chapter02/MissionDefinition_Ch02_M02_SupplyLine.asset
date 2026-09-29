@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.supply_line.summary
   locationNameKey: mission.supply_line.location
   scenarioId: scenario.ch02.m02.supply_line
-  operationMapId: opmap.ch02.supply_yard_01
+  operationMapId: opmap.ch02.supply_line_refinery_review
   briefingSequenceId: seq.ch02.m02.brief
   commsSequenceId: seq.ch02.m02.comms
   debriefSequenceId: seq.ch02.m02.debrief

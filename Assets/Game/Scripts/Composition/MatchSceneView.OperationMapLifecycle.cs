@@ -285,12 +285,22 @@ namespace Game.Composition
             if (world == null || !world.IsCreated)
                 return false;
 
+            // Packed EntityScene variants intentionally leave the source view's SubScene
+            // component unbound. Use the same authored GUID that their loader owns.
+            Unity.Entities.Hash128 sceneGuid = activeOperationMapSceneView.MapSubScene.SceneGUID;
+            if (!sceneGuid.IsValid &&
+                OperationMapEntityScenePresentationPolicy.UsesEntityScenePresentation(
+                    activeOperationMapSceneView.Definition))
+                sceneGuid = new Unity.Entities.Hash128(
+                    activeOperationMapSceneView.Definition.NavigationMetadata.AuthoredSubSceneGuid);
+            if (!sceneGuid.IsValid)
+                return false;
+
             if (loadedOperationMapSubSceneEntity == Entity.Null ||
                 !world.EntityManager.Exists(loadedOperationMapSubSceneEntity))
             {
                 loadedOperationMapSubSceneEntity = SceneSystem.GetSceneEntity(
-                    world.Unmanaged,
-                    activeOperationMapSceneView.MapSubScene.SceneGUID);
+                    world.Unmanaged, sceneGuid);
             }
 
             return loadedOperationMapSubSceneEntity != Entity.Null &&

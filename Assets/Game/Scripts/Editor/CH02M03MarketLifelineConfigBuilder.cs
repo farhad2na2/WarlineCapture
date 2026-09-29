@@ -29,7 +29,7 @@ namespace Game.Editor
         }
         private static void BuildMap()
         {
-            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.MapPath,MapPath);var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
+            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.LegacyMapPath,MapPath);var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
             Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Market surface unavailable");
             using(blob)
             {

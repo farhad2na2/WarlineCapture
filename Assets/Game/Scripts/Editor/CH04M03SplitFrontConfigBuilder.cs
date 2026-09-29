@@ -50,7 +50,7 @@ namespace Game.Editor
         }
         private static void BuildMap()
         {
-            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.MapPath,MapPath);
+            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.LegacyMapPath,MapPath);
             var data=new SerializedObject(map);Replace(data,"ch02.m02","ch04.m03");
             S(data.FindProperty("operationMapId"),MapId);
             var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(590,0,410);

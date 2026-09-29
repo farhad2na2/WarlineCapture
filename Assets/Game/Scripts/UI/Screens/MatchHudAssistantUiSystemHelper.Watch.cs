@@ -20,6 +20,9 @@ namespace Game.UI.Runtime
         private int operationsWatchActions;
         private bool operationsLastWasTravel;
         private float operationsTravelUntil;
+        private bool supplyWatchFocusSet;
+        private Vector3 supplyWatchFocusTarget;
+        private float supplyWatchFocusAt;
 
         private void TickWatch()
         {
@@ -37,6 +40,7 @@ namespace Game.UI.Runtime
             int target = 0;
             Vector2 position = default;
             Vector2 dragEnd=default;bool drag=false;
+            bool supplyFocusPending=false;
             bool skirmish = UiShellRuntimeGateway.TryReadSkirmish(out var skirmishModel);
             bool narrativeBlocking = false;
             if (!skirmish)
@@ -44,23 +48,9 @@ namespace Game.UI.Runtime
                     if (narrative.IsVisible) { narrativeBlocking = true; break; }
             bool supported = UiShellRuntimeGateway.ReadAriaPlayCapability() != AriaPlayCapability.None;
             bool available = supported && (skirmish ? !skirmishModel.Finished && !skirmishModel.StartupFailed : UsesNextTutorialAction && _lastPanelModel.HasRecommendation);
-            bool supplyCanReserve=_lastPanelModel.TutorialStepCount==4 &&
-                UiShellRuntimeGateway.TryReadSupplyLine(out _,out _,out bool canReserve) && canReserve;
             bool supplyWaiting=_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyTarget) &&
-                (supplyTarget.BattleAction==UiTutorialBattleAction.Watch || supplyTarget.Moving) &&
-                !supplyCanReserve;
+                (supplyTarget.BattleAction==UiTutorialBattleAction.Watch || supplyTarget.Moving);
             if (available && !skirmish && supplyWaiting)kind=AriaPlayObservationKind.Waiting;
-            // Supply Line's final decision is an explicit HUD action. Observe the
-            // visible control directly once it becomes legal instead of depending
-            // on the preceding defend-area cue being replaced in the same frame.
-            // Otherwise Watch can remain on the completed defense step until the
-            // deadline even though the reserve button is enabled for the player.
-            if(available && !skirmish && supplyCanReserve)
-            {
-                var hud=Object.FindAnyObjectByType<MissionDefenseHudView>();
-                var reserve=ObserveWatchButton(hud?.SupplyReserveButton);
-                if(reserve.Available){kind=AriaPlayObservationKind.Control;target=reserve.Id;position=reserve.Position;}
-            }
             // Observe the real tactical command control directly after selection. The
             // decorative tutorial frame can trail the selection projection by a frame,
             // but Watch must still perform the same visible Move/Attack button press as
@@ -89,6 +79,7 @@ namespace Game.UI.Runtime
                     _highlightPresentationSystem.ShowTutorialWorld(tutorialTarget.Destination);
                     if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
                        !UiShellRuntimeGateway.IsEvidenceChainGuideContext() &&
+                       !UiShellRuntimeGateway.IsSupplyLineGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
                        !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
@@ -109,7 +100,33 @@ namespace Game.UI.Runtime
                     if (WatchTargetIsReachable(position, target, world))
                         kind = world ? AriaPlayObservationKind.WorldTarget : AriaPlayObservationKind.Control;
                 }
+                // The large refinery map can put a squad or road destination behind
+                // a side panel while Show Me is still panning. Wait for a usable
+                // center-screen cue instead of spending Watch retries on that panel.
+                if (!_tutorialCinematicSuspended && UiShellRuntimeGateway.IsSupplyLineGuideContext() &&
+                    UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyFocus) && Camera.main != null)
+                {
+                    Vector3 worldPoint=supplyFocus.NeedsSelection?supplyFocus.Selection:supplyFocus.Destination;
+                    Vector3 screenPoint=Camera.main.WorldToScreenPoint(worldPoint);
+                    if(screenPoint.z<=0 || screenPoint.x<Screen.width*.26f || screenPoint.x>Screen.width*.74f ||
+                       screenPoint.y<Screen.height*.20f || screenPoint.y>Screen.height*.78f)
+                    {
+                        // Reissuing a smooth focus every frame restarts the pan. Let
+                        // each camera request settle before following a moving hauler.
+                        float sinceFocus=Time.unscaledTime-supplyWatchFocusAt;
+                        if(!supplyWatchFocusSet || sinceFocus>3f &&
+                           (Vector3.Distance(worldPoint,supplyWatchFocusTarget)>35f || sinceFocus>8f))
+                        {
+                            if(UiShellRuntimeGateway.TryFocusMissionTutorialTarget(supplyFocus.NeedsSelection))
+                            {supplyWatchFocusSet=true;supplyWatchFocusTarget=worldPoint;supplyWatchFocusAt=Time.unscaledTime;}
+                        }
+                        supplyFocusPending=true;
+                        kind=AriaPlayObservationKind.Waiting;target=0;drag=false;dragEnd=default;
+                    }
+                    else supplyWatchFocusSet=false;
+                }
                 if (!_tutorialCinematicSuspended && kind == AriaPlayObservationKind.Waiting &&
+                    !supplyFocusPending &&
                     _embeddedTutorialView.ShowMeButton is Button show && show.IsActive() && show.IsInteractable())
                 {
                     RectTransform rect = (RectTransform)show.transform;

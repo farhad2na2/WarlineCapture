@@ -84,14 +84,8 @@ namespace Game.UI.Runtime
             if(touchLayout!=null) touchLayout.Apply(active || touring || UiShellRuntimeGateway.TryReadMissionExtraction(out _));
             if(returnCameraButton!=null) returnCameraButton.gameObject.SetActive(false);
             if(status!=null) status.gameObject.SetActive(false);
-            if(supplyReserveButton!=null)supplyReserveButton.gameObject.SetActive(supply);
+            if(supplyReserveButton!=null)supplyReserveButton.gameObject.SetActive(false);
             if(supplyReserveStatus!=null)supplyReserveStatus.gameObject.SetActive(false);
-            if(supply)
-            {
-                if(supplyReserveButton!=null)supplyReserveButton.interactable=canAllocate;
-                if(supplyReserveLabel!=null)supplyReserveLabel.SetLocalizedValue(UiShellRuntimeGateway.Localization.Get(reserve>0?"mission.supply_line.reserve.allocated":"mission.supply_line.reserve.allocate")+"\n"+Game.Configs.GameText.Format("mission.supply_line.reserve.status","Fuel: {0}/40 | Civilian reserve: {1}/20",fuel,reserve));
-                if(supplyReserveStatus!=null){supplyReserveStatus.SetLocalizedValue(Game.Configs.GameText.Format("mission.supply_line.reserve.status","Fuel: {0}/40 | Civilian reserve: {1}/20",fuel,reserve));}
-            }
             if(!active) {lastScanResult=0; return;}
             if(warningButton!=null) warningButton.interactable=model.HasWarning;
             if(warningButton!=null && model.ScanResultVersion!=lastScanResult && !string.IsNullOrEmpty(model.ScanFeedback))

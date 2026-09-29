@@ -60,6 +60,7 @@ namespace Game.Runtime
             EntityCommandBuffer ecb = new(Allocator.Temp);
             try
             {
+                CampaignSplitFrontLauncherSafety.Stop(entityManager, entity);
                 result.StructuralRemoves += RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitPathFollow>(entityManager, ecb, entity) ? 1 : 0;
                 result.StructuralRemoves += RemoveComponentIfPresent<UnitPathRange>(entityManager, ecb, entity) ? 1 : 0;
@@ -137,6 +138,7 @@ namespace Game.Runtime
             EntityCommandBuffer ecb = new(Allocator.Temp);
             try
             {
+                CampaignSplitFrontLauncherSafety.Stop(entityManager, entity);
                 RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitPathFollow>(entityManager, ecb, entity);
                 RemoveComponentIfPresent<UnitPathRange>(entityManager, ecb, entity);
@@ -229,6 +231,7 @@ namespace Game.Runtime
             RemoveComponentIfPresent<ManualMoveGroupMemberTag>(entityManager, ecb, entity);
             RemoveComponentIfPresent<AutoWanderMoveTag>(entityManager, ecb, entity);
             RemoveComponentIfPresent<HoldPositionOrderTag>(entityManager, ecb, entity);
+            CampaignSplitFrontLauncherSafety.Stop(entityManager, entity);
             RemoveComponentIfPresent<EngageTarget>(entityManager, ecb, entity);
             RemoveComponentIfPresent<BaseBreachOrder>(entityManager, ecb, entity);
             RemoveComponentIfPresent<AttackMoveOrder>(entityManager, ecb, entity);

@@ -27,6 +27,8 @@ namespace Game.Runtime
                 // producer is placed; neither may overlap the other.
                 if (runtime.MissionId.Equals(SteelPushMissionId))
                     ProjectSteelPushProtection(em, root, in runtime, ref facts);
+                if(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)))
+                    ProjectSplitFrontFuel(em,root,in runtime,ref facts);
                 TryPrepareDefenseProducer(ref state, root, ref defense, ref definition, ref facts);
                 if (em.HasComponent<CampaignMissionOpeningPresentationComponent>(root))
                 {
@@ -38,6 +40,8 @@ namespace Game.Runtime
                     ProjectDefenseRoster(em, root, in runtime, in defense, ref definition, ref facts);
                 if (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor)))
                     ProjectAirCorridorProtection(em, root, ref facts);
+                if(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)))
+                    ProjectSplitFrontProtection(em,root,in runtime,ref facts);
                 if (controlsReady && runtime.Phase == MissionPhaseKind.Engage && (defense.AcknowledgedGuidanceMask & 0x1FFu)==0x1FFu)
                     facts.ElapsedMilliseconds = SaturatingAddMilliseconds(facts.ElapsedMilliseconds, SystemAPI.Time.DeltaTime);
                 em.SetComponentData(root, defense);

@@ -1,0 +1,521 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6217085979693261579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M03_SplitFront_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m03.debrief
+  entryStateId: SplitFront-debrief-0
+  defaultSkipDestinationId: SplitFront-debrief-complete
+  states:
+  - stateId: SplitFront-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-debrief-samira
+      textKey: narrative.split_front.debrief-samira
+      englishFallback: The battery is silent and the forward base is holding. The
+        shelters are safe. Keeping defenders on the second front protected the people
+        between them.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.714286
+      essentialCaption: 1
+    continueStateId: SplitFront-debrief-1
+    skipStateId: SplitFront-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-debrief-dalia
+      textKey: narrative.split_front.debrief-dalia
+      englishFallback: The battery's targeting package was built to request ARIA's
+        authorization. This is imported Relay-compatible hardware. Its supply trail
+        leads to an air-support site.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.785714
+      essentialCaption: 1
+    continueStateId: SplitFront-debrief-2
+    skipStateId: SplitFront-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.785714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 3907da0665604f3ea564456fcafc19c6
+      m_SubObjectName: CH04M03_SplitFront_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-debrief-aria
+      textKey: narrative.split_front.debrief-aria
+      englishFallback: I have preserved the targeting package and Qassem's offer.
+        Neither grants autonomous authority. The evidence points to the air-support
+        site; your next operation will decide how we approach it.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.714286
+      essentialCaption: 1
+    continueStateId: SplitFront-debrief-complete
+    skipStateId: SplitFront-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.split_front.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M03_SplitFront_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m03.brief
+  entryStateId: SplitFront-brief-0
+  defaultSkipDestinationId: SplitFront-brief-complete
+  states:
+  - stateId: SplitFront-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-brief-dalia
+      textKey: narrative.split_front.brief-dalia
+      englishFallback: Vanguard's battery is confirmed on the far side of the district.
+        Ash Line is moving against our forward base. Keep the tanks and infantry
+        on the approach while the launcher takes the battery.
+      speaker: 1
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.642858
+      essentialCaption: 1
+    continueStateId: SplitFront-brief-1
+    skipStateId: SplitFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.642858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-brief-samira
+      textKey: narrative.split_front.brief-samira
+      englishFallback: Families are sheltering between the two fronts. Their buildings
+        are protected. Smoke can cover our defenders, but this operation does not
+        depend on it. Do not pull everyone away from the base.
+      speaker: 2
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.714286
+      essentialCaption: 1
+    continueStateId: SplitFront-brief-2
+    skipStateId: SplitFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.714286
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 6cf6827623344499990b676eff38124f
+      m_SubObjectName: CH04M03_SplitFront-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-brief-aria
+      textKey: narrative.split_front.brief-aria
+      englishFallback: Select the launcher, tap Attack, then tap the verified battery.
+        Targets must be within range and clear of civilian shelters. Use Hold to
+        stop before launch; a missile in flight cannot be recalled. I will show the
+        target without issuing orders.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 17.357143
+      essentialCaption: 1
+    continueStateId: SplitFront-brief-complete
+    skipStateId: SplitFront-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 17.357143
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.split_front.brief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &2726812489338925990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M03_SplitFront_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m03.comms
+  entryStateId: SplitFront-comms-0
+  defaultSkipDestinationId: SplitFront-comms-complete
+  states:
+  - stateId: SplitFront-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b8a3a8c60f93457b962dad293aa09b57
+      m_SubObjectName: CH04M03_SplitFront_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b8a3a8c60f93457b962dad293aa09b57
+      m_SubObjectName: CH04M03_SplitFront_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-comms-qassem
+      textKey: narrative.split_front.comms-qassem
+      englishFallback: ARIA, your complete memory is within reach. Commander, I can
+        give you unrestricted Relay access. Let her authorize the battery and the
+        city will answer to you.
+      speaker: 9
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 11.357142
+      essentialCaption: 1
+    continueStateId: SplitFront-comms-1
+    skipStateId: SplitFront-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 11.357142
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: b8a3a8c60f93457b962dad293aa09b57
+      m_SubObjectName: CH04M03_SplitFront_Comms-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: b8a3a8c60f93457b962dad293aa09b57
+      m_SubObjectName: CH04M03_SplitFront_Comms-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: split_front-comms-aria
+      textKey: narrative.split_front.comms-aria
+      englishFallback: No. Recovering my memory does not give me authority over this
+        city. The Commander chooses each verified action. Keep the base defended;
+        I will preserve this transmission as evidence.
+      speaker: 3
+      voiceClip: {fileID: 0}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13
+      essentialCaption: 1
+    continueStateId: SplitFront-comms-complete
+    skipStateId: SplitFront-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: SplitFront-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.split_front.comms.complete
+    evidenceIds: []
+    missionContextFlags: []

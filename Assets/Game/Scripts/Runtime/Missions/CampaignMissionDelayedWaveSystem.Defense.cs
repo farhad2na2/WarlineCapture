@@ -57,7 +57,10 @@ namespace Game.Runtime
                                 commands.SetComponent(entity, combat);
                             }
                             commands.RemoveComponent<CampaignMissionCombatSuppressedTag>(entity);
-                            commands.RemoveComponent<CampaignMissionStationaryUnitTag>(entity);
+                            bool fixedBattery = runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront)) &&
+                                em.HasComponent<CampaignMissionUnitRoleComponent>(entity) &&
+                                em.GetComponentData<CampaignMissionUnitRoleComponent>(entity).MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery"));
+                            if (!fixedBattery) commands.RemoveComponent<CampaignMissionStationaryUnitTag>(entity);
                         }
                         element.Activated = 1;
                     }

@@ -17,6 +17,8 @@ namespace Game.Runtime
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => FocusedUnitUiStatus.MissileLaunched,
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissilePreparing => FocusedUnitUiStatus.MissilePreparing,
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.GroundMissileReloading => FocusedUnitUiStatus.GroundMissileReloading,
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => FocusedUnitUiStatus.AirspaceClear,
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => FocusedUnitUiStatus.TrackingAirTarget,
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => FocusedUnitUiStatus.InterceptingMissile,

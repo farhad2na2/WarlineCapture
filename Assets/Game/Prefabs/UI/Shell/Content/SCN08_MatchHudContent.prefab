@@ -452,7 +452,6 @@ GameObject:
   - component: {fileID: 9047593390580522595}
   - component: {fileID: 8765736163130452616}
   - component: {fileID: 8625426344573319516}
-  - component: {fileID: 6418971534864906099}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -533,18 +532,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &6418971534864906099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 131140829581624751}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &136656111656167879
 GameObject:
   m_ObjectHideFlags: 0
@@ -1015,6 +1002,8 @@ MonoBehaviour:
   localizationKey: tactical.command.cease_fire
   englishFallback: CEASE FIRE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &230829130649183984
 GameObject:
   m_ObjectHideFlags: 0
@@ -1244,6 +1233,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.open
   englishFallback: "\u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646\u06CC"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &343567801071969488
 GameObject:
   m_ObjectHideFlags: 0
@@ -1397,6 +1388,8 @@ MonoBehaviour:
   localizationKey: ui.v3.show_me.1460e98c65
   englishFallback: SHOW ME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &346278833743018119
 GameObject:
   m_ObjectHideFlags: 0
@@ -1668,6 +1661,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel.0e2f3c1696
   englishFallback: FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &375992404744604956
 GameObject:
   m_ObjectHideFlags: 0
@@ -1878,7 +1873,6 @@ GameObject:
   - component: {fileID: 6752163789727471471}
   - component: {fileID: 7422134379112312363}
   - component: {fileID: 6516004255200202726}
-  - component: {fileID: 4823560352327476847}
   m_Layer: 0
   m_Name: Label
   m_TagString: Untagged
@@ -2020,18 +2014,8 @@ MonoBehaviour:
   localizationKey: ui.v3.build.3053677e43
   englishFallback: BUILD
   observeRuntimeSourceChanges: 1
---- !u!114 &4823560352327476847
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399508180654509517}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &400498386235251140
 GameObject:
   m_ObjectHideFlags: 0
@@ -2357,6 +2341,8 @@ MonoBehaviour:
   localizationKey: mission.m04.hud.secure
   englishFallback: LANDING AREA CLEAR
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &444696863313781555
 GameObject:
   m_ObjectHideFlags: 0
@@ -2647,6 +2633,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials.64b5791a58
   englishFallback: MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &488946392644603995
 GameObject:
   m_ObjectHideFlags: 0
@@ -3074,6 +3062,8 @@ MonoBehaviour:
   localizationKey: ui.v3.scan.7a1580c49e
   englishFallback: SCAN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &521635884855605852
 GameObject:
   m_ObjectHideFlags: 0
@@ -3865,6 +3855,8 @@ MonoBehaviour:
   localizationKey: ui.v3.board_all.4de59a3cdf
   englishFallback: BOARD ALL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &710203000000000001
 GameObject:
   m_ObjectHideFlags: 0
@@ -4139,6 +4131,8 @@ MonoBehaviour:
   localizationKey: ui.v3.cancel.ad8d698573
   englishFallback: CANCEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &742210212527327415
 GameObject:
   m_ObjectHideFlags: 0
@@ -4943,6 +4937,8 @@ MonoBehaviour:
   localizationKey: narrative.first_launch.speaker.aria.name
   englishFallback: ARIA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &910000000000000020
 GameObject:
   m_ObjectHideFlags: 0
@@ -5096,6 +5092,8 @@ MonoBehaviour:
   localizationKey: ui.v3.tutorial_1_3.956f57814e
   englishFallback: TUTORIAL 1/3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &910000000000000030
 GameObject:
   m_ObjectHideFlags: 0
@@ -5938,6 +5936,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1080996700689499618
 GameObject:
   m_ObjectHideFlags: 0
@@ -6162,6 +6162,7 @@ GameObject:
   - component: {fileID: 4662581313987643459}
   - component: {fileID: 4572686492642878818}
   - component: {fileID: 4821892996233109795}
+  - component: {fileID: 8430307333075179042}
   m_Layer: 0
   m_Name: HeaderContent
   m_TagString: Untagged
@@ -6332,6 +6333,7 @@ MonoBehaviour:
   - {fileID: 8412579334026851528}
   - {fileID: 3089174820711031523}
   - {fileID: 3437327138170705982}
+  - {fileID: 0}
   widthExpandedTargets: []
   horizontalResponsiveTargets: []
   rightTargetBasePositions:
@@ -6342,9 +6344,22 @@ MonoBehaviour:
   - {x: 1042, y: -8}
   - {x: 1120, y: -8}
   - {x: 0, y: 0}
+  - {x: 440, y: -220}
   widthTargetBaseSizes: []
   horizontalTargetBasePositions: []
   horizontalTargetBaseSizes: []
+--- !u!114 &8430307333075179042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116400741511091209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3efbdc820f7794262930bf96bfe23a85, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.SplitFrontLauncherHudView
 --- !u!1 &1134626251888356840
 GameObject:
   m_ObjectHideFlags: 0
@@ -8298,6 +8313,8 @@ MonoBehaviour:
   localizationKey: ui.aria.do_it
   englishFallback: DO IT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1588138367738952498
 GameObject:
   m_ObjectHideFlags: 0
@@ -8532,6 +8549,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.open
   englishFallback: Field guide
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1628053490015177555
 GameObject:
   m_ObjectHideFlags: 0
@@ -10465,6 +10484,8 @@ MonoBehaviour:
   localizationKey: mission.m03.optional.skip
   englishFallback: Skip optional lesson
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1929979299602032778
 GameObject:
   m_ObjectHideFlags: 0
@@ -10792,6 +10813,8 @@ MonoBehaviour:
   localizationKey: ui.v3.return.c3172d0be7
   englishFallback: RETURN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1960275600531491645
 GameObject:
   m_ObjectHideFlags: 0
@@ -11045,6 +11068,8 @@ MonoBehaviour:
   englishFallback: "MISSION OVERVIEW\nTouring the post and approach. ARIA\u2019s
     tutorial starts when the camera returns."
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1965998045479446192
 GameObject:
   m_ObjectHideFlags: 0
@@ -11329,6 +11354,8 @@ MonoBehaviour:
   localizationKey: ui.v3.camera.582ff0d08a
   englishFallback: CAMERA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1973899933386327159
 GameObject:
   m_ObjectHideFlags: 0
@@ -11482,6 +11509,8 @@ MonoBehaviour:
   localizationKey: selection.feedback.soldier_singular
   englishFallback: SOLDIER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1991911742856454740
 GameObject:
   m_ObjectHideFlags: 0
@@ -11635,6 +11664,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2000227067248400204
 GameObject:
   m_ObjectHideFlags: 0
@@ -11952,6 +11983,8 @@ MonoBehaviour:
   localizationKey: ui.v3.support.a42b8352b4
   englishFallback: SUPPORT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2027271194132845331
 GameObject:
   m_ObjectHideFlags: 0
@@ -13592,7 +13625,6 @@ GameObject:
   - component: {fileID: 6493379717981041183}
   - component: {fileID: 7437314175761415324}
   - component: {fileID: 5357983710840486875}
-  - component: {fileID: -3230930446951559484}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -13673,18 +13705,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &-3230930446951559484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2330827738705339738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &2353518330235299349
 GameObject:
   m_ObjectHideFlags: 0
@@ -13909,7 +13929,6 @@ GameObject:
   - component: {fileID: 2894274497971652470}
   - component: {fileID: 8594513098423088342}
   - component: {fileID: 7250549715964797535}
-  - component: {fileID: -8475001062703660888}
   m_Layer: 0
   m_Name: V3GradientLayer
   m_TagString: Untagged
@@ -13990,18 +14009,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &-8475001062703660888
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2408397478103466866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &2411476501938817709
 GameObject:
   m_ObjectHideFlags: 0
@@ -15856,6 +15863,8 @@ MonoBehaviour:
   localizationKey: mission.m04.hud.aboard
   englishFallback: SPECIALISTS ABOARD
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2825244020905602841
 GameObject:
   m_ObjectHideFlags: 0
@@ -16089,6 +16098,8 @@ MonoBehaviour:
   localizationKey: mission.m04.focus.landing
   englishFallback: "\u0645\u062D\u0644 \u0641\u0631\u0648\u062F"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2862470146643641341
 GameObject:
   m_ObjectHideFlags: 0
@@ -17516,6 +17527,8 @@ MonoBehaviour:
   localizationKey: mission.m04.hud.carrier
   englishFallback: APC TRANSFER
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3067499330859089050
 GameObject:
   m_ObjectHideFlags: 0
@@ -18326,6 +18339,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3249883541376934830
 GameObject:
   m_ObjectHideFlags: 0
@@ -19723,6 +19738,8 @@ MonoBehaviour:
   localizationKey: ui.v3.elapsed_07_42.d8061cf4a0
   englishFallback: 'Elapsed: 07:42'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3481468443679918636
 GameObject:
   m_ObjectHideFlags: 0
@@ -20013,6 +20030,8 @@ MonoBehaviour:
   localizationKey: ui.v3.oil.406978520b
   englishFallback: OIL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3499987867064252089
 GameObject:
   m_ObjectHideFlags: 0
@@ -20806,6 +20825,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rifle_squad.403eab6961
   englishFallback: RIFLE SQUAD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3634354085277992372
 GameObject:
   m_ObjectHideFlags: 0
@@ -20959,6 +20980,8 @@ MonoBehaviour:
   localizationKey: ui.v3.stop.04dedf8afe
   englishFallback: STOP
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3638150190508018587
 GameObject:
   m_ObjectHideFlags: 0
@@ -21387,6 +21410,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3695349670983882127
 GameObject:
   m_ObjectHideFlags: 0
@@ -21846,6 +21871,8 @@ MonoBehaviour:
   localizationKey: ui.v3.camera.582ff0d08a
   englishFallback: CAMERA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3731877148664565384
 GameObject:
   m_ObjectHideFlags: 0
@@ -22230,6 +22257,8 @@ MonoBehaviour:
   localizationKey: ui.hud.no_passengers
   englishFallback: NO PASSENGERS ONBOARD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3799941458672592518
 GameObject:
   m_ObjectHideFlags: 0
@@ -22383,6 +22412,8 @@ MonoBehaviour:
   localizationKey: ui.v3.med.0852bdaf94
   englishFallback: MED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3802633694894100080
 GameObject:
   m_ObjectHideFlags: 0
@@ -22568,8 +22599,6 @@ GameObject:
   - component: {fileID: 1800108208000011009}
   - component: {fileID: 575952947409795803}
   - component: {fileID: 2648422827605019939}
-  - component: {fileID: 478834972638933908}
-  - component: {fileID: 4286457803981769347}
   m_Layer: 0
   m_Name: BuildCommand
   m_TagString: Untagged
@@ -22713,30 +22742,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &478834972638933908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3834970336718461161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledSelectableVisualStateView
---- !u!114 &4286457803981769347
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3834970336718461161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &3841680018916876631
 GameObject:
   m_ObjectHideFlags: 0
@@ -22890,6 +22895,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rifle_squad_a.13f8153028
   englishFallback: RIFLE SQUAD A
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3845102267528586509
 GameObject:
   m_ObjectHideFlags: 0
@@ -23122,6 +23129,8 @@ MonoBehaviour:
 
     Market quarter, 140m'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3855061046794957006
 GameObject:
   m_ObjectHideFlags: 0
@@ -23638,6 +23647,8 @@ MonoBehaviour:
   localizationKey: ui.v3.board.b9d89da667
   englishFallback: BOARD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3952704508206226817
 GameObject:
   m_ObjectHideFlags: 0
@@ -24365,6 +24376,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 'Fuel: 0/40 | Civilian reserve: 0/20'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4123682136424158646
 GameObject:
   m_ObjectHideFlags: 0
@@ -24632,7 +24645,6 @@ GameObject:
   - component: {fileID: 6766250271624365886}
   - component: {fileID: 6809692886415249230}
   - component: {fileID: 4404575027223590731}
-  - component: {fileID: 3530476654948540076}
   m_Layer: 0
   m_Name: Frame
   m_TagString: Untagged
@@ -24699,18 +24711,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &3530476654948540076
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4167900470035262515}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &4171465162826805754
 GameObject:
   m_ObjectHideFlags: 0
@@ -24948,6 +24948,8 @@ MonoBehaviour:
   localizationKey: mission.m04.focus.team
   englishFallback: "\u062A\u06CC\u0645"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4217000836983619070
 GameObject:
   m_ObjectHideFlags: 0
@@ -26102,6 +26104,8 @@ MonoBehaviour:
   localizationKey: ui.hud.squad.vehicles
   englishFallback: VEHICLES
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4540700827380802157
 GameObject:
   m_ObjectHideFlags: 0
@@ -26549,6 +26553,8 @@ MonoBehaviour:
   localizationKey: ui.v3.passengers_4_10_soldiers_4_10.c9e26a3934
   englishFallback: PASSENGERS 4/10  |  SOLDIERS 4/10
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4612319149598387721
 GameObject:
   m_ObjectHideFlags: 0
@@ -27121,6 +27127,8 @@ MonoBehaviour:
   localizationKey: mission.m04.hud.remaining
   englishFallback: TIME REMAINING
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4654821775311826947
 GameObject:
   m_ObjectHideFlags: 0
@@ -27274,6 +27282,8 @@ MonoBehaviour:
   localizationKey: ui.v3.destroy.9f092151ee
   englishFallback: DESTROY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4683888554756243512
 GameObject:
   m_ObjectHideFlags: 0
@@ -27427,6 +27437,8 @@ MonoBehaviour:
   localizationKey: ui.v3.transport.5bb175a5df
   englishFallback: TRANSPORT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4689011646856681895
 GameObject:
   m_ObjectHideFlags: 0
@@ -27822,6 +27834,8 @@ MonoBehaviour:
   localizationKey: ui.v3.protect_civilians.287dbb2a15
   englishFallback: Protect civilians
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4796363646312795351
 GameObject:
   m_ObjectHideFlags: 0
@@ -28319,6 +28333,8 @@ MonoBehaviour:
   localizationKey: mission.m03.camera.return
   englishFallback: mission.m03.camera.return
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4811787970983994298
 GameObject:
   m_ObjectHideFlags: 0
@@ -28735,6 +28751,8 @@ MonoBehaviour:
   localizationKey: ui.v3.destroy.9f092151ee
   englishFallback: DESTROY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4925868716106777430
 GameObject:
   m_ObjectHideFlags: 0
@@ -28821,7 +28839,6 @@ GameObject:
   - component: {fileID: 7299385553833860657}
   - component: {fileID: 1287119343159587829}
   - component: {fileID: 2324060647496722935}
-  - component: {fileID: 1350153087566137297}
   m_Layer: 0
   m_Name: Icon
   m_TagString: Untagged
@@ -28886,18 +28903,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &1350153087566137297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5004153944543139808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.UiDisabledMaterialStateView
 --- !u!1 &5010016907511874583
 GameObject:
   m_ObjectHideFlags: 0
@@ -29592,6 +29597,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5378425285997023502
 GameObject:
   m_ObjectHideFlags: 0
@@ -29880,6 +29887,8 @@ MonoBehaviour:
   localizationKey: mission.m03.camera.skip
   englishFallback: Return to command view
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5471987207533613085
 GameObject:
   m_ObjectHideFlags: 0
@@ -30108,6 +30117,8 @@ MonoBehaviour:
   localizationKey: ui.v3.attack.301de93e8a
   englishFallback: ATTACK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5475082898593650408
 GameObject:
   m_ObjectHideFlags: 0
@@ -30457,6 +30468,8 @@ MonoBehaviour:
   localizationKey: ui.v3.civilian_risk.fabdf7b5bb
   englishFallback: CIVILIAN RISK
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5537132905434260076
 GameObject:
   m_ObjectHideFlags: 0
@@ -30611,6 +30624,8 @@ MonoBehaviour:
   localizationKey: ui.v3.current_order.cd81d0f422
   englishFallback: CURRENT ORDER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5568529304863657865
 GameObject:
   m_ObjectHideFlags: 0
@@ -31213,6 +31228,8 @@ MonoBehaviour:
   localizationKey: ui.v3.neutralize_hostile_patrol.f478b8f8e1
   englishFallback: Neutralize hostile patrol
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5682182773847086730
 GameObject:
   m_ObjectHideFlags: 0
@@ -31657,6 +31674,8 @@ MonoBehaviour:
   localizationKey: ui.v3.move.fa865b0f43
   englishFallback: MOVE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5795546914417583862
 GameObject:
   m_ObjectHideFlags: 0
@@ -31815,6 +31834,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5797599028681246099
 GameObject:
   m_ObjectHideFlags: 0
@@ -32043,6 +32064,8 @@ MonoBehaviour:
   localizationKey: ui.hud.squad.jet
   englishFallback: JET
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5846673103953649874
 GameObject:
   m_ObjectHideFlags: 0
@@ -32271,6 +32294,8 @@ MonoBehaviour:
   localizationKey: ui.v3.select_the_rifle_squad.26b0371f54
   englishFallback: SELECT THE RIFLE SQUAD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5864102542887706181
 GameObject:
   m_ObjectHideFlags: 0
@@ -33071,6 +33096,8 @@ MonoBehaviour:
   localizationKey: mission.m04.focus.departure
   englishFallback: "\u062E\u0631\u0648\u062C"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6016773214825254034
 GameObject:
   m_ObjectHideFlags: 0
@@ -33224,6 +33251,8 @@ MonoBehaviour:
   localizationKey: ui.v3.board.b9d89da667
   englishFallback: BOARD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6017734294038588510
 GameObject:
   m_ObjectHideFlags: 0
@@ -33724,6 +33753,8 @@ MonoBehaviour:
   localizationKey: ui.v3.moving_to_marker.176e16dad2
   englishFallback: MOVING TO MARKER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6050093124562944242
 GameObject:
   m_ObjectHideFlags: 0
@@ -35911,6 +35942,8 @@ MonoBehaviour:
   localizationKey: mission.supply_line.reserve.allocate
   englishFallback: Reserve civilian Fuel
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6481116299340454468
 GameObject:
   m_ObjectHideFlags: 0
@@ -36103,6 +36136,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rifle_squad.403eab6961
   englishFallback: RIFLE SQUAD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6489134696575617941
 GameObject:
   m_ObjectHideFlags: 0
@@ -36789,6 +36824,8 @@ MonoBehaviour:
   localizationKey: ui.v3.tap_the_rifle_squad_card_to_sele.23a6337b95
   englishFallback: Tap the Rifle Squad card to select it.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6611210270838419253
 GameObject:
   m_ObjectHideFlags: 0
@@ -38028,6 +38065,8 @@ MonoBehaviour:
   localizationKey: ui.v3.rope_drop.186057036c
   englishFallback: ROPE DROP
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6840267262772777728
 GameObject:
   m_ObjectHideFlags: 0
@@ -38897,6 +38936,8 @@ MonoBehaviour:
   localizationKey: ui.hud.squad.helicopter
   englishFallback: HELICOPTER
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7138871783919825011
 GameObject:
   m_ObjectHideFlags: 0
@@ -39055,6 +39096,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7141640732355535276
 GameObject:
   m_ObjectHideFlags: 0
@@ -39557,6 +39600,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7174120246274317491
 GameObject:
   m_ObjectHideFlags: 0
@@ -39785,6 +39830,8 @@ MonoBehaviour:
   localizationKey: ui.v3.close.f13a1ed0cf
   englishFallback: CLOSE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7226396862543537015
 GameObject:
   m_ObjectHideFlags: 0
@@ -43725,6 +43772,8 @@ MonoBehaviour:
   localizationKey: ui.v3.hold.aacf94b7be
   englishFallback: HOLD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8084513992960910162
 GameObject:
   m_ObjectHideFlags: 0
@@ -46008,6 +46057,8 @@ MonoBehaviour:
   localizationKey: ui.v3.passengers_0_4.dbc6ee8c50
   englishFallback: PASSENGERS 0/4
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8431011301483571071
 GameObject:
   m_ObjectHideFlags: 0
@@ -46514,6 +46565,8 @@ MonoBehaviour:
   localizationKey: ui.v3.keep_losses_low.1511f29a8d
   englishFallback: Keep losses low
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8556895281364145581
 GameObject:
   m_ObjectHideFlags: 0
@@ -46759,6 +46812,8 @@ MonoBehaviour:
   localizationKey: ui.v3.objectives.3f8152da90
   englishFallback: OBJECTIVES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8598667511218304020
 GameObject:
   m_ObjectHideFlags: 0
@@ -47225,6 +47280,8 @@ MonoBehaviour:
   localizationKey: ui.hud.exit_all
   englishFallback: EXIT ALL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8645156832422715691
 GameObject:
   m_ObjectHideFlags: 0
@@ -47796,6 +47853,8 @@ MonoBehaviour:
   localizationKey: ui.v3.commands.92e37c53d8
   englishFallback: COMMANDS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8809258836096428532
 GameObject:
   m_ObjectHideFlags: 0
@@ -47985,6 +48044,8 @@ MonoBehaviour:
   localizationKey: ui.v3.return.c3172d0be7
   englishFallback: RETURN
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8824632285995856933
 GameObject:
   m_ObjectHideFlags: 0
@@ -48652,6 +48713,8 @@ MonoBehaviour:
   localizationKey: ui.v3.exit.3a0931580d
   englishFallback: EXIT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8907750369374295773
 GameObject:
   m_ObjectHideFlags: 0
@@ -49335,6 +49398,8 @@ MonoBehaviour:
   localizationKey: ui.v3.attack_unavailable_select_a_unit.d7e116ad49
   englishFallback: "ATTACK UNAVAILABLE \u2014 SELECT A UNIT OR VALID TARGET"
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8986668455523768720
 GameObject:
   m_ObjectHideFlags: 0
@@ -50743,6 +50808,8 @@ MonoBehaviour:
   localizationKey: ui.aria.player_control
   englishFallback: PLAYER CONTROL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9171280349907577112
 GameObject:
   m_ObjectHideFlags: 0
@@ -51039,6 +51106,8 @@ MonoBehaviour:
   localizationKey: ui.v3.select.6e4261695a
   englishFallback: SELECT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9198705060211911204
 GameObject:
   m_ObjectHideFlags: 0

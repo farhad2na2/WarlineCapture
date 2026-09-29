@@ -35,7 +35,9 @@ namespace Game.Runtime
             AirspaceClear = 5,
             TrackingAirTarget = 6,
             InterceptingMissile = 7,
-            AirDefenseReloading = 8
+            AirDefenseReloading = 8,
+            MissilePreparing = 11,
+            GroundMissileReloading = 12
         }
 
         private readonly FocusedUnitUiReadModelUiSystemHelper _focusedUnitUiReadModelSystem = new();

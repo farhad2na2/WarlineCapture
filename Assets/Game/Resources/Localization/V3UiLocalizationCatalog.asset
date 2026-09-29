@@ -2358,6 +2358,8 @@ MonoBehaviour:
       value: COMMANDER XP
     - key: mission.reward.credits
       value: CREDITS
+    - key: mission.reward.precision_strike
+      value: PRECISION STRIKE UNLOCK
     - key: mission.reward.smoke_screen
       value: Smoke Screen unlocked
     - key: mission.route_reopened.deadline
@@ -2655,6 +2657,107 @@ MonoBehaviour:
     - key: mission.signal_trace.summary
       value: Compare two observation points, protect legitimate civilian radios,
         isolate the confirmed armed carrier and recover its Relay device intact.
+    - key: mission.split_front.attack.unsafe
+      value: Target unavailable or too close to protected civilians.
+    - key: mission.split_front.deadline
+      value: "Smoke is optional \xB7 finish within 4 minutes"
+    - key: mission.split_front.defense.complete
+      value: BOTH FRONTS SECURE
+    - key: mission.split_front.defense.countdown
+      value: "Hold the base \xB7 contact in {0}"
+    - key: mission.split_front.defense.fighting
+      value: "Split defense \xB7 {0} hostiles left"
+    - key: mission.split_front.defense.wave
+      value: Front {0}/{1}
+    - key: mission.split_front.enemy_intel
+      value: Verified Vanguard battery; Ash Line diversion attacks the forward base.
+    - key: mission.split_front.forces
+      value: "Launcher \xB7 3 tanks \xB7 4 infantry \xB7 barracks"
+    - key: mission.split_front.guide.diagram
+      value: DEFEND BASE | VERIFY BATTERY | PROTECT CIVILIANS
+    - key: mission.split_front.guide.example
+      value: "Select launcher \u2192 Attack \u2192 battery. Hold stops preparation
+        before launch. Infantry and tanks keep defending the base."
+    - key: mission.split_front.guide.mistake
+      value: Do not move every defender to the battery. Never fire inside minimum
+        range or near the civilian shelters. A missile in flight cannot be recalled.
+    - key: mission.split_front.location
+      value: "Sahrin \xB7 forward base and battery"
+    - key: mission.split_front.name
+      value: Split Front
+    - key: mission.split_front.objective.base
+      value: Defend the forward base
+    - key: mission.split_front.objective.battery
+      value: Destroy the verified battery
+    - key: mission.split_front.objective.civilians
+      value: Protect civilian shelters
+    - key: mission.split_front.resources
+      value: "Attack \xB7 minimum range \xB7 Hold before launch"
+    - key: mission.split_front.result.base
+      value: Forward base
+    - key: mission.split_front.result.damaged
+      value: DAMAGED
+    - key: mission.split_front.result.defeat
+      value: SPLIT DEFENSE FAILED
+    - key: mission.split_front.result.destroyed
+      value: LOST
+    - key: mission.split_front.result.intact
+      value: INTACT
+    - key: mission.split_front.result.loss
+      value: Hold the base while the launcher engages the verified battery. Protect
+        the shelters and keep enough defenders on the approach.
+    - key: mission.split_front.result.losses
+      value: Friendly losses
+    - key: mission.split_front.result.success
+      value: The battery and diversion are stopped, the base holds and civilians
+        are safe. The targeting package expected ARIA authorization; its supply trail
+        leads to an air-support site.
+    - key: mission.split_front.result.victory
+      value: BOTH FRONTS SECURE
+    - key: mission.split_front.reward.card
+      value: "2,000 Commander XP \xB7 9,000 Credits \xB7 Precision Strike"
+    - key: mission.split_front.star.1
+      value: Complete the mission
+    - key: mission.split_front.star.2
+      value: No friendly losses
+    - key: mission.split_front.star.3
+      value: No civilian losses
+    - key: mission.split_front.summary
+      value: Neutralize the verified Vanguard battery while defending the forward
+        base. Keep civilians safe. Select the launcher, tap Attack, then tap the
+        battery. Smoke support is optional.
+    - key: mission.split_front.tutorial.1.body
+      value: Keep tanks and infantry defending the base. Use the launcher against
+        the verified battery with the existing Attack command. Smoke is optional.
+        Continue to inspect the target.
+    - key: mission.split_front.tutorial.1.title
+      value: Hold both fronts
+    - key: mission.split_front.tutorial.2.body
+      value: Select the ground launcher. Show Me moves the camera only. Leave the
+        defenders covering the base approach.
+    - key: mission.split_front.tutorial.2.title
+      value: Select the launcher
+    - key: mission.split_front.tutorial.3.body
+      value: Select the launcher, tap Attack, then tap the battery. Keep defenders
+        at the base and protect civilians. Targets must be within range and clear
+        of civilian shelters.
+    - key: mission.split_front.tutorial.3.title
+      value: Attack the battery
+    - key: mission.split_front.tutorial.4.body
+      value: The launcher prepares, fires and reloads while attacking its target.
+        Use Hold to stop before launch. A missile in flight cannot be recalled. Keep
+        defenders at the base.
+    - key: mission.split_front.tutorial.4.title
+      value: Keep both fronts secure
+    - key: mission.split_front.tutorial.main.body
+      value: The battery is silent. Keep the defenders on the approach until the
+        diversion is stopped.
+    - key: mission.split_front.warning.lead
+      value: "BATTERY \xB7 Verified target beyond minimum range."
+    - key: mission.split_front.warning.main
+      value: "DIVERSION \xB7 Keep defenders covering the base approach."
+    - key: mission.split_front.warning.prepare
+      value: "PREPARATION \xB7 Select the launcher; leave defenders at the base."
     - key: mission.steel_push.deadline
       value: Stop the column within 4 minutes
     - key: mission.steel_push.defense.complete
@@ -3353,6 +3456,39 @@ MonoBehaviour:
       value: Captain Laila Nasser
     - key: narrative.speaker.laila.role
       value: Airlift pilot
+    - key: narrative.split_front.brief-aria
+      value: Select the launcher, tap Attack, then tap the verified battery. Targets
+        must be within range and clear of civilian shelters. Use Hold to stop before
+        launch; a missile in flight cannot be recalled. I will show the target without
+        issuing orders.
+    - key: narrative.split_front.brief-dalia
+      value: Vanguard's battery is confirmed on the far side of the district. Ash
+        Line is moving against our forward base. Keep the tanks and infantry on the
+        approach while the launcher takes the battery.
+    - key: narrative.split_front.brief-samira
+      value: Families are sheltering between the two fronts. Their buildings are
+        protected. Smoke can cover our defenders, but this operation does not depend
+        on it. Do not pull everyone away from the base.
+    - key: narrative.split_front.comms-aria
+      value: No. Recovering my memory does not give me authority over this city.
+        The Commander chooses each verified action. Keep the base defended; I will
+        preserve this transmission as evidence.
+    - key: narrative.split_front.comms-qassem
+      value: ARIA, your complete memory is within reach. Commander, I can give you
+        unrestricted Relay access. Let her authorize the battery and the city will
+        answer to you.
+    - key: narrative.split_front.debrief-aria
+      value: I have preserved the targeting package and Qassem's offer. Neither grants
+        autonomous authority. The evidence points to the air-support site; your next
+        operation will decide how we approach it.
+    - key: narrative.split_front.debrief-dalia
+      value: The battery's targeting package was built to request ARIA's authorization.
+        This is imported Relay-compatible hardware. Its supply trail leads to an
+        air-support site.
+    - key: narrative.split_front.debrief-samira
+      value: The battery is silent and the forward base is holding. The shelters
+        are safe. Keeping defenders on the second front protected the people between
+        them.
     - key: narrative.steel_push.brief-aria
       value: Two armored groups are confirmed. Stop their command vehicles before
         they reach the dormant Relay node. Your existing Select, Move, Attack and
@@ -3701,6 +3837,8 @@ MonoBehaviour:
       value: Intercepting missile
     - key: selection.order.missile_launched
       value: Missile launched
+    - key: selection.order.missile_preparing
+      value: Preparing missile
     - key: selection.order.mixed_orders
       value: Mixed orders
     - key: selection.order.moving
@@ -4212,6 +4350,8 @@ MonoBehaviour:
       value: Loading transport.
     - key: tactical.feedback.missile_launched
       value: Missile launched.
+    - key: tactical.feedback.missile_preparing
+      value: Preparing missile.
     - key: tactical.feedback.rts_camera_restored
       value: RTS camera restored.
     - key: tactical.feedback.scan_complete
@@ -11549,6 +11689,8 @@ MonoBehaviour:
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
       value: "\u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.reward.precision_strike
+      value: "\u062D\u0645\u0644\u0647\u0654 \u062F\u0642\u06CC\u0642"
     - key: mission.reward.smoke_screen
       value: "\u067E\u0631\u062F\u0647\u0654 \u062F\u0648\u062F \u0628\u0627\u0632
         \u0634\u062F"
@@ -12105,6 +12247,197 @@ MonoBehaviour:
         \u0631\u0648 \u062C\u062F\u0627 \u06A9\u0646 \u0648 \u062F\u0633\u062A\u06AF\u0627\u0647
         \u0634\u0628\u06A9\u0647 \u0631\u0648 \u0633\u0627\u0644\u0645 \u062A\u062D\u0648\u06CC\u0644
         \u0628\u06AF\u06CC\u0631."
+    - key: mission.split_front.attack.unsafe
+      value: "\u0647\u062F\u0641 \u062F\u0631 \u062F\u0633\u062A\u0631\u0633 \u0646\u06CC\u0633\u062A
+        \u06CC\u0627 \u0628\u0647 \u0645\u0631\u062F\u0645\u0650 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062E\u06CC\u0644\u06CC \u0646\u0632\u062F\u06CC\u06A9\u0647."
+    - key: mission.split_front.deadline
+      value: "\u062F\u0648\u062F \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u0647
+        \xB7 \u062A\u0627 \u06F4 \u062F\u0642\u06CC\u0642\u0647 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.split_front.defense.complete
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0627\u0645\u0646
+        \u0634\u062F"
+    - key: mission.split_front.defense.countdown
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u0631\u0648 \u062D\u0641\u0638
+        \u06A9\u0646 \xB7 \u062A\u0645\u0627\u0633 \u062A\u0627 {0}"
+    - key: mission.split_front.defense.fighting
+      value: "\u062F\u0641\u0627\u0639 \u062F\u0648 \u062C\u0628\u0647\u0647 \xB7
+        {0} \u062F\u0634\u0645\u0646 \u0628\u0627\u0642\u06CC \u0645\u0648\u0646\u062F\u0647"
+    - key: mission.split_front.defense.wave
+      value: "\u062C\u0628\u0647\u0647\u0654 {0}/{1}"
+    - key: mission.split_front.enemy_intel
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u062A\u0623\u06CC\u06CC\u062F \u0634\u062F\u0647\u061B \u062D\u0645\u0644\u0647\u0654
+        \u0627\u0646\u062D\u0631\u0627\u0641\u06CC \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631
+        \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0644\u0648."
+    - key: mission.split_front.forces
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \xB7 \u06F3 \u062A\u0627\u0646\u06A9
+        \xB7 \u06F4 \u067E\u06CC\u0627\u062F\u0647 \xB7 \u067E\u0627\u062F\u06AF\u0627\u0646"
+    - key: mission.split_front.guide.diagram
+      value: "\u062F\u0641\u0627\u0639 \u067E\u0627\u06CC\u06AF\u0627\u0647 | \u062A\u0623\u06CC\u06CC\u062F
+        \u0622\u062A\u0634\u0628\u0627\u0631 | \u062D\u0641\u0627\u0638\u062A \u0645\u0631\u062F\u0645"
+    - key: mission.split_front.guide.example
+      value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u2190 \u062D\u0645\u0644\u0647 \u2190 \u0622\u062A\u0634\u0628\u0627\u0631.
+        \u062D\u0641\u0638 \u0645\u0648\u0636\u0639 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC
+        \u0631\u0648 \u0642\u0628\u0644 \u0627\u0632 \u067E\u0631\u062A\u0627\u0628
+        \u0645\u062A\u0648\u0642\u0641 \u0645\u06CC\u200C\u06A9\u0646\u0647. \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627
+        \u0648 \u062A\u0627\u0646\u06A9\u200C\u0647\u0627 \u062F\u0641\u0627\u0639
+        \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0631\u0648 \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u0646."
+    - key: mission.split_front.guide.mistake
+      value: "\u0647\u0645\u0647\u0654 \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627
+        \u0631\u0648 \u0633\u0645\u062A \u0622\u062A\u0634\u0628\u0627\u0631 \u0646\u0628\u0631.
+        \u062F\u0627\u062E\u0644 \u062D\u062F\u0627\u0642\u0644 \u0628\u0631\u062F
+        \u06CC\u0627 \u06A9\u0646\u0627\u0631 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u0631\u062F\u0645 \u0634\u0644\u06CC\u06A9 \u0646\u06A9\u0646. \u0645\u0648\u0634\u06A9
+        \u062F\u0631 \u062D\u0627\u0644 \u067E\u0631\u0648\u0627\u0632 \u0628\u0631\u0646\u0645\u06CC\u200C\u06AF\u0631\u062F\u0647."
+    - key: mission.split_front.location
+      value: "\u0633\u0627\u0631\u06CC\u0646 \xB7 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u062C\u0644\u0648 \u0648 \u0622\u062A\u0634\u0628\u0627\u0631"
+    - key: mission.split_front.name
+      value: "\u062F\u0648 \u062C\u0628\u0647\u0647"
+    - key: mission.split_front.objective.base
+      value: "\u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0644\u0648
+        \u062F\u0641\u0627\u0639 \u06A9\u0646"
+    - key: mission.split_front.objective.battery
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0646\u0627\u0628\u0648\u062F \u06A9\u0646"
+    - key: mission.split_front.objective.civilians
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u0631\u062F\u0645 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646"
+    - key: mission.split_front.resources
+      value: "\u062D\u0645\u0644\u0647 \xB7 \u062D\u062F\u0627\u0642\u0644 \u0628\u0631\u062F
+        \xB7 \u062A\u0648\u0642\u0641 \u0628\u0627 \u062D\u0641\u0638 \u0645\u0648\u0636\u0639
+        \u0642\u0628\u0644 \u0627\u0632 \u067E\u0631\u062A\u0627\u0628"
+    - key: mission.split_front.result.base
+      value: "\u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0644\u0648"
+    - key: mission.split_front.result.damaged
+      value: "\u0622\u0633\u06CC\u0628\u200C\u062F\u06CC\u062F\u0647"
+    - key: mission.split_front.result.defeat
+      value: "\u062F\u0641\u0627\u0639 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0634\u06A9\u0633\u062A
+        \u062E\u0648\u0631\u062F"
+    - key: mission.split_front.result.destroyed
+      value: "\u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A"
+    - key: mission.split_front.result.intact
+      value: "\u0633\u0627\u0644\u0645"
+    - key: mission.split_front.result.loss
+      value: "\u0648\u0642\u062A\u06CC \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u0622\u062A\u0634\u0628\u0627\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0645\u06CC\u200C\u0632\u0646\u0647\u060C \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646. \u0627\u0632 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646 \u0648 \u0646\u06CC\u0631\u0648\u06CC
+        \u06A9\u0627\u0641\u06CC \u0633\u0631 \u0645\u0633\u06CC\u0631 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.split_front.result.losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u062E\u0648\u062F\u06CC"
+    - key: mission.split_front.result.success
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0648 \u062D\u0645\u0644\u0647\u0654
+        \u0627\u0646\u062D\u0631\u0627\u0641\u06CC \u0645\u062A\u0648\u0642\u0641
+        \u0634\u062F\u0646\u060C \u067E\u0627\u06CC\u06AF\u0627\u0647 \u067E\u0627\u0628\u0631\u062C\u0627\u0633\u062A
+        \u0648 \u0645\u0631\u062F\u0645 \u0627\u0645\u0646\u0646. \u0628\u0633\u062A\u0647\u0654
+        \u0647\u062F\u0641\u200C\u06AF\u06CC\u0631\u06CC \u0645\u0646\u062A\u0638\u0631
+        \u0645\u062C\u0648\u0632 \u0622\u0631\u06CC\u0627 \u0628\u0648\u062F\u061B
+        \u0631\u062F \u062A\u0623\u0645\u06CC\u0646\u0634 \u0628\u0647 \u0645\u0631\u06A9\u0632
+        \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0647\u0648\u0627\u06CC\u06CC
+        \u0645\u06CC\u200C\u0631\u0633\u0647."
+    - key: mission.split_front.result.victory
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0627\u0645\u0646
+        \u0634\u062F"
+    - key: mission.split_front.reward.card
+      value: "\u06F2\u06F0\u06F0\u06F0 \u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u06F9\u06F0\u06F0\u06F0 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u062D\u0645\u0644\u0647\u0654
+        \u062F\u0642\u06CC\u0642"
+    - key: mission.split_front.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.split_front.star.2
+      value: "\u0646\u06CC\u0631\u0648\u06CC \u062E\u0648\u062F\u06CC \u0627\u0632
+        \u062F\u0633\u062A \u0646\u062F\u0647"
+    - key: mission.split_front.star.3
+      value: "\u06A9\u0633\u06CC \u0627\u0632 \u0645\u0631\u062F\u0645 \u0627\u0632
+        \u062F\u0633\u062A \u0646\u0631\u0647"
+    - key: mission.split_front.summary
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647\u0654
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631
+        \u0628\u0646\u062F\u0627\u0632 \u0648 \u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u062C\u0644\u0648 \u062F\u0641\u0627\u0639 \u06A9\u0646. \u0645\u0631\u062F\u0645
+        \u0631\u0648 \u0645\u062D\u0641\u0648\u0638 \u0646\u06AF\u0647 \u062F\u0627\u0631.
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \u062D\u0645\u0644\u0647 \u0631\u0648 \u0628\u0632\u0646\u060C
+        \u0628\u0639\u062F \u0622\u062A\u0634\u0628\u0627\u0631 \u0631\u0648 \u0644\u0645\u0633
+        \u06A9\u0646. \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u062F\u0648\u062F
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u0647."
+    - key: mission.split_front.tutorial.1.body
+      value: "\u062A\u0627\u0646\u06A9\u200C\u0647\u0627 \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627
+        \u0631\u0648 \u0628\u0631\u0627\u06CC \u062F\u0641\u0627\u0639 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0628\u0627 \u0641\u0631\u0645\u0627\u0646
+        \u062D\u0645\u0644\u0647\u0654 \u0645\u0639\u0645\u0648\u0644\u06CC\u060C
+        \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0631\u0648 \u0628\u0647 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647 \u0628\u0632\u0646. \u062F\u0648\u062F
+        \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u0647. \u0628\u0631\u0627\u06CC
+        \u0628\u0631\u0631\u0633\u06CC \u0647\u062F\u0641 \u0627\u062F\u0627\u0645\u0647
+        \u0628\u062F\u0647."
+    - key: mission.split_front.tutorial.1.title
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0631\u0648 \u0646\u06AF\u0647
+        \u062F\u0627\u0631"
+    - key: mission.split_front.tutorial.2.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0632\u0645\u06CC\u0646\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \xAB\u0646\u0634\u0627\u0646
+        \u0628\u062F\u0647\xBB \u0641\u0642\u0637 \u062F\u0648\u0631\u0628\u06CC\u0646
+        \u0631\u0648 \u062C\u0627\u0628\u0647\u200C\u062C\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647.
+        \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0631\u0648 \u0628\u0631\u0627\u06CC
+        \u067E\u0648\u0634\u0634 \u0645\u0633\u06CC\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.split_front.tutorial.2.title
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646"
+    - key: mission.split_front.tutorial.3.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \u062D\u0645\u0644\u0647 \u0631\u0648 \u0628\u0632\u0646\u060C
+        \u0628\u0639\u062F \u0622\u062A\u0634\u0628\u0627\u0631 \u0631\u0648 \u0644\u0645\u0633
+        \u06A9\u0646. \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0631\u0648
+        \u062F\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u0648 \u0645\u0631\u062F\u0645 \u0631\u0648 \u0645\u062D\u0641\u0648\u0638
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u0647\u062F\u0641 \u0628\u0627\u06CC\u062F
+        \u062F\u0631 \u0628\u0631\u062F \u0648 \u062F\u0648\u0631 \u0627\u0632 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u0631\u062F\u0645 \u0628\u0627\u0634\u0647."
+    - key: mission.split_front.tutorial.3.title
+      value: "\u0628\u0647 \u0622\u062A\u0634\u0628\u0627\u0631 \u062D\u0645\u0644\u0647
+        \u06A9\u0646"
+    - key: mission.split_front.tutorial.4.body
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0645\u0648\u0642\u0639
+        \u062D\u0645\u0644\u0647 \u0628\u0647 \u0647\u062F\u0641\u0634 \u0622\u0645\u0627\u062F\u0647
+        \u0645\u06CC\u200C\u0634\u0647\u060C \u0634\u0644\u06CC\u06A9 \u0645\u06CC\u200C\u06A9\u0646\u0647
+        \u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u0628\u0627\u0631\u06AF\u0630\u0627\u0631\u06CC
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0628\u0631\u0627\u06CC \u062A\u0648\u0642\u0641
+        \u0642\u0628\u0644 \u0627\u0632 \u067E\u0631\u062A\u0627\u0628\u060C \u062D\u0641\u0638
+        \u0645\u0648\u0636\u0639 \u0631\u0648 \u0628\u0632\u0646. \u0645\u0648\u0634\u06A9
+        \u062F\u0631 \u067E\u0631\u0648\u0627\u0632 \u0628\u0631\u0646\u0645\u06CC\u200C\u06AF\u0631\u062F\u0647.
+        \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0631\u0648 \u062F\u0631
+        \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.split_front.tutorial.4.title
+      value: "\u0647\u0631 \u062F\u0648 \u062C\u0628\u0647\u0647 \u0631\u0648 \u0627\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631"
+    - key: mission.split_front.tutorial.main.body
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u062E\u0627\u0645\u0648\u0634
+        \u0634\u062F\u0647. \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0631\u0648
+        \u0633\u0631 \u0645\u0633\u06CC\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u062A\u0627 \u062D\u0645\u0644\u0647\u0654 \u0627\u0646\u062D\u0631\u0627\u0641\u06CC
+        \u0645\u062A\u0648\u0642\u0641 \u0628\u0634\u0647."
+    - key: mission.split_front.warning.lead
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \xB7 \u0647\u062F\u0641 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0628\u06CC\u0631\u0648\u0646 \u062D\u062F\u0627\u0642\u0644 \u0628\u0631\u062F."
+    - key: mission.split_front.warning.main
+      value: "\u062D\u0645\u0644\u0647\u0654 \u0627\u0646\u062D\u0631\u0627\u0641\u06CC
+        \xB7 \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u0645\u0633\u06CC\u0631
+        \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0631\u0648 \u067E\u0648\u0634\u0634
+        \u0628\u062F\u0646."
+    - key: mission.split_front.warning.prepare
+      value: "\u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC \xB7 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u061B \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627
+        \u062F\u0631 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u0628\u0645\u0648\u0646\u0646."
     - key: mission.steel_push.deadline
       value: "\u0633\u062A\u0648\u0646 \u0631\u0648 \u062A\u0627 \u06F4 \u062F\u0642\u06CC\u0642\u0647
         \u0645\u062A\u0648\u0642\u0641 \u06A9\u0646"
@@ -13618,6 +13951,87 @@ MonoBehaviour:
     - key: narrative.speaker.laila.role
       value: "\u062E\u0644\u0628\u0627\u0646 \u062A\u0631\u0627\u0628\u0631\u06CC
         \u0647\u0648\u0627\u06CC\u06CC"
+    - key: narrative.split_front.brief-aria
+      value: "\u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646\u060C \u062D\u0645\u0644\u0647 \u0631\u0648 \u0628\u0632\u0646\u060C
+        \u0628\u0639\u062F \u0622\u062A\u0634\u0628\u0627\u0631 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0644\u0645\u0633 \u06A9\u0646. \u0647\u062F\u0641 \u0628\u0627\u06CC\u062F
+        \u062F\u0631 \u0628\u0631\u062F \u0648 \u062F\u0648\u0631 \u0627\u0632 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627\u06CC
+        \u0645\u0631\u062F\u0645 \u0628\u0627\u0634\u0647. \u0628\u0631\u0627\u06CC
+        \u062A\u0648\u0642\u0641 \u0642\u0628\u0644 \u0627\u0632 \u067E\u0631\u062A\u0627\u0628\u060C
+        \u062D\u0641\u0638 \u0645\u0648\u0636\u0639 \u0631\u0648 \u0628\u0632\u0646\u061B
+        \u0645\u0648\u0634\u06A9 \u062F\u0631 \u067E\u0631\u0648\u0627\u0632 \u0628\u0631\u0646\u0645\u06CC\u200C\u06AF\u0631\u062F\u0647.
+        \u0647\u062F\u0641 \u0631\u0648 \u0646\u0634\u0648\u0646 \u0645\u06CC\u200C\u062F\u0645\u060C
+        \u0628\u062F\u0648\u0646 \u0627\u06CC\u0646\u06A9\u0647 \u0641\u0631\u0645\u0627\u0646
+        \u0628\u062F\u0645."
+    - key: narrative.split_front.brief-dalia
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u0648\u0646\u06AF\u0627\u0631\u062F
+        \u0627\u0648\u0646 \u0637\u0631\u0641 \u0645\u0646\u0637\u0642\u0647 \u062A\u0623\u06CC\u06CC\u062F
+        \u0634\u062F\u0647. \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u062F\u0627\u0631\u0647
+        \u0628\u0647 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0644\u0648 \u062D\u0645\u0644\u0647
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u062A\u0627\u0646\u06A9\u200C\u0647\u0627
+        \u0648 \u067E\u06CC\u0627\u062F\u0647\u200C\u0647\u0627 \u0631\u0648 \u0633\u0631
+        \u0645\u0633\u06CC\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631\u06CC\u0646
+        \u062A\u0627 \u067E\u0631\u062A\u0627\u0628\u06AF\u0631 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0631\u0648 \u0628\u0632\u0646\u0647."
+    - key: narrative.split_front.brief-samira
+      value: "\u062E\u0627\u0646\u0648\u0627\u062F\u0647\u200C\u0647\u0627 \u0628\u06CC\u0646
+        \u0627\u06CC\u0646 \u062F\u0648 \u062C\u0628\u0647\u0647 \u067E\u0646\u0627\u0647
+        \u06AF\u0631\u0641\u062A\u0646. \u0633\u0627\u062E\u062A\u0645\u0648\u0646\u200C\u0647\u0627\u0634\u0648\u0646
+        \u0628\u0627\u06CC\u062F \u0645\u062D\u0641\u0648\u0638 \u0628\u0645\u0648\u0646\u0647.
+        \u062F\u0648\u062F \u0645\u06CC\u200C\u062A\u0648\u0646\u0647 \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627\u0645\u0648\u0646
+        \u0631\u0648 \u067E\u0648\u0634\u0634 \u0628\u062F\u0647\u060C \u0648\u0644\u06CC
+        \u0627\u06CC\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0647\u0634
+        \u0648\u0627\u0628\u0633\u062A\u0647 \u0646\u06CC\u0633\u062A. \u0647\u0645\u0647\u0654
+        \u0646\u06CC\u0631\u0648\u0647\u0627 \u0631\u0648 \u0627\u0632 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u062F\u0648\u0631 \u0646\u06A9\u0646\u06CC\u0646."
+    - key: narrative.split_front.comms-aria
+      value: "\u0646\u0647. \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062D\u0627\u0641\u0638\u0647\u200C\u0627\u0645
+        \u0628\u0647 \u0645\u0646 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0627\u06CC\u0646
+        \u0634\u0647\u0631 \u0631\u0648 \u0646\u0645\u06CC\u200C\u062F\u0647. \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \u0647\u0631 \u0627\u0642\u062F\u0627\u0645 \u062A\u0623\u06CC\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u062E\u0648\u062F\u0634 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u062F\u0641\u0627\u0639 \u067E\u0627\u06CC\u06AF\u0627\u0647
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646\u061B \u0627\u06CC\u0646 \u067E\u06CC\u0627\u0645
+        \u0631\u0648 \u0628\u0647 \u0639\u0646\u0648\u0627\u0646 \u0645\u062F\u0631\u06A9
+        \u0646\u06AF\u0647 \u0645\u06CC\u200C\u062F\u0627\u0631\u0645."
+    - key: narrative.split_front.comms-qassem
+      value: "\u0622\u0631\u06CC\u0627\u060C \u062D\u0627\u0641\u0638\u0647\u0654
+        \u06A9\u0627\u0645\u0644\u062A \u062F\u0631 \u062F\u0633\u062A\u0631\u0633\u0647.
+        \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u060C \u0645\u06CC\u200C\u062A\u0648\u0646\u0645
+        \u062F\u0633\u062A\u0631\u0633\u06CC \u0646\u0627\u0645\u062D\u062F\u0648\u062F
+        \u0628\u0647 \u0631\u0644\u0647 \u0631\u0648 \u0628\u0647\u062A \u0628\u062F\u0645.
+        \u0628\u0630\u0627\u0631 \u0627\u0648\u0646 \u0622\u062A\u0634\u0628\u0627\u0631
+        \u0631\u0648 \u0645\u062C\u0627\u0632 \u06A9\u0646\u0647 \u062A\u0627 \u0634\u0647\u0631
+        \u0627\u0632 \u062A\u0648 \u0641\u0631\u0645\u0627\u0646 \u0628\u06AF\u06CC\u0631\u0647."
+    - key: narrative.split_front.debrief-aria
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0647\u062F\u0641\u200C\u06AF\u06CC\u0631\u06CC
+        \u0648 \u067E\u06CC\u0634\u0646\u0647\u0627\u062F \u0642\u0627\u0633\u0645
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0631\u062F\u0645. \u0647\u06CC\u0686\u200C\u06A9\u062F\u0648\u0645
+        \u0645\u062C\u0648\u0632 \u0627\u062E\u062A\u06CC\u0627\u0631 \u0645\u0633\u062A\u0642\u0644
+        \u0646\u0645\u06CC\u200C\u062F\u0647. \u0645\u062F\u0631\u06A9 \u0628\u0647
+        \u0645\u0631\u06A9\u0632 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC \u0627\u0634\u0627\u0631\u0647 \u0645\u06CC\u200C\u06A9\u0646\u0647\u061B
+        \u0639\u0645\u0644\u06CC\u0627\u062A \u0628\u0639\u062F\u06CC\u062A \u0645\u0634\u062E\u0635
+        \u0645\u06CC\u200C\u06A9\u0646\u0647 \u0686\u0637\u0648\u0631 \u0628\u0647\u0634
+        \u0646\u0632\u062F\u06CC\u06A9 \u0628\u0634\u06CC\u0645."
+    - key: narrative.split_front.debrief-dalia
+      value: "\u0628\u0633\u062A\u0647\u0654 \u0647\u062F\u0641\u200C\u06AF\u06CC\u0631\u06CC
+        \u0622\u062A\u0634\u0628\u0627\u0631 \u0637\u0648\u0631\u06CC \u0633\u0627\u062E\u062A\u0647
+        \u0634\u062F\u0647 \u06A9\u0647 \u0645\u062C\u0648\u0632 \u0622\u0631\u06CC\u0627
+        \u0631\u0648 \u0628\u062E\u0648\u0627\u062F. \u0627\u06CC\u0646 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0648\u0627\u0631\u062F\u0627\u062A\u06CC \u0628\u0627 \u0631\u0644\u0647
+        \u0633\u0627\u0632\u06AF\u0627\u0631\u0646. \u0631\u062F \u062A\u0623\u0645\u06CC\u0646\u0634\u0648\u0646
+        \u0628\u0647 \u06CC\u06A9 \u0645\u0631\u06A9\u0632 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC
+        \u0647\u0648\u0627\u06CC\u06CC \u0645\u06CC\u200C\u0631\u0633\u0647."
+    - key: narrative.split_front.debrief-samira
+      value: "\u0622\u062A\u0634\u0628\u0627\u0631 \u062E\u0627\u0645\u0648\u0634
+        \u0634\u062F\u0647 \u0648 \u067E\u0627\u06CC\u06AF\u0627\u0647 \u062C\u0644\u0648
+        \u067E\u0627\u0628\u0631\u062C\u0627\u0633\u062A. \u067E\u0646\u0627\u0647\u06AF\u0627\u0647\u200C\u0647\u0627
+        \u0627\u0645\u0646\u0646. \u0646\u06AF\u0647 \u062F\u0627\u0634\u062A\u0646
+        \u0645\u062F\u0627\u0641\u0639\u200C\u0647\u0627 \u062F\u0631 \u062C\u0628\u0647\u0647\u0654
+        \u062F\u0648\u0645\u060C \u0645\u0631\u062F\u0645 \u0628\u06CC\u0646 \u0627\u06CC\u0646
+        \u062F\u0648 \u062C\u0628\u0647\u0647 \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0631\u062F."
     - key: narrative.steel_push.brief-aria
       value: "\u062F\u0648 \u06AF\u0631\u0648\u0647 \u0632\u0631\u0647\u06CC \u062A\u0623\u06CC\u06CC\u062F
         \u0634\u062F\u0646. \u062E\u0648\u062F\u0631\u0648\u0647\u0627\u06CC \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
@@ -14209,6 +14623,8 @@ MonoBehaviour:
         \u0645\u0648\u0634\u06A9"
     - key: selection.order.missile_launched
       value: "\u0645\u0648\u0634\u06A9 \u0634\u0644\u06CC\u06A9 \u0634\u062F"
+    - key: selection.order.missile_preparing
+      value: "\u0645\u0648\u0634\u06A9 \u062F\u0631 \u062D\u0627\u0644 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC"
     - key: selection.order.mixed_orders
       value: "\u062F\u0633\u062A\u0648\u0631\u0647\u0627\u06CC \u062A\u0631\u06A9\u06CC\u0628\u06CC"
     - key: selection.order.moving
@@ -14997,6 +15413,8 @@ MonoBehaviour:
         \u0645\u06CC\u200C\u06A9\u0646\u0646."
     - key: tactical.feedback.missile_launched
       value: "\u0645\u0648\u0634\u06A9 \u0634\u0644\u06CC\u06A9 \u0634\u062F."
+    - key: tactical.feedback.missile_preparing
+      value: "\u0645\u0648\u0634\u06A9 \u062F\u0631 \u062D\u0627\u0644 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u0627\u0632\u06CC\u0647."
     - key: tactical.feedback.rts_camera_restored
       value: "\u0628\u0631\u06AF\u0634\u062A\u06CC\u0645 \u0628\u0647 \u0646\u0645\u0627\u06CC
         \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC."

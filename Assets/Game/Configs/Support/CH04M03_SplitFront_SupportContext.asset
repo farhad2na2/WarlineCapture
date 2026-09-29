@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c770b8e33b114dcabd2bbd385f69d2d, type: 3}
+  m_Name: CH04M03_SplitFront_SupportContext
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportMissionContextConfig
+  MissionId: saga.ch04.m03.split_front
+  OperationMapId: opmap.ch04.split_front_01
+  MissionSourceVersion: 1
+  Revision: 1
+  GroundMin: {x: 590, y: 410}
+  GroundMax: {x: 845, y: 490}
+  Entry: {x: 0, y: 0, z: 0}
+  Release: {x: 0, y: 0, z: 0}
+  Exit: {x: 0, y: 0, z: 0}
+  Clearance: 5
+  PopulationCeiling: 0
+  RouteAuthored: 0
+  Regions:
+  - Min: {x: 590, y: 410}
+    Max: {x: 845, y: 490}
+    Visible: 1
+    Protected: 0
+  - Min: {x: 689, y: 450}
+    Max: {x: 725, y: 486}
+    Visible: 1
+    Protected: 1

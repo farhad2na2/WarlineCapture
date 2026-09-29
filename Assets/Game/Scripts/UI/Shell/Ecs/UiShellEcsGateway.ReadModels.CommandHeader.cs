@@ -233,6 +233,8 @@ namespace Game.UI.Shell.Ecs
                 showOil = true;
                 oilVisibilityResolved = true;
             }
+            else if(CampaignSplitFrontFuelScope.TryGet(entityManager,out var splitReserve,out _))
+            {oilText="0";fuelText=Mathf.Max(0,Mathf.FloorToInt(CampaignSplitFrontFuelScope.Usable(entityManager,splitReserve))).ToString();showOil=false;oilVisibilityResolved=true;}
             else if (TryFormatSupplyLineResources(out oilText,out fuelText))
             {
                 showOil=true;oilVisibilityResolved=true;

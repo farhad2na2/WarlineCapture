@@ -29,6 +29,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a53c5ba7463dd4d868a2300ca98b8b8c, type: 2}
   - {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
   - {fileID: 11400000, guid: f88a7b632df304be88bde7709928ec6a, type: 2}
+  - {fileID: 11400000, guid: ad4954749229d4f8d81df237825cac50, type: 2}
   - {fileID: 11400000, guid: 7065e2ee8e49b4a3682ce88a38e3eda0, type: 2}
   entries:
   - definition: {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
@@ -127,6 +128,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 72e5b663fb786e098faa46038e913a97125f6780cfc5c87be44e46c2b81eb2bb
+  - definition: {fileID: 11400000, guid: ad4954749229d4f8d81df237825cac50, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch04.split_front_01
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 4f35ab3c417d20504e56fa413b78852daea9b0b3f74f515d8fa3847b63206a0b
   - definition: {fileID: 11400000, guid: 7065e2ee8e49b4a3682ce88a38e3eda0, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch04.steel_push_01

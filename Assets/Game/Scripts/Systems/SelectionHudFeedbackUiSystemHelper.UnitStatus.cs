@@ -8,6 +8,8 @@ namespace Game.Runtime
             {
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.ReturningToBase => Text("selection.order.returning_to_base", "Returning to base"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.MissileLaunched => Text("selection.order.missile_launched", "Missile launched"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.MissilePreparing => Text("selection.order.missile_preparing", "Preparing missile"),
+                SelectionUiReadModelLookup.FocusedUnitUiStatus.GroundMissileReloading => Text("selection.order.reloading", "Reloading"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.AirspaceClear => Text("selection.order.airspace_clear", "Airspace clear"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.TrackingAirTarget => Text("selection.order.tracking_air_target", "Tracking air target"),
                 SelectionUiReadModelLookup.FocusedUnitUiStatus.InterceptingMissile => Text("selection.order.intercepting_missile", "Intercepting missile"),

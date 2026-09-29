@@ -1,0 +1,535 @@
+{
+  "base_git_head": "a5c936c28c6175e9d18b2376daca6e26ba6c15d8",
+  "delta_sha256": "b596b06fd1a02c1487e42acde05c77da6a003f52deae8acbe2b8b7fead8968a0",
+  "files": [
+    {
+      "path": "Assets/AddressableAssetsData/AddressableAssetSettings.asset",
+      "sha256": "31884304446c54bde726aa8bfef263005bfaacd58d43723082171222df43acc2"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Split Front Narrative_BundledAssetGroupSchema.asset",
+      "sha256": "4700b4442d79e1e9955f5657580f7a6d1f881f9a0d4e434e21e541132e826cc6"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Split Front Narrative_BundledAssetGroupSchema.asset.meta",
+      "sha256": "344909a2ff7ebf17d512eb4425ee80d0c6f43b0e1301c7a7ebbf9ef63eccf7da"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Split Front Narrative_ContentUpdateGroupSchema.asset",
+      "sha256": "cd99f8ec3db9252629149817e11a40e1435a698146011816c9c27ede31947b4c"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Schemas/Split Front Narrative_ContentUpdateGroupSchema.asset.meta",
+      "sha256": "903fdf657d89d815b80781a85d9a4a42404a0ae32b3ac43279b1f29f5004624a"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Split Front Narrative.asset",
+      "sha256": "64bc73f4ed3c05efe793b60797779628008e985d09423d12dd95c0f16d9c31dd"
+    },
+    {
+      "path": "Assets/AddressableAssetsData/AssetGroups/Split Front Narrative.asset.meta",
+      "sha256": "8b53a58ea5c559da945ffc947bcd9ff592e3ef7503c3ef8df85b423a14ca1dd0"
+    },
+    {
+      "path": "Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset",
+      "sha256": "adc024b2e740b6d18ebbb9b49561a78925bfd6f30d9fb30bdcf9b687a988e4cf"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter04/CH04M03_SplitFront_FieldGuide.asset",
+      "sha256": "b0da98e32086f91f9a4a6b70a9f66ed7f5628e2ca14979edf08ad9b18b6921b2"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter04/CH04M03_SplitFront_FieldGuide.asset.meta",
+      "sha256": "6fb36dc839e2e7868755a500cab121d2280ea7d4252309ddf270fd7a01759e4f"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M03_SplitFront.asset",
+      "sha256": "9c2f796ac6426c5d41fed1b8a5b3db879b45d4c5e60012f8f30215a85a684b7e"
+    },
+    {
+      "path": "Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M03_SplitFront.asset.meta",
+      "sha256": "8ca8946d6892d7253cf288ff401e22f2c3865d08c7e766812c50152f041e4a6a"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/Chapter04/CH04M03_SplitFront_Narrative.asset",
+      "sha256": "f5fb9b2a6797114cd8d11fd4a0afb3310cdb6c3f7c2a0afc299c13caadc3ea3e"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/Chapter04/CH04M03_SplitFront_Narrative.asset.meta",
+      "sha256": "663f8b45689ceb5382d07ec7b2254cb8d6913c198b8370e7c722471ec08b0aa1"
+    },
+    {
+      "path": "Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset",
+      "sha256": "0a67e5f3b06088ee81bf6dcbcccd18bd89979e5146878722e1bfc2aab0dd9e65"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset",
+      "sha256": "c507d504ccff7ed5f70fede6cb4b418146fb7b638921103af9b5e9917f107448"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SplitFront01.asset",
+      "sha256": "d69498d92e2a964960d4b8783bfccd9d09386db72d93a57e42d7246ff464108b"
+    },
+    {
+      "path": "Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SplitFront01.asset.meta",
+      "sha256": "731505de4ea73864afe0ff597bc033139bf04f5f218f18f5d2b5511cd1f87aff"
+    },
+    {
+      "path": "Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M03_SplitFront.asset",
+      "sha256": "0ccfd495e000bb09088133f7603a4feb4b6f6af48a6cbb335ce4bed236357c06"
+    },
+    {
+      "path": "Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M03_SplitFront.asset.meta",
+      "sha256": "d2ed3b16718d72c128be72a4af663da3b8abbc11ea29975fadf42343b1550227"
+    },
+    {
+      "path": "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset",
+      "sha256": "4d5ca3ad59fd62fb3f2e74ce6b69781edb81511b2055ca0e48d8847f2eb0b38f"
+    },
+    {
+      "path": "Assets/Game/Configs/Support/CH04M03_SplitFront_SupportContext.asset",
+      "sha256": "bd26ae168b363ba030b3b37fd57aa4e81d5c3eeec86e22d5ddf9597e392392c6"
+    },
+    {
+      "path": "Assets/Game/Configs/Support/CH04M03_SplitFront_SupportContext.asset.meta",
+      "sha256": "9827ab062f670aa212f21fa65a0e82d2f40d5dc20fa95deede801ee508c0d267"
+    },
+    {
+      "path": "Assets/Game/Configs/Support/SupportAbilityCatalog.asset",
+      "sha256": "a7a9af970711182b232141e31259388af74b8029ed632d186c12fee91b8ac559"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/CH04M03SplitFront.meta",
+      "sha256": "8f28665db64698c7622ea5cda17c79c6e30e1510b417389870475482f18f2520"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/CH04M03SplitFront/Building_SplitFront_SupportDepot.prefab",
+      "sha256": "51dc3d3fb50894dc24c99fffb6439c8ed8c0a04f228a556e199f995ed60b614e"
+    },
+    {
+      "path": "Assets/Game/Prefabs/Buildings/CH04M03SplitFront/Building_SplitFront_SupportDepot.prefab.meta",
+      "sha256": "dc8d9cbac31182d5d3d87611117643ba3ba2475310d950e8c1072d3ed6b65634"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Popups/M03_FieldGuide.prefab",
+      "sha256": "2aaae68900d0d57d13390de3108db6be4a830317e10bd28d12ce89514c214361"
+    },
+    {
+      "path": "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab",
+      "sha256": "9827383471e2c2d432e8cd29f741cc748153b11eeb29e5fd470f4ba69102acff"
+    },
+    {
+      "path": "Assets/Game/Resources/FutureMissionComics/CH04M03_SplitFront.png.meta",
+      "sha256": "59bac73192aa9500aa3e18ac50c5dd23d73aef11bd106f0f609be8f391fc1a08"
+    },
+    {
+      "path": "Assets/Game/Resources/FutureMissionComics/CH04M03_SplitFront_Comms.png.meta",
+      "sha256": "eac55fb1e5b86013a82092a998e0c4f7dfe23b6ce14e0098682f64217e56926f"
+    },
+    {
+      "path": "Assets/Game/Resources/FutureMissionComics/CH04M03_SplitFront_Debrief.png.meta",
+      "sha256": "f3099c21ef0d38ce34b18c4bcb4711266ac3b47c4fe37ce2a4acfc9f42a23521"
+    },
+    {
+      "path": "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset",
+      "sha256": "e30a00120ec27d8e005a8c0085765b5b43bd8f8cc8e8e211f8471dccb92f116a"
+    },
+    {
+      "path": "Assets/Game/Scenes/Match/MatchRuntimeSubScene.unity",
+      "sha256": "637752a992d6a08bf4bcc273b2a05a57ad33d1c15032b73752b13309a27c07f5"
+    },
+    {
+      "path": "Assets/Game/Scenes/Menu.unity",
+      "sha256": "fea58b6556f801c9812db999562b0be286198d79662c31556c29a24a370d2a31"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionComponents.cs",
+      "sha256": "9aa899835c3c97cf71210cdfed8b65ff428f0ad630071a7ccb5a53772ff4b80f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionSplitFrontFuelState.cs",
+      "sha256": "0fd52f9fac68fb203430afc0c5ef805d9a1bc63488023dc3efb3b92ce16258b8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionSplitFrontFuelState.cs.meta",
+      "sha256": "ea54b36dae787315d3c98b002637b5be9375f432b0c4f7a88a935be6378c1f78"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionSplitFrontState.cs",
+      "sha256": "84773862248bf6c2481b7b91c95db4bf5cfec4fcd278890649903107d0e47e0a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Components/CampaignMissionSplitFrontState.cs.meta",
+      "sha256": "a0a6d9ff2972b3895fea863119ff078959a07adbb108e912879f7a1984fec2d1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Narrative/CH04M03SplitFrontCopy.cs",
+      "sha256": "6d6335d3ed243c61ec736a0608456dd9ecce0c04f5f97d1d0ce77683dc0e38c1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Configs/Narrative/CH04M03SplitFrontCopy.cs.meta",
+      "sha256": "92e33eaae6bf38164e662e69a703c9201ed89b58d60deb3e66de8e224a44510f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontConfigBuilder.cs",
+      "sha256": "3d5e78573ce2aeb3441a92a5d71cb746c1348a78bf6cb14027974e39ae9d1f96"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontConfigBuilder.cs.meta",
+      "sha256": "79d5acdc9ed60f3ed4e672f8976086c1267a96931fda8b49636e5009f443f3f9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.Cancel.cs",
+      "sha256": "2485f5316a2d37ec877f3c22bed852eb390fd20637eea2338c6859d82f347c90"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.Cancel.cs.meta",
+      "sha256": "ddc18fab643f7db0e5c68ac4391d1cd2a18b1c143c87d6b0661609c5a467a4d8"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.Smoke.cs",
+      "sha256": "402af04728d8bfb96d0ccff32c83fff2114c83e372a7cde48a4ccd8c87367c43"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.Smoke.cs.meta",
+      "sha256": "859e8940625ddf51102a276bc0dc18ab5fd11f18a0edabbb99d8b0ffe36d9c67"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs",
+      "sha256": "7137a37dbcfaa2ea1a5e8fc82995f0bbd301d10597842a23f8137d47a99d360f"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs.meta",
+      "sha256": "9df2d69d0b1c17d54dd45dee2549590d6b87a732d0eb3138fd4bb26bd377621d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontNarrativeBuilder.cs",
+      "sha256": "09602b0ab97dafb8c15eb38b0eabf34d19ae7f4804a30f293ca7c7a6cc4d7e2c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontNarrativeBuilder.cs.meta",
+      "sha256": "60602838caaf051d691e67d33007276707114192b529f46ec741f4be0b10fdfb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontPresentationBuilder.cs",
+      "sha256": "df161b016bc7f2b6d62a3fb5560f1320b65f3fb9c835b0de91bb25b0b6c4f91d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontPresentationBuilder.cs.meta",
+      "sha256": "0b73efb4716d2dffbdaa55aa91509f62faeb7f8e2aaefeb2b12cb70050940525"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontRulesValidation.cs",
+      "sha256": "1750ac2538fdd214f323e9b696a6413dd5b0a40dd590be8776e8a14bbd2e3c7c"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontRulesValidation.cs.meta",
+      "sha256": "063ca7b547c65aacbb7a46d88953fc1b8600d86c3a552448f9556c76bc4fe72d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontSupportBuilder.cs",
+      "sha256": "def03a04fb30720239c895ad62418e818135b83f93091bbb647a4710a17e774e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/CH04M03SplitFrontSupportBuilder.cs.meta",
+      "sha256": "f951fad43f7167d6d6057598d4da2f17ffc3b0a195def26c79ee670d976facfb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MissionSupportUiStyle.SplitFront.cs",
+      "sha256": "6843c7504bd9b60789c96134de05057c5bd774ea78610e9b018cb4e28f8455e0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Editor/MissionSupportUiStyle.SplitFront.cs.meta",
+      "sha256": "8a002e3ea9d8b095c52f4e87e48292caf134d10e4210a7e44951cf6bb6ea249a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Missions/Contracts/CampaignMissionSequence.cs",
+      "sha256": "c2c9e4e8ead27944111db50e3d1f1643549ca75db356a47b8db1c9232369a9e0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignMissionProgressStore.Support.cs",
+      "sha256": "6e93385b49dd4581e90cbaa30004d28dcdb077124b86703ae04bc85f72374914"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignSupportOwnershipProjectionSystem.cs",
+      "sha256": "f0cc12fe196cb2a3cda5b1c2f8910ad54d05da51e363511e85fdeb07e600ebb1"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Campaign/CampaignSupportOwnershipProjectionSystem.cs.meta",
+      "sha256": "76eb84010c28667935e69df87f8b8e3c92c4af668c6f45c923158c9922d3e7b6"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDefenseDeathObservationSystem.cs",
+      "sha256": "1b9877393f4cc6ae8ba7e7170add9a0b7b860ed76ce65602722a7b6f51f5ac61"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDefenseDeathObservationSystem.cs.meta",
+      "sha256": "2d488c8034ea3d6f9ead7b5435a6771227a0871f92071b6ad9d7120dfad50d21"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionDelayedWaveSystem.Defense.cs",
+      "sha256": "5dc8327da129a1cb340aca90ee397cd3e86e42049d0cf98ff6046728d89ae9ce"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SplitFront.cs",
+      "sha256": "019754c506ad95bd9a4fd5770356b0ffd35e6eeccac42b42a5caf279dd524ec5"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SplitFront.cs.meta",
+      "sha256": "21b79a8c2269912acec627a656a35ab583d29196591e8718a2b3210b278e811b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.cs",
+      "sha256": "bfef1313af3a6f1fcfb3c1cf9ede1e5b46f347c6b0b5f070b6bc77e5b08a5c8a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionLaunchSystem.DefenseCleanup.cs",
+      "sha256": "a7a0c024db044761a50cd36f4e898963f71013095bce812b58bacc7ab53cb612"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionNarrativePolicy.cs",
+      "sha256": "01a0fed09188b15ad57b2cb706b1d8ee65604157d425bb40bf50af66b152778a"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Defense.cs",
+      "sha256": "67b5dedc60b488c74c604c73ff3e9039bc05f2c1004c1a19823d5e953a059f11"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SplitFront.cs",
+      "sha256": "b812bb218d31c55ae92e1709f464e4de48d1bed58f9d0bcac56b0a5ab65373bf"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SplitFront.cs.meta",
+      "sha256": "f89f719755bf250cae3b51a4450ba85531293c34bcfce197e7908e8dd052108e"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SplitFrontFuel.cs",
+      "sha256": "f9871d23b4f8961df5478c5a84868fa606c2f7e3acbf529570aa4b210f929fe9"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SplitFrontFuel.cs.meta",
+      "sha256": "891cc44841a0197b5ee4c9370a8c5cd8d7710d07d6717cb41fd884df731a6111"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignMissionSpawnSystem.Defense.cs",
+      "sha256": "3b46e1eaac7a743ed2a6feaa37826ac29cfb7aa28354eb58aeb4bbec0bb29d75"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignSplitFrontFuelScope.cs",
+      "sha256": "7b5c97512783b084d90acf005705a51c5f918614d18f415e0df5670cbcb1340d"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignSplitFrontFuelScope.cs.meta",
+      "sha256": "33ce3ad262b24d3edd2c5b02d87466e0bf1b5111e8857126d728c8cbee84ff00"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignSplitFrontLauncherSafety.cs",
+      "sha256": "69aac2a1eff5ff6ded7ae32f2f4a5139a9d94c1518605d34158fab1671e46a73"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/CampaignSplitFrontLauncherSafety.cs.meta",
+      "sha256": "7949ca9417ad0219c46042cf1435b90adfd5c2c9b7ea499e5320e575ec5e95a0"
+    },
+    {
+      "path": "Assets/Game/Scripts/Runtime/Missions/MissionLaunchPayloadFactory.cs",
+      "sha256": "1e767adb10331b7355239ba05879314659db38605e35a9e4a4f6a628781eab71"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/GroundMissileLauncherSystems.cs",
+      "sha256": "273ef6bf2e592a3b2a684f866b68a28c32d9cc2dd25fd1adb655209ad92d7f1b"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionHudFeedbackUiSystemHelper.UnitStatus.cs",
+      "sha256": "10c54cad91913e9d146011e5e98188b47b5b2bc40392b3a788f26e890e51a071"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelLookup.UnitStatus.cs",
+      "sha256": "40b5ceee378f045c3f6d385d2f400f4e9029a9ee396b819370f7a9685c8b56be"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.Status.cs",
+      "sha256": "76430eba78c828b0101d08d504da8a2d3f0be9ad823cf8013a996408ac781105"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/SelectionUiReadModelUiSystemHelper.cs",
+      "sha256": "8ee462b29b4b5a269f1b9d7facfaeb03d362f2e3c7ccccce65d37e20cd8a3adb"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/ThreatWarningPresentationState.Defense.cs",
+      "sha256": "b0fc31a412ed4cc60ea661c77d508ffbab9f7ec56d218783d13c5b0c9f94d5ad"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitAttackSystem.cs",
+      "sha256": "d86767734e478d9a37eb2d79187f5873b175b5badf1eba344530283e5f8e61cd"
+    },
+    {
+      "path": "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs",
+      "sha256": "8ace1c9c94f8b2ec871c82e93524addba8d18c62469249785ba779f17ed596e6"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/UiDisabledMaterialStateView.cs",
+      "sha256": "34c4ac59d0fbe960b81390d84442b4e5e429ac915c0d0c3a2a55e72246f089e2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/UiDisabledMaterialStateView.cs.meta",
+      "sha256": "09fdbcca100a7ff5ab25ea36155376687ea51d3534301c8f10248ec738c1bffe"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/UiDisabledMaterialUtility.cs",
+      "sha256": "2496b45e22f8815b4579bab603496e94b3fa1224ae8c0b1a008f88596e9007c2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/UiDisabledSelectableVisualStateView.cs",
+      "sha256": "2dbb5075bd0f722615dc97740674a37d1653948bfe547e6b7831ee1199093d57"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Components/UiDisabledSelectableVisualStateView.cs.meta",
+      "sha256": "f762a86be54b064c45955272c9cbd1c846c27e5334fc99c67b12b1b72dd36f7b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiSplitFrontModels.cs",
+      "sha256": "49a5da36823f77409445d99905aef8c887eddf9295ce38422bbdae331429ee3f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Contracts/UiSplitFrontModels.cs.meta",
+      "sha256": "aa17de6a46bd3a247ac3bc363ea756c931801a49c7cbaaebd6bd362da58fd557"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignMissionScreenBinderView.cs",
+      "sha256": "5405a7c3fddeec6bbf26b1f737e5ba6d660741eb93366b6062d12cffb25857cc"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Goals.cs",
+      "sha256": "91d84da1497c004c0a7395cdf783e74ba2e31f374292a4d9b51647023a207f91"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.Gridlock.cs",
+      "sha256": "dd7213f6968ca7400c2547ee12a85809f7fc5227b37a7434daddc2220a38a1de"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.SplitFront.cs",
+      "sha256": "4ab2be74bd9059064fcc4b3bbe1685c513188f1497199810f37bcb311570cb8d"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/CampaignOperationsScreenView.SplitFront.cs.meta",
+      "sha256": "b12e63032d08ef1d4410c88b26e82f8776dac12cd25fdd041956968c4aeb9a9b"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.NextAction.cs",
+      "sha256": "91c72e4d10c7063fb5e20431dd7c28d0335853c4ad2556d479d5fc6d0e978789"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MatchHudAssistantUiSystemHelper.Watch.cs",
+      "sha256": "5c235102d5f3b269494a14b8add0e72a9f81e7f169d60cfa7c131bb4fc0620eb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.SplitFront.cs",
+      "sha256": "17f85c01377b141f06332466dd22d440ac1521bef258c3a4f3d1da096c281e55"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.SplitFront.cs.meta",
+      "sha256": "1758792f8720e882c4ed745c783e11e20936ad53ea8c6f88fd55af3f4e5a3274"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenView.cs",
+      "sha256": "7c8313442cc8084029ec9d007546b792b582823aace838d03ac8971c0443315a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionFieldGuideView.cs",
+      "sha256": "ca44764901dadf1bc610b6a3bbe7dda6d41e39c640184a34bf51e2e614bf58f9"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.SplitFront.cs",
+      "sha256": "eaf494d8ebaf80e8470f224c9105c9a53bb64abf2156473899f7f5c33ea893d7"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.SplitFront.cs.meta",
+      "sha256": "8d6681ef3eadb873671958f04faf559c9d4a67d224416ab550fb559f58b82b11"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/MissionResultPopupView.cs",
+      "sha256": "c2c39a2d6d199dcf088a1481c9dc13a6a7409c14902e32a40d4703042d66d51a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/SplitFrontLauncherHudView.cs",
+      "sha256": "2f85ad44937f1b5b4a169e0f5c5aa8d9fb74c590639465ece366b5a23b2703d2"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Screens/SplitFrontLauncherHudView.cs.meta",
+      "sha256": "359e409ca8a7fa3cde6315ea33ccc7fa37dcb1e3e112641446208d5b3a58e865"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/AssistantObjectiveProjectionUtility.cs",
+      "sha256": "8b65318f0b024fecd016c5a8d3711e2711d408bad4fc607a2796b907cf6a3eae"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.AriaPlay.cs",
+      "sha256": "eb71081c3758d4579ec0597a4b67cadcbef0157e50d67dbbbf37ac769d013932"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.Breach.cs",
+      "sha256": "b5cb01f6a35725d0a61f2f329fad985c2dd897a8fb87fadc65be4f0b6e1e1393"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionDefense.cs",
+      "sha256": "c0ce5d1dcddaf77fdb4b6b7739d131c00b661833ede76d99463ea8377778e2ff"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.MissionHudRestrictions.cs",
+      "sha256": "f6f5083b78e4cfa7418365c100da7751e2e22e73b397f954568e3c44d7458d9f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.CommandHeader.cs",
+      "sha256": "6becfb042c398de38b6c080e6ba10fa5e416995f769968f5ffa6752c0727da01"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.Core.cs",
+      "sha256": "2b53bf25138b48d2d46d764b673b00c5afac48adc0389db4ef6bb8ea08b81a66"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.ReadModels.ResourceValues.cs",
+      "sha256": "5e6bc90bef0be1bc8fec1b260709790ea26c5853c69202c558d2c97e4cb166b9"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SplitFront.cs",
+      "sha256": "29398e41ac023af5f4b88a5ce49a2d02f2fc7625d0e51acb8e5bcb204007a1cb"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SplitFront.cs.meta",
+      "sha256": "ad5d1384d6a7bb48bcc9b4d505fb2e741b10a6a863d03701579cb1164b191fb5"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SplitFrontResult.cs",
+      "sha256": "f7fd189d97832b86ad5c476ad2e796c91b0c7cb6c892f81fed052e61afd8e1c8"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.SplitFrontResult.cs.meta",
+      "sha256": "24474911df27a0403b69c2b2725fddb2bc743cd6f542ea19b7fa3c46388b645a"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/Ecs/UiShellEcsGateway.TutorialTarget.cs",
+      "sha256": "f484adaab7c6c7d92d13c63d3181bd37429ccdc722a83ac24fe8904ec3216f8f"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.SplitFront.cs",
+      "sha256": "dd184fb3143f66e626feba41bf3bebf809b0c9a000a89b59b4bc6cd65d0d9eec"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.SplitFront.cs.meta",
+      "sha256": "2d2cb9dcc610a98976359d4b7670f70a0e943bff66b113215363a22485cdb648"
+    },
+    {
+      "path": "Assets/Game/Scripts/UI/Shell/UiShellRuntimeGateway.SteelPush.cs",
+      "sha256": "4a41e2527e162de46bb5727150795001ea0cedced2932ae7b2f656b06df0ca80"
+    },
+    {
+      "path": "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Medium SDF.asset",
+      "sha256": "bd5228b3a1aeceb13d7b4f5e09b5830ca2adf8ff5fec3a57c74626a54ae3a89d"
+    },
+    {
+      "path": "Tools/Audio/generate_split_front_bilingual_voice.py",
+      "sha256": "c7b486f7f6956656037c126e5bd247c99c8133e481082695be008e928243fcca"
+    }
+  ],
+  "scope": "All modified/untracked Assets and Audio tools; unchanged dependencies pinned by Git HEAD. No post-build runtime edits before final English/Persian runs."
+}

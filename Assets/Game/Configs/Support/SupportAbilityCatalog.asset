@@ -29,7 +29,7 @@ MonoBehaviour:
     DurationSeconds: 15
     ApproachSeconds: 0
     DirectDamagePermille: 650
-    ProductionReady: 0
+    ProductionReady: 1
     Icon: {fileID: 21300000, guid: 960601e98d6f4534ab88664e2545cea1, type: 3}
     SourcePrefab: {fileID: 1506195013956270, guid: 2455f9e97989bb34b863456d2c2f67de, type: 3}
   - Kind: 2

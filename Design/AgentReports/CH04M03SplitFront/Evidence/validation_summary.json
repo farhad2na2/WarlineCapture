@@ -1,0 +1,44 @@
+{
+  "player_delta_sha256": "11b2e954873a387ca4beadc6a705f006cd989a294f10eb6953c7a3ae9e5f8e1b",
+  "runs": [
+    {
+      "log": "split-front-build-08.log",
+      "pass_markers": {
+        "SplitFrontNativeHud": true,
+        "SplitFrontRules": true,
+        "SplitFrontProtection": true,
+        "SplitFrontDeathObservation": true,
+        "SplitFrontCheckpoint": true,
+        "ExistingEditorValidation": true
+      },
+      "wrapper_exit": 0,
+      "voice_gate": "pending: captions only",
+      "device_gate": "pending"
+    },
+    {
+      "log": "split-front-input-smoke-03.log",
+      "pass_markers": {
+        "SplitFrontOptionalSmoke": true,
+        "SplitFrontPlayerCancel": true,
+        "SplitFrontSettlement": true,
+        "SplitFrontInput": true,
+        "ExistingEditorValidation": true
+      },
+      "wrapper_exit": 0,
+      "voice_gate": "pending: captions only",
+      "device_gate": "pending"
+    },
+    {
+      "log": "split-front-input-fa-02.log",
+      "pass_markers": {
+        "SplitFrontSettlement": true,
+        "SplitFrontInput": true,
+        "ExistingEditorValidation": true
+      },
+      "wrapper_exit": 0,
+      "voice_gate": "pending: captions only",
+      "device_gate": "pending"
+    }
+  ],
+  "unchanged_player_candidate": true
+}

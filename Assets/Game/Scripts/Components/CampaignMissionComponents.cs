@@ -240,7 +240,8 @@ namespace Game.Components
         PowerRoute = 64, PowerFuel = 65, PowerRepair = 66, PowerDefend = 67, PowerHold = 68,
         RouteRelief = 69, RouteFuel = 70, RouteRepair = 71, RouteBreach = 72, RouteGarrison = 73, RouteRecords = 74,
         AirCorridorPlan = 75, AirCorridorSelect = 76, AirCorridorMove = 77, AirCorridorDefend = 78,
-        SteelPushPlan = 79, SteelPushSelect = 80, SteelPushMove = 81, SteelPushDefend = 82
+        SteelPushPlan = 79, SteelPushSelect = 80, SteelPushMove = 81, SteelPushDefend = 82,
+        SplitFrontPlan = 83, SplitFrontSelect = 84, SplitFrontTarget = 85, SplitFrontConfirm = 86
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

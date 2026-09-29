@@ -71,8 +71,8 @@ namespace Game.UI.Shell.Ecs
 
                 bool radar = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning"));
                 bool introductory = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"));
-                bool steelPush = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush));
-                bool defensePreparation = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush));
+                bool steelPush = (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)));
+                bool defensePreparation = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.AirCorridor))||(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)));
                 restrictions = new UiMissionHudRestrictionsModel(
                     runtime.MissionId.ToString(),
                     definition.BuildingDisabled != 0,

@@ -1,0 +1,1599 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=Game.Editor.CH04M03SplitFrontInputProbe.RunPersian
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:90)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_cc4ca705/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[MainMenuV3PrefabBuilder] gameView=2400x1080 selectedIndex=21
+UnityEngine.Debug:Log (object)
+Game.Editor.MainMenuV3PrefabBuilder:SetGameViewResolution (int,int) (at Assets/Game/Scripts/Editor/MainMenuV3PrefabBuilder.cs:368)
+Game.Editor.CH04M03SplitFrontInputProbe:Run () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:52)
+Game.Editor.CH04M03SplitFrontInputProbe:RunPersian () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:37)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:92)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__9> (Game.Editor.ExistingEditorValidation/<Run>d__9&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_cc4ca705/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+[FirstLaunchStartup] fix=LanguageChoiceAwakeOrder_2026-07-17 disposition=EnterMenu languageView=1 languageVisible=0 narrativeView=1
+UnityEngine.Debug:Log (object)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:LogStartupDisposition (Game.Composition.FirstLaunchNarrativeStartupDisposition) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:319)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:Initialize (Game.Configs.NarrativeSequenceConfig,Game.Configs.NarrativeSpeakerCatalog,Game.Configs.NarrativePunctuationConfig,Game.UI.Runtime.NarrativeSequenceView,Game.UI.Contracts.IGameTextResolver,Game.Runtime.SaveService,bool,bool,Game.UI.Runtime.FirstLaunchLanguageChoiceView,Game.Configs.NarrativeLocaleConfig,Game.UI.Runtime.UIShellView) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:98)
+Game.Composition.FirstLaunchNarrativeCompositionSystemHelper:InitializeShell (Game.Composition.MenuBootstrapView,Game.UI.Contracts.IGameTextResolver,bool,bool) (at Assets/Game/Scripts/Composition/Narrative/FirstLaunchNarrativeCompositionSystemHelper.cs:151)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Initialize (Game.Composition.MenuBootstrapView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:115)
+Game.Composition.MenuBootstrapView:Awake () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:159)
+
+[UiShellPresentation] stage=CommandStarted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=1 kind=EnterMenu region=None route=MainMenu
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=1 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=2 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=2 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellPresentation] stage=CommandStarted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=3 kind=SwapMenuMiddle region=MiddleRegion route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=3 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SplitFrontNativeUiClick] button=LaunchMissionButton screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[UiShellPresentation] stage=CommandStarted sequence=4 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=4 kind=SwapMenuMiddle region=MiddleRegion route=MissionBriefing
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=4 kind=SwapMenuMiddle region=MiddleRegion
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SplitFrontNativeUiClick] button=DeployOperationButton screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=None outcome=None clock=0 hostile=0/0 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=5 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=5 kind=ExitMenu region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=5 kind=ExitMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[UiShellRoute] submitted deferred Match scene load request after loading feedback.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:643)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[UiShellRoute] submitted deferred Match gameplay start request.
+UnityEngine.Debug:Log (object)
+Game.Composition.MenuBootstrapCompositionSystemHelper:QueueDeferredMatchLoadAfterLoadingFeedback (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:658)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:157)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapLaunchIdentity] source=Campaign mission=saga.ch04.m03.split_front scenario=scenario.ch04.m03.split_front operationMap=opmap.ch04.split_front_01
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryResolveOperationMapDefinition (Unity.Entities.World,Game.Configs.OperationMapDefinition&,bool&,Game.Components.OperationMapLoadResultCode&,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:377)
+Game.Composition.MatchSceneView:EnsureOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:314)
+Game.Composition.MatchSceneView:EnsureMatchRuntimeBound () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:19)
+Game.Composition.MatchSceneView:Awake () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:229)
+
+[OperationMapReadiness] ready=SourceContent, Metadata, MapSurface, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:277)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=CompositionInit configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper:Initialize (Game.Configs.BuildingPlacementSystemConfig,UnityEngine.Camera,UnityEngine.Transform,UnityEngine.Transform,Game.Runtime.RoadGridProjectionSystem/RoadFootprintState,Game.Runtime.FactionVisualSettings,Game.Runtime.DayNightSystem,Game.Configs.RTSSelectionSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,UnityEngine.Transform,UnityEngine.Transform,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:470)
+Game.Runtime.ManagedGameplayStartupSystemHelper:Initialize (Unity.Entities.EntityManager,Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,System.Func`2<UnityEngine.GameObject, UnityEngine.Sprite>,Game.Runtime.BuildingProductionQueueCompositionSystemHelper/TryGetUnitProductionMetadataDelegate,Game.Runtime.BuildingProductionTransportPresentationSystemHelper/PrepareTransportDropVisualDelegate,System.Func`2<UnityEngine.GameObject, string>,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetBuildingDefinitionMetadataDelegate,Game.Runtime.BuildingDefinitionPrefabSystemHelper/TryGetUnitDefinitionMetadataDelegate,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool,System.Func`1<Game.Configs.MapVehiclePlacementConfig>,System.Func`1<UnityEngine.Transform>) (at Assets/Game/Scripts/Systems/ManagedGameplayStartupSystemHelper.cs:177)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntime (Game.Configs.DayNightSystemConfig,Game.Configs.FactionVisualSettingsConfig,Game.Configs.RoadBuildSystemConfig,Game.Configs.BuildingPlacementSystemConfig,Game.Configs.MapBuildingPlacementConfig,Game.Configs.MapVehiclePlacementConfig,Game.Configs.RTSSelectionSystemConfig,Game.Configs.RuntimeCitySpawnerSystemConfig,Game.Configs.GameStringsConfig,UnityEngine.Camera,UnityEngine.Light,UnityEngine.Rendering.Volume,UnityEngine.Transform,UnityEngine.Transform,System.Func`3<UnityEngine.Transform, Game.Configs.RTSSelectionSystemConfig, Game.UI.Contracts.ISelectionRectangleView>,UnityEngine.Transform,UnityEngine.Transform,Game.UI.Contracts.IMatchIntroStateQuery,bool) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:432)
+Game.Composition.MatchBootstrapCompositionSystemHelper:InitializeManagedRuntimeIfNeeded () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:765)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:158)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[RuntimeGridBootstrap] RuntimeGridBootstrap_NoTacticalMapRuntimeLoader_2026-05-26 ready entity=337 size=2048x1024 cellSize=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.RuntimeGridBootstrapStartupSystemHelper:Ensure (Unity.Entities.EntityManager,int,int,single,UnityEngine.Vector3,UnityEngine.Vector2Int[]) (at Assets/Game/Scripts/Systems/RuntimeGridBootstrapStartupSystemHelper.cs:63)
+Game.Composition.MatchBootstrapStartupConfigProjection:ProjectRuntimeStartupConfig (Unity.Entities.World,Game.Runtime.RuntimeGridBootstrapStartupSystemHelper,Game.Composition.MapSurfaceRuntimeBootstrapSceneSystemHelper,Game.Composition.MatchSceneView,Game.Configs.BuildingPlacementSystemConfig,Game.Runtime.AIStartupSystem,System.Collections.Generic.IReadOnlyList`1<Game.Configs.AIControllerConfig>,Game.Configs.AISettingsSnapshot,System.Collections.Generic.List`1<Game.Runtime.InitialFactionSpawnCellFallbackEntry>) (at Assets/Game/Scripts/Composition/MatchBootstrapStartupConfigProjection.cs:49)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:181)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[SplitFrontInputState] stage=3 phase=None outcome=None clock=0 hostile=0/0 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[OperationMapReadiness] ready=SourceContent, SubScene, Metadata, MapSurface, AuthoredConversion, PresentationManifest, RequiredPresentationPreload failed=None
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryPublishOperationMapReadiness (bool,bool,string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:277)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentationForLoadedMatch (bool,Game.Composition.MatchSceneView) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:476)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateStaticMapPresentation (Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:453)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:150)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[MapVehicleOwnershipRuntime] phase=RuntimeContextReady configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 positiveContract=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__EnsureRuntimeTickContext|38 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:486)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:606)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapBuildingPlacement] no baked map building placements configured.
+UnityEngine.Debug:LogWarning (object)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:WarnOnce (bool&,Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context,string) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:815)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:SpawnPlacements (Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:93)
+Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper:Update (Game.Runtime.MapBuildingPlacementSpawnPrefabSystemHelper/Context) (at Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnPrefabSystemHelper.cs:86)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_1:<Initialize>b__58 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:552)
+Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingPlacementRuntimeTickCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickCompositionSystemHelper.cs:119)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingStartupTick|39 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:607)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateStartup (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:31)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:AdvanceStep (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:288)
+Game.Composition.MatchGameplayStartupCompositionSystemHelper:Advance (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context&) (at Assets/Game/Scripts/Composition/MatchGameplayStartupCompositionSystemHelper.cs:112)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:186)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] waiting frame=864 gameplayInitialized=1 playRequested=1 simulationActive=0 city=null blockers=null decorations=null initialSpawn=configs:1,initialized:0,progress:0
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:LogLoadingGateIfDue (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:413)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:239)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[LoadingGate] ready frame=865 gameplayInitialized=1 playRequested=1 simulationActive=1
+UnityEngine.Debug:Log (object)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:220)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[MapVehicleOwnershipRuntime] phase=LiveContractObserved configAssigned=0 placements=-1 authoringRootAssigned=1 configuredPacked=1 authoredVehicles=0
+UnityEngine.Debug:Log (object)
+Game.Runtime.BuildingGameplayCompositionSystemHelper/<>c__DisplayClass16_0:<Initialize>g__UpdateBuildingSimulationTick|40 () (at Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystemHelper.cs:622)
+Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper:UpdateSimulation (Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context) (at Assets/Game/Scripts/Systems/BuildingRuntimeUpdateCompositionSystemHelper.cs:41)
+Game.Runtime.GameplayRuntimeUpdateCompositionSystemHelper:Update (Unity.Entities.World,bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Systems/GameplayRuntimeUpdateCompositionSystemHelper.Runtime.cs:150)
+Game.Composition.MatchBootstrapCompositionSystemHelper:UpdateRuntime (bool,Game.Runtime.RuntimeGameplayStateSystem,Game.Runtime.PerformanceDiagnosticsSystemHelper,System.Action,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper,Game.Runtime.BuildingRuntimeUpdateCompositionSystemHelper/Context,System.Action,UnityEngine.Camera,Game.Runtime.RuntimeCityCompositionSystemHelper,Game.Runtime.RuntimeGridBlockerPresentationSystemHelper,Game.Runtime.RuntimeDecorationSpawnerPresentationSystemHelper,Game.Runtime.DayNightSystem,System.Action,Game.UI.Contracts.IMatchRuntimeUi,Game.Rendering.Contracts.IUnitImpostorRenderer,bool&) (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:583)
+Game.Composition.MatchBootstrapCompositionSystemHelper:Update () (at Assets/Game/Scripts/Composition/MatchBootstrapCompositionSystemHelper.cs:203)
+Game.Composition.MatchSceneView:Update () (at Assets/Game/Scripts/Composition/MatchSceneView.cs:271)
+
+[FreezeDetect] Update hitch frame=866 BuildingPlacement=1371.0ms, GC=0/0/0, Total=1373.8ms
+[SplitFrontSupportReserve] initialized origin=int2(796, 450) footprint=int2(24, 23) stored=44 civilian=40 usable=4
+UnityEngine.Debug:Log (object)
+Game.Runtime.CampaignMissionRuntimeSystem:ProjectSplitFrontFuel (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.Components.CampaignMissionRuntimeComponent&,Game.Components.CampaignMissionAttemptFactsComponent&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.SplitFrontFuel.cs:63)
+Game.Runtime.CampaignMissionRuntimeSystem:TryAdvanceDefense (Unity.Entities.SystemState&,Unity.Entities.Entity,Game.Components.CampaignMissionRuntimeComponent&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.Defense.cs:31)
+Game.Runtime.CampaignMissionRuntimeSystem:OnUpdate (Unity.Entities.SystemState&) (at Assets/Game/Scripts/Runtime/Missions/CampaignMissionRuntimeSystem.cs:52)
+Game.Runtime.CampaignMissionRuntimeSystem:__codegen__OnUpdate (intptr,intptr)
+Unity.Entities.SystemBaseRegistry/<>c__DisplayClass9_0:<SelectBurstFn>b__0 (intptr,intptr) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBaseRegistry.cs:251)
+Unity.Entities.WorldUnmanagedImpl/Unity.Entities.UnmanagedUpdate_000015A0$BurstDirectCall:Invoke (void*)
+Unity.Entities.WorldUnmanagedImpl:UnmanagedUpdate (void*)
+Unity.Entities.WorldUnmanagedImpl:UpdateSystem (Unity.Entities.SystemHandle) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/WorldUnmanaged.cs:942)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:725)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+[UiShellPresentation] stage=CommandStarted sequence=6 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[CampaignMissionNarrative] status=started stage=Brief sequence=seq.ch04.m03.brief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:167)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[UiShellPresentation] stage=CommandCompleted sequence=6 kind=EnterMatchHud region=None route=Match
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=6 kind=EnterMatchHud region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SplitFrontInputState] stage=3 phase=InteractiveBrief outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=InteractiveBrief outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=InteractiveBrief outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=InteractiveBrief outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 150 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=InteractiveBrief outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=2487 BuildingPlacement=152.7ms, GC=0/0/0, Total=158.5ms
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=2818 BuildingPlacement=162.0ms, GC=0/0/0, Total=167.8ms
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=FindSquad outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=0 actions=0 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNormalHud] result=Passed centerPanel=absent confirmationControls=absent commands=existing
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ValidateNormalHud () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:242)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:196)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=WatchAriaPlay screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontNativeUiClick] button=ConfirmWatchAria screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontTouch] phase=Began point=(2153.24, 463.68) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(2153.24, 463.68) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=Waiting goal=401 target=0 button= point=(0.00, 0.00) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=65002 actions=1 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Observing kind=Control goal=402 target=-2040626 button=SelectCommand point=(939.33, 106.16) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(939.33, 106.16) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(939.33, 106.16) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=Waiting goal=402 target=-2035934 button=ShowMeButton point=(2153.24, 658.79) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(2153.24, 658.79) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(2153.24, 658.79) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=Waiting goal=402 target=0 button= point=(0.00, 0.00) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=65002 actions=3 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=WorldTarget goal=402 target=1 button= point=(745.55, 925.06) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=0 hostile=0/5 core=0 integrity=0 guide=65002 actions=3 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=2/4 locked=False body=پرتابگر زمینی رو انتخاب کن. «نشان بده» فقط دوربین رو جابه‌جا می‌کنه. مدافع‌ها رو برای پوشش مسیر پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Aiming kind=WorldTarget goal=402 target=1 button= point=(1157.46, 636.17) mask=1 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(1195.35, 582.28) hit= focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(1195.35, 582.28) hit= focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=3840 Selection=399.4ms, GC=0/0/0, Total=411.2ms
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=WorldTarget goal=402 target=1 button= point=(1195.71, 581.56) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=1451 hostile=0/5 core=0 integrity=0 guide=65004 actions=4 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Aiming kind=Control goal=403 target=-2040778 button=AttackCommand point=(1370.58, 106.16) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(1370.58, 106.16) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(1370.58, 106.16) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=Waiting goal=403 target=-2035934 button=ShowMeButton point=(2153.24, 463.68) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(2153.24, 463.68) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(2153.24, 463.68) hit=V3GradientLayer focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=Waiting goal=403 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 150 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=6446 hostile=0/5 core=0 integrity=0 guide=65004 actions=6 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=403 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=4122 MainMenu=177.7ms, GC=1/1/1, Total=178.2ms
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=11464 hostile=0/5 core=0 integrity=0 guide=65004 actions=6 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=3/4 locked=False body=پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار رو لمس کن. مدافع‌ها رو در پایگاه نگه دار و مردم رو محفوظ نگه دار. هدف باید در برد و دور از پناهگاه‌های مردم باشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Aiming kind=WorldTarget goal=403 target=1 button= point=(983.46, 569.27) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontTouch] phase=Began point=(1192.01, 569.18) hit= focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[SplitFrontTouch] phase=Ended point=(1192.01, 569.18) hit= focus= module=InputSystemUIInputModule
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:ObserveTouch (Game.UI.Runtime.AriaTouchInputUiSystemHelper,string,UnityEngine.Vector2) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:271)
+Game.UI.Runtime.AriaTouchInputUiSystemHelper:OnInputEvent (UnityEngine.InputSystem.LowLevel.InputEventPtr,UnityEngine.InputSystem.InputDevice) (at Assets/Game/Scripts/UI/Screens/AriaTouchInputUiSystemHelper.cs:162)
+UnityEngine.InputSystem.LowLevel.NativeInputRuntime/<>c__DisplayClass7_0:<set_onUpdate>b__0 (UnityEngineInternal.Input.NativeInputUpdateType,UnityEngineInternal.Input.NativeInputEventBuffer*)
+UnityEngineInternal.Input.NativeInputSystem:NotifyUpdate (UnityEngineInternal.Input.NativeInputUpdateType,intptr) (at /Users/bokken/build/output/unity/unity/Modules/Input/Private/Input.cs:132)
+
+[FreezeDetect] Update hitch frame=4348 Selection=408.9ms, GC=0/0/0, Total=418.6ms
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=16333 hostile=0/5 core=0 integrity=0 guide=65008 actions=6 combat=False launcherFired=False
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=پرتابگر موقع حمله به هدفش آماده می‌شه، شلیک می‌کنه و دوباره بارگذاری می‌کنه. برای توقف قبل از پرتاب، حفظ موضع رو بزن. موشک در پرواز برنمی‌گرده. مدافع‌ها رو در پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=WorldTarget goal=403 target=1 button= point=(1192.84, 569.18) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=پرتابگر موقع حمله به هدفش آماده می‌شه، شلیک می‌کنه و دوباره بارگذاری می‌کنه. برای توقف قبل از پرتاب، حفظ موضع رو بزن. موشک در پرواز برنمی‌گرده. مدافع‌ها رو در پایگاه نگه دار.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Verifying kind=WorldTarget goal=403 target=1 button= point=(1192.84, 569.18) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=560/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:198)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.TacticalBannerAcceptedAttackTitle bus=Voice requestId=13 played=1 status=Presented reason=Played at=116.14 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[CampaignMissionNarrative] status=started stage=Comms sequence=seq.ch04.m03.comms session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:167)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=20011 hostile=0/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Cinematic goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=2 position=float3(593.5f, 1.77918f, 450.5f) health=0/560 min=35 max=600 stationary=True target=Entity.Null attackOrders=0 stops=0 launches=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=20011 hostile=0/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Cinematic goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=20011 hostile=0/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Cinematic goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=22690 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=27700 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FreezeDetect] Update hitch frame=5251 GC=0/0/0, Total=159.7ms
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=32710 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=37713 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=42715 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=47717 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[Command Cache] Cleaned 150 expired entries
+UnityEngine.Debug:Log (object)
+Unity.AI.Tracing.ConsoleSink:LogToConsole (string,string,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:313)
+Unity.AI.Tracing.ConsoleSink:Write (Unity.AI.Tracing.TraceEvent) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceSinks.cs:277)
+Unity.AI.Tracing.TraceWriter:WriteEventInternal (string,string,Unity.AI.Tracing.TraceEventOptions,string,System.Nullable`1<int>) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:373)
+Unity.AI.Tracing.TraceWriter:Event (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceWriter.cs:297)
+Unity.AI.Tracing.TraceLogger:Emit (string,string,string,string,Unity.AI.Tracing.TraceEventOptions,object,System.Exception) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:105)
+Unity.AI.Tracing.TraceLogger:Info (string,string,string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.Tracing/TraceLogger.cs:35)
+Unity.AI.MCP.Editor.Helpers.McpLog:Log (string,Unity.AI.Tracing.TraceEventOptions) (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Helpers/McpLog.cs:15)
+Unity.AI.MCP.Editor.Bridge:CleanExpiredCommandResults () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1966)
+Unity.AI.MCP.Editor.Bridge:ProcessCommands () (at ./Library/PackageCache/com.unity.ai.assistant@6fee27370e6a/Modules/Unity.AI.MCP.Editor/Bridge.cs:1493)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.WarningGroundAttackType bus=Voice requestId=42 played=1 status=Presented reason=Played at=164.88 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=52729 hostile=1/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=Engage outcome=None clock=57747 hostile=2/5 core=0 integrity=0 guide=65008 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistant] ready=True recommendation=True step=4/4 locked=False body=آتشبار خاموش شده. مدافع‌ها رو سر مسیر نگه دار تا حملهٔ انحرافی متوقف بشه.
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:248)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAssistantBoundary] route=Match mode=MatchHud transition=0 started=1 pending=0 state=True recommendation=True message=True threat=True target=True objective=True goals=True recommendations=True messages=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:252)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontAriaTarget] phase=Waiting kind=Waiting goal=404 target=0 button= point=(0.00, 0.00) mask=511 stop=0
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:254)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontLauncher] faction=1 position=float3(781.5f, 1.88918f, 450.5f) health=560/560 min=35 max=600 stationary=False target=Entity(859:5) attackOrders=1 stops=0 launches=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:261)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontMissingMember] entity=Entity(859:5) element=0 faction=2 sensor=0 initialized=1 defeated=1
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Diagnose (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:256)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:159)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[AudioDiag] Playback event=VO.ARIA.Message.WarningGroundAttackType bus=Voice requestId=97 played=1 status=Presented reason=Played at=172.89 source=null
+UnityEngine.Debug:Log (object)
+Game.Runtime.AudioPlaybackPresentationDiagnostics:Log (Unity.Entities.EntityManager,Game.Components.AudioPlaybackRequestElement,Game.Configs.AudioEventCatalogEntry,Game.Runtime.AudioPlaybackPresentationResult,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationDiagnostics.cs:32)
+Game.Runtime.AudioPlaybackPresentationBridgeSystemHelper:DrainAcceptedRequests (Unity.Entities.EntityManager,Game.Configs.AudioEventCatalogConfig,Game.Configs.AudioMixerBusConfig,Game.Runtime.AudioPlaybackPresentationSystemHelper,single) (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationBridgeSystemHelper.cs:169)
+Game.Runtime.AudioPlaybackPresentationRuntimeView:Update () (at Assets/Game/Scripts/Audio/Runtime/AudioPlaybackPresentationRuntimeView.cs:54)
+
+[SplitFrontInputState] stage=3 phase=SecureCorridor outcome=None clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNormalAttack] result=Passed attackOrders=1 launches=1 stoppedOrders=0 confirmation=none
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:188)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[CampaignMissionNarrative] status=started stage=Debrief sequence=seq.ch04.m03.debrief session=campaign-m03-0000000000000001 attempt=1
+UnityEngine.Debug:Log (object)
+Game.Composition.CampaignMissionNarrativeCompositionUtility:LogStage (string,Game.Composition.CampaignMissionDebriefCompositionSystemHelper/SequenceStage,Unity.Collections.FixedString64Bytes&,Unity.Collections.FixedString64Bytes&,int) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:269)
+Game.Composition.CampaignMissionDebriefCompositionSystemHelper:Tick (single,Unity.Entities.EntityManager,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent&) (at Assets/Game/Scripts/Composition/Narrative/CampaignMissionDebriefCompositionSystemHelper.cs:167)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:TickDebrief (Game.Composition.MenuBootstrapView,Unity.Entities.EntityManager,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:59)
+Game.Composition.CampaignMissionMenuBootstrapRuntime:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/CampaignMissionMenuBootstrapRuntime.cs:35)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:175)
+
+[SplitFrontInputState] stage=3 phase=DebriefFirstClear outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInputState] stage=3 phase=DebriefFirstClear outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=DebriefFirstClear outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontInputState] stage=3 phase=DebriefFirstClear outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontNativeUiClick] button=InputSurface screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[SplitFrontNativeUiClick] button=ContinueButton screen=2400x1080
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe/PlayerFrameUiInputHost:Update () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.PlayerFrame.cs:20)
+
+[UiShellPresentation] stage=CommandStarted sequence=7 kind=ShowLoading region=LoadingLayer route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=7 kind=ShowLoading region=LoadingLayer route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView:ExecuteCommandSequence (System.Collections.Generic.IReadOnlyList`1<Game.UI.Contracts.UiShellPresentationCommandModel>,int,System.Action`1<int>) (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:86)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:89)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=7 kind=ShowLoading region=LoadingLayer
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[OperationMapSourceScene] stage=SceneUnloadRequested
+UnityEngine.Debug:Log (object)
+Game.Composition.MatchSceneView:TryBeginOperationMapContentUnload (string&) (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:92)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:387)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+UnityEngine.Debug:Log (object)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:UpdateUnload () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:361)
+Game.Composition.OperationMapSceneLoadingSceneSystemHelper:Update () (at Assets/Game/Scripts/Composition/OperationMapSceneLoadingSceneSystemHelper.cs:120)
+Game.Composition.MatchSceneView:UpdateOperationMapSourceSceneLoad () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:434)
+Game.Composition.MatchSceneView:UpdateOperationMapContentUnload () (at Assets/Game/Scripts/Composition/MatchSceneView.OperationMapLifecycle.cs:102)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateMenuLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:399)
+Game.Composition.MenuBootstrapCompositionSystemHelper:UpdateActualLoadingProgress (Unity.Entities.EntityManager,Unity.Entities.Entity,Game.UI.Shell.Contracts.Ecs.UiShellStateComponent) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:311)
+Game.Composition.MenuBootstrapCompositionSystemHelper:Update (Game.Composition.MenuBootstrapView,single) (at Assets/Game/Scripts/Composition/MenuBootstrapCompositionSystemHelper.cs:158)
+Game.Composition.MenuBootstrapView:Update () (at Assets/Game/Scripts/Composition/MenuBootstrapView.cs:174)
+
+[SplitFrontInputState] stage=4 phase=ReturnReplay outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[UiShellPresentation] stage=CommandStarted sequence=8 kind=EnterMenu region=None route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:87)
+
+[UiShellPresentation] stage=CommandCompleted sequence=8 kind=EnterMenu region=None route=Campaign
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellPresentationCommandModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:138)
+Game.UI.Runtime.UIShellEcsPresentationSystem/<>c__DisplayClass24_0:<Update>b__0 (int) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:100)
+Game.UI.Runtime.UIShellView/<>c__DisplayClass19_0:<ExecuteCommandSequence>b__0 () (at Assets/Game/Scripts/UI/Shell/UIShellView.cs:99)
+Game.UI.Runtime.UIMotionHostView/<SequenceRoutine>d__32:MoveNext () (at Assets/Game/Scripts/UI/Shell/UIMotionHostView.cs:268)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+[UiShellPresentation] stage=CompletionFlushed sequence=8 kind=EnterMenu region=None
+UnityEngine.Debug:Log (object,UnityEngine.Object)
+Game.Composition.UiDiagnosticsComposition:Report (Game.UI.Contracts.UiDiagnosticSeverity,string,UnityEngine.Object) (at Assets/Game/Scripts/Composition/UiDiagnosticsComposition.cs:17)
+Game.UI.Contracts.UiDiagnostics:Info (string,UnityEngine.Object) (at Assets/Game/Scripts/UI/Contracts/UiDiagnostics.cs:14)
+Game.UI.Runtime.UIShellEcsPresentationSystem:LogTransition (string,Game.UI.Contracts.UiShellTransitionCompleteModel) (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:146)
+Game.UI.Runtime.UIShellEcsPresentationSystem:FlushPendingCompletion () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:129)
+Game.UI.Runtime.UIShellEcsPresentationSystem:Update () (at Assets/Game/Scripts/UI/Shell/UIShellEcsPresentationSystem.cs:67)
+
+[SplitFrontInputState] stage=4 phase=ReturnReplay outcome=Victory clock=61468 hostile=5/5 core=0 integrity=0 guide=0 actions=7 combat=True launcherFired=True
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:158)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontSettlement] result=Passed firstClear=settled duplicate=rejected unlock=ability.precision_strike
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:174)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SplitFrontInput] result=Passed locale=fa-IR dialogue=8 combat=live launcher=normal-attack ARIA-actions=7 victory=result=settlement=return
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M03SplitFrontInputProbe:Complete (bool,string) (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:278)
+Game.Editor.CH04M03SplitFrontInputProbe:Tick () (at Assets/Game/Scripts/Editor/CH04M03SplitFrontInputProbe.cs:139)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=Game.Editor.CH04M03SplitFrontInputProbe.RunPersian
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__9:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:109)
+UnityEngine.UnitySynchronizationContext:ExecuteTasks () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/UnitySynchronizationContext.cs:110)
+

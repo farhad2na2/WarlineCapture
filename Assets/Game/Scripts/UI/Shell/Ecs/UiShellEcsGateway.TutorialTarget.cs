@@ -26,12 +26,12 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
-            if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))) &&
+            if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor))||(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)))) &&
                 em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {
                 target=new UiMissionTutorialTarget(em.GetComponentData<LocalTransform>(guidance.SourceEntity).Position,guidance.WorldPosition,
                     !em.HasComponent<SelectedUnitTag>(guidance.SourceEntity),IsTutorialActorMoving(em,guidance.SourceEntity),
-                    battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:guidance.RecommendationKind==AssistantRecommendationKind.Move?UiTutorialBattleAction.Move:UiTutorialBattleAction.None);
+                    battleAction:guidance.CanExecute==0?UiTutorialBattleAction.Watch:guidance.RecommendationKind==AssistantRecommendationKind.Attack?UiTutorialBattleAction.Attack:guidance.RecommendationKind==AssistantRecommendationKind.Move?UiTutorialBattleAction.Move:UiTutorialBattleAction.None);
                 return true;
             }
             if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.FalseFront)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SafehouseSweep)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SignalTrace)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.RouteReopened)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.PowerRelay)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.MarketLifeline)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SupplyLine)) || runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.Gridlock))) &&

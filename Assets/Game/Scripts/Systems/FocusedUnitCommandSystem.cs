@@ -195,7 +195,10 @@ namespace Game.Runtime
             moveOrderSystem.RemoveComponentIfPresent<UnitTransportAirdropRequest>(em, ecb, entity);
             moveOrderSystem.RemoveComponentIfPresent<UnitResourceHaulOrder>(em, ecb, entity);
             if (clearEngageTarget)
+            {
+                CampaignSplitFrontLauncherSafety.Stop(em, entity);
                 moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, ecb, entity);
+            }
 
             if (holdPosition)
                 HoldRuntimeMotion(em, ecb, entity);

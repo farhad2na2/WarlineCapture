@@ -17,7 +17,9 @@ namespace Game.Runtime
             InterceptingMissile = 7,
             AirDefenseReloading = 8,
             Holding = 9,
-            AttackMoving = 10
+            AttackMoving = 10,
+            MissilePreparing = 11,
+            GroundMissileReloading = 12
         }
         public FocusedUnitUiStatus GetFocusedUnitUiStatus(EntityManager entityManager, Entity entity)
         {
@@ -27,10 +29,16 @@ namespace Game.Runtime
             if (entityManager.HasComponent<UnitAirComponent>(entity) && entityManager.GetComponentData<UnitAirComponent>(entity).ReturningHome != 0)
                 return FocusedUnitUiStatus.ReturningToBase;
 
-            if (entityManager.HasComponent<GroundMissileInFlightComponent>(entity) ||
-                HasCommandedGroundMissileTarget(entityManager, entity))
+            if (entityManager.HasComponent<GroundMissileInFlightComponent>(entity))
             {
                 return FocusedUnitUiStatus.MissileLaunched;
+            }
+            if(entityManager.HasComponent<GroundMissileLauncherStateComponent>(entity))
+            {
+                var phase=(GroundMissileLauncherPhase)entityManager.GetComponentData<GroundMissileLauncherStateComponent>(entity).Phase;
+                if(phase==GroundMissileLauncherPhase.Preparing)return FocusedUnitUiStatus.MissilePreparing;
+                if(phase!=GroundMissileLauncherPhase.Idle)return FocusedUnitUiStatus.GroundMissileReloading;
+                if(HasCommandedGroundMissileTarget(entityManager,entity))return FocusedUnitUiStatus.MissilePreparing;
             }
 
             if (HasAutoGroundMissileTarget(entityManager, entity))

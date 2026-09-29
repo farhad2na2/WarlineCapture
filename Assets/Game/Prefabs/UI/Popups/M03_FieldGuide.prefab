@@ -158,6 +158,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.all
   englishFallback: All classes
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &180445693068263015
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,6 +389,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.next
   englishFallback: Next
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &409993702454031683
 GameObject:
   m_ObjectHideFlags: 0
@@ -545,6 +549,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &603311723055588790
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,6 +968,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.title
   englishFallback: "FIELD GUIDE \xB7 RADAR WARNING"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1923672217153604815
 GameObject:
   m_ObjectHideFlags: 0
@@ -1237,6 +1245,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2915585741519768763
 GameObject:
   m_ObjectHideFlags: 0
@@ -1612,6 +1622,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.scroll
   englishFallback: Scroll to read the example and common mistake
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3130961726103091747
 GameObject:
   m_ObjectHideFlags: 0
@@ -1836,6 +1848,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.topics
   englishFallback: 12 lessons
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3341976630418496267
 GameObject:
   m_ObjectHideFlags: 0
@@ -2065,6 +2079,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.search
   englishFallback: "Search classes\u2026"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3585337778243503659
 GameObject:
   m_ObjectHideFlags: 0
@@ -2223,6 +2239,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3586997148456685258
 GameObject:
   m_ObjectHideFlags: 0
@@ -2806,6 +2824,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.classes
   englishFallback: 57 classes
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5108363007674136241
 GameObject:
   m_ObjectHideFlags: 0
@@ -3035,6 +3055,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5275702696242412540
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,6 +3298,7 @@ MonoBehaviour:
   networkBreakGuide: {fileID: 11400000, guid: 74d5ad447a72d4b23ac709a552deb055, type: 2}
   airCorridorGuide: {fileID: 11400000, guid: 5e317e6e45b444a10affe72acd94d116, type: 2}
   steelPushGuide: {fileID: 11400000, guid: a3743e972309340d58297e6d007081c7, type: 2}
+  splitFrontGuide: {fileID: 11400000, guid: 471ae4d3cd1c845d39f2976f93853a5f, type: 2}
   topicsButton: {fileID: 6178553223766020603}
   classesButton: {fileID: 2093645630736046819}
   previousButton: {fileID: 9033275931593746121}
@@ -3460,6 +3483,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6528479122740975753
 GameObject:
   m_ObjectHideFlags: 0
@@ -4385,6 +4410,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.pause
   englishFallback: "Battle paused \xB7 Close to resume"
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7899278893481264945
 GameObject:
   m_ObjectHideFlags: 0
@@ -4781,6 +4808,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.radio
   englishFallback: RADIO ARCHIVE
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8559155717829892285
 GameObject:
   m_ObjectHideFlags: 0
@@ -5129,6 +5158,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8850687839305254086
 GameObject:
   m_ObjectHideFlags: 0
@@ -5287,6 +5318,8 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.previous
   englishFallback: Previous
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9046737583648983960
 GameObject:
   m_ObjectHideFlags: 0
@@ -5562,6 +5595,8 @@ MonoBehaviour:
   localizationKey: 
   englishFallback: 
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9221392243457158149
 GameObject:
   m_ObjectHideFlags: 0
@@ -5720,3 +5755,5 @@ MonoBehaviour:
   localizationKey: mission.m03.guide.close
   englishFallback: Close guide
   observeRuntimeSourceChanges: 0
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0

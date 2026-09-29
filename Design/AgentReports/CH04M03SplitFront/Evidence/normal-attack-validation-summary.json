@@ -1,0 +1,48 @@
+{
+  "candidate_sha256": "8012692ac1ed83a458a6ddcebaf2c64e93bd78fbc8293c8a2071d0cd75545325",
+  "runs": [
+    {
+      "log": "split-front-normal-attack-build-02.log",
+      "exit_code": 0,
+      "required_markers": [
+        "[SplitFrontNativeHud] result=Passed launcherPanel=removed attack=existing hold=existing",
+        "[SplitFrontRules] result=Passed",
+        "[SplitFrontCheckpoint] result=Passed dialogue=8 locales=en,fa-IR launcher=normal-attack controls=existing-only",
+        "[SplitFrontProtection] result=Passed",
+        "[SplitFrontDeathObservation] result=Passed",
+        "[ExistingEditorValidation] result=Passed"
+      ],
+      "missing_markers": []
+    },
+    {
+      "log": "split-front-normal-attack-smoke-en-01.log",
+      "exit_code": 0,
+      "required_markers": [
+        "[SplitFrontNormalHud] result=Passed",
+        "[SplitFrontOptionalSmoke] result=Passed",
+        "[SplitFrontPlayerHold] result=Passed",
+        "[SplitFrontNormalAttack] result=Passed",
+        "[SplitFrontSettlement] result=Passed",
+        "[SplitFrontInput] result=Passed locale=en",
+        "[ExistingEditorValidation] result=Passed"
+      ],
+      "missing_markers": []
+    },
+    {
+      "log": "split-front-normal-attack-fa-01.log",
+      "exit_code": 0,
+      "required_markers": [
+        "[SplitFrontNormalHud] result=Passed",
+        "[SplitFrontNormalAttack] result=Passed attackOrders=1 launches=1 stoppedOrders=0 confirmation=none",
+        "[SplitFrontSettlement] result=Passed",
+        "[SplitFrontInput] result=Passed locale=fa-IR",
+        "[ExistingEditorValidation] result=Passed"
+      ],
+      "missing_markers": []
+    }
+  ],
+  "player_files_changed_across_journeys": [],
+  "human_device_acceptance": "pending",
+  "voices": "captioned; no upload attempted in this fix",
+  "persian_exact_wide_comic_crops": 8
+}

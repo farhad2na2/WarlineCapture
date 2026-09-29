@@ -3,6 +3,7 @@ namespace Game.Runtime
 {
     public sealed partial class CampaignMissionProgressStore
     {
+        public string[] ReadSupportUnlocks() => (string[])(_saveService.LoadProfile().ownedSupportAbilityUnlocks ?? System.Array.Empty<string>()).Clone();
         private static bool IsSupportUnlock(string missionId,bool firstClear,CampaignMissionRewardGrant reward) =>
             firstClear && reward.Amount==1 && SupportProfileMigration.AbilityForGrant(missionId,reward.RewardConfigId).Length!=0;
         private static bool TryApplySupportUnlock(PlayerProfileSaveData profile,CampaignMissionRewardGrant reward)

@@ -39,7 +39,8 @@ namespace Game.UI.Runtime
                 {
                     if(step==1)Cue(_embeddedTutorialView.ContinueButton,"tutorial.next.continue");
                     else if(step==2)ShowSelectionTarget(default);
-                    else if(step==3)ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move);
+                    else if(step==3)ShowCommandOrDestination(UiShellRuntimeGateway.IsSplitFrontGuideContext()?_commandControlsView?.AttackButton:_commandControlsView?.MoveButton,
+                        UiShellRuntimeGateway.IsSplitFrontGuideContext()?TacticalCommandMode.Attack:TacticalCommandMode.Move);
                     else WaitForTutorialArrival();
                 }
                 else ShowSupplyLineNextAction();
@@ -194,7 +195,7 @@ namespace Game.UI.Runtime
             if(_activeCommandMode==mode) ShowTutorialWorld(target.Destination,false);
             else Cue(button,mode==TacticalCommandMode.Board
                 ? (_commandControlsView?.CommandWheelPanel?.IsOpen == true ? "tutorial.next.board" : "ui.v3.commands.92e37c53d8")
-                : "ui.aria.press_move");
+                : mode==TacticalCommandMode.Attack?"ui.aria.press_attack":"ui.aria.press_move");
         }
 
         private void ShowExtractionNextAction(int step)

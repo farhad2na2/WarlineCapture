@@ -30,6 +30,10 @@ namespace Game.UI.Shell.Ecs
                 int credits = TryReadPlayerCredits(entityManager, out int resolvedCredits)
                     ? resolvedCredits
                     : 0;
+                if(CampaignSplitFrontFuelScope.TryGet(entityManager,out var splitReserve,out _))
+                {
+                    values=UiMatchHudResourceValuesModel.FromValues(0,Mathf.Max(0,Mathf.FloorToInt(CampaignSplitFrontFuelScope.Usable(entityManager,splitReserve))),false,credits);return true;
+                }
                 if(CampaignSteelPushFuelScope.TryGet(entityManager,out var steelReserve,out _))
                 {
                     values=UiMatchHudResourceValuesModel.FromValues(0,

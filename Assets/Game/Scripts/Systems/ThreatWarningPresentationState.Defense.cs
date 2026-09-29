@@ -40,29 +40,30 @@ namespace Game.Runtime
             var elements = em.GetBuffer<CampaignMissionConvoyElementState>(root, true);
             var members = em.GetBuffer<CampaignMissionDefenseMember>(root, true);
             bool preparing = (defense.AcknowledgedGuidanceMask & 0x1FFu) != 0x1FFu;
+            bool splitFront=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront));
             bool steelPush=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SteelPush));
             bool airCorridor=runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor));
             string text;
             if (preparing)
-                text = steelPush?GameText.Get("mission.steel_push.warning.prepare"):airCorridor?GameText.Get("mission.air_corridor.warning.prepare"):GameText.Get("mission.m03.prepare.short") + "\n" + GameText.Get("mission.m03.prepare.progress");
+                text = splitFront?GameText.Get("mission.split_front.warning.prepare"):steelPush?GameText.Get("mission.steel_push.warning.prepare"):airCorridor?GameText.Get("mission.air_corridor.warning.prepare"):GameText.Get("mission.m03.prepare.short") + "\n" + GameText.Get("mission.m03.prepare.progress");
             else
             {
                 int next = 0;
                 while (next < elements.Length && elements[next].Resolved != 0) next++;
                 if (next >= elements.Length)
-                    text = GameText.Get(steelPush?"mission.steel_push.defense.complete":airCorridor?"mission.air_corridor.defense.complete":"mission.m03.defense.complete");
+                    text = GameText.Get(splitFront?"mission.split_front.defense.complete":steelPush?"mission.steel_push.defense.complete":airCorridor?"mission.air_corridor.defense.complete":"mission.m03.defense.complete");
                 else
                 {
                     int seconds = math.max(0, (definition.Defense.Elements[next].ContactAtMilliseconds - facts.ElapsedMilliseconds + 999) / 1000);
-                    string phase = GameText.Format(steelPush?"mission.steel_push.defense.wave":airCorridor?"mission.air_corridor.defense.wave":"mission.m03.defense.wave", "Wave {0}/{1}", next + 1, elements.Length);
+                    string phase = GameText.Format(splitFront?"mission.split_front.defense.wave":steelPush?"mission.steel_push.defense.wave":airCorridor?"mission.air_corridor.defense.wave":"mission.m03.defense.wave", "Wave {0}/{1}", next + 1, elements.Length);
                     if (seconds > 0)
-                        text = phase + "\n" + GameText.Format(steelPush?"mission.steel_push.defense.countdown":airCorridor?"mission.air_corridor.defense.countdown":"mission.m03.defense.countdown", "Hold · arrival in {0}", $"{seconds / 60:00}:{seconds % 60:00}");
+                        text = phase + "\n" + GameText.Format(splitFront?"mission.split_front.defense.countdown":steelPush?"mission.steel_push.defense.countdown":airCorridor?"mission.air_corridor.defense.countdown":"mission.m03.defense.countdown", "Hold · arrival in {0}", $"{seconds / 60:00}:{seconds % 60:00}");
                     else
                     {
                         int alive = 0;
                         for (int i = 0; i < members.Length; i++)
                             if (members[i].ElementIndex == next && members[i].Defeated == 0) alive++;
-                        text = phase + "\n" + GameText.Format(steelPush?"mission.steel_push.defense.fighting":airCorridor?"mission.air_corridor.defense.fighting":"mission.m03.defense.fighting", "Defend · {0} targets left", alive);
+                        text = phase + "\n" + GameText.Format(splitFront?"mission.split_front.defense.fighting":steelPush?"mission.steel_push.defense.fighting":airCorridor?"mission.air_corridor.defense.fighting":"mission.m03.defense.fighting", "Defend · {0} targets left", alive);
                     }
                 }
             }

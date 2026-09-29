@@ -48,6 +48,13 @@ namespace Game.Runtime
                     if (stateRw.Timer > 0f)
                         continue;
 
+                    if (!CampaignSplitFrontLauncherSafety.MayFire(em,entity,stateRw.TargetEntity))
+                    {
+                        CampaignSplitFrontLauncherSafety.Stop(em,entity);
+                        if(em.HasComponent<EngageTarget>(entity))ecb.RemoveComponent<EngageTarget>(entity);
+                        continue;
+                    }
+                    CampaignSplitFrontLauncherSafety.RecordLaunch(em,entity);
                     FireProjectile(
                         em,
                         ecb,
@@ -171,7 +178,7 @@ namespace Game.Runtime
             else
                 ecb.AddComponent(launcherEntity, inFlight);
 
-            if (em.HasComponent<EngageTarget>(launcherEntity))
+            if (em.HasComponent<EngageTarget>(launcherEntity) && !em.HasComponent<SplitFrontLauncherCommandState>(launcherEntity))
                 ecb.RemoveComponent<EngageTarget>(launcherEntity);
         }
 

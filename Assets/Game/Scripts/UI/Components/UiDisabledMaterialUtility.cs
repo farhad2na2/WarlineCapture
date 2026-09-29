@@ -13,22 +13,6 @@ namespace Game.UI.Runtime
         CinematicInteractionLock = 1 << 1
     }
 
-    [DisallowMultipleComponent]
-    internal sealed class UiDisabledMaterialStateView : MonoBehaviour
-    {
-        [NonSerialized] public Material OriginalMaterial;
-        [NonSerialized] public Color OriginalColor;
-        [NonSerialized] public UiDisabledVisualReason Reasons;
-        [NonSerialized] public bool PreserveAuthoredVisual;
-    }
-
-    [DisallowMultipleComponent]
-    internal sealed class UiDisabledSelectableVisualStateView : MonoBehaviour
-    {
-        [NonSerialized] public ColorBlock OriginalColors;
-        [NonSerialized] public UiDisabledVisualReason Reasons;
-    }
-
     internal static class UiDisabledMaterialUtility
     {
         private const string ShaderName = "Warline/UI/Disabled Grayscale";
@@ -110,6 +94,7 @@ namespace Game.UI.Runtime
                 if (!disabled)
                     return;
                 state = graphic.gameObject.AddComponent<UiDisabledMaterialStateView>();
+                state.hideFlags=HideFlags.DontSaveInEditor;
             }
 
             if (disabled)
@@ -168,6 +153,7 @@ namespace Game.UI.Runtime
                 if (!disabled)
                     return;
                 state = selectable.gameObject.AddComponent<UiDisabledSelectableVisualStateView>();
+                state.hideFlags=HideFlags.DontSaveInEditor;
             }
 
             if (disabled)

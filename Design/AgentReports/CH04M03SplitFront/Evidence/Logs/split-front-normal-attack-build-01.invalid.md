@@ -1,0 +1,1 @@
+Not candidate evidence. The Editor ran old compiled assemblies while the new Editor input probe had CS0136 local-name errors. The wrapper completed successfully, but launcher=explicit-consent and launcherPanel=authored markers prove the old design ran. The probe variable was corrected. A fresh import and new candidate-specific markers are required.

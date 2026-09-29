@@ -1051,6 +1051,7 @@ namespace Game.Runtime
                 return true;
             }
 
+            if (!CampaignSplitFrontLauncherSafety.MayFire(em, attacker, target)) return true;
             int rocketCount = em.HasBuffer<GroundMissileLauncherRocketVisualComponent>(attacker)
                 ? em.GetBuffer<GroundMissileLauncherRocketVisualComponent>(attacker).Length
                 : 0;

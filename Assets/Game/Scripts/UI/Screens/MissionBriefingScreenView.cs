@@ -174,6 +174,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain) ApplyEvidenceChain(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.AirCorridor) ApplyAirCorridor(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SteelPush) ApplySteelPush(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SplitFront) ApplySplitFront(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak) ApplyNetworkBreak(in model);
             bool evidenceChain = model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;
             if (evidenceChainRoutePanel != null) evidenceChainRoutePanel.gameObject.SetActive(evidenceChain);

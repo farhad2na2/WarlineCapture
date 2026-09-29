@@ -210,6 +210,7 @@ namespace Game.UI.Shell.Ecs
                 construction: establishBase ? new UiMissionConstructionResultDetails(
                     facts.RequiredBuildingCompletedCount, facts.RequiredUnitProducedCount, facts.CivilianLossCount) : default);
             if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.AirCorridor))) result=LocalizeAirCorridorResult(in result,in facts);
+            if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SplitFront))) result=LocalizeSplitFrontResult(in result,in facts);
             if(runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.SteelPush))) result=LocalizeSteelPushResult(in result,in facts);
             if(runtime.MissionId.Equals(RadarResultMissionId)) result=LocalizeDefenseResult(in result,in facts,in runtime);
             if(runtime.MissionId.Equals(AirliftId)) result=LocalizeExtractionResult(in result,in facts);

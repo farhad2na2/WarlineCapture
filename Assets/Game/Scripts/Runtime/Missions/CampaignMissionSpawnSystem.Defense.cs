@@ -75,6 +75,13 @@ namespace Game.Runtime
                 fuel.Enabled = 0;
                 em.SetComponentData(instance, fuel);
             }
+            if(definition.MissionId.Equals(new FixedString64Bytes(Game.Missions.Contracts.CampaignMissionSequence.SplitFront)))
+            {
+                if(group.FactionId==1&&em.HasComponent<GroundMissileLauncherComponent>(instance))
+                    em.AddComponentData(instance,new SplitFrontLauncherCommandState{ProtectedCenter=new Unity.Mathematics.float3(707,0,468),ProtectedRadius=18});
+                if(unit.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery"))||group.FactionId==0)
+                    em.AddComponent<CampaignMissionStationaryUnitTag>(instance);
+            }
             int elementIndex = -1;
             for (int i = 0; i < definition.Defense.Elements.Length; i++)
                 if (definition.Defense.Elements[i].UnitGroupId.Equals(group.GroupId)) elementIndex = i;

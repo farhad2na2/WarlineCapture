@@ -184,6 +184,12 @@ namespace Game.Runtime
                         continue;
                     }
 
+                    if (!CampaignSplitFrontLauncherSafety.TryIssueAttack(entityManager, entity, targetEntity))
+                    {
+                        missileRangeRejection = TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable,
+                            GameText.Get("mission.split_front.attack.unsafe", "Target unavailable or too close to protected civilians."));
+                        continue;
+                    }
                     Entity engageTarget = targetEntity;
                     int2 engageCell = targetCell;
                     float3 engagePosition = targetTransform.Position;
@@ -275,7 +281,7 @@ namespace Game.Runtime
             }
 
             TacticalCommandResult result = issuedCount > 0
-                ? TacticalCommandResult.Success(issuedGroundMissileOrder ? GameText.Get("tactical.feedback.missile_launched", "Missile launched.") : string.Empty)
+                ? TacticalCommandResult.Success(issuedGroundMissileOrder ? GameText.Get("tactical.feedback.missile_preparing", "Preparing missile.") : string.Empty)
                 : missileRangeRejection.ReasonCode != TacticalCommandReasonCode.None
                     ? missileRangeRejection
                     : sawTransportWithoutAttackPayload
@@ -293,6 +299,7 @@ namespace Game.Runtime
             int2 targetCell,
             float3 targetPosition)
         {
+            if (!CampaignSplitFrontLauncherSafety.TryIssueAttack(entityManager, sourceEntity, targetEntity)) return;
             EntityCommandBuffer ecb = new(Allocator.Temp);
             try
             {
@@ -319,6 +326,7 @@ namespace Game.Runtime
 
         public void ClearCommandedAttackOrderComponents(EntityManager entityManager, Entity entity)
         {
+            CampaignSplitFrontLauncherSafety.Stop(entityManager, entity);
             PlaybackInterruptedOrderClear(entityManager, entity, removeEngageTarget: true);
         }
 

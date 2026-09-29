@@ -29,6 +29,9 @@ namespace Game.Runtime
             ClearBufferIfPresent<MissionDefenseInteractionRequest>(em, root);
             ClearBufferIfPresent<ThreatWarningRecord>(em, root);
             ClearBufferIfPresent<ThreatWarningObservation>(em, root);
+            ResetComponentIfPresent<CampaignMissionSplitFrontState>(em, root);
+            ResetComponentIfPresent<CampaignMissionSplitFrontFuelState>(em, root);
+            if(em.HasComponent<SupportFuelScopeComponent>(root))em.RemoveComponent<SupportFuelScopeComponent>(root);
             ResetComponentIfPresent<CampaignMissionDefenseStateComponent>(em, root);
             ResetComponentIfPresent<CampaignMissionCameraTourState>(em, root);
             ResetComponentIfPresent<ThreatWarningLedgerState>(em, root);

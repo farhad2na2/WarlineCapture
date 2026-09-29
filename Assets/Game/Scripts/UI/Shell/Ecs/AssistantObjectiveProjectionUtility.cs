@@ -134,6 +134,7 @@ namespace Game.UI.Shell.Ecs
 
         internal static byte TutorialStepFor(CampaignMissionGuidancePromptKind prompt) => prompt switch
         {
+            >= CampaignMissionGuidancePromptKind.SplitFrontPlan and <= CampaignMissionGuidancePromptKind.SplitFrontConfirm => (byte)((int)prompt-82),
             >= CampaignMissionGuidancePromptKind.SteelPushPlan and <= CampaignMissionGuidancePromptKind.SteelPushDefend => (byte)((int)prompt-78),
             >= CampaignMissionGuidancePromptKind.AirCorridorPlan and <= CampaignMissionGuidancePromptKind.AirCorridorDefend => (byte)((int)prompt-74),
             >= CampaignMissionGuidancePromptKind.PowerRoute and <= CampaignMissionGuidancePromptKind.PowerHold => (byte)((int)prompt-63),
@@ -155,6 +156,7 @@ namespace Game.UI.Shell.Ecs
         };
 
         internal static byte TutorialStepCountFor(CampaignMissionGuidancePromptKind prompt) =>
+            prompt is >= CampaignMissionGuidancePromptKind.SplitFrontPlan and <= CampaignMissionGuidancePromptKind.SplitFrontConfirm ? (byte)4 :
             prompt is >= CampaignMissionGuidancePromptKind.SteelPushPlan and <= CampaignMissionGuidancePromptKind.SteelPushDefend ? (byte)4 :
             prompt is >= CampaignMissionGuidancePromptKind.AirCorridorPlan and <= CampaignMissionGuidancePromptKind.AirCorridorDefend ? (byte)4 :
             prompt is >= CampaignMissionGuidancePromptKind.RouteRelief and <= CampaignMissionGuidancePromptKind.RouteRecords ? (byte)6 :

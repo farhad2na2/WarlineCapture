@@ -449,7 +449,7 @@ namespace Game.Editor
             fill.ConfigureCorners(new Color32(19, 30, 34, 252), new Color32(11, 21, 25, 252), new Color32(4, 10, 13, 253), new Color32(7, 14, 17, 253), Border, 3f);
             if (string.Equals(name, "CreditsVisualPanel", StringComparison.Ordinal))
             {
-                RectTransform iconRoot = CreateTopLeftRect("Icon", panel, 18f, 18f, 72f, 72f);
+                RectTransform iconRoot = CreateTopLeftRect("Icon", panel, 14f, 11f, 64f, 64f);
                 CreateCreditsIcon(iconRoot, accent);
             }
             else
@@ -459,9 +459,9 @@ namespace Game.Editor
                 iconImage.preserveAspect = true;
             }
             TMP_Text labelText = CreateText("Label", panel, label, 25f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(labelText.rectTransform, 95f, 4f, width - 106f, 30f);
+            SetTopLeft(labelText.rectTransform, 90f, 4f, width - 102f, 30f);
             TMP_Text valueText = CreateText("Value", panel, value, 43f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(valueText.rectTransform, 95f, 31f, width - 106f, 51f);
+            SetTopLeft(valueText.rectTransform, 90f, 31f, width - 102f, 51f);
             CreateSolidTopLeft("Accent", panel, 3f, height - 5f, width - 6f, 3f, new Color(accent.r, accent.g, accent.b, 0.55f));
         }
 
@@ -689,10 +689,44 @@ namespace Game.Editor
         {
             RectTransform rect=CreateTopLeftRect(name,root,1296,y,360,100);
             var fill=rect.gameObject.AddComponent<V3GradientGraphic>(); fill.Configure(new Color32(6,105,172,255),new Color32(4,38,89,255),Cyan,2);
-            Image icon=CreateImage("Icon",rect,iconSprite,Color.white,false); SetTopLeft(icon.rectTransform,18,12,74,74); icon.preserveAspect=true;
+            RectTransform icon=CreateTopLeftRect("Icon",rect,14,10,82,80);
+            if(route == UIRoute.Armory) BuildArmoryEmblem(icon); else BuildContentCollectionEmblem(icon);
             TMP_Text label=CreateText("Label",rect,title+"   ›",32,boldFont,TextAlignmentOptions.Center,TextPrimary); SetTopLeft(label.rectTransform,102,5,242,90);
             AddRouteHotspot(rect,route);
             rect.gameObject.AddComponent<MainMenuDisclosureView>().Configure(route == UIRoute.Armory ? 3u : 0x1fu);
+        }
+
+        private static void BuildContentCollectionEmblem(RectTransform root)
+        {
+            // Three illustrated collection volumes; content rather than consumable shopping.
+            for(int i=0;i<3;i++)
+            {
+                float x=9+i*21, y=16-i*4;
+                var volume=CreateTopLeftRect("CollectionVolume"+i,root,x,y,23,54);
+                var face=volume.gameObject.AddComponent<V3GradientGraphic>();
+                face.Configure(new Color32(255,200,80,255),new Color32(173,91,12,255),new Color32(255,224,135,255),1.5f);
+                CreateSolidTopLeft("Spine",volume,3,3,3,48,new Color32(103,53,8,255));
+                CreateSolidTopLeft("TopBand",volume,8,10,11,2,new Color32(255,234,167,255));
+                CreateSolidTopLeft("BottomBand",volume,8,41,11,2,new Color32(255,234,167,255));
+                var badge=CreateTopLeftRect("CollectionStar",volume,9,20,10,14).gameObject.AddComponent<V3StarGraphic>();
+                badge.Configure(new Color32(255,235,172,255),false,Color.clear);
+            }
+        }
+
+        private static void BuildArmoryEmblem(RectTransform root)
+        {
+            var shield=CreateTopLeftRect("Shield",root,8,4,66,72).gameObject.AddComponent<V3PolygonGraphic>();
+            shield.ConfigureResponsive(new[]{new Vector2(2,4),new Vector2(33,0),new Vector2(64,4),new Vector2(59,47),new Vector2(33,70),new Vector2(7,47)},
+                new Color32(15,28,37,255),new Color32(255,191,63,255),2.5f,new Vector2(66,72));
+            for(int i=0;i<2;i++)
+            {
+                var rifle=CreateRect("Rifle"+i,root,new Vector2(.5f,.5f),new Vector2(.5f,.5f),new Vector2(54,14),Vector2.zero);
+                rifle.localRotation=Quaternion.Euler(0,0,i==0?42:-42);
+                CreateSolid("Receiver",rifle,new Color32(230,235,232,255),new Vector2(27,7),new Vector2(-3,0));
+                CreateSolid("Barrel",rifle,new Color32(255,193,61,255),new Vector2(20,3),new Vector2(18,2));
+                CreateSolid("Stock",rifle,new Color32(255,193,61,255),new Vector2(9,10),new Vector2(-22,-1));
+                CreateSolid("Magazine",rifle,new Color32(230,235,232,255),new Vector2(5,9),new Vector2(-3,-6)).rectTransform.localRotation=Quaternion.Euler(0,0,-18);
+            }
         }
 
 
@@ -735,7 +769,7 @@ namespace Game.Editor
 
         private static void CreateCreditsIcon(Transform root, Color color)
         {
-            CreateRing("OuterRing", root, new Vector2(66f, 66f), Vector2.zero, color, 4f);
+            CreateRing("OuterRing", root, new Vector2(52f, 52f), Vector2.zero, color, 3f);
             float[] heights = { 14f, 25f, 36f, 29f, 43f };
             for (int i = 0; i < heights.Length; i++)
             {

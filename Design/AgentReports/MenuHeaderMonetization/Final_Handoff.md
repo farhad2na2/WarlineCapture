@@ -60,3 +60,7 @@ All Unity runs used Tools/CI/invoke_unity_macos.sh with GUI licensing/reuse, exp
 Candidate audit: the post-run manifest includes a concurrent ComicPortraitRuntimeValidation edit and a new M05 test entrypoint appended after Steel Push ended. Menu/runtime sources did not change during the successful run; the complete shared tree was not frozen for release acceptance.
 
 M05 candidate audit: candidate-before-m05-input-01.json and candidate-after-m05-input-01.json have identical hashes for every recorded source/config file. A subsequent menu-only name-capacity correction is separately verified by the final native check; the mission pass belongs to the recorded M05 candidate, not a packaged release.
+
+## 2026-09-29 panel/icon correction
+
+Credits containment and native Store/Armory emblems are implemented and validated. Full ARIA and six commander comic scene panels await visual-direction review. See [revision evidence](Panel_Icon_Revision_2026-09-29.md).

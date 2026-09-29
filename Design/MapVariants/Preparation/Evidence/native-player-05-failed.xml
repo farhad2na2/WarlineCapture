@@ -1,0 +1,80 @@
+<test-run result="Failed" total="2" passed="0" failed="2" skipped="0">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:07:12Z" end-time="2026-09-29 16:07:15Z" duration="2.813510" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="PlayMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1004" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:07:12Z" end-time="2026-09-29 16:07:15Z" duration="2.800383" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="43863" />
+        <property name="_APPDOMAIN" value="Unity Root Domain" />
+        <property name="platform" value="PlayMode" />
+        <property name="EditorOnly" value="False" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <output><![CDATA[[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+]]></output>
+      <test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:07:12Z" end-time="2026-09-29 16:07:15Z" duration="2.796787" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+]]></output>
+        <test-case id="1002" name="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" fullname="MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" methodname="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="2114515195" result="Failed" start-time="2026-09-29 16:07:12Z" end-time="2026-09-29 16:07:13Z" duration="0.449535" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="850000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Operation-map source-scene reference is missing or invalid.
+  Expected: True
+  But was:  False
+]]></message>
+            <stack-trace><![CDATA[at MapVariantPackedPreparationPlayModeTests+<Run>d__2.MoveNext () [0x006ae] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:159
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  Operation-map source-scene reference is missing or invalid.
+  Expected: True
+  But was:  False
+
+]]></output>
+        </test-case>
+        <test-case id="1003" name="PreparedVariants_SwitchWithExistingDenseCity" fullname="MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity" methodname="PreparedVariants_SwitchWithExistingDenseCity" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="1683019320" result="Failed" start-time="2026-09-29 16:07:15Z" end-time="2026-09-29 16:07:15Z" duration="0.043376" asserts="0">
+          <properties>
+            <property name="_JOINTYPE" value="UnityCombinatorial" />
+            <property name="Timeout" value="600000" />
+            <property name="retryIteration" value="0" />
+            <property name="repeatIteration" value="0" />
+          </properties>
+          <failure>
+            <message><![CDATA[  Operation-map source-scene reference is missing or invalid.
+  Expected: True
+  But was:  False
+]]></message>
+            <stack-trace><![CDATA[at MapVariantPackedPreparationPlayModeTests+<PreparedVariants_SwitchWithExistingDenseCity>d__1.MoveNext () [0x00454] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:75
+at UnityEngine.TestTools.TestEnumerator+<Execute>d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+]]></stack-trace>
+          </failure>
+          <output><![CDATA[[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=  Operation-map source-scene reference is missing or invalid.
+  Expected: True
+  But was:  False
+
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+]]></output>
+        </test-case>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

@@ -1,0 +1,100 @@
+ M .gitattributes
+ M Assets/Game/Art/MapPrototypes/M01/Materials/M01_Concrete.mat
+ M "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset"
+ M Assets/Game/Scripts/Authorings/OperationMapEntityPresentationRootAuthoring.cs
+ M Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantRefineryPreparationSlice.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs
+ M Assets/Synty/PolygonGeneric/Materials/Generic_Mountains.mat
+ M Assets/Tests/Editor/M02EstablishBaseResourceTests.cs
+ M Assets/Tests/Editor/MapVariantPreparationTests.cs
+ M Assets/Tests/Editor/OperationMapEntityPresentationRootAuthoringTests.cs
+ M "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+ M Design/MapVariants/Preparation/STATUS.md
+?? Assets/Game/GeneratedOperationMaps/Variants/AshLinePort.meta
+?? Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/
+?? Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield.meta
+?? Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/
+?? Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate.meta
+?? Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/
+?? Assets/Game/Scenes/OperationMaps/Variants/AshLinePort.meta
+?? Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/
+?? Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield.meta
+?? Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/
+?? Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity
+?? Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparedEntities.unity.meta
+?? Assets/Game/Scripts/Authorings/MapPreparationUnitFixtureAuthoring.cs
+?? Assets/Game/Scripts/Authorings/MapPreparationUnitFixtureAuthoring.cs.meta
+?? Assets/Game/Scripts/Components/MapPreparationUnitFixtureComponent.cs
+?? Assets/Game/Scripts/Components/MapPreparationUnitFixtureComponent.cs.meta
+?? Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs
+?? Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs.meta
+?? Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedCandidateBuilder.cs
+?? Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedCandidateBuilder.cs.meta
+?? Assets/Tests/Editor/MapVariantPreparedCandidateTests.cs
+?? Assets/Tests/Editor/MapVariantPreparedCandidateTests.cs.meta
+?? Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs
+?? Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs.meta
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-055617-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-060735-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-061628-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-062729-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-063738-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-064207-split-front-en-smoke/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-064944-split-front-en-smoke/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/abf787acffee4059b05a7ffd528c3adc/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-briefing.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-campaign.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-c-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Comms-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Comms-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-c-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-1.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-2.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-3.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-launcher-preview-cancel.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-launcher-safe-confirm.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-result.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-return.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-optional.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-safe-preview.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-smoke-live.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-070206-split-front-fa-IR/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-070855-split-front-fa-IR/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-073731-split-front-en-smoke/3d13e152a09f4d06a301e9b1c781778e/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-074356-split-front-fa-IR/4ca796d154494382bf31dff9e6298a2b/
+?? Design/MapVariants/Preparation/AshLinePort/Candidate/
+?? Design/MapVariants/Preparation/CityEdgeAirfield/Candidate/
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-01-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-01-failed.log
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-02-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-02-failed.log
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-03-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-03.log
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-04-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-04.log
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-05-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-medium-05.log
+?? Design/MapVariants/Preparation/Evidence/candidate-refinery-01-failed.log
+?? Design/MapVariants/Preparation/Evidence/candidate-refinery-02-failed.log
+?? Design/MapVariants/Preparation/Evidence/candidate-refinery-03-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-refinery-03.log
+?? Design/MapVariants/Preparation/Evidence/candidate-run-code-identity.json
+?? Design/MapVariants/Preparation/Evidence/candidate-validation-01-code.json
+?? Design/MapVariants/Preparation/Evidence/candidate-validation-01-failed.log
+?? Design/MapVariants/Preparation/Evidence/device-availability.json
+?? Design/MapVariants/Preparation/Evidence/full-candidate-protected-check.json
+?? Design/MapVariants/Preparation/Evidence/inventory-stage-status.md
+?? Design/MapVariants/Preparation/Evidence/medium-content-06-code.json
+?? Design/MapVariants/Preparation/Evidence/packed-content-01-code.json
+?? Design/MapVariants/Preparation/Evidence/packed-content-01-failed.log
+?? Design/MapVariants/Preparation/Evidence/packed-content-02-code.json
+?? Design/MapVariants/Preparation/Evidence/packed-content-02-failed.log
+?? Design/MapVariants/Preparation/Evidence/packed-content-03-code.json
+?? Design/MapVariants/Preparation/Evidence/packed-content-03-failed.log
+?? Design/MapVariants/Preparation/RefineryDistrict/Candidate/
+?? Design/MapVariants/Preparation/prepared-source-manifest.json

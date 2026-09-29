@@ -1,0 +1,6 @@
+{
+  "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs": "842e6a0e10fdc7561596b3d4948ff4eacf669592224463de8a70c1b6cbc67cb8",
+  "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedEntitySceneBuildProcessor.cs": "d4b96092fde89c4c4b173b3bd6cf8c3cb1f2678ad3f42146aa2152e0c757fadb",
+  "Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs": "a20e61dc5684a16c6f37a44a60eb2f8470dab3fad910de2c8151600854bdcbb7",
+  "Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs": "7fc72ef09f064df2242805c3ce57acd14cb9c2ac3390cf187fd74d682d7d7e31"
+}

@@ -100,6 +100,20 @@ public sealed class OperationMapEntityPresentationRootAuthoringTests
         Assert.That(type.GetMethod("OnValidate", BindingFlags.Instance | BindingFlags.NonPublic), Is.Null);
     }
 
+    [Test]
+    public void TryValidate_AcceptsZeroActiveVehiclesButRejectsNegativeCounts()
+    {
+        var marker = CreateMarker("opmap.skirmish.refinerydistrict_prepared", OperationMapEntityPresentationRole.GameplayBuildings,
+            OperationMapEntityPresentationRootAuthoring.CurrentSchemaVersion, new string('a', 64));
+        var data = new SerializedObject(marker);
+        data.FindProperty("expectedGameplayVehicleCount").intValue = 0;
+        data.ApplyModifiedPropertiesWithoutUndo();
+        Assert.That(marker.TryValidate(out string error), Is.True, error);
+        data.FindProperty("expectedGameplayVehicleCount").intValue = -1;
+        data.ApplyModifiedPropertiesWithoutUndo();
+        Assert.That(marker.TryValidate(out _), Is.False);
+    }
+
     private OperationMapEntityPresentationRootAuthoring CreateMarker(
         string operationMapId,
         OperationMapEntityPresentationRole role,

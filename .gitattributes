@@ -10,3 +10,7 @@ Assets/Game/Art/MapPrototypes/Variants/*/Ground/*.asset filter=lfs diff=lfs merg
 Design/MapVariants/**/*.png filter=lfs diff=lfs merge=lfs -text
 Assets/Game/GeneratedOperationMaps/Variants/**/Ground.asset filter=lfs diff=lfs merge=lfs -text
 Design/MapVariants/Preparation/*/inventory.json filter=lfs diff=lfs merge=lfs -text
+
+Assets/Game/GeneratedOperationMaps/Variants/**/*.asset filter=lfs diff=lfs merge=lfs -text
+Design/MapVariants/Preparation/*/Candidate/output-manifest.json filter=lfs diff=lfs merge=lfs -text
+Assets/Game/GeneratedOperationMaps/Variants/**/*.png filter=lfs diff=lfs merge=lfs -text

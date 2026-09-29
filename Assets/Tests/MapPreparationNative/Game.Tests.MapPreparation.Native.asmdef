@@ -1,0 +1,31 @@
+{
+    "name": "Game.Tests.MapPreparation.Native",
+    "rootNamespace": "",
+    "references": [
+        "Game.Components",
+        "Game.Composition",
+        "Game.Configs",
+        "Game.Rendering",
+        "Game.Runtime",
+        "Unity.Addressables",
+        "Unity.Collections",
+        "Unity.Entities",
+        "Unity.Entities.Graphics",
+        "Unity.Mathematics",
+        "Unity.ResourceManager",
+        "Unity.Scenes",
+        "Unity.Transforms"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "noEngineReferences": false
+}

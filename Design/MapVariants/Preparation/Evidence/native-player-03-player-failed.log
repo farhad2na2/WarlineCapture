@@ -1,0 +1,382 @@
+Mono path[0] = '/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed'
+Mono config path = '/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Found 2 interfaces on host : 0) 192.168.2.175 1) 10.137.14.201
+Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55000 [Flags] 2 [Guid] 2622683743 [EditorId] 4111103354 [Version] 1048832 [Id] OSXPlayer(1,Farhads-MacBook-Air-2.local) [Debug] 0 [PackageName] OSXPlayer [ProjectName] WarlineCapture" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55000 [Flags] 2 [Guid] 2622683743 [EditorId] 4111103354 [Version] 1048832 [Id] OSXPlayer(1,Farhads-MacBook-Air-2.local) [Debug] 0 [PackageName] OSXPlayer [ProjectName] WarlineCapture" 
+
+Player connection [8466637184] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Finished resetting the current domain, in  0.055 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Metal RecreateSurface[0x1195e0600]: surface size 1024x768
+UnloadTime: 5.529166 ms
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:216)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 216)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:216)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 216)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2 unused Assets / (0 B). Loaded Objects now: 5212.
+Memory consumption went from 268.3 MB to 268.3 MB.
+Total: 8.063833 ms (FindLiveObjects: 0.328416 ms CreateObjectMapping: 0.669959 ms MarkObjects: 7.036458 ms  DeleteObjects: 0.028416 ms)
+
+CRC Mismatch. Provided eec9e225, calculated 1788a72e from data. Will not load AssetBundle '1b1b87a0834ccbed39c21798e9c49165.bundle'
+RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:Complete (UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:ProviderCompleted<UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource> (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:189)
+UnityEngine.ResourceManagement.ResourceProviders.ProvideHandle:Complete<UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource> (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/IResourceProvider.cs:146)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:CompleteOperation (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:409)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:CompleteBundleLoad (UnityEngine.AssetBundle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:944)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:LocalRequestOperationCompleted (UnityEngine.AsyncOperation) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:932)
+UnityEngine.AsyncOperation:InvokeCompletionEvent () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/AsyncOperation.cs:24)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+OperationException : GroupOperation failed because one of its dependencies failed
+RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:Complete (System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.GroupOperation:CompleteIfDependenciesComplete () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/GroupOperation.cs:185)
+UnityEngine.ResourceManagement.AsyncOperations.GroupOperation:OnOperationCompleted (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/GroupOperation.cs:231)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1/<>c__DisplayClass60_0<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:<add_CompletedTypeless>b__0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:326)
+DelegateList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>>:Invoke (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/DelegateList.cs:75)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:391)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:UnityEngine.ResourceManagement.AsyncOperations.IAsyncOperation.InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:577)
+UnityEngine.ResourceManagement.ResourceManager:ExecuteDeferredCallbacks () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1071)
+UnityEngine.ResourceManagement.ResourceManager:Update (single) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1127)
+MonoBehaviourCallbackHooks:Update () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/MonoBehaviourCallbackHooks.cs:29)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+System.Exception: Dependency Exception ---> UnityEngine.ResourceManagement.Exceptions.OperationException: GroupOperation failed because one of its dependencies failed ---> UnityEngine.ResourceManagement.Exceptions.RemoteProviderException: RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:Complete (Game.Configs.OperationMapDefinition,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<Game.Configs.OperationMapDefinition>:ProviderCompleted<Game.Configs.OperationMapDefinition> (Game.Configs.OperationMapDefinition,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:189)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<Game.Configs.OperationMapDefinition>:Execute () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:236)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:InvokeExecute () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:517)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:<.ctor>b__38_0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:150)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1/<>c__DisplayClass60_0<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:<add_CompletedTypeless>b__0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:326)
+DelegateList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>>:Invoke (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/DelegateList.cs:75)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:391)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:UnityEngine.ResourceManagement.AsyncOperations.IAsyncOperation.InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:577)
+UnityEngine.ResourceManagement.ResourceManager:ExecuteDeferredCallbacks () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1071)
+UnityEngine.ResourceManagement.ResourceManager:Update (single) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1127)
+MonoBehaviourCallbackHooks:Update () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/MonoBehaviourCallbackHooks.cs:29)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+Unloading 3 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2 unused Assets / (1.7 KB). Loaded Objects now: 5236.
+Memory consumption went from 279.1 MB to 279.1 MB.
+Total: 10.763375 ms (FindLiveObjects: 0.320542 ms CreateObjectMapping: 0.670291 ms MarkObjects: 9.736250 ms  DeleteObjects: 0.036083 ms)
+
+CRC Mismatch. Provided eec9e225, calculated 1788a72e from data. Will not load AssetBundle '1b1b87a0834ccbed39c21798e9c49165.bundle'
+RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:Complete (UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:ProviderCompleted<UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource> (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:189)
+UnityEngine.ResourceManagement.ResourceProviders.ProvideHandle:Complete<UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource> (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/IResourceProvider.cs:146)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:CompleteOperation (UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:409)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:CompleteBundleLoad (UnityEngine.AssetBundle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:944)
+UnityEngine.ResourceManagement.ResourceProviders.AssetBundleResource:LocalRequestOperationCompleted (UnityEngine.AsyncOperation) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceProviders/AssetBundleProvider.cs:932)
+UnityEngine.AsyncOperation:InvokeCompletionEvent () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/AsyncOperation.cs:24)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+OperationException : GroupOperation failed because one of its dependencies failed
+RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:Complete (System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.GroupOperation:CompleteIfDependenciesComplete () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/GroupOperation.cs:185)
+UnityEngine.ResourceManagement.AsyncOperations.GroupOperation:OnOperationCompleted (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/GroupOperation.cs:231)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1/<>c__DisplayClass60_0<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:<add_CompletedTypeless>b__0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:326)
+DelegateList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>>:Invoke (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/DelegateList.cs:75)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:391)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<UnityEngine.ResourceManagement.ResourceProviders.IAssetBundleResource>:UnityEngine.ResourceManagement.AsyncOperations.IAsyncOperation.InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:577)
+UnityEngine.ResourceManagement.ResourceManager:ExecuteDeferredCallbacks () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1071)
+UnityEngine.ResourceManagement.ResourceManager:Update (single) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1127)
+MonoBehaviourCallbackHooks:Update () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/MonoBehaviourCallbackHooks.cs:29)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+System.Exception: Dependency Exception ---> UnityEngine.ResourceManagement.Exceptions.OperationException: GroupOperation failed because one of its dependencies failed ---> UnityEngine.ResourceManagement.Exceptions.RemoteProviderException: RemoteProviderException : Invalid path in AssetBundleProvider: '/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/RefineryDistrict/Addressables/Bundles/1b1b87a0834ccbed39c21798e9c49165.bundle'.
+
+   --- End of inner exception stack trace ---
+   --- End of inner exception stack trace ---
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+UnityEngine.AddressableAssets.AddressablesImpl:LogException (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/AddressablesImpl.cs:229)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:set_OperationException (System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:344)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:Complete (Game.Configs.OperationMapDefinition,bool,System.Exception,bool) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:478)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<Game.Configs.OperationMapDefinition>:ProviderCompleted<Game.Configs.OperationMapDefinition> (Game.Configs.OperationMapDefinition,bool,System.Exception) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:189)
+UnityEngine.ResourceManagement.AsyncOperations.ProviderOperation`1<Game.Configs.OperationMapDefinition>:Execute () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/ProviderOperation.cs:236)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:InvokeExecute () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:517)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<Game.Configs.OperationMapDefinition>:<.ctor>b__38_0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:150)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1/<>c__DisplayClass60_0<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:<add_CompletedTypeless>b__0 (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:326)
+DelegateList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>>:Invoke (UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/DelegateList.cs:75)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:391)
+UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationBase`1<System.Collections.Generic.IList`1<UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationHandle>>:UnityEngine.ResourceManagement.AsyncOperations.IAsyncOperation.InvokeCompletionEvent () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/AsyncOperations/AsyncOperationBase.cs:577)
+UnityEngine.ResourceManagement.ResourceManager:ExecuteDeferredCallbacks () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1071)
+UnityEngine.ResourceManagement.ResourceManager:Update (single) (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/ResourceManager.cs:1127)
+MonoBehaviourCallbackHooks:Update () (at ./Library/PackageCache/com.unity.addressables@9bffe1a216ce/Runtime/ResourceManager/Util/MonoBehaviourCallbackHooks.cs:29)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+Unloading 0 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 0 unused Assets / (0.9 KB). Loaded Objects now: 5252.
+Memory consumption went from 281.0 MB to 281.0 MB.
+Total: 10.878125 ms (FindLiveObjects: 0.118167 ms CreateObjectMapping: 0.533583 ms MarkObjects: 10.218042 ms  DeleteObjects: 0.008000 ms)
+
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Sending player alive message back to editor.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender:SendAliveMessageIfNeeded () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:148)
+UnityEngine.TestTools.TestRunner.Callbacks.RemoteTestResultSender/<SendDataRoutine>d__15:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/Callbacks/RemoteTestResultSender.cs:134)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+

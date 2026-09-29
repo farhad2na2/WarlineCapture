@@ -1,0 +1,23 @@
+{
+    "unitFixtureSceneGuid": "1035720b7b9c8426999ddbdf7cd40bce",
+    "variant": "CityEdgeAirfield",
+    "mapId": "opmap.skirmish.cityedgeairfield_prepared",
+    "semanticHash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "cd836ff2ddd2a440e81db4a20332d266",
+    "entityContentPath": "Library/MapVariantPreparedContent/CityEdgeAirfield/Entities",
+    "entityCatalogPath": "Library/MapVariantPreparedContent/CityEdgeAirfield/Entities/ContentArchives/archive_dependencies.bin",
+    "entityCatalogHash": "82912c9972426c3020ee6d7af59769394b3c7779ee5bbab527ac530f289d0387",
+    "definitionPath": "Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset",
+    "definitionGuid": "6734dd62613b6488c97bc2287777edf4",
+    "bindingPath": "Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity",
+    "bindingGuid": "915718fcf0cd7422db987b388cd0d925",
+    "status": "Content built; packed load/unload, graphics, actual movement and device performance pending",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/CityEdgeAirfield/Addressables/catalog.bin",
+    "addressablesCatalogHash": "2cfdc1055083609e3ead90aa0e38f462c34360db935ac9883ef3aff340c14c46",
+    "definitionAddress": "map-variant-candidate/CityEdgeAirfield/definition",
+    "entityFileSetHash": "c55049f197ac2ea79b5d1787f25d53ea18d3d8fca92192c2d1dbf2aa134682b8",
+    "definitionHash": "51cea9bd7f286857170f44782c05864e6fb5c4b31fb4ad1d236f0690c8fcfb8d",
+    "bindingHash": "54a90f079fedcb79b56174b8fd2c80dad8890d880ffea2eb0d0ecd6739f6e125",
+    "entityContentBytes": 120671467
+}

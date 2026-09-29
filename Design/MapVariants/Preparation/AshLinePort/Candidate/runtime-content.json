@@ -1,0 +1,23 @@
+{
+    "unitFixtureSceneGuid": "1035720b7b9c8426999ddbdf7cd40bce",
+    "variant": "AshLinePort",
+    "mapId": "opmap.skirmish.ashlineport_prepared",
+    "semanticHash": "3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "1561a8788c3144347bccd1bbe76eb4a7",
+    "entityContentPath": "Library/MapVariantPreparedContent/AshLinePort/Entities",
+    "entityCatalogPath": "Library/MapVariantPreparedContent/AshLinePort/Entities/ContentArchives/archive_dependencies.bin",
+    "entityCatalogHash": "6e2796c1cbab8d364747fa2d07a1a4872d2ebcb56b0e007e5d7e328146b716bb",
+    "definitionPath": "Assets/Game/GeneratedOperationMaps/Variants/AshLinePort/Candidate/Definition.asset",
+    "definitionGuid": "37ac2d9ae9e794d8297f9e6979caa4a8",
+    "bindingPath": "Assets/Game/Scenes/OperationMaps/Variants/AshLinePort/RuntimeBinding.unity",
+    "bindingGuid": "fa3ff7d2247cd411a929f4af52c58a6c",
+    "status": "Content built; packed load/unload, graphics, actual movement and device performance pending",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/AshLinePort/Addressables/catalog.bin",
+    "addressablesCatalogHash": "0a5d34de8c99e985b9287521e03f79106fa0720f8d33e2dc7de59f22ccf14d31",
+    "definitionAddress": "map-variant-candidate/AshLinePort/definition",
+    "entityFileSetHash": "3e0d5d8ab8f7047235bcd631d6678e6b3d1eda8f2664f02eee14b8f0954304ae",
+    "definitionHash": "929b76b857dcaa91358db9985b94f2b2bfc2f71fa0a704811c40e7a6b9a2517c",
+    "bindingHash": "5b259c8bb77a1a0b037efe38a0758eb38a683d354d46d17404292c5894a0277a",
+    "entityContentBytes": 116077597
+}

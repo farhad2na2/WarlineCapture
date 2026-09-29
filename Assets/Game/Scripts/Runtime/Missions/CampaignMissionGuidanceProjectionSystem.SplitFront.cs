@@ -15,6 +15,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes SplitTutorialPrefix="mission.split_front.tutorial.";
         private static readonly FixedString128Bytes SplitMainBody="mission.split_front.tutorial.main.body";
         private static readonly FixedString64Bytes SplitWestLauncher="group.ch04.m03.launcher",SplitCoverageAnchor="anchor.ch04.m03.fork";
+        private static readonly FixedString64Bytes SplitHostileBatteryRole="role.hostile.battery";
         private bool TryUpdateSplitFrontGuidance(ref SystemState state,Entity root,in CampaignMissionRuntimeComponent runtime,
             in CampaignMissionAttemptFactsComponent facts,in AssistantSettingsComponent settings,in CampaignMissionGuidanceProjectionComponent current)
         {
@@ -36,7 +37,7 @@ namespace Game.Runtime
             if(em.HasComponent<SelectedUnitTag>(actor))defense.AcknowledgedGuidanceMask|=2;
             if((defense.AcknowledgedGuidanceMask&3)==3)defense.AcknowledgedGuidanceMask|=0x1FFu;
             Entity battery=Entity.Null;foreach(var (role,health,e) in SystemAPI.Query<RefRO<CampaignMissionUnitRoleComponent>,RefRO<UnitHealth>>().WithEntityAccess())
-                if(role.ValueRO.SessionToken.Equals(runtime.SessionToken)&&role.ValueRO.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.battery"))&&health.ValueRO.Current>0)battery=e;
+                if(role.ValueRO.SessionToken.Equals(runtime.SessionToken)&&role.ValueRO.MissionRoleId.Equals(SplitHostileBatteryRole)&&health.ValueRO.Current>0)battery=e;
             var consent=em.HasComponent<SplitFrontLauncherCommandState>(actor)?em.GetComponentData<SplitFrontLauncherCommandState>(actor):default;
             if(battery!=Entity.Null)coverage=em.GetComponentData<LocalTransform>(battery).Position;
             em.SetComponentData(root,defense);

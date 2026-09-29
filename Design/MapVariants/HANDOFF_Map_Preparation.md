@@ -2,7 +2,7 @@
 
 Date: 2026-09-29
 
-Status: **execution specification; preparation has not been implemented or validated.**
+Status: **execution in progress. Inventories and three complete authoring candidates have passed deterministic replay, surfaces, baking and independent destruction checks. Packed runtime, routes and acceptance gates are tracked in [Preparation/STATUS.md](Preparation/STATUS.md). No map foundation is qualified yet.**
 
 ## Objective and authorization boundary
 

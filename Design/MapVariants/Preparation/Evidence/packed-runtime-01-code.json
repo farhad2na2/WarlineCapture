@@ -1,0 +1,8 @@
+{
+  "revision": "5154a7717a6bf054697b406f61e39eb2df456392",
+  "dirty": true,
+  "diffSHA256": "754ca4683390b6ff588a3c9db1ab20a8ea60b10937ef08fa06616d6010a5890e",
+  "sources": {
+    "Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs": "1dfa15f74a7016860d984205ac9b70a67cbf53309bee5468c0d1115937283490"
+  }
+}

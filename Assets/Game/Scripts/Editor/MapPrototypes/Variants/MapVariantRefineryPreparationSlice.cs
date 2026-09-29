@@ -167,12 +167,12 @@ namespace Game.Editor.MapVariants
         private static string Key(MapVariantPlacement p) => MapVariantPreparationSchema.PlacementKey(
             "RefineryDistrict", AssetDatabase.AssetPathToGUID(MapVariantPreparationInventory.BasePath(p.PrefabPath)), p.Instance.transform.localToWorldMatrix);
 
-        private static GameObject ExtractDestroyed(GameObject source)
+        internal static GameObject ExtractDestroyed(GameObject source, string assetRoot = AssetRoot)
         {
             var row = MapVariantPreparationInventory.InspectPrefab(source);
             if (row.hierarchyStatus != "DirectAlternativeValidated") throw new InvalidOperationException("Ambiguous alternative: " + row.path);
-            string path = AssetRoot + "/Destroyed/" + row.guid + ".prefab";
-            MapVariantBuilder.EnsureFolder(AssetRoot + "/Destroyed");
+            string path = assetRoot + "/Destroyed/" + row.guid + ".prefab";
+            MapVariantBuilder.EnsureFolder(assetRoot + "/Destroyed");
             var root = new GameObject("DestroyedPresentation");
             try
             {
@@ -186,14 +186,14 @@ namespace Game.Editor.MapVariants
             finally { UnityEngine.Object.DestroyImmediate(root); }
         }
 
-        private static DenseCityPresentationHierarchyContext CreateHierarchy(Scene scene, MapPreparationManifest m)
+        internal static DenseCityPresentationHierarchyContext CreateHierarchy(Scene scene, MapPreparationManifest m, string generationId = "refinery-preparation-slice-v1")
         {
             var root = new GameObject("PreparedEntityPresentation");
             SceneManager.MoveGameObjectToScene(root, scene);
             var authoring = root.AddComponent<DenseCityGeneratedRootAuthoring>();
             var serialized = new SerializedObject(authoring);
             serialized.FindProperty("role").intValue = (int)DenseCityGeneratedRootRole.EntityPresentationSource;
-            serialized.FindProperty("generationId").stringValue = "refinery-preparation-slice-v1";
+            serialized.FindProperty("generationId").stringValue = generationId;
             serialized.FindProperty("generatorSchema").stringValue = MapVariantPreparationSchema.Version;
             serialized.FindProperty("generatorSchemaVersion").intValue = 1;
             serialized.FindProperty("deterministicSeed").intValue = m.seed;
@@ -228,7 +228,7 @@ namespace Game.Editor.MapVariants
                 "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat");
         }
 
-        private static void Capture(Scene scene, MapVariantView view, string path)
+        internal static void Capture(Scene scene, MapVariantView view, string path)
         {
             var go = new GameObject("PreparationEvidenceCamera", typeof(Camera));
             SceneManager.MoveGameObjectToScene(go, scene);

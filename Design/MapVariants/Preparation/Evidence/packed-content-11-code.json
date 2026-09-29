@@ -1,0 +1,9 @@
+{
+  "revision": "5154a7717a6bf054697b406f61e39eb2df456392",
+  "dirty": true,
+  "diffSHA256": "2f2d1431adbeeddbd8c7f8914a988faeaaac064269e6b320490e4cc221c74b68",
+  "sources": {
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs": "011801bb4738c499b9001789f2d4cfb4575cf833f2673152db25ae9675250484",
+    "Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs": "fc5f0d1e4e2e2177cd18f3bd43d67a650127b937fe5c4210279c7943beff47cc"
+  }
+}

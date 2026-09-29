@@ -1,0 +1,226 @@
+{
+  "runs": [
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/packed-content-01-failed.log",
+      "logSha256": "e1ce826e149805931c7c982b19255e47e8f41b96fd0f99745808ed2c71fde609",
+      "originalLogPath": "/private/tmp/map-prepared-content-20260929-01.log",
+      "mapId": "All medium candidates",
+      "candidateContentHashes": [],
+      "revision": "5154a7717",
+      "dirty": true,
+      "target": "StandaloneOSX; macOS Editor GUI content build",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-prepared-content-20260929-01.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildMediumContent",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedPassAndFailureMarkers": [
+        "[MapVariantPackedContent] result=Failed map=RefineryDistrict Saved grid authoring has no local ID."
+      ],
+      "result": "Failed packing gate",
+      "codeIdentity": "Design/MapVariants/Preparation/Evidence/packed-content-01-code.json"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/packed-content-02-failed.log",
+      "logSha256": "458af57fa3ad52c21ecc5508f8cf075c1200d37428be8b14d9fef89cb75d3c56",
+      "originalLogPath": "/private/tmp/map-prepared-content-20260929-02.log",
+      "mapId": "All medium candidates",
+      "candidateContentHashes": [],
+      "revision": "5154a7717",
+      "dirty": true,
+      "target": "StandaloneOSX; macOS Editor GUI content build",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-prepared-content-20260929-02.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildMediumContent",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedPassAndFailureMarkers": [
+        "[MapVariantPackedContent] result=Failed map=RefineryDistrict Object reference not set to an instance of an object"
+      ],
+      "result": "Failed packing gate",
+      "codeIdentity": "Design/MapVariants/Preparation/Evidence/packed-content-02-code.json"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/packed-content-03-failed.log",
+      "logSha256": "ba825bc96aa6e3b43da4812e97e1fcc9534759a3f597c18acf0dd9dabeb87888",
+      "originalLogPath": "/private/tmp/map-prepared-content-20260929-03.log",
+      "mapId": "RefineryDistrict",
+      "candidateContentHashes": [],
+      "revision": "5154a7717",
+      "dirty": true,
+      "target": "StandaloneOSX; macOS Editor GUI content build",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-prepared-content-20260929-03.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildRefineryContent",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapVariantPackedContent] result=Passed map=RefineryDistrict",
+      "observedPassAndFailureMarkers": [
+        "[MapVariantPackedContent] result=Failed map=RefineryDistrict System.NullReferenceException: Object reference not set to an instance of an object"
+      ],
+      "result": "Failed packing gate",
+      "codeIdentity": "Design/MapVariants/Preparation/Evidence/packed-content-03-code.json"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/packed-content-07-failed.log",
+      "logSha256": "f5c490b55feab6fe4be35b21d24489f994ac0dbf7d484d5b6761ac9a948e41d4",
+      "originalLogPath": "/private/tmp/map-prepared-content-20260929-07.log",
+      "mapId": "All medium candidates",
+      "candidateContentHashes": [],
+      "revision": "5154a7717",
+      "dirty": true,
+      "target": "StandaloneOSX; macOS Editor GUI content build",
+      "timeoutSeconds": 1800,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-content-20260929-07.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedPassAndFailureMarkers": [
+        "[MapVariantPackedContent] result=Failed map=RefineryDistrict System.IO.DirectoryNotFoundException: Could not find a part of the path '/Users/farhad/Projects/WarlineCapture/Library/com.unity.addressables/aa/Android'."
+      ],
+      "result": "Failed packing gate",
+      "codeIdentity": "Design/MapVariants/Preparation/Evidence/packed-content-07-code.json"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/medium-content-06-authoring-passed-packing-failed.log",
+      "logSha256": "7ad009a18a7264ebab24858ab42a0635d6494dac91754811a2cc08fc8a60c85f",
+      "originalLogPath": "/private/tmp/map-prepared-medium-content-20260929-06.log",
+      "mapId": "All medium candidates",
+      "candidateContentHashes": [
+        "3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+        "722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab",
+        "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22"
+      ],
+      "revision": "5154a7717",
+      "dirty": true,
+      "target": "StandaloneOSX; macOS Editor GUI content build",
+      "timeoutSeconds": 1800,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-medium-content-20260929-06.log -- -quit -executeMethod MapVariantPreparedCandidateTests.RunMediumPreparationAndContent",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedPassAndFailureMarkers": [
+        "[MapPreparedCandidate] result=Passed map=RefineryDistrict owners=217 staticBlockCells=40008 duplicateOriginals=0 semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab replay=InputsChanged scope=AuthoringAndSurfaceData",
+        "[MapPreparedCandidate] result=Passed map=RefineryDistrict owners=217 staticBlockCells=40008 duplicateOriginals=0 semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab replay=Passed scope=AuthoringAndSurfaceData",
+        "[MapPreparedBake] result=Passed map=RefineryDistrict owners=217 entities=25158 surfaceCells=2097152 independentDamage=Passed semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab scope=DirectBake",
+        "[MapPreparedCandidate] result=Passed map=CityEdgeAirfield owners=344 staticBlockCells=22840 duplicateOriginals=0 semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 replay=InputsChanged scope=AuthoringAndSurfaceData",
+        "[MapPreparedCandidate] result=Passed map=CityEdgeAirfield owners=344 staticBlockCells=22840 duplicateOriginals=0 semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 replay=Passed scope=AuthoringAndSurfaceData",
+        "[MapPreparedBake] result=Passed map=CityEdgeAirfield owners=344 entities=26093 surfaceCells=2097152 independentDamage=Passed semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 scope=DirectBake",
+        "[MapPreparedCandidate] result=Passed map=AshLinePort owners=232 staticBlockCells=39828 duplicateOriginals=0 semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 replay=InputsChanged scope=AuthoringAndSurfaceData",
+        "[MapPreparedCandidate] result=Passed map=AshLinePort owners=232 staticBlockCells=39828 duplicateOriginals=0 semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 replay=Passed scope=AuthoringAndSurfaceData",
+        "[MapPreparedBake] result=Passed map=AshLinePort owners=232 entities=28574 surfaceCells=2097152 independentDamage=Passed semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 scope=DirectBake",
+        "[MapPreparedValidation] result=Passed maps=3 deterministicRebuild=Passed fullBake=Passed scope=AuthoringSurfacesAndDestruction",
+        "[MapVariantPackedContent] result=Failed map=RefineryDistrict System.InvalidOperationException: Variant definition failed: At least one typed operation-map anchor record is required."
+      ],
+      "result": "Failed packing gate",
+      "codeIdentity": "Design/MapVariants/Preparation/Evidence/medium-content-06-code.json"
+    },
+    {
+      "run": "08",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-content-20260929-08.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "expectedMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedMarker": "[MapVariantPackedContent] result=Failed map=RefineryDistrict",
+      "result": "Failed: protected production Addressables settings changed",
+      "log": "packed-content-08-failed.log",
+      "codeIdentity": "packed-content-08-code.json"
+    },
+    {
+      "run": "09",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-prepared-content-20260929-09.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent",
+      "result": "Failed: camera span compile error; no packing marker",
+      "expectedMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedMarker": null,
+      "log": "packed-content-09-failed.log",
+      "codeIdentity": "packed-content-09-code.json",
+      "preflightNote": "Initial sandbox process inspection failed with wrapper exit65; escalated same wrapper found running Hub."
+    },
+    {
+      "run": "10",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-prepared-content-20260929-10.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent",
+      "result": "Passed content build; runtime acceptance pending",
+      "expectedMarkers": [
+        "[MapVariantPackedContent] result=Passed maps=3",
+        "[MapVariantPrototypeReferences] result=Passed maps=3",
+        "[MapVariantExistingContent] result=Passed protectedSources=Unchanged"
+      ],
+      "observedMarkers": [
+        "[MapVariantPackedContent] result=Passed map=RefineryDistrict bytes=158178344 semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=CityEdgeAirfield bytes=120672578 semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=AshLinePort bytes=116077926 semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed maps=3 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPrototypeReferences] result=Passed maps=3 protectedSources=Unchanged camera=Matched",
+        "[MapVariantExistingContent] result=Passed protectedSources=Unchanged scope=ReadOnlyComparisonContent"
+      ],
+      "log": "packed-content-10.log",
+      "codeIdentity": "packed-content-10-code.json"
+    },
+    {
+      "run": "11",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "result": "Passed content build with metadata-based packed ownership; old hashed archives retained, next run cleans outputs transactionally",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-content-20260929-11.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildMediumContent",
+      "expectedMarker": "[MapVariantPackedContent] result=Passed maps=3",
+      "observedMarkers": [
+        "[MapVariantPackedContent] result=Passed map=RefineryDistrict bytes=195856298 semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=CityEdgeAirfield bytes=158343181 semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=AshLinePort bytes=153755421 semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed maps=3 productionSettings=Unchanged scope=ContentBuildOnly"
+      ],
+      "log": "packed-content-11.log",
+      "codeIdentity": "packed-content-11-code.json"
+    },
+    {
+      "run": "12",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "result": "Passed clean transactional content builds; binding ambient/fog repair follows",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-content-20260929-12.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.BuildIntegrationContent",
+      "expectedMarkers": [
+        "[MapVariantPackedContent] result=Passed maps=3",
+        "[MapVariantExistingContent] result=Passed"
+      ],
+      "observedMarkers": [
+        "[MapVariantPackedContent] result=Passed map=RefineryDistrict bytes=120503800 semanticHash=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=CityEdgeAirfield bytes=120671467 semanticHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed map=AshLinePort bytes=116077597 semanticHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPackedContent] result=Passed maps=3 productionSettings=Unchanged scope=ContentBuildOnly",
+        "[MapVariantPrototypeReferences] result=Passed maps=3 protectedSources=Unchanged camera=Matched",
+        "[MapVariantExistingContent] result=Passed protectedSources=Unchanged scope=ReadOnlyComparisonContent"
+      ],
+      "log": "packed-content-12.log",
+      "codeIdentity": "packed-content-12-code.json"
+    },
+    {
+      "run": "13",
+      "exit": 0,
+      "target": "StandaloneOSX",
+      "result": "Passed ambient/fog parity and isolated Addressables refresh; entity archives from clean run12 unchanged",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-binding-environment-20260929-13.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.RefreshBindingEnvironmentsAndAddressables",
+      "expectedMarker": "[MapVariantBindingEnvironment] result=Passed maps=3",
+      "observedMarkers": [
+        "[MapVariantBindingEnvironment] result=Passed map=RefineryDistrict sourceAmbientFog=Matched packedOwnership=Explicit",
+        "[MapVariantBindingEnvironment] result=Passed map=CityEdgeAirfield sourceAmbientFog=Matched packedOwnership=Explicit",
+        "[MapVariantBindingEnvironment] result=Passed map=AshLinePort sourceAmbientFog=Matched packedOwnership=Explicit",
+        "[MapVariantBindingEnvironment] result=Passed maps=3 sourceAmbientFog=Matched packedOwnership=Explicit"
+      ],
+      "log": "binding-environment-13.log",
+      "codeIdentity": "binding-environment-13-code.json"
+    },
+    {
+      "run": "14",
+      "target": "StandaloneOSX",
+      "exit": 0,
+      "result": "Passed: repaired persisted definition source binding GUIDs and rebuilt 3 Addressables catalogs; entity archives preserved",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-binding-environment-20260929-14.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantCandidateRuntimeBuilder.RefreshBindingEnvironmentsAndAddressables",
+      "expectedMarkers": [
+        "[MapVariantBindingEnvironment] result=Passed maps=3"
+      ],
+      "observedMarkers": [
+        "[MapVariantBindingEnvironment] result=Passed maps=3"
+      ],
+      "log": "binding-environment-14.log",
+      "codeIdentity": "binding-environment-14-code.json"
+    }
+  ]
+}

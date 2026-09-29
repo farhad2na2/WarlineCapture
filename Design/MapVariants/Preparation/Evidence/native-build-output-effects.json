@@ -1,0 +1,17 @@
+{
+  "phase": "Native03 standard player build, before Native05 completes",
+  "expectedPackerPreservationSnapshot": "shared-addressables-before-08.json",
+  "changedSharedArtifacts": [
+    "OSX/settings.json",
+    "OSX/catalog.bin",
+    "OSX/catalog.hash",
+    "OSX/AddressablesLink/link.xml"
+  ],
+  "AndroidUnchanged": true,
+  "note": "Native player build regenerated normal OSX shared build output and production addressables_content_state.bin. Restore verified source assets after validation; keep build output diagnostics distinct from isolated packer preservation.",
+  "ignoredDerivedState": "Assets/AddressableAssetsData/OSX/addressables_content_state.bin",
+  "ignoredDerivedStateRegenerated": true,
+  "trackedInGit": false,
+  "sourceSnapshotComparison": "Initial 469-file snapshot now has 468 unchanged and one ignored generated content-state file changed by standard native player build. Exact strict snapshot gate did not remain unchanged; do not report it as passed.",
+  "recoveryNote": "No original byte backup of this ignored output was found; preserve current output and record the failed strict comparison. Original source, mission and production settings assets remain protected."
+}

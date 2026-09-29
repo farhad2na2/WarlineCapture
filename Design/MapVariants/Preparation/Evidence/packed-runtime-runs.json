@@ -1,0 +1,94 @@
+{
+  "runs": [
+    {
+      "run": "Editor01",
+      "target": "Editor PlayMode",
+      "exit": 2,
+      "expectedMarkers": [
+        "[MapVariantPackedRuntime] result=Passed maps=3",
+        "[MapVariantSwitch] result=Passed variantToExisting=Passed"
+      ],
+      "observedMarkers": [],
+      "result": "Failed: loader ready with zero owners. Binding valid Editor SubScene GUID skipped explicit loading; fixed to empty reference with metadata-based packed ownership. Editor artifacts cannot certify native packed content.",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-packed-20260929-01.log -- -runTests -testPlatform PlayMode -testFilter MapVariantPackedPreparationPlayModeTests -testResults /private/tmp/map-prepared-packed-20260929-01.xml",
+      "log": "packed-runtime-01-failed.log",
+      "xml": "packed-runtime-01-failed.xml",
+      "codeIdentity": "packed-runtime-01-code.json"
+    },
+    {
+      "run": "Native01",
+      "target": "StandaloneOSX ARM64 Metal Mono",
+      "exit": 3,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-prepared-native-20260929-01.log -- -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json -playerHeartbeatTimeout 600 -testResults /private/tmp/map-prepared-native-20260929-01.xml",
+      "result": "Build failed: unrelated legacy PlayMode suites reference Editor-only APIs in player compilation",
+      "expectedMarkers": [
+        "[MapVariantPackedRuntime] result=Passed maps=3",
+        "[MapVariantSwitch] result=Passed variantToExisting=Passed"
+      ],
+      "observedMarkers": [],
+      "log": "native-player-01-build-failed.log",
+      "codeIdentity": "native-player-01-code.json"
+    },
+    {
+      "run": "Native02",
+      "target": "StandaloneOSX ARM64 Metal Mono",
+      "exit": 3,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-prepared-native-20260929-02.log -- -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests -assemblyNames Game.Tests.MapPreparation.Native -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json -playerHeartbeatTimeout 600 -testResults /private/tmp/map-prepared-native-20260929-02.xml",
+      "result": "Build failed: Burst BC1016 constructing role.hostile.battery managed string inside SplitFront guidance OnUpdate. Script compilation and shader compilation passed; player tests not started.",
+      "expectedMarkers": [
+        "[MapVariantPackedRuntime] result=Passed maps=3",
+        "[MapVariantSwitch] result=Passed variantToExisting=Passed"
+      ],
+      "observedMarkers": [],
+      "log": "native-player-02-burst-failed.log",
+      "codeIdentity": "native-player-02-code.json"
+    },
+    {
+      "run": "Native03",
+      "target": "StandaloneOSX ARM64 Metal Mono",
+      "exit": 143,
+      "result": "Player built and both tests ran; stale cached catalog CRC failed. Editor did not receive player results and timed out after 600s. User explicitly authorized verified Editor/player recovery; SIGTERM exit143. No NUnit XML, gate failed.",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 3600 --log /private/tmp/map-prepared-native-20260929-03.log -- -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests -assemblyNames Game.Tests.MapPreparation.Native -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json -playerHeartbeatTimeout 600 -testResults /private/tmp/map-prepared-native-20260929-03.xml",
+      "expectedMarkers": [
+        "[MapVariantPackedRuntime] result=Passed maps=3",
+        "[MapVariantSwitch] result=Passed variantToExisting=Passed"
+      ],
+      "observedMarkers": [],
+      "log": "native-player-03-cache-and-connection-failed.log",
+      "playerLog": "native-player-03-player-failed.log",
+      "codeIdentity": "native-player-03-code.json"
+    },
+    {
+      "run": "Native04",
+      "target": "StandaloneOSX ARM64 Metal Mono",
+      "exit": 3,
+      "result": "Callback compile failed: this NUnit interface has no TotalCount. Use its actual pass/fail/skip/inconclusive counts.",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-native-20260929-04.log -- -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests -assemblyNames Game.Tests.MapPreparation.Native -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json -playerHeartbeatTimeout 600 -testResults /private/tmp/map-prepared-native-20260929-04.xml",
+      "expectedMarkers": [
+        "[MapPreparationNativePlayer] result=Passed"
+      ],
+      "observedMarkers": [],
+      "log": "native-player-04-callback-compile-failed.log",
+      "codeIdentity": "native-player-04-code.json"
+    },
+    {
+      "run": "Native05",
+      "target": "StandaloneOSX ARM64 Metal Mono",
+      "exit": 133,
+      "result": "Current catalog CRC loaded correctly. Native NUnit: 0/2 pass; serialized definition sourceSceneReference empty. Binding ref changed after an earlier save without marking definition dirty again. Editor shutdown also hit worker-session dispatch_release trap; gate failed.",
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 1800 --log /private/tmp/map-prepared-native-20260929-05.log -- -runTests -testPlatform StandaloneOSX -testFilter MapVariantPackedPreparationPlayModeTests -assemblyNames Game.Tests.MapPreparation.Native -buildPlayerPath Build/MapVariantPreparedPlayer/WarlinePreparation.app -testSettingsFile Design/MapVariants/Preparation/Evidence/native-test-settings.json -playerHeartbeatTimeout 600 -testResults /private/tmp/map-prepared-native-20260929-05.xml",
+      "expectedMarkers": [
+        "[MapPreparationNativePlayer] result=Passed",
+        "[MapVariantPackedRuntime] result=Passed maps=3",
+        "[MapVariantSwitch] result=Passed variantToExisting=Passed"
+      ],
+      "observedMarkers": [
+        "[MapPreparationNativePlayer] result=Failed tests=2 passed=0"
+      ],
+      "log": "native-player-05-invalid-binding-failed.log",
+      "xml": "native-player-05-failed.xml",
+      "playerLog": "native-player-05-player-failed.log",
+      "codeIdentity": "native-player-05-code.json"
+    }
+  ]
+}

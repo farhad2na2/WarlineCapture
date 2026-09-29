@@ -235,7 +235,7 @@ public sealed class MapVariantPreparationTests
         finally { blobs?.Dispose(); EditorSceneManager.CloseScene(scene, true); }
     }
 
-    private static void RequireState(EntityManager em, Entity owner, bool destroyed)
+    internal static void RequireState(EntityManager em, Entity owner, bool destroyed)
     {
         var p = em.GetComponentData<OperationMapBuildingPresentation>(owner);
         Assert.That(p.State, Is.EqualTo(destroyed ? 1 : 0));
@@ -246,7 +246,7 @@ public sealed class MapVariantPreparationTests
             Is.EqualTo(OperationMapBuildingBlockerPolicy.RubbleRemainsBlocked));
     }
 
-    private static void Update(World world)
+    internal static void Update(World world)
     {
         SystemHandle handle = world.CreateSystem<OperationMapBuildingDestructionSystem>();
         ref SystemState state = ref world.Unmanaged.ResolveSystemStateRef(handle);
@@ -254,7 +254,7 @@ public sealed class MapVariantPreparationTests
         state.Dependency.Complete(); world.EntityManager.CompleteAllTrackedJobs(); world.DestroySystem(handle);
     }
 
-    private static void Bake(World world, GameObject root, out IDisposable lifetime)
+    internal static void Bake(World world, GameObject root, out IDisposable lifetime)
     {
         Type utility = Type.GetType("Unity.Entities.BakingUtility, Unity.Entities.Hybrid", true);
         Type settingsType = Type.GetType("Unity.Entities.BakingSettings, Unity.Entities.Hybrid", true);

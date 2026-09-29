@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="1" result="Passed" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="9.3377902">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-29 16:39:25Z" end-time="2026-09-29 16:39:34Z" duration="9.337790" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=CityEdgeAirfield load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=AshLinePort load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+<properties><property name="platform" value="PlayMode"></property></properties><test-suite type="Assembly" id="1004" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-29 16:39:25Z" end-time="2026-09-29 16:39:34Z" duration="9.329238" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=CityEdgeAirfield load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=AshLinePort load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+<properties><property name="_PID" value="49180"></property><property name="_APPDOMAIN" value="Unity Root Domain"></property><property name="platform" value="PlayMode"></property><property name="EditorOnly" value="False"></property></properties><output>[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+</output><test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-09-29 16:39:25Z" end-time="2026-09-29 16:39:34Z" duration="9.326541" total="1" passed="1" failed="0" inconclusive="0" skipped="0" asserts="0">[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=CityEdgeAirfield load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=AshLinePort load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+<properties></properties><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+</output><test-case id="1003" name="PreparedVariants_SwitchWithExistingDenseCity" fullname="MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity" methodname="PreparedVariants_SwitchWithExistingDenseCity" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="186169372" result="Passed" start-time="2026-09-29 16:39:25Z" end-time="2026-09-29 16:39:34Z" duration="9.311502" asserts="0">[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=CityEdgeAirfield load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=AshLinePort load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+<properties><property name="_JOINTYPE" value="UnityCombinatorial"></property><property name="Timeout" value="600000"></property><property name="retryIteration" value="0"></property><property name="repeatIteration" value="0"></property></properties><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=CityEdgeAirfield load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=AshLinePort load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=ExistingDenseCity load=Passed unload=Passed grids=Single
+[OperationMapSourceScene] stage=SceneUnloadStarted
+[OperationMapSourceScene] stage=AddressablesUnloadComplete
+[MapVariantSwitch] map=RefineryDistrict load=Passed unload=Passed grids=Single
+[MapVariantSwitch] result=Passed variantToExisting=Passed existingToVariant=Passed loads=7
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Passed message=
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Passed message=
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Passed message=
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Passed message=
+</output></test-case></test-suite></test-suite></test-suite>
+</test-run>

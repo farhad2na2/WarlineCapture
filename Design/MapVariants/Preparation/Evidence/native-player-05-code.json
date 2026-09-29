@@ -1,0 +1,17 @@
+{
+  "revision": "5154a7717a6bf054697b406f61e39eb2df456392",
+  "dirty": true,
+  "diffSHA256": "edc66b8ed0740bd6bbf12448a4ac1735bd17acb9037b14b63e0a9f661be3712b",
+  "target": "StandaloneOSX ARM64 Metal Mono",
+  "sourceSHA256": {
+    "Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs": "cff331303b4b8d63d73b27e84c330e08cf719f15ab2223a2e069993831dfbedd",
+    "Assets/Tests/MapPreparationNative/Game.Tests.MapPreparation.Native.asmdef": "f1b9cfe23714eaa9f2e76b0ebdef0596d1dd99e0e3ce687f4b02b9aefaf0d095",
+    "Assets/Tests/PlayMode/Game.Tests.PlayMode.asmdef": "04b8c9cba22d57785acc7bf268937cf64b03f23c8615c43815a6fc90003a566f",
+    "Assets/Game/Scripts/AssemblyInfo.cs": "6437554a1e11a7335ab4367c73be5e8a00c15e34bd4079bad261c5d98ff298e1",
+    "Assets/Game/Scripts/Composition/AssemblyInfo.cs": "05c970dcc2b5595e7dc2bc05dc685027f87632282aeb65a393c849f01c751533",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantNativeTestPlayerBuildModifier.cs": "f2285b959bd32c5b83551974eee655ca2837f35ce6b4fe7fbbd3a6bdba3fa554",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionGuidanceProjectionSystem.SplitFront.cs": "4d630deff59dface0ea81c6492669ca2615fa1755643c7c55b47e7ddd3542e2d",
+    "Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs": "7fd986dbc81a7b998278785797bdef38407883ce67028764d5fc37de4b21bda0",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantNativeResultWatcher.cs": "f46ba32433969a3a8c19a783e5b901cb5bb5a6c105f8337cee1ed4c2433ed751"
+  }
+}

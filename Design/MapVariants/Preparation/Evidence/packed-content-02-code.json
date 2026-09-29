@@ -1,0 +1,32 @@
+{
+  "revision": "5154a7717a6bf054697b406f61e39eb2df456392",
+  "dirtyDiffSha256": "eb2f1c44a9fb69da60ea963987571900e195bb0907dcbb378892ba4c9a3fe34f",
+  "files": {
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs": "b267ab63afd1e2b0b8bbb9fbcd32724b82b7a3b4740757aa15042b572afbfd0b",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Compose.cs": "d5529d9e8580870c0fc8f7dd730613dc08adf034a16962905c620722e0c35368",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantHeightField.cs": "003dc07c4e36e3c70d4e2fd1392d519138948fdb6fdb2970e2e4e103e2f0333b",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantFrontier.cs": "56a6f43116efd8b1ec72985512c862a90082cd603edf50f03e66af8a0d9baae2",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCityAirfield.cs": "721a6e35f2cf02289a80315a752610c582461316c82f00639ba6671e59547607",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparationInventory.cs": "e4025db2e5f8da318637f8de77671429c74b44bd54d38cdc225e67e8f31ec228",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs": "850315ba9c6148aaf5cf9ed76c09f59f95c88bfe5378063f67ab7f5c2d8b4614",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparationSchema.cs": "7bf1fcf5fcf3ddf7a5c57a532150ed3b535adf817353be59995b8abe721e1eff",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Capture.cs": "c9456a6a543ab683d07b972cea69d8906e7cf54a11ea5c5f409b5ff07da2d6f9",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs": "57800f9f768462150ac1ecaa361a7ba50426a3f66c17a66a3074e737acf7c806",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantRefineryPreparationSlice.cs": "47937b4a257eb388131e572222238ad615f69ed1658ce6356c21db216c370477",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantKits.cs": "e00b765f000cdfe2f7f3d9f1c8db152f3710e91de265790efc4de21c5f9b073f",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantMenu.cs": "70ddb51e07d4ac93505917d1dcb59fcc7e265b9fb0c50208a615ccb99f36bd3b",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantLogisticsPort.cs": "41da61d59fb7b7ae9f4e7115c8420b5b22828bf78b2380e0b420ff3c3b9dafba",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparedCandidateBuilder.cs": "2dbeb233c6f2af018409d8de48daeeff9f1cd56a75ac40203583404f889d9743",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Audit.cs": "90e617aae75cb51188617d08fe9fcaf9b1398ce09c942d776043a291fa3f8419",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantRefineryDistrict.cs": "30308f1fbfdd2167dede48b0433ffa806145047afef6853f68cc098f108e81f1",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Roads.cs": "c2a1e83879cdd8d6eaebb9a5ebe6d4228d37b7966d246951eaf32c3f1e8c4b07",
+    "Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs": "325091d75dca4d55a4efb723a419ca09def75a49e4564dc8da5ab1354c601605",
+    "Assets/Tests/Editor/MapVariantPreparedCandidateTests.cs": "4471fb877d79a507a501c88048001dc6757a544f564e5a7abd34508e0af63dc3",
+    "Assets/Tests/Editor/MapVariantPreparationValidation.cs": "51dc08101397a5b94f4000dec9621310d02bdc28a7a4661d0bbc7dee687830eb",
+    "Assets/Tests/Editor/MapVariantPreparationTests.cs": "7858aac8a4ebdf84a70650c92bc6c3e940e3274948bbf3cdea6824e69f6660da",
+    "Assets/Game/Scripts/Authorings/MapPreparationUnitFixtureAuthoring.cs": "2fc7784c394e043fa32fcef44f1f2ae465ceb5df8f7dc1226ba008d288401ed4",
+    "Assets/Game/Scripts/Components/MapPreparationUnitFixtureComponent.cs": "0757afd6498955360e94e38f91d1f50f2a73d06e04c976a089541c20c2c53e0a",
+    "Assets/Game/Scripts/Authorings/OperationMapEntityPresentationRootAuthoring.cs": "ccbbe3c2868b05d2a8bfaa20d19b2edf66240199fd779944b458ff69df6ac296",
+    "Assets/Tests/Editor/OperationMapEntityPresentationRootAuthoringTests.cs": "87f7e1b5b27f5367198f6fad706bc568d3ad524940c2f9fe3a05bdc4350fbb74"
+  }
+}

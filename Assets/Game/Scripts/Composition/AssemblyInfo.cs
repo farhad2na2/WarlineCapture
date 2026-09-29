@@ -4,6 +4,7 @@ using Game.Runtime;
 [assembly: InternalsVisibleTo("Game.Editor")]
 [assembly: InternalsVisibleTo("Game.Tests.Editor")]
 [assembly: InternalsVisibleTo("Game.Tests.PlayMode")]
+[assembly: InternalsVisibleTo("Game.Tests.MapPreparation.Native")]
 
 namespace Game.Composition
 {

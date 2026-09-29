@@ -1,0 +1,41 @@
+{
+  "revision": "5154a7717a6bf054697b406f61e39eb2df456392",
+  "dirty": true,
+  "diffSHA256": "a4d4919a6e656b5e0b4f85aa0288c679b6fda297e45528bf4202cea20613d74e",
+  "target": "StandaloneOSX",
+  "settings": "native-test-settings.json",
+  "sources": {
+    "Assets/Tests/PlayMode/MapVariantPackedPreparationPlayModeTests.cs": "cf1db7ea574ab7a89404343fe60a44645b92a83727cab5c4ad3da18f89773a40",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantCandidateRuntimeBuilder.cs": "3888683462f3343f9bf5b431427320b4855153030afbfc1e2c4b4088257b46a2"
+  },
+  "projectSettingsSHA256": {
+    "ShaderGraphSettings.asset": "cdba1e5d65bcf6e3269d76ed3e60b6c21f98322002996642c9d74f1eb89f6b91",
+    "ProjectSettings.asset": "8b1e1954704772234e5cdb31636a028118a0da7ca24630c9438d4d021bb93de1",
+    "InputManager.asset": "7a1bb836a1008d26d0860d143e9d9df7ca41731d30a72901b518063819c62df2",
+    "TimeManager.asset": "3396f52fdc16d445024e01d7a2d99db6f0a37569d1d73c0302e9ffb857d90287",
+    "MultiplayerManager.asset": "aba89fd1a1ddad182727ad82727e536d27372e90328a8196da2a4560398983dd",
+    "VersionControlSettings.asset": "e7bda45bf7a394745fee1316e6c71fa676004d591ad1f3aa247fd3e4ceb86071",
+    "SceneTemplateSettings.json": "bb9098b3bfcde78d93e264b96f7b77b5430e64e8c57a7aad7f5a5d9c3945e16a",
+    "GraphicsSettings.asset": "6ba4e72fbb70b82a14792cf54ed64b053ffc1534bf9945d7076adfe3e7ed466a",
+    "XRSettings.asset": "edd2beb4a2e388312b4b7da241aa51070434005d82c59363f1237dd2e567585f",
+    "ScriptableBuildPipeline.json": "9ef5816157356c9b43513e33faf4c1e889d4d36d5acdce1a31a8db629d8db545",
+    "PresetManager.asset": "29c125923fe6e29f90190d4fce1c82d660e7051546e2c9d02908d18c9cf2436c",
+    "UnityConnectSettings.asset": "98f142992d8a623501c99648e1b7363adca08b67bb50390b566df368d00bc9a0",
+    "EditorSettings.asset": "b4c08fea9c6db7ad67634a84c258569354f4faacca43fefc16f9f6f1c18349a1",
+    "EditorBuildSettings.asset": "e018699f6506773a33fd1ae551df563773a1dd4ca22a2d4be87250dc85832c41",
+    "ClusterInputManager.asset": "40e65dd214bf254955d2c8829ca8ce2130fd3510485560ce012e9a1ddd93e623",
+    "PhysicsCoreProjectSettings2D.asset": "bedc5339a832c60dc3f11b84abc4f4384dbfa20b0cd9ad6c444b907e751fc35e",
+    "TagManager.asset": "23fc56b484aa3d7edf5914cd3591f7a823ccef5e3f3496f8a51f30388ead63dc",
+    "NavMeshAreas.asset": "80106cfa7e6181a1928b142c075f3e510d527441e3d79bc83590e4ac91e7cd66",
+    "Physics2DSettings.asset": "e3cbdbf0be15244b7b67d2f07bdb8e8981911c11a8c7fe8035f5261272fec658",
+    "URPProjectSettings.asset": "c317fe22b9488785c0611f0642429922e5d324430d929bffb41648130f30c218",
+    "PackageManagerSettings.asset": "fab10789be26f9c9bf4844e243fb811f3b67c0896d17cf737dabfcdbf8e7ec5c",
+    "EntitiesClientSettings.asset": "6839fb156576792ca78ce68f134323b8637de2d2b96a5304177bb813d6d0bffd",
+    "AudioManager.asset": "aeedeb3243f07b61dbbe854aa08b5ef6f0b5274dd9852ad9f6129dde3e105a31",
+    "VFXManager.asset": "f066c6483919961332415ee64204f74fe52f38c02e82892eb02b7a5b2e381f0e",
+    "DynamicsManager.asset": "b7c9a9dc08b98990109d4346f68745e15e238de400f96c583e53e1c83c743a78",
+    "QualitySettings.asset": "c9262d2e43ac2691a563737472666dc3bff8b3d86bd8552f9fa7b29ae3dc7a39",
+    "MemorySettings.asset": "1e8379a461b10ae09f3f696911088c16875d63e87ed5f2d95df9e1892703f9fd",
+    "ProjectVersion.txt": "0bd10e7d104bdb396187fb2b4c47d1f5494041120bd8fe22d47c678939c2bc47"
+  }
+}

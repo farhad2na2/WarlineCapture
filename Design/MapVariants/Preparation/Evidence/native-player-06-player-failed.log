@@ -1,0 +1,464 @@
+Mono path[0] = '/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed'
+Mono config path = '/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/MonoBleedingEdge/etc'
+CodeReloadManager initialized
+Found 2 interfaces on host : 0) 192.168.2.175 1) 10.137.14.201
+Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55000 [Flags] 2 [Guid] 1988186914 [EditorId] 2380292750 [Version] 1048832 [Id] OSXPlayer(1,Farhads-MacBook-Air-2.local) [Debug] 0 [PackageName] OSXPlayer [ProjectName] WarlineCapture" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55000 [Flags] 2 [Guid] 1988186914 [EditorId] 2380292750 [Version] 1048832 [Id] OSXPlayer(1,Farhads-MacBook-Air-2.local) [Debug] 0 [PackageName] OSXPlayer [ProjectName] WarlineCapture" 
+
+Player connection [8466637184] Started UDP target info broadcast (1) on [225.0.0.222:54997].
+
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/UnitySubsystems
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Begin MonoManager ReloadAssembly
+Symbol file LoadedFromMemory is not a mono symbol file
+- Finished resetting the current domain, in  0.040 seconds
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Metal RecreateSurface[0x1190a0600]: surface size 1024x768
+UnloadTime: 3.080792 ms
+Ignoring invalid [Unity.Entities.UpdateAfterAttribute(Game.Runtime.SkirmishResultSettlementSystem)] attribute on Game.Runtime.SkirmishExpandedSessionControlSystem because OrderFirst/OrderLast has higher precedence.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:216)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:522)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:304)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 216)
+
+Ignoring invalid [Unity.Entities.UpdateBeforeAttribute] attribute on Game.Rendering.OperationMapVehicleVisualOwnershipSystem targeting Game.Rendering.UnitRenderVisualExclusivitySystem.
+This attribute can only order systems that are members of the same ComponentSystemGroup instance.
+Make sure that both systems are in the same system group with [UpdateInGroup(typeof(Unity.Entities.PresentationSystemGroup))],
+or by manually adding both systems to the same group's update list.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogWarning (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:216)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Entities.ComponentSystemSorter:WarnAboutAnySystemAttributeBadness (int,Unity.Entities.ComponentSystemGroup) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemSorter.cs:504)
+Unity.Entities.ComponentSystemGroup:GenerateMasterUpdateList () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:490)
+Unity.Entities.ComponentSystemGroup:RecurseUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:410)
+Unity.Entities.ComponentSystemGroup:SortSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:598)
+Unity.Entities.DefaultWorldInitialization:AddSystemToRootLevelSystemGroupsInternal (Unity.Entities.World,Unity.Collections.NativeList`1<Unity.Entities.SystemTypeIndex>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:305)
+Unity.Entities.DefaultWorldInitialization:Initialize (string,bool) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorldInitialization.cs:156)
+Unity.Entities.AutomaticWorldBootstrap:Initialize () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities.Hybrid/Injection/AutomaticWorldBootstrap.cs:16)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 216)
+
+[MapPreparationNativeNUnit] started tests=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:RunStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:24)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass1_0:<RunStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:16)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:RunStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:16)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<Run>d__25:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:140)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testStarted=WarlineCapture
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:26)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass5_0:<TestStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:19)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:Execute () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:83)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityTestAssemblyRunner:Run (NUnit.Framework.Interfaces.ITestListener,NUnit.Framework.Interfaces.ITestFilter) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityTestAssemblyRunner.cs:99)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<Run>d__25:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:143)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:26)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass5_0:<TestStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:19)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:Execute () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:83)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:203)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:26)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass5_0:<TestStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:19)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:Execute () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:83)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:203)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:26)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass5_0:<TestStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:19)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:Execute () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:83)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:203)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Unloading 5 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 2 unused Assets / (0 B). Loaded Objects now: 5210.
+Memory consumption went from 268.0 MB to 268.0 MB.
+Total: 9.381625 ms (FindLiveObjects: 0.874542 ms CreateObjectMapping: 0.823917 ms MarkObjects: 7.491833 ms  DeleteObjects: 0.190750 ms)
+
+AssertionException: Assertion failure. Value was True
+Expected: False
+  at UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) [0x00029] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29 
+  at UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) [0x00003] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34 
+  at UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) [0x00003] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27 
+  at Unity.Scenes.SubScene.AddSceneEntities () [0x00019] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358 
+  at Unity.Scenes.SubScene.OnEnable () [0x00005] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337 
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs Line: 358)
+
+Could not open file /Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/StreamingAssets/EntityScenes/4f2791431607a46dba63d71c60633f71.entityheader for read
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+Unity.Debug:LogError (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:11)
+Unity.Scenes.SceneHeaderUtility:LogHeaderLoadError (Unity.Scenes.SceneHeaderUtility/HeaderLoadStatus,Unity.Entities.Hash128) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SceneHeaderUtility.cs:342)
+Unity.Scenes.SceneHeaderUtility:FinishHeaderLoad (Unity.Scenes.RequestSceneHeader,Unity.Entities.Hash128,string) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SceneHeaderUtility.cs:143)
+Unity.Scenes.ResolveSceneReferenceSystem:FinishHeaderLoad () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/ResolveSceneReferenceSystem.cs:414)
+Unity.Scenes.ResolveSceneReferenceSystem:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/ResolveSceneReferenceSystem.cs:436)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.InitializationSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorld.cs:169)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+Stopping profiler. Profiler is not able to send data to the Unity Editor or a file fast enough!
+Please reduce frame rate using VSync Quality Settings or Application.targetFrameRate api. Use wired connection to a device.
+Buffered 134250496 bytes while maximum allowed value by Profiler.maxUsedMemory is 134217728 bytes.
+Unloading 3 Unused Serialized files (Serialized files now loaded: 5)
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:27)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass6_0:<TestFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:24)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:107)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CoroutineTestWorkItem/<PerformWork>d__6:<>m__Finally1 () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CoroutineTestWorkItem.cs:59)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CoroutineTestWorkItem/<PerformWork>d__6:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CoroutineTestWorkItem.cs:56)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestStarted (NUnit.Framework.Interfaces.ITest) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:26)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass5_0:<TestStarted>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:59)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITest>:Invoke (NUnit.Framework.Interfaces.ITest) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestStarted (NUnit.Framework.Interfaces.ITest) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:19)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:Execute () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:83)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:203)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Unloading 27 unused Assets / (64.4 KB). Loaded Objects now: 5261.
+Memory consumption went from 318.6 MB to 318.6 MB.
+Total: 18.409750 ms (FindLiveObjects: 1.881791 ms CreateObjectMapping: 1.032583 ms MarkObjects: 13.922417 ms  DeleteObjects: 1.572417 ms)
+
+AssertionException: Assertion failure. Value was True
+Expected: False
+  at UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) [0x00029] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29 
+  at UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) [0x00003] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34 
+  at UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) [0x00003] in /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27 
+  at Unity.Scenes.SubScene.AddSceneEntities () [0x00019] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358 
+  at Unity.Scenes.SubScene.OnEnable () [0x00005] in ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337 
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs Line: 358)
+
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:27)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass6_0:<TestFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:24)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:107)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CoroutineTestWorkItem/<PerformWork>d__6:<>m__Finally1 () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CoroutineTestWorkItem.cs:59)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CoroutineTestWorkItem/<PerformWork>d__6:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CoroutineTestWorkItem.cs:56)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:27)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass6_0:<TestFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:24)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:107)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:379)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:124)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:27)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass6_0:<TestFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:24)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:107)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:379)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:124)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<RunChildren>d__17:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:207)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:82)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:27)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass6_0:<TestFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:64)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.TestListenerWrapper:TestFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/TestListenerWrapper.cs:24)
+UnityEngine.TestRunner.NUnitExtensions.Runner.UnityWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/UnityWorkItem.cs:107)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem:WorkItemComplete () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:379)
+UnityEngine.TestRunner.NUnitExtensions.Runner.CompositeWorkItem/<PerformWork>d__13:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Runner/CompositeWorkItem.cs:124)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:94)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+[MapPreparationNativeNUnit] result=Failed tests=2 passed=0 failed=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:Log (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:123)
+MapPreparationNativeResultCallback:RunFinished (NUnit.Framework.Interfaces.ITestResult) (at /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapPreparationNativeResultCallback.cs:38)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener/<>c__DisplayClass4_0:<RunFinished>b__0 (UnityEngine.TestRunner.ITestRunCallback) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:54)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:InvokeAllCallbacks (System.Action`1<UnityEngine.TestRunner.ITestRunCallback>) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:42)
+UnityEngine.TestRunner.Utils.TestRunCallbackListener:RunFinished (NUnit.Framework.Interfaces.ITestResult) (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/Utils/TestRunCallbackListener.cs:54)
+UnityEngine.Events.InvokableCall`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/Runtime/Export/UnityEvent/UnityEvent.cs:222)
+UnityEngine.Events.UnityEvent`1<NUnit.Framework.Interfaces.ITestResult>:Invoke (NUnit.Framework.Interfaces.ITestResult) (at /Users/bokken/build/output/unity/unity/artifacts/generated/UnityEvent/UnityEvent_1.cs:59)
+UnityEngine.TestTools.TestRunner.PlaymodeTestsController/<TestRunnerCoroutine>d__24:MoveNext () (at ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/TestRunner/PlaymodeTestsController.cs:110)
+UnityEngine.SetupCoroutine:InvokeMoveNext (System.Collections.IEnumerator,intptr) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/Coroutines.cs:17)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 123)
+
+Could not open file /Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/StreamingAssets/EntityScenes/4f2791431607a46dba63d71c60633f71.entityheader for read
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[]) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/DebugLogHandler.cs:9)
+UnityEngine.Logger:Log (UnityEngine.LogType,object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Logging/Logger.cs:60)
+UnityEngine.Debug:LogError (object) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs:151)
+Unity.Debug:LogError (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:11)
+Unity.Scenes.SceneHeaderUtility:LogHeaderLoadError (Unity.Scenes.SceneHeaderUtility/HeaderLoadStatus,Unity.Entities.Hash128) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SceneHeaderUtility.cs:342)
+Unity.Scenes.SceneHeaderUtility:FinishHeaderLoad (Unity.Scenes.RequestSceneHeader,Unity.Entities.Hash128,string) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SceneHeaderUtility.cs:143)
+Unity.Scenes.ResolveSceneReferenceSystem:FinishHeaderLoad () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/ResolveSceneReferenceSystem.cs:414)
+Unity.Scenes.ResolveSceneReferenceSystem:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/ResolveSceneReferenceSystem.cs:436)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ComponentSystemGroup:UpdateAllSystems () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:734)
+Unity.Entities.ComponentSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ComponentSystemGroup.cs:687)
+Unity.Entities.InitializationSystemGroup:OnUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/DefaultWorld.cs:169)
+Unity.Entities.SystemBase:Update () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/SystemBase.cs:205)
+Unity.Entities.ScriptBehaviourUpdateOrder/DummyDelegateWrapper:TriggerUpdate () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/ScriptBehaviourUpdateOrder.cs:523)
+
+(Filename: /Users/bokken/build/output/unity/unity/Runtime/Export/Debug/Debug.bindings.cs Line: 151)
+
+Thread 0x16ff6f000 may have been prematurely finalized
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+Thread 0x1705db000 may have been prematurely finalized
+Thread 0x170667000 may have been prematurely finalized
+Thread 0x17080b000 may have been prematurely finalized
+Thread 0x1706f3000 may have been prematurely finalized
+Thread 0x170897000 may have been prematurely finalized
+Thread 0x170923000 may have been prematurely finalized
+Thread 0x1709af000 may have been prematurely finalized
+Thread 0x17077f000 may have been prematurely finalized
+Thread 0x170a3b000 may have been prematurely finalized
+CodeReloadManager destroyed
+PlayerConnection::Cleanup

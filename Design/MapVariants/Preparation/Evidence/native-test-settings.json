@@ -1,0 +1,5 @@
+{
+  "scriptingBackend": "Mono2x",
+  "architecture": "arm64",
+  "playerGraphicsAPI": "Metal"
+}

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="120.7758195">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:20:34Z" end-time="2026-09-29 16:22:35Z" duration="120.775820" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errorsOne or more child tests had errors[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+AssertionException: Assertion failure. Value was True
+Expected: False
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+AssertionException: Assertion failure. Value was True
+Expected: False
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="platform" value="PlayMode"></property></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><test-suite type="Assembly" id="1004" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:20:34Z" end-time="2026-09-29 16:22:35Z" duration="120.759600" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errors[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+AssertionException: Assertion failure. Value was True
+Expected: False
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+AssertionException: Assertion failure. Value was True
+Expected: False
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="_PID" value="46293"></property><property name="_APPDOMAIN" value="Unity Root Domain"></property><property name="platform" value="PlayMode"></property><property name="EditorOnly" value="False"></property></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><output>[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+</output><test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:20:34Z" end-time="2026-09-29 16:22:35Z" duration="120.752709" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+AssertionException: Assertion failure. Value was True
+Expected: False
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+AssertionException: Assertion failure. Value was True
+Expected: False
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+</output><test-case id="1002" name="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" fullname="MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" methodname="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="1251375305" result="Failed" start-time="2026-09-29 16:20:34Z" end-time="2026-09-29 16:22:35Z" duration="120.607358" asserts="0">Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+AssertionException: Assertion failure. Value was True
+Expected: False
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+<properties><property name="_JOINTYPE" value="UnityCombinatorial"></property><property name="Timeout" value="850000"></property><property name="retryIteration" value="0"></property><property name="repeatIteration" value="0"></property></properties><failure>Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+<message>Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect</message><stack-trace>UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+</stack-trace></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+AssertionException: Assertion failure. Value was True
+Expected: False
+Loading Entity Scene failed because the entity header file couldn't be resolved: guid=4f2791431607a46dba63d71c60633f71.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+</output></test-case><test-case id="1003" name="PreparedVariants_SwitchWithExistingDenseCity" fullname="MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity" methodname="PreparedVariants_SwitchWithExistingDenseCity" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="37592782" result="Failed" start-time="2026-09-29 16:22:35Z" end-time="2026-09-29 16:22:35Z" duration="0.129525" asserts="0">Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+AssertionException: Assertion failure. Value was True
+Expected: False
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="_JOINTYPE" value="UnityCombinatorial"></property><property name="Timeout" value="600000"></property><property name="retryIteration" value="0"></property><property name="repeatIteration" value="0"></property></properties><failure>Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.ExpectUnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+<message>Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect</message><stack-trace>UnityEngine.Assertions.Assert.Fail (System.String message, System.String userMessage) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBase.cs:29)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition, System.String message) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:34)
+UnityEngine.Assertions.Assert.IsFalse (System.Boolean condition) (at /Users/bokken/build/output/unity/unity/Runtime/Export/Assertions/Assert/AssertBool.cs:27)
+Unity.Scenes.SubScene.AddSceneEntities () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:358)
+Unity.Scenes.SubScene.OnEnable () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes/SubScene.cs:337)
+
+</stack-trace></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+AssertionException: Assertion failure. Value was True
+Expected: False
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Exception] AssertionException: Assertion failure. Value was True
+Expected: False'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+</output></test-case></test-suite></test-suite></test-suite>
+</test-run>

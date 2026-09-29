@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="2" result="Failed(Child)" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="0001-01-01 00:00:00Z" end-time="0001-01-01 00:00:00Z" duration="269.4194277">
+  <test-suite type="TestSuite" id="1000" name="WarlineCapture" fullname="WarlineCapture" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:42:56Z" end-time="2026-09-29 16:47:25Z" duration="269.419428" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errorsOne or more child tests had errors[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Infantry seconds=8.71 distance=163.4
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Hauler seconds=5.69 distance=167.6
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Armor seconds=5.30 distance=167.9
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Infantry seconds=9.01 distance=170.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Hauler seconds=80.00 distance=1337.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Armor seconds=62.08 distance=1196.7
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RidgeAccess unit=Infantry seconds=3.15 distance=58.6
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+
+Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="platform" value="PlayMode"></property></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><test-suite type="Assembly" id="1004" name="Game.Tests.MapPreparation.Native.dll" fullname="/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:42:56Z" end-time="2026-09-29 16:47:25Z" duration="269.409038" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errors[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Infantry seconds=8.71 distance=163.4
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Hauler seconds=5.69 distance=167.6
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Armor seconds=5.30 distance=167.9
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Infantry seconds=9.01 distance=170.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Hauler seconds=80.00 distance=1337.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Armor seconds=62.08 distance=1196.7
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RidgeAccess unit=Infantry seconds=3.15 distance=58.6
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+
+Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="_PID" value="49765"></property><property name="_APPDOMAIN" value="Unity Root Domain"></property><property name="platform" value="PlayMode"></property><property name="EditorOnly" value="False"></property></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><output>[MapPreparationNativeNUnit] testStarted=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll
+</output><test-suite type="TestFixture" id="1001" name="MapVariantPackedPreparationPlayModeTests" fullname="MapVariantPackedPreparationPlayModeTests" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" testcasecount="2" result="Failed" site="Child" start-time="2026-09-29 16:42:56Z" end-time="2026-09-29 16:47:25Z" duration="269.406706" total="2" passed="0" failed="2" inconclusive="0" skipped="0" asserts="0">One or more child tests had errors[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Infantry seconds=8.71 distance=163.4
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Hauler seconds=5.69 distance=167.6
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Armor seconds=5.30 distance=167.9
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Infantry seconds=9.01 distance=170.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Hauler seconds=80.00 distance=1337.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Armor seconds=62.08 distance=1196.7
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RidgeAccess unit=Infantry seconds=3.15 distance=58.6
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+
+Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties></properties><failure>One or more child tests had errors<message>One or more child tests had errors</message></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests
+</output><test-case id="1002" name="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" fullname="MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" methodname="MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="1065496388" result="Failed" start-time="2026-09-29 16:42:56Z" end-time="2026-09-29 16:47:24Z" duration="268.525681" asserts="0">  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Infantry seconds=8.71 distance=163.4
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Hauler seconds=5.69 distance=167.6
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Armor seconds=5.30 distance=167.9
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Infantry seconds=9.01 distance=170.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Hauler seconds=80.00 distance=1337.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Armor seconds=62.08 distance=1196.7
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RidgeAccess unit=Infantry seconds=3.15 distance=58.6
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+
+<properties><property name="_JOINTYPE" value="UnityCombinatorial"></property><property name="Timeout" value="850000"></property><property name="retryIteration" value="0"></property><property name="repeatIteration" value="0"></property></properties><failure>  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+<message>  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+</message><stack-trace>at MapVariantPackedPreparationPlayModeTests+&lt;MoveActualUnit&gt;d__4.MoveNext () [0x0065f] in /Users/farhad/Projects/WarlineCapture/Assets/Tests/MapPreparationNative/MapVariantPackedPreparationPlayModeTests.cs:336
+at UnityEngine.TestTools.TestEnumerator+&lt;Execute&gt;d__7.MoveNext () [0x0003a] in ./Library/PackageCache/com.unity.test-framework@1405238725ab/UnityEngine.TestRunner/NUnitExtensions/Attributes/TestEnumerator.cs:44
+</stack-trace></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Infantry seconds=8.71 distance=163.4
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Hauler seconds=5.69 distance=167.6
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RefineryGate unit=Armor seconds=5.30 distance=167.9
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Infantry seconds=9.01 distance=170.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Hauler seconds=80.00 distance=1337.2
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=DepotExit unit=Armor seconds=62.08 distance=1196.7
+[MapPreparationRoute] result=Passed map=722770eae00961d6a82cea22081ceaa42839dd17f4c80437bf28647b054615ab route=RidgeAccess unit=Infantry seconds=3.15 distance=58.6
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+Sending player alive message back to editor.
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.MediumCandidates_PackedLoadReloadDamageAndActualUnitRoutes result=Failed message=  RidgeAccess Hauler did not reach destination; traveled=60.69128 final=float3(761.1193f, 0.03f, 546.3793f) goal=int2(758, 548)
+  String lengths are both 6. Strings differ at index 0.
+  Expected: "Passed"
+  But was:  "Failed"
+  -----------^
+
+</output></test-case><test-case id="1003" name="PreparedVariants_SwitchWithExistingDenseCity" fullname="MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity" methodname="PreparedVariants_SwitchWithExistingDenseCity" classname="MapVariantPackedPreparationPlayModeTests" runstate="Runnable" seed="1373780210" result="Failed" start-time="2026-09-29 16:47:24Z" end-time="2026-09-29 16:47:25Z" duration="0.866495" asserts="0">Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+<properties><property name="_JOINTYPE" value="UnityCombinatorial"></property><property name="Timeout" value="600000"></property><property name="retryIteration" value="0"></property><property name="repeatIteration" value="0"></property></properties><failure>Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+<message>Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect</message><stack-trace>
+</stack-trace></failure><output>[MapPreparationNativeNUnit] testStarted=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests.PreparedVariants_SwitchWithExistingDenseCity result=Failed message=Unhandled log message: '[Error] A BatchDrawCommand was submitted with an invalid Batch, Mesh, or Material ID. This is not supported when rendering with a BatchRendererGroup or anything based on it like GPU Resident Drawer or Entities Graphics.
+Shader pass: &lt;unknown&gt;, BatchDrawCommand index: 4, (index in range: 4), BatchDrawRange index: 0 MaterialID: 15 ("&lt;null&gt;"), MeshID: 188 ("&lt;null&gt;"), BatchID: 2.'. Use UnityEngine.TestTools.LogAssert.Expect
+[MapPreparationNativeNUnit] testFinished=MapVariantPackedPreparationPlayModeTests result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=/Users/farhad/Projects/WarlineCapture/build/MapVariantPreparedPlayer/WarlinePreparation.app/PlayerWithTests/PlayerWithTests.app/Contents/Resources/Data/Managed/Game.Tests.MapPreparation.Native.dll result=Failed(Child) message=One or more child tests had errors
+[MapPreparationNativeNUnit] testFinished=WarlineCapture result=Failed(Child) message=One or more child tests had errors
+</output></test-case></test-suite></test-suite></test-suite>
+</test-run>

@@ -1,0 +1,28 @@
+{
+  "publishedCRC": "1788a72e",
+  "nativeLoadedCRC": "eec9e225",
+  "cache": [
+    {
+      "cachedFile": "-1237484625.bin",
+      "bytes": 3057,
+      "SHA256": "50b5458dfd4f5b2c503f00e7aa970372475588ff1eb07e71e5ae663aa95ebd9f",
+      "oldCRC_eec9e225_count": 0,
+      "currentCRC_1788a72e_count": 0
+    },
+    {
+      "cachedFile": "779547259.bin",
+      "bytes": 3329,
+      "SHA256": "a000b22866c046fea6ce6cabb555336950d627cd85b503c59e6b0fabd726d1cb",
+      "oldCRC_eec9e225_count": 1,
+      "currentCRC_1788a72e_count": 0
+    },
+    {
+      "cachedFile": "1727679906.bin",
+      "bytes": 286824,
+      "SHA256": "6c6ca51da886f38accec8423aeb0504fad55109ce449401e67252924b67cb7da",
+      "oldCRC_eec9e225_count": 0,
+      "currentCRC_1788a72e_count": 0
+    }
+  ],
+  "cause": "ContentCatalogProvider.DisableCatalogUpdateOnStart prefers cached catalogs even when published hash changed. Exact catalog publication bytes contain current CRC; old cached bytes contain rejected CRC."
+}

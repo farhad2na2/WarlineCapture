@@ -42,7 +42,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "!WARLINE_MAP_NATIVE_TEST_PLAYER"
+    ],
     "versionDefines": [],
     "optionalUnityReferences": [
         "TestAssemblies"

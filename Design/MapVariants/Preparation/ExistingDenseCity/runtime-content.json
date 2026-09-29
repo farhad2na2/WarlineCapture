@@ -1,0 +1,23 @@
+{
+    "unitFixtureSceneGuid": "",
+    "variant": "ExistingDenseCity",
+    "mapId": "opmap.skirmish.desert_base_01",
+    "semanticHash": "2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "c00140f2e94a04c3084c8dcb0c18cbd0",
+    "entityContentPath": "Library/MapVariantPreparedContent/ExistingDenseCity/Entities",
+    "entityCatalogPath": "Library/MapVariantPreparedContent/ExistingDenseCity/Entities/ContentArchives/archive_dependencies.bin",
+    "entityCatalogHash": "29d0455e014c7e661b0a03aeb1a152cba8d02d0ffba7b8515caedcef3c1cfacd",
+    "definitionPath": "Assets/Game/Configs/OperationMaps/Candidates/OperationMap_Compatibility_DesertBase01_DenseCity_EntityScene_Candidate.asset",
+    "definitionGuid": "cbfc2f62e3142413485019bd83197539",
+    "bindingPath": "Assets/Game/GeneratedOperationMaps/RuntimeBinding/opmap.skirmish.desert_base_01/Candidates/opmap_skirmish_desert_base_01_dense_city_entity_scene_runtime.unity",
+    "bindingGuid": "dad0bd13fb20943dfb2f881cbe225f05",
+    "status": "Read-only repack of existing map; switching acceptance pending",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/ExistingDenseCity/Addressables/catalog.bin",
+    "addressablesCatalogHash": "10ba41c12796684c12723e55a4245ed96bb0e27de504edc612c002e841d1cb8d",
+    "definitionAddress": "map-variant-candidate/ExistingDenseCity/definition",
+    "entityFileSetHash": "",
+    "definitionHash": "68a631ca108e01c9a17839d2359e409226cdb009193f68ba910fa6f0f0a082b8",
+    "bindingHash": "6fe0dd7084d323112cbfa2118126ca1d3605a59c67ccdffd3f5281855ea0f984",
+    "entityContentBytes": 0
+}

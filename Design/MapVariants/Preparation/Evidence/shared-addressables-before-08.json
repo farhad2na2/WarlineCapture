@@ -1,0 +1,19 @@
+{
+  "note": "Android restored by failed 07 transaction; OSX scratch output from 07 is preserved for recovery. Full aa root is protected from 08 onward.",
+  "files": {
+    "OSX/settings.json": "4c6077ed7fd5f99127ad4504057e5f181dcef192ed524619a1cf3b81396f180a",
+    "OSX/catalog.bin": "bb03c154ea3ebe64c1c852910313f1e597c9287d4feff16ae0e2467c8eeab96e",
+    "OSX/catalog.hash": "543eba2615d14bedc7f8ef73cb965451753f2b0f844c33da3d5e01f03e44f585",
+    "OSX/AddressablesLink/link.xml": "0904cd4ec61d986a8e14d5ad24509215ef7c17db7e750b28819a74ff75cad1b6",
+    "Android/settings.json": "6650e5e54c54d2cc343af3bfc5eb92a7732e947d195c20c23c7f28aa21dd02f1",
+    "Android/catalog.bin": "31dc6e7ee216c676219de9bcf979de74def8090116132aaac582495d75949ff6",
+    "Android/catalog.hash": "48f202b17d10903b898c8485b8cf037554a7bc69407367a57ed62aebce88c3c4",
+    "Android/Android/db2c72ce54bf07206a6acda7d8c90cf6_unitybuiltinassets_b2bebf3b684d8814508babf950eb2939.bundle": "739aafe7e0cf26f4906436f8d4149baf86b6cb299f2c414d23bf76366a61696b",
+    "Android/Android/055ad682c7304c206725f54a6bffb263.bundle": "e11e8793c0426ae6cc6e3b8f6b52a99fa8179acad4b53a4bcb5c5725c24f0934",
+    "Android/Android/5673be990d8a2ba7e19c7b52fd24c761.bundle": "97cb713752dc8b2ae72608d77bcb869f63f577450bb8b1c1f43970423eb75307",
+    "Android/Android/firstlaunchnarrativepanels_assets_all_c2f0f84a2b691f387152b66f966908a9.bundle": "421d1dc8c6cc23d4c2a587782b554e4a412491c93f6c9a78d59cad91f9c94a1d",
+    "Android/Android/beb3ed5c8b6068519228928981dce8c2.bundle": "6eb322f7be94e7d871802e9018857b8dc23d1b607f7d13f36a30aa9191353f48",
+    "Android/Android/db2c72ce54bf07206a6acda7d8c90cf6_monoscripts_af8c5e7c0046b096a903343571ac8b48.bundle": "d3f60f7dfed7940889611536085dd2d997466fc3e02ab8081f7aa8dfd0817865",
+    "Android/AddressablesLink/link.xml": "390657bf144d41e6d67df023ab5aee225dfef436c822d068c245a02a7eab8168"
+  }
+}

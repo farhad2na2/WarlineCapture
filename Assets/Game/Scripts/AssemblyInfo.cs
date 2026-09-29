@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("Game.UI.Runtime")]
 [assembly: InternalsVisibleTo("Game.Tests.Editor")]
 [assembly: InternalsVisibleTo("Game.Tests.PlayMode")]
+[assembly: InternalsVisibleTo("Game.Tests.MapPreparation.Native")]
 
 namespace Game.Runtime
 {

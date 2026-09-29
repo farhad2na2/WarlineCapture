@@ -69,7 +69,7 @@ namespace Game.Authoring
 
             if (role == OperationMapEntityPresentationRole.GameplayBuildings &&
                 (expectedGameplayBuildingCount <= 0 ||
-                 expectedGameplayVehicleCount <= 0 ||
+                 expectedGameplayVehicleCount < 0 ||
                  expectedRenderOnlyCount <= 0 ||
                  expectedGeneratedIdentityCount < 0))
             {
@@ -81,7 +81,7 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 1)]
+        [BakingVersion("WarlineCapture", 2)]
         private sealed class RootBaker : Baker<OperationMapEntityPresentationRootAuthoring>
         {
             public override void Bake(OperationMapEntityPresentationRootAuthoring authoring)

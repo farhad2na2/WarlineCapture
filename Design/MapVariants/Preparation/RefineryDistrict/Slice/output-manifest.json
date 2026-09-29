@@ -1,0 +1,419 @@
+{
+    "mapId": "opmap.skirmish.refinery_preparation_slice",
+    "sourceInventoryHash": "991921cbbaa27b890dbab216e8150881fb16f49da19fb740e3f5b902ce624141",
+    "scenePath": "Assets/Game/Scenes/OperationMaps/Variants/RefineryDistrict/PreparationSlice.unity",
+    "sceneGuid": "dead3d7f7f5ed49f0a6cb240cbc26717",
+    "sceneHash": "13cb8c057abd5a2eba98a757c04dec9c39b340864e01be35df14372d7920e305",
+    "contentHash": "9714f7dfcf6d0bcd1991052a8099287973c90b3cdde1d58d9bdd11001bbb725f",
+    "status": "In progress; authoring fixture only; warehouse/industrial mapping and packed runtime pending",
+    "owners": [
+        {
+            "placementKey": "RefineryDistrict:11972ded5c2edadc7637c6df235c2b9eb3df81218787ea3bc4c4b53c02e831bd",
+            "stableId": "densecity.130a4e2a6f34c9851eb99b86f421659ffe56f7f4d695ef58b1d384a74c002b51",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 558.5026245117188,
+                "y": -0.05999999865889549,
+                "z": 323.7420349121094
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:1d252cab5fdfecb728edabbb4c43be4a612c842de145581b2ae24f60ffa469cb",
+            "stableId": "densecity.247180381851785f6fc49fbc95583999be039968d510d0bf80e1e4935b8cbdc5",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 587.67138671875,
+                "y": 0.0,
+                "z": 318.9125671386719
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:1dad363301e345ae55b77a6d13e447e75aa25941d03571afd8996b3d44482d2b",
+            "stableId": "densecity.0081b57ddc6b1b763197f8e25038f2d69a680567d1dd5c78e0c940766839b1e6",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 573.039306640625,
+                "y": 0.0,
+                "z": 333.5600891113281
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:2c4ce7a6346453735bbc4d09651e2670d8fd8945b799142481dc40c016ac14c7",
+            "stableId": "densecity.542d974988280f952bedd2cadaf6c16135b97e3604ac0419be3da32265eefb84",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_01.prefab",
+            "sourcePrefabGuid": "7e96d234022e54526ae11a3fee25daf5",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/7e96d234022e54526ae11a3fee25daf5.prefab",
+            "destroyedPrefabGuid": "43ac1b921f1f940a5a3e25891a0d64b2",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 587.7009887695313,
+                "y": 0.0,
+                "z": 326.5483093261719
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:323d49183e79301d537927b259c62dad56e5a0dc8aca4c16945d42f807c8ad67",
+            "stableId": "densecity.df9e6c34303f937db7dc5b9e6d50d0b08b57a4ff2fb663ce3ea346a34514666b",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_05.prefab",
+            "sourcePrefabGuid": "557b984869eef454a95a544168e3dbfa",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/557b984869eef454a95a544168e3dbfa.prefab",
+            "destroyedPrefabGuid": "a58a45593706d4d67b8ee1d90f345c8d",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 644.7179565429688,
+                "y": 0.0,
+                "z": 375.0487365722656
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:32686a8e7972561e9856ba99051b387687f7dccc57524254bc480be52c327e04",
+            "stableId": "densecity.14e2cb8b4556451df976f4240c57ac510ef01000a7e457fa052c852296ce0f6a",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 581.9110717773438,
+                "y": -0.05999999865889549,
+                "z": 305.429443359375
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:36713a6894a09648b0799d9fb05394317b8b07c42ed7ab3234349357f071ca5e",
+            "stableId": "densecity.cae5f6409a98dea6c0b94cb9c02feed80a4f3286dead45eb789e48002476ce42",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 594.1586303710938,
+                "y": -0.05999999865889549,
+                "z": 376.6221618652344
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:3792ab316fb2581349f883f364e18756cf038aa0a94f92cd27871a3456ea6f0a",
+            "stableId": "densecity.85c20f181e5d2a362d3c0d41c1f3db38a90dfa373262da2a487c02d70bc0d1f9",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_04.prefab",
+            "sourcePrefabGuid": "163683c5b8f974408977e22591383c22",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/163683c5b8f974408977e22591383c22.prefab",
+            "destroyedPrefabGuid": "617f686a8e4a444df8a81babbe487e9e",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 645.238037109375,
+                "y": 0.0,
+                "z": 333.59442138671877
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:3b6c48a3427b471f69e58c33fce01a943fb3b891ced928589c86858488b7c29c",
+            "stableId": "densecity.69ec1cb36f7569c50e9a5bd6d05b02b877546e37b62d8d6943854c3bb3f9ba5b",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 621.9981079101563,
+                "y": 0.0,
+                "z": 356.4399108886719
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:428e495452ee7965ffc47d18b5037bd41471f47fff72e99807e55b73556bbef4",
+            "stableId": "densecity.2eb7b219bf2c722fb58b259fef8ca2a40d5c8ddaedb52109fb767fa0be43dab8",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_03.prefab",
+            "sourcePrefabGuid": "98105b554051a49c087228af3e9ca7b5",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/98105b554051a49c087228af3e9ca7b5.prefab",
+            "destroyedPrefabGuid": "0ea535095f90d45af9f971aa4af0082f",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 646.7711181640625,
+                "y": 0.0,
+                "z": 356.3233642578125
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:47d00956c352aa885d5f312a5846318ffb09773ddeb97f65c73b3e5a51af67fd",
+            "stableId": "densecity.0ed077fab9d9e8fe80921786941c154b15248c88d668da346904e0b63064f3c1",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 654.2882080078125,
+                "y": -0.05999999865889549,
+                "z": 319.64599609375
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:4c6660f60956964bc1580d753639f487fbbd89149e4456d759814413e76c5404",
+            "stableId": "densecity.a42d08b748e22946c80ad5532485e07c41a540481e0591c5bf5e51de111f2fcb",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 601.2587280273438,
+                "y": -0.05999999865889549,
+                "z": 376.6221618652344
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:60f87552c3147e2da52395c80b22edeed4839c5c787459b1da1449016a74505c",
+            "stableId": "densecity.ea301090e74826eac2ba77abe6dc2ae4867bf40ac1c741436a4f33d2c947fba6",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_04.prefab",
+            "sourcePrefabGuid": "163683c5b8f974408977e22591383c22",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/163683c5b8f974408977e22591383c22.prefab",
+            "destroyedPrefabGuid": "617f686a8e4a444df8a81babbe487e9e",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 594.1004028320313,
+                "y": 0.0,
+                "z": 302.1282043457031
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:63ed868467ea56a3a7e893779fa016afa37aa0e3c2489252b40c750a39b3be2a",
+            "stableId": "densecity.5cae325aa22494152054a1d107dcbbe22227be9d1b9b39897e75d99df4efc05f",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 619.0970458984375,
+                "y": 0.0,
+                "z": 306.19256591796877
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:6941e3ba5263c80ea142c0b85aa259457beab4eaf76fa71b2aa1b93e717cde5a",
+            "stableId": "densecity.c2826d5be73fc37ede3094fbee3a3b8b849b83ff67e6abd59bfe2477d970cdb9",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_01.prefab",
+            "sourcePrefabGuid": "7e96d234022e54526ae11a3fee25daf5",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/7e96d234022e54526ae11a3fee25daf5.prefab",
+            "destroyedPrefabGuid": "43ac1b921f1f940a5a3e25891a0d64b2",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 637.7294921875,
+                "y": 0.0,
+                "z": 317.224853515625
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:8ad22406f13027590a8f48058ee01b0dd82bd766c0d6ab44f16ceea6d5931a77",
+            "stableId": "densecity.e0a8dc9401b68c4c4fbeec2fc95f123d8f035d2e6192a70ab1125ea18a19c322",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_07.prefab",
+            "sourcePrefabGuid": "c07a4ea7418664c24ad4c16fd7f26424",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c07a4ea7418664c24ad4c16fd7f26424.prefab",
+            "destroyedPrefabGuid": "54107cf6505034d6081e146b626b7fe5",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 646.15625,
+                "y": -0.05999999865889549,
+                "z": 323.620361328125
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:921f3b501759657c230ad243cb8d619bb655f186b8792509e71f79e845c629f3",
+            "stableId": "densecity.f4f982a0fa35a3128911d058869a55880d52e7d4b678caa34f84f7fc19395752",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_05.prefab",
+            "sourcePrefabGuid": "557b984869eef454a95a544168e3dbfa",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/557b984869eef454a95a544168e3dbfa.prefab",
+            "destroyedPrefabGuid": "a58a45593706d4d67b8ee1d90f345c8d",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 601.3968505859375,
+                "y": 0.0,
+                "z": 318.2641296386719
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:9af535f9220afff78e04640bda67d6820dd68f8b10ab754f03400b997e867ae0",
+            "stableId": "densecity.1c2cca7652e6b9dfb2947b871923650d2da9201ee3ca73fbab605d236766e192",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 563.2245483398438,
+                "y": 0.0,
+                "z": 308.0279846191406
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:c0f86a28ea3dc7bcdf5b3aa040d1d4b1e9b98540d9f202c5bb816bcae65c89b8",
+            "stableId": "densecity.7717e4ccb1c570b3348b44df9d442de01e80ef4b76966e58c404383d6fab1a0f",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_05.prefab",
+            "sourcePrefabGuid": "557b984869eef454a95a544168e3dbfa",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/557b984869eef454a95a544168e3dbfa.prefab",
+            "destroyedPrefabGuid": "a58a45593706d4d67b8ee1d90f345c8d",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 571.388427734375,
+                "y": 0.0,
+                "z": 308.3663635253906
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:c8514685e8322dea34c53bff79712fcafff829962bc9bf98b60d51976af60272",
+            "stableId": "densecity.aaf16409af85cc8deefb0532320288b4dc1af1e58a4e3975b523d6e122b75a77",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_02.prefab",
+            "sourcePrefabGuid": "f17185abba3e947a0a3b7f2170c1af75",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/f17185abba3e947a0a3b7f2170c1af75.prefab",
+            "destroyedPrefabGuid": "d7f62cf44c02642969de79a759d35285",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 610.356201171875,
+                "y": 0.0,
+                "z": 373.5600891113281
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:dc7eb2daf0e24debacd42bfa71bb3ec2440029a6a2cdada1f384a878aa2d6506",
+            "stableId": "densecity.c7fbc40f8273afd26643558bf873ea544d34cd7f1475bb28493832ed6b074013",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_06.prefab",
+            "sourcePrefabGuid": "c4196f14c6e6e4b739aaf457686e2523",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c4196f14c6e6e4b739aaf457686e2523.prefab",
+            "destroyedPrefabGuid": "93e613c1f875a49c8a2a6497c7cade9f",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 571.4801025390625,
+                "y": 0.0,
+                "z": 359.7112731933594
+            },
+            "originalRemoved": true,
+            "intactRenderers": 2,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:ecfd4696d799465605854943bb244a21fbbbb38a5aeaafdceffca772840f397e",
+            "stableId": "densecity.ce3970673652e6b8e837082de893a3ae06d6635acfe34bcb22ef926a6e408d2a",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_06.prefab",
+            "sourcePrefabGuid": "c4196f14c6e6e4b739aaf457686e2523",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c4196f14c6e6e4b739aaf457686e2523.prefab",
+            "destroyedPrefabGuid": "93e613c1f875a49c8a2a6497c7cade9f",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 554.501220703125,
+                "y": 0.0,
+                "z": 330.2887268066406
+            },
+            "originalRemoved": true,
+            "intactRenderers": 2,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:f25940dbbecd155a5908c3d48fa5e7b263edd15879497c9f6ee21b2557b43e97",
+            "stableId": "densecity.b176dc7bbff96218b4ced6438567f36889f00e2d4048e2d5deb2b0aa5b128f94",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_06.prefab",
+            "sourcePrefabGuid": "c4196f14c6e6e4b739aaf457686e2523",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/c4196f14c6e6e4b739aaf457686e2523.prefab",
+            "destroyedPrefabGuid": "93e613c1f875a49c8a2a6497c7cade9f",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 630.1830444335938,
+                "y": 0.0,
+                "z": 370.2887268066406
+            },
+            "originalRemoved": true,
+            "intactRenderers": 2,
+            "destroyedRenderers": 1
+        },
+        {
+            "placementKey": "RefineryDistrict:f49af1d399d0a2463585a573624b615fae3ee7678186c48cfdea7a83cd251cb1",
+            "stableId": "densecity.06329b1f105718876d13081f3d6b06ca047a509748319943ce79b5bb8c5f0fe8",
+            "sourcePrefab": "Assets/Game/Prefabs/Environment/City/House_01.prefab",
+            "sourcePrefabGuid": "7e96d234022e54526ae11a3fee25daf5",
+            "destroyedPrefab": "Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Slice/Destroyed/7e96d234022e54526ae11a3fee25daf5.prefab",
+            "destroyedPrefabGuid": "43ac1b921f1f940a5a3e25891a0d64b2",
+            "attachmentPolicy": "All source Model descendants follow intact state; matching source Destroyed descendants follow destroyed state",
+            "ownerPosition": {
+                "x": 610.7879028320313,
+                "y": 0.0,
+                "z": 326.5483093261719
+            },
+            "originalRemoved": true,
+            "intactRenderers": 1,
+            "destroyedRenderers": 1
+        }
+    ]
+}

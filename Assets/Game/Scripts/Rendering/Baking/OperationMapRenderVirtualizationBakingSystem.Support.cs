@@ -9,6 +9,7 @@ namespace Game.Rendering
     public partial struct OperationMapRenderVirtualizationBakingSystem
     {
         private EntityQuery _databaseQuery;
+        private EntityQuery _strippingRequestQuery;
         private EntityQuery _sourceRowQuery;
         private EntityQuery _additionalRenderQuery;
         private EntityQuery _buildingOwnerQuery;
@@ -16,6 +17,8 @@ namespace Game.Rendering
 
         public void OnCreate(ref SystemState state)
         {
+            _strippingRequestQuery = state.GetEntityQuery(
+                ComponentType.ReadOnly<OperationMapRenderSourceStrippingRequestBakingComponent>());
             _databaseQuery = state.GetEntityQuery(
                 ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
                 ComponentType.ReadOnly<OperationMapRenderEligibleSourceRowBakingComponent>());

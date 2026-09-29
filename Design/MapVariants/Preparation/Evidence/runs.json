@@ -1,0 +1,113 @@
+{
+  "runs": [
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/inventory-01.log",
+      "originalLogPath": "/private/tmp/map-preparation-inventory-20260929-01.log",
+      "logSha256": "56bea4d0ba6d3a25ea3b390a83c8f980f5989526f196f8139bd3b37f469c8b38",
+      "mapId": "AllFourInventory",
+      "candidateContentHash": null,
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-inventory-20260929-01.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantPreparationInventory.ExportAll",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationInventory] result=Passed maps=4",
+      "observedPassMarkers": [
+        "[MapPreparationInventory] result=Passed maps=4 protectedSources=Unchanged scope=InventoryOnly"
+      ],
+      "result": "Passed",
+      "codeIdentity": "Exact historical dirty source snapshot not captured; see log and starting state"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/slice-01-failed.log",
+      "originalLogPath": "/private/tmp/map-preparation-slice-20260929-01.log",
+      "logSha256": "783f9ae2358a8b978a1e931cf97a6dc6525def98d577bb61b63f0b9a93e9a0ea",
+      "mapId": "RefineryDistrict",
+      "candidateContentHash": null,
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-slice-20260929-01.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantRefineryPreparationSlice.Build",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationSlice] result=Passed",
+      "observedPassMarkers": [],
+      "result": "Failed gate",
+      "codeIdentity": "Exact historical dirty source snapshot not captured; see log and starting state"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/validation-01-failed.log",
+      "originalLogPath": "/private/tmp/map-preparation-validation-20260929-01.log",
+      "logSha256": "7363659fae4f5467caa51f8fc12cdab579af30d962b44d32fe4be857d164ef37",
+      "mapId": "RefineryDistrict",
+      "candidateContentHash": "1911c3744b7b8e3f6fdff4a80a95f10461c90fbe3d7f7f306bb87b79fd579f9c",
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-validation-20260929-01.log -- -quit -executeMethod MapVariantPreparationValidation.Run",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationValidation] result=Passed",
+      "observedPassMarkers": [],
+      "result": "Failed gate",
+      "codeIdentity": "Exact historical dirty source snapshot not captured; see log and starting state"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/validation-02-failed.log",
+      "originalLogPath": "/private/tmp/map-preparation-validation-20260929-02.log",
+      "logSha256": "bd426b49a844680f4de9350ca8cc4b20cb1469150163715fc1868ed1fda952eb",
+      "mapId": "RefineryDistrict",
+      "candidateContentHash": "1911c3744b7b8e3f6fdff4a80a95f10461c90fbe3d7f7f306bb87b79fd579f9c",
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-validation-20260929-02.log -- -quit -executeMethod MapVariantPreparationTests.RunFocusedValidation",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationValidation] result=Passed",
+      "observedPassMarkers": [],
+      "result": "Failed gate",
+      "codeIdentity": "Exact historical dirty source snapshot not captured; see log and starting state"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/validation-03.log",
+      "originalLogPath": "/private/tmp/map-preparation-validation-20260929-03.log",
+      "logSha256": "314a80a4fdb295618d68b2db86b50da807c92d1ea7ed04ee142a5f22e0d8db0f",
+      "mapId": "RefineryDistrict",
+      "candidateContentHash": "1911c3744b7b8e3f6fdff4a80a95f10461c90fbe3d7f7f306bb87b79fd579f9c",
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-validation-20260929-03.log -- -quit -executeMethod MapVariantPreparationTests.RunFocusedValidation",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationValidation] result=Passed checks=8",
+      "observedPassMarkers": [
+        "[MapPreparationValidation] result=Passed checks=8 existingSourceRegressions=5 scope=InventoryAndBakedSlice"
+      ],
+      "result": "Passed",
+      "codeIdentity": "code-identity.json: tested core/test hashes retained; generator replay code changed subsequently"
+    },
+    {
+      "logPath": "Design/MapVariants/Preparation/Evidence/slice-02.log",
+      "originalLogPath": "/private/tmp/map-preparation-slice-20260929-02.log",
+      "logSha256": "da0554bb1ab6b8c9444ed0be908b113725d77b789fa48f99f85d9c55ae8c394b",
+      "mapId": "RefineryDistrict",
+      "candidateContentHash": "9714f7dfcf6d0bcd1991052a8099287973c90b3cdde1d58d9bdd11001bbb725f",
+      "revision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+      "dirty": true,
+      "target": "macOS Editor 6000.5.2f1 GUI licensing; not a packed player or device",
+      "timeoutSeconds": 900,
+      "command": "rtk proxy Tools/CI/invoke_unity_macos.sh --timeout 900 --log /private/tmp/map-preparation-slice-20260929-02.log -- -quit -executeMethod Game.Editor.MapVariants.MapVariantRefineryPreparationSlice.Build",
+      "wrapperExitStatus": 0,
+      "expectedPassMarker": "[MapPreparationSlice] result=Passed",
+      "observedPassMarkers": [
+        "[MapPreparationSlice] result=Passed map=RefineryDistrict owners=24 duplicateOriginals=0 contentHash=9714f7dfcf6d0bcd1991052a8099287973c90b3cdde1d58d9bdd11001bbb725f deterministicOwnerReplay=Passed scope=AuthoringFixture"
+      ],
+      "result": "Passed",
+      "codeIdentity": "code-identity.json"
+    }
+  ],
+  "rule": "Wrapper exit zero alone is insufficient; missing expected pass marker fails."
+}

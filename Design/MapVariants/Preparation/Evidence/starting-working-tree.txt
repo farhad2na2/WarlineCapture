@@ -1,0 +1,65 @@
+ M "Assets/Game/Art/UI/Fonts/NotoSansArabic/NotoSansArabic-Narrative SDF.asset"
+ M Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs
+ M Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs
+ M Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs
+ M Assets/Tests/Editor/M02EstablishBaseResourceTests.cs
+ M "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset"
+ M Design/Campaign_Mission_High_Level_Design_Catalog.md
+ M Design/Level_And_Mission_Content_Plan.md
+ M Design/Roadmap/Operations/ACCEPTANCE.md
+ M Design/Roadmap/Operations/DELIVERY.md
+ M Design/Roadmap/Operations/MISSION_IMPLEMENTATION.md
+ M Design/Roadmap/Operations/Missions/D01_old_quarter.md
+ M Design/Roadmap/Operations/Missions/D02_civic_center.md
+ M Design/Roadmap/Operations/Missions/D03_industrial_belt.md
+ M Design/Roadmap/Operations/Missions/D04_river_crossing.md
+ M Design/Roadmap/Operations/Missions/D05_highland_approach.md
+ M Design/Roadmap/Operations/Missions/D06_airport_perimeter.md
+ M Design/Roadmap/Operations/Missions/README.md
+ M Design/Roadmap/Operations/PLAN.md
+ M Design/Roadmap/Skirmish_Expansion/ACCEPTANCE.md
+ M Design/Roadmap/Skirmish_Expansion/AGENT_WORK_PACKAGES.md
+ M Design/Roadmap/Skirmish_Expansion/BATTLE_CATALOG.md
+ M Design/Roadmap/Skirmish_Expansion/DELIVERY.md
+ M Design/Roadmap/Skirmish_Expansion/IMPLEMENTATION_HANDOFF.md
+ M Design/Roadmap/Skirmish_Expansion/MAPS.md
+ M Design/Roadmap/Skirmish_Expansion/MAP_IMPLEMENTATION.md
+ M Design/Roadmap/Skirmish_Expansion/PLAN.md
+ M Design/Roadmap/Skirmish_Expansion/Tools/generate_handoff.py
+ M Design/SagaChapters/Saga_Chapter04_Air_And_Armor.md
+ M Design/SagaChapters/Saga_Chapter05_Citywide_Command.md
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-055617-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-060735-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-061628-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-062729-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-063738-split-front-en/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-064207-split-front-en-smoke/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-064944-split-front-en-smoke/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/abf787acffee4059b05a7ffd528c3adc/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-briefing.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-campaign.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront-c-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Comms-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Comms-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-a-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-b-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-comic-CH04M03_SplitFront_Debrief-c-16x9.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-1.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-2.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud-aria-3.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-hud.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-launcher-preview-cancel.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-launcher-safe-confirm.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-result.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-return.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-optional.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-safe-preview.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-065647-split-front-en-smoke/en-support-smoke-live.png
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-070206-split-front-fa-IR/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-070855-split-front-fa-IR/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-073731-split-front-en-smoke/3d13e152a09f4d06a301e9b1c781778e/
+?? Design/AgentReports/CH04M03SplitFront/Evidence/20260929-074356-split-front-fa-IR/4ca796d154494382bf31dff9e6298a2b/
+?? Design/MapVariants/FUTURE_CONTENT_MAP_PLAN.md
+?? Design/MapVariants/Preparation/

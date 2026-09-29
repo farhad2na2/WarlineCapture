@@ -9,6 +9,9 @@ namespace Game.Editor.MapVariants
     internal sealed partial class MapVariantBuilder
     {
         public const string GeneratedRoot = "Assets/Game/Art/MapPrototypes/Variants";
+        // Inventory uses transient geometry and may only read pre-existing shared art.
+        // Set/reset by the preparation transaction in a finally block.
+        internal static bool InventoryOnly { get; set; }
         private const string GroundMaterialPath = "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
         private const string GroundUvSourcePrefab = "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Square_01.prefab";
         private const string VolumeProfilePath = "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
@@ -23,9 +26,10 @@ namespace Game.Editor.MapVariants
             Vector2 uv = ResolveGroundUv();
             string folder = $"{GeneratedFolder}/Ground";
             // A coarser grid produces fewer chunks, so meshes from an earlier build are removed first.
-            if (AssetDatabase.IsValidFolder(folder))
+            if (!InventoryOnly && AssetDatabase.IsValidFolder(folder))
                 AssetDatabase.DeleteAsset(folder);
-            EnsureFolder(folder);
+            if (!InventoryOnly)
+                EnsureFolder(folder);
 
             int chunks = 0;
             for (int z = 0; z < Height.CellsZ; z += GroundChunkCells)
@@ -34,8 +38,11 @@ namespace Game.Editor.MapVariants
                 string name = $"Ground_{x / GroundChunkCells}_{z / GroundChunkCells}";
                 Mesh mesh = Height.BuildChunkMesh(x, z, GroundChunkCells, GroundChunkCells, uv, name);
                 string path = $"{folder}/{name}.asset";
-                AssetDatabase.DeleteAsset(path);
-                AssetDatabase.CreateAsset(mesh, path);
+                if (!InventoryOnly)
+                {
+                    AssetDatabase.DeleteAsset(path);
+                    AssetDatabase.CreateAsset(mesh, path);
+                }
                 var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
                 go.transform.SetParent(Layer(MapVariantLayer.Ground), false);
                 go.GetComponent<MeshFilter>().sharedMesh = mesh;
@@ -117,6 +124,8 @@ namespace Game.Editor.MapVariants
             string materialPath = $"{folder}/{Path.GetFileNameWithoutExtension(sourceMaterialPath)}_{suffix}.mat";
             if (AssetDatabase.LoadAssetAtPath<Material>(materialPath) != null)
                 return materialPath;
+            if (InventoryOnly)
+                throw new InvalidOperationException($"[MapPreparation] Missing shared reference material: {materialPath}. Inventory cannot generate protected prototype art.");
 
             var source = AssetDatabase.LoadAssetAtPath<Material>(sourceMaterialPath) ??
                          throw new InvalidOperationException($"[MapVariants] Missing material {sourceMaterialPath}.");
@@ -166,7 +175,7 @@ namespace Game.Editor.MapVariants
 
         public static string ProjectRoot => Path.GetDirectoryName(Application.dataPath);
 
-        private static Vector2 ResolveGroundUv()
+        internal static Vector2 ResolveGroundUv()
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GroundUvSourcePrefab);
             MeshFilter filter = prefab != null ? prefab.GetComponentInChildren<MeshFilter>() : null;

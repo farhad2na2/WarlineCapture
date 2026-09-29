@@ -1,0 +1,19 @@
+{
+  "startingRevision": "5a1e5a15003cd18294d311b24e29aadf7b7e7a5a",
+  "revision": "52334a3bd4833c7994603c77e1188f085833bea9",
+  "dirty": true,
+  "sourceHashes": {
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs": "57800f9f768462150ac1ecaa361a7ba50426a3f66c17a66a3074e737acf7c806",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs": "b267ab63afd1e2b0b8bbb9fbcd32724b82b7a3b4740757aa15042b572afbfd0b",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparationSchema.cs": "7bf1fcf5fcf3ddf7a5c57a532150ed3b535adf817353be59995b8abe721e1eff",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantPreparationInventory.cs": "e4025db2e5f8da318637f8de77671429c74b44bd54d38cdc225e67e8f31ec228",
+    "Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantRefineryPreparationSlice.cs": "c0205787743fe5faf0ea3eec755dd10acf47e4a71c1e9807e63d000c2013ae91",
+    "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs": "e644de1fc9aaacc5d17821be065477481f887b04e5adb982260c3ed48fb0496a",
+    "Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.Support.cs": "188677d450f9ece6784d4fbfa45c2140499b2110dec99aa2d42d1ef35afdc7bc",
+    "Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs": "20b0d61bdc0b1354c6ad9a7cc2f36ec015cddac70d0410a439ad12e9dedbf70b",
+    "Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs": "33f021c4dcc89f19c51b218548eed22525173253cc1a63aba614bbbac6faea3c",
+    "Assets/Tests/Editor/MapVariantPreparationTests.cs": "d181cea3b96e586af60185ca2b569d358f3117ed9ed0a457ee23a2b68aa52ec9",
+    "Assets/Tests/Editor/MapVariantPreparationValidation.cs": "51dc08101397a5b94f4000dec9621310d02bdc28a7a4661d0bbc7dee687830eb"
+  },
+  "sourceSetHash": "b4fae004096700b0524fd49c06ab17787d4b2c2d0f2f4fa1baa22da5c55e7972"
+}

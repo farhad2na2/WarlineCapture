@@ -1,0 +1,180 @@
+diff --git a/.gitattributes b/.gitattributes
+index 9ed16a7af..be0d80703 100644
+--- a/.gitattributes
++++ b/.gitattributes
+@@ -8,3 +8,5 @@ Design/AgentReports/2026-07-21_dense_city_phase0a_transform_parity.json filter=l
+ Assets/Game/Scenes/MapPrototypes/Variants/*.unity filter=lfs diff=lfs merge=lfs -text
+ Assets/Game/Art/MapPrototypes/Variants/*/Ground/*.asset filter=lfs diff=lfs merge=lfs -text
+ Design/MapVariants/**/*.png filter=lfs diff=lfs merge=lfs -text
++Assets/Game/GeneratedOperationMaps/Variants/**/Ground.asset filter=lfs diff=lfs merge=lfs -text
++Design/MapVariants/Preparation/*/inventory.json filter=lfs diff=lfs merge=lfs -text
+diff --git a/Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs b/Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs
+index a6cd9ea6c..106f36bec 100644
+--- a/Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs
++++ b/Assets/Game/Scripts/Authorings/OperationMapVirtualizedPresentationAuthoring.cs
+@@ -41,11 +41,16 @@ namespace Game.Authoring
+             return true;
+         }
+ 
+-        [BakingVersion("WarlineCapture", 3)]
++        [BakingVersion("WarlineCapture", 4)]
+         private sealed class Baker : Baker<OperationMapVirtualizedPresentationAuthoring>
+         {
+             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)
+             {
++                // Identity/source-row markers are also emitted for resident presentation.
++                // Record explicit stripping intent before validation, so an invalid or
++                // missing database cannot silently fall back to resident rendering.
++                if (authoring.SourcePresentationRoot != null)
++                    AddComponent<OperationMapRenderSourceStrippingRequestBakingComponent>(GetEntity(TransformUsageFlags.None));
+                 if (!OperationMapRenderMeshArrayBuilder.TryBuild(
+                         authoring.DatabaseConfig,
+                         out RenderMeshArray renderMeshArray,
+diff --git a/Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs b/Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs
+index d0bde5991..f7f4c85de 100644
+--- a/Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs
++++ b/Assets/Game/Scripts/Components/OperationMapRenderVirtualizationComponents.cs
+@@ -283,6 +283,9 @@ namespace Game.Components
+         public OperationMapRenderIdentity128 RendererPathIdentity;
+     }
+ 
++    [BakingType]
++    public struct OperationMapRenderSourceStrippingRequestBakingComponent : IComponentData { }
++
+     [BakingType]
+     [InternalBufferCapacity(1)]
+     public struct OperationMapRenderSourceRowBakingComponent : IBufferElementData
+diff --git a/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs b/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs
+index a672708da..ad5f9ace8 100644
+--- a/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs
++++ b/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.Environment.cs
+@@ -9,6 +9,9 @@ namespace Game.Editor.MapVariants
+     internal sealed partial class MapVariantBuilder
+     {
+         public const string GeneratedRoot = "Assets/Game/Art/MapPrototypes/Variants";
++        // Inventory uses transient geometry and may only read pre-existing shared art.
++        // Set/reset by the preparation transaction in a finally block.
++        internal static bool InventoryOnly { get; set; }
+         private const string GroundMaterialPath = "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
+         private const string GroundUvSourcePrefab = "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Square_01.prefab";
+         private const string VolumeProfilePath = "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
+@@ -23,9 +26,10 @@ namespace Game.Editor.MapVariants
+             Vector2 uv = ResolveGroundUv();
+             string folder = $"{GeneratedFolder}/Ground";
+             // A coarser grid produces fewer chunks, so meshes from an earlier build are removed first.
+-            if (AssetDatabase.IsValidFolder(folder))
++            if (!InventoryOnly && AssetDatabase.IsValidFolder(folder))
+                 AssetDatabase.DeleteAsset(folder);
+-            EnsureFolder(folder);
++            if (!InventoryOnly)
++                EnsureFolder(folder);
+ 
+             int chunks = 0;
+             for (int z = 0; z < Height.CellsZ; z += GroundChunkCells)
+@@ -34,8 +38,11 @@ namespace Game.Editor.MapVariants
+                 string name = $"Ground_{x / GroundChunkCells}_{z / GroundChunkCells}";
+                 Mesh mesh = Height.BuildChunkMesh(x, z, GroundChunkCells, GroundChunkCells, uv, name);
+                 string path = $"{folder}/{name}.asset";
+-                AssetDatabase.DeleteAsset(path);
+-                AssetDatabase.CreateAsset(mesh, path);
++                if (!InventoryOnly)
++                {
++                    AssetDatabase.DeleteAsset(path);
++                    AssetDatabase.CreateAsset(mesh, path);
++                }
+                 var go = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+                 go.transform.SetParent(Layer(MapVariantLayer.Ground), false);
+                 go.GetComponent<MeshFilter>().sharedMesh = mesh;
+@@ -117,6 +124,8 @@ namespace Game.Editor.MapVariants
+             string materialPath = $"{folder}/{Path.GetFileNameWithoutExtension(sourceMaterialPath)}_{suffix}.mat";
+             if (AssetDatabase.LoadAssetAtPath<Material>(materialPath) != null)
+                 return materialPath;
++            if (InventoryOnly)
++                throw new InvalidOperationException($"[MapPreparation] Missing shared reference material: {materialPath}. Inventory cannot generate protected prototype art.");
+ 
+             var source = AssetDatabase.LoadAssetAtPath<Material>(sourceMaterialPath) ??
+                          throw new InvalidOperationException($"[MapVariants] Missing material {sourceMaterialPath}.");
+@@ -166,7 +175,7 @@ namespace Game.Editor.MapVariants
+ 
+         public static string ProjectRoot => Path.GetDirectoryName(Application.dataPath);
+ 
+-        private static Vector2 ResolveGroundUv()
++        internal static Vector2 ResolveGroundUv()
+         {
+             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(GroundUvSourcePrefab);
+             MeshFilter filter = prefab != null ? prefab.GetComponentInChildren<MeshFilter>() : null;
+diff --git a/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs b/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs
+index af4f77ca3..41d4ee1c5 100644
+--- a/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs
++++ b/Assets/Game/Scripts/Editor/MapPrototypes/Variants/MapVariantBuilder.cs
+@@ -77,6 +77,8 @@ namespace Game.Editor.MapVariants
+         public float SpanDeckTop;
+         public float FoundationDepth;
+         public int Group;
++        // Explicit provenance for separately placed roof details; group numbers are not ownership.
++        public MapVariantPlacement Support;
+     }
+ 
+     internal sealed class MapVariantPrefabInfo
+@@ -420,6 +422,7 @@ namespace Game.Editor.MapVariants
+                 HalfSize = new Vector2(info.LocalBounds.extents.x, info.LocalBounds.extents.z) * scale,
+                 Yaw = yaw,
+                 Attached = true,
++                Support = support,
+                 Group = support.Group
+             };
+             Placements.Add(placement);
+diff --git a/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.Support.cs b/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.Support.cs
+index f3c4dddda..82adf13d0 100644
+--- a/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.Support.cs
++++ b/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.Support.cs
+@@ -9,6 +9,7 @@ namespace Game.Rendering
+     public partial struct OperationMapRenderVirtualizationBakingSystem
+     {
+         private EntityQuery _databaseQuery;
++        private EntityQuery _strippingRequestQuery;
+         private EntityQuery _sourceRowQuery;
+         private EntityQuery _additionalRenderQuery;
+         private EntityQuery _buildingOwnerQuery;
+@@ -16,6 +17,8 @@ namespace Game.Rendering
+ 
+         public void OnCreate(ref SystemState state)
+         {
++            _strippingRequestQuery = state.GetEntityQuery(
++                ComponentType.ReadOnly<OperationMapRenderSourceStrippingRequestBakingComponent>());
+             _databaseQuery = state.GetEntityQuery(
+                 ComponentType.ReadOnly<OperationMapRenderDatabaseComponent>(),
+                 ComponentType.ReadOnly<OperationMapRenderEligibleSourceRowBakingComponent>());
+diff --git a/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs b/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs
+index 444efb752..70c2eddfd 100644
+--- a/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs
++++ b/Assets/Game/Scripts/Rendering/Baking/OperationMapRenderVirtualizationBakingSystem.cs
+@@ -7,7 +7,7 @@ using Unity.Rendering;
+ 
+ namespace Game.Rendering
+ {
+-    [BakingVersion("WarlineCapture", 1)]
++    [BakingVersion("WarlineCapture", 2)]
+     [RequireMatchingQueriesForUpdate]
+     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
+     [UpdateInGroup(typeof(PostBakingSystemGroup))]
+@@ -17,10 +17,16 @@ namespace Game.Rendering
+         public void OnUpdate(ref SystemState state)
+         {
+             int databaseCount = _databaseQuery.CalculateEntityCount();
+-            if (databaseCount == 0 &&
+-                _sourceRowQuery.IsEmptyIgnoreFilter &&
+-                _buildingOwnerQuery.IsEmptyIgnoreFilter)
++            if (databaseCount == 0 && _strippingRequestQuery.IsEmptyIgnoreFilter)
+             {
++                // Every building baker emits an ownership marker, including resident maps.
++                // A marker alone does not request source-row stripping or a render database.
++                // Reject incomplete/virtualized owners so a missing database still fails closed.
++                using NativeArray<Entity> owners = _buildingOwnerQuery.ToEntityArray(Allocator.Temp);
++                foreach (Entity owner in owners)
++                    if (!state.EntityManager.HasComponent<OperationMapBuildingPresentation>(owner) ||
++                        state.EntityManager.HasComponent<OperationMapVirtualizedBuildingPresentationComponent>(owner))
++                        throw new InvalidOperationException("Building ownership without a render database requires resident presentation only.");
+                 return;
+             }
+             if (databaseCount != 1)

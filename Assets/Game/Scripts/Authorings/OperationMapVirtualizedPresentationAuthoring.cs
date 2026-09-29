@@ -41,11 +41,16 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 3)]
+        [BakingVersion("WarlineCapture", 4)]
         private sealed class Baker : Baker<OperationMapVirtualizedPresentationAuthoring>
         {
             public override void Bake(OperationMapVirtualizedPresentationAuthoring authoring)
             {
+                // Identity/source-row markers are also emitted for resident presentation.
+                // Record explicit stripping intent before validation, so an invalid or
+                // missing database cannot silently fall back to resident rendering.
+                if (authoring.SourcePresentationRoot != null)
+                    AddComponent<OperationMapRenderSourceStrippingRequestBakingComponent>(GetEntity(TransformUsageFlags.None));
                 if (!OperationMapRenderMeshArrayBuilder.TryBuild(
                         authoring.DatabaseConfig,
                         out RenderMeshArray renderMeshArray,

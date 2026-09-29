@@ -77,6 +77,8 @@ namespace Game.Editor.MapVariants
         public float SpanDeckTop;
         public float FoundationDepth;
         public int Group;
+        // Explicit provenance for separately placed roof details; group numbers are not ownership.
+        public MapVariantPlacement Support;
     }
 
     internal sealed class MapVariantPrefabInfo
@@ -420,6 +422,7 @@ namespace Game.Editor.MapVariants
                 HalfSize = new Vector2(info.LocalBounds.extents.x, info.LocalBounds.extents.z) * scale,
                 Yaw = yaw,
                 Attached = true,
+                Support = support,
                 Group = support.Group
             };
             Placements.Add(placement);

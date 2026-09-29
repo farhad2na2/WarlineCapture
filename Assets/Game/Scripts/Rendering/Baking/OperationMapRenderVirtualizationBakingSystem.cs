@@ -7,7 +7,7 @@ using Unity.Rendering;
 
 namespace Game.Rendering
 {
-    [BakingVersion("WarlineCapture", 1)]
+    [BakingVersion("WarlineCapture", 2)]
     [RequireMatchingQueriesForUpdate]
     [WorldSystemFilter(WorldSystemFilterFlags.BakingSystem)]
     [UpdateInGroup(typeof(PostBakingSystemGroup))]
@@ -17,10 +17,16 @@ namespace Game.Rendering
         public void OnUpdate(ref SystemState state)
         {
             int databaseCount = _databaseQuery.CalculateEntityCount();
-            if (databaseCount == 0 &&
-                _sourceRowQuery.IsEmptyIgnoreFilter &&
-                _buildingOwnerQuery.IsEmptyIgnoreFilter)
+            if (databaseCount == 0 && _strippingRequestQuery.IsEmptyIgnoreFilter)
             {
+                // Every building baker emits an ownership marker, including resident maps.
+                // A marker alone does not request source-row stripping or a render database.
+                // Reject incomplete/virtualized owners so a missing database still fails closed.
+                using NativeArray<Entity> owners = _buildingOwnerQuery.ToEntityArray(Allocator.Temp);
+                foreach (Entity owner in owners)
+                    if (!state.EntityManager.HasComponent<OperationMapBuildingPresentation>(owner) ||
+                        state.EntityManager.HasComponent<OperationMapVirtualizedBuildingPresentationComponent>(owner))
+                        throw new InvalidOperationException("Building ownership without a render database requires resident presentation only.");
                 return;
             }
             if (databaseCount != 1)

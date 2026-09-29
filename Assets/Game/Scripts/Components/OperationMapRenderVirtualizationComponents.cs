@@ -284,6 +284,9 @@ namespace Game.Components
     }
 
     [BakingType]
+    public struct OperationMapRenderSourceStrippingRequestBakingComponent : IComponentData { }
+
+    [BakingType]
     [InternalBufferCapacity(1)]
     public struct OperationMapRenderSourceRowBakingComponent : IBufferElementData
     {

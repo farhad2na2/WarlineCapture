@@ -1,0 +1,59 @@
+[ExistingEditorValidation] project=/Users/farhad/Projects/WarlineCapture/Assets executeMethod=ImplementedMissionEconomyValidation.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:38)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[BuildingPlacementConstructionTransactionValidation] result=Passed tests=7
+UnityEngine.Debug:Log (object)
+BuildingPlacementConstructionTransactionTests:RunFocusedValidation () (at Assets/Tests/Editor/BuildingPlacementConstructionTransactionTests.cs:22)
+ImplementedMissionEconomyValidation:Run () (at Assets/Tests/Editor/ImplementedMissionEconomyValidation.cs:55)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[FactionConstructionResourceFocusedValidation] result=Passed tests=8
+UnityEngine.Debug:Log (object)
+FactionConstructionResourceUtilitySystemHelperTests:RunFocusedValidation () (at Assets/Tests/Editor/FactionConstructionResourceUtilitySystemHelperTests.cs:22)
+ImplementedMissionEconomyValidation:Run () (at Assets/Tests/Editor/ImplementedMissionEconomyValidation.cs:57)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[SteelPushRules] result=Passed fuel=binding,spending,civilian-floor,damage,destruction deadline=240s progression=17
+UnityEngine.Debug:Log (object)
+Game.Editor.CH04M02SteelPushRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH04M02SteelPushRulesValidation.cs:43)
+ImplementedMissionEconomyValidation:Run () (at Assets/Tests/Editor/ImplementedMissionEconomyValidation.cs:59)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ImplementedMissionEconomy] result=Passed authoredPrices=4 walletIsolation=2 transaction=spend,shortage,retry,duplicate,refund,commit-failure M02=120-90-20=10
+UnityEngine.Debug:Log (object)
+ImplementedMissionEconomyValidation:Run () (at Assets/Tests/Editor/ImplementedMissionEconomyValidation.cs:60)
+System.Reflection.MethodBase:Invoke (object,object[])
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:40)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Passed executeMethod=ImplementedMissionEconomyValidation.Run
+UnityEngine.Debug:Log (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:55)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_4bd451e8/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

@@ -179,12 +179,20 @@ namespace Game.UI.Runtime
                 v3StateLayout
                     ? UiShellRuntimeGateway.Localization.Get("ui.campaign.start_briefing", "START BRIEFING")
                     : UiShellRuntimeGateway.Localization.GetBySource(mission.PrimaryActionLabel));
-            launchMissionButton.interactable = mission.Available;
+            launchMissionButton.interactable = mission.Available && mission.AccessState == UiContentAccessState.Allowed;
             ApplyGridlockChapter(in model);
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission); ApplyBreach(mission);
             ApplyMissionGoals(mission.MissionId);
+            if(mission.AccessState != UiContentAccessState.Allowed)
+                Set(missionBriefingText,UiShellRuntimeGateway.Localization.GetBySource(mission.AccessState switch
+                {
+                    UiContentAccessState.NotOwned => "Campaign Edition required.",
+                    UiContentAccessState.ProgressionLocked => "Complete the previous mission first.",
+                    UiContentAccessState.InstalledContentMissing => "Content download required.",
+                    _ => "This mission is currently unavailable."
+                }));
             for (int index = 0; index < progressNodes.Length; index++)
                 progressNodes[index].gameObject.SetActive(index < mission.BestStars);
         }

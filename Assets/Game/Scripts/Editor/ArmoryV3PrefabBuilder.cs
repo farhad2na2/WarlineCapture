@@ -96,6 +96,7 @@ namespace Game.Editor
                     rightSection, right,
                     footerSection, footer);
 
+            MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally
@@ -212,9 +213,8 @@ namespace Game.Editor
             AddRoute(backRect, UiShellRouteIntent.BackMenuRoute, UIRoute.MainMenu, false);
 
             RectTransform credits = BuildResource(
-                root, "CreditsPanel", 1060f, "CREDITS", "24,750", Cyan, true);
-            RectTransform command = BuildResource(
-                root, "CommandPanel", 1312f, "COMMAND", "8,430", Cyan, false);
+                root, "CreditsPanel", 1060f, "CREDITS", "—", Cyan, true);
+            RectTransform command = null;
             RectTransform settings = BuildSettingsButton(root);
             return new HeaderBindings(bar.rectTransform, credits, command, settings);
         }
@@ -235,6 +235,7 @@ namespace Game.Editor
                 label, 19f, White, TextAlignmentOptions.MidlineLeft, true);
             CreateText(panel, "Value", 81f, 34f, 147f, 40f,
                 value, 29f, White, TextAlignmentOptions.MidlineLeft, true);
+            panel.gameObject.AddComponent<MainMenuAccountHeaderView>().Configure(panel.Find("Value").GetComponent<TMP_Text>());
             return panel;
         }
 

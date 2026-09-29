@@ -17,6 +17,15 @@ namespace Game.Tests.Editor.Operations
 
         public static void RunAll()
         {
+            var scopedWorld = OperationsRunInitializationSystem.Create(9222, OperationsDifficultyKind.Regular, OperationsContentScope.Intro);
+            scopedWorld.Districts[1].EnemyInfluence = 100;
+            scopedWorld.Districts[1].Security = 0;
+            scopedWorld.Districts[1].Heat = 100;
+            Require(OperationsDayAdvanceSystem.TryAdvance(scopedWorld, out _, out _), "scoped pressure day");
+            Require(scopedWorld.Districts[0].EnemyInfluence == 50 && scopedWorld.Districts[0].IntelConfidence == 17,
+                "local day rules apply without inaccessible adjacency");
+            Require(scopedWorld.Districts[1].EnemyInfluence == 100 && scopedWorld.Districts[1].Heat == 100,
+                "inaccessible district state is frozen");
             var legacy = OperationsSaveMigration.CreateEmpty();
             legacy.activeRun = new OperationsRunSaveData { scopeId = "", runId = "run.operations.00000001" };
             Require(OperationsSaveMigration.Migrate(legacy).Data.activeRun.scopeId == OperationsContentScope.Full, "legacy scope");
@@ -42,7 +51,7 @@ namespace Game.Tests.Editor.Operations
             Require(!loop.IntroCompleted, "two victories are not completion");
             Require(loop.RequestEndDay(Id()).Accepted, "intro next day");
             Activate(loop, "operation.o003");
-            Require(loop.TryMaterials(out int materials) && materials == 80, "scenario repair materials");
+            Require(loop.MissionMaterials == 80, "scenario repair materials");
             WinAndFinish(loop, "operation.o003");
             Require(loop.IntroCompleted, "all three victories complete intro");
             var completed = OperationsStrategicSession.FromCommittedJson(loop.CommittedJson);
@@ -64,6 +73,13 @@ namespace Game.Tests.Editor.Operations
             Require(upgrade.Save.runSummaries.Length == 1 &&
                 upgrade.Save.runSummaries[0].scopeId == OperationsContentScope.Intro, "intro archived separately");
             Require(upgrade.Save.activeRun.runId != completed.Save.activeRun.runId, "scope run identities differ");
+            int priorXp = upgrade.Save.operationsRewardCommanderXp;
+            int priorCredits = upgrade.Save.operationsRewardCredits;
+            OperationsRewardSystem.ApplyLiveVictory(upgrade.Save, "operation.o001", "txn.operations.0000ffff");
+            Require(upgrade.Save.firstClearRewardIds.Length == 3 && upgrade.Save.operationsRewardCommanderXp == priorXp,
+                "full replay cannot duplicate account first clear");
+            Require(upgrade.Save.operationsRewardCredits - priorCredits == OperationsRewardSchema.CreateBaseline().RepeatVictoryCreditsAmount,
+                "only ordinary replay reward after upgrade");
         }
 
         static void Activate(OperationsLoopSession loop, string mission)
@@ -84,7 +100,7 @@ namespace Game.Tests.Editor.Operations
             string settlement = Id();
             Require(loop.BeginSettlement(settlement).Accepted && loop.CompleteSettlement(settlement).Accepted, "settlement");
             int credits = loop.Credits;
-            Require(loop.CompleteSettlement(settlement).Accepted && loop.Credits == credits, "duplicate settlement");
+            Require(loop.ProbeSettlement(Id(), result).Accepted && loop.Credits == credits, "duplicate settlement");
             Require(loop.BeginReturn().Accepted && loop.CompleteReturn().Accepted, "return");
         }
     }

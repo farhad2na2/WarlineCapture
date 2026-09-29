@@ -1,4 +1,5 @@
 using UnityEditor;
+using System;
 
 namespace Game.Editor
 {
@@ -29,17 +30,21 @@ namespace Game.Editor
 
         private static void Tick()
         {
-            if (!SessionState.GetBool(Pending, false) || EditorApplication.isPlayingOrWillChangePlaymode) return;
-            if (SessionState.GetBool(ResumeRefresh, false))
+            if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+            if (!SessionState.GetBool(Pending, false))
             {
-                SessionState.SetBool(ResumeRefresh, false);
-                AssetDatabase.AllowAutoRefresh();
+                if (SessionState.GetBool(ResumeRefresh, false) && !ExistingEditorValidation.IsRunning)
+                { SessionState.SetBool(ResumeRefresh, false); AssetDatabase.AllowAutoRefresh(); }
+                return;
             }
             if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.timeSinceStartup < readyAt) return;
             int status = SessionState.GetInt(Status, 1);
             SessionState.SetBool(Pending, false);
             LastCompletion = status;
             if (ExistingEditorValidation.IsRunning) return;
+            // A normal connected Editor must never be closed after domain reload.
+            // Only a wrapper-launched executeMethod process owns its own exit.
+            if (Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0) return;
             EditorApplication.Exit(status);
         }
     }

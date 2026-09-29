@@ -158,6 +158,8 @@ MonoBehaviour:
   localizationKey: ui.v3.3x3.97a611ef57
   englishFallback: 3x3
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &46016615981925810
 GameObject:
   m_ObjectHideFlags: 0
@@ -391,6 +393,8 @@ MonoBehaviour:
   localizationKey: ui.v3.footprint.7cedb59e13
   englishFallback: FOOTPRINT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &122269319563605387
 GameObject:
   m_ObjectHideFlags: 0
@@ -1178,6 +1182,8 @@ MonoBehaviour:
   localizationKey: ui.v3.military_structure.2127e6ffab
   englishFallback: MILITARY STRUCTURE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &358585923092646892
 GameObject:
   m_ObjectHideFlags: 0
@@ -2160,6 +2166,8 @@ MonoBehaviour:
   localizationKey: ui.v3.requires_command_center_level_1.8c777aa721
   englishFallback: "REQUIRES  \u2022  COMMAND CENTER LEVEL 1"
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &774126647260483973
 GameObject:
   m_ObjectHideFlags: 0
@@ -2318,6 +2326,8 @@ MonoBehaviour:
   localizationKey: ui.v3.production_queue.0b1dd0453e
   englishFallback: PRODUCTION QUEUE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &815826776359460025
 GameObject:
   m_ObjectHideFlags: 0
@@ -2476,6 +2486,8 @@ MonoBehaviour:
   localizationKey: ui.v3.military_structure.2127e6ffab
   englishFallback: MILITARY STRUCTURE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &864850126668410942
 GameObject:
   m_ObjectHideFlags: 0
@@ -2872,6 +2884,8 @@ MonoBehaviour:
   localizationKey: ui.v3.build_unavailable.456688bb55
   englishFallback: BUILD UNAVAILABLE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &967161478932880959
 GameObject:
   m_ObjectHideFlags: 0
@@ -3030,6 +3044,8 @@ MonoBehaviour:
   localizationKey: ui.v3.upgrade_command_center.241bdc6e78
   englishFallback: Upgrade Command Center
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &986302090976634874
 GameObject:
   m_ObjectHideFlags: 0
@@ -3263,6 +3279,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fabrication_depot.2145c767e6
   englishFallback: FABRICATION DEPOT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1041939851387013791
 GameObject:
   m_ObjectHideFlags: 0
@@ -3459,6 +3477,8 @@ MonoBehaviour:
   localizationKey: ui.v3.military_structure.2127e6ffab
   englishFallback: MILITARY STRUCTURE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1286481711208711242
 GameObject:
   m_ObjectHideFlags: 0
@@ -3662,6 +3682,8 @@ MonoBehaviour:
 
     FORWARD HQ'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1322624632908549627
 GameObject:
   m_ObjectHideFlags: 0
@@ -3856,6 +3878,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fuel.0e2f3c1696
   englishFallback: FUEL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1453691006970998308
 GameObject:
   m_ObjectHideFlags: 0
@@ -4423,6 +4447,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials.64b5791a58
   englishFallback: MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1623819742132362907
 GameObject:
   m_ObjectHideFlags: 0
@@ -5105,6 +5131,8 @@ MonoBehaviour:
   localizationKey: ui.v3.place.068853f927
   englishFallback: PLACE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1887741498557266654
 GameObject:
   m_ObjectHideFlags: 0
@@ -5305,6 +5333,8 @@ MonoBehaviour:
 
     FORWARD HQ'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &1988027943538610863
 GameObject:
   m_ObjectHideFlags: 0
@@ -6551,6 +6581,8 @@ MonoBehaviour:
   localizationKey: ui.v3.oil.406978520b
   englishFallback: OIL
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2196765699658814736
 GameObject:
   m_ObjectHideFlags: 0
@@ -6746,6 +6778,8 @@ MonoBehaviour:
   localizationKey: ui.v3.soldiers.445f1a2bec
   englishFallback: SOLDIERS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2244432477918469006
 GameObject:
   m_ObjectHideFlags: 0
@@ -6904,6 +6938,8 @@ MonoBehaviour:
   localizationKey: ui.v3.buildings.5ad25fbd5d
   englishFallback: BUILDINGS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2290046431337261738
 GameObject:
   m_ObjectHideFlags: 0
@@ -8228,6 +8264,8 @@ MonoBehaviour:
   localizationKey: ui.v3.materials.64b5791a58
   englishFallback: MATERIALS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2539440390950304810
 GameObject:
   m_ObjectHideFlags: 0
@@ -8497,6 +8535,8 @@ MonoBehaviour:
   localizationKey: ui.v3.mission_does_not_allow_construct.831cf20018
   englishFallback: Mission does not allow construction.
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2717656099960252451
 GameObject:
   m_ObjectHideFlags: 0
@@ -8805,6 +8845,8 @@ MonoBehaviour:
   localizationKey: ui.v3.queue_slot_locked.75948cb552
   englishFallback: QUEUE SLOT LOCKED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &2972550041025103223
 GameObject:
   m_ObjectHideFlags: 0
@@ -9411,6 +9453,8 @@ MonoBehaviour:
   localizationKey: ui.v3.build.3053677e43
   englishFallback: BUILD
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3279163927416137187
 GameObject:
   m_ObjectHideFlags: 0
@@ -10172,6 +10216,8 @@ MonoBehaviour:
   localizationKey: ui.v3.oil_refinery.acc5da1517
   englishFallback: OIL REFINERY
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3673294999037969285
 GameObject:
   m_ObjectHideFlags: 0
@@ -10405,6 +10451,8 @@ MonoBehaviour:
   localizationKey: ui.v3.build_time.79bfacd872
   englishFallback: BUILD TIME
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3793812173241809584
 GameObject:
   m_ObjectHideFlags: 0
@@ -11091,6 +11139,8 @@ MonoBehaviour:
   localizationKey: ui.v3.no_production_queued.0f87c11fb8
   englishFallback: NO PRODUCTION QUEUED
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &3947143691062398577
 GameObject:
   m_ObjectHideFlags: 0
@@ -11249,6 +11299,8 @@ MonoBehaviour:
   localizationKey: ui.v3.guard_tower.bbeb962d6a
   englishFallback: GUARD TOWER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4012382024712742217
 GameObject:
   m_ObjectHideFlags: 0
@@ -11482,6 +11534,8 @@ MonoBehaviour:
   localizationKey: mission.reward.credits
   englishFallback: CREDITS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4068643637127886086
 GameObject:
   m_ObjectHideFlags: 0
@@ -12328,6 +12382,8 @@ MonoBehaviour:
   localizationKey: ui.hud.squad.vehicles
   englishFallback: VEHICLES
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4684298502980661444
 GameObject:
   m_ObjectHideFlags: 0
@@ -12529,6 +12585,8 @@ MonoBehaviour:
 
     FORWARD HQ'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &4727334631671133818
 GameObject:
   m_ObjectHideFlags: 0
@@ -14221,6 +14279,8 @@ MonoBehaviour:
   localizationKey: ui.v3.military_structure.2127e6ffab
   englishFallback: MILITARY STRUCTURE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &5488720005864744330
 GameObject:
   m_ObjectHideFlags: 0
@@ -15705,6 +15765,8 @@ MonoBehaviour:
   localizationKey: mission.reward.credits
   englishFallback: CREDITS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6317449545691321984
 GameObject:
   m_ObjectHideFlags: 0
@@ -16241,6 +16303,8 @@ MonoBehaviour:
   localizationKey: ui.v3.military_structure.2127e6ffab
   englishFallback: MILITARY STRUCTURE
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6446365377660202510
 GameObject:
   m_ObjectHideFlags: 0
@@ -16450,6 +16514,8 @@ MonoBehaviour:
   localizationKey: ui.v3.fabrication_depot.2145c767e6
   englishFallback: FABRICATION DEPOT
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6544933531527450176
 GameObject:
   m_ObjectHideFlags: 0
@@ -17375,6 +17441,8 @@ MonoBehaviour:
   localizationKey: ui.catalog.barracks.upper
   englishFallback: BARRACKS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &6849365995224338161
 GameObject:
   m_ObjectHideFlags: 0
@@ -18596,6 +18664,8 @@ MonoBehaviour:
 
     FORWARD HQ'
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7634757919704098099
 GameObject:
   m_ObjectHideFlags: 0
@@ -19056,6 +19126,8 @@ MonoBehaviour:
   localizationKey: ui.v3.aircrafts.f5da2fd335
   englishFallback: AIRCRAFTS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &7727609268298700926
 GameObject:
   m_ObjectHideFlags: 0
@@ -21281,6 +21353,8 @@ MonoBehaviour:
   localizationKey: ui.catalog.barracks.upper
   englishFallback: BARRACKS
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8779113387018193459
 GameObject:
   m_ObjectHideFlags: 0
@@ -21680,6 +21754,8 @@ MonoBehaviour:
   localizationKey: ui.v3.select_a_valid_build_area.fce091e1a5
   englishFallback: SELECT A VALID BUILD AREA
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &8987281189560142404
 GameObject:
   m_ObjectHideFlags: 0
@@ -22244,6 +22320,8 @@ MonoBehaviour:
   localizationKey: ui.v3.guard_tower.bbeb962d6a
   englishFallback: GUARD TOWER
   observeRuntimeSourceChanges: 1
+  minimumPresentationSize: 0
+  maximumPresentationSize: 0
 --- !u!1 &9166979293097262096
 GameObject:
   m_ObjectHideFlags: 0

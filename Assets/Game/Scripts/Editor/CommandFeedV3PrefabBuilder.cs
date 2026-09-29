@@ -69,6 +69,7 @@ namespace Game.Editor
             CommandFeedScreenView view = root.gameObject.AddComponent<CommandFeedScreenView>();
             view.Configure(credits, command, status, filters, filterGradients, rows, categories, pause, pauseLabel, search);
 
+            MenuAccountHeaderAuthoring.Apply(root.gameObject);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

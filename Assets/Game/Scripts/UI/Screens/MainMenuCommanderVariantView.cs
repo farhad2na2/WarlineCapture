@@ -1,13 +1,13 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using Game.Configs;
 
 namespace Game.UI.Runtime
 {
     /// <summary>
-    /// Selects one cohesive baked Main Menu scene for a stable commander ID.
-    /// The full-scene variant keeps character lighting, hand contact, occlusion,
-    /// tactical table, and environment authored as one composition.
+    /// Selects the saved onboarding portrait and presents the player-entered identity.
     /// </summary>
     [DisallowMultipleComponent]
     public sealed class MainMenuCommanderVariantView : MonoBehaviour
@@ -29,6 +29,8 @@ namespace Game.UI.Runtime
         }
 
         [SerializeField] private Image target;
+        [SerializeField] private TMP_Text identityName;
+        [SerializeField] private TMP_FontAsset identityFont, identityPersianFont;
         [SerializeField] private CommanderVariant[] variants = Array.Empty<CommanderVariant>();
         [SerializeField] private string defaultCommanderId = "field_commander_01";
 
@@ -65,9 +67,31 @@ namespace Game.UI.Runtime
             return false;
         }
 
-        private void OnEnable()
+        public void ConfigureIdentity(TMP_Text label)
         {
-            ApplyCommander(defaultCommanderId);
+            identityName=label; identityFont=label.font;
+            identityPersianFont=Resources.Load<GameLocalizationCatalog>("Localization/V3UiLocalizationCatalog")?.FindLocale("fa-IR")?.FontAsset as TMP_FontAsset;
+        }
+        private void OnEnable() => RefreshIdentity();
+        private void LateUpdate() => RefreshIdentity();
+        public void RefreshIdentity()
+        {
+            if (!UiShellRuntimeGateway.TryReadCommanderProfile(out var profile)) return;
+            ApplyCommander(profile.PortraitClass);
+            if (identityName != null)
+            {
+                // Shape the player's raw name independently of the UI language.
+                var binding=identityName.GetComponent<V3LocalizedTextBindingView>();
+                if(binding!=null) binding.enabled=false;
+                bool arabic=false;
+                foreach(char letter in profile.Name) arabic |= letter is >= '\u0600' and <= '\u06ff';
+                var font=arabic?identityPersianFont:identityFont;
+                if(font!=null && identityName.font!=font) { identityName.font=font; identityName.fontSharedMaterial=font.material; }
+                identityName.isRightToLeftText=arabic;
+                identityName.alignment=arabic?TextAlignmentOptions.MidlineRight:TextAlignmentOptions.MidlineLeft;
+                string rendered=arabic?V3LocalizedTextBindingView.ShapeForRendering(profile.Name):profile.Name;
+                if(identityName.text!=rendered) identityName.text=rendered;
+            }
         }
     }
 }

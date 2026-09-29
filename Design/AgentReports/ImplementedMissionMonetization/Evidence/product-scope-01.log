@@ -1,0 +1,7 @@
+CSSM_ModuleLoad(): One or more parameters passed to a function were not valid.
+[ImplementedContentAccess] result=Passed canonical=205 profiles=4 free=9 ownership,progression,readiness,missing,restore,offline
+System.InvalidOperationException: duplicate settlement
+   at Game.Tests.Editor.Operations.OperationsProductScopeChecks.Require(Boolean value, String reason) in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/Operations/OperationsProductScopeChecks.cs:line 16
+   at Game.Tests.Editor.Operations.OperationsProductScopeChecks.WinAndFinish(OperationsLoopSession loop, String mission) in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/Operations/OperationsProductScopeChecks.cs:line 87
+   at Game.Tests.Editor.Operations.OperationsProductScopeChecks.RunAll() in /Users/farhad/Projects/WarlineCapture/Assets/Tests/Editor/Operations/OperationsProductScopeChecks.cs:line 37
+   at Runner.Main() in /private/var/folders/db/jvv773z13272j7lkn6ydkmvm0000gn/T/mission-product-host-bkyu4hyj/Runner.cs:line 5

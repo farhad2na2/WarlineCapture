@@ -30,6 +30,22 @@ namespace Game.Editor
         private static bool guidanceHeld,guidanceVerifyHold,guidanceRestoreHold,guidanceJourneyVerified;
         private static UIAssistanceLevel guidanceOriginalMode;
         private static string guidanceOriginalLocale;
+        public static void RunRemediationGuidanceEnglish()
+        {
+            BeginRemediationEvidence("en");
+            RunFullGuidanceJourney();
+        }
+        public static void RunRemediationGuidancePersian()
+        {
+            BeginRemediationEvidence("fa-IR");
+            RunBuildingJourneyPersian();
+        }
+        private static void BeginRemediationEvidence(string locale)
+        {
+            SessionState.SetString("Warline.M03.ReadinessOutput", "Design/AgentReports/ImplementedMissionMonetization/Evidence/"+
+                DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-radar-warning-"+locale);
+            SessionState.SetBool("Warline.M03.ReadinessReturn", true);
+        }
         public static void RunCompletionGuidanceAndMotion()
         {
             SessionState.SetString("Warline.M03.ReadinessOutput", "/private/tmp/warline-m03-final-guidance");

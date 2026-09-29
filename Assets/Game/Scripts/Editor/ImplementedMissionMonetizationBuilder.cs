@@ -10,8 +10,9 @@ namespace Game.Editor
         public static void ApplyRewardCopy()
         {
             M05BreachAssaultPresentationBuilder.ImportCopy();
+            M03RadarWarningLocalizationBuilder.Import();
             AssetDatabase.SaveAssets();
-            Debug.Log("[ImplementedMissionRewardCopy] result=Passed M05=teaser-removed legacy-parts=preserved");
+            Debug.Log("[ImplementedMissionRewardCopy] result=Passed M05=teaser-removed legacy-parts=preserved M03=140-materials");
         }
         public static void ApplyEconomy()
         {

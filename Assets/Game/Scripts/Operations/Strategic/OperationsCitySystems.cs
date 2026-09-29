@@ -184,9 +184,6 @@ namespace Game.Operations.Strategic
 
         public static void TryCreateIncident(OperationsCityWorld world)
         {
-            // Intro recovery/reoffers are free; inaccessible city pressure cannot
-            // create obligations against missions outside the three-mission scope.
-            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) return;
             if (ActiveIncidentCount(world) >= 2 || CreatedToday(world) >= 1)
                 return;
 
@@ -195,6 +192,8 @@ namespace Game.Operations.Strategic
             uint bestTie = uint.MaxValue;
             for (int index = 0; index < world.Districts.Length; index++)
             {
+                if (!OperationsContentScope.AllowsDistrict(world.Run.ScopeId, world.Districts[index].Number))
+                    continue;
                 if (DistrictHasIncident(world, world.Districts[index].DistrictId))
                     continue;
                 int score = Score(world.Districts[index]);
@@ -333,6 +332,7 @@ namespace Game.Operations.Strategic
 
         public static bool IsDeployable(OperationsCityWorld world, OperationsCatalogEntry entry)
         {
+            if (!OperationsContentScope.AllowsMission(world.Run.ScopeId, entry.MissionId)) return false;
             int intel = DistrictIntel(world, entry.DistrictId);
             if (intel < entry.MinIntel)
                 return false;
@@ -460,7 +460,8 @@ namespace Game.Operations.Strategic
             for (int index = 0; index < OperationsCatalogIndex.Entries.Length; index++)
             {
                 OperationsCatalogEntry entry = OperationsCatalogIndex.Entries[index];
-                if (entry.DistrictId != districtId || entry.Family != family)
+                if (entry.DistrictId != districtId || entry.Family != family ||
+                    !OperationsContentScope.AllowsMission(world.Run.ScopeId, entry.MissionId))
                     continue;
                 if (!IsSlotEligible(world, districtId, entry.LocalSlot) || world.HasVictory(entry.MissionId))
                     continue;
@@ -481,7 +482,8 @@ namespace Game.Operations.Strategic
             for (int index = 0; index < OperationsCatalogIndex.Entries.Length; index++)
             {
                 OperationsCatalogEntry entry = OperationsCatalogIndex.Entries[index];
-                if (entry.DistrictId != districtId || entry.LocalSlot == 10)
+                if (entry.DistrictId != districtId || entry.LocalSlot == 10 ||
+                    !OperationsContentScope.AllowsMission(world.Run.ScopeId, entry.MissionId))
                     continue;
                 if (!IsSlotEligible(world, districtId, entry.LocalSlot) || world.HasVictory(entry.MissionId))
                     continue;
@@ -773,11 +775,12 @@ namespace Game.Operations.Strategic
 
         private static int ExpireIncidents(OperationsCityWorld world, OperationsSignedMetricDelta[] requested)
         {
-            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) { world.Incidents.Clear(); return 0; }
             int expired = 0;
             for (int index = world.Incidents.Count - 1; index >= 0; index--)
             {
                 OperationsIncidentComponent incident = world.Incidents[index];
+                if (!OperationsContentScope.AllowsMission(world.Run.ScopeId, incident.MissionId))
+                { world.Incidents.RemoveAt(index); continue; }
                 if (incident.DueDay > world.Run.Day)
                     continue;
                 int districtIndex = world.DistrictIndex(incident.DistrictId);
@@ -802,7 +805,6 @@ namespace Game.Operations.Strategic
 
         private static void AccumulatePressure(OperationsCityWorld world, OperationsSignedMetricDelta[] requested)
         {
-            if (OperationsContentScope.IsIntro(world.Run.ScopeId)) return;
             OperationsDistrictComponent[] snapshot = new OperationsDistrictComponent[world.Districts.Length];
             for (int index = 0; index < world.Districts.Length; index++)
             {
@@ -820,11 +822,12 @@ namespace Game.Operations.Strategic
             for (int index = 0; index < snapshot.Length; index++)
             {
                 OperationsDistrictComponent metric = snapshot[index];
+                if (!OperationsContentScope.AllowsDistrict(world.Run.ScopeId, metric.Number)) continue;
                 int pressure = (metric.EnemyInfluence >= 60 ? 2 : 0) +
                                (metric.Heat >= 70 ? 1 : 0) +
                                (metric.Infrastructure < 30 ? 1 : 0);
                 int enemy = metric.Security < 30 ? 2 : 0;
-                if (HasAdjacentHighEnemy(campaign, snapshot, metric.Number))
+                if (HasAdjacentHighEnemy(campaign, snapshot, metric.Number, world.Run.ScopeId))
                     enemy++;
                 bool finale = HasFinaleVictory(world, metric.DistrictId);
                 requested[index] += new OperationsSignedMetricDelta(
@@ -841,14 +844,14 @@ namespace Game.Operations.Strategic
         private static bool HasAdjacentHighEnemy(
             OperationsCampaignSchema campaign,
             OperationsDistrictComponent[] snapshot,
-            int districtNumber)
+            int districtNumber, string scopeId)
         {
             for (int index = 0; index < campaign.Adjacency.Length; index++)
             {
                 OperationsAdjacencyPair pair = campaign.Adjacency[index];
                 int other = pair.LeftDistrict == districtNumber ? pair.RightDistrict :
                     pair.RightDistrict == districtNumber ? pair.LeftDistrict : 0;
-                if (other == 0)
+                if (other == 0 || !OperationsContentScope.AllowsDistrict(scopeId, other))
                     continue;
                 if (snapshot[other - 1].EnemyInfluence >= 80)
                     return true;

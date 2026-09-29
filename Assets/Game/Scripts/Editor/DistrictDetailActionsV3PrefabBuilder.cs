@@ -68,6 +68,7 @@ namespace Game.Editor
             SetReference(serialized, "confirmRaidPopupPrefab", AssetDatabase.LoadAssetAtPath<GameObject>(ConfirmRaidPopupPath));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            MenuAccountHeaderAuthoring.Apply(root.gameObject);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

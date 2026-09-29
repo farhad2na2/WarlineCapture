@@ -1,0 +1,23 @@
+{
+  "tool": "built-in image_gen",
+  "references": [
+    "Design/AgentReports/CH04M02SteelPush/VisualReview/en-hud-aria-5.png",
+    "Design/AgentReports/Operations/O001_PLAYER_EXPERIENCE_20260924/evidence/regular-matrix/4102/O001AriaStopped.png"
+  ],
+  "outputs": [
+    {
+      "path": "o002-hud-direction-v1.png",
+      "prompt": "Use case: ui-mockup. Asset type: Warline Capture O002 Clinic Supply Route native mission HUD visual direction, landscape 16:9. Input images: image 1 actual Campaign Steel Push HUD, image 2 actual Operations O001 HUD; both are style references only. Match the existing game typography, left roster and portraits, colorful bottom command bar, mobile readable spacing, blue objective and ARIA panels. Show a coherent top down desert Old Quarter tactical street with exactly three medical cargo trucks waiting at a scouted junction, infantry, a clinic, two distinct route overlays: short exposed Main Street and longer covered Service Loop. Preserve game UI style and ARIA portrait. Mission title \"Clinic Supply Route\". Compact visible objective panel exact text \"Scout the junction\", \"Deliver 2 trucks to the clinic\", \"Hold clinic \u2022 30 s\", \"Protect clinic\". Show explicit player route selector \"Main Street\" and \"Service Loop\" and convoy controls \"Go\" and \"Hold\" near objective panel, clear next action \"Scout the junction, then choose a route.\" Top resources show only \"Materials 80 / 80\", \"14:00\", risk. Right ARIA control visibly \"ARIA Play\" and \"Stop\". Bottom familiar colored \"SELECT\", \"MOVE\", \"ATTACK\", \"HOLD\", \"SCAN\", \"SUPPORT\". Camera guidance is a small separate \"Focus junction\" button and must not look like a troop command. No Credits, account wallet, developer labels, debug controls, store, purchase banner, invented rewards, giant headings or ornamental UI. This is a design review image, not runtime evidence. Crisp legible exact UI text."
+    },
+    {
+      "path": "o003-hud-direction-v1.png",
+      "prompt": "Use case: ui-mockup. Asset type: Warline Capture O003 Courtyard Water Point native mission HUD visual direction, landscape 16:9. Input images: image 1 actual Campaign Steel Push HUD, image 2 actual Operations O001 HUD; both style references only. Reuse actual typography, compact left roster and portraits, colorful bottom command bar, blue objectives/ARIA panel, mobile readable spacing. Top down desert Old Quarter service courtyard with two distinct damaged service pumps labeled \"West pump\" and \"East pump\", clinic clearly visible and preserved, two selected infantry repair specialists, other rifle cover and finite raiders. Not a fantasy technology scene. Compact left selected specialist portrait and health, minimap and bottom roster. Mission title \"Courtyard Water Point\". Right objectives exact \"Clear pump guards\", \"Repair both pumps \u2022 0 / 2\", \"Hold service court \u2022 60 s\", \"Protect clinic and pumps\". Visible next action \"Clear the guards, then cover a specialist at each pump.\" Top local resources \"Materials 80 / 80\", timer \"15:00\", risk. A pump interaction card near selected West pump says \"Repair \u2022 40 Materials\" with repair progress, \"Resume repair\" and small separate camera-only \"Focus pump\" button. Visible ARIA portrait, controls \"ARIA Play\" and \"Stop\". Bottom colored SELECT grey, MOVE green, ATTACK red, HOLD olive, SCAN blue, SUPPORT grey; contextual REPAIR gold. Preserve existing HUD style, use readable modest text and world visibility. No account Credits, paid repair, developer labels, store, purchase prompt, prototype badges, new rewards, giant headers or decorative UI. Design review only, not runtime evidence."
+    },
+    {
+      "path": "o002-hud-direction-v2.png",
+      "editOf": "o002-hud-direction-v1.png",
+      "prompt": "Edit the attached O002 Clinic Supply Route HUD direction mockup. Change only the top Materials stock readout from 80 / 80 to 240 / 240, matching the authored O002 local stock. Preserve the composition, existing game typography, panels, exactly three trucks, route controls, ARIA Play / Stop and all other text and imagery. Do not alter anything else. This remains a visual-direction mockup, not native acceptance evidence."
+    }
+  ],
+  "review": "Pending user visual-direction approval; no native O002/O003 screen implementation yet."
+}

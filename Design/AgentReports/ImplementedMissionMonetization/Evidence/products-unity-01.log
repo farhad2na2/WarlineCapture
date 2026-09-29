@@ -1,0 +1,17 @@
+MissingMemberException: ImplementedMissionProductValidation
+Game.Editor.ExistingEditorValidation.Run (System.String executeMethod, System.String logFile) (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:34)
+UnityEngine.Debug:LogException(Exception)
+Game.Editor.<Run>d__4:MoveNext() (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:59)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start(<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run(String, String)
+PipelineEvaluation.<>c__DisplayClass0_0:<Execute>b__0()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions() (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+[ExistingEditorValidation] result=Failed executeMethod=ImplementedMissionProductValidation.Run
+UnityEngine.Debug:LogError (object)
+Game.Editor.ExistingEditorValidation/<Run>d__4:MoveNext () (at Assets/Game/Scripts/Editor/ExistingEditorValidation.cs:60)
+System.Runtime.CompilerServices.AsyncVoidMethodBuilder:Start<Game.Editor.ExistingEditorValidation/<Run>d__4> (Game.Editor.ExistingEditorValidation/<Run>d__4&)
+Game.Editor.ExistingEditorValidation:Run (string,string)
+PipelineEvaluation.PipelineEval_92add6e2/<>c__DisplayClass0_0:<Execute>b__0 ()
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+

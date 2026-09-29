@@ -1,0 +1,372 @@
+[
+  {
+    "number": 1,
+    "identity": "Building_Airport",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Airport_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 2,
+    "identity": "Building_Ammunition_Depot",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Ammunition_Depot_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 3,
+    "identity": "Building_Barrack",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Barrack_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 4,
+    "identity": "Building_Satelite_Dish",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Satelite_Dish_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 5,
+    "identity": "Building_Fuel_Bladder",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Fuel_Bladder_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 6,
+    "identity": "Building_GuardTower_Big",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_Big_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 7,
+    "identity": "Building_GuardTower",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 8,
+    "identity": "Building_Hall",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Hall_Polygon.png"
+  },
+  {
+    "number": 9,
+    "identity": "Building_Helipad",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Helipad_Polygon.png"
+  },
+  {
+    "number": 10,
+    "identity": "Building_House",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_House_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 11,
+    "identity": "Building_OilPump",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_OilPump_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 12,
+    "identity": "Building_Refinery_Big",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Refinery_Big_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 13,
+    "identity": "Building_Refinery",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Refinery_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 14,
+    "identity": "Building_Portaloo",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Portaloo_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 15,
+    "identity": "Building_Road_Barrier",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Road_Barrier_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 16,
+    "identity": "Building_Shop",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Shop_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 17,
+    "identity": "Building_Tent_Contractor",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Contractor_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 18,
+    "identity": "Building_Tent_Expert",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Expert_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 19,
+    "identity": "Building_Tent_Refugee",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Refugee_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 20,
+    "identity": "Building_Tent_Regular",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Tent_Regular_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 21,
+    "identity": "Building_Wall_Dirt_Straight",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Dirt_Straight_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 22,
+    "identity": "Building_Wall_Fence_Straight",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Fence_Straight_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 23,
+    "identity": "Building_WaterTank",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_WaterTank_AI_RealisticBuilding_ChromaGreen.png"
+  },
+  {
+    "number": 24,
+    "identity": "Chr_Bombsuit_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Bombsuit_Male_01_AI_RealisticBombSuit_ChromaGreen.png"
+  },
+  {
+    "number": 25,
+    "identity": "Chr_Civilian_Female_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Female_01_AI_RealisticCivilian_ChromaGreen.png"
+  },
+  {
+    "number": 26,
+    "identity": "Chr_Civilian_Female_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Female_02_AI_RealisticCivilian_ChromaGreen.png"
+  },
+  {
+    "number": 27,
+    "identity": "Chr_Civilian_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_01_AI_RealisticCivilian_ChromaGreen.png"
+  },
+  {
+    "number": 28,
+    "identity": "Chr_Civilian_Male_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Civilian_Male_02_AI_RealisticCivilian_ChromaGreen.png"
+  },
+  {
+    "number": 29,
+    "identity": "Chr_Contractor_Female_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Female_01_AI_RealisticSMG_ChromaGreen.png"
+  },
+  {
+    "number": 30,
+    "identity": "Chr_Contractor_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Male_01_AI_RealisticPistol_ChromaGreen.png"
+  },
+  {
+    "number": 31,
+    "identity": "Chr_Contractor_Male_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Contractor_Male_02_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 32,
+    "identity": "Chr_Ghillie_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Ghillie_Male_01_AI_RealisticRocketLauncher_ChromaGreen.png"
+  },
+  {
+    "number": 33,
+    "identity": "Chr_Insurgent_Female_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Female_01_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 34,
+    "identity": "Chr_Insurgent_Female_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Female_02_AI_RealisticPistol_ChromaGreen.png"
+  },
+  {
+    "number": 35,
+    "identity": "Chr_Insurgent_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_01_AI_RealisticRPG_ChromaGreen.png"
+  },
+  {
+    "number": 36,
+    "identity": "Chr_Insurgent_Male_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_02_AI_RealisticMachineGun_ChromaGreen.png"
+  },
+  {
+    "number": 37,
+    "identity": "Chr_Insurgent_Male_03",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_03_AI_RealisticSMG_ChromaGreen.png"
+  },
+  {
+    "number": 38,
+    "identity": "Chr_Insurgent_Male_04",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_04_AI_RealisticSniper_ChromaGreen.png"
+  },
+  {
+    "number": 39,
+    "identity": "Chr_Insurgent_Male_05",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Insurgent_Male_05_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 40,
+    "identity": "Chr_Leader_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Leader_Male_01_AI_RealisticMetalPistol_ChromaGreen.png"
+  },
+  {
+    "number": 41,
+    "identity": "Chr_Pilot_Female_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Pilot_Female_01_AI_RealisticCompactPistol_ChromaGreen.png"
+  },
+  {
+    "number": 42,
+    "identity": "Chr_Pilot_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Pilot_Male_01_AI_RealisticCompactPistol_ChromaGreen.png"
+  },
+  {
+    "number": 43,
+    "identity": "Chr_Soldier_Female_01_Alt_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_Alt_01_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 44,
+    "identity": "Chr_Soldier_Female_01_Alt_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_Alt_02_AI_RealisticSniper_ChromaGreen.png"
+  },
+  {
+    "number": 45,
+    "identity": "Chr_Soldier_Female_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_01_AI_RealisticSniper_ChromaGreen.png"
+  },
+  {
+    "number": 46,
+    "identity": "Chr_Soldier_Female_02_Alt_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_Alt_01_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 47,
+    "identity": "Chr_Soldier_Female_02_Alt_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_Alt_02_AI_RealisticSMG_ChromaGreen.png"
+  },
+  {
+    "number": 48,
+    "identity": "Chr_Soldier_Female_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Female_02_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 49,
+    "identity": "Chr_Soldier_Male_01_Alt_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_Alt_01_AI_RealisticSniperBearded_ChromaGreen.png"
+  },
+  {
+    "number": 50,
+    "identity": "Chr_Soldier_Male_01_Alt_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_Alt_02_AI_RealisticAdvancedRifle_v3_ChromaGreen.png"
+  },
+  {
+    "number": 51,
+    "identity": "Chr_Soldier_Male_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_01_AI_RealisticMachineGun_ChromaGreen.png"
+  },
+  {
+    "number": 52,
+    "identity": "Chr_Soldier_Male_02_Alt_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_01_AI_RealisticMetalPistol_ChromaGreen.png"
+  },
+  {
+    "number": 53,
+    "identity": "Chr_Soldier_Male_02_Alt_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_02_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 54,
+    "identity": "Chr_Soldier_Male_02_Alt_03",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_03_AI_RealisticPistol_ChromaGreen.png"
+  },
+  {
+    "number": 55,
+    "identity": "Chr_Soldier_Male_02_Alt_04",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_Alt_04_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 56,
+    "identity": "Chr_Soldier_Male_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Chr_Soldier_Male_02_AI_RealisticRifle_ChromaGreen.png"
+  },
+  {
+    "number": 57,
+    "identity": "Veh_APC_Fast",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Fast_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 58,
+    "identity": "Veh_APC_Heavy",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Heavy_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 59,
+    "identity": "Veh_APC_Slow",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_APC_Slow_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 60,
+    "identity": "Veh_Drone",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Drone_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 61,
+    "identity": "Veh_Helicopter_Attack",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Attack_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 62,
+    "identity": "Veh_Helicopter_Attack_Small",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Attack_Small_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 63,
+    "identity": "Veh_Helicopter_Transport",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Transport_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 64,
+    "identity": "Veh_Jet_01",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Jet_01_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 65,
+    "identity": "Veh_Jet_02",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Jet_02_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 66,
+    "identity": "Veh_Light_Armored_Car",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Light_Armored_Car_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 67,
+    "identity": "Veh_Missle_Launcher_Air",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Missle_Launcher_Air_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 68,
+    "identity": "Veh_Missle_Launcher_Ground",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Missle_Launcher_Ground_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 69,
+    "identity": "Veh_Plane_Transport",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Plane_Transport_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 70,
+    "identity": "Veh_Radar_Tank",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Radar_Tank_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 71,
+    "identity": "Veh_Tank_USA",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Tank_USA_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 72,
+    "identity": "Veh_Truck_Canopy",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Canopy_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 73,
+    "identity": "Veh_Truck_Tanker",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Tanker_AI_RealisticVehicle_ChromaGreen.png"
+  },
+  {
+    "number": 74,
+    "identity": "Veh_Truck_Tray",
+    "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Truck_Tray_AI_RealisticVehicle_ChromaGreen.png"
+  }
+]

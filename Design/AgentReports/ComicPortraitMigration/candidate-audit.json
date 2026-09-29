@@ -1,0 +1,52 @@
+{
+  "checked": 238,
+  "pending": 0,
+  "issues": [],
+  "nearTransparentCornerNoise": [
+    {
+      "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_Big_AI_RealisticBuilding_ChromaGreen.png",
+      "cornerAlpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_GuardTower_AI_RealisticBuilding_ChromaGreen.png",
+      "cornerAlpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Dirt_Straight_AI_RealisticBuilding_ChromaGreen.png",
+      "cornerAlpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Building_Wall_Fence_Straight_AI_RealisticBuilding_ChromaGreen.png",
+      "cornerAlpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    {
+      "target": "Assets/Game/Art/UI/Portraits/Generated/Portrait_Unit_Veh_Helicopter_Attack_Small_AI_RealisticVehicle_ChromaGreen.png",
+      "cornerAlpha": [
+        0,
+        0,
+        1,
+        0
+      ]
+    }
+  ]
+}

@@ -57,6 +57,7 @@ namespace Game.Editor
             BuildFooter(composition);
             ConfigureResponsiveLayout(composition, responsive);
 
+            MenuAccountHeaderAuthoring.Apply(root.gameObject);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

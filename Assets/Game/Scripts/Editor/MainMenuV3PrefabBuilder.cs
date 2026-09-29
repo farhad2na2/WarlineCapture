@@ -70,7 +70,6 @@ namespace Game.Editor
             ConfigureTexture(CampaignArtPath, false, 2048);
             ConfigureTexture(OperationsArtPath, false, 2048);
             ConfigureTexture(SkirmishArtPath, false, 2048);
-            ConfigureTexture(V3UiFoundationBuilder.SharedAriaPortraitPath, true, 2048);
             ConfigureTexture(CampaignIconPath, true, 512);
             ConfigureTexture(OperationsIconPath, true, 512);
             ConfigureTexture(SkirmishIconPath, true, 512);
@@ -101,12 +100,13 @@ namespace Game.Editor
             ConfigureRuntimeLayouts(headerSection, leftSection, middleSection, rightSection, footerSection);
 
             MissionUiSerializedBindingsAuthoring.Apply(root);
+            MenuAccountHeaderAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
             Validate();
-            Debug.Log("[MainMenuV3PrefabBuilder] result=Passed v3=True cohesive baked commander scene selected by stable commander ID; live UI remains shared/procedural.");
+            Debug.Log("[MainMenuV3PrefabBuilder] result=Passed v3=True Campaign-led home with native portraits, informational Credits, and independent mode routes.");
         }
 
         [MenuItem("Game/UI/V3/Validate Main Menu")]
@@ -120,25 +120,22 @@ namespace Game.Editor
             if (sections == null || sections.Sections == null || sections.Sections.Count != 6)
                 throw new MissingReferenceException("Main Menu V3 must expose all six shell sections.");
 
-            Require(prefab.transform, "HeaderContent/HeaderResourceArea/CreditsPanel/Frame");
-            Require(prefab.transform, "HeaderContent/HeaderResourceArea/CommandPanel/Frame");
-            Require(prefab.transform, "LeftContent/Card_Campaign/Hotspot");
+            Require(prefab.transform, "HeaderContent/CreditsVisualPanel/Value");
+            if (prefab.transform.Find("HeaderContent/CommandVisualPanel") != null || prefab.transform.Find("HeaderContent/HeaderResourceArea") != null)
+                throw new InvalidOperationException("Retired Command/header purchase routes must be absent.");
+            Require(prefab.transform, "LeftContent/Card_Campaign/ContinueButton");
             Require(prefab.transform, "LeftContent/Card_Operations/Hotspot");
             Require(prefab.transform, "LeftContent/Card_Skirmish/Hotspot");
-            Require(prefab.transform, "RightContent/CommanderPanel/CommanderPanelHotspot");
+            Require(prefab.transform, "RightContent/CommanderPanel/ViewCommanderButton/CommanderPanelHotspot");
             Require(prefab.transform, "FooterContent/StoreButton");
             Require(prefab.transform, "FooterContent/OpenArmoryButton");
 
-            Transform commanderTransform = Require(prefab.transform, "MenuBackgroundContent/CommanderSceneVariant");
-            MainMenuCommanderVariantView commanderView = commanderTransform.GetComponent<MainMenuCommanderVariantView>();
-            Image commanderImage = commanderTransform.GetComponent<Image>();
-            AspectRatioFitter commanderFitter = commanderTransform.GetComponent<AspectRatioFitter>();
-            if (commanderView == null || commanderImage == null || commanderView.Target != commanderImage ||
-                commanderView.Variants == null || commanderView.Variants.Length < 1 ||
-                !string.Equals(commanderView.DefaultCommanderId, DefaultCommanderId, StringComparison.Ordinal))
-                throw new MissingReferenceException("Main Menu V3 must bind one cohesive baked commander scene by stable commander ID.");
-            if (commanderFitter == null || commanderFitter.aspectMode != AspectRatioFitter.AspectMode.EnvelopeParent)
-                throw new MissingComponentException("Main Menu V3 commander scene must use an aspect-fill crop instead of stretching.");
+            Transform commanderTransform=Require(prefab.transform,"RightContent/CommanderPanel/CommanderSceneVariant");
+            var commanderView=commanderTransform.GetComponent<MainMenuCommanderVariantView>();
+            if(commanderView == null || commanderView.Variants.Length < 6) throw new MissingReferenceException("Commander must bind saved identity portraits.");
+            var aria=Require(prefab.transform,"RightContent/AriaPanel/Portrait").GetComponent<Image>();
+            if(AssetDatabase.GetAssetPath(aria.sprite)!=V3UiFoundationBuilder.SharedAriaPortraitPath || !aria.preserveAspect)
+                throw new InvalidOperationException("ARIA must retain her exact native portrait and proportions.");
 
             MainMenuV3SectionLayoutView[] layouts = prefab.GetComponentsInChildren<MainMenuV3SectionLayoutView>(true);
             if (layouts.Length < 6)
@@ -148,17 +145,13 @@ namespace Game.Editor
             ValidateAtlas(AriaAtlasPath, V3UiFoundationBuilder.SharedAriaPortraitPath);
             ValidateAtlas(MainMenuIconAtlasPath, CampaignIconPath, OperationsIconPath, SkirmishIconPath, StoreIconPath, ArmoryIconPath);
 
-            if (prefab.GetComponentsInChildren<V3GradientGraphic>(true).Length < 18)
-                throw new MissingComponentException("Main Menu V3 requires procedural gradients on its live chrome.");
-            if (prefab.GetComponentsInChildren<V3RingGraphic>(true).Length < 8)
-                throw new MissingComponentException("Main Menu V3 requires procedural rings for ARIA telemetry and Operations progress.");
-
             Transform settings = Require(prefab.transform, "HeaderContent/SettingsButton");
             UIShellActionButtonView settingsAction = settings.GetComponent<UIShellActionButtonView>();
             if (settingsAction == null || settingsAction.ActionKind != UiActionKind.OpenSettings || settings.GetComponent<UIShellRouteButtonView>() != null)
                 throw new InvalidOperationException("Main Menu Settings must enqueue OpenSettings, not route to the legacy Settings screen.");
 
-            ValidateRoute(prefab, "Card_Campaign", UIRoute.Campaign);
+            if (Require(prefab.transform,"LeftContent/Card_Campaign").GetComponent<MainMenuCampaignCardView>() == null)
+                throw new MissingComponentException("Campaign must share its target with Continue.");
             ValidateRoute(prefab, "Card_Operations", UIRoute.Operations);
             ValidateRoute(prefab, "Card_Skirmish", UIRoute.QuickCustomSetup);
             ValidateRoute(prefab, "CommanderPanelHotspot", UIRoute.CommanderProfile);
@@ -167,7 +160,7 @@ namespace Game.Editor
 
             HashSet<string> allowedRasterPaths = new(StringComparer.Ordinal)
             {
-                CommanderScenePath,
+                FirstLaunchNarrativeDialogueAssetImporter.CommanderPortraitSheetPath,
                 CampaignArtPath,
                 OperationsArtPath,
                 SkirmishArtPath,
@@ -187,7 +180,7 @@ namespace Game.Editor
                 if (image.sprite == null)
                     continue;
                 string path = AssetDatabase.GetAssetPath(image.sprite);
-                if (!allowedRasterPaths.Contains(path))
+                if (!allowedRasterPaths.Contains(path) && !path.StartsWith("Assets/Game/Art/Narrative/",StringComparison.Ordinal))
                     throw new InvalidOperationException($"Main Menu V3 references historical or duplicated raster chrome: {path}");
             }
 
@@ -388,45 +381,28 @@ namespace Game.Editor
 
         private static void BuildBackground(Transform root)
         {
-            Image commanderSceneImage = CreateImage("CommanderSceneVariant", root, commanderScene, Color.white, false);
-            Stretch(commanderSceneImage.rectTransform);
-            AspectRatioFitter fitter = commanderSceneImage.gameObject.AddComponent<AspectRatioFitter>();
-            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
-            fitter.aspectRatio = commanderScene.rect.width / commanderScene.rect.height;
-            MainMenuCommanderVariantView commanderView = commanderSceneImage.gameObject.AddComponent<MainMenuCommanderVariantView>();
-            commanderView.Configure(
-                commanderSceneImage,
-                new[] { new MainMenuCommanderVariantView.CommanderVariant(DefaultCommanderId, commanderScene) },
-                DefaultCommanderId);
-
-            RectTransform shadeReference = CreateTopLeftRect("BackgroundChromeReference", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
-            ConfigureLayout(shadeReference, MainMenuV3SectionAlignment.TopLeft);
-            V3GradientGraphic topShade = CreateGradient("HeaderReadability", shadeReference, new Color(0f, 0f, 0f, 0.55f), new Color(0f, 0f, 0f, 0f), Color.clear, 0f);
-            SetTopLeft(topShade.rectTransform, 0f, 0f, 1672f, 205f);
+            Image background = CreateImage("HomeBackground", root, null, new Color32(3, 10, 14, 255), false);
+            Stretch(background.rectTransform);
+            RectTransform reference = CreateTopLeftRect("BackgroundChromeReference", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
+            ConfigureLayout(reference, MainMenuV3SectionAlignment.TopLeft);
         }
 
-        private static void ConfigureRuntimeLayouts(
-            RectTransform header,
-            RectTransform left,
-            RectTransform middle,
-            RectTransform right,
-            RectTransform footer)
+
+        private static void ConfigureRuntimeLayouts(RectTransform header, RectTransform left, RectTransform middle, RectTransform right, RectTransform footer)
         {
-            ConfigureLayout(
-                header,
-                MainMenuV3SectionAlignment.TopLeft,
-                header.Find("CreditsVisualPanel") as RectTransform,
-                header.Find("CommandVisualPanel") as RectTransform,
-                header.Find("SettingsButton") as RectTransform);
-            ConfigureLayout(left, MainMenuV3SectionAlignment.TopLeft);
+            ConfigureLayout(header, MainMenuV3SectionAlignment.TopLeft, header.Find("CreditsVisualPanel") as RectTransform, header.Find("SettingsButton") as RectTransform);
+            var layout = left.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
+            layout.Configure(ReferenceResolution, MainMenuV3SectionAlignment.TopLeft, horizontalTargets: new[]
+            {
+                new MainMenuV3HorizontalResponsiveTarget(left.Find("Card_Campaign") as RectTransform, 0f, 1f),
+                new MainMenuV3HorizontalResponsiveTarget(left.Find("Card_Operations") as RectTransform, 0f, .5f),
+                new MainMenuV3HorizontalResponsiveTarget(left.Find("Card_Skirmish") as RectTransform, .5f, .5f)
+            });
             ConfigureLayout(middle, MainMenuV3SectionAlignment.Center);
             ConfigureLayout(right, MainMenuV3SectionAlignment.TopRight);
-            MainMenuV3SectionLayoutView footerLayout = footer.gameObject.AddComponent<MainMenuV3SectionLayoutView>();
-            footerLayout.Configure(
-                ReferenceResolution,
-                MainMenuV3SectionAlignment.BottomCenter,
-                shouldExpandToCanvasWidth: true);
+            ConfigureLayout(footer, MainMenuV3SectionAlignment.TopRight);
         }
+
 
         private static void ConfigureLayout(
             RectTransform target,
@@ -440,15 +416,17 @@ namespace Game.Editor
         private static void BuildHeader(Transform root)
         {
             BuildLogo(root);
-            BuildVisibleResource(root, "CreditsVisualPanel", 963f, 14f, 281f, 107f, "CREDITS", "24,750", creditsIcon, Amber);
-            BuildVisibleResource(root, "CommandVisualPanel", 1251f, 14f, 278f, 107f, "COMMAND", "8,430", commandIcon, Cyan);
+            BuildVisibleResource(root, "CreditsVisualPanel", 1215f, 10f, 310f, 86f, "CREDITS", "—", creditsIcon, Amber);
+            var value = root.Find("CreditsVisualPanel/Value").GetComponent<TMP_Text>();
+            value.enableAutoSizing = true; value.fontSizeMin = 24; value.fontSizeMax = 40;
+            root.gameObject.AddComponent<MainMenuAccountHeaderView>().Configure(value);
             BuildSettingsButton(root);
-            BuildResourceCompatibilityScaffold(root);
         }
+
 
         private static void BuildLogo(Transform root)
         {
-            RectTransform plate = CreateTopLeftRect("HeaderLogoPanel", root, 14f, 13f, 513f, 137f);
+            RectTransform plate = CreateTopLeftRect("HeaderLogoPanel", root, 14f, 10f, 410f, 86f);
             V3GradientGraphic fill = plate.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(20, 31, 35, 252), new Color32(11, 22, 26, 252), new Color32(3, 9, 12, 253), new Color32(6, 13, 16, 253), Border, 3f);
             V3UiFoundationBuilder.AddMainMenuLogo(plate, left: 18f, top: 10f, right: 18f, bottom: 10f);
@@ -477,19 +455,19 @@ namespace Game.Editor
             else
             {
                 Image iconImage = CreateImage("Icon", panel, icon, Color.white, false);
-                SetTopLeft(iconImage.rectTransform, 17f, 17f, 75f, 75f);
+                SetTopLeft(iconImage.rectTransform, 16f, 10f, 66f, 66f);
                 iconImage.preserveAspect = true;
             }
             TMP_Text labelText = CreateText("Label", panel, label, 25f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(labelText.rectTransform, 101f, 12f, width - 108f, 38f);
+            SetTopLeft(labelText.rectTransform, 95f, 4f, width - 106f, 30f);
             TMP_Text valueText = CreateText("Value", panel, value, 43f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(valueText.rectTransform, 101f, 45f, width - 108f, 55f);
+            SetTopLeft(valueText.rectTransform, 95f, 31f, width - 106f, 51f);
             CreateSolidTopLeft("Accent", panel, 3f, height - 5f, width - 6f, 3f, new Color(accent.r, accent.g, accent.b, 0.55f));
         }
 
         private static void BuildSettingsButton(Transform root)
         {
-            RectTransform rect = CreateTopLeftRect("SettingsButton", root, 1537f, 14f, 118f, 107f);
+            RectTransform rect = CreateTopLeftRect("SettingsButton", root, 1537f, 10f, 118f, 86f);
             V3GradientGraphic fill = rect.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(23, 35, 39, 255), new Color32(14, 26, 30, 255), new Color32(5, 12, 15, 255), new Color32(8, 17, 20, 255), Border, 3f);
             Button button = rect.gameObject.AddComponent<Button>();
@@ -497,7 +475,7 @@ namespace Game.Editor
             button.transition = Selectable.Transition.ColorTint;
             button.colors = ButtonColors();
             Image icon = CreateImage("Icon", rect, settingsIcon, TextPrimary, false);
-            SetTopLeft(icon.rectTransform, 28f, 23f, 62f, 62f);
+            SetTopLeft(icon.rectTransform, 28f, 12f, 62f, 62f);
             icon.preserveAspect = true;
             UIShellActionButtonView action = rect.gameObject.AddComponent<UIShellActionButtonView>();
             SerializedObject serialized = new(action);
@@ -507,73 +485,51 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void BuildResourceCompatibilityScaffold(Transform root)
-        {
-            RectTransform area = CreateRect("HeaderResourceArea", root, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(1380f, 160f), Vector2.zero);
-            area.gameObject.SetActive(false);
-            BuildResourceCompatibilityPanel(area, "CreditsPanel", -350f, "CREDITS", "24,750", creditsIcon);
-            BuildResourceCompatibilityPanel(area, "CommandPanel", 350f, "COMMAND", "8,430", commandIcon);
-        }
-
-        private static void BuildResourceCompatibilityPanel(Transform area, string name, float x, string label, string value, Sprite icon)
-        {
-            RectTransform panel = CreateRect(name, area, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(676f, 160f), new Vector2(x, 0f));
-            RectTransform frame = CreateRect("Frame", panel, Vector2.zero, Vector2.one, Vector2.zero, Vector2.zero);
-            TMP_Text labelText = CreateText("Label", frame, label, 26f, boldFont, TextAlignmentOptions.BottomLeft, TextPrimary);
-            labelText.rectTransform.anchoredPosition = new Vector2(150f, -20f);
-            labelText.rectTransform.sizeDelta = new Vector2(330f, 34f);
-            TMP_Text valueText = CreateText("Value", frame, value, 54f, boldFont, TextAlignmentOptions.TopLeft, TextPrimary);
-            valueText.rectTransform.anchoredPosition = new Vector2(150f, -58f);
-            valueText.rectTransform.sizeDelta = new Vector2(330f, 76f);
-            Image iconImage = CreateImage("Icon", frame, icon, Color.white, false);
-            iconImage.rectTransform.anchoredPosition = new Vector2(-235f, 0f);
-            iconImage.rectTransform.sizeDelta = new Vector2(112f, 112f);
-            iconImage.preserveAspect = true;
-        }
-
         private static void BuildModeCards(Transform root)
         {
             BuildCampaignCard(root);
-            BuildCompactModeCard(root, "Card_Operations", 14f, 504f, 680f, 128f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
-            BuildCompactModeCard(root, "Card_Skirmish", 14f, 644f, 680f, 139f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
+            BuildCompactModeCard(root, "Card_Operations", 14f, 705f, 628f, 216f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
+            BuildCompactModeCard(root, "Card_Skirmish", 654f, 705f, 628f, 216f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
         }
+
 
         private static void BuildCampaignCard(Transform root)
         {
-            RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 156f, 680f, 337f);
-            Image art = CreateImage("CampaignArt", card, campaignArt, Color.white, false);
+            RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 108f, 1268f, 585f);
+            Image art = CreateImage("CampaignArt", card, null, Color.white, false);
             Stretch(art.rectTransform);
-            V3GradientGraphic shade = CreateGradient("CampaignReadability", card, new Color(0.02f, 0.01f, 0f, 0.2f), new Color(0.02f, 0.01f, 0f, 0.65f), Color.clear, 0f);
+            art.rectTransform.pivot = new Vector2(0.5f, 1f);
+            // Preserve scene proportions; crop within the hero, never stretch faces.
+            var mask = card.gameObject.AddComponent<RectMask2D>();
+            var fitter = art.gameObject.AddComponent<AspectRatioFitter>();
+            fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            fitter.aspectRatio = 16f / 9f;
+            V3GradientGraphic shade = CreateGradient("CampaignReadability", card, new Color(0,0,0,.05f), new Color(0,0,0,.95f), Border, 2f);
             Stretch(shade.rectTransform);
-            V3GradientGraphic frame = CreateGradient("Frame", card, Color.clear, Color.clear, Amber, 3f);
-            Stretch(frame.rectTransform);
-            RectTransform iconCell = CreateTopLeftRect("IconCell", card, 3f, 3f, 102f, 117f);
-            V3GradientGraphic iconFill = iconCell.gameObject.AddComponent<V3GradientGraphic>();
-            iconFill.Configure(new Color32(194, 127, 0, 245), new Color32(107, 63, 0, 248), Amber, 3f);
-            Image campaignIconImage = CreateImage("CampaignTarget", iconCell, campaignIcon, Color.white, false);
-            SetTopLeft(campaignIconImage.rectTransform, 8f, 12f, 86f, 86f);
-            campaignIconImage.preserveAspect = true;
-            TMP_Text title = CreateText("Title", card, "CAMPAIGN", 53f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(title.rectTransform, 120f, 7f, 535f, 66f);
-            TMP_Text subtitle = CreateText("Subtitle", card, "CONTINUE CAMPAIGN  ›", 27f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(subtitle.rectTransform, 122f, 67f, 500f, 43f);
-            RectTransform quote = CreateTopLeftRect("StoryQuote", card, 24f, 135f, 255f, 78f);
-            V3GradientGraphic quoteFill = quote.gameObject.AddComponent<V3GradientGraphic>();
-            quoteFill.Configure(new Color32(255, 255, 252, 255), new Color32(226, 223, 211, 255), new Color32(54, 54, 49, 255), 2f);
-            Image quoteTail = CreateSolid("Tail", quote, new Color32(238, 236, 225, 255), new Vector2(16f, 16f), new Vector2(124f, 0f));
-            quoteTail.rectTransform.localRotation = Quaternion.Euler(0f, 0f, 45f);
-            TMP_Text quoteText = CreateText("Text", quote, "PEOPLE ARE COUNTING\nON US. KEEP THEM SAFE.", 19f, boldFont, TextAlignmentOptions.Center, new Color32(22, 24, 23, 255));
-            Stretch(quoteText.rectTransform);
-            quoteText.fontStyle = FontStyles.Bold | FontStyles.Italic;
-            RectTransform warning = CreateTopLeftRect("EmergencyWarning", card, 22f, 263f, 475f, 59f);
-            V3GradientGraphic warningFill = warning.gameObject.AddComponent<V3GradientGraphic>();
-            warningFill.Configure(new Color32(30, 20, 14, 248), new Color32(8, 9, 9, 252), Red, 3f);
-            CreateWarningIcon(CreateTopLeftRect("Icon", warning, 13f, 9f, 45f, 41f), Red);
-            TMP_Text warningText = CreateText("Text", warning, "EMERGENCY: CIVILIANS AT RISK", 24f, boldFont, TextAlignmentOptions.MidlineLeft, Red);
-            SetTopLeft(warningText.rectTransform, 70f, 5f, 392f, 49f);
-            AddRouteHotspot(card, UIRoute.Campaign);
+            TMP_Text label = CreateText("CampaignLabel", card, "CAMPAIGN", 30f, boldFont, TextAlignmentOptions.MidlineLeft, Amber);
+            SetTopLeft(label.rectTransform, 32, 276, 1170, 42);
+            ExpandTextWithParent(label.rectTransform, 1268);
+            TMP_Text chapter = CreateText("Chapter", card, "", 26f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(chapter.rectTransform, 32, 319, 1170, 40);
+            ExpandTextWithParent(chapter.rectTransform, 1268);
+            TMP_Text title = CreateText("Title", card, "CAMPAIGN", 52f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(title.rectTransform, 32, 357, 1170, 68);
+            ExpandTextWithParent(title.rectTransform, 1268);
+            title.enableAutoSizing=true; title.fontSizeMin=32; title.fontSizeMax=52;
+            TMP_Text purpose = CreateText("Purpose", card, "Review your Campaign missions.", 27f, mediumFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(purpose.rectTransform, 32, 426, 1170, 54);
+            ExpandTextWithParent(purpose.rectTransform, 1268);
+            purpose.textWrappingMode=TextWrappingModes.Normal; purpose.enableAutoSizing=true; purpose.fontSizeMin=20; purpose.fontSizeMax=27;
+            RectTransform action = CreateTopLeftRect("ContinueButton", card, 32, 487, 650, 82);
+            var fill=action.gameObject.AddComponent<V3GradientGraphic>();
+            fill.Configure(new Color32(46,143,39,255), new Color32(9,65,34,255), Green, 3f);
+            Button button=action.gameObject.AddComponent<Button>(); button.targetGraphic=fill; button.colors=ButtonColors();
+            TMP_Text actionLabel=CreateText("Label", action, "CONTINUE CAMPAIGN   ›", 36, boldFont, TextAlignmentOptions.Center, TextPrimary);
+            Stretch(actionLabel.rectTransform); actionLabel.enableAutoSizing=true; actionLabel.fontSizeMin=24; actionLabel.fontSizeMax=36;
             BindCampaignPlates(card.gameObject, art);
+            card.GetComponent<MainMenuCampaignCardView>().Configure(title,chapter,purpose,actionLabel,button);
         }
+
 
         private static void BindCampaignPlates(GameObject card, Image art)
         {
@@ -582,7 +538,7 @@ namespace Game.Editor
             data.FindProperty("art").objectReferenceValue = art;
             (string id, string path, string sprite)[] entries =
             {
-                ("saga.ch01.m01.first_contact", CampaignArtPath, null),
+                ("saga.ch01.m01.first_contact", "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png", null),
                 ("saga.ch01.m02.establish_base", "Assets/Game/Art/Narrative/M02EstablishBase/Final/M02-P01-Brief.png", null),
                 ("saga.ch01.m03.radar_warning", "Assets/Game/Art/Narrative/M03RadarWarning/Final/M03-B01.png", "M03-B01-16x9"),
                 ("saga.ch01.m04.airlift", "Assets/Game/Art/Narrative/M04Airlift/Final/M04-B01.png", "M04-B01-16x9"),
@@ -594,7 +550,8 @@ namespace Game.Editor
                 ("saga.ch02.m05.route_reopened", "Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefRoutingArchive.png", "BriefRoutingArchive-16x9"),
                 ("saga.ch03.m01.signal_trace", "Assets/Game/Art/Narrative/CH03M01SignalTrace/BriefThreeSignals.png", "BriefThreeSignals-16x9"),
                 ("saga.ch03.m02.safehouse_sweep", "Assets/Game/Art/Narrative/CH03M02SafehouseSweep/BriefVerifiedNode.png", "BriefVerifiedNode-16x9"),
-                ("saga.ch03.m03.false_front", "Assets/Game/Art/Narrative/CH03M03FalseFront/BriefEvacuationReport.png", "BriefEvacuationReport-16x9")
+                ("saga.ch03.m03.false_front", "Assets/Game/Art/Narrative/CH03M03FalseFront/BriefEvacuationReport.png", "BriefEvacuationReport-16x9"),
+                ("saga.ch04.m02.steel_push", "Assets/Game/Resources/FutureMissionComics/CH04M02_SteelPush.png", "CH04M02_SteelPush-a-16x9")
             };
             SerializedProperty plates = data.FindProperty("plates");
             plates.arraySize = entries.Length;
@@ -645,7 +602,7 @@ namespace Game.Editor
                 Image operationsIconImage = CreateImage("OperationsCompass", iconCell, operationsIcon, Color.white, false);
                 SetTopLeft(operationsIconImage.rectTransform, 4f, 7f, 94f, 94f);
                 operationsIconImage.preserveAspect = true;
-                BuildOperationsRoute(card);
+
             }
             else
             {
@@ -654,22 +611,23 @@ namespace Game.Editor
                 skirmishIconImage.preserveAspect = true;
             }
             TMP_Text label = CreateText("Title", card, title, 48f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(label.rectTransform, 120f, 0f, width - 195f, height);
+            SetTopLeft(label.rectTransform, 120f, 18f, width - 180f, 70f);
+            ExpandTextWithParent(label.rectTransform,width);
             TMP_Text chevron = CreateText("Chevron", card, "›", 82f, boldFont, TextAlignmentOptions.Center, TextPrimary);
             SetTopLeft(chevron.rectTransform, width - 66f, 2f, 54f, height - 4f);
+            chevron.rectTransform.anchorMin=chevron.rectTransform.anchorMax=new Vector2(1,1);
+            chevron.rectTransform.pivot=new Vector2(1,1); chevron.rectTransform.anchoredPosition=new Vector2(-12,-2);
+            TMP_Text subtitle = CreateText("Subtitle", card, iconKind == ModeIcon.Operations ? "Multi-mission strategic operations" : "Standalone tactical battles", 25f, mediumFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
+            SetTopLeft(subtitle.rectTransform, 120, 95, width-195, 90);
+            ExpandTextWithParent(subtitle.rectTransform,width);
+            subtitle.textWrappingMode=TextWrappingModes.Normal; subtitle.enableAutoSizing=true; subtitle.fontSizeMin=20; subtitle.fontSizeMax=25;
+            label.enableAutoSizing=true; label.fontSizeMin=32; label.fontSizeMax=48;
             AddRouteHotspot(card, route);
+            card.gameObject.AddComponent<MainMenuDisclosureView>().Configure(0x1fu);
         }
 
-        private static void BuildMiddleHitTargets(Transform root)
-        {
-            RectTransform hidden = CreateTopLeftRect("DeployCommandButton", root, 824f, 704f, 2f, 2f);
-            hidden.gameObject.SetActive(false);
-            V3GradientGraphic graphic = hidden.gameObject.AddComponent<V3GradientGraphic>();
-            Button button = hidden.gameObject.AddComponent<Button>();
-            button.targetGraphic = graphic;
-            UIShellRouteButtonView route = hidden.gameObject.AddComponent<UIShellRouteButtonView>();
-            route.Configure(UiShellRouteIntent.EnterMatch, UIRoute.Match, false);
-        }
+        private static void BuildMiddleHitTargets(Transform root) { }
+
 
         private static void BuildRightRail(Transform root)
         {
@@ -679,78 +637,64 @@ namespace Game.Editor
 
         private static void BuildAriaPanel(Transform root)
         {
-            RectTransform panel = CreateTopLeftRect("AriaPanel", root, 1332f, 129f, 324f, 388f);
+            RectTransform panel = CreateTopLeftRect("AriaPanel", root, 1296f, 108f, 360f, 285f);
             V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
             fill.ConfigureCorners(new Color32(2, 18, 28, 252), new Color32(2, 24, 36, 252), new Color32(0, 7, 12, 254), new Color32(1, 12, 18, 254), Cyan, 3f);
             TMP_Text title = CreateText("Title", panel, "ARIA", 44f, boldFont, TextAlignmentOptions.MidlineLeft, Cyan);
             SetTopLeft(title.rectTransform, 20f, 3f, 160f, 62f);
             Image portrait = CreateImage("Portrait", panel, ariaPortrait, new Color32(112, 224, 255, 255), false);
             portrait.color = Color.white;
-            SetTopLeft(portrait.rectTransform, 45f, 39f, 258f, 343f);
+            SetTopLeft(portrait.rectTransform, 110f, 39f, 235f, 242f);
             portrait.preserveAspect = true;
             V3GradientGraphic scan = CreateGradient("PortraitScan", panel, new Color(0f, 0.65f, 1f, 0.025f), new Color(0f, 0.17f, 0.28f, 0.14f), Color.clear, 0f);
-            SetTopLeft(scan.rectTransform, 42f, 37f, 264f, 347f);
-            BuildAriaTelemetry(panel);
+            SetTopLeft(scan.rectTransform, 108f, 37f, 240f, 244f);
+            TMP_Text description=CreateText("Description", panel, "Tactical assistant", 23, mediumFont, TextAlignmentOptions.TopLeft, Cyan);
+            SetTopLeft(description.rectTransform, 20, 66, 95, 135); description.textWrappingMode=TextWrappingModes.Normal;
         }
 
         private static void BuildCommanderPanel(Transform root)
         {
-            // Keep the panel's target-locked right edge while widening it to give the
-            // commander copy and CTA a consistent inset from the right frame.
-            RectTransform panel = CreateTopLeftRect("CommanderPanel", root, 1225f, 529f, 430f, 244f);
-            V3GradientGraphic fill = panel.gameObject.AddComponent<V3GradientGraphic>();
-            fill.ConfigureCorners(new Color32(30, 45, 28, 252), new Color32(18, 30, 21, 252), new Color32(7, 14, 10, 253), new Color32(10, 21, 13, 253), Border, 3f);
-            RectTransform emblem = CreateTopLeftRect("RankEmblem", panel, 20f, 22f, 64f, 92f);
-            CreateChevron("Rank1", emblem, 0f, 23f, Amber, 31f);
-            CreateChevron("Rank2", emblem, 0f, 1f, Amber, 31f);
-            CreateChevron("Rank3", emblem, 0f, -21f, Amber, 31f);
-            TMP_Text title = CreateText("Title", panel, "FIELD COMMANDER", 31f, boldFont, TextAlignmentOptions.MidlineLeft, TextPrimary);
-            SetTopLeft(title.rectTransform, 96f, 18f, 315f, 46f);
-            TMP_Text subtitle = CreateText("Subtitle", panel, "SELECTED COMMANDER", 22f, boldFont, TextAlignmentOptions.MidlineLeft, Amber);
-            SetTopLeft(subtitle.rectTransform, 96f, 61f, 313f, 38f);
-            RectTransform change = CreateTopLeftRect("ChangeButton", panel, 24f, 122f, 382f, 95f);
-            V3GradientGraphic changeFill = change.gameObject.AddComponent<V3GradientGraphic>();
-            changeFill.ConfigureCorners(new Color32(74, 116, 58, 255), new Color32(48, 90, 43, 255), new Color32(27, 62, 27, 255), new Color32(35, 73, 31, 255), new Color32(111, 148, 84, 255), 3f);
-            TMP_Text label = CreateText("Label", change, "CHANGE   ›", 44f, boldFont, TextAlignmentOptions.Center, TextPrimary);
-            SetTopLeft(label.rectTransform, 18f, 0f, 346f, 95f);
-            AddRouteHotspot(panel, UIRoute.CommanderProfile, "CommanderPanelHotspot");
+            RectTransform panel=CreateTopLeftRect("CommanderPanel", root, 1296,405,360,288);
+            var fill=panel.gameObject.AddComponent<V3GradientGraphic>();
+            fill.Configure(GraphiteTop,GraphiteBottom,Border,3);
+            TMP_Text heading=CreateText("Title",panel,"COMMANDER",32,boldFont,TextAlignmentOptions.MidlineLeft,TextPrimary);
+            SetTopLeft(heading.rectTransform,18,8,324,48);
+            TMP_Text name=CreateText("IdentityName",panel,"Commander",23,mediumFont,TextAlignmentOptions.MidlineLeft,TextPrimary);
+            SetTopLeft(name.rectTransform,18,56,140,140); name.textWrappingMode=TextWrappingModes.Normal;
+            name.enableAutoSizing=true; name.fontSizeMin=16; name.fontSizeMax=23;
+            Image portrait=CreateImage("CommanderSceneVariant",panel,null,Color.white,false);
+            SetTopLeft(portrait.rectTransform,160,55,186,150); portrait.preserveAspect=true;
+            var variants=new List<MainMenuCommanderVariantView.CommanderVariant>();
+            var portraits=new List<Sprite>();
+            foreach(var asset in AssetDatabase.LoadAllAssetRepresentationsAtPath(FirstLaunchNarrativeDialogueAssetImporter.CommanderPortraitSheetPath))
+                if(asset is Sprite sprite && sprite.name.StartsWith("commander_",StringComparison.Ordinal)) portraits.Add(sprite);
+            portraits.Sort((a,b)=>string.CompareOrdinal(a.name,b.name));
+            for(int i=0;i<portraits.Count;i++) variants.Add(new MainMenuCommanderVariantView.CommanderVariant(i.ToString(),portraits[i]));
+            var view=portrait.gameObject.AddComponent<MainMenuCommanderVariantView>();
+            view.Configure(portrait,variants.ToArray(),"0"); view.ConfigureIdentity(name);
+            RectTransform action=CreateTopLeftRect("ViewCommanderButton",panel,12,206,336,80);
+            var actionFill=action.gameObject.AddComponent<V3GradientGraphic>(); actionFill.Configure(new Color32(46,143,39,255),new Color32(9,65,34,255),Green,2);
+            TMP_Text actionText=CreateText("Label",action,"VIEW COMMANDER   ›",27,boldFont,TextAlignmentOptions.Center,TextPrimary); Stretch(actionText.rectTransform);
+            actionText.enableAutoSizing=true; actionText.fontSizeMin=20; actionText.fontSizeMax=27;
+            AddRouteHotspot(action,UIRoute.CommanderProfile,"CommanderPanelHotspot");
         }
+
 
         private static void BuildFooter(Transform root)
         {
-            RectTransform store = CreateTopLeftRect("StoreButton", root, 14f, 795f, 753f, 146f);
-            // The two footer actions form one uninterrupted, full-width strip. Their
-            // half-width anchors preserve the target proportions while distributing
-            // all additional ultra-wide width instead of leaving black side gutters.
-            store.anchorMin = new Vector2(0f, 1f);
-            store.anchorMax = new Vector2(0.5f, 1f);
-            store.pivot = new Vector2(0f, 1f);
-            store.anchoredPosition = new Vector2(14f, -795f);
-            store.sizeDelta = new Vector2(-83f, 146f);
-            V3GradientGraphic storeFill = store.gameObject.AddComponent<V3GradientGraphic>();
-            storeFill.ConfigureCorners(new Color32(4, 144, 215, 255), new Color32(3, 112, 183, 255), new Color32(1, 77, 135, 255), new Color32(2, 92, 153, 255), new Color32(0, 138, 216, 255), 3f);
-            Image cart = CreateImage("CartIcon", store, storeIcon, Color.white, false);
-            SetTopLeft(cart.rectTransform, 109f, 21f, 128f, 105f);
-            cart.preserveAspect = true;
-            TMP_Text storeText = CreateText("Label", store, "STORE", 59f, boldFont, TextAlignmentOptions.Center, TextPrimary);
-            SetTopLeft(storeText.rectTransform, 264f, 0f, 340f, 146f);
-            AddRouteHotspot(store, UIRoute.CommandExchange, "StoreButtonHotspot");
-
-            RectTransform armory = CreateTopLeftRect("OpenArmoryButton", root, 767f, 795f, 890f, 146f);
-            armory.anchorMin = new Vector2(0.5f, 1f);
-            armory.anchorMax = new Vector2(1f, 1f);
-            armory.pivot = new Vector2(0f, 1f);
-            armory.anchoredPosition = new Vector2(-69f, -795f);
-            armory.sizeDelta = new Vector2(54f, 146f);
-            V3GradientGraphic armoryFill = armory.gameObject.AddComponent<V3GradientGraphic>();
-            armoryFill.ConfigureCorners(new Color32(31, 65, 119, 255), new Color32(25, 52, 96, 255), new Color32(12, 29, 58, 255), new Color32(17, 38, 72, 255), new Color32(40, 69, 111, 255), 3f);
-            Image crate = CreateImage("CrateIcon", armory, armoryIcon, Color.white, false);
-            SetTopLeft(crate.rectTransform, 158f, 11f, 154f, 124f);
-            crate.preserveAspect = true;
-            TMP_Text armoryText = CreateText("Label", armory, "ARMORY", 59f, boldFont, TextAlignmentOptions.Center, TextPrimary);
-            SetTopLeft(armoryText.rectTransform, 327f, 0f, 400f, 146f);
-            AddRouteHotspot(armory, UIRoute.Armory, "ArmoryButtonHotspot");
+            BuildSecondaryButton(root,"StoreButton",705,"STORE",storeIcon,UIRoute.CommandExchange);
+            BuildSecondaryButton(root,"OpenArmoryButton",821,"ARMORY",armoryIcon,UIRoute.Armory);
         }
+        private static void BuildSecondaryButton(Transform root,string name,float y,string title,Sprite iconSprite,UIRoute route)
+        {
+            RectTransform rect=CreateTopLeftRect(name,root,1296,y,360,100);
+            var fill=rect.gameObject.AddComponent<V3GradientGraphic>(); fill.Configure(new Color32(6,105,172,255),new Color32(4,38,89,255),Cyan,2);
+            Image icon=CreateImage("Icon",rect,iconSprite,Color.white,false); SetTopLeft(icon.rectTransform,18,12,74,74); icon.preserveAspect=true;
+            TMP_Text label=CreateText("Label",rect,title+"   ›",32,boldFont,TextAlignmentOptions.Center,TextPrimary); SetTopLeft(label.rectTransform,102,5,242,90);
+            AddRouteHotspot(rect,route);
+            rect.gameObject.AddComponent<MainMenuDisclosureView>().Configure(route == UIRoute.Armory ? 3u : 0x1fu);
+        }
+
 
         private static void AddRouteHotspot(RectTransform parent, UIRoute route, string name = "Hotspot")
         {
@@ -1052,9 +996,11 @@ namespace Game.Editor
             if (prefab == null)
                 throw new FileNotFoundException($"Missing Main Menu prefab for capture: {PrefabPath}");
 
-            Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+            Scene scene = EditorSceneManager.NewPreviewScene();
             GameObject cameraObject = new("MainMenuV3CaptureCamera");
+            SceneManager.MoveGameObjectToScene(cameraObject, scene);
             Camera camera = cameraObject.AddComponent<Camera>();
+            camera.scene = scene;
             camera.clearFlags = CameraClearFlags.SolidColor;
             camera.backgroundColor = Color.black;
             camera.orthographic = true;
@@ -1071,6 +1017,7 @@ namespace Game.Editor
             camera.targetTexture = renderTexture;
 
             GameObject canvasObject = new("MainMenuV3CaptureCanvas", typeof(RectTransform), typeof(Canvas));
+            SceneManager.MoveGameObjectToScene(canvasObject, scene);
             RectTransform canvasRect = canvasObject.GetComponent<RectTransform>();
             canvasRect.sizeDelta = new Vector2(width, height);
             canvasRect.localPosition = Vector3.zero;
@@ -1092,6 +1039,10 @@ namespace Game.Editor
                 instance.GetComponentsInChildren<V3LocalizedTextBindingView>(true);
             for (int i = 0; i < localizedTextBindings.Length; i++)
                 localizedTextBindings[i].ApplyLocalization();
+            foreach(var view in instance.GetComponentsInChildren<MainMenuCampaignCardView>(true)) view.Refresh();
+            foreach(var view in instance.GetComponentsInChildren<MainMenuAccountHeaderView>(true)) view.Refresh();
+            foreach(var view in instance.GetComponentsInChildren<MainMenuCommanderVariantView>(true)) view.RefreshIdentity();
+            foreach(var view in instance.GetComponentsInChildren<MainMenuDisclosureView>(true)) view.Refresh();
             Canvas.ForceUpdateCanvases();
             // The shell stretches content after component OnEnable. Mirror that runtime
             // ordering in QA captures so every section resolves against the final canvas
@@ -1118,7 +1069,7 @@ namespace Game.Editor
                 RenderTexture.active = null;
                 UnityEngine.Object.DestroyImmediate(image);
                 UnityEngine.Object.DestroyImmediate(renderTexture);
-                EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+                EditorSceneManager.ClosePreviewScene(scene);
             }
         }
 
@@ -1190,6 +1141,12 @@ namespace Game.Editor
             text.textWrappingMode = TMPro.TextWrappingModes.NoWrap;
             text.overflowMode = TextOverflowModes.Overflow;
             return text;
+        }
+
+        private static void ExpandTextWithParent(RectTransform rect,float authoredParentWidth)
+        {
+            rect.anchorMax=new Vector2(1,1);
+            rect.sizeDelta=new Vector2(rect.sizeDelta.x-authoredParentWidth,rect.sizeDelta.y);
         }
 
         private static Image CreateSolid(string name, Transform parent, Color color, Vector2 size, Vector2 position)

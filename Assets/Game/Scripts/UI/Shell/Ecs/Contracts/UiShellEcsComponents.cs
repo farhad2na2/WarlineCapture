@@ -68,7 +68,8 @@ namespace Game.UI.Shell.Contracts.Ecs
 
     public struct UiShellCommanderProfileComponent : IComponentData
     {
-        public FixedString64Bytes Name;
+        // Onboarding accepts 32 characters, including multibyte player names.
+        public FixedString128Bytes Name;
         public FixedString64Bytes Subtitle;
         public FixedString64Bytes PortraitClass;
     }

@@ -1,0 +1,7 @@
+{
+  "before": "2026-09-28T22:08:23.732385+00:00",
+  "after": "2026-09-28T22:09:36.249738+00:00",
+  "changedFiles": [
+    "Assets/Game/Scripts/Editor/ComicPortraitRuntimeValidation.cs"
+  ]
+}

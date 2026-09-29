@@ -296,7 +296,8 @@ namespace Game.UI.Shell.Ecs
                 component.OperationMapId.ToString(), component.DisplayName.ToString(),
                 component.Available != 0, component.FirstClearCompleted != 0, component.PendingResume != 0,
                 component.BestStars, component.BestCompletionMilliseconds, component.SuccessfulReplayCount,
-                component.PrimaryAction, component.PrimaryActionLabel.ToString());
+                component.PrimaryAction, component.PrimaryActionLabel.ToString(),
+                (UiContentAccessState)Game.Runtime.ContentAccessRuntime.Evaluate(component.SelectedMissionId.ToString(), ready: component.ContentReady != 0, progression: component.Available != 0));
             campaign = new UiCampaignOperationsModel(
                 component.Version, component.CatalogSourceVersion, component.ProgressSourceVersion,
                 selected, component.NextMissionId.ToString(), component.NextMissionRevealed != 0, component.AvailableMissionMask, component.CompletedMissionMask);

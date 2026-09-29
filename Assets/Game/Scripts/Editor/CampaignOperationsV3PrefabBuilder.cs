@@ -146,6 +146,7 @@ namespace Game.Editor
 
             MissionUiSerializedBindingsAuthoring.Apply(root);
             CampaignMenuPresentationRepair.Configure(screen);
+            MenuAccountHeaderAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();

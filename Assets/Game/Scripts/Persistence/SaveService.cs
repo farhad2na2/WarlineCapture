@@ -47,6 +47,25 @@ namespace Game.Runtime
             SaveQuickGame(migrated.quickGame);
         }
 
+        public bool TryReadAccountProfile(out PlayerProfileSaveData profile)
+        {
+            profile = null;
+            try
+            {
+                if (_repository.Exists(ProfileFileName))
+                {
+                    string raw = _repository.ReadRaw(ProfileFileName);
+                    if (string.IsNullOrWhiteSpace(raw) || !raw.TrimStart().StartsWith("{", StringComparison.Ordinal)) return false;
+                    var parsed = JsonUtility.FromJson<PlayerProfileSaveData>(raw);
+                    if (parsed == null || parsed.profileSchemaVersion > FirstLaunchProfileState.CurrentSchemaVersion) return false;
+                }
+                profile = LoadProfile();
+                return true;
+            }
+            catch (Exception error) when (error is System.IO.IOException || error is UnauthorizedAccessException || error is ArgumentException)
+            { return false; }
+        }
+
         public PlayerProfileSaveData LoadProfile()
         {
             bool exists = _repository.Exists(ProfileFileName);

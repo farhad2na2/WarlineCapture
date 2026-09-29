@@ -85,7 +85,9 @@ namespace Game.UI.Runtime
                 return;
 
             AudioClip clip = voice.Clip;
-            bool voiceComplete = clip == null || elapsed >= clip.length;
+            // Editor frame stalls and audio loading can put elapsed time ahead of
+            // actual playback. Advance only after the voice source has finished.
+            bool voiceComplete = clip == null || !voice.IsPlaying && elapsed >= clip.length;
             if (!voiceComplete)
                 return;
 

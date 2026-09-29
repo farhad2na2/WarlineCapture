@@ -31,7 +31,7 @@ namespace Game.UI.Runtime
         private bool hasRuntimeSource;
         private bool specializedOwner;
         private float presentationScale=1f;
-        private float minimumPresentationSize,maximumPresentationSize;
+        [SerializeField] private float minimumPresentationSize,maximumPresentationSize;
         private bool meshRefreshQueued;
         private TextOverflowModes sourceOverflow;
 
@@ -278,6 +278,8 @@ namespace Game.UI.Runtime
         }
         public void SetFontBounds(float minimum,float maximum)
         {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum); ApplyLocalization();}
+        public void ConfigureFontBounds(float minimum,float maximum)
+        {minimumPresentationSize=Mathf.Max(8,minimum); maximumPresentationSize=Mathf.Max(minimumPresentationSize,maximum);}
         private static bool ContainsArabicScript(string value)
         {
             if(value==null) return false;

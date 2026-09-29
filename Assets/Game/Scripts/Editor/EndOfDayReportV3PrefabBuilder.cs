@@ -78,6 +78,7 @@ namespace Game.Editor
                     footer.ButtonRow);
                 reportView.Configure(popup, footer.ViewOperations, footer.SaveContinue, header.Back);
 
+            MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

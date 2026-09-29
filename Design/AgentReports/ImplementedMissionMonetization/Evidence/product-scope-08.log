@@ -1,0 +1,4 @@
+CSSM_ModuleLoad(): One or more parameters passed to a function were not valid.
+[ImplementedContentAccess] result=Passed canonical=205 profiles=4 free=9 ownership,progression,readiness,missing,restore,offline
+[OperationsProductScope] result=Passed filtering,checkpoint,completion,replay,upgrade,reward-dedup,legacy,unknown
+[OperationsCheckpointScope] result=Passed legacy-full,current-intro,scope-tamper,result-scope-conflict

@@ -82,6 +82,7 @@ namespace Game.Editor
             SetReference(serialized, "dayLabel", FindText(composition, "DayLabel"));
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            MenuAccountHeaderAuthoring.Apply(root.gameObject);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null)

@@ -32,6 +32,9 @@ namespace Game.Editor
             {
                 Debug.LogException(exception);
                 Debug.LogError("[M03RadarWarningEditorLaunchProbe] result=Failed startup: "+exception.Message);
+                // A connected normal Editor is shared and must remain open.
+                if (ExistingEditorValidation.IsRunning || Array.IndexOf(Environment.GetCommandLineArgs(), "-executeMethod") < 0)
+                    throw;
                 EditorApplication.Exit(1);
             }
         }

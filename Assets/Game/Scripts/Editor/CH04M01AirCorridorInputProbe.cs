@@ -31,7 +31,20 @@ namespace Game.Editor
         private static UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode savedEditorInput;
         private static UnityEngine.InputSystem.InputSettings.BackgroundBehavior savedBackgroundInput;
         private static bool inputRoutingConfigured;
-        static CH04M01AirCorridorInputProbe(){if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}}
+        static CH04M01AirCorridorInputProbe()
+        {
+            AssemblyReloadEvents.beforeAssemblyReload += () =>
+            {
+                if (!inputRoutingConfigured && !SessionState.GetBool(Active, false)) return;
+                RestoreInputRouting();
+                SessionState.SetBool(Active, false);
+                EditorApplication.update -= Tick;
+                Application.logMessageReceived -= Observe;
+                AriaTouchInputUiSystemHelper.Evidence -= ObserveTouch;
+                Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION", null);
+            };
+            if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}
+        }
         public static void RunEnglish(){SessionState.SetString(Locale,"en");Run();}
         public static void RunPersian(){SessionState.SetString(Locale,"fa-IR");Run();}
         public static void RunPersianBriefingReview()
@@ -179,7 +192,7 @@ namespace Game.Editor
             var voice=view?.VoiceSource;var clip=voice!=null&&voice.isPlaying?voice.clip:null;
             if(clip!=comicClip)
             {
-                if(comicClip!=null&&comicProgress<comicClip.length-.45f)throw new InvalidOperationException("Comic voice cut off: "+comicClip.name);
+                if(comicClip!=null&&comicProgress<comicClip.length-.45f)throw new InvalidOperationException("Comic voice cut off: "+comicClip.name+" observed="+comicProgress+" duration="+comicClip.length+" next="+clip?.name+" dialogue="+view?.DialogueView?.Phase);
                 comicClip=clip;comicProgress=0;
             }
             if(clip!=null)comicProgress=Mathf.Max(comicProgress,(float)voice.timeSamples/clip.frequency);
@@ -221,8 +234,16 @@ namespace Game.Editor
         }
         private static void Complete(bool passed,string detail)
         {
-            if(inputRoutingConfigured){var input=UnityEngine.InputSystem.InputSystem.settings;input.editorInputBehaviorInPlayMode=savedEditorInput;input.backgroundBehavior=savedBackgroundInput;inputRoutingConfigured=false;}
+            RestoreInputRouting();
             SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;AriaTouchInputUiSystemHelper.Evidence-=ObserveTouch;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);Debug.Log("[AirCorridorInput] result="+(passed?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(passed);
+        }
+        private static void RestoreInputRouting()
+        {
+            if(!inputRoutingConfigured)return;
+            var input=UnityEngine.InputSystem.InputSystem.settings;
+            input.editorInputBehaviorInPlayMode=savedEditorInput;
+            input.backgroundBehavior=savedBackgroundInput;
+            inputRoutingConfigured=false;
         }
     }
 }

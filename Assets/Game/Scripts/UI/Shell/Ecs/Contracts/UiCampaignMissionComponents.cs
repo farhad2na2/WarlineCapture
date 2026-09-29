@@ -21,6 +21,7 @@ namespace Game.UI.Shell.Contracts.Ecs
         public int SuccessfulReplayCount;
         public int LastAttemptOrdinal;
         public UiCampaignMissionPrimaryActionKind PrimaryAction;
+        public byte ContentReady;
         public byte Available;
         public byte FirstClearCompleted;
         public byte PendingResume;

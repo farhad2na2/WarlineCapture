@@ -95,6 +95,7 @@ namespace Game.Editor
             layout.Configure(ReferenceResolution, MainMenuV3SectionAlignment.Center, rightTargets.ToArray(), true, null, widthTargets.ToArray());
             view.Configure(credits, command, categoryButtons, categoryGradients, bodies, viewRewards);
 
+            MenuAccountHeaderAuthoring.Apply(root.gameObject);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root.gameObject, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root.gameObject);
             if (prefab == null) throw new InvalidOperationException($"Failed to save Ranking V3 prefab: {PrefabPath}");

@@ -215,6 +215,7 @@ namespace Game.Editor
                     ?? throw new MissingReferenceException("Mission briefing screen missing.");
                 if (screen.transform.Find("EvidenceChainRoutes") != null) return;
                 BuildEvidenceChainRoutes(screen.GetComponent<RectTransform>(), screen);
+            MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally { PrefabUtility.UnloadPrefabContents(root); }

@@ -197,6 +197,59 @@ namespace Game.Editor
         // Prefab builders must retain localization when recreating their hierarchy.
         // Initial project authoring may precede the catalog; the full catalog builder
         // binds all screens in that case.
+        public static void RebuildMenuHeaderLocalization()
+        {
+            var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
+            if (catalog == null) throw new InvalidOperationException("Missing localization catalog.");
+            var english = ToDictionary(catalog.FindLocale(GameLocalization.EnglishLocaleCode));
+            var persian = ToDictionary(catalog.FindLocale(GameLocalization.PersianLocaleCode));
+            var keys = new Dictionary<string, string>(StringComparer.Ordinal);
+            foreach (var pair in english) if (!keys.ContainsKey(pair.Value)) keys.Add(pair.Value, pair.Key);
+            ImportHomeStrings(english, persian, keys);
+            catalog = BuildCatalog(english, persian);
+            EditorUtility.SetDirty(catalog);
+            var root = PrefabUtility.LoadPrefabContents("Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab");
+            try
+            {
+                BindExistingCatalog(root);
+                foreach(var text in root.GetComponentsInChildren<TMP_Text>(true))
+                {
+                    var binding=text.GetComponent<V3LocalizedTextBindingView>();
+                    if(binding==null) continue;
+                    float maximum=text.enableAutoSizing?text.fontSizeMax:text.fontSize;
+                    if(text.name=="IdentityName") UnityEngine.Object.DestroyImmediate(binding);
+                    else binding.ConfigureFontBounds(Mathf.Min(maximum,18f),maximum);
+                }
+                PrefabUtility.SaveAsPrefabAsset(root, "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab");
+            }
+            finally { PrefabUtility.UnloadPrefabContents(root); }
+            RebuildAndPersistPersianFontCoverage(catalog.FindLocale(GameLocalization.PersianLocaleCode)?.FontAsset as TMP_FontAsset, persian.Values);
+            AssetDatabase.SaveAssets();
+            Debug.Log("[MenuHeaderLocalization] result=Passed nativeBindings=True preservedCatalog=True");
+        }
+
+        private static void ImportHomeStrings(Dictionary<string, string> english, Dictionary<string, string> persian, Dictionary<string, string> keysByEnglish)
+        {
+            void AddRuntimeText(string key, string source, string translated)
+            { AddEnglish(key, source, english, keysByEnglish); persian[key] = translated; }
+            AddRuntimeText("ui.home.chapter_mission", "CHAPTER {0} • MISSION {1}", "فصل {0} • مأموریت {1}");
+            AddRuntimeText("ui.home.continue", "CONTINUE CAMPAIGN   ›", "ادامهٔ کارزار   ›");
+            AddRuntimeText("ui.home.choose", "CHOOSE MISSION   ›", "انتخاب مأموریت   ›");
+            AddRuntimeText("ui.home.commander", "VIEW COMMANDER   ›", "مشاهدهٔ فرمانده   ›");
+            AddRuntimeText("ui.home.commander_default", "Commander", "فرمانده");
+            AddRuntimeText("ui.home.store", "STORE   ›", "فروشگاه   ›");
+            AddRuntimeText("ui.home.armory", "ARMORY   ›", "تسلیحات   ›");
+            AddRuntimeText("ui.home.operations", "Multi-mission strategic operations", "عملیات راهبردی چندمأموریتی");
+            AddRuntimeText("ui.home.skirmish", "Standalone tactical battles", "نبردهای تاکتیکی مستقل");
+            AddRuntimeText("ui.home.aria", "Tactical assistant", "دستیار تاکتیکی");
+            AddRuntimeText("ui.home.review", "Review your Campaign missions.", "مأموریت‌های کارزار را بررسی کنید.");
+            AddRuntimeText("ui.home.briefing", "Review the mission briefing.", "توجیه مأموریت را بررسی کنید.");
+            AddRuntimeText("ui.home.owned", "Campaign Edition required.", "نسخهٔ کارزار لازم است.");
+            AddRuntimeText("ui.home.progression", "Complete the previous mission first.", "ابتدا مأموریت قبلی را کامل کنید.");
+            AddRuntimeText("ui.home.download", "Content download required.", "دانلود محتوا لازم است.");
+            AddRuntimeText("ui.home.unavailable", "This mission is currently unavailable.", "این مأموریت اکنون در دسترس نیست.");
+        }
+
         public static int BindExistingCatalog(GameObject root)
         {
             var catalog = AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(CatalogPath);
@@ -820,6 +873,7 @@ namespace Game.Editor
                 keysByEnglish);
             AddEnglish("narrative.first_launch.control.cancel_skip", "KEEP WATCHING", english, keysByEnglish);
             AddEnglish("narrative.first_launch.control.confirm_skip", "SKIP INTRO", english, keysByEnglish);
+            ImportHomeStrings(english, persian, keysByEnglish);
             AddRuntimeText("ui.common.alerts", "ALERTS", "هشدارها");
             AddRuntimeText("ui.common.music", "MUSIC", "موسیقی");
             AddRuntimeText("ui.common.sound", "SOUND", "صدا");

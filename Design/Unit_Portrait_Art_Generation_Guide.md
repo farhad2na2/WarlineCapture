@@ -1,5 +1,7 @@
 # WarlineCapture Unit Portrait Art Generation Guide
 
+> Current art direction (2026-09-28): the user requested campaign-comic consistency for the complete portrait and selection library. Follow [the comic portrait art contract](Architecture/portrait_comic_art_style_contract.md). The older rendering prompts below are historical references and must not drive new portrait generation.
+
 ## Purpose
 
 This guide defines the reference style for AI-generated unit portrait icons used by WarlineCapture. The first approved reference portrait is:

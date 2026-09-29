@@ -35,6 +35,7 @@ namespace Game.Missions.Contracts
             return ContentAccessState.Allowed;
         }
         public static bool TryMembership(string id, out MissionProductMembership membership) => Members.TryGetValue(id ?? string.Empty, out membership);
+        public static IEnumerable<MissionProductMembership> Memberships => Members.Values;
         // Canonical membership generated from the adopted 205-row policy register.
         // Runtime indices and prototype names are deliberately absent.
         private static readonly Dictionary<string,MissionProductMembership> Members = new(StringComparer.Ordinal)

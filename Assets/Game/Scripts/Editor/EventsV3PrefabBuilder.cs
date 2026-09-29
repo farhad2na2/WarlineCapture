@@ -71,6 +71,7 @@ namespace Game.Editor
             view.Configure(credits, command, tabs, tabChrome, eventButtons, eventChrome, titles, timers,
                 descriptions, progressTexts, progressFills, detailTitle, detailTimer, detailDescription,
                 objectives, states, modifiers, rewards);
+            MenuAccountHeaderAuthoring.Apply(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null) throw new InvalidOperationException(PrefabPath);

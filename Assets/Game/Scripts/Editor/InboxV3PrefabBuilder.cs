@@ -95,6 +95,7 @@ namespace Game.Editor
                 detailBody, favorite, favoriteStar, markRead, markReadLabel, attachments, attachmentTitles,
                 attachmentFiles, attachmentStates);
 
+            MenuAccountHeaderAuthoring.Apply(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)

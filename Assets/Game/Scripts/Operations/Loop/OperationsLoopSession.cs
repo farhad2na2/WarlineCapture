@@ -1117,7 +1117,7 @@ namespace Game.Operations.Loop
             _replaying = false;
             _orders.Clear();
             _orders.AddRange(image.Orders);
-            string rebuilt = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount, document.ScopeId);
+            string rebuilt = OperationsCheckpointCodec.Write(_mission, _definition, _orders, document.SessionId, document.ContentHash, document.RestartCount, document.ScopeId, image.SchemaVersion);
             if (!OperationsCheckpointCodec.TryRead(rebuilt, out OperationsCheckpointImage check, out _) || check.Checksum != image.Checksum)
             {
                 _mission = null;

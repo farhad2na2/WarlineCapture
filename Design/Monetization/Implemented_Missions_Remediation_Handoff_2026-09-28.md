@@ -2,6 +2,8 @@
 
 Date: 2026-09-28. Status: implementation assignment prepared for another agent; no remediation implemented by this document. Source checkpoint inspected: `a299f9c5f` (Campaign Support implementation), following `f419cd462` (monetization proposal). Start from the latest committed version of this handoff and recheck the live working tree.
 
+Implementation underway from `3d728d005`: see the [candidate change/evidence ledger](../AgentReports/ImplementedMissionMonetization/CHANGE_LEDGER.md). Economy, access and Operations scope source candidates now exist. Passing focused/model checks are recorded separately from native and normal-input acceptance. The first changed Air Corridor input run failed a voice-completion assertion; that evidence is retained. O002/O003 shipping screens await visual-direction review of the reference-based mockups. This assignment remains open.
+
 ## Objective and scope
 
 Bring already implemented missions into the adopted [mission product contract](Mission_Product_Contract_2026-09-28.md), preserving existing gameplay, story, earned ownership and the newly implemented Support system. Produce candidate-specific evidence for every affected behavior. The [readiness audit](../AgentReports/2026-09-28_monetization-mission-change-readiness.md) distinguishes complete recorded Editor journeys from incomplete coded candidates; the [205-entry policy register](Mission_Product_Policies_2026-09-28.csv) owns product membership and per-entry changes.
@@ -125,3 +127,7 @@ Completion means the implemented mission paths satisfy their scoped product/reso
 ## Copy-ready instruction for the implementing agent
 
 > Implement `Design/Monetization/Implemented_Missions_Remediation_Handoff_2026-09-28.md`, starting with IM-00 and continuing through the applicable existing-content packages. Preserve current Support implementation and unrelated work. Fix actual tactical resource ownership, rewards and shared content access; integrate the standalone O001–O003 introduction through existing mission graphs. Keep all 120 core Skirmish IDs included and do not expand the assignment into building the whole future catalog. Do not activate live purchases or lock unfinished content behind an unpurchasable offer. Validate through the repository Unity wrappers and real normal-input manual/ARIA journeys, preserve failed evidence, and report Editor, human and device acceptance separately. Produce the specified change/evidence ledger and final handoff.
+
+### Current implementation checkpoint
+
+See [current handoff status](../AgentReports/ImplementedMissionMonetization/HANDOFF_STATUS.md) and [change/evidence ledger](../AgentReports/ImplementedMissionMonetization/CHANGE_LEDGER.md). Implementation remains in progress: focused economy/product/scope checks have passed, current native normal-input acceptance is incomplete, and O002/O003 shipping UI awaits visual-direction review required by AGENTS.md. Failed Air input evidence is preserved; no whole-product readiness or release approval is asserted.

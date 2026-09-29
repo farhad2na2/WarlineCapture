@@ -112,6 +112,7 @@ namespace Game.Editor
                 purchase,
                 purchaseLabel);
 
+            MenuAccountHeaderAuthoring.Apply(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)

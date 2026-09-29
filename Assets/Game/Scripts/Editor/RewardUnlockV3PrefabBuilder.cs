@@ -58,6 +58,7 @@ namespace Game.Editor
                     frame.ContinueButton,
                     frame.Body,
                     frame.ButtonRow);
+            MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             }
             finally

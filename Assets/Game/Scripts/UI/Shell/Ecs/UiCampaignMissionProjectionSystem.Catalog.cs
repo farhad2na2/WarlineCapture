@@ -66,7 +66,7 @@ namespace Game.UI.Shell.Ecs
             return ProjectMission(
                 catalogSourceVersion, settlementSourceVersion,
                 definition.MissionId, definition.ScenarioId, definition.OperationMapId,
-                displayName, nextMissionId, progress, in current, availableMissionMask);
+                displayName, nextMissionId, progress, in current, availableMissionMask, definition.MissionRuntimeEnabled != 0);
         }
 
         private static uint AvailableMissionMask(ref CampaignMissionCatalogBlob catalog, CampaignMissionProgressSaveData[] progress)
@@ -110,7 +110,7 @@ namespace Game.UI.Shell.Ecs
             FixedString64Bytes displayName,
             FixedString64Bytes nextMissionId,
             CampaignMissionProgressSaveData[] progress,
-            in UiCampaignOperationsComponent current, uint availableMissionMask = 0)
+            in UiCampaignOperationsComponent current, uint availableMissionMask = 0, bool contentReady = true)
         {
             CampaignMissionProgressSaveData entry = Find(progress, missionId);
             bool isM01 = missionId.Equals(new FixedString64Bytes(M01MissionId));
@@ -146,6 +146,7 @@ namespace Game.UI.Shell.Ecs
                 SuccessfulReplayCount = entry?.successfulReplayCount ?? 0,
                 LastAttemptOrdinal = entry?.lastAttemptOrdinal ?? -1,
                 PrimaryAction = action,
+                ContentReady = contentReady ? (byte)1 : (byte)0,
                 Available = available ? (byte)1 : (byte)0,
                 FirstClearCompleted = completed ? (byte)1 : (byte)0,
                 PendingResume = pending ? (byte)1 : (byte)0,

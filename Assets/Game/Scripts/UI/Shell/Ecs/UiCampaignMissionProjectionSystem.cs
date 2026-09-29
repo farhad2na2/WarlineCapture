@@ -109,7 +109,9 @@ namespace Game.UI.Shell.Ecs
             for (int i = 0; i < requests.Length; i++)
                 refreshCompleted |= campaignPage && requests[i].Action == UiCampaignMissionActionKind.Refresh &&
                     Find(progress, current.SelectedMissionId)?.firstClearCompleted == true;
-            if (definitionIndex < 0 || progressionCompatibilityApplied || refreshCompleted)
+            if (definitionIndex < 0 || progressionCompatibilityApplied || refreshCompleted ||
+                entityManager.HasComponent<UiShellStateComponent>(uiRoot) &&
+                entityManager.GetComponentData<UiShellStateComponent>(uiRoot).ActiveRoute == UIRoute.MainMenu)
                 definitionIndex = FindDefaultDefinitionIndex(ref catalogBlob, progress);
 
             bool actionRequested = requests.Length > 0;
@@ -428,7 +430,7 @@ namespace Game.UI.Shell.Ecs
             left.BestStars == right.BestStars &&
             left.BestCompletionMilliseconds == right.BestCompletionMilliseconds &&
             left.SuccessfulReplayCount == right.SuccessfulReplayCount &&
-            left.LastAttemptOrdinal == right.LastAttemptOrdinal && left.Available == right.Available &&
+            left.ContentReady == right.ContentReady && left.LastAttemptOrdinal == right.LastAttemptOrdinal && left.Available == right.Available &&
             left.FirstClearCompleted == right.FirstClearCompleted && left.PendingResume == right.PendingResume &&
             left.NextMissionRevealed == right.NextMissionRevealed && left.AvailableMissionMask == right.AvailableMissionMask && left.CompletedMissionMask == right.CompletedMissionMask;
 

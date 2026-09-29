@@ -81,6 +81,7 @@ namespace Game.Editor
                 new UIShellContentSectionsView.SectionReference(UIShellContentSectionId.Footer, footer.gameObject)
             });
 
+            MenuAccountHeaderAuthoring.Apply(root);
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             AssetDatabase.SaveAssets();
@@ -172,8 +173,8 @@ namespace Game.Editor
             CreateGradientPanel(logo, DarkTop, DarkBottom, Border, 3f);
             V3UiFoundationBuilder.AddMainMenuLogo(logo);
 
-            BuildResourceChip(root, "CreditsChip", 1038f, 14f, 265f, 90f, catalog.CreditsIcon, "CREDITS", "24,750");
-            BuildResourceChip(root, "CommandChip", 1310f, 14f, 245f, 90f, catalog.CommandIcon, "COMMAND", "8,430");
+            BuildResourceChip(root, "CreditsChip", 1038f, 14f, 265f, 90f, catalog.CreditsIcon, "CREDITS", "—");
+
 
             Button settings = CreateGradientButton("SettingsButton", root, 1562f, 14f, 100f, 90f, DarkTop, DarkBottom, Border, 3f);
             Image gear = CreateImage("Icon", settings.transform, catalog.SettingsIcon, Color.white, false);
@@ -191,6 +192,7 @@ namespace Game.Editor
             SetTopLeft(labelText.rectTransform, 82f, 9f, width - 92f, 33f);
             TMP_Text valueText = CreateText("Value", chip, value, 34f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);
             SetTopLeft(valueText.rectTransform, 82f, 38f, width - 92f, 46f);
+            chip.gameObject.AddComponent<MainMenuAccountHeaderView>().Configure(valueText);
         }
 
         private static void BuildLeftNavigation(RectTransform root)

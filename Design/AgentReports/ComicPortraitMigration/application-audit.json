@@ -1,0 +1,14 @@
+{
+  "result": "Passed",
+  "changedImages": 238,
+  "metaFilesUnchanged": 238,
+  "dimensions": "512x512",
+  "roles": {
+    "Primary": 74,
+    "Card": 74,
+    "Action": 74,
+    "Group": 16
+  },
+  "promptAndSourceProvenance": 238,
+  "duplicateImages": 0
+}

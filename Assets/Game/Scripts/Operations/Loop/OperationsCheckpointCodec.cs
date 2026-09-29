@@ -7,6 +7,7 @@ namespace Game.Operations.Loop
 {
     public sealed class OperationsCheckpointImage
     {
+        public int SchemaVersion = 1;
         public string ScopeId = Game.Operations.Contracts.OperationsContentScope.Full;
         public string SessionId = string.Empty;
         public string ContentHash = string.Empty;
@@ -25,12 +26,16 @@ namespace Game.Operations.Loop
             IReadOnlyList<OperationsLoopOrder> orders,
             string sessionId,
             string contentHash,
-            int restartCount, string scopeId = Game.Operations.Contracts.OperationsContentScope.Full)
+            int restartCount, string scopeId = Game.Operations.Contracts.OperationsContentScope.Full,
+            int checkpointSchemaVersion = 2)
         {
+            Game.Operations.Contracts.OperationsContentScope.Require(scopeId);
+            if (checkpointSchemaVersion != 1 && checkpointSchemaVersion != 2 ||
+                checkpointSchemaVersion == 1 && Game.Operations.Contracts.OperationsContentScope.IsIntro(scopeId))
+                throw new ArgumentException("Unsupported checkpoint schema/scope.");
             var lines = new List<string>
             {
-                "schema=2",
-                "scope=" + Game.Operations.Contracts.OperationsContentScope.Normalize(scopeId),
+                "schema=" + checkpointSchemaVersion,
                 "session=" + sessionId,
                 "content=" + contentHash,
                 "tick=" + mission.Tick,
@@ -38,6 +43,8 @@ namespace Game.Operations.Loop
                 "materials=" + mission.Materials,
                 "restart=" + restartCount
             };
+            if (checkpointSchemaVersion == 2)
+                lines.Insert(1, "scope=" + Game.Operations.Contracts.OperationsContentScope.Normalize(scopeId));
 
             OperationsTacticalActorState[] actors = mission.CopyActors();
             Array.Sort(actors, (left, right) => string.CompareOrdinal(left.ObjectId, right.ObjectId));
@@ -88,6 +95,13 @@ namespace Game.Operations.Loop
 
         public static bool TryRead(string text, out OperationsCheckpointImage image, out string error)
         {
+            try { return TryReadUnchecked(text, out image, out error); }
+            catch (Exception exception) when (exception is FormatException || exception is OverflowException || exception is IndexOutOfRangeException)
+            { image = null; error = "malformed"; return false; }
+        }
+
+        static bool TryReadUnchecked(string text, out OperationsCheckpointImage image, out string error)
+        {
             image = null;
             error = string.Empty;
             if (string.IsNullOrEmpty(text))
@@ -112,12 +126,15 @@ namespace Game.Operations.Loop
             }
 
             var parsed = new OperationsCheckpointImage { Checksum = checksum };
+            bool scopePresent = false;
             string[] lines = body.Split('\n');
             for (int index = 0; index < lines.Length; index++)
             {
                 string line = lines[index];
-                if (line.StartsWith("scope=", StringComparison.Ordinal))
-                    parsed.ScopeId = line.Substring("scope=".Length);
+                if (line.StartsWith("schema=", StringComparison.Ordinal))
+                    parsed.SchemaVersion = int.Parse(line.Substring("schema=".Length));
+                else if (line.StartsWith("scope=", StringComparison.Ordinal))
+                { parsed.ScopeId = line.Substring("scope=".Length); scopePresent = !string.IsNullOrEmpty(parsed.ScopeId); }
                 else if (line.StartsWith("session=", StringComparison.Ordinal))
                     parsed.SessionId = line.Substring("session=".Length);
                 else if (line.StartsWith("content=", StringComparison.Ordinal))
@@ -135,6 +152,11 @@ namespace Game.Operations.Loop
                 }
             }
 
+            if (parsed.SchemaVersion != 1 && parsed.SchemaVersion != 2 ||
+                parsed.SchemaVersion == 2 && !scopePresent ||
+                !Game.Operations.Contracts.OperationsContentScope.IsKnown(parsed.ScopeId) ||
+                parsed.SchemaVersion == 1 && Game.Operations.Contracts.OperationsContentScope.IsIntro(parsed.ScopeId))
+            { error = "schema_scope"; return false; }
             image = parsed;
             return true;
         }

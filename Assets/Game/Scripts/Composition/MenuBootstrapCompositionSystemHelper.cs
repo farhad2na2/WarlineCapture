@@ -980,9 +980,9 @@ namespace Game.Composition
             {
                 entityManager.SetComponentData(boundary, new UiShellCommanderProfileComponent
                 {
-                    Name = new FixedString64Bytes("COL. ALEX MORGAN"),
-                    Subtitle = new FixedString64Bytes("VICTORY IS PLANNED"),
-                    PortraitClass = new FixedString64Bytes("commander-portrait-default")
+                    Name = new FixedString64Bytes("Commander"),
+                    Subtitle = new FixedString64Bytes("FIELD COMMANDER"),
+                    PortraitClass = new FixedString64Bytes("0")
                 });
             }
 
@@ -990,8 +990,8 @@ namespace Game.Composition
             {
                 entityManager.SetComponentData(boundary, new UiShellMainMenuResourcesComponent
                 {
-                    CreditsText = new FixedString32Bytes("12,450"),
-                    CommandText = new FixedString32Bytes("78/100")
+                    CreditsText = new FixedString32Bytes("—"),
+                    CommandText = default
                 });
             }
         }

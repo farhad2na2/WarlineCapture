@@ -2,6 +2,8 @@ using System;
 
 namespace Game.UI.Contracts
 {
+    public enum UiContentAccessState { Allowed, UnknownContent, InstalledContentMissing, Unavailable, ProgressionLocked, NotOwned }
+
     public enum UiCampaignMissionPrimaryActionKind : byte
     {
         Locked = 0,
@@ -46,8 +48,10 @@ namespace Game.UI.Contracts
             string missionId, string scenarioId, string operationMapId, string displayName,
             bool available, bool firstClearCompleted, bool pendingResume,
             int bestStars, int bestCompletionMilliseconds, int successfulReplayCount,
-            UiCampaignMissionPrimaryActionKind primaryAction, string primaryActionLabel)
+            UiCampaignMissionPrimaryActionKind primaryAction, string primaryActionLabel,
+            UiContentAccessState accessState = UiContentAccessState.Allowed)
         {
+            AccessState = accessState;
             MissionId = missionId ?? string.Empty;
             ScenarioId = scenarioId ?? string.Empty;
             OperationMapId = operationMapId ?? string.Empty;
@@ -62,6 +66,7 @@ namespace Game.UI.Contracts
             PrimaryActionLabel = primaryActionLabel ?? string.Empty;
         }
 
+        public UiContentAccessState AccessState { get; }
         public string MissionId { get; }
         public string ScenarioId { get; }
         public string OperationMapId { get; }
@@ -76,7 +81,7 @@ namespace Game.UI.Contracts
         public string PrimaryActionLabel { get; }
 
         public bool Equals(UiCampaignMissionModel other) =>
-            MissionId == other.MissionId && ScenarioId == other.ScenarioId &&
+            AccessState == other.AccessState && MissionId == other.MissionId && ScenarioId == other.ScenarioId &&
             OperationMapId == other.OperationMapId && DisplayName == other.DisplayName &&
             Available == other.Available && FirstClearCompleted == other.FirstClearCompleted &&
             PendingResume == other.PendingResume && BestStars == other.BestStars &&

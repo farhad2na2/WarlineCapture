@@ -116,6 +116,7 @@ namespace Game.Editor
             serializedScreen.ApplyModifiedPropertiesWithoutUndo();
 
             EnsureFolder("Assets/Game/Prefabs/UI/Shell/Content");
+            MenuAccountHeaderAuthoring.Apply(root);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             UnityEngine.Object.DestroyImmediate(root);
             if (prefab == null)
@@ -968,6 +969,7 @@ namespace Game.Editor
                 button.targetGraphic = image;
                 UIShellRouteButtonView route = target.GetComponent<UIShellRouteButtonView>() ?? target.AddComponent<UIShellRouteButtonView>();
                 route.Configure(UiShellRouteIntent.OpenMenuRoute, UIRoute.QuickCustomSetup, true);
+            MenuAccountHeaderAuthoring.Apply(root);
                 PrefabUtility.SaveAsPrefabAsset(root, MainMenuPrefabPath);
             }
             finally

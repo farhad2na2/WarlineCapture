@@ -84,7 +84,7 @@ namespace Game.Configs
             ("mission.m03.objective.hold_post", "Keep the forward post standing", "پاسگاه رو حفظ کن"),
             ("mission.m03.objective.keep_core_clear", "Prevent a breach of the inner core", "از ورود دشمن به محدودهٔ مرکزی جلوگیری کن"),
             ("mission.m03.goal.civilians", "Bonus star: protect all four civilians", "ستارهٔ امتیازی: هر چهار غیرنظامی رو حفظ کن"),
-            ("mission.m03.resources", "50,000 Credits · 100 Materials", "۵۰٬۰۰۰ اعتبار · ۱۰۰ مصالح"),
+            ("mission.m03.resources", "140 Materials", "۱۴۰ مصالح"),
             ("mission.m03.access", "Two rifle squads · Ground Radar Tank", "دو گروه تفنگدار · خودروی رادار زمینی"),
             ("mission.m03.options", "Tower, Barrier or rifle reinforcements", "برج نگهبانی، مانع یا تفنگداران کمکی"),
             ("mission.m03.label.forces", "STARTING FORCES", "نیروهای آغازین"),

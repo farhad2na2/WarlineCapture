@@ -1,0 +1,158 @@
+{
+    "mapId": "RefineryDistrict",
+    "scenePath": "Assets/Game/Scenes/MapPrototypes/Variants/MapVariant_RefineryDistrict.unity",
+    "worldMin": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "worldSize": {
+        "x": 1400.0,
+        "y": 1200.0
+    },
+    "playableMin": {
+        "x": 400.0,
+        "y": 300.0
+    },
+    "playableSize": {
+        "x": 600.0,
+        "y": 400.0
+    },
+    "roadGridSize": 10.0,
+    "zones": [
+        {
+            "id": "SupplyLine_Refinery",
+            "suggestedMissions": "CH02 M02 Supply Line",
+            "center": {
+                "x": 715.0,
+                "y": 0.0,
+                "z": 500.0
+            },
+            "size": {
+                "x": 340.0,
+                "y": 0.0,
+                "z": 180.0
+            },
+            "note": "Convoy runs east along the main road past warehouses, tankers and the refinery gate."
+        },
+        {
+            "id": "PowerRelay_Substation",
+            "suggestedMissions": "CH02 M04 Power Relay",
+            "center": {
+                "x": 790.0,
+                "y": 0.0,
+                "z": 450.0
+            },
+            "size": {
+                "x": 260.0,
+                "y": 0.0,
+                "z": 150.0
+            },
+            "note": "Relay crew restores the fenced substation; saboteurs approach through the logistics yard."
+        },
+        {
+            "id": "SplitFront_Ridge",
+            "suggestedMissions": "CH04 M03 Split Front",
+            "center": {
+                "x": 760.0,
+                "y": 0.0,
+                "z": 560.0
+            },
+            "size": {
+                "x": 480.0,
+                "y": 0.0,
+                "z": 300.0
+            },
+            "note": "Enemy enters from the west, forks into north pipeline lane and south service lane; launchers hold the NE ridge."
+        },
+        {
+            "id": "Anchor_EnemySpawnWest",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 420.0,
+                "y": 0.0,
+                "z": 505.0
+            },
+            "size": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "note": "Western desert entry."
+        },
+        {
+            "id": "Anchor_WestFork",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 555.0,
+                "y": 0.0,
+                "z": 505.0
+            },
+            "size": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "note": "Three-lane fork."
+        },
+        {
+            "id": "Anchor_FriendlyDepot",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 941.0,
+                "y": 0.0,
+                "z": 446.0
+            },
+            "size": {
+                "x": 106.0,
+                "y": 0.0,
+                "z": 96.0
+            },
+            "note": "Forward depot with fuel bladders."
+        },
+        {
+            "id": "Anchor_LauncherCompound",
+            "suggestedMissions": "Split Front",
+            "center": {
+                "x": 955.0,
+                "y": 9.0,
+                "z": 679.0
+            },
+            "size": {
+                "x": 90.0,
+                "y": 0.0,
+                "z": 42.0
+            },
+            "note": "Ridge launcher compound."
+        },
+        {
+            "id": "Anchor_Substation",
+            "suggestedMissions": "Power Relay",
+            "center": {
+                "x": 813.0,
+                "y": 0.0,
+                "z": 446.0
+            },
+            "size": {
+                "x": 98.0,
+                "y": 0.0,
+                "z": 92.0
+            },
+            "note": "Substation core."
+        },
+        {
+            "id": "Anchor_RefineryGate",
+            "suggestedMissions": "Supply Line",
+            "center": {
+                "x": 716.0,
+                "y": 0.0,
+                "z": 516.0
+            },
+            "size": {
+                "x": 16.0,
+                "y": 0.0,
+                "z": 6.0
+            },
+            "note": "Refinery south gate."
+        }
+    ]
+}

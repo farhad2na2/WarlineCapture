@@ -1,0 +1,18 @@
+{
+    "mapId": "Frontier",
+    "seed": 90101,
+    "placements": 15846,
+    "reservedPlacements": 15758,
+    "attachedPlacements": 2,
+    "roadCells": 2029,
+    "rejectedCandidates": 22783,
+    "floating": 0,
+    "buried": 0,
+    "detachedParts": 0,
+    "unsupportedAttachments": 0,
+    "overlaps": 0,
+    "roadIntrusions": 0,
+    "transformDrift": 0,
+    "outsideWorld": 0,
+    "issues": []
+}

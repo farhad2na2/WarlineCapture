@@ -1,0 +1,18 @@
+{
+    "mapId": "CityEdgeAirfield",
+    "seed": 10404,
+    "placements": 4667,
+    "reservedPlacements": 4661,
+    "attachedPlacements": 2,
+    "roadCells": 927,
+    "rejectedCandidates": 13362,
+    "floating": 0,
+    "buried": 0,
+    "detachedParts": 0,
+    "unsupportedAttachments": 0,
+    "overlaps": 0,
+    "roadIntrusions": 0,
+    "transformDrift": 0,
+    "outsideWorld": 0,
+    "issues": []
+}

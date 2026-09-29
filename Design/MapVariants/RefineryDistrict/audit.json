@@ -1,0 +1,18 @@
+{
+    "mapId": "RefineryDistrict",
+    "seed": 40302,
+    "placements": 4970,
+    "reservedPlacements": 4949,
+    "attachedPlacements": 0,
+    "roadCells": 900,
+    "rejectedCandidates": 11774,
+    "floating": 0,
+    "buried": 0,
+    "detachedParts": 0,
+    "unsupportedAttachments": 0,
+    "overlaps": 0,
+    "roadIntrusions": 0,
+    "transformDrift": 0,
+    "outsideWorld": 0,
+    "issues": []
+}

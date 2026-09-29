@@ -1,0 +1,143 @@
+{
+    "mapId": "AshLinePort",
+    "scenePath": "Assets/Game/Scenes/MapPrototypes/Variants/MapVariant_AshLinePort.unity",
+    "worldMin": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "worldSize": {
+        "x": 1400.0,
+        "y": 1200.0
+    },
+    "playableMin": {
+        "x": 400.0,
+        "y": 300.0
+    },
+    "playableSize": {
+        "x": 600.0,
+        "y": 400.0
+    },
+    "roadGridSize": 10.0,
+    "zones": [
+        {
+            "id": "RouteReopened_Hub",
+            "suggestedMissions": "CH02 M05 Route Reopened",
+            "center": {
+                "x": 530.0,
+                "y": 0.0,
+                "z": 601.5
+            },
+            "size": {
+                "x": 176.0,
+                "y": 0.0,
+                "z": 215.0
+            },
+            "note": "Capture the Ash Line hub (warehouses + watchtower) and reopen the disrupted lane across the canal."
+        },
+        {
+            "id": "SupplyYard_East",
+            "suggestedMissions": "CH02 M02 Supply Yard",
+            "center": {
+                "x": 850.0,
+                "y": 0.0,
+                "z": 601.5
+            },
+            "size": {
+                "x": 236.0,
+                "y": 0.0,
+                "z": 215.0
+            },
+            "note": "Fuel storage and tanker lines on the east bank; defend relief stock."
+        },
+        {
+            "id": "ConvoyApproach_Bridge",
+            "suggestedMissions": "CH01 M03 Convoy Approach",
+            "center": {
+                "x": 680.0,
+                "y": -4.0,
+                "z": 505.0
+            },
+            "size": {
+                "x": 560.0,
+                "y": 0.0,
+                "z": 200.0
+            },
+            "note": "Convoy enters from the west along the main artery and must hold the canal bridge."
+        },
+        {
+            "id": "Anchor_MainBridge",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 680.0,
+                "y": -4.0,
+                "z": 505.0
+            },
+            "size": {
+                "x": 40.0,
+                "y": 0.0,
+                "z": 10.0
+            },
+            "note": "Main artery canal bridge."
+        },
+        {
+            "id": "Anchor_SouthBridge",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 680.0,
+                "y": -4.0,
+                "z": 385.0
+            },
+            "size": {
+                "x": 40.0,
+                "y": 0.0,
+                "z": 10.0
+            },
+            "note": "Second artery canal bridge."
+        },
+        {
+            "id": "Anchor_Watchtower",
+            "suggestedMissions": "Route Reopened",
+            "center": {
+                "x": 589.0,
+                "y": 0.0,
+                "z": 523.0
+            },
+            "size": {
+                "x": 12.0,
+                "y": 0.0,
+                "z": 12.0
+            },
+            "note": "Hub watchtower."
+        },
+        {
+            "id": "Anchor_EastCheckpoint",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 1000.0,
+                "y": 1.1412570476531983,
+                "z": 505.0
+            },
+            "size": {
+                "x": 40.0,
+                "y": 0.0,
+                "z": 30.0
+            },
+            "note": "Friendly checkpoint gate."
+        },
+        {
+            "id": "Anchor_EnemyWest",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 420.0,
+                "y": 1.0257139205932618,
+                "z": 505.0
+            },
+            "size": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "note": "Western approach."
+        }
+    ]
+}

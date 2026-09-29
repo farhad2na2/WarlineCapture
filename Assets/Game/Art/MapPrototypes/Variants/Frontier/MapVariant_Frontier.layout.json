@@ -1,0 +1,188 @@
+{
+    "mapId": "Frontier",
+    "scenePath": "Assets/Game/Scenes/MapPrototypes/Variants/MapVariant_Frontier.unity",
+    "worldMin": {
+        "x": 0.0,
+        "y": 0.0
+    },
+    "worldSize": {
+        "x": 2400.0,
+        "y": 1500.0
+    },
+    "playableMin": {
+        "x": 176.0,
+        "y": 176.0
+    },
+    "playableSize": {
+        "x": 2048.0,
+        "y": 1024.0
+    },
+    "roadGridSize": 10.0,
+    "zones": [
+        {
+            "id": "Frontier_PortSector",
+            "suggestedMissions": "CH01 M03 / CH02 M05 / CH02 M02",
+            "center": {
+                "x": 540.0,
+                "y": -4.0,
+                "z": 880.0
+            },
+            "size": {
+                "x": 720.0,
+                "y": 0.0,
+                "z": 600.0
+            },
+            "note": "Canal port: harbour hub, supply yard and the highway bridge chokepoint."
+        },
+        {
+            "id": "Frontier_RefinerySector",
+            "suggestedMissions": "CH02 M02 / CH02 M04 / CH04 M03",
+            "center": {
+                "x": 1210.0,
+                "y": 0.0,
+                "z": 700.0
+            },
+            "size": {
+                "x": 620.0,
+                "y": 0.0,
+                "z": 800.0
+            },
+            "note": "Refinery valley: fenced plant, pump field, substation and the launcher ridge."
+        },
+        {
+            "id": "Frontier_AirfieldSector",
+            "suggestedMissions": "CH01 M04 / CH04 M01",
+            "center": {
+                "x": 1900.0,
+                "y": 0.0,
+                "z": 520.0
+            },
+            "size": {
+                "x": 600.0,
+                "y": 0.0,
+                "z": 420.0
+            },
+            "note": "City-edge airfield: runway, apron, helipads, field hospital and crash field."
+        },
+        {
+            "id": "Anchor_CanalBridge",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 540.0,
+                "y": -4.0,
+                "z": 705.0
+            },
+            "size": {
+                "x": 40.0,
+                "y": 0.0,
+                "z": 10.0
+            },
+            "note": "Highway bridge over the canal."
+        },
+        {
+            "id": "Anchor_PortWatchtower",
+            "suggestedMissions": "port",
+            "center": {
+                "x": 503.0,
+                "y": 0.0,
+                "z": 726.0
+            },
+            "size": {
+                "x": 12.0,
+                "y": 0.0,
+                "z": 12.0
+            },
+            "note": "Port hub watchtower."
+        },
+        {
+            "id": "Anchor_LauncherRidge",
+            "suggestedMissions": "refinery",
+            "center": {
+                "x": 1412.5,
+                "y": 9.0,
+                "z": 1017.5
+            },
+            "size": {
+                "x": 125.0,
+                "y": 0.0,
+                "z": 45.0
+            },
+            "note": "Launcher compound on the ridge."
+        },
+        {
+            "id": "Anchor_FriendlyDepot",
+            "suggestedMissions": "refinery",
+            "center": {
+                "x": 1481.0,
+                "y": 0.0,
+                "z": 626.5
+            },
+            "size": {
+                "x": 128.0,
+                "y": 0.0,
+                "z": 133.0
+            },
+            "note": "Forward depot."
+        },
+        {
+            "id": "Anchor_Helipads",
+            "suggestedMissions": "airfield",
+            "center": {
+                "x": 2010.0,
+                "y": 0.0,
+                "z": 640.0
+            },
+            "size": {
+                "x": 70.0,
+                "y": 0.0,
+                "z": 30.0
+            },
+            "note": "Twin helipads."
+        },
+        {
+            "id": "Anchor_ControlTower",
+            "suggestedMissions": "airfield",
+            "center": {
+                "x": 1867.0,
+                "y": 0.0,
+                "z": 680.0
+            },
+            "size": {
+                "x": 12.0,
+                "y": 0.0,
+                "z": 12.0
+            },
+            "note": "Control tower."
+        },
+        {
+            "id": "Anchor_EnemyWest",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 190.0,
+                "y": 0.0,
+                "z": 705.0
+            },
+            "size": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "note": "Western highway entry."
+        },
+        {
+            "id": "Anchor_EnemyEast",
+            "suggestedMissions": "all",
+            "center": {
+                "x": 2210.0,
+                "y": 0.0,
+                "z": 705.0
+            },
+            "size": {
+                "x": 20.0,
+                "y": 0.0,
+                "z": 20.0
+            },
+            "note": "Eastern highway entry."
+        }
+    ]
+}

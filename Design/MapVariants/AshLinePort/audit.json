@@ -1,0 +1,18 @@
+{
+    "mapId": "AshLinePort",
+    "seed": 20502,
+    "placements": 5314,
+    "reservedPlacements": 5240,
+    "attachedPlacements": 0,
+    "roadCells": 850,
+    "rejectedCandidates": 10248,
+    "floating": 0,
+    "buried": 0,
+    "detachedParts": 0,
+    "unsupportedAttachments": 0,
+    "overlaps": 0,
+    "roadIntrusions": 0,
+    "transformDrift": 0,
+    "outsideWorld": 0,
+    "issues": []
+}

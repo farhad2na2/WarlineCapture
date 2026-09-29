@@ -185,6 +185,40 @@ namespace Game.Editor.MapVariants
             return placed;
         }
 
+        // Final pass that fills leftover open sand with the Demo scene's dressing: dune lips, low mounds,
+        // grass clumps, pebbles and flat rocks. Paved pads stay clean; big dunes only frame the playable area.
+        public int DesertDressing(Rect area, float density = 1f)
+        {
+            var pads = new List<Rect>();
+            foreach (MapVariantPlacement placement in Placements)
+                if (placement.Surface)
+                    pads.Add(new Rect(placement.Center - placement.HalfSize - Vector2.one, placement.HalfSize * 2f + Vector2.one * 2f));
+            bool OpenSand(Vector2 p)
+            {
+                foreach (Rect pad in pads)
+                    if (pad.Contains(p))
+                        return false;
+                return true;
+            }
+
+            int Count(float squareMetresPerPiece) => Mathf.RoundToInt(area.width * area.height * density / squareMetresPerPiece);
+            int placed = 0;
+            placed += Scatter(MapVariantKits.SandDunes, MapVariantLayer.Vegetation, area, Count(40000f),
+                PlaceOptions.Vegetation.WithGroundDelta(3f).WithSink(0.4f), minScale: 0.7f, maxScale: 1.1f,
+                accept: p => !Playable.Contains(p) && OpenSand(p));
+            placed += Scatter(MapVariantKits.SandMounds, MapVariantLayer.Vegetation, area, Count(9000f),
+                PlaceOptions.Vegetation.WithGroundDelta(0.6f).WithPadding(0.5f), minScale: 0.8f, maxScale: 1.4f, accept: OpenSand);
+            placed += Scatter(MapVariantKits.SandEdges, MapVariantLayer.Vegetation, area, Count(900f),
+                PlaceOptions.Vegetation.WithGroundDelta(0.6f).WithPadding(0.2f), minScale: 0.8f, maxScale: 1.5f, accept: OpenSand);
+            placed += Scatter(MapVariantKits.FlatRocks, MapVariantLayer.Vegetation, area, Count(7000f),
+                PlaceOptions.Vegetation.WithGroundDelta(1f), minScale: 0.4f, maxScale: 1f, accept: OpenSand);
+            placed += Scatter(MapVariantKits.Pebbles, MapVariantLayer.Vegetation, area, Count(500f),
+                PlaceOptions.Vegetation.WithPadding(0.1f), minScale: 0.8f, maxScale: 1.6f, accept: OpenSand);
+            placed += Scatter(MapVariantKits.GrassClumps, MapVariantLayer.Vegetation, area, Count(160f),
+                PlaceOptions.Vegetation.WithPadding(0.05f).WithSink(0.05f), minScale: 0.8f, maxScale: 1.5f, accept: OpenSand);
+            return placed;
+        }
+
         public static Rect Inset(Rect rect, float amount) =>
             new(rect.xMin + amount, rect.yMin + amount, Mathf.Max(0f, rect.width - amount * 2f), Mathf.Max(0f, rect.height - amount * 2f));
 

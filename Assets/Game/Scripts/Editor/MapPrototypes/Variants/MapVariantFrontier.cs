@@ -79,15 +79,10 @@ namespace Game.Editor.MapVariants
             BuildRoadside(b);
             BuildCity(b);
             BuildWilds(b);
+            b.DesertDressing(WorldRect);
             AddZones(b);
 
-            b.BuildLighting(
-                new Vector3(17f, 62f, 0f),
-                new Color(1f, 0.70f, 0.47f),
-                1.45f,
-                new Color(0.92f, 0.66f, 0.52f),
-                320f,
-                2300f);
+            b.BuildLighting();
             return b;
         }
 

@@ -9,10 +9,9 @@ namespace Game.Editor.MapVariants
     internal sealed partial class MapVariantBuilder
     {
         public const string GeneratedRoot = "Assets/Game/Art/MapPrototypes/Variants";
-        private const string GroundMaterialPath = "Assets/Game/Rendering/Materials/PolygonMilitary_GroundVariation_Real.mat";
+        private const string GroundMaterialPath = "Assets/PolygonMilitary/Materials/PolygonMilitary_Mat_01_A.mat";
         private const string GroundUvSourcePrefab = "Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Square_01.prefab";
-        private const string SkyboxPath = "Assets/Game/Art/MapPrototypes/M01/M01_DesertSkybox.mat";
-        private const string VolumeProfilePath = "Assets/Game/Art/MapPrototypes/M01/M01_VisualVolumeProfile.asset";
+        private const string VolumeProfilePath = "Assets/PolygonMilitary/Scenes/Demo/Military_Demo.asset";
         private const int GroundChunkCells = 128;
 
         public string GeneratedFolder => $"{GeneratedRoot}/{MapId}";
@@ -66,32 +65,32 @@ namespace Game.Editor.MapVariants
             return water;
         }
 
-        public void BuildLighting(Vector3 sunEuler, Color sunColor, float sunIntensity, Color fogColor, float fogStart, float fogEnd)
+        // Matches the lighting of Assets/Game/Scenes/Demo.unity so the variants read like the reference scene.
+        public void BuildLighting()
         {
             var lighting = new GameObject("Lighting").transform;
             lighting.SetParent(Root, false);
 
             var sun = new GameObject("Sun", typeof(Light));
             sun.transform.SetParent(lighting, false);
-            sun.transform.rotation = Quaternion.Euler(sunEuler);
+            sun.transform.rotation = new Quaternion(-0.048195288f, 0.74310285f, -0.6193119f, 0.24885356f);
             var light = sun.GetComponent<Light>();
             light.type = LightType.Directional;
-            light.color = sunColor;
-            light.intensity = sunIntensity;
+            light.color = new Color(1f, 0.98261887f, 0.8308824f);
+            light.intensity = 1.5f;
             light.shadows = LightShadows.Soft;
-            light.shadowStrength = 0.82f;
             RenderSettings.sun = light;
 
-            RenderSettings.skybox = SunsetSky();
+            RenderSettings.skybox = AssetDatabase.GetBuiltinExtraResource<Material>("Default-Skybox.mat");
             RenderSettings.ambientMode = AmbientMode.Trilight;
-            RenderSettings.ambientSkyColor = new Color(0.80f, 0.64f, 0.62f);
-            RenderSettings.ambientEquatorColor = new Color(0.82f, 0.58f, 0.44f);
-            RenderSettings.ambientGroundColor = new Color(0.40f, 0.29f, 0.22f);
+            RenderSettings.ambientIntensity = 1f;
+            RenderSettings.ambientSkyColor = new Color(0.5169811f, 0.46643582f, 0.42431468f);
+            RenderSettings.ambientEquatorColor = new Color(0.38185117f, 0.5526082f, 0.6679245f);
+            RenderSettings.ambientGroundColor = new Color(0.047f, 0.043f, 0.035f);
             RenderSettings.fog = true;
-            RenderSettings.fogMode = FogMode.Linear;
-            RenderSettings.fogColor = fogColor;
-            RenderSettings.fogStartDistance = fogStart;
-            RenderSettings.fogEndDistance = fogEnd;
+            RenderSettings.fogMode = FogMode.ExponentialSquared;
+            RenderSettings.fogColor = new Color(0.85660374f, 0.79479903f, 0.6965966f);
+            RenderSettings.fogDensity = 0.002f;
 
             // Game.Editor does not reference the SRP core runtime assembly, so the volume is authored by type name.
             var profile = AssetDatabase.LoadAssetAtPath<ScriptableObject>(VolumeProfilePath);
@@ -109,76 +108,6 @@ namespace Game.Editor.MapVariants
                 sharedProfile.objectReferenceValue = profile;
                 serialized.ApplyModifiedPropertiesWithoutUndo();
             }
-        }
-
-        // Comic palette: lavender zenith, rose mid-sky, gold horizon. A latitude gradient keeps it exact.
-        private static readonly (float latitude, Color color)[] SunsetGradient =
-        {
-            (-1.00f, new Color(0.52f, 0.38f, 0.30f)),
-            (-0.02f, new Color(0.86f, 0.62f, 0.44f)),
-            (0.00f, new Color(1.00f, 0.76f, 0.47f)),
-            (0.06f, new Color(0.99f, 0.66f, 0.45f)),
-            (0.20f, new Color(0.90f, 0.56f, 0.52f)),
-            (0.45f, new Color(0.66f, 0.50f, 0.62f)),
-            (1.00f, new Color(0.38f, 0.40f, 0.62f))
-        };
-
-        private static Material SunsetSky()
-        {
-            string folder = $"{GeneratedRoot}/Shared";
-            string texturePath = $"{folder}/MapVariant_SunsetGradient.png";
-            string path = $"{folder}/MapVariant_SunsetSky.mat";
-            EnsureFolder(folder);
-
-            const int width = 8;
-            const int height = 512;
-            var gradient = new Texture2D(width, height, TextureFormat.RGB24, false);
-            for (int y = 0; y < height; y++)
-            {
-                float latitude = y / (float)(height - 1) * 2f - 1f;
-                Color color = SunsetGradient[^1].color;
-                for (int i = 0; i + 1 < SunsetGradient.Length; i++)
-                {
-                    if (latitude > SunsetGradient[i + 1].latitude)
-                        continue;
-                    float t = Mathf.InverseLerp(SunsetGradient[i].latitude, SunsetGradient[i + 1].latitude, latitude);
-                    color = Color.Lerp(SunsetGradient[i].color, SunsetGradient[i + 1].color, Mathf.SmoothStep(0f, 1f, t));
-                    break;
-                }
-
-                for (int x = 0; x < width; x++)
-                    gradient.SetPixel(x, y, color);
-            }
-
-            File.WriteAllBytes(Path.Combine(ProjectRoot, texturePath), gradient.EncodeToPNG());
-            UnityEngine.Object.DestroyImmediate(gradient);
-            AssetDatabase.ImportAsset(texturePath);
-            if (AssetImporter.GetAtPath(texturePath) is TextureImporter importer)
-            {
-                importer.wrapModeU = TextureWrapMode.Repeat;
-                importer.wrapModeV = TextureWrapMode.Clamp;
-                importer.mipmapEnabled = false;
-                importer.textureCompression = TextureImporterCompression.Uncompressed;
-                importer.SaveAndReimport();
-            }
-
-            var sky = AssetDatabase.LoadAssetAtPath<Material>(path);
-            if (sky == null)
-            {
-                sky = new Material(Shader.Find("Skybox/Panoramic"));
-                AssetDatabase.CreateAsset(sky, path);
-            }
-
-            sky.shader = Shader.Find("Skybox/Panoramic");
-            sky.SetTexture("_MainTex", AssetDatabase.LoadAssetAtPath<Texture2D>(texturePath));
-            // Panoramic's KeywordEnum maps _Mapping 1 to the latitude-longitude layout.
-            sky.shaderKeywords = Array.Empty<string>();
-            sky.SetFloat("_Exposure", 1f);
-            sky.SetFloat("_Mapping", 1f);
-            sky.SetFloat("_ImageType", 0f);
-            sky.EnableKeyword("_MAPPING_LATITUDE_LONGITUDE_LAYOUT");
-            EditorUtility.SetDirty(sky);
-            return sky;
         }
 
         // Synty ships one container colour; hue-rotated copies of its atlas give the yard a mixed-colour stack.

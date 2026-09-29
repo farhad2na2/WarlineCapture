@@ -55,6 +55,43 @@ namespace Game.Editor.MapVariants
             $"{Env}/Blockers/SM_Env_Pebbles_04.prefab"
         };
 
+        // Desert dressing used throughout Assets/Game/Scenes/Demo.unity.
+        public static readonly string[] GrassClumps =
+        {
+            $"{Env}/Decorations/SM_Env_Grass_01.prefab",
+            $"{Env}/Decorations/SM_Env_Grass_02.prefab",
+            $"{Env}/Decorations/SM_Env_Grass_03.prefab",
+            $"{Env}/Decorations/SM_Env_Grass_04.prefab"
+        };
+
+        public static readonly string[] SandEdges =
+        {
+            $"{Mil}/Environment/SM_Env_SandEdge_01.prefab",
+            $"{Mil}/Environment/SM_Env_SandEdge_02.prefab",
+            $"{Mil}/Environment/SM_Env_SandEdge_04.prefab",
+            $"{Mil}/Environment/SM_Env_SandEdge_05.prefab",
+            $"{Mil}/Environment/SM_Env_SandEdge_06.prefab"
+        };
+
+        public static readonly string[] SandMounds =
+        {
+            $"{Mil}/Environment/SM_Env_Ground_Round_01.prefab",
+            $"{Mil}/Environment/SM_Env_Ground_Hill_Flat_Square_01.prefab"
+        };
+
+        public static readonly string[] SandDunes =
+        {
+            $"{Mil}/Environment/SM_Env_SandDunes_01.prefab",
+            $"{Mil}/Environment/SM_Env_SandDunes_02.prefab",
+            $"{Mil}/Environment/SM_Env_SandDunes_03.prefab"
+        };
+
+        public static readonly string[] FlatRocks =
+        {
+            $"{Env}/Blockers/SM_Env_Rock_Flat_01.prefab",
+            $"{Env}/Blockers/SM_Env_Rock_Flat_02.prefab"
+        };
+
         public static readonly string[] Ruins =
         {
             $"{Env}/Blockers/SM_Env_Ruin_01.prefab",

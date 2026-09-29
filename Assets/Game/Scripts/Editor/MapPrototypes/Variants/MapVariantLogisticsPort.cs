@@ -57,15 +57,10 @@ namespace Game.Editor.MapVariants
             BuildBeaches(b);
             BuildRoadside(b);
             BuildCity(b);
+            b.DesertDressing(WorldRect);
             AddZones(b);
 
-            b.BuildLighting(
-                new Vector3(17f, 62f, 0f),
-                new Color(1f, 0.70f, 0.47f),
-                1.45f,
-                new Color(0.92f, 0.66f, 0.52f),
-                200f,
-                1350f);
+            b.BuildLighting();
             return b;
         }
 

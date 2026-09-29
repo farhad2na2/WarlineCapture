@@ -1,0 +1,38 @@
+[
+  {
+    "asset": "Assets/Game/Art/Narrative/CH02M02SupplyLine/SupplyChain.png",
+    "original_sha256": "d71955fbf8b81e74f533f6b8368b3ffee7a4de05cf3bf139da86e2b160fb550b",
+    "replacement_sha256": "b3a6b518c790dfdfd85adb2f476acb4ba9d701cf8b61569bb6b59420a49d13d0",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH02M02SupplyLine/SupplyChain.png"
+  },
+  {
+    "asset": "Assets/Game/Art/Narrative/CH02M02SupplyLine/EmergencyServices.png",
+    "original_sha256": "0294d9b4a9e1e8140c2021099de28a36ba5cfdd449a813fe35100791b937fc8a",
+    "replacement_sha256": "27c61e1464afc5c3162ceeac06120c6747076315080911ef65e57c2ebe7520db",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH02M02SupplyLine/EmergencyServices.png"
+  },
+  {
+    "asset": "Assets/Game/Art/Narrative/CH02M02SupplyLine/Manifest.png",
+    "original_sha256": "f2a1aa675c577b99ca97290028cf0c90c3f296cd6518b43e328c89f60518b479",
+    "replacement_sha256": "d635523527b71904dcb9ccfc72986129f046e0cb246388f6c7f51feea78e5f67",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH02M02SupplyLine/Manifest.png"
+  },
+  {
+    "asset": "Assets/Game/Art/Narrative/CH02M03MarketLifeline/ManifestEvidence.png",
+    "original_sha256": "7f46641c583699338088c5892fc587bd631fcc06b0554e048e7695963939dac8",
+    "replacement_sha256": "a356dd755e5d2b353b33f59e8d662b64e823efc6f5d1eaae699d049ce902a3c6",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH02M03MarketLifeline/ManifestEvidence.png"
+  },
+  {
+    "asset": "Assets/Game/Art/Narrative/CH03M03FalseFront/BriefProtectRoute.png",
+    "original_sha256": "64cca15bb708b07c2ccba323c8cf89e4fb584c4a6e0b0b98077f3031b81d135d",
+    "replacement_sha256": "d7e37746e390b17a67c4d45f143ec25c68acabc9005c7e784ec4616a71d985d8",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH03M03FalseFront/BriefProtectRoute.png"
+  },
+  {
+    "asset": "Assets/Game/Art/Narrative/CH03M02SafehouseSweep/CommsCourierEscape.png",
+    "original_sha256": "9d3dd026c78d88c8b3216a14f12602ce2bd2955a3f30795dc31a7f2f86fcbff0",
+    "replacement_sha256": "1faad5c1b8d4659eb1ad240ab2a15270e3fc2ca4656586ec4166af7d67d29651",
+    "backup": "Design/AgentReports/ComicSahrinGeography/Originals/CH03M02SafehouseSweep/CommsCourierEscape.png"
+  }
+]

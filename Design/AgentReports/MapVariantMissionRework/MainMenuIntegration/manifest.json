@@ -1,0 +1,9 @@
+{
+  "mainCommit": "2c36f349f",
+  "mergeCommit": "c8665ab14",
+  "log": "campaign-latest-main-merge-01.log.gz",
+  "rawBytes": 44373,
+  "rawSha256": "9c4ea1f6b8a14b523838696c9ddf51cb3f52514d8375c62307e8b4fc1b025901",
+  "requiredPassMarker": "[CampaignOperationsScreenValidation] result=Passed tests=4",
+  "wrapperExitCode": 0
+}

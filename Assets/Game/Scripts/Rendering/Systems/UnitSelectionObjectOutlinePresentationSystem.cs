@@ -86,14 +86,13 @@ namespace Game.Rendering
 
             for (int i = 0; i < units.Length; i++)
             {
-                // Operation-map buildings can reference a packed/static-reuse renderer whose
-                // render hierarchy also contains neighbouring buildings and roads. Copying
-                // that renderer into the generic unit outline turns the shared presentation
-                // into one enormous cyan hit-looking region. Buildings retain the dedicated
-                // footprint marker created by UnitSelectionMarkerSystem; only the unsafe
-                // renderer-copy outline is suppressed here.
-                if (UnitSelectionMarkerSystem.IsBuildingSelectionOwner(em, units[i]))
+                // Ground selections use their open footprint corners. Copying model
+                // renderers adds a cyan cage over the silhouette and, for packed map
+                // buildings, can also cover neighbouring roads and buildings.
+                if (UnitSelectionMarkerSystem.IsBuildingSelectionOwner(em, units[i]) || airUnits[i] == 0)
                 {
+                    if (!em.HasBuffer<SelectionObjectOutlineInstanceElement>(markers[i]))
+                        em.AddBuffer<SelectionObjectOutlineInstanceElement>(markers[i]);
                     DestroySelectionObjectOutlines(em, markers[i]);
                     MarkSelectionObjectOutlineResolved(em, markers[i]);
                     continue;

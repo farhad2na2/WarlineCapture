@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.air_corridor.summary
   locationNameKey: mission.air_corridor.location
   scenarioId: scenario.ch04.m01.air_corridor
-  operationMapId: opmap.ch04.air_corridor_01
+  operationMapId: opmap.ch04.air_corridor_airfield_review
   briefingSequenceId: seq.ch04.m01.brief
   commsSequenceId: seq.ch04.m01.comms
   debriefSequenceId: seq.ch04.m01.debrief

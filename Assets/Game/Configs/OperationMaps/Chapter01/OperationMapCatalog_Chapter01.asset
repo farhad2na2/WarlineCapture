@@ -32,6 +32,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a53c5ba7463dd4d868a2300ca98b8b8c, type: 2}
   - {fileID: 11400000, guid: 1c811b1336a584ef3bf2d9549b44a982, type: 2}
   - {fileID: 11400000, guid: f88a7b632df304be88bde7709928ec6a, type: 2}
+  - {fileID: 11400000, guid: 4f2ea70113325408aa8ae5a4366950b9, type: 2}
   - {fileID: 11400000, guid: ad4954749229d4f8d81df237825cac50, type: 2}
   - {fileID: 11400000, guid: 7065e2ee8e49b4a3682ce88a38e3eda0, type: 2}
   entries:
@@ -149,6 +150,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 72e5b663fb786e098faa46038e913a97125f6780cfc5c87be44e46c2b81eb2bb
+  - definition: {fileID: 11400000, guid: 4f2ea70113325408aa8ae5a4366950b9, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch04.air_corridor_airfield_review
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 7f9fa034a9b1919a1c33dd5372cae2dfd2a0777429b83d744d90de83c64de095
   - definition: {fileID: 11400000, guid: ad4954749229d4f8d81df237825cac50, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch04.split_front_01

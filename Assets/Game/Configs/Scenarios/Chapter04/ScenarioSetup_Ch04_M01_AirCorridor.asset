@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch04_M01_AirCorridor
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch04.m01.air_corridor
-  operationMapId: opmap.ch04.air_corridor_01
+  operationMapId: opmap.ch04.air_corridor_airfield_review
   requiredAnchors:
   - anchorId: anchor.ch04.m01.forward_post
     kind: 7
@@ -28,7 +28,7 @@ MonoBehaviour:
   - anchorId: anchor.ch04.m01.ground_sensor
     kind: 3
   - anchorId: anchor.ch04.m01.civilians
-    kind: 5
+    kind: 3
   - anchorId: anchor.ch04.m01.evacuation
     kind: 5
   - anchorId: anchor.ch04.m01.vanguard_spawn
@@ -39,6 +39,8 @@ MonoBehaviour:
     kind: 6
   - anchorId: anchor.ch04.m01.fork
     kind: 11
+  - anchorId: anchor.ch04.m01.north_contact
+    kind: 6
   - anchorId: anchor.ch04.m01.inner_core
     kind: 7
   - anchorId: anchor.ch04.m01.return_rts
@@ -47,56 +49,6 @@ MonoBehaviour:
     kind: 4
   - anchorId: anchor.ch04.m01.defense_barrier
     kind: 4
-  - anchorId: anchor.ch04.m01.convoy_path_000
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_001
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_002
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_003
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_004
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_005
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_006
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_007
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_008
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_009
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_010
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_011
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_012
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_013
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_014
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_015
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_016
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_017
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_018
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_019
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_020
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_021
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_022
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_023
-    kind: 11
-  - anchorId: anchor.ch04.m01.convoy_path_024
-    kind: 11
   deterministicSeed: 4001001
   encounterStartMilliseconds: 5000
   unitGroups:
@@ -194,7 +146,7 @@ MonoBehaviour:
   - routeId: route.ch04.m01.main_body
     unitGroupId: group.ch04.m01.main_body
     anchorIds:
-    - anchor.ch04.m01.fork
+    - anchor.ch04.m01.north_contact
     - anchor.ch04.m01.inner_core
     startDelayMilliseconds: 65000
   restrictions:
@@ -224,9 +176,9 @@ MonoBehaviour:
       halfWidthCells: 105
       halfHeightCells: 65
     delayedWave:
-      unitGroupId: 
-      routeId: 
-      targetMissionRoleId: 
+      unitGroupId:
+      routeId:
+      targetMissionRoleId:
       warningAtMilliseconds: 0
       activationAtMilliseconds: 0
   defense:
@@ -251,7 +203,7 @@ MonoBehaviour:
     - elementId: convoy.ch04.m01.main_body
       unitGroupId: group.ch04.m01.main_body
       routeId: route.ch04.m01.main_body
-      contactAnchorId: anchor.ch04.m01.contact
+      contactAnchorId: anchor.ch04.m01.north_contact
       warningAtMilliseconds: 45000
       activationAtMilliseconds: 65000
       contactAtMilliseconds: 95000
@@ -338,12 +290,12 @@ MonoBehaviour:
       ApproachPerspective: {x: 50, y: 67, z: 0, w: 55}
   extraction:
     enabled: 0
-    passengerRoleId: 
-    carrierRoleId: 
-    aircraftRoleId: 
-    rescueAnchorId: 
-    landingAnchorId: 
-    departureAnchorId: 
+    passengerRoleId:
+    carrierRoleId:
+    aircraftRoleId:
+    rescueAnchorId:
+    landingAnchorId:
+    departureAnchorId:
     requiredPassengers: 0
     secureHoldMilliseconds: 0
     deadlineMilliseconds: 0
@@ -361,14 +313,14 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   breach:
     enabled: 0
-    gateBuildingId: 
-    coreBuildingId: 
-    approachAnchorId: 
-    gateAnchorId: 
-    coreAnchorId: 
-    archiveAnchorId: 
-    supportRoleId: 
-    counterattackRoleId: 
+    gateBuildingId:
+    coreBuildingId:
+    approachAnchorId:
+    gateAnchorId:
+    coreAnchorId:
+    archiveAnchorId:
+    supportRoleId:
+    counterattackRoleId:
     gateHealth: 0
     coreHealth: 0
     secureHoldMilliseconds: 0
@@ -385,16 +337,16 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   gridlock:
     enabled: 0
-    siteAAnchorId: 
-    siteBAnchorId: 
-    hospitalAnchorId: 
-    obstructionAAnchorId: 
-    obstructionBAnchorId: 
-    fadiRoleId: 
-    workerRoleId: 
-    vehicleRoleId: 
-    counterattackRoleId: 
-    obstructionBuildingId: 
+    siteAAnchorId:
+    siteBAnchorId:
+    hospitalAnchorId:
+    obstructionAAnchorId:
+    obstructionBAnchorId:
+    fadiRoleId:
+    workerRoleId:
+    vehicleRoleId:
+    counterattackRoleId:
+    obstructionBuildingId:
     workMilliseconds: 0
     holdMilliseconds: 0
     deadlineMilliseconds: 0
@@ -404,22 +356,22 @@ MonoBehaviour:
     hospitalRadius: 0
   supplyLine:
     enabled: 0
-    oilAnchorId: 
-    refineryAnchorId: 
-    storageAnchorId: 
-    alternateLaneAnchorId: 
-    oilBuildingId: 
-    refineryBuildingId: 
-    storageBuildingId: 
+    oilAnchorId:
+    refineryAnchorId:
+    storageAnchorId:
+    alternateLaneAnchorId:
+    oilBuildingId:
+    refineryBuildingId:
+    storageBuildingId:
     reserveBarrels: 0
     civilianReserveBarrels: 0
     holdMilliseconds: 0
     deadlineMilliseconds: 0
   marketLifeline:
     enabled: 0
-    deliveryAnchorId: 
-    manifestAnchorId: 
-    corruptManifestAnchorId: 
+    deliveryAnchorId:
+    manifestAnchorId:
+    corruptManifestAnchorId:
     requiredDeliveries: 0
     manifestHoldMilliseconds: 0
     victoryHoldMilliseconds: 0
@@ -436,10 +388,10 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   powerRelay:
     enabled: 0
-    shortRouteAnchorId: 
-    safeRouteAnchorId: 
-    shelterAnchorId: 
-    repairAnchorId: 
+    shortRouteAnchorId:
+    safeRouteAnchorId:
+    shelterAnchorId:
+    repairAnchorId:
     repairHoldMilliseconds: 0
     victoryHoldMilliseconds: 0
     deadlineMilliseconds: 0
@@ -456,11 +408,11 @@ MonoBehaviour:
       ApproachPerspective: {x: 0, y: 0, z: 0, w: 0}
   routeReopened:
     enabled: 0
-    reliefGoalAnchorId: 
-    fuelGoalAnchorId: 
-    disruptedLinkAnchorId: 
-    hubGateAnchorId: 
-    recordsAnchorId: 
+    reliefGoalAnchorId:
+    fuelGoalAnchorId:
+    disruptedLinkAnchorId:
+    hubGateAnchorId:
+    recordsAnchorId:
     linkRepairHoldMilliseconds: 0
     recordsHoldMilliseconds: 0
     deadlineMilliseconds: 0

@@ -56,3 +56,22 @@ pad. Source geometry is preserved; the scenario supplies the interactive
 helicopter. Existing mission controls, objectives and passenger graph remain.
 Saved-state handling, native journeys and human/device acceptance are tracked
 in `Airlift/WORKSPACE.md`.
+
+## Air Corridor review candidate
+
+| Item | Existing binding | Review candidate |
+|---|---|---|
+| Campaign mission ID | `saga.ch04.m01.air_corridor` | Same |
+| Scenario ID | `scenario.ch04.m01.air_corridor` | Same |
+| Logical map ID | `opmap.ch04.air_corridor_01` | `opmap.ch04.air_corridor_airfield_review` |
+| Physical map ID | `opmap.skirmish.desert_base_01` | `opmap.skirmish.cityedgeairfield_prepared` |
+| Physical semantic hash | `2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c` | `e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22` |
+| Logical definition | `Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_AirCorridor01.asset` | `Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset` |
+| Runtime binding | Existing dense-city chapter binding | `Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity` |
+
+Seventeen mission anchors consume the same prepared physical content. The
+Airlift helicopter presentation override is absent. The original map remains
+for rollback; other builders do not consume this mission's `MapPath`. English
+ARIA and Persian manual full native journeys passed. Human/device acceptance,
+negative paths, saved-state handling and packaged content remain pending.
+See `AirCorridor/WORKSPACE.md` for exact evidence and failures.

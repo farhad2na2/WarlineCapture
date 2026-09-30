@@ -1,0 +1,47 @@
+[
+  {
+    "log": "air-corridor-airfield-preparation-01.log.gz",
+    "rawBytes": 237986,
+    "rawSha256": "edc00ade51d8a0e200fa4958e52502f91b5ccf43a71ff9c96dd386bac1a88a91"
+  },
+  {
+    "log": "air-corridor-airfield-preparation-02.log.gz",
+    "rawBytes": 224437,
+    "rawSha256": "4ab52fc8a3f1a8f99b1cdd32ffb68e477c5e58a55b0c4dbee8c4d0ad602acea3"
+  },
+  {
+    "log": "ground-marker-validation-01.log.gz",
+    "rawBytes": 199859,
+    "rawSha256": "21680c5f75510f4ba20789b047010c773f2bef799054b48b290f7ad9d94bb5e6"
+  },
+  {
+    "log": "air-corridor-airfield-aria-en-01.log.gz",
+    "rawBytes": 495768,
+    "rawSha256": "e17efb364e8c5ef150580b170000e75d4d16990eb1fdce0332d093fdfd9eab0d"
+  },
+  {
+    "log": "air-corridor-airfield-aria-en-02.log.gz",
+    "rawBytes": 993602,
+    "rawSha256": "ed3b8cac3cade1cf8274a2a7e5ecd1aaedab5ac13fd65b342baac153fefeeebf"
+  },
+  {
+    "log": "air-corridor-airfield-aria-en-03.log.gz",
+    "rawBytes": 816364,
+    "rawSha256": "c1a55a43c85edd4d19d29d95971a1bd7aaad90e922b4d2f437f070d46c01e550"
+  },
+  {
+    "log": "air-corridor-airfield-aria-en-04.log.gz",
+    "rawBytes": 832925,
+    "rawSha256": "700cfc8a6e0bbabf31339cf6dbdb556196d0644c8072f1641bc27f2f5850f20f"
+  },
+  {
+    "log": "air-corridor-airfield-manual-fa-01.log.gz",
+    "rawBytes": 679123,
+    "rawSha256": "8e4bfb6d6dc2fcf83c7de4dc668ac3b9c30b8f1caa7797861a8c1c40d69af1fa"
+  },
+  {
+    "log": "ground-marker-validation-02.log.gz",
+    "rawBytes": 170783,
+    "rawSha256": "5b615775f70633477274cff56497f7483ac8e8c003701264e27ac05852d443c3"
+  }
+]

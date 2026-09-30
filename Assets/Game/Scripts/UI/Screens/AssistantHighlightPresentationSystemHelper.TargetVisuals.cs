@@ -320,78 +320,33 @@ namespace Game.UI.Runtime
         private static bool UsesTacticalGroundGuidance => UiShellRuntimeGateway.IsExtractionGuideContext() && !UiShellRuntimeGateway.IsEvidenceChainGuideContext();
         private void WriteWorldMarker(Vector3 center, float radius)
         {
-            bool tactical=UsesTacticalGroundGuidance;
-            _worldRingRenderer.enabled = !tactical;
-            foreach(var line in _worldAccentRenderers){line.widthMultiplier=tactical?.12f:.34f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Lime;}
-            foreach(var line in _worldBracketRenderers){line.widthMultiplier=tactical?.12f:.24f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Cyan;}
-            foreach(var line in _worldCrosshairRenderers){line.positionCount=tactical?3:2;line.widthMultiplier=tactical?.12f:.14f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Lime;}
-            for (int index = 0; index < WorldRingSegments; index++)
+            // Ground guidance shares the sparse selection vocabulary. Never overlay a
+            // circular perimeter, segmented halo or crosshair over the selected object.
+            _worldRingRenderer.enabled = false;
+            SetLinesActive(_worldAccentRenderers, false);
+            SetLinesActive(_worldCrosshairRenderers, false);
+            float extent = radius;
+            float arm = Mathf.Clamp(radius * .23f, .18f, .65f);
+            for (int index = 0; index < _worldBracketRenderers.Length; index++)
             {
-                float angle = index * Mathf.PI * 2f / WorldRingSegments;
-                _worldRingRenderer.SetPosition(
-                    index,
-                    new Vector3(
-                        center.x + Mathf.Cos(angle) * radius,
-                        center.y,
-                        center.z + Mathf.Sin(angle) * radius));
+                float x = (index == 0 || index == 3) ? -1f : 1f;
+                float z = index < 2 ? -1f : 1f;
+                Vector3 corner = center + new Vector3(x * extent, 0f, z * extent);
+                LineRenderer bracket = _worldBracketRenderers[index];
+                bracket.widthMultiplier = .10f;
+                bracket.startColor = bracket.endColor = V3CyanSoft;
+                bracket.SetPosition(0, corner - new Vector3(x * arm, 0f, 0f));
+                bracket.SetPosition(1, corner);
+                bracket.SetPosition(2, corner - new Vector3(0f, 0f, z * arm));
             }
-
-            if (_worldAccentRenderers != null)
-            {
-                float accentSweep = Mathf.PI * (tactical ? .025f : .16f);
-                for (int segmentIndex = 0; segmentIndex < _worldAccentRenderers.Length; segmentIndex++)
-                {
-                    LineRenderer segment = _worldAccentRenderers[segmentIndex];
-                    float start = segmentIndex * Mathf.PI * 2f / _worldAccentRenderers.Length + Mathf.PI * 0.045f;
-                    for (int pointIndex = 0; pointIndex < segment.positionCount; pointIndex++)
-                    {
-                        float t = pointIndex / (float)(segment.positionCount - 1);
-                        float angle = start + accentSweep * t;
-                        float accentRadius = tactical ? radius : radius * .82f;
-                        segment.SetPosition(
-                            pointIndex,
-                            new Vector3(
-                                center.x + Mathf.Cos(angle) * accentRadius,
-                                center.y + 0.015f,
-                                center.z + Mathf.Sin(angle) * accentRadius));
-                    }
-                }
-            }
-
-            if (_worldBracketRenderers != null)
-            {
-                for (int index = 0; index < _worldBracketRenderers.Length; index++)
-                {
-                    float angle = index * Mathf.PI * 0.5f + Mathf.PI * 0.25f;
-                    Vector3 radial = new(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-                    Vector3 tangent = new(-radial.z, 0f, radial.x);
-                    float outer = radius * 1.25f;
-                    Vector3 corner = center + radial * outer;
-                    _worldBracketRenderers[index].SetPosition(0, corner - radial * radius * 0.28f);
-                    _worldBracketRenderers[index].SetPosition(1, corner);
-                    _worldBracketRenderers[index].SetPosition(2, corner - tangent * radius * 0.28f);
-                }
-            }
-
-            if (_worldCrosshairRenderers != null)
-            {
-                if(!tactical)
-                {
-                    float oldArm=radius*.36f;
-                    _worldCrosshairRenderers[0].SetPosition(0,center+Vector3.left*oldArm);
-                    _worldCrosshairRenderers[0].SetPosition(1,center+Vector3.right*oldArm);
-                    _worldCrosshairRenderers[1].SetPosition(0,center+Vector3.back*oldArm);
-                    _worldCrosshairRenderers[1].SetPosition(1,center+Vector3.forward*oldArm);
-                    return;
-                }
-                float arm = Mathf.Min(.65f, radius * .22f);
-                _worldCrosshairRenderers[0].SetPosition(0, center + Vector3.left * arm);
-                _worldCrosshairRenderers[0].SetPosition(1, center + Vector3.forward * arm);
-                _worldCrosshairRenderers[0].SetPosition(2, center + Vector3.right * arm);
-                _worldCrosshairRenderers[1].SetPosition(0, center + Vector3.left * arm);
-                _worldCrosshairRenderers[1].SetPosition(1, center + Vector3.back * arm);
-                _worldCrosshairRenderers[1].SetPosition(2, center + Vector3.right * arm);
-            }
+            // One quiet amber dash carries the guidance accent without enclosing the unit.
+            LineRenderer dash = _worldAccentRenderers[0];
+            dash.positionCount = 2;
+            dash.widthMultiplier = .09f;
+            dash.startColor = dash.endColor = V3GuidanceYellow;
+            Vector3 rear = center + Vector3.back * (extent + .18f);
+            dash.SetPosition(0, rear + Vector3.left * arm * .5f);
+            dash.SetPosition(1, rear + Vector3.right * arm * .5f);
         }
 
         private static Material CreateWorldRingMaterial()

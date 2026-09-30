@@ -1,0 +1,1 @@
+ImageGen edit of the user screenshot: replace yellow full circle, green segmented halo and cyan central cage with thin cyan ground corners and one short amber rear dash. Preserve vehicle, terrain and camera. No ground text or new controls. Native implementation validation is pending.

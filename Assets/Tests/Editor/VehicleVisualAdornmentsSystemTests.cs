@@ -36,7 +36,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             tests.UnitSelectionMarkerSystemSizesVehicleMarkerFromMeshBoundsWhenAvailable();
             tests.UnitSelectionMarkerSystemCreatesMarkerForSelectedCharacterUnit();
             tests.UnitSelectionMarkerSystemSplitsReferenceMarkerPrefabForVehiclesAndInfantry();
-            tests.UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing();
+            tests.UnitSelectionMarkerSystemUsesGroundCornersWithoutModelOverlays();
             tests.UnitSelectionMarkerSystemKeepsAirVehicleObjectOutlineWhileGroundMarkerIsHidden();
             tests.UnitSelectionMarkerSystemOutlinesReferencedAirVehicleVisualRoot();
             tests.UnitSelectionMarkerSystemSuppressesHelicopterBladeOutlineSourcesByBakedBladeReference();
@@ -328,9 +328,9 @@ public sealed class VehicleVisualAdornmentsSystemTests
     }
 
     [Test]
-    public void UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing()
+    public void UnitSelectionMarkerSystemUsesGroundCornersWithoutModelOverlays()
     {
-        using var world = new World(nameof(UnitSelectionMarkerSystemUsesVehicleOutlineAndInfantryGroundRing));
+        using var world = new World(nameof(UnitSelectionMarkerSystemUsesGroundCornersWithoutModelOverlays));
         EntityManager em = world.EntityManager;
         Entity markerPrefab = CreateVisualPrefab(em);
         Entity vehicle = CreateVehicle(em, health: 100);
@@ -348,18 +348,20 @@ public sealed class VehicleVisualAdornmentsSystemTests
         system.Update(world.Unmanaged);
         outlineSystem.Update(world.Unmanaged);
 
-        Entity vehicleOutline = AssertSelectionObjectOutline(em, vehicle, vehicleRenderer, "Vehicle");
+        Entity vehicleMarker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(vehicle).Instance;
+        Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(vehicleMarker).Length,
+            "Ground selection must preserve the vehicle silhouette instead of copying model renderers.");
         Entity characterMarker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(character).Instance;
         Assert.IsTrue(em.Exists(characterMarker));
         Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(characterMarker).Length);
-        Assert.AreEqual(1.5f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
+        Assert.IsTrue(em.HasComponent<SelectionObjectOutlineResolvedTag>(vehicleMarker));
         Assert.IsTrue(em.Exists(characterMarker));
 
         em.RemoveComponent<SelectedUnitTag>(vehicle);
         visibilitySystem.Update(world.Unmanaged);
         em.CompleteAllTrackedJobs();
 
-        Assert.AreEqual(0f, em.GetComponentData<LocalTransform>(vehicleOutline).Scale, 0.001f);
+        Assert.AreEqual(0, em.GetBuffer<SelectionObjectOutlineInstanceElement>(vehicleMarker).Length);
         Assert.IsTrue(em.Exists(characterMarker));
 
         em.SetComponentData(character, new UnitHealth { Current = 0, Max = 100 });
@@ -568,6 +570,7 @@ public sealed class VehicleVisualAdornmentsSystemTests
             EntityManager em = world.EntityManager;
             Entity markerPrefab = CreateVisualPrefab(em);
             Entity vehicle = CreateVehicle(em, health: 100);
+            em.AddComponentData(vehicle, new UnitAirMovement { CruiseHeight = 55f, RunwayTaxiSpeed = 12f });
             CreateRenderableChild(em, vehicle, "VehicleBody", 1f);
             em.AddComponentData(vehicle, new UnitSelectionMarkerPrefabReference { Prefab = markerPrefab });
             em.AddComponent<SelectedUnitTag>(vehicle);

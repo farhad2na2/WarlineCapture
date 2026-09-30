@@ -2,7 +2,7 @@
 
 Updated 2026-09-30. This isolated checkout contains the CH02-M02 Supply Line
 pilot, a CH02-M04 Power Relay review candidate, and a CH01-M04 Airlift
-candidate ready for mission review. No map or mission is qualified for release,
+candidate and a CH04-M01 Air Corridor candidate ready for mission review. No map or mission is qualified for release,
 and these review bindings have not been promoted
 to `main`.
 
@@ -23,7 +23,7 @@ to `main`.
 | CH03-M03 False Front | Retain urban | No migration; baseline not rerun |
 | CH03-M04 Evidence Chain | Retain urban | No migration; baseline not rerun |
 | CH03-M05 Network Break | Retain urban | No migration; baseline not rerun |
-| CH04-M01 Air Corridor | CityEdgeAirfield | Not started |
+| CH04-M01 Air Corridor | CityEdgeAirfield | English ARIA and Persian manual normal-input victory/result/return passed; remaining round guidance marker migrated; ready for user review; see `AirCorridor/WORKSPACE.md` |
 | CH04-M02 Steel Push | RefineryDistrict | Generator basis pinned to legacy Supply Line map; migration not started |
 | CH04-M03 Split Front | RefineryDistrict | Generator basis pinned to legacy Supply Line map; migration not started |
 
@@ -44,3 +44,11 @@ cases, two socket cases, 13 Show Me cases and complete final-layout ARIA/manual
 native journeys **passed**. Human map/camera/minimap review, updated briefing
 voices, native negative journeys, saved-state migration and device acceptance
 remain **pending**. See `Airlift/WORKSPACE.md` for preserved failures and evidence.
+
+Air Corridor gates: prepared source/ground clearance, focused rules and media,
+open guidance geometry plus 22 vehicle and 11 building selection cases, and
+English ARIA/Persian manual normal-input victory through Campaign return passed.
+The final approach preserves wave timing and unit stats. Failed closer approaches
+and the marker observation regression remain in the evidence. Human/device
+acceptance, negative journeys, saved-state handling and packaged device content
+remain pending; see `AirCorridor/WORKSPACE.md`.

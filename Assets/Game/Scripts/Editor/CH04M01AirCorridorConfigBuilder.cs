@@ -10,36 +10,25 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-    public static class CH04M01AirCorridorConfigBuilder
+    public static partial class CH04M01AirCorridorConfigBuilder
     {
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M01_AirCorridor.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M01_AirCorridor.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_AirCorridor01.asset";
-        public const string MapId="opmap.ch04.air_corridor_01",ScenarioId="scenario.ch04.m01.air_corridor";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_AirCorridor01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset";
+        public const string MapId="opmap.ch04.air_corridor_airfield_review",ScenarioId="scenario.ch04.m01.air_corridor";
         public const string Prefix="anchor.ch04.m01.";
         public static void Build()
         {
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"}) Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter04");
             AssetDatabase.Refresh();
-            var map=Clone<OperationMapDefinition>(M03RadarWarningMapBuilder.Path,MapPath);
-            var md=new SerializedObject(map); Replace(md);
-            S(md.FindProperty("operationMapId"),MapId);
-            using(var sha=SHA256.Create())
-            {
-                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(map.ContentHash+":air-corridor-west-north-v1"))).Replace("-","").ToLowerInvariant();
-                S(md.FindProperty("contentHash"),hash);S(md.FindProperty("generatedMetadataHash"),hash);
-            }
-            var anchors=md.FindProperty("anchors");
-            for(int i=0;i<anchors.arraySize;i++)
-            {
-                var a=anchors.GetArrayElementAtIndex(i); string id=a.FindPropertyRelative("anchorId").stringValue;
-                if(id==Prefix+"vanguard_spawn") a.FindPropertyRelative("position").vector3Value=new Vector3(590,18,426);
-                if(id==Prefix+"main_spawn") a.FindPropertyRelative("position").vector3Value=new Vector3(1050,18,280);
-            }
-            md.ApplyModifiedPropertiesWithoutUndo();
-            Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);
+            BuildAirfieldMap();
+            string error;
             var scenario=Clone<ScenarioSetupConfig>(M03RadarWarningConfigBuilder.ScenarioPath,ScenarioPath);
             var sd=new SerializedObject(scenario);Replace(sd);
+            var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(MapPath);
+            var required=sd.FindProperty("requiredAnchors");required.arraySize=map.Anchors.Length;
+            for(int i=0;i<map.Anchors.Length;i++){var a=required.GetArrayElementAtIndex(i);S(a.FindPropertyRelative("anchorId"),map.Anchors[i].AnchorId);I(a.FindPropertyRelative("kind"),(int)map.Anchors[i].Kind);}
             S(sd.FindProperty("scenarioId"),ScenarioId);S(sd.FindProperty("operationMapId"),MapId);I(sd.FindProperty("deterministicSeed"),4001001);
             I(sd.FindProperty("missionRuntime").FindPropertyRelative("startingCredits"),0);
             I(sd.FindProperty("missionRuntime").FindPropertyRelative("startingMaterials"),140);
@@ -58,13 +47,14 @@ namespace Game.Editor
                 S(route.FindPropertyRelative("routeId"),"route.ch04.m01."+group);S(route.FindPropertyRelative("unitGroupId"),"group.ch04.m01."+group);
                 I(route.FindPropertyRelative("startDelayMilliseconds"),i==0?20000:65000);
                 var points=route.FindPropertyRelative("anchorIds");points.arraySize=2;
-                S(points.GetArrayElementAtIndex(0),Prefix+"fork");S(points.GetArrayElementAtIndex(1),Prefix+"inner_core");
+                S(points.GetArrayElementAtIndex(0),Prefix+(i==0?"fork":"north_contact"));S(points.GetArrayElementAtIndex(1),Prefix+"inner_core");
             }
             var defense=sd.FindProperty("defense");
             var elements=defense.FindPropertyRelative("convoyElements");
             for(int i=0;i<2;i++)
             {
                 var e=elements.GetArrayElementAtIndex(i);
+                S(e.FindPropertyRelative("contactAnchorId"),Prefix+(i==0?"contact":"north_contact"));
                 I(e.FindPropertyRelative("warningAtMilliseconds"),i==0?0:45000);
                 I(e.FindPropertyRelative("activationAtMilliseconds"),i==0?20000:65000);
                 I(e.FindPropertyRelative("contactAtMilliseconds"),i==0?50000:95000);
@@ -87,7 +77,7 @@ namespace Game.Editor
             I(rewards.GetArrayElementAtIndex(0).FindPropertyRelative("amount"),1800);I(rewards.GetArrayElementAtIndex(1).FindPropertyRelative("amount"),8500);
             data.ApplyModifiedPropertiesWithoutUndo();Require(MissionDefinitionContractValidation.TryValidateDefinition(mission,out error),error);EditorUtility.SetDirty(mission);
             M01FirstContactConfigBuilder.RefreshChapterCatalogs();AssetDatabase.SaveAssets();
-            Debug.Log("[AirCorridorConfig] result=Passed aircraft=6 launchers=2 radar=1 waves=2 terrain=urban-airfield controls=existing-only");
+            Debug.Log("[AirCorridorConfig] result=Passed aircraft=6 launchers=2 radar=1 waves=2 terrain=CityEdgeAirfield-review controls=existing-only");
         }
         private static void Group(SerializedProperty group,string id,int faction,string anchor,string role,string[] prefabs)
         {

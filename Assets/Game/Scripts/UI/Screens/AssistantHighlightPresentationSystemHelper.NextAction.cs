@@ -26,6 +26,7 @@ namespace Game.UI.Runtime
             }
         }
         private bool _directTutorialCue;
+        private bool _worldCueIsTap;
         private RectTransform _directTutorialTarget;
         private Vector3 _directTutorialWorldTarget;
         private string _directCaptionKey, _directCaptionLocale;
@@ -164,9 +165,14 @@ namespace Game.UI.Runtime
 
         private void SetWorldMarkerDecoration(bool active)
         {
-            SetLinesActive(_worldAccentRenderers, UsesTacticalGroundGuidance ? !active : active);
-            SetLinesActive(_worldBracketRenderers, active);
-            SetLinesActive(_worldCrosshairRenderers, active);
+            _worldCueIsTap = active;
+            // An area cue uses the same open corners as a point cue.
+            SetLinesActive(_worldAccentRenderers, false);
+            if (_worldAccentRenderers != null && _worldAccentRenderers.Length > 0)
+                _worldAccentRenderers[0].enabled = active;
+            // Extraction already owns the full landing perimeter.
+            SetLinesActive(_worldBracketRenderers, active || !UsesTacticalGroundGuidance);
+            SetLinesActive(_worldCrosshairRenderers, false);
         }
 
         private static void SetLinesActive(LineRenderer[] lines, bool active)

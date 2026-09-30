@@ -24,8 +24,10 @@ namespace Game.UI.Runtime
                 identity = button.GetEntityId().GetHashCode();
                 return true;
             }
-            // A plain area ring is a wait/defend region, not a tap instruction.
-            if (_worldCrosshairRenderers == null || _worldCrosshairRenderers.Length == 0 || !_worldCrosshairRenderers[0].enabled) return false;
+            // Tap eligibility is semantic: changing the marker decoration must not
+            // stop ARIA, and a waiting/defend area must never become a tap instruction.
+            if (!_worldCueIsTap || _worldBracketRenderers == null ||
+                _worldBracketRenderers.Length == 0 || !_worldBracketRenderers[0].enabled) return false;
             // LineRenderer bounds can lag one frame after a mission guidance step changes.
             // Observe the exact world point used to draw the currently visible direct cue so
             // ARIA never taps the previous objective while the ring is being rebuilt.

@@ -68,6 +68,7 @@ namespace Game.UI.Runtime
             ReleaseMaskedRouteLines();
             storyArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
             footerStoryArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
+            atlasStoryArchiveButton?.onClick.AddListener(OpenRadarGuideArchive);
             if (!_stateButtonsBound)
             {
                 showMissionSelectButton?.onClick.AddListener(ShowMissionSelect);
@@ -106,6 +107,7 @@ namespace Game.UI.Runtime
         {
             storyArchiveButton?.onClick.RemoveListener(OpenRadarGuideArchive);
             footerStoryArchiveButton?.onClick.RemoveListener(OpenRadarGuideArchive);
+            atlasStoryArchiveButton?.onClick.RemoveListener(OpenRadarGuideArchive);
             if (!_stateButtonsBound)
                 return;
             showMissionSelectButton?.onClick.RemoveListener(ShowMissionSelect);
@@ -182,6 +184,8 @@ namespace Game.UI.Runtime
             launchMissionButton.interactable = mission.Available && mission.AccessState == UiContentAccessState.Allowed;
             ApplyGridlockChapter(in model);
             ApplyMissionNodes(mission.MissionId, model.NextMissionRevealed, model.AvailableMissionMask, model.CompletedMissionMask);
+            ApplyDistrictAtlas(IsChapterFour ? 4 : IsChapterThree ? 3 : IsChapterTwo ? 2 : 1);
+            ApplyAtlasChapterProgress(model.CompletedMissionMask, model.AvailableMissionMask);
             ApplyRadarWarning(mission);
             ApplyAirlift(mission); ApplyBreach(mission);
             ApplyMissionGoals(mission.MissionId);
@@ -217,6 +221,7 @@ namespace Game.UI.Runtime
 
         private void ApplyMissionNodes(string selectedMissionId, bool m02Revealed, uint availableMask, uint completedMask)
         {
+            selectedMissionNodeIndex = -1;
             for (int index = 0; index < (missionNodes?.Length ?? 0); index++)
             {
                 int contentIndex=IsChapterFour?index+15:IsChapterThree?index+10:IsChapterTwo?index+5:index;
@@ -230,6 +235,7 @@ namespace Game.UI.Runtime
                 if (lockIcon != null)
                     lockIcon.SetActive(!available);
                 bool selected = selectedMissionId == Game.Missions.Contracts.CampaignMissionSequence.IdAt(contentIndex);
+                if (selected) selectedMissionNodeIndex = index;
                 if(nodeIdLabels!=null && index<nodeIdLabels.Length) Set(nodeIdLabels[index],"M"+(index+1).ToString("00"));
                 ApplyNodeAppearance(index, available, (completedMask & (1u << contentIndex)) != 0, selected);
             }

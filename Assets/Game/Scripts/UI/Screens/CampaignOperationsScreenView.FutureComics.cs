@@ -6,6 +6,7 @@ namespace Game.UI.Runtime
 {
     public sealed partial class CampaignOperationsScreenView
     {
+        private int selectedMissionNodeIndex = -1;
         public Button ChapterFourButton => ResolveChapterCardButton(3);
         public Button ChapterFiveButton => ResolveChapterCardButton(4);
 
@@ -25,7 +26,7 @@ namespace Game.UI.Runtime
                     bool available=FutureMissionComicCatalog.Find(4,index+1)!=null;
                     if(missionNodeButtons!=null&&index<missionNodeButtons.Length&&missionNodeButtons[index]!=null)missionNodeButtons[index].interactable=available;
                     if(missionLockIcons!=null&&index<missionLockIcons.Length&&missionLockIcons[index]!=null)missionLockIcons[index].SetActive(!available);
-                    ApplyNodeAppearance(index,available,false,false);
+                    ApplyNodeAppearance(index,available,false,index==selectedMissionNodeIndex);
                 }
         }
 
@@ -49,6 +50,7 @@ namespace Game.UI.Runtime
             FutureMissionComicMission mission = FutureMissionComicCatalog.Find(chapter, number);
             if (mission == null)
                 return;
+            selectedMissionNodeIndex = number - 1;
             bool persian = UiShellRuntimeGateway.Localization.IsRightToLeft;
             if (chapter >= 4)
             {
@@ -86,6 +88,7 @@ namespace Game.UI.Runtime
             if (launchMissionButton != null)
                 launchMissionButton.interactable = true;
             EnableFutureComicChapters(chapter);
+            ApplyDistrictAtlas(chapter);
         }
 
         private void EnableFutureChapterCard(

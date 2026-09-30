@@ -90,11 +90,9 @@ public sealed class CampaignOperationsScreenTests
         Assert.NotNull(content);
 
         List<UIShellRouteButtonView> mainMenuRoutes = CollectComponentsInHierarchy<UIShellRouteButtonView>(content.MainMenuContentPrefab.transform);
-        UIShellRouteButtonView campaignRoute = ResolveRoute(mainMenuRoutes, UiShellRouteIntent.OpenMenuRoute, UIRoute.Campaign);
-        Assert.NotNull(campaignRoute, "Campaign card must expose a route hotspot.");
-        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, campaignRoute.Intent);
-        Assert.AreEqual(UIRoute.Campaign, campaignRoute.Route);
-        Assert.IsTrue(campaignRoute.PushHistory);
+        MainMenuCampaignCardView campaignCard = content.MainMenuContentPrefab.GetComponentInChildren<MainMenuCampaignCardView>(true);
+        Assert.NotNull(campaignCard, "Campaign card must expose its current mission action.");
+        Assert.NotNull(ResolveCampaignContinueButton(campaignCard));
 
         CampaignOperationsScreenView campaignView = content.CampaignContentPrefab.GetComponentInChildren<CampaignOperationsScreenView>(true);
         Assert.NotNull(campaignView);
@@ -115,13 +113,6 @@ public sealed class CampaignOperationsScreenTests
         Assert.NotNull(skirmishRoute);
         Assert.AreEqual(UIRoute.QuickCustomSetup, skirmishRoute.Route);
 
-        int directDeployCount = 0;
-        for (int i = 0; i < mainMenuRoutes.Count; i++)
-        {
-            if (mainMenuRoutes[i].Intent == UiShellRouteIntent.EnterMatch && mainMenuRoutes[i].Route == UIRoute.Match)
-                directDeployCount++;
-        }
-        Assert.GreaterOrEqual(directDeployCount, 1, "General Deploy must remain a direct Match launch.");
     }
 
     [Test]
@@ -158,11 +149,10 @@ public sealed class CampaignOperationsScreenTests
         GameObject campaignInstance = UnityEngine.Object.Instantiate(content.CampaignContentPrefab);
         try
         {
-            List<UIShellRouteButtonView> menuRoutes = CollectComponentsInHierarchy<UIShellRouteButtonView>(menuInstance.transform);
-            UIShellRouteButtonView campaignRoute = ResolveRoute(menuRoutes, UiShellRouteIntent.OpenMenuRoute, UIRoute.Campaign);
-            Assert.NotNull(campaignRoute);
-            EditModeViewLifecycle.Invoke(campaignRoute, "OnEnable");
-            campaignRoute.GetComponent<Button>().onClick.Invoke();
+            MainMenuCampaignCardView campaignCard = menuInstance.GetComponentInChildren<MainMenuCampaignCardView>(true);
+            Assert.NotNull(campaignCard);
+            EditModeViewLifecycle.Invoke(campaignCard, "OnEnable");
+            ResolveCampaignContinueButton(campaignCard).onClick.Invoke();
             flowSystem.Update(_world.Unmanaged);
 
             UiShellStateComponent shellState = em.GetComponentData<UiShellStateComponent>(boundary);
@@ -219,7 +209,7 @@ public sealed class CampaignOperationsScreenTests
         AssertAllAssigned(view.MissionNodes, "mission node");
         AssertAllAssigned(view.ProgressNodes, "progress node");
 
-        Assert.AreEqual("Assets/Game/Art/UI/V3Shared/CampaignScenes/SCN05_SahrinMissionMap_V3.png", AssetDatabase.GetAssetPath(view.DistrictMapImage.texture));
+        Assert.AreEqual("Assets/Game/Art/UI/Generated/CampaignOperations/DistrictAtlasA/chapter-01-district.png", AssetDatabase.GetAssetPath(view.DistrictMapImage.texture));
         Assert.AreEqual("Assets/Game/Art/UI/Generated/SkirmishSetup/TargetLockV02/scn13_operation_preview_sahrin_v02.png", AssetDatabase.GetAssetPath(view.MissionPreviewImage.texture));
         Assert.AreEqual("Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Bold SDF.asset", AssetDatabase.GetAssetPath(view.ScreenTitle.font));
         Assert.GreaterOrEqual(view.ScreenTitle.fontSize, 38f);
@@ -229,6 +219,13 @@ public sealed class CampaignOperationsScreenTests
         RectTransform launchRect = view.LaunchMissionButton.GetComponent<RectTransform>();
         Assert.AreEqual(1f, launchRect.anchorMin.y, 0.001f);
         Assert.AreEqual(1f, launchRect.anchorMax.y, 0.001f);
+    }
+
+    private static Button ResolveCampaignContinueButton(MainMenuCampaignCardView card)
+    {
+        foreach (Button button in card.GetComponentsInChildren<Button>(true))
+            if (button.name == "ContinueButton") return button;
+        return null;
     }
 
     private static void Run(string name, Action<CampaignOperationsScreenTests> action, ref int passed)

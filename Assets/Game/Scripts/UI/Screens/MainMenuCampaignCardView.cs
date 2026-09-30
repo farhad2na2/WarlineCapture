@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
         [Serializable] public struct MissionPlate { public string missionId; public Sprite plate; }
         [Serializable] public struct AftermathScene { public Sprite plate; public string captionKey; public string captionFallback; }
         [SerializeField] private Image art;
+        [SerializeField] private Image comicBackdrop;
         [SerializeField] private MissionPlate[] plates = Array.Empty<MissionPlate>();
         [SerializeField] private TMP_Text title, chapter, purpose, actionLabel;
         [SerializeField] private Button continueButton;
@@ -39,6 +40,7 @@ namespace Game.UI.Runtime
             UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Refresh, CampaignMissionSequence.IdAt(0));
             Refresh();
         }
+
         private void BindDirectionalLabels()
         {
             if (directionalLabelsBound) return;
@@ -71,7 +73,7 @@ namespace Game.UI.Runtime
                 PresentedMissionId = string.Empty;
                 CompletionVisible=false;
                 if (archiveButton != null) archiveButton.gameObject.SetActive(false);
-                if (art != null) { art.sprite=null; art.enabled=false; }
+                SetArt(null);
                 Set(title, "CAMPAIGN"); Set(chapter, string.Empty);
                 Set(purpose, "Review your Campaign missions."); Set(actionLabel, "CHOOSE MISSION   ›");
                 return;
@@ -88,11 +90,7 @@ namespace Game.UI.Runtime
                     previousAftermath = visitAftermath;
                 }
                 bool full = model.FullCampaignRegistered;
-                if (art != null)
-                {
-                    art.sprite = full ? epilogue : visitAftermath >= 0 ? aftermathScenes[visitAftermath].plate : null;
-                    art.enabled = art.sprite != null;
-                }
+                SetArt(full ? epilogue : visitAftermath >= 0 ? aftermathScenes[visitAftermath].plate : null);
                 Set(chapter, string.Empty);
                 if(chapter!=null) chapter.gameObject.SetActive(false);
                 Set(title, full ? "CAMPAIGN COMPLETE" : "ALL AVAILABLE MISSIONS COMPLETED");
@@ -103,7 +101,7 @@ namespace Game.UI.Runtime
             }
             Sprite plate = FindPlate(PresentedMissionId);
             if(chapter!=null) chapter.gameObject.SetActive(true);
-            if (art != null) { art.sprite=plate; art.enabled=plate != null; }
+            SetArt(plate);
             int index = CampaignMissionSequence.IndexOf(PresentedMissionId);
             Set(chapter, UiShellRuntimeGateway.Localization.Format("ui.home.chapter_mission", "CHAPTER {0} • MISSION {1}", index / 5 + 1, index % 5 + 1));
             if (UiShellRuntimeGateway.TryReadMissionBriefing(out var briefing) && briefing.MissionId == PresentedMissionId)
@@ -136,6 +134,19 @@ namespace Game.UI.Runtime
         {
             if (target == null) return;
             UiLocalizedText.Set(target, value);
+        }
+        private void SetArt(Sprite plate)
+        {
+            if (comicBackdrop != null)
+            {
+                comicBackdrop.sprite = plate;
+                comicBackdrop.enabled = plate != null;
+            }
+            if (art != null)
+            {
+                art.sprite = plate;
+                art.enabled = plate != null && comicBackdrop == null;
+            }
         }
         private static string FirstSentence(string summary)
         {

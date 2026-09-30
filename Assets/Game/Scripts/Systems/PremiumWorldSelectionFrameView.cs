@@ -76,12 +76,12 @@ namespace Game.Runtime
                 topCenter + right * halfX - forward * halfZ
             };
 
-            ConfigureLoop(_footprintFrame, groundCorners, groundLineWidth, baseColor, alpha: 0.24f);
-            ConfigureLoop(_topRim, topCorners, rimLineWidth, accentColor, alpha: 0.9f);
+            _footprintFrame.enabled=false;
+            _topRim.enabled=false;
 
             for (int i = 0; i < CornerCount; i++)
             {
-                ConfigureSegment(_cornerPosts[i], groundCorners[i], topCorners[i], postLineWidth, accentColor, alpha: 0.82f);
+                _cornerPosts[i].enabled=false;
             }
 
             ConfigureCornerBrackets(
@@ -91,14 +91,7 @@ namespace Game.Runtime
                 bracketLength,
                 groundLineWidth * 1.12f,
                 baseColor);
-            ConfigureScanBands(
-                topCenter,
-                right,
-                forward,
-                halfX,
-                halfZ,
-                rimLineWidth * 0.62f,
-                accentColor);
+            foreach(var band in _scanBands) band.enabled=false;
         }
 
         private void LogGeometryDiagnostic(
@@ -171,8 +164,8 @@ namespace Game.Runtime
                         break;
                 }
 
-                ConfigureSegment(_cornerBrackets[i * 2], corner, corner + inwardA * length, lineWidth, color, alpha: 0.38f);
-                ConfigureSegment(_cornerBrackets[i * 2 + 1], corner, corner + inwardB * length, lineWidth, color, alpha: 0.38f);
+                ConfigureSegment(_cornerBrackets[i * 2], corner, corner + inwardA * length, lineWidth, color, alpha: 0.9f);
+                ConfigureSegment(_cornerBrackets[i * 2 + 1], corner, corner + inwardB * length, lineWidth, color, alpha: 0.9f);
             }
         }
 
@@ -252,7 +245,9 @@ namespace Game.Runtime
             Material material = ResolveMaterial();
             material.SetColor(BaseColorProperty, baseColor);
             material.SetColor(LegacyColorProperty, baseColor);
-            material.SetColor(EmissionColorProperty, baseColor * 1.35f);
+            material.SetColor(EmissionColorProperty, Color.black);
+            material.SetFloat("_PulseStrength", 0);
+            material.SetFloat("_ScanStrength", 0);
             material.SetColor(AccentColorProperty, accentColor);
             material.SetFloat(AlphaProperty, Mathf.Clamp01(baseColor.a));
         }

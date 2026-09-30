@@ -25,16 +25,16 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.18
+    - _Alpha: 0.95
     - _EdgeSoftness: 0.42
-    - _PulseSpeed: 2.8079998
-    - _PulseStrength: 0.08
-    - _ScanSpeed: 0.472
-    - _ScanStrength: 0.08
+    - _PulseSpeed: 2.6
+    - _PulseStrength: 0
+    - _ScanSpeed: 0.38
+    - _ScanStrength: 0
     m_Colors:
     - _AccentColor: {r: 0.5, g: 0.95, b: 1, a: 1}
     - _BaseColor: {r: 0.05, g: 0.88, b: 1, a: 0.18}
     - _Color: {r: 0.05, g: 0.88, b: 1, a: 0.18}
-    - _EmissionColor: {r: 0.02, g: 0.22, b: 0.26, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

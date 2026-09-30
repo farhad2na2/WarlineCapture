@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch01_M02_EstablishBase
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch01.m04.airlift
-  operationMapId: opmap.ch01.airlift_01
+  operationMapId: opmap.ch01.airlift_airfield_review
   requiredAnchors:
   - anchorId: anchor.ch01.m04.squad_a
     kind: 3
@@ -23,10 +23,14 @@ MonoBehaviour:
     kind: 3
   - anchorId: anchor.ch01.m04.specialists
     kind: 5
+  - anchorId: anchor.ch01.m04.pickup
+    kind: 11
   - anchorId: anchor.ch01.m04.landing
     kind: 3
   - anchorId: anchor.ch01.m04.aircraft
     kind: 3
+  - anchorId: anchor.ch01.m04.transfer
+    kind: 11
   - anchorId: anchor.ch01.m04.departure
     kind: 12
   - anchorId: anchor.ch01.m04.return_rts

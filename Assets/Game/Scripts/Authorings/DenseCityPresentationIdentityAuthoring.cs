@@ -78,7 +78,7 @@ namespace Game.Authoring
             return true;
         }
 
-        [BakingVersion("WarlineCapture", 1)]
+        [BakingVersion("WarlineCapture", 2)]
         private sealed class IdentityBaker : Baker<DenseCityPresentationIdentityAuthoring>
         {
             public override void Bake(DenseCityPresentationIdentityAuthoring authoring)
@@ -86,7 +86,11 @@ namespace Game.Authoring
                 if (!authoring.TryValidate(out _))
                     return;
 
-                Entity entity = GetEntity(TransformUsageFlags.Renderable);
+                bool airliftSocket=authoring.stableId==OperationMapMissionPresentationSocket.AirliftTransportSceneryStableId;
+                // Keep this exact scenery owner's render hierarchy addressable so a
+                // mission can replace it without editing or deleting the physical source.
+                Entity entity = GetEntity(airliftSocket?TransformUsageFlags.Dynamic:TransformUsageFlags.Renderable);
+                if(airliftSocket)AddComponent(entity,new OperationMapMissionPresentationSocket {MissionId="saga.ch01.m04.airlift"});
                 AddComponent(entity, new DenseCityPresentationIdentity
                 {
                     StableId = new FixedString128Bytes(authoring.stableId),

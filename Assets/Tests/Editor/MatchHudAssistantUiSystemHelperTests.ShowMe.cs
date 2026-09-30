@@ -15,10 +15,37 @@ public sealed partial class MatchHudAssistantUiSystemHelperTests
         RunCase(test => test.EveryEnabledMissionShowMeHasATarget(true));
         RunCase(test => test.M4UsesLiveSelectionModeAndHidesShowMeForVisibleIndicators());
         RunCase(test => test.M4GuidesRealSelectionBeforeBoardingOrMoving());
+        RunCase(test => test.ExtractionDestinationUnderStatusBarsOffersCameraRecovery());
         RunCase(test => test.GroupSelectionExposesVisibleDragAndClearsWhenControlChanges());
         foreach (byte count in new byte[] { 5, 9, 12, 8, 10 })
             RunCase(test => test.CampaignActionsFollowLiveModeAndArrival(count));
-        Debug.Log("[MissionShowMe] result=Passed tests=12 M1-M5,Gridlock=normal-selection,drag,command,destination,waiting");
+        Debug.Log("[MissionShowMe] result=Passed tests=13 M1-M5,Gridlock=normal-selection,drag,command,destination,waiting extractionStatusBarRecovery=Passed");
+    }
+
+    [Test]
+    public void ExtractionDestinationUnderStatusBarsOffersCameraRecovery()
+    {
+        CreateHudHarness(true,out var overlay,out var header,out _);
+        var model=CreateStructuredModel(1,recommendationKind:9,recommendationTargetKind:4,tutorialStep:3,tutorialStepCount:12);
+        var gateway=new FakeAssistantPanelGateway(model,UiAssistantHighlightModel.Empty){HasTutorialTarget=true,Extraction=true,HasCommandState=true,CommandMode=TacticalCommandMode.Move};
+        UiShellRuntimeGateway.Register(gateway);
+        var cameraObject=new GameObject("Extraction status obstruction camera",typeof(Camera));var camera=cameraObject.GetComponent<Camera>();
+        camera.orthographic=true;camera.orthographicSize=20;camera.transform.position=Vector3.up*100;camera.transform.LookAt(Vector3.zero);gateway.FocusCamera=camera;
+        gateway.TutorialTarget=new UiMissionTutorialTarget(Vector3.zero,camera.ViewportToWorldPoint(new Vector3(.5f,.8f,100)),false,false);
+        var ui=new MainMenuPlayUI();ui.Init(null,new FakeMatchRuntimeState());
+        try
+        {
+            ui.BindMatchHudAssistant(header.gameObject,overlay,LoadPopupPrefab());ui.BindMatchHudCommandControls(CreateCommandControls(overlay));
+            var helper=GetPrivateField<MatchHudAssistantUiSystemHelper>(ui,"_matchHudAssistantUiSystem");helper.BindWorldCamera(camera);
+            var view=header.Find("AriaAssistantButton").GetComponent<AriaTutorialBriefingView>();
+            helper.ApplyReadModel(model);helper.TickHighlight(1);
+            Assert.IsTrue(view.ShowMeButton.IsActive()&&view.ShowMeButton.IsInteractable(),"HUD-covered destination needs the existing camera recovery control.");
+            view.ShowMeButton.onClick.Invoke();helper.TickHighlight(2);
+            Assert.AreEqual(gateway.TutorialTarget.Destination,gateway.LastTutorialFocus);
+            Assert.AreEqual(0,gateway.GroupSelectionRequests,"Camera recovery must not select or order troops.");
+            Assert.IsFalse(view.ShowMeButton.gameObject.activeSelf,"Centered destination clears recovery after its cue is visible.");
+        }
+        finally{ui.Dispose();UnityEngine.Object.DestroyImmediate(cameraObject);}
     }
 
     [Test]

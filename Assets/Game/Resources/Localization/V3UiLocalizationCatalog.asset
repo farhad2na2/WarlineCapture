@@ -1562,7 +1562,8 @@ MonoBehaviour:
 
         All four specialists are safe. Laila is departing.'
     - key: mission.m04.enemy_intel
-      value: A western patrol moves 15 seconds after boarding, or after two minutes.
+      value: An eastern apron patrol moves 15 seconds after boarding, or after two
+        minutes.
     - key: mission.m04.focus.departure
       value: DEPARTURE
     - key: mission.m04.focus.landing
@@ -1608,7 +1609,7 @@ MonoBehaviour:
     - key: mission.m04.hud.status
       value: "Aboard {0}/4 \xB7 APC leg {1}/4 \xB7 Clear {2}/20s \xB7 {3}s left"
     - key: mission.m04.location
-      value: "Eastern district \xB7 medical landing area"
+      value: "Airfield clinic \xB7 western helipad"
     - key: mission.m04.name
       value: AIRLIFT
     - key: mission.m04.objective.extract
@@ -1714,7 +1715,7 @@ MonoBehaviour:
       value: A rescue, in two stages
     - key: mission.m04.tutorial.10.body
       value: Keep the loaded helicopter inside the marked landing area for twenty
-        clear seconds. Use the rifles to stop threats entering the ring. Leaving
+        clear seconds. Use the rifles to stop threats entering the area. Leaving
         or enemy entry resets the count.
     - key: mission.m04.tutorial.10.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
@@ -1758,8 +1759,9 @@ MonoBehaviour:
     - key: mission.m04.tutorial.2.title
       value: Select the APC
     - key: mission.m04.tutorial.3.body
-      value: Press Move, then tap beside the four specialists on the western road.
-        Show Me locates them. Send the rifles forward to cover the pickup.
+      value: Press Move, then tap the pickup marker beside the four specialists at
+        the airfield clinic. Show Me locates them. Send the rifles forward to cover
+        the pickup.
     - key: mission.m04.tutorial.3.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.3.example
@@ -1769,12 +1771,13 @@ MonoBehaviour:
     - key: mission.m04.tutorial.3.title
       value: Reach the stranded team
     - key: mission.m04.tutorial.4.body
-      value: Select all four specialists beside the road. Keep armed escorts outside
-        the selection. This step completes when all four are selected.
+      value: Press Select, then drag around all four specialists beside the clinic.
+        Keep armed escorts outside the selection. This step completes when all four
+        are selected.
     - key: mission.m04.tutorial.4.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.4.example
-      value: Tap Select all specialists in ARIA.
+      value: Use the highlighted world selection box.
     - key: mission.m04.tutorial.4.mistake
       value: Keep armed escorts out of this selection.
     - key: mission.m04.tutorial.4.title
@@ -1791,8 +1794,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.5.title
       value: Board all four into the APC
     - key: mission.m04.tutorial.6.body
-      value: Move the loaded APC east to the marked landing area. Show Me locates
-        Laila. Keep the rifles covering the approaching patrol.
+      value: Move the loaded APC west to the transfer marker beside the helipad.
+        Show Me locates Laila. Keep the rifles covering the approaching patrol.
     - key: mission.m04.tutorial.6.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.6.example
@@ -1825,8 +1828,8 @@ MonoBehaviour:
     - key: mission.m04.tutorial.8.title
       value: Inspect the helicopter
     - key: mission.m04.tutorial.9.body
-      value: Select all four specialists, press Board, then tap the landed helicopter.
-        Check that its passenger list shows four people.
+      value: Press Select and drag around all four specialists, press Board, then
+        tap the landed helicopter. Check that its passenger list shows four people.
     - key: mission.m04.tutorial.9.diagram
       value: "TEAM \u2192 APC \u2192 LANDING AREA \u2192 HELICOPTER \u2192 EXIT"
     - key: mission.m04.tutorial.9.example
@@ -1837,21 +1840,20 @@ MonoBehaviour:
     - key: mission.m04.tutorial.9.title
       value: Transfer the specialists
     - key: mission.m04.tutorial.hold.contested
-      value: 'Enemy inside the landing ring: the safety timer has reset. Keep the
+      value: 'Enemy inside the landing area: the safety timer has reset. Keep the
         helicopter here. Select your armed escorts and attack the intruders; the
-        countdown resumes when the ring is clear.'
+        countdown resumes when the area is clear.'
     - key: mission.m04.tutorial.hold.return
       value: The helicopter is outside the landing zone. Select it, press Move, then
-        tap inside the yellow landing ring. Keep it there until the safety countdown
+        tap inside the marked landing area. Keep it there until the safety countdown
         finishes.
     - key: mission.m04.tutorial.hold.wait
       value: All four specialists are aboard. Wait {0} more seconds; no click is
-        needed. Keep the helicopter inside the yellow landing ring. The next lesson
+        needed. Keep the helicopter inside the marked landing area. The next lesson
         will guide you to the exit.
     - key: mission.m04.tutorial.selection_progress
-      value: 'Specialists selected: {0}/4. Tap Select all specialists to select the
-        rescue team together. Once all four are selected, follow the next highlighted
-        action.'
+      value: 'Specialists selected: {0}/4. Press Select and drag around the rescue
+        team. Once all four are selected, follow the next highlighted action.'
     - key: mission.m05.access
       value: "8 rifles \xB7 heavy APC"
     - key: mission.m05.camera.opening
@@ -2045,6 +2047,18 @@ MonoBehaviour:
       value: A destroyed transmitter alone does not complete the mission.
     - key: mission.m05.tutorial.8.title
       value: Recover the archive
+    - key: mission.marker.clear
+      value: CLEAR
+    - key: mission.marker.contested
+      value: CONTESTED
+    - key: mission.marker.departure
+      value: DEPARTURE
+    - key: mission.marker.pickup
+      value: PICKUP
+    - key: mission.marker.securing
+      value: SECURING
+    - key: mission.marker.transfer
+      value: TRANSFER
     - key: mission.market_lifeline.deadline
       value: 10 active minutes
     - key: mission.market_lifeline.enemy_intel
@@ -3247,12 +3261,12 @@ MonoBehaviour:
       value: The convoy is stopped, but the post took damage and civilians were lost.
         Record both. The corridor still needs protection.
     - key: narrative.m04.brief.01
-      value: Captain Laila Nasser. My helicopter is ready at the eastern landing
-        area. Bring the four specialists to me in the APC; I can keep this extraction
+      value: Captain Laila Nasser. My helicopter is ready on the airfield's western
+        helipad. Bring the four specialists to me in the APC; I can keep this extraction
         window open for ten minutes.
     - key: narrative.m04.brief.02
-      value: Two medics and two engineers are stranded by the western road. They
-        are the people who can reopen the clinics and restore the network. Bring
+      value: Two medics and two engineers are stranded beside the airfield clinic.
+        They are the people who can reopen the clinics and restore the network. Bring
         every one of them home.
     - key: narrative.m04.brief.03
       value: Rifles cover the road; the APC carries the team. Unload beside Laila,
@@ -10231,10 +10245,11 @@ MonoBehaviour:
         \u0644\u06CC\u0644\u0627 \u062F\u0631 \u062D\u0627\u0644 \u062E\u0631\u0648\u062C
         \u0627\u0633\u062A."
     - key: mission.m04.enemy_intel
-      value: "\u06AF\u0634\u062A \u063A\u0631\u0628\u06CC \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647
-        \u0628\u0639\u062F \u0627\u0632 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646
-        \u062A\u06CC\u0645\u060C \u06CC\u0627 \u0628\u0639\u062F \u0627\u0632 \u062F\u0648
-        \u062F\u0642\u06CC\u0642\u0647 \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u0647."
+      value: "\u06AF\u0634\u062A \u0634\u0631\u0642\u06CC \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u06F1\u06F5 \u062B\u0627\u0646\u06CC\u0647 \u0628\u0639\u062F \u0627\u0632
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646 \u062A\u06CC\u0645\u060C \u06CC\u0627
+        \u0628\u0639\u062F \u0627\u0632 \u062F\u0648 \u062F\u0642\u06CC\u0642\u0647
+        \u062D\u0631\u06A9\u062A \u0645\u06CC\u200C\u06A9\u0646\u0647."
     - key: mission.m04.focus.departure
       value: "\u062E\u0631\u0648\u062C"
     - key: mission.m04.focus.landing
@@ -10308,8 +10323,8 @@ MonoBehaviour:
         {2} \u0627\u0632 \u06F2\u06F0 \u062B\u0627\u0646\u06CC\u0647 \xB7 \u0632\u0645\u0627\u0646:
         {3} \u062B\u0627\u0646\u06CC\u0647"
     - key: mission.m04.location
-      value: "\u0628\u062E\u0634 \u0634\u0631\u0642\u06CC \xB7 \u0645\u062D\u0644
-        \u0641\u0631\u0648\u062F \u0627\u0645\u062F\u0627\u062F\u06CC"
+      value: "\u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \xB7 \u0633\u06A9\u0648\u06CC \u063A\u0631\u0628\u06CC"
     - key: mission.m04.name
       value: "\u062A\u062E\u0644\u06CC\u0647\u0654 \u0647\u0648\u0627\u06CC\u06CC"
     - key: mission.m04.objective.extract
@@ -10475,10 +10490,10 @@ MonoBehaviour:
       value: "\u0646\u062C\u0627\u062A \u062F\u0631 \u062F\u0648 \u0645\u0631\u062D\u0644\u0647"
     - key: mission.m04.tutorial.10.body
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u067E\u0631 \u0631\u0648 \u0628\u06CC\u0633\u062A
-        \u062B\u0627\u0646\u06CC\u0647 \u062A\u0648\u06CC \u062D\u0644\u0642\u0647\u0654
+        \u062B\u0627\u0646\u06CC\u0647 \u062A\u0648\u06CC \u0645\u062D\u062F\u0648\u062F\u0647\u0654
         \u0627\u0645\u0646 \u0641\u0631\u0648\u062F \u0646\u06AF\u0647 \u062F\u0627\u0631.
         \u0628\u0627 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0646\u0630\u0627\u0631
-        \u062F\u0634\u0645\u0646 \u0648\u0627\u0631\u062F \u062D\u0644\u0642\u0647
+        \u062F\u0634\u0645\u0646 \u0648\u0627\u0631\u062F \u0645\u062D\u062F\u0648\u062F\u0647
         \u0628\u0634\u0647. \u0627\u06AF\u0647 \u0628\u0627\u0644\u06AF\u0631\u062F
         \u0628\u06CC\u0631\u0648\u0646 \u0628\u0631\u0647 \u06CC\u0627 \u062F\u0634\u0645\u0646
         \u0648\u0627\u0631\u062F \u0628\u0634\u0647\u060C \u0632\u0645\u0627\u0646
@@ -10569,9 +10584,10 @@ MonoBehaviour:
         \u06A9\u0646"
     - key: mission.m04.tutorial.3.body
       value: "\xAB\u062D\u0631\u06A9\u062A\xBB \u0631\u0648 \u0628\u0632\u0646 \u0648
-        \u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u06A9\u0646\u0627\u0631 \u0686\u0647\u0627\u0631
-        \u0645\u062A\u062E\u0635\u0635 \u062A\u0648\u06CC \u062C\u0627\u062F\u0647\u0654
-        \u063A\u0631\u0628\u06CC \u0628\u0628\u0631. \xAB\u0646\u0634\u0627\u0646
+        \u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u0628\u0647 \u0646\u0634\u0627\u0646
+        \u06A9\u0646\u0627\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u062C\u0644\u0648\u06CC \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u0628\u0628\u0631. \xAB\u0646\u0634\u0627\u0646
         \u0628\u062F\u0647\xBB \u062C\u0627\u0634\u0648\u0646 \u0631\u0648 \u0646\u0634\u0648\u0646\u062A
         \u0645\u06CC\u200C\u062F\u0647. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
         \u0631\u0648 \u0647\u0645 \u0628\u0631\u0627\u06CC \u067E\u0648\u0634\u0634
@@ -10592,10 +10608,10 @@ MonoBehaviour:
       value: "\u0628\u0647 \u062A\u06CC\u0645 \u06AF\u0631\u0641\u062A\u0627\u0631
         \u0628\u0631\u0633\u06CC\u062F"
     - key: mission.m04.tutorial.4.body
-      value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
-        \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647 \u0631\u0648 \u0628\u0627
-        \u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u062A\u062E\u0635\u0635\u0627\u0646
-        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646. \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627\u06CC
+      value: "\xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB \u0631\u0648 \u0628\u0632\u0646\u060C
+        \u0628\u0639\u062F \u062F\u0648\u0631 \u0647\u0631 \u0686\u0647\u0627\u0631
+        \u0645\u062A\u062E\u0635\u0635 \u06A9\u0646\u0627\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u06A9\u0627\u062F\u0631 \u0628\u06A9\u0634. \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627\u06CC
         \u0645\u0633\u0644\u062D \u0646\u0628\u0627\u06CC\u062F \u062A\u0648\u06CC
         \u0627\u06CC\u0646 \u06AF\u0631\u0648\u0647 \u0628\u0627\u0634\u0646. \u0648\u0642\u062A\u06CC
         \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0627\u0646\u062A\u062E\u0627\u0628
@@ -10606,9 +10622,9 @@ MonoBehaviour:
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
         \u062E\u0631\u0648\u062C"
     - key: mission.m04.tutorial.4.example
-      value: "\u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u0647\u0645\u0647\u0654 \u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0648
-        \u062F\u0631 \u067E\u0646\u0644 \u0622\u0631\u06CC\u0627 \u0628\u0632\u0646."
+      value: "\u0628\u0627 \u06A9\u0627\u062F\u0631 \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
+        \u062A\u0648\u06CC \u0645\u06CC\u062F\u0627\u0646\u060C \u06AF\u0631\u0648\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646."
     - key: mission.m04.tutorial.4.mistake
       value: "\u0645\u062D\u0627\u0641\u0638\u0627\u0646 \u0645\u0633\u0644\u062D
         \u0631\u0648 \u0648\u0627\u0631\u062F \u0627\u06CC\u0646 \u0627\u0646\u062A\u062E\u0627\u0628
@@ -10640,12 +10656,13 @@ MonoBehaviour:
         \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u06A9\u0646"
     - key: mission.m04.tutorial.6.body
       value: "\u0646\u0641\u0631\u0628\u0631 \u067E\u0631 \u0631\u0648 \u0628\u0647
-        \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647
-        \u062A\u0648\u06CC \u0634\u0631\u0642 \u0628\u0628\u0631. \xAB\u0646\u0634\u0627\u0646
-        \u0628\u062F\u0647\xBB \u062C\u0627\u06CC \u0644\u06CC\u0644\u0627 \u0631\u0648
-        \u0646\u0634\u0648\u0646\u062A \u0645\u06CC\u200C\u062F\u0647. \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627
-        \u0631\u0648 \u0628\u0631\u0627\u06CC \u067E\u0648\u0634\u0634 \u0645\u0633\u06CC\u0631
-        \u06AF\u0634\u062A \u062F\u0634\u0645\u0646 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+        \u0646\u0634\u0627\u0646 \u0627\u0646\u062A\u0642\u0627\u0644 \u06A9\u0646\u0627\u0631
+        \u0633\u06A9\u0648\u06CC \u0641\u0631\u0648\u062F \u062F\u0631 \u063A\u0631\u0628
+        \u0628\u0628\u0631. \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u062C\u0627\u06CC
+        \u0644\u06CC\u0644\u0627 \u0631\u0648 \u0646\u0634\u0648\u0646\u062A \u0645\u06CC\u200C\u062F\u0647.
+        \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u0647\u0627 \u0631\u0648 \u0628\u0631\u0627\u06CC
+        \u067E\u0648\u0634\u0634 \u0645\u0633\u06CC\u0631 \u06AF\u0634\u062A \u062F\u0634\u0645\u0646
+        \u0646\u06AF\u0647 \u062F\u0627\u0631."
     - key: mission.m04.tutorial.6.diagram
       value: "\u062A\u06CC\u0645 \u2190 \u0646\u0641\u0631\u0628\u0631 \u2190 \u0645\u062D\u0644
         \u0641\u0631\u0648\u062F \u2190 \u0628\u0627\u0644\u06AF\u0631\u062F \u2190
@@ -10710,12 +10727,11 @@ MonoBehaviour:
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
         \u06A9\u0646"
     - key: mission.m04.tutorial.9.body
-      value: "\u0628\u0627 \u062F\u06A9\u0645\u0647\u0654 \u0627\u0646\u062A\u062E\u0627\u0628
-        \u0645\u062A\u062E\u0635\u0635\u0627\u0646\u060C \u0647\u0631 \u0686\u0647\u0627\u0631
-        \u0646\u0641\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646.
-        \xAB\u0633\u0648\u0627\u0631\u0634\u062F\u0646\xBB \u0631\u0648 \u0628\u0632\u0646\u060C
-        \u0628\u0639\u062F \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648\u06CC
-        \u0632\u0645\u06CC\u0646 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+      value: "\xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB \u0631\u0648 \u0628\u0632\u0646
+        \u0648 \u062F\u0648\u0631 \u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
+        \u06A9\u0627\u062F\u0631 \u0628\u06A9\u0634. \xAB\u0633\u0648\u0627\u0631\u0634\u062F\u0646\xBB
+        \u0631\u0648 \u0628\u0632\u0646\u060C \u0628\u0639\u062F \u0628\u0627\u0644\u06AF\u0631\u062F
+        \u0631\u0648\u06CC \u0632\u0645\u06CC\u0646 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646. \u0628\u0627\u06CC\u062F \u0647\u0631 \u0686\u0647\u0627\u0631
         \u0646\u0641\u0631 \u062A\u0648\u06CC \u0641\u0647\u0631\u0633\u062A \u0645\u0633\u0627\u0641\u0631\u0647\u0627
         \u0628\u0627\u0634\u0646."
@@ -10737,40 +10753,41 @@ MonoBehaviour:
       value: "\u0645\u062A\u062E\u0635\u0635\u0627\u0646 \u0631\u0648 \u0645\u0646\u062A\u0642\u0644
         \u06A9\u0646"
     - key: mission.m04.tutorial.hold.contested
-      value: "\u062F\u0634\u0645\u0646 \u0648\u0627\u0631\u062F \u062D\u0644\u0642\u0647\u0654
+      value: "\u062F\u0634\u0645\u0646 \u0648\u0627\u0631\u062F \u0645\u062D\u062F\u0648\u062F\u0647\u0654
         \u0641\u0631\u0648\u062F \u0634\u062F\u0647\u061B \u0632\u0645\u0627\u0646
         \u0627\u06CC\u0645\u0646\u06CC \u0627\u0632 \u0627\u0648\u0644 \u0634\u0631\u0648\u0639
         \u0645\u06CC\u200C\u0634\u0647. \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648
         \u0647\u0645\u06CC\u0646\u200C\u062C\u0627 \u0646\u06AF\u0647 \u062F\u0627\u0631.
         \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646 \u0648 \u0628\u0647 \u0645\u0647\u0627\u062C\u0645\u200C\u0647\u0627
-        \u062D\u0645\u0644\u0647 \u06A9\u0646\u061B \u0648\u0642\u062A\u06CC \u062D\u0644\u0642\u0647
+        \u062D\u0645\u0644\u0647 \u06A9\u0646\u061B \u0648\u0642\u062A\u06CC \u0645\u062D\u062F\u0648\u062F\u0647
         \u067E\u0627\u06A9 \u0628\u0634\u0647\u060C \u0634\u0645\u0627\u0631\u0634
         \u0627\u062F\u0627\u0645\u0647 \u067E\u06CC\u062F\u0627 \u0645\u06CC\u200C\u06A9\u0646\u0647."
     - key: mission.m04.tutorial.hold.return
       value: "\u0628\u0627\u0644\u06AF\u0631\u062F \u0628\u06CC\u0631\u0648\u0646
         \u0645\u062D\u0644 \u0641\u0631\u0648\u062F\u0647. \u0627\u0646\u062A\u062E\u0627\u0628\u0634
         \u06A9\u0646\u060C \xAB\u062D\u0631\u06A9\u062A\xBB \u0631\u0648 \u0628\u0632\u0646
-        \u0648 \u062F\u0627\u062E\u0644 \u062D\u0644\u0642\u0647\u0654 \u0632\u0631\u062F
-        \u0645\u0642\u0635\u062F \u0628\u062F\u0647. \u062A\u0627 \u0634\u0645\u0627\u0631\u0634
-        \u062A\u0645\u0648\u0645 \u0628\u0634\u0647\u060C \u0647\u0645\u0648\u0646\u200C\u062C\u0627
-        \u0646\u06AF\u0647\u0634 \u062F\u0627\u0631."
+        \u0648 \u062F\u0627\u062E\u0644 \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0645\u0642\u0635\u062F
+        \u0628\u062F\u0647. \u062A\u0627 \u0634\u0645\u0627\u0631\u0634 \u062A\u0645\u0648\u0645
+        \u0628\u0634\u0647\u060C \u0647\u0645\u0648\u0646\u200C\u062C\u0627 \u0646\u06AF\u0647\u0634
+        \u062F\u0627\u0631."
     - key: mission.m04.tutorial.hold.wait
       value: "\u0647\u0631 \u0686\u0647\u0627\u0631 \u0645\u062A\u062E\u0635\u0635
         \u0633\u0648\u0627\u0631\u0646. {0} \u062B\u0627\u0646\u06CC\u0647\u0654
         \u062F\u06CC\u06AF\u0647 \u0635\u0628\u0631 \u06A9\u0646\u061B \u0644\u0627\u0632\u0645
         \u0646\u06CC\u0633\u062A \u062F\u06A9\u0645\u0647\u200C\u0627\u06CC \u0628\u0632\u0646\u06CC.
-        \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648 \u062A\u0648\u06CC \u062D\u0644\u0642\u0647\u0654
-        \u0632\u0631\u062F \u0641\u0631\u0648\u062F \u0646\u06AF\u0647 \u062F\u0627\u0631.
-        \u062F\u0631\u0633 \u0628\u0639\u062F\u06CC \u0645\u0633\u06CC\u0631 \u062E\u0631\u0648\u062C
-        \u0631\u0648 \u0646\u0634\u0648\u0646\u062A \u0645\u06CC\u200C\u062F\u0647."
+        \u0628\u0627\u0644\u06AF\u0631\u062F \u0631\u0648 \u062A\u0648\u06CC \u0645\u062D\u062F\u0648\u062F\u0647\u0654
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647\u0654 \u0641\u0631\u0648\u062F
+        \u0646\u06AF\u0647 \u062F\u0627\u0631. \u062F\u0631\u0633 \u0628\u0639\u062F\u06CC
+        \u0645\u0633\u06CC\u0631 \u062E\u0631\u0648\u062C \u0631\u0648 \u0646\u0634\u0648\u0646\u062A
+        \u0645\u06CC\u200C\u062F\u0647."
     - key: mission.m04.tutorial.selection_progress
       value: "\u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627\u06CC \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647:
-        {0} \u0627\u0632 \u06F4. \xAB\u0627\u0646\u062A\u062E\u0627\u0628 \u0647\u0645\u0647\u0654
-        \u0645\u062A\u062E\u0635\u0635\u0627\u0646\xBB \u0631\u0648 \u0628\u0632\u0646
-        \u062A\u0627 \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A \u0628\u0627 \u0647\u0645
-        \u0627\u0646\u062A\u062E\u0627\u0628 \u0628\u0634\u0646. \u0648\u0642\u062A\u06CC
-        \u0647\u0631 \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0627\u0646\u062A\u062E\u0627\u0628
+        {0} \u0627\u0632 \u06F4. \xAB\u0627\u0646\u062A\u062E\u0627\u0628\xBB \u0631\u0648
+        \u0628\u0632\u0646 \u0648 \u062F\u0648\u0631 \u062A\u06CC\u0645 \u0646\u062C\u0627\u062A
+        \u06A9\u0627\u062F\u0631 \u0628\u06A9\u0634. \u0648\u0642\u062A\u06CC \u0647\u0631
+        \u0686\u0647\u0627\u0631 \u0646\u0641\u0631 \u0627\u0646\u062A\u062E\u0627\u0628
         \u0634\u062F\u0646\u060C \u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0632\u0631\u062F
         \u0628\u0639\u062F\u06CC \u0631\u0648 \u062F\u0646\u0628\u0627\u0644 \u06A9\u0646."
     - key: mission.m05.access
@@ -11130,6 +11147,18 @@ MonoBehaviour:
     - key: mission.m05.tutorial.8.title
       value: "\u0627\u0633\u0646\u0627\u062F \u0631\u0648 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
         \u06A9\u0646"
+    - key: mission.marker.clear
+      value: "\u0627\u0645\u0646"
+    - key: mission.marker.contested
+      value: "\u0632\u06CC\u0631 \u062A\u0647\u062F\u06CC\u062F"
+    - key: mission.marker.departure
+      value: "\u062E\u0631\u0648\u062C"
+    - key: mission.marker.pickup
+      value: "\u0633\u0648\u0627\u0631\u0634\u062F\u0646"
+    - key: mission.marker.securing
+      value: "\u0627\u06CC\u0645\u0646\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.marker.transfer
+      value: "\u0627\u0646\u062A\u0642\u0627\u0644"
     - key: mission.market_lifeline.deadline
       value: "\u06F1\u06F0 \u062F\u0642\u06CC\u0642\u0647 \u0632\u0645\u0627\u0646
         \u0641\u0639\u0627\u0644"
@@ -13463,7 +13492,7 @@ MonoBehaviour:
     - key: narrative.m04.brief.01
       value: "\u0645\u0646 \u0633\u0631\u0648\u0627\u0646 \u0644\u06CC\u0644\u0627
         \u0646\u0627\u0635\u0631\u0645. \u0628\u0627\u0644\u06AF\u0631\u062F\u0645
-        \u062A\u0648\u06CC \u0645\u062D\u0644 \u0641\u0631\u0648\u062F \u0634\u0631\u0642\u06CC
+        \u0631\u0648\u06CC \u0633\u06A9\u0648\u06CC \u063A\u0631\u0628\u06CC \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
         \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u062A. \u0686\u0647\u0627\u0631
         \u0645\u062A\u062E\u0635\u0635 \u0631\u0648 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631
         \u0628\u0647 \u0645\u0646 \u0628\u0631\u0633\u0648\u0646\u06CC\u062F. \u062F\u0647
@@ -13471,8 +13500,8 @@ MonoBehaviour:
         \u0645\u0646\u062A\u0638\u0631 \u0628\u0645\u0648\u0646\u0645."
     - key: narrative.m04.brief.02
       value: "\u062F\u0648 \u0627\u0645\u062F\u0627\u062F\u06AF\u0631 \u0648 \u062F\u0648
-        \u0645\u0647\u0646\u062F\u0633 \u06A9\u0646\u0627\u0631 \u062C\u0627\u062F\u0647\u0654
-        \u063A\u0631\u0628\u06CC \u06AF\u06CC\u0631 \u0627\u0641\u062A\u0627\u062F\u0646.
+        \u0645\u0647\u0646\u062F\u0633 \u06A9\u0646\u0627\u0631 \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647
+        \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u06AF\u06CC\u0631 \u0627\u0641\u062A\u0627\u062F\u0646.
         \u0628\u0631\u0627\u06CC \u0631\u0627\u0647\u200C\u0627\u0646\u062F\u0627\u062E\u062A\u0646
         \u062F\u0631\u0645\u0627\u0646\u06AF\u0627\u0647\u200C\u0647\u0627 \u0648
         \u0634\u0628\u06A9\u0647 \u0628\u0647\u0634\u0648\u0646 \u0646\u06CC\u0627\u0632

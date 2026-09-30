@@ -37,7 +37,8 @@ namespace Game.Editor
         private static void BuildMap()
         {
             CH03M04EvidenceChainWorldBuilder.Build();
-            var map = Clone<OperationMapDefinition>(M04AirliftConfigBuilder.MapPath, MapPath);
+            // Evidence Chain retains its urban source while Airlift migrates independently.
+            var map = Clone<OperationMapDefinition>(M04AirliftConfigBuilder.LegacyMapPath, MapPath);
             var data = new SerializedObject(map);
             ReplaceStrings(data, "ch01.m04", "ch03.m04");
             Set(data, "operationMapId", MapId);
@@ -75,6 +76,13 @@ namespace Game.Editor
             ReplaceStrings(data, "ch01.m04", "ch03.m04");
             Set(data, "scenarioId", ScenarioId); Set(data, "operationMapId", MapId);
             Set(data, "deterministicSeed", 3004001);
+            var map=Load<OperationMapDefinition>(MapPath);
+            var required=data.FindProperty("requiredAnchors");required.arraySize=map.Anchors.Length;
+            for(int i=0;i<required.arraySize;i++)
+            {
+                var entry=required.GetArrayElementAtIndex(i);
+                Set(entry,"anchorId",map.Anchors[i].AnchorId);Set(entry,"kind",(int)map.Anchors[i].Kind);
+            }
             var groups = data.FindProperty("unitGroups");
             for (int i = 0; i < groups.arraySize; i++)
             {

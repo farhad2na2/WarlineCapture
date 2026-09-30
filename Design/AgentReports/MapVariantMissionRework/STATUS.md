@@ -1,8 +1,9 @@
 # Existing Campaign map migration status
 
 Updated 2026-09-30. This isolated checkout contains the CH02-M02 Supply Line
-pilot and a CH02-M04 Power Relay review candidate. No map or mission is
-qualified for release, and the new Power Relay binding has not been promoted
+pilot, a CH02-M04 Power Relay review candidate, and a CH01-M04 Airlift
+candidate ready for mission review. No map or mission is qualified for release,
+and these review bindings have not been promoted
 to `main`.
 
 | Mission | Planned disposition | This checkout |
@@ -10,7 +11,7 @@ to `main`.
 | CH01-M01 First Contact | Retain urban | No migration; baseline not rerun |
 | CH01-M02 Establish the Base | Retain urban | No migration; baseline not rerun |
 | CH01-M03 Radar Warning | Retain urban | No migration; baseline not rerun |
-| CH01-M04 Airlift | CityEdgeAirfield | Not started |
+| CH01-M04 Airlift | CityEdgeAirfield | ARIA English and manual Persian normal-input extraction/result/return passed on final layout; ready for user review; see `Airlift/WORKSPACE.md` |
 | CH01-M05 Breach Assault | Retain urban | No migration; baseline not rerun |
 | CH02-M01 Gridlock | Retain urban | No migration; baseline not rerun |
 | CH02-M02 Supply Line | RefineryDistrict | Review candidate in progress; see `SupplyLine/WORKSPACE.md` |
@@ -37,3 +38,9 @@ and complete public-input ARIA victory through Campaign return **passed**.
 Manual play, native negative paths, school landmark and camera visual review,
 human approval, and device acceptance remain **pending**. See
 `PowerRelay/WORKSPACE.md`.
+
+Airlift gates: packed source, static route clearance, 15 focused passenger-rule
+cases, two socket cases, 13 Show Me cases and complete final-layout ARIA/manual
+native journeys **passed**. Human map/camera/minimap review, updated briefing
+voices, native negative journeys, saved-state migration and device acceptance
+remain **pending**. See `Airlift/WORKSPACE.md` for preserved failures and evidence.

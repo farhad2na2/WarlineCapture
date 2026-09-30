@@ -48,9 +48,18 @@ namespace Game.UI.Shell.Ecs
             using var cameraQuery=em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeCameraSnapshotComponent>());
             var cameraSnapshot=cameraQuery.CalculateEntityCount()==1 ? cameraQuery.GetSingleton<RuntimeCameraSnapshotComponent>() : default;
             var rotation=cameraSnapshot.IsValid!=0 ? cameraSnapshot.Rotation : Unity.Mathematics.quaternion.EulerXYZ(math.radians(new float3(60,0,0)));
+            float3 pickupCenter=default; bool hasPickup=false;
+            using var mapQuery=em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+            if(runtime.MissionId.Equals(AirliftId) && mapQuery.CalculateEntityCount()==1)
+            {
+                var metadata=mapQuery.GetSingleton<OperationMapMetadataComponent>();
+                if(metadata.Blob.IsCreated && TryFindExtractionAnchor(ref metadata.Blob.Value,
+                    new FixedString64Bytes("anchor.ch01.m04.pickup"),out var pickup))
+                {pickupCenter=pickup.Position;hasPickup=true;}
+            }
             model=new UiMissionExtractionModel(facts.ExtractionPassengersAboard,facts.ExtractionPassengersDelivered,config.RequiredPassengers,facts.ExtractionCarrierLegCount,
                 facts.ExtractionSecureMilliseconds/1000,math.max(0,(config.DeadlineMilliseconds-facts.ElapsedMilliseconds+999)/1000),lesson,
-                facts.ExtractionContested!=0,extraction.DepartureCleared!=0,extraction.LandingCenter,extraction.DepartureCenter,config.LandingRadius,config.DepartureRadius,math.max(0,((extraction.PatrolReleaseAtMilliseconds>0?math.min(120000,extraction.PatrolReleaseAtMilliseconds):120000)-facts.ElapsedMilliseconds+999)/1000),rotation,(config.SecureHoldMilliseconds+999)/1000,IsAircraftAtLanding(em,in extraction,config.LandingRadius));return true;
+                facts.ExtractionContested!=0,extraction.DepartureCleared!=0,extraction.LandingCenter,extraction.DepartureCenter,config.LandingRadius,config.DepartureRadius,math.max(0,((extraction.PatrolReleaseAtMilliseconds>0?math.min(120000,extraction.PatrolReleaseAtMilliseconds):120000)-facts.ElapsedMilliseconds+999)/1000),rotation,(config.SecureHoldMilliseconds+999)/1000,IsAircraftAtLanding(em,in extraction,config.LandingRadius),pickupCenter,extraction.HandoffCenter,hasPickup);return true;
         }
         private static int cachedExtractionHoldStatus=int.MinValue;
         internal static bool IsAircraftAtLanding(EntityManager em,in CampaignMissionExtractionState state,float radius) =>

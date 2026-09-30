@@ -3,6 +3,14 @@ using Unity.Entities;
 
 namespace Game.Components
 {
+    public struct OperationMapMissionPresentationSocket : IComponentData
+    {
+        public const string AirliftTransportSceneryStableId="densecity.7ee80dd1b1b10cf9b43fe1dad88c423f238837f91c9a347dd9615ee4d45f38e4";
+        public FixedString64Bytes MissionId;
+    }
+
+    public struct OperationMapMissionPresentationHiddenTag : IComponentData { }
+
     public enum DenseCityPresentationSemanticCategory : byte
     {
         Unknown = 0,

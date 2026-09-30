@@ -192,18 +192,18 @@ namespace Game.Editor
                 {
                     case 0:
                         UiShellRuntimeGateway.TryRequestExtractionAction(UiMissionExtractionAction.ContinuePlan);
-                        Move(em,extraction.Carrier,new int2(812,427));
-                        for(int i=0;i<members.Length;i++)if(members[i].Kind==0)Move(em,members[i].Entity,new int2(830+(i%4)*2,420+(i/4)*3));
+                        Move(em,extraction.Carrier,M04AirliftConfigBuilder.PickupCell);
+                        for(int i=0;i<members.Length;i++)if(members[i].Kind==0)Move(em,members[i].Entity,new int2(880+(i%4)*2,650+(i/4)*3));
                         Next();break;
                     case 1:
-                        if(!Near(em,extraction.Carrier,new float3(812,0,427),8))return;
+                        if(!Near(em,extraction.Carrier,new float3(M04AirliftConfigBuilder.PickupCell.x,0,M04AirliftConfigBuilder.PickupCell.y),8))return;
                         passenger=0;Next();break;
                     case 2:
                         if(passenger<4){Board(em,extraction.Carrier,team[passenger++]);frame=Time.frameCount;return;}
                         if(facts.ExtractionCarrierLegCount<4||facts.ExtractionPassengersAboard<4)return;
-                        ScreenCapture.CaptureScreenshot(Output+"/apc-loaded.png");Move(em,extraction.Carrier,new int2(1046,428));Next();break;
+                        ScreenCapture.CaptureScreenshot(Output+"/apc-loaded.png");Move(em,extraction.Carrier,M04AirliftConfigBuilder.TransferCell);Next();break;
                     case 3:
-                        if(!Near(em,extraction.Carrier,new float3(1046,0,428),7))return;
+                        if(!Near(em,extraction.Carrier,new float3(M04AirliftConfigBuilder.TransferCell.x,0,M04AirliftConfigBuilder.TransferCell.y),7))return;
                         if(!UnloadThroughTutorial(em,extraction))return;Next();break;
                     case 4:
                         if(facts.ExtractionPassengersAboard!=0)return;
@@ -216,7 +216,7 @@ namespace Game.Editor
                     case 6:
                         if(ExerciseClearanceInterruption(em,extraction,facts))return;
                         if(extraction.DepartureCleared==0)return;
-                        ScreenCapture.CaptureScreenshot(Output+"/cleared.png");Move(em,extraction.Aircraft,new int2(1085,465));Next();break;
+                        ScreenCapture.CaptureScreenshot(Output+"/cleared.png");Move(em,extraction.Aircraft,M04AirliftConfigBuilder.DepartureCell);Next();break;
                     case 7:
                         if(EditorApplication.timeSinceStartup-stepAt>120)throw new TimeoutException("Helicopter did not reach airborne departure");break;
                 }

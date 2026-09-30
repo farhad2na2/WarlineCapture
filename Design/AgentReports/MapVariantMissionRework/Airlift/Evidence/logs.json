@@ -1,0 +1,97 @@
+[
+  {
+    "file": "airlift-airfield-config-01.log.gz",
+    "originalBytes": 2391622,
+    "originalSha256": "dbcd245ed6e08deb89fa8fbe413d409712415556f2f04c5bde2426d35657ee2f"
+  },
+  {
+    "file": "airlift-airfield-config-02.log.gz",
+    "originalBytes": 11313514,
+    "originalSha256": "509a16736ca86b1c6a0828c97558a9b240e2e7309ec4090432ab0407f144b493"
+  },
+  {
+    "file": "airlift-airfield-config-03.log.gz",
+    "originalBytes": 3093703,
+    "originalSha256": "7178ed3748392117162885dcc3cfce107b5f01d6810e1c27b5fa43db5f33fe87"
+  },
+  {
+    "file": "airlift-airfield-focused-01.log.gz",
+    "originalBytes": 88695,
+    "originalSha256": "ada88d2616f331bf10ecbde191fc955fc644e197318ce9f0fa33fbe5ab2b882f"
+  },
+  {
+    "file": "airlift-airfield-focused-02.log.gz",
+    "originalBytes": 181877,
+    "originalSha256": "5365721873dc4fc22ca893a22946110328f477953ef843da6a45db40db0fa419"
+  },
+  {
+    "file": "airlift-airfield-manual-fa-01.log.gz",
+    "originalBytes": 480803,
+    "originalSha256": "81903bb2e20036bc1f2bde85234a10bd622ce927e5fc5271b60e010ad5e58d34"
+  },
+  {
+    "file": "airlift-airfield-manual-fa-02.log.gz",
+    "originalBytes": 446868,
+    "originalSha256": "bc5586497ceae49e5651c0b7057cabe8df59dbae83ce1f21bebb32625dd284ba"
+  },
+  {
+    "file": "airlift-airfield-manual-fa-03.log.gz",
+    "originalBytes": 513030,
+    "originalSha256": "b8746bf4d1a7f30257c28498d96f2ec280f5a59c22779304872f95daf6f4987b"
+  },
+  {
+    "file": "airlift-airfield-manual-fa-04.log.gz",
+    "originalBytes": 522993,
+    "originalSha256": "e78ab80f038bb80ce13dcf5b15f1c762e0870388c403b707de6c6629029316f2"
+  },
+  {
+    "file": "airlift-airfield-packed-01.log.gz",
+    "originalBytes": 703102,
+    "originalSha256": "75bac0af7408bf6005ffef17d5143c8aedb3529bc0850e94dd5246d9a14cb3a4"
+  },
+  {
+    "file": "airlift-airfield-watch-en-01.log.gz",
+    "originalBytes": 347158,
+    "originalSha256": "7f79adfda6289c9d30656d6f50bfedf7dc82e8768c06d5c4b2824b570335f3da"
+  },
+  {
+    "file": "airlift-airfield-watch-en-02.log.gz",
+    "originalBytes": 509315,
+    "originalSha256": "3e115fa60f6991dae532c233e0bf8b3610a971242c6156522286c25c4b05f36c"
+  },
+  {
+    "file": "airlift-airfield-watch-en-03.log.gz",
+    "originalBytes": 470910,
+    "originalSha256": "800453a26153c99925f9a83b672fb6ac50f1fcb76437e306d395a89849973175"
+  },
+  {
+    "file": "airlift-airfield-watch-en-04.log.gz",
+    "originalBytes": 327846,
+    "originalSha256": "7cb60a6f5d0304a04428e57be3fc8b3f91aa6df154c82bbf47041cd16a155685"
+  },
+  {
+    "file": "airlift-airfield-watch-en-05.log.gz",
+    "originalBytes": 434858,
+    "originalSha256": "5f7b6584099f53c538446e5eb26b1c73e993b6ec1a839734cc1116bc7cdbc014"
+  },
+  {
+    "file": "airlift-airfield-watch-en-06.log.gz",
+    "originalBytes": 396984,
+    "originalSha256": "adcb77fac1ffe292e556f23f991b50af872a9126b3123d41495562459410ec7f"
+  },
+  {
+    "file": "airlift-airfield-watch-en-07.log.gz",
+    "originalBytes": 1840620,
+    "originalSha256": "f2dca550a8af4794164ce9470ae789c2e50cbcdacb6d24028737e2aa63440fca"
+  },
+  {
+    "file": "airlift-airfield-watch-en-08.log.gz",
+    "originalBytes": 1861793,
+    "originalSha256": "92dab8f4dc4b0eaaf9c478930690cd3efda1297f3949bbdc0d763b7783c4cde0"
+  },
+  {
+    "file": "airlift-airfield-manual-fa-05.log.gz",
+    "originalBytes": 1943594,
+    "originalSha256": "4c0e7631412d75cacbd43479b8938227dd7b7509d5ddc1a19cba6f6ae309bbfd"
+  }
+]

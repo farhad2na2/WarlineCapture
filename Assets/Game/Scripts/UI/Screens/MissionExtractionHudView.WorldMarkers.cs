@@ -12,6 +12,33 @@ namespace Game.UI.Runtime
         private LineRenderer landingRing, departureRing;
         private TextMeshPro landingLabel, departureLabel;
         private Quaternion markerRotation;
+        private TacticalGroundMarkerView tacticalLanding, tacticalDeparture, tacticalPickup, tacticalTransfer;
+        private void RefreshTacticalMarkers(in UiMissionExtractionModel model)
+        {
+            if(tacticalLanding==null)
+            {
+                tacticalLanding=CreateTactical("Landing perimeter"); tacticalDeparture=CreateTactical("Departure");
+                tacticalPickup=CreateTactical("Clinic pickup"); tacticalTransfer=CreateTactical("Carrier transfer");
+            }
+            landingRing.gameObject.SetActive(false); departureRing.gameObject.SetActive(false);
+            landingLabel.gameObject.SetActive(false); departureLabel.gameObject.SetActive(false);
+            Color amber=new Color32(255,191,48,255), green=new Color32(94,224,112,255), coral=new Color32(255,102,76,255);
+            var glyph=model.Contested?TacticalGroundMarkerView.Symbol.Alert:model.Cleared?TacticalGroundMarkerView.Symbol.Check:TacticalGroundMarkerView.Symbol.Clock;
+            var color=model.Contested?coral:model.Cleared?green:amber;
+            var localization=UiShellRuntimeGateway.Localization;
+            tacticalLanding.Configure(model.LandingCenter,model.LandingRadius,color,
+                localization.Get(model.Contested?"mission.marker.contested":model.Cleared?"mission.marker.clear":"mission.marker.securing"),glyph);
+            tacticalDeparture.Configure(model.DepartureCenter,model.DepartureRadius,model.Cleared?green:amber,
+                localization.Get("mission.marker.departure"),TacticalGroundMarkerView.Symbol.Departure,true);
+            tacticalPickup.gameObject.SetActive(model.HasPickupMarker && model.CarrierLeg<model.Required);
+            tacticalPickup.Configure(model.PickupCenter,3,amber,localization.Get("mission.marker.pickup"),TacticalGroundMarkerView.Symbol.People,true);
+            tacticalTransfer.gameObject.SetActive(model.Lesson>=6 && model.Lesson<=9 && model.Delivered<model.Required);
+            tacticalTransfer.Configure(model.TransferCenter,3,amber,localization.Get("mission.marker.transfer"),TacticalGroundMarkerView.Symbol.People,true);
+        }
+        private TacticalGroundMarkerView CreateTactical(string name)
+        {
+            var go=new GameObject(name);go.transform.SetParent(markerRoot.transform,false);return go.AddComponent<TacticalGroundMarkerView>();
+        }
 
         private void RefreshWorldMarkers(bool active, in UiMissionExtractionModel model)
         {
@@ -22,6 +49,7 @@ namespace Game.UI.Runtime
             // Evidence Chain's physical helipad/checkpoint is already legible in the
             // world. The old floating "LANDING AREA" caption obscured the aircraft.
             bool evidenceChain = UiShellRuntimeGateway.IsEvidenceChainGuideContext();
+            if(!evidenceChain) { RefreshTacticalMarkers(in model);return; }
             landingLabel.gameObject.SetActive(!evidenceChain);
             departureLabel.gameObject.SetActive(!evidenceChain);
             var landingColor=model.Contested ? new Color32(255,79,28,255) : model.Cleared ? new Color32(94,224,79,255) : new Color32(255,196,36,255);
@@ -78,7 +106,7 @@ namespace Game.UI.Runtime
         {
             if(markerRoot!=null) Destroy(markerRoot);
             if(markerMaterial!=null) Destroy(markerMaterial);
-            markerRoot=null;markerMaterial=null;
+            markerRoot=null;markerMaterial=null;tacticalLanding=tacticalDeparture=tacticalPickup=tacticalTransfer=null;
         }
     }
 }

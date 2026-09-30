@@ -267,7 +267,7 @@ namespace Game.UI.Runtime
                 GameObject segment = new($"AccentSegment{index + 1:00}");
                 segment.transform.SetParent(_worldRingRoot.transform, false);
                 _worldAccentRenderers[index] = segment.AddComponent<LineRenderer>();
-                ConfigureWorldLine(_worldAccentRenderers[index], false, 7, 0.34f, V3Lime);
+                ConfigureWorldLine(_worldAccentRenderers[index], false, 7, 0.12f, V3GuidanceYellow);
             }
 
             _worldBracketRenderers = new LineRenderer[WorldBracketCount];
@@ -276,7 +276,7 @@ namespace Game.UI.Runtime
                 GameObject bracket = new($"CornerBracket{index + 1:00}");
                 bracket.transform.SetParent(_worldRingRoot.transform, false);
                 _worldBracketRenderers[index] = bracket.AddComponent<LineRenderer>();
-                ConfigureWorldLine(_worldBracketRenderers[index], false, 3, 0.24f, V3Cyan);
+                ConfigureWorldLine(_worldBracketRenderers[index], false, 3, 0.12f, V3GuidanceYellow);
             }
 
             _worldCrosshairRenderers = new LineRenderer[2];
@@ -285,7 +285,7 @@ namespace Game.UI.Runtime
                 GameObject crosshair = new(index == 0 ? "CrosshairHorizontal" : "CrosshairVertical");
                 crosshair.transform.SetParent(_worldRingRoot.transform, false);
                 _worldCrosshairRenderers[index] = crosshair.AddComponent<LineRenderer>();
-                ConfigureWorldLine(_worldCrosshairRenderers[index], false, 2, 0.14f, V3Lime);
+                ConfigureWorldLine(_worldCrosshairRenderers[index], false, 3, 0.12f, V3GuidanceYellow);
             }
             _worldRingRoot.SetActive(false);
         }
@@ -317,8 +317,14 @@ namespace Game.UI.Runtime
                 line.sharedMaterial = _worldRingMaterial;
         }
 
+        private static bool UsesTacticalGroundGuidance => UiShellRuntimeGateway.IsExtractionGuideContext() && !UiShellRuntimeGateway.IsEvidenceChainGuideContext();
         private void WriteWorldMarker(Vector3 center, float radius)
         {
+            bool tactical=UsesTacticalGroundGuidance;
+            _worldRingRenderer.enabled = !tactical;
+            foreach(var line in _worldAccentRenderers){line.widthMultiplier=tactical?.12f:.34f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Lime;}
+            foreach(var line in _worldBracketRenderers){line.widthMultiplier=tactical?.12f:.24f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Cyan;}
+            foreach(var line in _worldCrosshairRenderers){line.positionCount=tactical?3:2;line.widthMultiplier=tactical?.12f:.14f;line.startColor=line.endColor=tactical?V3GuidanceYellow:V3Lime;}
             for (int index = 0; index < WorldRingSegments; index++)
             {
                 float angle = index * Mathf.PI * 2f / WorldRingSegments;
@@ -332,7 +338,7 @@ namespace Game.UI.Runtime
 
             if (_worldAccentRenderers != null)
             {
-                const float accentSweep = Mathf.PI * 0.16f;
+                float accentSweep = Mathf.PI * (tactical ? .025f : .16f);
                 for (int segmentIndex = 0; segmentIndex < _worldAccentRenderers.Length; segmentIndex++)
                 {
                     LineRenderer segment = _worldAccentRenderers[segmentIndex];
@@ -341,7 +347,7 @@ namespace Game.UI.Runtime
                     {
                         float t = pointIndex / (float)(segment.positionCount - 1);
                         float angle = start + accentSweep * t;
-                        float accentRadius = radius * 0.82f;
+                        float accentRadius = tactical ? radius : radius * .82f;
                         segment.SetPosition(
                             pointIndex,
                             new Vector3(
@@ -369,11 +375,22 @@ namespace Game.UI.Runtime
 
             if (_worldCrosshairRenderers != null)
             {
-                float arm = radius * 0.36f;
+                if(!tactical)
+                {
+                    float oldArm=radius*.36f;
+                    _worldCrosshairRenderers[0].SetPosition(0,center+Vector3.left*oldArm);
+                    _worldCrosshairRenderers[0].SetPosition(1,center+Vector3.right*oldArm);
+                    _worldCrosshairRenderers[1].SetPosition(0,center+Vector3.back*oldArm);
+                    _worldCrosshairRenderers[1].SetPosition(1,center+Vector3.forward*oldArm);
+                    return;
+                }
+                float arm = Mathf.Min(.65f, radius * .22f);
                 _worldCrosshairRenderers[0].SetPosition(0, center + Vector3.left * arm);
-                _worldCrosshairRenderers[0].SetPosition(1, center + Vector3.right * arm);
-                _worldCrosshairRenderers[1].SetPosition(0, center + Vector3.back * arm);
-                _worldCrosshairRenderers[1].SetPosition(1, center + Vector3.forward * arm);
+                _worldCrosshairRenderers[0].SetPosition(1, center + Vector3.forward * arm);
+                _worldCrosshairRenderers[0].SetPosition(2, center + Vector3.right * arm);
+                _worldCrosshairRenderers[1].SetPosition(0, center + Vector3.left * arm);
+                _worldCrosshairRenderers[1].SetPosition(1, center + Vector3.back * arm);
+                _worldCrosshairRenderers[1].SetPosition(2, center + Vector3.right * arm);
             }
         }
 

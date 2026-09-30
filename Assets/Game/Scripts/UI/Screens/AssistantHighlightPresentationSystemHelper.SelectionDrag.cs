@@ -33,14 +33,16 @@ namespace Game.UI.Runtime
                 var go=new GameObject("NormalSelectionDragGuide",typeof(RectTransform));
                 _selectionBox=go.GetComponent<RectTransform>();_selectionBox.SetParent(_screenTargetCanvas.transform,false);
                 _selectionBox.anchorMin=_selectionBox.anchorMax=_selectionBox.pivot=Vector2.zero;
-                for(int i=0;i<4;i++)
+                for(int i=0;i<8;i++)
                 {
                     var edge=new GameObject("Edge",typeof(RectTransform),typeof(Image));edge.transform.SetParent(_selectionBox,false);
                     var graphic=edge.GetComponent<Image>();graphic.color=V3GuidanceYellow;graphic.raycastTarget=false;
                     var rect=(RectTransform)edge.transform;
-                    rect.anchorMin=i<2?new Vector2(0,i):new Vector2(i-2,0);
-                    rect.anchorMax=i<2?new Vector2(1,i):new Vector2(i-2,1);
-                    rect.sizeDelta=i<2?new Vector2(0,3):new Vector2(3,0);rect.anchoredPosition=Vector2.zero;
+                    int corner=i/2; bool horizontal=i%2==0;
+                    var anchor=new Vector2(corner<2?0:1,corner%2);
+                    rect.anchorMin=rect.anchorMax=anchor;rect.pivot=anchor;
+                    rect.sizeDelta=horizontal?new Vector2(22,2):new Vector2(2,22);rect.anchoredPosition=Vector2.zero;
+                    graphic.color=Color.white;
                 }
             }
             _selectionDragStart=lo;_selectionDragEnd=hi;

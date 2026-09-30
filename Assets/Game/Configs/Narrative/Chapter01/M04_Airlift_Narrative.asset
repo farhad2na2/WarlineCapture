@@ -35,11 +35,11 @@ MonoBehaviour:
     lines:
     - lineId: m04-brief-01
       textKey: narrative.m04.brief.01
-      englishFallback: Captain Laila Nasser. My helicopter is ready at the eastern
-        landing area. Bring the four specialists to me in the APC; I can keep this
-        extraction window open for ten minutes.
+      englishFallback: Captain Laila Nasser. My helicopter is ready on the airfield's
+        western helipad. Bring the four specialists to me in the APC; I can keep
+        this extraction window open for ten minutes.
       speaker: 5
-      voiceClip: {fileID: 8300000, guid: 792dcc425909b473796a12d66a77aa86, type: 3}
+      voiceClip: {fileID: 0}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -81,11 +81,11 @@ MonoBehaviour:
     lines:
     - lineId: m04-brief-02
       textKey: narrative.m04.brief.02
-      englishFallback: Two medics and two engineers are stranded by the western road.
-        They are the people who can reopen the clinics and restore the network. Bring
-        every one of them home.
+      englishFallback: Two medics and two engineers are stranded beside the airfield
+        clinic. They are the people who can reopen the clinics and restore the network.
+        Bring every one of them home.
       speaker: 2
-      voiceClip: {fileID: 8300000, guid: 21dec9c928e6c4309b2f3177175a34be, type: 3}
+      voiceClip: {fileID: 0}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0

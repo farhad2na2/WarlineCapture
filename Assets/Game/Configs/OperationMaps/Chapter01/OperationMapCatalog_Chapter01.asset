@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Game.Configs::Game.Configs.OperationMapCatalogConfig
   definitions:
   - {fileID: 11400000, guid: 1a2923aa685514516b10e057261fd960, type: 2}
+  - {fileID: 11400000, guid: b71fe1bba6e764e008b6092cc3ac7c00, type: 2}
   - {fileID: 11400000, guid: 0a2117ca560a44d4099b1fb448c92c0c, type: 2}
   - {fileID: 11400000, guid: cdac096ca74d84e84b2e0e1f93a29014, type: 2}
   - {fileID: 11400000, guid: 8c19d5328fd5b7c43b9d5ecb0065df04, type: 2}
@@ -40,6 +41,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: 3ec8d7c3b871218a5478cb1b2d1648b4cfa522f6aba4e7c70ceab89e25791814
+  - definition: {fileID: 11400000, guid: b71fe1bba6e764e008b6092cc3ac7c00, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch01.airlift_airfield_review
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 6d76d3be9c739e6ba8603635df5538da00f9220a91b0cc61f2c1b9cf2f70ddeb
   - definition: {fileID: 11400000, guid: 0a2117ca560a44d4099b1fb448c92c0c, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch01.breach_assault_01

@@ -24,7 +24,7 @@ namespace Game.Editor
             AssetDatabase.Refresh();
             GameObject clinic = CreateClinic();
             GameObject barracks = CreateBarracks();
-            var map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M04AirliftConfigBuilder.MapPath);
+            var map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(M04AirliftConfigBuilder.LegacyMapPath);
             var surface = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(
                 AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
             if (surface == null || !surface.TryCreateRuntimeBlobAsset(Allocator.Temp,

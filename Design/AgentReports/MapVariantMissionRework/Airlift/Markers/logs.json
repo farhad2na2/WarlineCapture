@@ -1,0 +1,141 @@
+[
+  {
+    "source": "/private/tmp/airlift-marker-building-focused-01.log",
+    "file": "airlift-marker-building-focused-01.log.gz",
+    "rawSha256": "6929d3a97dbd223221534f61d0993d0509932e5b0690e6558a46b8eb62db1507",
+    "rawBytes": 110578,
+    "markers": [
+      "[BuildingSelectionMarkerFocusedValidation] result=Passed tests=11"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-building-native-01.log",
+    "file": "airlift-marker-building-native-01.log.gz",
+    "rawSha256": "7c7f575163cf3b1b64c4e993afc4e870acc0e7e5cf20316b36a0b02a4ff9d5dc",
+    "rawBytes": 2294,
+    "markers": []
+  },
+  {
+    "source": "/private/tmp/airlift-marker-building-native-02.log",
+    "file": "airlift-marker-building-native-02.log.gz",
+    "rawSha256": "ba55bb6ffd29bba82cd1d7c84ee22975054742deef05daf119239675bb1c51b2",
+    "rawBytes": 106907,
+    "markers": [
+      "[CanonicalBuildingSelectionMarkerPlayModeValidation] result=Failed timed out deploy=0 matchReady=0 barracks=0 barracksId=0 origin=(0, 0) footprint=(0, 0) contractorTentId=0 contractorTentCell=(0, 0) barracksValidated=0 ownershipClicked=0"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-focused-01.log",
+    "file": "airlift-marker-focused-01.log.gz",
+    "rawSha256": "4174792f4dcd89acd9e1d31d6fa88fcc4844756a151a49c5b76fff8f0f7529ba",
+    "rawBytes": 90064,
+    "markers": [
+      "[MissionShowMe] result=Passed tests=13 M1-M5,Gridlock=normal-selection,drag,command,destination,waiting extractionStatusBarRecovery=Passed",
+      "[AirliftAirfieldFocused] result=Passed ruleCases=15 socketCases=2 neighboringScenery=Preserved priorVisibility=Preserved"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-manual-fa-01.log",
+    "file": "airlift-marker-manual-fa-01.log.gz",
+    "rawSha256": "ca869f61bf44367cb3fbfd139b0df8cdae47ce564ba5584f55ab393e3038718b",
+    "rawBytes": 1948204,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[AirliftMarkers] result=Passed state=securing sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftMarkers] result=Passed state=clear sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftInput] result=Passed publicEntry=Passed sourceHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 controls=Manual passengerAccounting=4/4 comics=6/6 comms=InactiveByExistingPolicy routeTargets=2/2 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-manual-fa-02.log",
+    "file": "airlift-marker-manual-fa-02.log.gz",
+    "rawSha256": "00dfeb87cef182f2d11be685776b55b1a4654c8dde21c7159450302cf3bc4ef1",
+    "rawBytes": 1968468,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[AirliftMarkers] result=Passed state=securing sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftMarkers] result=Passed state=clear sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftInput] result=Passed publicEntry=Passed sourceHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 controls=Manual passengerAccounting=4/4 comics=6/6 comms=InactiveByExistingPolicy routeTargets=2/2 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-preparation-01.log",
+    "file": "airlift-marker-preparation-01.log.gz",
+    "rawSha256": "ad3247dac4cf7cc668230f27f0706e34abdb0265e4639f6f9641e503ae2c88fd",
+    "rawBytes": 243608,
+    "markers": [
+      "[TacticalMarkerPreparation] result=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-preparation-02.log",
+    "file": "airlift-marker-preparation-02.log.gz",
+    "rawSha256": "ee91de22312004ddc01dc661438872cdef3044f59b2294c21f83aa0b01a26b47",
+    "rawBytes": 207029,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[TacticalMarkerPreparation] result=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-vehicle-focused-01.log",
+    "file": "airlift-marker-vehicle-focused-01.log.gz",
+    "rawSha256": "c0317c29f58c924471e346be9d9b25d59c4cd8aeb79179dba99958a524679044",
+    "rawBytes": 11628014,
+    "markers": [
+      "[VehicleVisualAdornmentsFocusedValidation] result=Passed tests=22"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-watch-en-01.log",
+    "file": "airlift-marker-watch-en-01.log.gz",
+    "rawSha256": "55d68d930253772dfc70d6a41f24fe441af4bd689f46d06e4b24d10e6ddadca9",
+    "rawBytes": 1763173,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[AirliftInput] result=Passed publicEntry=Passed sourceHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 controls=ARIA passengerAccounting=4/4 comics=6/6 comms=InactiveByExistingPolicy routeTargets=2/2 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-watch-en-02.log",
+    "file": "airlift-marker-watch-en-02.log.gz",
+    "rawSha256": "f4e171430c5d0e0086ca6d6e4337f966183cb13e33756136e4b47407f7e3892f",
+    "rawBytes": 1816381,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[AirliftMarkers] result=Passed state=securing sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftMarkers] result=Passed state=clear sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftInput] result=Passed publicEntry=Passed sourceHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 controls=ARIA passengerAccounting=4/4 comics=6/6 comms=InactiveByExistingPolicy routeTargets=2/2 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "source": "/private/tmp/airlift-marker-watch-en-03.log",
+    "file": "airlift-marker-watch-en-03.log.gz",
+    "rawSha256": "f973600d0ced70b5dfd8dbbdacf6739109f09609161a937e04ae2cb33e16aa60",
+    "rawBytes": 1877265,
+    "markers": [
+      "[AirliftRoutes] result=Passed carrierToPickup=103 pickupToTransfer=217 vehicleClearance=2 formationClearance=3",
+      "[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending",
+      "[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=21",
+      "[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4",
+      "[AirliftMarkers] result=Passed state=securing sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftMarkers] result=Passed state=clear sparsePerimeter=Passed radius=Passed labels=Localized input=NonInteractive",
+      "[AirliftInput] result=Passed publicEntry=Passed sourceHash=e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22 controls=ARIA passengerAccounting=4/4 comics=6/6 comms=InactiveByExistingPolicy routeTargets=2/2 debrief=Passed resultReturn=Passed"
+    ]
+  }
+]

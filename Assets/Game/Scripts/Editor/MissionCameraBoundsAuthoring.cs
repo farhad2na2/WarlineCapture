@@ -21,7 +21,7 @@ namespace Game.Editor
 
         public static void UpdateCommittedMissionMaps()
         {
-            foreach (string path in new[] { M03RadarWarningMapBuilder.Path, M04AirliftConfigBuilder.MapPath })
+            foreach (string path in new[] { M03RadarWarningMapBuilder.Path, M04AirliftConfigBuilder.LegacyMapPath })
             {
                 var map = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(path);
                 if (map == null) throw new InvalidOperationException(path);

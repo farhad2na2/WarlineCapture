@@ -1,0 +1,47 @@
+{
+  "commanderXp": 500,
+  "credits": 2500,
+  "ownedUnitUnlocks": [
+    "Unit_Chr_Pilot_Female_01",
+    "Unit_Veh_APC_Fast",
+    "Unit_Veh_Helicopter_Transport"
+  ],
+  "campaignMissionProgress": [
+    {
+      "schemaVersion": 2,
+      "missionId": "saga.ch01.m04.airlift",
+      "available": true,
+      "firstClearCompleted": true,
+      "chapterOpeningSeen": false,
+      "bestStars": 3,
+      "bestCompletionMilliseconds": 90386,
+      "firstClearRewardSettled": true,
+      "successfulReplayCount": 0,
+      "lastSettledToken": "campaign-m01-0000000000000001:1",
+      "settledTokens": [
+        "campaign-m01-0000000000000001:1"
+      ],
+      "pendingResume": false,
+      "lastAttemptOrdinal": 1
+    },
+    {
+      "schemaVersion": 2,
+      "missionId": "saga.ch01.m05.breach_assault",
+      "available": true,
+      "firstClearCompleted": false,
+      "chapterOpeningSeen": false,
+      "bestStars": 0,
+      "bestCompletionMilliseconds": 0,
+      "firstClearRewardSettled": false,
+      "successfulReplayCount": 0,
+      "lastSettledToken": "",
+      "settledTokens": [],
+      "pendingResume": false,
+      "lastAttemptOrdinal": 0
+    }
+  ],
+  "nativeRun": "airlift-airfield-manual-fa-05",
+  "wrapperExitCode": 0,
+  "normalInput": "Manual touch",
+  "sourceUnload": "AddressablesUnloadComplete"
+}

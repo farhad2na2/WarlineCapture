@@ -23,6 +23,10 @@ namespace Game.UI.Runtime
         private bool supplyWatchFocusSet;
         private Vector3 supplyWatchFocusTarget;
         private float supplyWatchFocusAt;
+        private bool extractionWatchPointSet;
+        private Vector2 extractionWatchPoint;
+        private Vector2 extractionWatchDragEnd;
+        private float extractionWatchPointStableAt;
 
         private void TickWatch()
         {
@@ -81,6 +85,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsEvidenceChainGuideContext() &&
                        !UiShellRuntimeGateway.IsSupplyLineGuideContext() &&
                        !UiShellRuntimeGateway.IsPowerRelayGuideContext() &&
+                       !UiShellRuntimeGateway.IsExtractionGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
                        !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
@@ -149,6 +154,23 @@ namespace Game.UI.Runtime
                 drag = false;
                 dragEnd = default;
             }
+            // Show Me pans the extraction camera. A touch held at yesterday's
+            // screen position becomes a different ground order while that camera
+            // moves. Observe the presented cue until it settles before touching it.
+            if (UiShellRuntimeGateway.IsExtractionGuideContext() && kind == AriaPlayObservationKind.WorldTarget)
+            {
+                if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
+                    drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
+                {
+                    extractionWatchPointStableAt = Time.unscaledTime;
+                    extractionWatchPoint = position;
+                    extractionWatchDragEnd = dragEnd;
+                }
+                extractionWatchPointSet = true;
+                if (Time.unscaledTime - extractionWatchPointStableAt < .5f)
+                { kind = AriaPlayObservationKind.Waiting; target = 0; drag = false; dragEnd = default; }
+            }
+            else extractionWatchPointSet = false;
             if (!skirmish && _finalTutorialSuppressed) kind = AriaPlayObservationKind.Finished;
             int goalId=_lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep;
             // A delivered load is visible reserve progress, even while the same

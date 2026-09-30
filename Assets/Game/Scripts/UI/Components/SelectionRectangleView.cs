@@ -57,7 +57,7 @@ namespace Game.UI.Runtime
 
         private void DrawRectangle(Rect rect)
         {
-            DrawRect(rect, selectionFill);
+            // Keep the selected units visible while dragging. Only sparse corners frame the bounds.
             DrawBorder(rect, borderThickness, selectionBorder);
         }
 
@@ -71,10 +71,15 @@ namespace Game.UI.Runtime
 
         private void DrawBorder(Rect rect, float thickness, Color color)
         {
-            DrawRect(new Rect(rect.xMin, rect.yMin, rect.width, thickness), color);
-            DrawRect(new Rect(rect.xMin, rect.yMax - thickness, rect.width, thickness), color);
-            DrawRect(new Rect(rect.xMin, rect.yMin, thickness, rect.height), color);
-            DrawRect(new Rect(rect.xMax - thickness, rect.yMin, thickness, rect.height), color);
+            float length=Mathf.Min(22,Mathf.Min(rect.width,rect.height)*.3f);
+            Color ink=new Color(.94f,.97f,1f,.95f);
+            for(int i=0;i<4;i++)
+            {
+                float x=i<2?rect.xMin:rect.xMax-thickness;
+                float y=i%2==0?rect.yMin:rect.yMax-thickness;
+                DrawRect(new Rect(i<2?x:rect.xMax-length,y,length,thickness),ink);
+                DrawRect(new Rect(x,i%2==0?y:rect.yMax-length,thickness,length),ink);
+            }
         }
 
     }

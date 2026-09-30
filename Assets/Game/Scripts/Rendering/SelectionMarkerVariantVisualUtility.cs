@@ -20,9 +20,9 @@ namespace Game.Rendering
             SelectionMarkerVariantVisuals visuals =
                 entityManager.GetComponentData<SelectionMarkerVariantVisuals>(marker);
             SetVisible(entityManager, visuals.InfantryGroundRing, !usesVehicleMarker);
-            SetVisible(entityManager, visuals.VehicleFootprintFill, showVehicleGroundMarker);
+            SetVisible(entityManager, visuals.VehicleFootprintFill, false);
             SetVisible(entityManager, visuals.VehicleCornerBrackets, showVehicleGroundMarker);
-            SetVisible(entityManager, visuals.VehicleBoundsFrame, showVehicleGroundMarker);
+            SetVisible(entityManager, visuals.VehicleBoundsFrame, false);
             return true;
         }
 

@@ -19,7 +19,10 @@ namespace Game.UI.Runtime
                 if(_directTutorialTarget!=null) return _screenTargetIndicator!=null && _screenTargetIndicator.gameObject.activeInHierarchy;
                 if(_worldCamera==null || _worldRingRenderer==null) return false;
                 var point=_worldCamera.WorldToViewportPoint(_directTutorialWorldTarget);
-                return point.z>0 && point.x>.18f && point.x<.72f && point.y>.27f && point.y<.86f;
+                // The extraction status and patrol bars cover the upper battlefield.
+                // A ring under those bars needs the existing Show Me camera recovery.
+                float top=UiShellRuntimeGateway.IsExtractionGuideContext() ? .74f : .86f;
+                return point.z>0 && point.x>.18f && point.x<.72f && point.y>.27f && point.y<top;
             }
         }
         private bool _directTutorialCue;
@@ -62,7 +65,7 @@ namespace Game.UI.Runtime
         {
             TutorialAttentionPulseView.Present(_screenTargetIndicator, time,
                 _commandCueActive, _directTutorialTarget != null ? _directTutorialTarget.GetEntityId().GetHashCode() : 0, 0f);
-            if (_worldRingRenderer != null && _worldRingRoot.activeSelf)
+            if (_worldRingRenderer != null && _worldRingRenderer.enabled && _worldRingRoot.activeSelf)
                 _worldRingRenderer.widthMultiplier = WorldRingWidth * (1f + .5f *
                     TutorialAttentionPulseView.Opacity(time, 0, SettingsService.LoadReducedMotionPreference()));
         }
@@ -151,13 +154,17 @@ namespace Game.UI.Runtime
             ShowTutorialWorld(center);
             WriteWorldMarker(center + Vector3.up * WorldRingHeightOffset, Mathf.Max(.35f, radius));
             SetWorldMarkerDecoration(false);
+            // Airlift already owns the true landing perimeter; do not draw a second,
+            // smaller waiting-zone outline over the helicopter.
+            if(UsesTacticalGroundGuidance && UiShellRuntimeGateway.TryReadMissionExtraction(out _))
+                SetLinesActive(_worldAccentRenderers,false);
             _worldRingRenderer.startColor = _worldRingRenderer.endColor = defensive
                 ? V3GuidanceYellow : new Color32(94,224,79,255);
         }
 
         private void SetWorldMarkerDecoration(bool active)
         {
-            SetLinesActive(_worldAccentRenderers, active);
+            SetLinesActive(_worldAccentRenderers, UsesTacticalGroundGuidance ? !active : active);
             SetLinesActive(_worldBracketRenderers, active);
             SetLinesActive(_worldCrosshairRenderers, active);
         }

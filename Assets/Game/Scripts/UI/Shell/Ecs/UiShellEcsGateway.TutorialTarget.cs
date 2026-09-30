@@ -153,6 +153,17 @@ namespace Game.UI.Shell.Ecs
                 : step==10 || armored && step>=11 ? extraction.LandingCenter
                 : step>=11 ? extraction.DepartureCenter : team;
             if(step==3) destination=team+new float3(12,0,0); // Stop beside the pickup group, not on top of it.
+            if(step==3 && em.HasComponent<CampaignMissionRuntimeComponent>(root) &&
+                em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(AirliftId))
+            {
+                using var maps=em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+                if(maps.CalculateEntityCount()==1)
+                {
+                    var metadata=maps.GetSingleton<OperationMapMetadataComponent>();
+                    if(metadata.Blob.IsCreated && TryFindExtractionAnchor(ref metadata.Blob.Value,
+                        new Unity.Collections.FixedString64Bytes("anchor.ch01.m04.pickup"),out var pickup))destination=pickup.Position;
+                }
+            }
             if(step==5) destination=actorPosition;
             if(step==9 && !TryGetLiveExtractionPosition(em,extraction.Aircraft,out destination)) return false;
             target=new UiMissionTutorialTarget(teamStep ? (selected>0 && selected<count ? missing : team) : actorPosition,destination,

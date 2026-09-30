@@ -1,4 +1,4 @@
-# Supply Line map binding ledger
+# Mission map binding ledger
 
 | Item | Existing binding | Review candidate |
 |---|---|---|
@@ -37,3 +37,22 @@ handling, packed content and normal-input acceptance are pending.
 This managed worktree is a review lane. The production branch remains on the old
 physical map until physical-map visual/device acceptance and the Supply Line
 mission's normal-input/manual/ARIA acceptance gates pass.
+
+## Airlift review candidate
+
+| Item | Existing binding | Review candidate |
+|---|---|---|
+| Campaign mission ID | `saga.ch01.m04.airlift` | Same |
+| Scenario ID | `scenario.ch01.m04.airlift` | Same |
+| Logical map ID | `opmap.ch01.airlift_01` | `opmap.ch01.airlift_airfield_review` |
+| Physical map ID | `opmap.skirmish.desert_base_01` | `opmap.skirmish.cityedgeairfield_prepared` |
+| Physical semantic hash | `2713962f0faa2dae49805e1b7e3a1673199a2cca915334d11421b354cd8f591c` | `e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22` |
+| Logical definition | `Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_Airlift01.asset` | `Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset` |
+| Runtime binding | Existing dense-city chapter binding | `Assets/Game/Scenes/OperationMaps/Variants/CityEdgeAirfield/RuntimeBinding.unity` |
+
+The prepared source is reused with mission-owned anchors and a narrowly scoped
+presentation socket for the decorative transport helicopter at the operational
+pad. Source geometry is preserved; the scenario supplies the interactive
+helicopter. Existing mission controls, objectives and passenger graph remain.
+Saved-state handling, native journeys and human/device acceptance are tracked
+in `Airlift/WORKSPACE.md`.

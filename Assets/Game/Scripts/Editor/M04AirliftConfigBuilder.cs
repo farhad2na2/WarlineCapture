@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using Game.Components;
@@ -10,6 +11,8 @@ using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
 using UnityEngine;
+using Game.Editor.MapVariants;
+using UnityEditor.SceneManagement;
 
 namespace Game.Editor
 {
@@ -19,64 +22,122 @@ namespace Game.Editor
         public const string MissionId="saga.ch01.m04.airlift", ScenarioId="scenario.ch01.m04.airlift";
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter01/MissionDefinition_Ch01_M04_Airlift.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter01/ScenarioSetup_Ch01_M04_Airlift.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_Airlift01.asset";
-        public const string MapId="opmap.ch01.airlift_01", Prefix="anchor.ch01.m04.";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01_Airlift01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter01/OperationMap_Ch01M04_AirfieldReview.asset";
+        public const string MapId="opmap.ch01.airlift_airfield_review", Prefix="anchor.ch01.m04.";
+        public const string PreparedMapPath="Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Definition.asset";
+        public const string PreparedHash="e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22";
+        public static readonly int2 PickupCell=new(905,650), TransferCell=new(774,648), DepartureCell=new(730,590);
         public const string PassengerRole="role.friendly.specialist", CarrierRole="role.friendly.rescue_apc", AircraftRole="role.friendly.airlift";
         public static void Build()
         {
-            BuildMap(); BuildScenario(); BuildMission(); M01FirstContactConfigBuilder.RefreshChapterCatalogs();
+            BuildMap(); BuildScenario(); BuildMission(); RefreshAirfieldCopy(); M01FirstContactConfigBuilder.RefreshChapterCatalogs();
             Require(MissionDefinitionContractValidation.TryValidateCatalog(Load<MissionDefinitionCatalogConfig>(M02EstablishBaseConfigBuilder.MissionCatalogPath),out string error),error);
             Debug.Log("[M04AirliftConfig] result=Passed specialists=4 escorts=8 apc=1 helicopter=1 hostiles=4");
         }
         private static void BuildMap()
         {
-            var map=Clone<OperationMapDefinition>(M03RadarWarningMapBuilder.Path,MapPath);
+            var physical=Load<OperationMapDefinition>(PreparedMapPath);
+            Require(physical.ContentHash==PreparedHash,"Prepared Airfield hash changed; re-audit Airlift geometry.");
+            RequireRoutes();
+            var map=Clone<OperationMapDefinition>(PreparedMapPath,MapPath);
             var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
             Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"M04 surface unavailable");
             using(blob)
             {
-                // Main east-west road surveyed in M03. M04 occupies a separate logical window/anchor set.
+                // Hospital rescue to the western helipad, through the existing apron approaches.
                 (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
-                    ("squad_a",940,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("squad_b",960,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("carrier",979,426,OperationMapAnchorKind.Deployment,1,4),
-                    ("specialists",801,427,OperationMapAnchorKind.Civilian,1,4),
-                    ("landing",1060,428,OperationMapAnchorKind.Deployment,1,14),
-                    ("aircraft",1060,428,OperationMapAnchorKind.Deployment,1,8),
-                    ("departure",1085,465,OperationMapAnchorKind.Camera,1,14),
-                    ("return_rts",960,426,OperationMapAnchorKind.Camera,1,3),
-                    ("hostiles",690,426,OperationMapAnchorKind.Spawn,2,5),
-                    ("route_00",712,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_01",748,427,OperationMapAnchorKind.Lane,2,3),
-                    ("route_02",801,427,OperationMapAnchorKind.Lane,2,3),
-                    ("route_03",876,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_04",940,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_05",1004,426,OperationMapAnchorKind.Lane,2,3),
-                    ("route_06",1060,428,OperationMapAnchorKind.Lane,2,3)};
+                    ("squad_a",845,610,OperationMapAnchorKind.Deployment,1,4),
+                    ("squad_b",835,610,OperationMapAnchorKind.Deployment,1,4),
+                    ("carrier",850,610,OperationMapAnchorKind.Deployment,1,4),
+                    ("specialists",910,655,OperationMapAnchorKind.Civilian,1,4),
+                    ("pickup",PickupCell.x,PickupCell.y,OperationMapAnchorKind.Lane,1,4),
+                    ("landing",760,648,OperationMapAnchorKind.Deployment,1,14),
+                    ("aircraft",760,648,OperationMapAnchorKind.Deployment,1,8),
+                    ("transfer",TransferCell.x,TransferCell.y,OperationMapAnchorKind.Lane,1,4),
+                    ("departure",730,590,OperationMapAnchorKind.Camera,1,14),
+                    ("return_rts",850,610,OperationMapAnchorKind.Camera,1,3),
+                    ("hostiles",940,480,OperationMapAnchorKind.Spawn,2,5),
+                    ("route_00",930,610,OperationMapAnchorKind.Lane,2,3),
+                    ("route_01",910,610,OperationMapAnchorKind.Lane,2,3),
+                    ("route_02",905,650,OperationMapAnchorKind.Lane,2,3),
+                    ("route_03",850,610,OperationMapAnchorKind.Lane,2,3),
+                    ("route_04",810,610,OperationMapAnchorKind.Lane,2,3),
+                    ("route_05",774,620,OperationMapAnchorKind.Lane,2,3),
+                    ("route_06",760,648,OperationMapAnchorKind.Lane,2,3)};
                 var data=new SerializedObject(map); S(data,"operationMapId",MapId);
+                var binding=data.FindProperty("sourceBinding");S(binding,"sourceOperationMapId",physical.OperationMapId);S(binding,"sourceIdentityHash",physical.SourceIdentityHash);S(binding,"sourceContentHash",physical.ContentHash);
+                data.FindProperty("additionalBuildingPlacements").objectReferenceValue=null;
                 S(data,"planningCameraId","camera.ch01.m04.planning"); S(data,"battleCameraId","camera.ch01.m04.battle");
-                S(data.FindProperty("minimap"),"minimapId","minimap.ch01.m04.airlift");
+                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(700,-20,470);bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(950,980,690);bounds.FindPropertyRelative("cameraMin").vector3Value=new Vector3(630,-20,450);bounds.FindPropertyRelative("cameraMax").vector3Value=new Vector3(1000,980,700);
+                // Keep the prepared raster's physical projection so mission markers
+                // align with its roads and pads even though gameplay uses a smaller sector.
+                var minimap=data.FindProperty("minimap");S(minimap,"minimapId","minimap.ch01.m04.airlift");
                 A(data.FindProperty("anchors"),seeds.Length,(entry,i)=>
                 {
                     var seed=seeds[i]; Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new int2(seed.x,seed.z),out var sample),seed.id);
                     S(entry,"anchorId",Prefix+seed.id); S(entry,"kind",(int)seed.kind); S(entry,"factionId",seed.faction); S(entry,"laneIndex",0);
                     entry.FindPropertyRelative("position").vector3Value=new Vector3(seed.x,sample.Height,seed.z);
-                    entry.FindPropertyRelative("eulerAngles").vector3Value=Vector3.zero; entry.FindPropertyRelative("radius").floatValue=seed.radius;
+                    entry.FindPropertyRelative("eulerAngles").vector3Value=seed.id=="aircraft"?new Vector3(0,200,0):Vector3.zero; entry.FindPropertyRelative("radius").floatValue=seed.radius;
                 });
                 A(data.FindProperty("cameras"),2,(entry,i)=>
                 {
                     S(entry,"cameraId","camera.ch01.m04."+(i==0?"planning":"battle"));
-                    var pos=new Vector3(960,i==0?95:78,i==0?480:470);
+                    var focus=new Vector3(830,0,645);var pos=focus+new Vector3(0,i==0?150:95,i==0?-100:-65);
                     entry.FindPropertyRelative("position").vector3Value=pos;
-                    entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(new Vector3(960,0,426)-pos).eulerAngles;
+                    entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-pos).eulerAngles;
+                    entry.FindPropertyRelative("orthographic").boolValue=false;
                     entry.FindPropertyRelative("fieldOfView").floatValue=58;
                 });
-                using var sha=SHA256.Create();
-                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes("M04-Airlift-v1:"+map.ContentHash+":road801-1060:departure1085-465"))).Replace("-",string.Empty).ToLowerInvariant();
+                S(data,"contentHash",string.Empty);S(data,"generatedMetadataHash",string.Empty);data.ApplyModifiedPropertiesWithoutUndo();
+                using var sha=SHA256.Create();string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(EditorJsonUtility.ToJson(map)))).Replace("-",string.Empty).ToLowerInvariant();data.Update();
                 S(data,"contentHash",hash); S(data,"generatedMetadataHash",hash); data.ApplyModifiedPropertiesWithoutUndo();
                 Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);
                 EditorUtility.SetDirty(map); AssetDatabase.SaveAssets();
             }
+        }
+        public static void BuildPackedAirfieldSource()
+        {
+            EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
+            MapVariantCandidateRuntimeBuilder.BuildAirfieldContent();
+            Debug.Log("[AirliftPackedSource] result=Passed map=CityEdgeAirfield");
+        }
+        private static void RequireRoutes()
+        {
+            var grid=Load<GridAuthoringSceneConfigAsset>("Assets/Game/GeneratedOperationMaps/Variants/CityEdgeAirfield/Candidate/Grid.asset");var blocked=new HashSet<Vector2Int>(grid.BlockedCells);
+            bool Fits(Vector2Int p,int radius=2){if(p.x<700||p.x>950||p.y<470||p.y>690)return false;for(int z=-radius;z<=radius;z++)for(int x=-radius;x<=radius;x++)if(blocked.Contains(p+new Vector2Int(x,z)))return false;return true;}
+            int Distance(Vector2Int start,Vector2Int goal){Require(Fits(start)&&Fits(goal),$"Airlift blocked route endpoint {start}/{goal}");var q=new Queue<Vector2Int>();var distances=new Dictionary<Vector2Int,int>{{start,0}};q.Enqueue(start);while(q.Count>0){var p=q.Dequeue();if(p==goal)return distances[p];foreach(var step in new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right}){var n=p+step;if(!distances.ContainsKey(n)&&Fits(n)){distances.Add(n,distances[p]+1);q.Enqueue(n);}}}throw new InvalidOperationException($"Airlift route blocked {start}/{goal}");}
+            int pickup=Distance(new Vector2Int(850,610),new Vector2Int(PickupCell.x,PickupCell.y));int transfer=Distance(new Vector2Int(PickupCell.x,PickupCell.y),new Vector2Int(TransferCell.x,TransferCell.y));
+            foreach(var p in new[]{new Vector2Int(845,610),new Vector2Int(835,610),new Vector2Int(910,655),new Vector2Int(940,480),new Vector2Int(760,648)})Require(Fits(p,3),$"Airlift formation blocked {p}");
+            Require(Vector2.Distance(new Vector2(940,480),new Vector2(PickupCell.x,PickupCell.y))>95,"Opening pursuit deployment must clear the 75-cell weapon range plus formation margin.");
+            Distance(new Vector2Int(940,480),new Vector2Int(930,610));
+            Debug.Log($"[AirliftRoutes] result=Passed carrierToPickup={pickup} pickupToTransfer={transfer} vehicleClearance=2 formationClearance=3");
+        }
+        private static void RefreshAirfieldCopy()
+        {
+            M04AirliftPresentationBuilder.ImportCopy();
+            foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(M04AirliftNarrativeBuilder.Path))
+            {
+                var data=new SerializedObject(asset);var states=data.FindProperty("states");if(states==null)continue;
+                for(int i=0;i<states.arraySize;i++)
+                {
+                    var lines=states.GetArrayElementAtIndex(i).FindPropertyRelative("lines");
+                    for(int j=0;j<lines.arraySize;j++)
+                    {
+                        var line=lines.GetArrayElementAtIndex(j);string id=line.FindPropertyRelative("lineId").stringValue;
+                        foreach(var copy in M04AirliftCopyCatalog.Brief)if(copy.Id==id)
+                        {S(line,"englishFallback",copy.English);if(id is "m04-brief-01" or "m04-brief-02")line.FindPropertyRelative("voiceClip").objectReferenceValue=null;}
+                    }
+                }
+                data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(asset);
+            }
+            var locale=Load<ScriptableObject>(M02EstablishBaseNarrativeLocaleBuilder.PersianLocalePath);var localized=new SerializedObject(locale);
+            var text=localized.FindProperty("text");for(int i=0;i<text.arraySize;i++)
+            {var entry=text.GetArrayElementAtIndex(i);foreach(var copy in M04AirliftCopyCatalog.Brief)if(entry.FindPropertyRelative("key").stringValue==copy.Key)S(entry,"value",copy.Persian);}
+            var voices=localized.FindProperty("voices");for(int i=0;i<voices.arraySize;i++)
+            {var entry=voices.GetArrayElementAtIndex(i);if(entry.FindPropertyRelative("lineId").stringValue is "m04-brief-01" or "m04-brief-02")entry.FindPropertyRelative("voiceClip").objectReferenceValue=null;}
+            localized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(locale);AssetDatabase.SaveAssets();
+            Debug.Log("[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending");
         }
         private static void BuildScenario()
         {

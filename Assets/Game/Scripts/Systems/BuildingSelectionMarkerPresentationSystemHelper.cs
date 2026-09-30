@@ -272,6 +272,7 @@ namespace Game.Runtime
             _markerInstance.SetActive(false);
             _markerRenderers = _markerInstance.GetComponentsInChildren<Renderer>(true);
             _baseRendererSize = CalculateRendererSize(_markerRenderers);
+            foreach(var renderer in _markerRenderers) renderer.enabled=false;
 
             _markerColor = PremiumSelectionColor;
             context.VisualSystem?.ApplyMarkerColor(_markerRenderers, _markerColor, context.MarkerPropertyBlock);

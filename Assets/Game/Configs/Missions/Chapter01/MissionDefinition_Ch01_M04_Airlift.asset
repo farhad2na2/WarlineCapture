@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.m04.summary
   locationNameKey: mission.m04.location
   scenarioId: scenario.ch01.m04.airlift
-  operationMapId: opmap.ch01.airlift_01
+  operationMapId: opmap.ch01.airlift_airfield_review
   briefingSequenceId: seq.ch01.m04.brief
   commsSequenceId: seq.ch01.m04.comms
   debriefSequenceId: seq.ch01.m04.debrief

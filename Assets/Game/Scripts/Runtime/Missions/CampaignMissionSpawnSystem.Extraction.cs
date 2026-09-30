@@ -15,6 +15,9 @@ namespace Game.Runtime
             bool evidenceChain = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.EvidenceChain));
             bool armored = evidenceChain && EvidenceChainRouteChoice.Selected == EvidenceChainExtractionRoute.Armored;
             var handoff = landing.Position;
+            if (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m04.airlift")) &&
+                TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch01.m04.transfer"), out var transfer))
+                handoff = transfer.Position;
             if (evidenceChain && TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch03.m04.route_05"), out var road))
                 handoff = road.Position;
             if (armored && TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch03.m04.return_rts"), out var checkpoint))

@@ -1,8 +1,9 @@
 # Existing Campaign map migration status
 
-Updated 2026-09-30. This checkout contains the CH02-M02 Supply Line pilot for
-review. No map or mission is qualified for release, and the new map binding has
-not been promoted to `main`.
+Updated 2026-09-30. This isolated checkout contains the CH02-M02 Supply Line
+pilot and a CH02-M04 Power Relay review candidate. No map or mission is
+qualified for release, and the new Power Relay binding has not been promoted
+to `main`.
 
 | Mission | Planned disposition | This checkout |
 |---|---|---|
@@ -14,7 +15,7 @@ not been promoted to `main`.
 | CH02-M01 Gridlock | Retain urban | No migration; baseline not rerun |
 | CH02-M02 Supply Line | RefineryDistrict | Review candidate in progress; see `SupplyLine/WORKSPACE.md` |
 | CH02-M03 Market Lifeline | Retain urban | Generator basis pinned to legacy Supply Line map; regression pending |
-| CH02-M04 Power Relay | RefineryDistrict | Not started |
+| CH02-M04 Power Relay | RefineryDistrict | ARIA public-input victory and result/return passed; visual and negative gates pending; see `PowerRelay/WORKSPACE.md` |
 | CH02-M05 Route Reopened | AshLinePort | Not started |
 | CH03-M01 Signal Trace | Retain urban | No migration; baseline not rerun |
 | CH03-M02 Safehouse Sweep | Retain urban | No migration; baseline not rerun |
@@ -30,3 +31,9 @@ configuration, exact native spawns, and generated-grid pump truck clearance
 **passed**. Full ARIA normal-input outcome **failed** in the latest run; manual
 mission, result/return, renewed native route suite, human visual review, and
 Android device acceptance remain **pending**. See `SupplyLine/WORKSPACE.md`.
+
+Power Relay gates: static route clearance, packed source hash, focused rules,
+and complete public-input ARIA victory through Campaign return **passed**.
+Manual play, native negative paths, school landmark and camera visual review,
+human approval, and device acceptance remain **pending**. See
+`PowerRelay/WORKSPACE.md`.

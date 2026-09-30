@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.power_relay.summary
   locationNameKey: mission.power_relay.location
   scenarioId: scenario.ch02.m04.power_relay
-  operationMapId: opmap.ch02.power_relay_01
+  operationMapId: opmap.ch02.power_relay_refinery_review
   briefingSequenceId: seq.ch02.m04.brief
   commsSequenceId: seq.ch02.m04.comms
   debriefSequenceId: seq.ch02.m04.debrief

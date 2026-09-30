@@ -21,6 +21,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 650740e21f42641739622a6c499eb11e, type: 2}
   - {fileID: 11400000, guid: ab7e541690c8040228fe2284d94173ff, type: 2}
   - {fileID: 11400000, guid: dc1b384202d46427aab2431d0b043a93, type: 2}
+  - {fileID: 11400000, guid: 7f505450d4aff47929241e93ec7bdca5, type: 2}
   - {fileID: 11400000, guid: 7b9374274816942dbabc046eae0256d3, type: 2}
   - {fileID: 11400000, guid: 175a9270403f042998aa354cc89d26fe, type: 2}
   - {fileID: 11400000, guid: e4ef03d180a404ccd87e3bd41f19c8ba, type: 2}
@@ -81,6 +82,12 @@ MonoBehaviour:
       deliveryKind: 0
       contentVersion: 1
       contentHash: c4566b824997b71951aff5620161c5b1fac38f057ce4295fa630a6f2d091c95d
+  - definition: {fileID: 11400000, guid: 7f505450d4aff47929241e93ec7bdca5, type: 2}
+    contentPack:
+      contentPackId: opmap-pack.ch02.power_relay_refinery_review
+      deliveryKind: 0
+      contentVersion: 1
+      contentHash: 4c7c268f43168304a624f376e2167a8f114b87b11c5a35361fcdb70a8c251aba
   - definition: {fileID: 11400000, guid: 7b9374274816942dbabc046eae0256d3, type: 2}
     contentPack:
       contentPackId: opmap-pack.ch02.route_reopened_01

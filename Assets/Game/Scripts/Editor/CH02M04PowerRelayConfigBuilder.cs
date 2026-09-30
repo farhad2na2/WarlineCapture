@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
@@ -10,16 +11,21 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using Game.Editor.MapVariants;
 
 namespace Game.Editor
 {
     public static class CH02M04PowerRelayConfigBuilder
     {
-        public const string MissionId=CampaignMissionSequence.PowerRelay,ScenarioId="scenario.ch02.m04.power_relay",MapId="opmap.ch02.power_relay_01",Prefix="anchor.ch02.m04.";
+        public const string MissionId=CampaignMissionSequence.PowerRelay,ScenarioId="scenario.ch02.m04.power_relay",MapId="opmap.ch02.power_relay_refinery_review",Prefix="anchor.ch02.m04.";
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M04_PowerRelay.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M04_PowerRelay.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_PowerRelay01.asset";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_PowerRelay01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M04_RefineryReview.asset";
+        private const string PreparedMapPath="Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Definition.asset";
         [MenuItem("Game/Campaign/Power Relay/Build Configuration")]
         public static void Build()
         {
@@ -28,24 +34,73 @@ namespace Game.Editor
             Require(MissionDefinitionContractValidation.TryValidateCatalog(Load<MissionDefinitionCatalogConfig>(M01FirstContactConfigBuilder.CatalogPath),out string error),error);
             AssetDatabase.SaveAssets();Debug.Log("[PowerRelayConfig] result=Passed chapter=2 mission=4 controls=Select,Move,Attack,Hold");
         }
+        public static void BuildPackedRefinerySource()
+        {
+            EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
+            MapVariantCandidateRuntimeBuilder.BuildRefineryContent();
+            Debug.Log("[PowerRelayPackedSource] result=Passed map=RefineryDistrict menuScene=Saved");
+        }
         private static void BuildMap()
         {
-            var map=Clone<OperationMapDefinition>(CH02M03MarketLifelineConfigBuilder.MapPath,MapPath);var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
+            var physical=Load<OperationMapDefinition>(PreparedMapPath);
+            Require(physical.ContentHash=="2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778","Prepared Refinery source hash changed; re-audit Power Relay anchors.");
+            RequireVehicleRoutes();
+            var map=Clone<OperationMapDefinition>(PreparedMapPath,MapPath);var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
             Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Power Relay surface unavailable");
             using(blob)
             {
                 (string name,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] anchors={
-                    ("short_route",724,449,OperationMapAnchorKind.Objective,1,6),("safe_route",700,466,OperationMapAnchorKind.Objective,1,7),("shelter",682,452,OperationMapAnchorKind.Objective,1,8),("repair",790,446,OperationMapAnchorKind.Objective,1,8),
-                    ("squad_a",700,442,OperationMapAnchorKind.Deployment,1,3),("squad_b",710,438,OperationMapAnchorKind.Deployment,1,3),("engineers",754,430,OperationMapAnchorKind.Deployment,1,3),("families",715,455,OperationMapAnchorKind.Deployment,1,.35f),("fuel",746,420,OperationMapAnchorKind.Deployment,1,.35f),
-                    ("hostile_a",783,474,OperationMapAnchorKind.Spawn,2,3),("hostile_b",805,442,OperationMapAnchorKind.Spawn,2,3),("return_rts",746,440,OperationMapAnchorKind.Camera,1,2)};
-                var data=new SerializedObject(map);S(data,"operationMapId",MapId);data.FindProperty("additionalBuildingPlacements").objectReferenceValue=null;S(data,"planningCameraId","camera.ch02.m04.overview");S(data,"battleCameraId","camera.ch02.m04.battle");
-                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(665,0,410);bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(830,100,495);MissionCameraBoundsAuthoring.Apply(bounds);
-                var minimap=data.FindProperty("minimap");S(minimap,"minimapId","minimap.ch02.m04.power_relay");minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(665,0,410);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(165,85);
+                    ("short_route",700,505,OperationMapAnchorKind.Objective,1,6),("safe_route",705,385,OperationMapAnchorKind.Objective,1,7),("shelter",885,385,OperationMapAnchorKind.Objective,1,8),("repair",813,487,OperationMapAnchorKind.Objective,1,8),
+                    ("squad_a",810,505,OperationMapAnchorKind.Deployment,1,3),("squad_b",845,505,OperationMapAnchorKind.Deployment,1,3),("engineers",815,505,OperationMapAnchorKind.Deployment,1,3),("families",555,505,OperationMapAnchorKind.Deployment,1,.35f),("fuel",905,505,OperationMapAnchorKind.Deployment,1,.35f),
+                    ("hostile_a",755,470,OperationMapAnchorKind.Spawn,2,3),("hostile_b",870,480,OperationMapAnchorKind.Spawn,2,3),("return_rts",805,505,OperationMapAnchorKind.Camera,1,2)};
+                var data=new SerializedObject(map);S(data,"operationMapId",MapId);
+                var sourceBinding=data.FindProperty("sourceBinding");S(sourceBinding,"sourceOperationMapId",physical.OperationMapId);S(sourceBinding,"sourceIdentityHash",physical.SourceIdentityHash);S(sourceBinding,"sourceContentHash",physical.ContentHash);
+                data.FindProperty("additionalBuildingPlacements").objectReferenceValue=null;S(data,"planningCameraId","camera.ch02.m04.overview");S(data,"battleCameraId","camera.ch02.m04.battle");
+                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(535,-20,360);bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(925,980,535);bounds.FindPropertyRelative("cameraMin").vector3Value=new Vector3(450,-20,300);bounds.FindPropertyRelative("cameraMax").vector3Value=new Vector3(1000,980,620);
+                var minimap=data.FindProperty("minimap");S(minimap,"minimapId","minimap.ch02.m04.power_relay");minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(535,0,360);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(390,175);
                 A(data.FindProperty("anchors"),anchors.Length,(entry,i)=>{var seed=anchors[i];int2 cell=RequiresVehicleFootprint(seed.name)?ResolveVehicleCell(ref blob,new int2(seed.x,seed.z),24):new int2(seed.x,seed.z);Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,cell,out var sample),seed.name);S(entry,"anchorId",Prefix+seed.name);S(entry,"kind",(int)seed.kind);S(entry,"factionId",seed.faction);S(entry,"laneIndex",0);entry.FindPropertyRelative("position").vector3Value=new Vector3(cell.x,sample.Height,cell.y);entry.FindPropertyRelative("eulerAngles").vector3Value=Vector3.zero;entry.FindPropertyRelative("radius").floatValue=seed.radius;Debug.Log($"[PowerRelayConfig] anchor={seed.name} requested=({seed.x},{seed.z}) resolved={cell} vehicleFootprint={(RequiresVehicleFootprint(seed.name)?"3x3":"none")}");});
-                A(data.FindProperty("cameras"),3,(entry,i)=>{S(entry,"cameraId",i==0?"camera.ch02.m04.overview":i==1?"camera.ch02.m04.battle":"camera.ch02.m04.relay");Vector3 focus=i==0?new Vector3(744,0,447):i==1?new Vector3(790,0,454):new Vector3(790,0,446);Vector3 position=focus+new Vector3(0,i==0?78:54,-42);entry.FindPropertyRelative("position").vector3Value=position;entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;entry.FindPropertyRelative("fieldOfView").floatValue=i==0?58:51;});
+                A(data.FindProperty("cameras"),3,(entry,i)=>{S(entry,"cameraId",i==0?"camera.ch02.m04.overview":i==1?"camera.ch02.m04.battle":"camera.ch02.m04.relay");Vector3 focus=i==0?new Vector3(745,0,445):i==1?new Vector3(790,0,470):new Vector3(813,0,487);Vector3 position=focus+new Vector3(0,i==0?210:105,i==0?-120:-65);entry.FindPropertyRelative("position").vector3Value=position;entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;entry.FindPropertyRelative("orthographic").boolValue=false;entry.FindPropertyRelative("fieldOfView").floatValue=i==0?58:51;});
+                data.ApplyModifiedPropertiesWithoutUndo();data.FindProperty("sourceSceneReference").FindPropertyRelative("m_AssetGUID").stringValue=physical.SourceSceneReference.AssetGUID;
                 S(data,"contentHash",string.Empty);S(data,"generatedMetadataHash",string.Empty);data.ApplyModifiedPropertiesWithoutUndo();using var sha=SHA256.Create();string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(EditorJsonUtility.ToJson(map)))).Replace("-","").ToLowerInvariant();data.Update();S(data,"contentHash",hash);S(data,"generatedMetadataHash",hash);data.ApplyModifiedPropertiesWithoutUndo();
                 Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);AssetDatabase.SaveAssets();
             }
+        }
+        private static void RequireVehicleRoutes()
+        {
+            var grid=Load<GridAuthoringSceneConfigAsset>("Assets/Game/GeneratedOperationMaps/Variants/RefineryDistrict/Candidate/Grid.asset");
+            var blocked=new HashSet<Vector2Int>(grid.BlockedCells);
+            bool Fits(Vector2Int cell)
+            {
+                if(cell.x<535||cell.x>925||cell.y<360||cell.y>535)return false;
+                for(int z=-2;z<=2;z++)for(int x=-2;x<=2;x++)
+                    if(blocked.Contains(new Vector2Int(cell.x+x,cell.y+z)))return false;
+                return true;
+            }
+            int Distance(Vector2Int start,Vector2Int goal,bool avoidExposed)
+            {
+                Require(Fits(start)&&Fits(goal),$"Power Relay route endpoint blocked: {start} or {goal}");
+                var queue=new Queue<Vector2Int>();var distances=new Dictionary<Vector2Int,int>{{start,0}};queue.Enqueue(start);
+                var steps=new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right};
+                while(queue.Count>0)
+                {
+                    var cell=queue.Dequeue();if(cell==goal)return distances[cell];
+                    foreach(var step in steps)
+                    {
+                        var next=cell+step;
+                        bool exposed=(next.x-700)*(next.x-700)+(next.y-505)*(next.y-505)<=100;
+                        if(!distances.ContainsKey(next)&&Fits(next)&&(!avoidExposed||!exposed)){distances.Add(next,distances[cell]+1);queue.Enqueue(next);}
+                    }
+                }
+                throw new InvalidOperationException($"Power Relay route blocked: {start} to {goal}");
+            }
+            var family=new Vector2Int(555,505);var safe=new Vector2Int(705,385);var shelter=new Vector2Int(885,385);
+            var fuel=new Vector2Int(905,505);var engineers=new Vector2Int(815,505);var repair=new Vector2Int(813,487);
+            int familyLeg=Distance(family,safe,true),shelterLeg=Distance(safe,shelter,true),fuelLeg=Distance(fuel,repair,false),engineerLeg=Distance(engineers,repair,false);
+            Require(Vector2Int.Distance(safe,new Vector2Int(700,505))>100,"Protected and exposed routes overlap");
+            foreach(var center in new[]{new Vector2Int(755,470),new Vector2Int(870,480)})
+                for(int z=-3;z<=3;z++)for(int x=-3;x<=3;x++)
+                    Require(!blocked.Contains(new Vector2Int(center.x+x,center.y+z)),$"Power Relay hostile formation blocked at {center}");
+            Debug.Log($"[PowerRelayRoutes] result=Passed familyToSafe={familyLeg} safeToShelter={shelterLeg} fuelToRepair={fuelLeg} engineersToRepair={engineerLeg} clearance=2 exposedRoute=Avoided");
         }
         private static void BuildScenario()
         {

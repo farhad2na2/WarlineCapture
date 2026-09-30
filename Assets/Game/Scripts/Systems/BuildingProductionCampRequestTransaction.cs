@@ -33,13 +33,26 @@ namespace Game.Runtime
                 context.ConfiguredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition buildingDefinition))
             {
                 int buildingMaterialsCost = Mathf.Max(0, buildingDefinition?.MaterialsCost ?? 0);
+                int authoredCreditsCost = 0;
+                // Defense prices use both authored components to resolve their
+                // Materials-only price. Dropping the legacy component here made
+                // preflight disagree with the displayed and reserved amount.
+                if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var costWorld))
+                {
+                    using var resources = costWorld.CreateEntityQuery(typeof(FactionEconomy));
+                    using var economies = resources.ToComponentDataArray<FactionEconomy>(Unity.Collections.Allocator.Temp);
+                    foreach (var economy in economies)
+                        if (FactionIdentity.IsPlayerControlled(economy.FactionId) &&
+                            economy.MaterialsOnlyConstruction == Game.Tactical.Contracts.MissionConstructionCostPolicy.DefenseMaterialsV1)
+                            authoredCreditsCost = Mathf.Max(0, buildingDefinition?.CreditsCost ?? 0);
+                }
                 if (context.EvaluateConstructionResources == null)
                     return context.ResourceMaterials < buildingMaterialsCost
                         ? CampRequestFailure.InsufficientMaterials
                         : CampRequestFailure.None;
 
                 return BuildingCampItemCommandPolicySystemHelper.MapConstructionResourceFailure(
-                    context.EvaluateConstructionResources(0, buildingMaterialsCost));
+                    context.EvaluateConstructionResources(authoredCreditsCost, buildingMaterialsCost));
             }
 
             if (!TryResolveUnitResourceCosts(
@@ -238,11 +251,20 @@ namespace Game.Runtime
 
             if (context.TryGetEntityManager != null && context.TryGetEntityManager(out var paidWorld))
             {
-                using var skirmish = paidWorld.CreateEntityQuery(typeof(SkirmishMatchState));
-                if (!missionReceipt && !skirmish.IsEmptyIgnoreFilter && producerBuilding.PendingProductions.Count > 0)
+                if (!missionReceipt && producerBuilding.PendingProductions.Count > 0)
                 {
                     var paid = producerBuilding.PendingProductions[producerBuilding.PendingProductions.Count - 1];
-                    paid.RefundableMaterials = materialsCost;
+                    int refundableMaterials = materialsCost;
+                    using var economiesQuery = paidWorld.CreateEntityQuery(typeof(FactionEconomy));
+                    using var economies = economiesQuery.ToComponentDataArray<FactionEconomy>(Unity.Collections.Allocator.Temp);
+                    foreach (var economy in economies)
+                        if (FactionIdentity.IsPlayerControlled(economy.FactionId) &&
+                            Game.Tactical.Contracts.MissionConstructionCostPolicy.TryResolve(economy.MaterialsOnlyConstruction,
+                                creditsCost, materialsCost, out _, out int effectiveMaterials))
+                            refundableMaterials = effectiveMaterials;
+                    // The cancellation receipt holds the amount actually paid,
+                    // rather than the legacy Materials component of that price.
+                    paid.RefundableMaterials = refundableMaterials;
                     paid.PaidQuantity = Mathf.Max(1, paid.RemainingQuantity);
                 }
             }

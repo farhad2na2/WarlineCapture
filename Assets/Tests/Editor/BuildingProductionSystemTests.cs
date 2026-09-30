@@ -5646,6 +5646,34 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientCreditsAndMaterials);
     }
 
+    [Test]
+    public void DefenseBuildingPreflightUsesAuthoredMaterialsPriceAndRecoversAfterRefund()
+    {
+        using var world = new World("DefenseBuildingPreflight");
+        var prefab = new GameObject("Barracks");
+        try
+        {
+            var economy = new FactionEconomy { FactionId = 1, MaterialsOnlyConstruction = 2, Money = 0 };
+            var materials = new FactionTacticalMaterialsComponent { FactionId = 1, Current = 110, Capacity = 140 };
+            world.EntityManager.SetComponentData(world.EntityManager.CreateEntity(typeof(FactionEconomy)), economy);
+            var definition = new BuildingDefinition { Prefab = prefab, CreditsCost = 40000, MaterialsCost = 90 };
+            bool TryWorld(out EntityManager em) { em = world.EntityManager; return true; }
+            var context = CreateCampItemRequestContext(new Dictionary<int, RuntimeBuildingEntity>(),
+                new List<BuildingDefinition> { definition }, new Dictionary<GameObject, BuildingDefinition> { [prefab] = definition },
+                Array.Empty<GameObject>(), new Dictionary<string, GameObject>(), _ => true, _ => true, _ => {}, _ => {},
+                (credits, cost) => FactionConstructionResourceUtilitySystemHelper.Evaluate(economy, materials, credits, cost), TryWorld);
+            var requests = new BuildingProductionRequestSystemHelper();
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.InsufficientMaterials,
+                requests.GetCampRequestFailure(context, prefab, 120, out _));
+            Assert.AreEqual(110, materials.Current, "Preflight must not spend resources.");
+            materials.Current = 140;
+            Assert.AreEqual(BuildingUiCommandSystemHelper.CampRequestFailure.None,
+                requests.GetCampRequestFailure(context, prefab, 120, out _));
+            Assert.AreEqual(0, economy.Money);
+        }
+        finally { UnityEngine.Object.DestroyImmediate(prefab); }
+    }
+
     private static void AssertConfiguredBuildingPreflight(
         FactionConstructionResourceMutationResult evaluationResult,
         BuildingUiCommandSystemHelper.CampRequestFailure expectedFailure)
@@ -5772,7 +5800,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
         BuildingProductionRequestSystemHelper.TrySpendMaterialsDelegate trySpendMaterials,
         BuildingProductionRequestSystemHelper.RefundMaterialsDelegate refundMaterials,
         BuildingProductionRequestSystemHelper.SetActivePlacementCostDelegate setActivePlacementCost,
-        BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null)
+        BuildingProductionRequestSystemHelper.EvaluateConstructionResourcesDelegate evaluateConstructionResources = null,
+        BuildingProductionRequestSystemHelper.TryGetEntityManagerDelegate tryGetEntityManager = null)
     {
         var productionSystem = new BuildingProductionQueueCompositionSystemHelper();
         BuildingProductionQueueCompositionSystemHelper.QueueContext queueContext = new(
@@ -5810,7 +5839,8 @@ public sealed class BuildingProductionQueueCompositionSystemHelperTests
             Debug.LogWarning,
             (_, _) => 0,
             (_, _) => 0,
-            evaluateConstructionResources: evaluateConstructionResources);
+            evaluateConstructionResources: evaluateConstructionResources,
+            tryGetEntityManager: tryGetEntityManager);
     }
 
     private static void UpdateEmptyBuildingRuntimeBoundary(

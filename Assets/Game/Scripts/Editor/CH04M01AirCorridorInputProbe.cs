@@ -21,7 +21,7 @@ namespace Game.Editor
 {
     /// <summary>Isolated saves; shipping ARIA touch input. No health, position, objective or outcome injection.</summary>
     [InitializeOnLoad]
-    public static class CH04M01AirCorridorInputProbe
+    public static partial class CH04M01AirCorridorInputProbe
     {
         private const string Active="Warline.AirCorridor.Input",Locale="Warline.AirCorridor.Locale";
         private static string Output;
@@ -51,9 +51,9 @@ namespace Game.Editor
             };
             if(SessionState.GetBool(Active,false)){EditorApplication.update+=Tick;Application.logMessageReceived+=Observe;}
         }
-        public static void RunEnglish(){SessionState.SetBool(Active+".Manual",false);SessionState.SetString(Locale,"en");Run();}
-        public static void RunPersian(){SessionState.SetBool(Active+".Manual",false);SessionState.SetString(Locale,"fa-IR");Run();}
-        public static void RunManualPersian(){SessionState.SetBool(Active+".Manual",true);SessionState.SetString(Locale,"fa-IR");Run();}
+        public static void RunEnglish(){SessionState.SetBool(Active+".Budget",false);SessionState.SetBool(Active+".Recovery",false);SessionState.SetBool(Active+".Manual",false);SessionState.SetString(Locale,"en");Run();}
+        public static void RunPersian(){SessionState.SetBool(Active+".Budget",false);SessionState.SetBool(Active+".Recovery",false);SessionState.SetBool(Active+".Manual",false);SessionState.SetString(Locale,"fa-IR");Run();}
+        public static void RunManualPersian(){SessionState.SetBool(Active+".Budget",false);SessionState.SetBool(Active+".Recovery",false);SessionState.SetBool(Active+".Manual",true);SessionState.SetString(Locale,"fa-IR");Run();}
         public static void RunPersianBriefingReview()
         {
             SessionState.SetBool(Active+".BriefingOnly",true);RunPersian();
@@ -66,7 +66,7 @@ namespace Game.Editor
         private static void Run()
         {
             Output="Design/AgentReports/MapVariantMissionRework/AirCorridor/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-air-corridor-"+SessionState.GetString(Locale,"en");
-            Output+=Manual?"-manual":"-aria";Directory.CreateDirectory(Output);manualLesson=-1;lastManualInput=0;manualFocused.Clear();SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;projectileSeen=radarLinked=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
+            Output+=Budget?"-budget":Recovery?"-recovery":Manual?"-manual":"-aria";Directory.CreateDirectory(Output);manualLesson=-1;lastManualInput=0;manualFocused.Clear();SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;projectileSeen=radarLinked=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
             sourceChecked=false;engageStarted=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);AssetDatabase.DisallowAutoRefresh();
             EditorApplication.update-=Tick;EditorApplication.update+=Tick;Application.logMessageReceived-=Observe;Application.logMessageReceived+=Observe;EditorApplication.EnterPlaymode();
@@ -84,8 +84,10 @@ namespace Game.Editor
                 if(stage==0)
                 {
                     if(!em.HasComponent<CampaignMissionProgressStoreReferenceComponent>(root))return;
-                    store=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,Guid.NewGuid().ToString("N")))));
+                    recoverySave=new SaveService(new JsonSaveRepository(Path.Combine(Output,Guid.NewGuid().ToString("N"))));
+                    store=new CampaignMissionProgressStore(recoverySave);
                     for(int i=0;i<CampaignMissionSequence.RegisteredMissionCount;i++)store.EnsureAvailable(CampaignMissionSequence.IdAt(i));
+                    if(Recovery)store.SetPendingResume(CampaignMissionSequence.AirCorridor,true,7);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;
                     EditorWindow.GetWindow(Type.GetType("UnityEditor.GameView,UnityEditor")).Focus();
                     // Wrapper-owned GUI checks may run behind Codex. Route their real
@@ -157,6 +159,7 @@ namespace Game.Editor
                     Debug.Log($"[AirCorridorInputState] stage={stage} phase={runtime.Phase} outcome={runtime.Outcome} clock={facts.ElapsedMilliseconds} hostile={facts.HostileDefeatedCount}/{facts.HostileTotalCount} core={facts.CoreBreached} integrity={facts.HostileRosterIntegrityFault} guide={guide.GuidanceId} actions={actions} missiles={projectileSeen} radar={radarLinked}");
                     if(runtime.Phase==MissionPhaseKind.Engage)Diagnose(em,root);
                 }
+                if(Recovery && TickRecovery(em,root,runtime,facts))return;
                 if(runtime.Outcome==MissionOutcomeKind.Defeat){Diagnose(em,root);throw new InvalidOperationException("Air Corridor defeated: core="+facts.CoreBreached+" radar="+facts.ForwardPostDestroyed+" integrity="+facts.HostileRosterIntegrityFault);}
                 if(stage==4)
                 {
@@ -182,6 +185,7 @@ namespace Game.Editor
                 if(runtime.Phase!=MissionPhaseKind.Engage)return;
                 if(!sourceChecked)ValidatePreparedSource(em);
                 if(engageStarted==0){engageStarted=EditorApplication.timeSinceStartup;Shot("hud");}
+                if(Budget && TickBudget(em))return;
                 if(Manual){DriveManual();return;}
                 var aria=UiShellRuntimeGateway.ReadAriaPlay();if(aria.Actions>actions){actions=aria.Actions;Shot("hud-aria-"+actions);Diagnose(em,root);}
                 if(aria.Phase==AriaPlayPhase.Blocked){Diagnose(em,root);throw new InvalidOperationException("ARIA input blocked after "+actions+" actions");}
@@ -281,6 +285,12 @@ namespace Game.Editor
         }
         private static void Complete(bool passed,string detail)
         {
+            if(passed && Budget && !budgetVerified){passed=false;detail="Normal-input resource gates were not completed.";}
+            if(passed && Recovery)
+            {
+                if(!recoveryVerified){passed=false;detail="Recovery gates were not completed.";}
+                else Debug.Log("[AirCorridorRecovery] result=Passed legacy-launch=rejected Continue=fresh-current-map radar-loss=real-combat Retry=clean no-defeat-rewards victory=settlement=return");
+            }
             manualTouch?.Dispose();manualTouch=null;RestoreInputRouting();
             SessionState.SetBool(Active,false);EditorApplication.update-=Tick;Application.logMessageReceived-=Observe;AriaTouchInputUiSystemHelper.Evidence-=ObserveTouch;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION",null);Debug.Log("[AirCorridorInput] result="+(passed?"Passed":"Failed")+" "+detail);MissionEditorValidationExit.Complete(passed);
         }

@@ -15,6 +15,7 @@ using Game.UI.Shell.Contracts.Ecs;
 using Game.UI.Shell.Ecs;
 using NUnit.Framework;
 using TMPro;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEditor;
@@ -29,6 +30,65 @@ public sealed class M02EstablishBaseResourceTests
     private const string MapId = "opmap.ch01.forward_post_01";
     private const int StartingCredits = 0;
     private const int StartingMaterials = 120;
+
+    public static void RunBurstResourceValidation()
+    {
+        bool compilation = BurstCompiler.Options.EnableBurstCompilation;
+        bool synchronous = BurstCompiler.Options.EnableBurstCompileSynchronously;
+        try
+        {
+            BurstCompiler.Options.EnableBurstCompilation = true;
+            BurstCompiler.Options.EnableBurstCompileSynchronously = true;
+            Assert.IsTrue(BurstCompiler.IsEnabled, "Burst must be enabled for this regression validation.");
+            M02EstablishBaseResourceTests tests = new();
+            tests.BurstInitializerPreservesMissionConstructionMode(MissionId, 1);
+            tests.BurstInitializerPreservesMissionConstructionMode("saga.ch01.m03.radar_warning", 2);
+            tests.BurstInitializerPreservesMissionConstructionMode("saga.ch04.m01.air_corridor", 2);
+            tests.BurstInitializerPreservesMissionConstructionMode("saga.ch04.m02.steel_push", 2);
+            tests.BurstInitializerPreservesMissionConstructionMode("saga.ch04.m03.split_front", 0);
+            Debug.Log("[MissionResourceBurstValidation] result=Passed tests=5");
+            ValidationExit.Passed();
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[MissionResourceBurstValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+        finally
+        {
+            BurstCompiler.Options.EnableBurstCompileSynchronously = synchronous;
+            BurstCompiler.Options.EnableBurstCompilation = compilation;
+        }
+    }
+
+    [TestCase(MissionId, 1)]
+    [TestCase("saga.ch01.m03.radar_warning", 2)]
+    [TestCase("saga.ch04.m01.air_corridor", 2)]
+    [TestCase("saga.ch04.m02.steel_push", 2)]
+    [TestCase("saga.ch04.m03.split_front", 0)]
+    public void BurstInitializerPreservesMissionConstructionMode(string missionId, int expectedMode)
+    {
+        using World world = CreateRuntimeWorld(true, out var blob, missionId);
+        try
+        {
+            Entity resources = CreatePlayerResources(world.EntityManager, 12, 88, 600, 7u, 14f, 23f);
+            SystemHandle system = world.CreateSystem<CampaignMissionAttemptResourceInitializationSystem>();
+            // Dispatch through Entities' generated Burst entry point, rather than calling OnUpdate directly.
+            system.Update(world.Unmanaged);
+            world.EntityManager.CompleteAllTrackedJobs();
+            FactionEconomy economy = world.EntityManager.GetComponentData<FactionEconomy>(resources);
+            Assert.AreEqual(expectedMode, economy.MaterialsOnlyConstruction);
+            Assert.AreEqual(0, economy.Money);
+            Assert.AreEqual(0f, economy.Oil);
+            Assert.AreEqual(0f, economy.Fuel);
+            Assert.AreEqual(StartingMaterials, world.EntityManager.GetComponentData<FactionTacticalMaterialsComponent>(resources).Current);
+        }
+        finally
+        {
+            blob.Dispose();
+        }
+    }
 
     [MenuItem("Game/Validation/Run M02 Establish Base Resource Focused")]
     public static void RunFocusedValidation()
@@ -418,7 +478,8 @@ public sealed class M02EstablishBaseResourceTests
 
     private static World CreateRuntimeWorld(
         bool enabled,
-        out BlobAssetReference<CampaignMissionCatalogBlob> blob)
+        out BlobAssetReference<CampaignMissionCatalogBlob> blob,
+        string missionId = MissionId)
     {
         World world = new($"M02 resources enabled={enabled}");
         EntityManager entityManager = world.EntityManager;
@@ -432,7 +493,7 @@ public sealed class M02EstablishBaseResourceTests
         using BlobBuilder builder = new(Allocator.Temp);
         ref CampaignMissionCatalogBlob catalog = ref builder.ConstructRoot<CampaignMissionCatalogBlob>();
         BlobBuilderArray<CampaignMissionDefinitionBlob> missions = builder.Allocate(ref catalog.Missions, 1);
-        missions[0].MissionId = MissionId;
+        missions[0].MissionId = new FixedString64Bytes(missionId);
         missions[0].ScenarioId = ScenarioId;
         missions[0].OperationMapId = MapId;
         missions[0].MissionRuntimeEnabled = enabled ? (byte)1 : (byte)0;
@@ -448,7 +509,7 @@ public sealed class M02EstablishBaseResourceTests
         });
         entityManager.SetComponentData(root, new CampaignMissionRuntimeComponent
         {
-            MissionId = MissionId,
+            MissionId = new FixedString64Bytes(missionId),
             ScenarioId = ScenarioId,
             OperationMapId = MapId,
             SessionToken = "m02-resource-attempt",

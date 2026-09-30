@@ -28,8 +28,8 @@ namespace Game.Editor
             {
                 (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius,bool air)[] seeds={
                     ("forward_post",650,682,OperationMapAnchorKind.Base,1,12,false),
-                    ("initial_barracks",515,630,OperationMapAnchorKind.Build,1,1,false),
-                    ("build_zone",515,630,OperationMapAnchorKind.Build,1,35,false),
+                    ("initial_barracks",515,597,OperationMapAnchorKind.Build,1,1,false),
+                    ("build_zone",515,597,OperationMapAnchorKind.Build,1,35,false),
                     ("squad_a",600,610,OperationMapAnchorKind.Deployment,1,4,false),
                     ("squad_b",670,600,OperationMapAnchorKind.Deployment,1,4,false),
                     ("ground_sensor",630,600,OperationMapAnchorKind.Deployment,1,3,false),
@@ -38,7 +38,7 @@ namespace Game.Editor
                     ("vanguard_spawn",430,560,OperationMapAnchorKind.Spawn,2,5,true),
                     ("main_spawn",980,690,OperationMapAnchorKind.Spawn,2,5,true),
                     ("contact",520,580,OperationMapAnchorKind.Hostile,2,4,true),
-                    ("fork",580,600,OperationMapAnchorKind.Lane,1,3,false),
+                    ("fork",630,610,OperationMapAnchorKind.Lane,1,3,false),
                     ("north_contact",900,660,OperationMapAnchorKind.Hostile,2,4,true),
                     ("inner_core",650,610,OperationMapAnchorKind.Base,1,6,true),
                     ("return_rts",630,600,OperationMapAnchorKind.Camera,1,2,false),
@@ -74,9 +74,12 @@ namespace Game.Editor
             var blocked=new HashSet<Vector2Int>(grid.BlockedCells);
             bool Fits(Vector2Int p,int radius){for(int z=-radius;z<=radius;z++)for(int x=-radius;x<=radius;x++)if(blocked.Contains(p+new Vector2Int(x,z)))return false;return true;}
             foreach(var p in new[]{new Vector2Int(600,610),new Vector2Int(670,600),new Vector2Int(630,600),new Vector2Int(650,590)})Require(Fits(p,3),"Air Corridor formation blocked "+p);
-            Require(Fits(new Vector2Int(515,630),9),"Producer service footprint blocked.");
-            var start=new Vector2Int(600,610);var goal=new Vector2Int(580,600);var q=new Queue<Vector2Int>();var distance=new Dictionary<Vector2Int,int>{{start,0}};q.Enqueue(start);
-            while(q.Count>0){var p=q.Dequeue();if(p==goal){Debug.Log("[AirCorridorAirfieldRoutes] result=Passed westCoverageCells="+distance[p]+" vehicleClearance=2 formations=7x7 producer=19x19 sourceHash="+PreparedHash);return;}foreach(var step in new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right}){var n=p+step;if(n.x<420||n.x>730||n.y<520||n.y>700||distance.ContainsKey(n)||!Fits(n,2))continue;distance.Add(n,distance[p]+1);q.Enqueue(n);}}
+            // Building origins are the lower-left cell, not the center. Audit the
+            // catalog's complete 28x15 Barracks footprint plus its service margin.
+            for(int z=595;z<=613;z++)for(int x=513;x<=544;x++)
+                Require(!blocked.Contains(new Vector2Int(x,z)),"Barracks footprint/service margin blocked at "+new Vector2Int(x,z));
+            var start=new Vector2Int(600,610);var goal=new Vector2Int(630,610);var q=new Queue<Vector2Int>();var distance=new Dictionary<Vector2Int,int>{{start,0}};q.Enqueue(start);
+            while(q.Count>0){var p=q.Dequeue();if(p==goal){Debug.Log("[AirCorridorAirfieldRoutes] result=Passed westCoverageCells="+distance[p]+" vehicleClearance=2 formations=7x7 producer=28x15 serviceMargin=2 origin=515,597 sourceHash="+PreparedHash);return;}foreach(var step in new[]{Vector2Int.up,Vector2Int.down,Vector2Int.left,Vector2Int.right}){var n=p+step;if(n.x<420||n.x>730||n.y<520||n.y>700||distance.ContainsKey(n)||!Fits(n,2))continue;distance.Add(n,distance[p]+1);q.Enqueue(n);}}
             throw new InvalidOperationException("West launcher cannot reach coverage point.");
         }
         public static void PrepareAirfieldReview()

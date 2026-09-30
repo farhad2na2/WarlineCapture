@@ -88,7 +88,8 @@ namespace Game.UI.Runtime
             BuildDrawerCatalogPresentationSystemHelper.ClearRuntimeItems(view, _runtimeItems);
             BuildDrawerProductionQueueUiSystemHelper.ClearRuntimeItems(_runtimeQueueItems);
             _selectedItemView = null;
-            _hasSelectedItem = false;
+            // Preserve the player's choice across closing/reopening. Refresh
+            // resolves it against the current catalog and rechecks affordability.
             _availability.Clear();
             _nextQueueRefreshTime = 0f;
         }
@@ -118,7 +119,8 @@ namespace Game.UI.Runtime
 
         internal void RefreshSkirmishAvailability()
         {
-            if (!UiShellRuntimeGateway.TryReadSkirmish(out _) || view == null) return;
+            if (view == null || !UiShellRuntimeGateway.TryReadSkirmish(out _) &&
+                !(UiShellRuntimeGateway.TryReadMissionDefense(out var defense) && defense.IsActive)) return;
             for (int i = 0; i < _items.Count; i++)
             {
                 var item = i == 0 ? view.ItemTemplate : i - 1 < _runtimeItems.Count ? _runtimeItems[i - 1] : null;
@@ -126,7 +128,8 @@ namespace Game.UI.Runtime
                 var failure = GetCampRequestFailure(_items[i], out string requiredBuilding);
                 if (_availability.TryGetValue(item, out var previous) && previous == failure) continue;
                 _availability[item] = failure;
-                item.SetInteractable(failure == BuildingUiCommandFailure.None);
+                item.SetInteractable(failure == BuildingUiCommandFailure.None,
+                    BuildDrawerCatalogPresentationSystemHelper.CanInspectUnavailable(failure));
                 item.SetUnavailableReason(failure == BuildingUiCommandFailure.None ? string.Empty :
                     BuildDrawerCatalogPresentationSystemHelper.FormatFailureMessage(
                         _gameTextResolver, failure, requiredBuilding, MaxQueuedUnitProductions));

@@ -132,7 +132,7 @@ namespace Game.UI.Runtime
             BindDetail(context, model);
         }
 
-        internal static void ClearDetail(BuildDrawerView view)
+        internal static void ClearDetail(BuildDrawerView view, BuildDrawerCategory category = BuildDrawerCategory.Buildings)
         {
             if (view == null)
                 return;
@@ -148,7 +148,8 @@ namespace Game.UI.Runtime
                 "Select an item to place, produce, or recruit.",
                 null,
                 null,
-                string.Empty,
+                UiShellRuntimeGateway.Localization.Get(category == BuildDrawerCategory.Buildings ? "ui.build.title" : "ui.build.produce",
+                    category == BuildDrawerCategory.Buildings ? "BUILD" : "PRODUCE"),
                 false);
         }
 
@@ -390,7 +391,7 @@ namespace Game.UI.Runtime
                 FormatRequirements(context.TextResolver, model));
             item.BindThumbnail(model.CardPortrait);
             BuildingUiCommandFailure failure = context.GetCampRequestFailure(model, out string requiredBuilding);
-            item.SetInteractable(failure == BuildingUiCommandFailure.None);
+            item.SetInteractable(failure == BuildingUiCommandFailure.None, CanInspectUnavailable(failure));
             item.SetUnavailableReason(failure == BuildingUiCommandFailure.None ? string.Empty :
                 FormatFailureMessage(context.TextResolver, failure, requiredBuilding, context.MaxQueuedUnitProductions));
             item.SetSelected(false, context.View.SelectedItemFrameSprite);
@@ -403,6 +404,11 @@ namespace Game.UI.Runtime
             button.onClick.AddListener(action);
             context.ItemBindings.Add(new ButtonBinding(button, action));
         }
+
+        internal static bool CanInspectUnavailable(BuildingUiCommandFailure failure) => failure is
+            BuildingUiCommandFailure.ProductionQueueFull or BuildingUiCommandFailure.GlobalProductionQueueFull or
+            BuildingUiCommandFailure.InsufficientMaterials or BuildingUiCommandFailure.InsufficientCredits or
+            BuildingUiCommandFailure.InsufficientCreditsAndMaterials or BuildingUiCommandFailure.NotEnoughMoney;
 
         private static void HideStaticPlaceholderItems(BuildDrawerView view)
         {

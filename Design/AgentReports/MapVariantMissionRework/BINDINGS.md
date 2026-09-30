@@ -72,6 +72,11 @@ in `Airlift/WORKSPACE.md`.
 Seventeen mission anchors consume the same prepared physical content. The
 Airlift helicopter presentation override is absent. The original map remains
 for rollback; other builders do not consume this mission's `MapPath`. English
-ARIA and Persian manual full native journeys passed. Human/device acceptance,
-negative paths, saved-state handling and packaged content remain pending.
+manual and Persian ARIA full native journeys passed on final logical hash
+`c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe`.
+The current-map saved Continue, rejected legacy-map launch, real radar-loss defeat
+without rewards and fresh Retry through victory/return passed. Barracks origin
+(515,597) clears the full 28×15 footprint plus service margin; western coverage
+(630,610) is reachable and overlaps the northern defense. Human/device acceptance
+and packaged device content remain pending.
 See `AirCorridor/WORKSPACE.md` for exact evidence and failures.

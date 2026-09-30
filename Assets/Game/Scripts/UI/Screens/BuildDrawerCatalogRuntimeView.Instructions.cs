@@ -88,7 +88,7 @@ namespace Game.UI.Runtime
         {
             _selectedItemView = null;
             _hasSelectedItem = false;
-            BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view);
+            BuildDrawerCatalogPresentationSystemHelper.ClearDetail(view, _activeCategory);
             ApplyInstruction(
                 FormatNoSelectionInstruction(),
                 BuildDrawerInstructionSeverity.Warning);

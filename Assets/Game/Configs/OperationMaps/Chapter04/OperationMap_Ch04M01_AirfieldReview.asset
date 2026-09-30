@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: 3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db
-  contentHash: 7f9fa034a9b1919a1c33dd5372cae2dfd2a0777429b83d744d90de83c64de095
-  generatedMetadataHash: 7f9fa034a9b1919a1c33dd5372cae2dfd2a0777429b83d744d90de83c64de095
+  contentHash: c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe
+  generatedMetadataHash: c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.cityedgeairfield_prepared
     sourceIdentityHash: 3702e8f11717773ce79fe38461c50cfeaf0caf86e9a62b0670166d9461aea5db
@@ -84,14 +84,14 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch04.m01.initial_barracks
     kind: 4
-    position: {x: 515, y: 0.03, z: 630}
+    position: {x: 515, y: 0, z: 597}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 1
     factionId: 1
     laneIndex: 0
   - anchorId: anchor.ch04.m01.build_zone
     kind: 4
-    position: {x: 515, y: 0.03, z: 630}
+    position: {x: 515, y: 0, z: 597}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 35
     factionId: 1
@@ -154,7 +154,7 @@ MonoBehaviour:
     laneIndex: 0
   - anchorId: anchor.ch04.m01.fork
     kind: 11
-    position: {x: 580, y: 0, z: 600}
+    position: {x: 630, y: 0, z: 610}
     eulerAngles: {x: 0, y: 0, z: 0}
     radius: 3
     factionId: 1
@@ -198,44 +198,44 @@ MonoBehaviour:
   renderResidencyMode: 0
   sourceSceneReference:
     m_AssetGUID: 915718fcf0cd7422db987b388cd0d925
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   optionalHeavyMetadataReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   staticPresentationManifestReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   mapSurfaceDataReference:
     m_AssetGUID: 8f750533817554c5e8ec1d550cdd0554
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   minimapRasterReference:
     m_AssetGUID: aab518573516e42b1b93921d6ab8d5c0
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   buildingPlacementsReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   vehiclePlacementsReference:
-    m_AssetGUID:
-    m_SubObjectName:
-    m_SubObjectType:
-    m_SubObjectGUID:
+    m_AssetGUID: 
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   additionalBuildingPlacements: {fileID: 0}

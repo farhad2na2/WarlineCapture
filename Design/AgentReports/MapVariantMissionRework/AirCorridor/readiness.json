@@ -1,0 +1,91 @@
+{
+  "updated": "2026-10-01",
+  "mission": "saga.ch04.m01.air_corridor",
+  "status": "ready-for-editor-review",
+  "logicalHash": "c7f3994aec248113199a64ea5e84c084188b90c4248b8c83ccc5e6a3a4aac8fe",
+  "physicalHash": "e02f51b03a20b145a5ef0f31779770fd4b63fbff20d11272d2b0476b41bc4a22",
+  "finalNativeRuns": [
+    {
+      "log": "air-corridor-recovery-en-12.log.gz",
+      "exitCode": 0,
+      "checks": [
+        "Continue-current-map",
+        "legacy-map-rejected",
+        "real-radar-loss",
+        "no-defeat-rewards",
+        "fresh-Retry",
+        "manual-victory-result-settlement-return"
+      ]
+    },
+    {
+      "log": "air-corridor-final-aria-fa-02.log.gz",
+      "exitCode": 0,
+      "checks": [
+        "Persian-ARIA",
+        "seven-input-actions",
+        "six-voices",
+        "six-interceptions",
+        "victory-result-settlement-return"
+      ]
+    }
+  ],
+  "unchangedUiResourceEvidence": {
+    "log": "air-corridor-budget-en-06.log.gz",
+    "exitCode": 0,
+    "note": "Same final producer position and UI/resource implementation; before western coverage-point adjustment.",
+    "checks": [
+      "140-to-110",
+      "visible-disabled-120-Barracks",
+      "Cancel-to-140",
+      "affordability-restored",
+      "Credits-zero"
+    ]
+  },
+  "automatedChecks": {
+    "resources": "air-corridor-resources-04.log.gz",
+    "drawer": "air-corridor-build-drawer-01.log.gz",
+    "production": "air-corridor-production-01.log.gz",
+    "marker": "ground-marker-validation-02.log.gz"
+  },
+  "visualInspection": "Final EN movement/defeat/result, native gray shortage/refund drawer and final FA guidance/result/Campaign return inspected.",
+  "humanApproval": "Selection-marker direction approved; map/camera/minimap and real player acceptance pending.",
+  "pending": [
+    "packaged-device-content",
+    "Android-device-acceptance",
+    "other-affected-mission-regressions"
+  ],
+  "sourceSha256": {
+    "Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset": "b9d0da5fb3add1159c307edc243404eb4bbc4266b20c7690408c38c994a309a7",
+    "Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04M01_AirfieldReview.asset": "501a82fe92c63d7658b71154e1a6d7d44be3ce626cc992f82707c72089dd5f85",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorConfigBuilder.Airfield.cs": "787e8b02ca73ca8f7fbb313b7dc99779a524be9c4961204727a07a8a5b54ac1e",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorConfigBuilder.cs": "20238a1ceea3fc4f5f36b378e3e9a3bc6069d409a11928f6139c8eec5305f759",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorInputProbe.Budget.cs": "2d57c86fd8e54e802e02776c62f4b6fb74b3ba73e9e052a8afa9b24b34327e61",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorInputProbe.Recovery.cs": "3b67746e67eb482bf3e482d8bfc93439dcd3d6a0b6dabe358b35af7515f093ef",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorInputProbe.cs": "ebf452a6951f6b2b153faa0819410096485c323d1352fc04d0509b1d0a36c800",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorNarrativeBuilder.cs": "b5c6dd7a152d64d09b29b88662bff90dcbe6d4eb7f699d2f9eeb87a58ad6d537",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorPresentationBuilder.cs": "51d83af210e419a95be1410f490014edf8ba3e48661cdccde384ae2f7281cd01",
+    "Assets/Game/Scripts/Editor/CH04M01AirCorridorRulesValidation.cs": "8aa9877dba1acf5ce2cbf233ba16ee02eac4331941026e0c513ff4d8f3607a81",
+    "Assets/Game/Scripts/Runtime/Missions/CampaignMissionAttemptResourceInitializationSystem.cs": "a309d948aa8be3b574d1c65178c7e4c861973de4ef0afd4660b4c37eeb06d96d",
+    "Assets/Game/Scripts/Systems/BuildingProductionCampRequestTransaction.cs": "4d91c74cf9bd5d9371061d58b7d2a16550f1773f2cfb0d14b77e63edbf9a60ca",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.Detail.cs": "863115be64f427dc19a5ba7aa8d3517431dfd1d5137314706714450c5db830ec",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogPresentationSystemHelper.cs": "d87b27b0d1dc6d2968606cb6386129a25a018af24f32fe7d7c713396fb3582f0",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.ItemMetadata.cs": "06cff052b563a921bab17d8b4db59be250548dae43774e921ca907e6f33f64ea",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogQueryUiSystemHelper.cs": "32981e97b7b981970058b19c268ac5754bf446ec887e7f238eaf17d5a9b9c1d9",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.Instructions.cs": "5c3dd8740c4f60dbbc2045876a110028523a277e28a2808fc4a9bd183bbd511c",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.MissionGuidance.cs": "342dbdbda7511e5c56f86c00d99035f95e9332527eac316b768d40abfcb7b3be",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.NextAction.cs": "863909932240adb858ac3a00d2d3263c5a4303dc5a2415d096284105ef3c643e",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerCatalogRuntimeView.cs": "dd3e9ea379b8b9a471817e30cf0be0119443db95ae9d574fc01721a4173cbe4c",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.Guidance.cs": "dc01067a8f851e20b2f3c44709faca14da20dc3fc62c1273804f75ee9fb4fde1",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerHudOcclusionView.cs": "06b717360d61dc599175f91f91273ae259bea49c5799ef38f8d262961f27820c",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerInstructionSeverity.cs": "6a10307f05c3caa6e430c181014589df01006f564387e75a5f4ebb1fdce12d72",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerItemView.cs": "d7090097a5f9e2918da4c24f5a370d823163b310c52e2b80f9525c9abf1d7917",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerMissionCatalogPrefabSource.cs": "832152aff44ea7cca4f3949030ea13435a1129341c340c12cfbddeb51085d20e",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerPanelView.cs": "163b2dc4b0005b5763815c4f2ffe9364fa07e9acaa8a485cbbc1557927927b90",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerProductionQueueUiSystemHelper.cs": "22861db3b29a7768dd7b0b3666d2ce24586046f33b65c4e80ddde6750ce378e7",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerQueueItemView.cs": "5a1b8da383f3da3069077891b8b53cf790bf8dfb90b9db0512d5538448525870",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerTabView.cs": "c6a756b8e142df07a6da182657bc94668a13be89a549832f1a62523d723358fa",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerView.Readiness.cs": "624e791fac328a2aff7912c751f54558b4f7e2137cd3eb948a5fdb33a0e0802e",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerView.Resources.cs": "0746ea0ede1267d616c23ce64dbcb9cc65cafc7cb34cb8d95a103189762d2b56",
+    "Assets/Game/Scripts/UI/Screens/BuildDrawerView.cs": "9806ae8d44c394548b41bc0bbcd458eea2060a7ed5f3c0ffd01b5db98790924a"
+  }
+}

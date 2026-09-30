@@ -10,6 +10,9 @@ namespace Game.Runtime
     public partial struct CampaignMissionAttemptResourceInitializationSystem : ISystem
     {
         private static readonly Unity.Collections.FixedString64Bytes EstablishBaseResourceMissionId = "saga.ch01.m02.establish_base";
+        private static readonly Unity.Collections.FixedString64Bytes RadarWarningResourceMissionId = "saga.ch01.m03.radar_warning";
+        private static readonly Unity.Collections.FixedString64Bytes AirCorridorResourceMissionId = "saga.ch04.m01.air_corridor";
+        private static readonly Unity.Collections.FixedString64Bytes SteelPushResourceMissionId = "saga.ch04.m02.steel_push";
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
@@ -91,9 +94,9 @@ namespace Game.Runtime
                 return;
 
             nextEconomy.MaterialsOnlyConstruction = runtime.MissionId.Equals(EstablishBaseResourceMissionId) ? (byte)1 :
-                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning")) ||
-                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch04.m01.air_corridor")) ||
-                runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch04.m02.steel_push")) ? (byte)2 : (byte)0;
+                runtime.MissionId.Equals(RadarWarningResourceMissionId) ||
+                runtime.MissionId.Equals(AirCorridorResourceMissionId) ||
+                runtime.MissionId.Equals(SteelPushResourceMissionId) ? (byte)2 : (byte)0;
             if (nextEconomy.MaterialsOnlyConstruction != 0) nextEconomy.Money = 0;
             entityManager.SetComponentData(playerResources, nextEconomy);
             entityManager.SetComponentData(playerResources, nextMaterials);

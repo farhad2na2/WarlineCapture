@@ -88,12 +88,12 @@ namespace Game.UI.Runtime
             ApplyV3VisualState();
         }
 
-        public void SetInteractable(bool interactable)
+        public void SetInteractable(bool interactable, bool allowInspection = false)
         {
             _interactable = interactable;
             DisableTransientSelectableFrameState();
             if (selectionButton != null)
-                selectionButton.interactable = interactable;
+                selectionButton.interactable = interactable || allowInspection;
 
             if (disabledOverlay != null)
                 disabledOverlay.SetActive(!interactable);

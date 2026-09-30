@@ -720,7 +720,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             presenter.SelectCategoryForTests(BuildDrawerCategory.Vehicles);
             var card = view.ItemTemplate;
             presenter.RefreshSkirmishAvailability();
-            Assert.IsFalse(card.SelectionButton.interactable);
+            Assert.IsTrue(card.SelectionButton.interactable, "Unavailable production must remain inspectable.");
             Assert.IsFalse(view.PrimaryActionButton.interactable);
             available = true;
             presenter.RefreshSkirmishAvailability();
@@ -729,7 +729,7 @@ public sealed class BuildDrawerCatalogQueryUiSystemHelperTests
             Assert.IsTrue(view.PrimaryActionButton.interactable);
             available = false;
             presenter.RefreshSkirmishAvailability();
-            Assert.IsFalse(card.SelectionButton.interactable);
+            Assert.IsTrue(card.SelectionButton.interactable, "Queue details must remain reachable after availability changes.");
             Assert.IsFalse(view.PrimaryActionButton.interactable);
         }
         finally

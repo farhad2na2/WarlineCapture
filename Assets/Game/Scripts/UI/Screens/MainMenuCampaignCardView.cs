@@ -137,16 +137,31 @@ namespace Game.UI.Runtime
         }
         private void SetArt(Sprite plate)
         {
-            if (comicBackdrop != null)
+            Image backdrop = ResolveComicBackdrop();
+            if (backdrop != null)
             {
-                comicBackdrop.sprite = plate;
-                comicBackdrop.enabled = plate != null;
+                backdrop.sprite = plate;
+                backdrop.enabled = plate != null;
             }
             if (art != null)
             {
                 art.sprite = plate;
-                art.enabled = plate != null && comicBackdrop == null;
+                art.enabled = plate != null && backdrop == null;
             }
+        }
+
+        private Image ResolveComicBackdrop()
+        {
+            Transform uiRoot = transform.root;
+            if (comicBackdrop != null && comicBackdrop.transform.root == uiRoot)
+                return comicBackdrop;
+
+            // The shell instantiates its background and left card as separate sections.
+            // Their prefab reference points at the asset, so bind the live background.
+            foreach (Image image in uiRoot.GetComponentsInChildren<Image>(true))
+                if (image.name == "ComicBackdrop")
+                    return comicBackdrop = image;
+            return null;
         }
         private static string FirstSentence(string summary)
         {

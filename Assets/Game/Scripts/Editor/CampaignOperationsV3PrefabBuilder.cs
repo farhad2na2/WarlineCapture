@@ -226,7 +226,9 @@ namespace Game.Editor
             if (screen.MissionNodeButtons == null || screen.MissionNodeButtons.Length != 5 ||
                 screen.LaunchMissionButton == null || screen.DistrictMapImage == null)
                 throw new MissingReferenceException("Campaign V3 mission bindings are incomplete.");
-            if (AssetDatabase.GetAssetPath(screen.DistrictMapImage.texture) != MissionMapPath)
+            string districtArtPath = AssetDatabase.GetAssetPath(screen.DistrictMapImage.texture);
+            if (districtArtPath != MissionMapPath &&
+                districtArtPath != "Assets/Game/Art/UI/Generated/CampaignOperations/DistrictAtlasA/chapter-01-district.png")
                 throw new MissingReferenceException("Campaign V3 must use the canonical Sahrin mission-map plate.");
             Image[] images = prefab.GetComponentsInChildren<Image>(true);
             for (int i = 0; i < images.Length; i++)
@@ -627,7 +629,10 @@ namespace Game.Editor
             Image icon = CreateImage("Icon", card, RequireSprite(iconPath), theme.TextPrimary, false);
             SetTopLeft(icon.rectTransform, width * 0.5f - 20f, 5f, 40f, 40f);
             TMP_Text label = CreateText("Label", card, copy, 14f, boldFont, TextAlignmentOptions.Center, theme.TextPrimary);
-            SetTopLeft(label.rectTransform, 5f, 44f, width - 10f, 40f);
+            label.fontSize = 13f;
+            label.textWrappingMode = TextWrappingModes.Normal;
+            label.lineSpacing = -2f;
+            SetTopLeft(label.rectTransform, 5f, 42f, width - 10f, 44f);
             return label;
         }
 

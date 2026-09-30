@@ -11,6 +11,36 @@ namespace Game.UI.Runtime
     {
         private static readonly Regex PositionedName = new(@"^(.+) \((-?\d+),(-?\d+)\)$");
 
+        // Forward navigation follows the reading direction. Ignore TMP rich-text tags,
+        // whose closing '>' is markup rather than a visible arrow.
+        public static string MirrorForwardArrows(string value, bool rightToLeft)
+        {
+            if (!rightToLeft || string.IsNullOrEmpty(value)) return value ?? string.Empty;
+            var result = new System.Text.StringBuilder(value.Length);
+            bool inTag = false;
+            for (int i = 0; i < value.Length; i++)
+            {
+                char character = value[i];
+                if (character == '<' && !inTag && i + 1 < value.Length &&
+                    (char.IsLetter(value[i + 1]) || value[i + 1] == '/' && i + 2 < value.Length && char.IsLetter(value[i + 2])) &&
+                    value.IndexOf('>', i + 1) > i)
+                    inTag = true;
+                if (!inTag)
+                    result.Append(character switch
+                    {
+                        '>' => '<',
+                        '›' => '‹',
+                        '→' => '←',
+                        '▶' => '◀',
+                        _ => character
+                    });
+                else
+                    result.Append(character);
+                if (inTag && character == '>') inTag = false;
+            }
+            return result.ToString();
+        }
+
         public static void Set(TMP_Text target, string source)
         {
             if (target == null) return;

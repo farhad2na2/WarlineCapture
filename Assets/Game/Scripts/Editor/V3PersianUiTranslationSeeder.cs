@@ -948,6 +948,12 @@ namespace Game.Editor
 
                 if (!TryTranslate(entry.Value, out string translated))
                     continue;
+                // Generated labels retain authoring chevrons unless the direction is
+                // normalized here; explicit locale entries are handled separately.
+                if (entry.Value.Contains('›') && !entry.Value.Contains('‹'))
+                    translated = translated.Replace('›', '‹');
+                else if (entry.Value.Contains('‹') && !entry.Value.Contains('›'))
+                    translated = translated.Replace('‹', '›');
                 persian[entry.Key] = translated;
                 added++;
             }

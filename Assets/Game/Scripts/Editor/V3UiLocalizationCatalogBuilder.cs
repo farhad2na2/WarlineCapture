@@ -233,12 +233,12 @@ namespace Game.Editor
             void AddRuntimeText(string key, string source, string translated)
             { AddEnglish(key, source, english, keysByEnglish); persian[key] = translated; }
             AddRuntimeText("ui.home.chapter_mission", "CHAPTER {0} • MISSION {1}", "فصل {0} • مأموریت {1}");
-            AddRuntimeText("ui.home.continue", "CONTINUE CAMPAIGN   ›", "ادامهٔ کارزار   ›");
-            AddRuntimeText("ui.home.choose", "CHOOSE MISSION   ›", "انتخاب مأموریت   ›");
-            AddRuntimeText("ui.home.commander", "VIEW COMMANDER   ›", "مشاهدهٔ فرمانده   ›");
+            AddRuntimeText("ui.home.continue", "CONTINUE CAMPAIGN   ›", "ادامهٔ کارزار   ‹");
+            AddRuntimeText("ui.home.choose", "CHOOSE MISSION   ›", "انتخاب مأموریت   ‹");
+            AddRuntimeText("ui.home.commander", "VIEW COMMANDER   ›", "مشاهدهٔ فرمانده   ‹");
             AddRuntimeText("ui.home.commander_default", "Commander", "فرمانده");
-            AddRuntimeText("ui.home.store", "STORE   ›", "فروشگاه   ›");
-            AddRuntimeText("ui.home.armory", "ARMORY   ›", "تسلیحات   ›");
+            AddRuntimeText("ui.home.store", "STORE   ›", "فروشگاه   ‹");
+            AddRuntimeText("ui.home.armory", "ARMORY   ›", "تسلیحات   ‹");
             AddRuntimeText("ui.home.operations", "Multi-mission strategic operations", "عملیات راهبردی چندمأموریتی");
             AddRuntimeText("ui.home.skirmish", "Standalone tactical battles", "نبردهای تاکتیکی مستقل");
             AddRuntimeText("ui.home.aria", "Tactical assistant", "دستیار تاکتیکی");
@@ -986,7 +986,7 @@ namespace Game.Editor
             AddRuntimeText("ui.hud.oil_capacity", "OIL {0}/{1}", "نفت {0}/{1}");
             AddRuntimeText("ui.hud.oil_fuel_capacity", "OIL {0}/{1} | FUEL {2}/{3}", "نفت {0}/{1} | بنزین {2}/{3}");
             AddRuntimeText("ui.hud.cargo_capacity", "CARGO 0/{0}", "محموله ۰/{0}");
-            AddRuntimeText("ui.hud.material_fabrication_status", "OIL {0}/{1} | MATERIALS {2}/{3}\n{4} OIL > {5} MATERIALS / {6}s\n{7}%", "نفت {0}/{1} | مصالح {2}/{3}\n{4} نفت > {5} مصالح / {6} ثانیه\n{7}٪");
+            AddRuntimeText("ui.hud.material_fabrication_status", "OIL {0}/{1} | MATERIALS {2}/{3}\n{4} OIL > {5} MATERIALS / {6}s\n{7}%", "نفت {0}/{1} | مصالح {2}/{3}\n{4} نفت < {5} مصالح / {6} ثانیه\n{7}٪");
             AddRuntimeText("ui.hud.health_empty", "HEALTH -", "سلامت -");
             AddRuntimeText("ui.hud.onboard", "ONBOARD", "سوارشده");
 

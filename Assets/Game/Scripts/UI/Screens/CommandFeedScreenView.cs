@@ -76,9 +76,12 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            UiShellRuntimeGateway.Localization.LocaleChanged += RefreshStatus;
             WireButtons();
             Refresh();
         }
+
+        private void OnDisable() => UiShellRuntimeGateway.Localization.LocaleChanged -= RefreshStatus;
 
         private void OnDestroy()
         {
@@ -181,7 +184,9 @@ namespace Game.UI.Runtime
         private void RefreshStatus()
         {
             if (pauseLabel != null)
-                pauseLabel.text = _paused ? ">" : "||";
+                pauseLabel.text = _paused
+                    ? UiLocalizedText.MirrorForwardArrows(">", UiShellRuntimeGateway.Localization.IsRightToLeft)
+                    : "||";
             if (liveStatusLabel == null)
                 return;
             liveStatusLabel.text = _paused

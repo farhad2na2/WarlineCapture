@@ -20,6 +20,21 @@ namespace Game.UI.Runtime
             if (nodeLabelPanels != null && index < nodeLabelPanels.Length && nodeLabelPanels[index] != null)
                 nodeLabelPanels[index].SetBorder(selected ? accent : new Color32(69, 81, 85, 255), 2f);
             var image = missionNodeButtons[index].image;
+            if (atlasMissionArtwork != null && index < atlasMissionArtwork.Length && atlasMissionArtwork[index] != null)
+            {
+                if (image != null)
+                {
+                    image.sprite = null;
+                    image.color = selected ? new Color32(247, 179, 0, 255) :
+                        available ? new Color32(20, 42, 48, 255) : new Color32(30, 36, 39, 255);
+                }
+                atlasMissionArtwork[index].color = available ? Color.white : new Color(0.55f, 0.58f, 0.59f, 1f);
+                if (nodeNumberLabels != null && index < nodeNumberLabels.Length && nodeNumberLabels[index] != null)
+                    nodeNumberLabels[index].gameObject.SetActive(false);
+                if (nodeStateImages != null && index < nodeStateImages.Length && nodeStateImages[index] != null)
+                    nodeStateImages[index].gameObject.SetActive(false);
+                return;
+            }
             Sprite sprite = !available ? lockedNodeSprite : completed && !selected ? completedNodeSprite : availableNodeSprite;
             if (image != null && sprite != null)
             {

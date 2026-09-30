@@ -14,6 +14,47 @@ public sealed class GameLocalizationCatalogTests
 
     private GameLocalizationCatalog catalog;
 
+    [UnityEditor.MenuItem("Game/Validation/Run Persian Navigation Focused")]
+    public static void RunPersianNavigationFocusedValidation()
+    {
+        try
+        {
+            new GameLocalizationCatalogTests().PersianNavigation_MirrorsForwardGlyphsWithoutChangingRichText();
+            Debug.Log("[PersianNavigationValidation] result=Passed");
+            ValidationExit.Passed();
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogException(exception);
+            Debug.LogError("[PersianNavigationValidation] result=Failed");
+            ValidationExit.Failed();
+        }
+    }
+
+    [Test]
+    public void PersianNavigation_MirrorsForwardGlyphsWithoutChangingRichText()
+    {
+        const string source = "CONTINUE ›  >  →  ▶  <color=#00D1F3>GO</color>";
+        Assert.AreEqual("CONTINUE ‹  <  ←  ◀  <color=#00D1F3>GO</color>",
+            UiLocalizedText.MirrorForwardArrows(source, true));
+        Assert.AreEqual(source, UiLocalizedText.MirrorForwardArrows(source, false));
+        Assert.AreEqual("›   قبلی", UiLocalizedText.MirrorForwardArrows("›   قبلی", false));
+
+        var shipped = UnityEditor.AssetDatabase.LoadAssetAtPath<GameLocalizationCatalog>(
+            "Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset");
+        Assert.NotNull(shipped);
+        var persian = shipped.FindLocale(GameLocalization.PersianLocaleCode);
+        Assert.NotNull(persian);
+        var values = new Dictionary<string, string>();
+        foreach (GameLocalizedStringRecord entry in persian.Entries)
+            values[entry.Key] = entry.Value;
+        Assert.That(values["ui.home.continue"], Does.Contain("‹"));
+        Assert.That(values["ui.home.choose"], Does.Contain("‹"));
+        Assert.That(values["ui.identity.previous"], Does.Contain("›"));
+        Assert.That(values["ui.guidance.previous"], Does.Contain("›"));
+        Assert.That(values["ui.hud.material_fabrication_status"], Does.Contain("<"));
+    }
+
     [UnityEditor.MenuItem("Game/Validation/Run Disabled UI SubMesh Focused")]
     public static void RunDisabledUiFocusedValidation()
     {

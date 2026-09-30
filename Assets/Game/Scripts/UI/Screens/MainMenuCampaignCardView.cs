@@ -14,6 +14,7 @@ namespace Game.UI.Runtime
         [Serializable] public struct MissionPlate { public string missionId; public Sprite plate; }
         [Serializable] public struct AftermathScene { public Sprite plate; public string captionKey; public string captionFallback; }
         [SerializeField] private Image art;
+        [SerializeField] private Image comicBackdrop;
         [SerializeField] private MissionPlate[] plates = Array.Empty<MissionPlate>();
         [SerializeField] private TMP_Text title, chapter, purpose, actionLabel;
         [SerializeField] private Button continueButton;
@@ -24,6 +25,7 @@ namespace Game.UI.Runtime
         private int visitAftermath = -1;
         private bool visitActive;
         private bool routeRequested;
+        private bool directionalLabelsBound;
         public string PresentedMissionId { get; private set; }
         public bool CompletionVisible { get; private set; }
         public int AftermathIndex => visitAftermath;
@@ -31,11 +33,25 @@ namespace Game.UI.Runtime
         { title=name; chapter=location; purpose=summary; actionLabel=action; continueButton=button; }
         private void OnEnable()
         {
+            BindDirectionalLabels();
             routeRequested=false;
             if (!visitActive) BeginHomeVisit();
             continueButton?.onClick.AddListener(OpenCampaign);
             UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Refresh, CampaignMissionSequence.IdAt(0));
             Refresh();
+        }
+
+        private void BindDirectionalLabels()
+        {
+            if (directionalLabelsBound) return;
+            foreach (TMP_Text label in transform.root.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (label.GetComponent<V3LocalizedTextBindingView>() != null ||
+                    !label.text.Contains('›'))
+                    continue;
+                UiLocalizedText.Set(label, label.text);
+            }
+            directionalLabelsBound = true;
         }
         private void OnDisable()
         {
@@ -46,6 +62,7 @@ namespace Game.UI.Runtime
         private void LateUpdate() => Refresh();
         public void Refresh()
         {
+            BindDirectionalLabels();
             // An overlay can disable content without starting a new home visit.
             // Only a real route departure permits the next rotation.
             if (UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.ActiveRoute != UIRoute.MainMenu)
@@ -56,7 +73,7 @@ namespace Game.UI.Runtime
                 PresentedMissionId = string.Empty;
                 CompletionVisible=false;
                 if (archiveButton != null) archiveButton.gameObject.SetActive(false);
-                if (art != null) { art.sprite=null; art.enabled=false; }
+                SetArt(null);
                 Set(title, "CAMPAIGN"); Set(chapter, string.Empty);
                 Set(purpose, "Review your Campaign missions."); Set(actionLabel, "CHOOSE MISSION   ›");
                 return;
@@ -73,11 +90,7 @@ namespace Game.UI.Runtime
                     previousAftermath = visitAftermath;
                 }
                 bool full = model.FullCampaignRegistered;
-                if (art != null)
-                {
-                    art.sprite = full ? epilogue : visitAftermath >= 0 ? aftermathScenes[visitAftermath].plate : null;
-                    art.enabled = art.sprite != null;
-                }
+                SetArt(full ? epilogue : visitAftermath >= 0 ? aftermathScenes[visitAftermath].plate : null);
                 Set(chapter, string.Empty);
                 if(chapter!=null) chapter.gameObject.SetActive(false);
                 Set(title, full ? "CAMPAIGN COMPLETE" : "ALL AVAILABLE MISSIONS COMPLETED");
@@ -88,7 +101,7 @@ namespace Game.UI.Runtime
             }
             Sprite plate = FindPlate(PresentedMissionId);
             if(chapter!=null) chapter.gameObject.SetActive(true);
-            if (art != null) { art.sprite=plate; art.enabled=plate != null; }
+            SetArt(plate);
             int index = CampaignMissionSequence.IndexOf(PresentedMissionId);
             Set(chapter, UiShellRuntimeGateway.Localization.Format("ui.home.chapter_mission", "CHAPTER {0} • MISSION {1}", index / 5 + 1, index % 5 + 1));
             if (UiShellRuntimeGateway.TryReadMissionBriefing(out var briefing) && briefing.MissionId == PresentedMissionId)
@@ -121,6 +134,34 @@ namespace Game.UI.Runtime
         {
             if (target == null) return;
             UiLocalizedText.Set(target, value);
+        }
+        private void SetArt(Sprite plate)
+        {
+            Image backdrop = ResolveComicBackdrop();
+            if (backdrop != null)
+            {
+                backdrop.sprite = plate;
+                backdrop.enabled = plate != null;
+            }
+            if (art != null)
+            {
+                art.sprite = plate;
+                art.enabled = plate != null && backdrop == null;
+            }
+        }
+
+        private Image ResolveComicBackdrop()
+        {
+            Transform uiRoot = transform.root;
+            if (comicBackdrop != null && comicBackdrop.transform.root == uiRoot)
+                return comicBackdrop;
+
+            // The shell instantiates its background and left card as separate sections.
+            // Their prefab reference points at the asset, so bind the live background.
+            foreach (Image image in uiRoot.GetComponentsInChildren<Image>(true))
+                if (image.name == "ComicBackdrop")
+                    return comicBackdrop = image;
+            return null;
         }
         private static string FirstSentence(string summary)
         {

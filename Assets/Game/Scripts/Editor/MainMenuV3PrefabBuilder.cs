@@ -101,9 +101,9 @@ namespace Game.Editor
             RectTransform footerSection = CreateSection("FooterContent", root.transform, UIShellContentSectionId.Footer, sections);
             sectionsView.ConfigureSections(sections.ToArray());
 
-            BuildBackground(backgroundSection);
+            Image comicBackdrop = BuildBackground(backgroundSection);
             BuildHeader(headerSection);
-            BuildModeCards(leftSection);
+            BuildModeCards(leftSection, comicBackdrop);
             BuildMiddleHitTargets(middleSection);
             BuildRightRail(rightSection);
             BuildFooter(footerSection);
@@ -131,6 +131,8 @@ namespace Game.Editor
                 throw new MissingReferenceException("Main Menu V3 must expose all six shell sections.");
 
             Require(prefab.transform, "HeaderContent/CreditsVisualPanel/Value");
+            Require(prefab.transform, "MenuBackgroundContent/ComicBackdrop");
+            Require(prefab.transform, "MenuBackgroundContent/HeaderShade");
             if (prefab.transform.Find("HeaderContent/CommandVisualPanel") != null || prefab.transform.Find("HeaderContent/HeaderResourceArea") != null)
                 throw new InvalidOperationException("Retired Command/header purchase routes must be absent.");
             Require(prefab.transform, "LeftContent/Card_Campaign/ContinueButton");
@@ -226,6 +228,30 @@ namespace Game.Editor
             Capture("/private/tmp/warline-main-menu-v3-16x9.png", 1920, 1080);
             Capture("/private/tmp/warline-main-menu-v3-20x9.png", 2400, 1080);
             Debug.Log("[MainMenuV3PrefabBuilder] QA captures written to /private/tmp.");
+        }
+
+        public static void CaptureComicBackdropQa()
+        {
+            Sprite plate = AssetDatabase.LoadAssetAtPath<Sprite>(CompletionArtDirectory + "home-aftermath-rebuilding-v01.png");
+            if (plate == null) throw new FileNotFoundException("Missing Campaign completion comic for backdrop QA.");
+            foreach (int width in new[] { 1920, 2400 })
+            {
+                CaptureConfigured($"/private/tmp/warline-main-menu-comic-backdrop-{width}.png", width, 1080, instance =>
+                {
+                    Image backdrop = Require(instance.transform, "MenuBackgroundContent/ComicBackdrop").GetComponent<Image>();
+                    Image card = Require(instance.transform, "LeftContent/Card_Campaign/CampaignArt").GetComponent<Image>();
+                    backdrop.sprite = plate;
+                    backdrop.enabled = true;
+                    card.enabled = false;
+                });
+            }
+            Debug.Log("[MainMenuV3PrefabBuilder] comicBackdropQa=Passed widths=1920,2400");
+        }
+
+        public static void BuildAndCaptureComicBackdropQa()
+        {
+            Build();
+            CaptureComicBackdropQa();
         }
 
         [MenuItem("Game/UI/V3/Capture Main Menu Persian QA")]
@@ -412,12 +438,25 @@ namespace Game.Editor
             return section;
         }
 
-        private static void BuildBackground(Transform root)
+        private static Image BuildBackground(Transform root)
         {
             Image background = CreateImage("HomeBackground", root, null, new Color32(3, 10, 14, 255), false);
             Stretch(background.rectTransform);
+            Image comic = CreateImage("ComicBackdrop", root, null, Color.white, false);
+            Stretch(comic.rectTransform);
+            comic.rectTransform.pivot = new Vector2(0.5f, 1f);
+            var cover = comic.gameObject.AddComponent<AspectRatioFitter>();
+            cover.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+            cover.aspectRatio = 16f / 9f;
+            Image headerShade = CreateImage("HeaderShade", root, null, new Color(0.01f, 0.025f, 0.03f, 0.72f), false);
+            headerShade.rectTransform.anchorMin = new Vector2(0f, 1f);
+            headerShade.rectTransform.anchorMax = Vector2.one;
+            headerShade.rectTransform.pivot = new Vector2(0.5f, 1f);
+            headerShade.rectTransform.anchoredPosition = Vector2.zero;
+            headerShade.rectTransform.sizeDelta = new Vector2(0f, 118f);
             RectTransform reference = CreateTopLeftRect("BackgroundChromeReference", root, 0f, 0f, ReferenceResolution.x, ReferenceResolution.y);
             ConfigureLayout(reference, MainMenuV3SectionAlignment.TopLeft);
+            return comic;
         }
 
 
@@ -518,15 +557,15 @@ namespace Game.Editor
             serialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        private static void BuildModeCards(Transform root)
+        private static void BuildModeCards(Transform root, Image comicBackdrop)
         {
-            BuildCampaignCard(root);
+            BuildCampaignCard(root, comicBackdrop);
             BuildCompactModeCard(root, "Card_Operations", 14f, 705f, 628f, 216f, "OPERATIONS", operationsArt, Green, UIRoute.Operations, ModeIcon.Operations);
             BuildCompactModeCard(root, "Card_Skirmish", 654f, 705f, 628f, 216f, "SKIRMISH", skirmishArt, Red, UIRoute.QuickCustomSetup, ModeIcon.Skirmish);
         }
 
 
-        private static void BuildCampaignCard(Transform root)
+        private static void BuildCampaignCard(Transform root, Image comicBackdrop)
         {
             RectTransform card = CreateTopLeftRect("Card_Campaign", root, 14f, 108f, 1268f, 585f);
             Image art = CreateImage("CampaignArt", card, null, Color.white, false);
@@ -560,7 +599,7 @@ namespace Game.Editor
             Button button=action.gameObject.AddComponent<Button>(); button.targetGraphic=fill; button.colors=ButtonColors();
             TMP_Text actionLabel=CreateText("Label", action, "CONTINUE CAMPAIGN   ›", 36, boldFont, TextAlignmentOptions.Center, TextPrimary);
             Stretch(actionLabel.rectTransform); actionLabel.enableAutoSizing=true; actionLabel.fontSizeMin=24; actionLabel.fontSizeMax=36;
-            BindCampaignPlates(card.gameObject, art);
+            BindCampaignPlates(card.gameObject, art, comicBackdrop);
             card.GetComponent<MainMenuCampaignCardView>().Configure(title,chapter,purpose,actionLabel,button);
             RectTransform archive=CreateTopLeftRect("StoryArchiveButton",card,710,487,360,82);
             var archiveFill=archive.gameObject.AddComponent<V3GradientGraphic>();
@@ -588,11 +627,12 @@ namespace Game.Editor
         }
 
 
-        private static void BindCampaignPlates(GameObject card, Image art)
+        private static void BindCampaignPlates(GameObject card, Image art, Image comicBackdrop)
         {
             MainMenuCampaignCardView view = card.GetComponent<MainMenuCampaignCardView>() ?? card.AddComponent<MainMenuCampaignCardView>();
             SerializedObject data = new(view);
             data.FindProperty("art").objectReferenceValue = art;
+            data.FindProperty("comicBackdrop").objectReferenceValue = comicBackdrop;
             (string id, string path, string sprite)[] entries =
             {
                 ("saga.ch01.m01.first_contact", "Assets/Game/Art/Narrative/FirstLaunch/Panels/16x9/FL-P15.png", null),

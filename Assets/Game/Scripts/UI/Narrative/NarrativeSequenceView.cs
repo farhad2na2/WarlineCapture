@@ -163,6 +163,8 @@ namespace Game.UI.Runtime
                 string value = resolver.Get(
                     localizedTextKeys[i],
                     localizedTextEnglishFallbacks[i]);
+                if (value == localizedTextEnglishFallbacks[i])
+                    value = UiLocalizedText.MirrorForwardArrows(value, rightToLeft);
                 if (target is RTLTextMeshPro rtl)
                 {
                     rtl.Farsi = rightToLeft;
@@ -178,6 +180,18 @@ namespace Game.UI.Runtime
             }
 
             dialogueView?.ApplyIdentityReadingOrder(rightToLeft);
+            MirrorNavigationIcon(dialogueView != null ? dialogueView.transform.Find("Pointer/SharedAdvanceIcon") : null, rightToLeft);
+            foreach (RectTransform icon in GetComponentsInChildren<RectTransform>(true))
+                if (icon.name == "Icon" && icon.Find("UpperA") != null && icon.Find("LowerA") != null)
+                    MirrorNavigationIcon(icon, rightToLeft);
+        }
+
+        private static void MirrorNavigationIcon(Transform icon, bool rightToLeft)
+        {
+            if (icon == null) return;
+            Vector3 scale = icon.localScale;
+            scale.x = Mathf.Abs(scale.x) * (rightToLeft ? -1f : 1f);
+            icon.localScale = scale;
         }
 
         private void CacheDefaultTextPresentation()

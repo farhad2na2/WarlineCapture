@@ -42,8 +42,13 @@ namespace Game.UI.Runtime
 
         private void OnEnable()
         {
+            UiShellRuntimeGateway.Localization.LocaleChanged += RefreshLocale;
             SetState(initialState);
         }
+
+        private void OnDisable() => UiShellRuntimeGateway.Localization.LocaleChanged -= RefreshLocale;
+
+        private void RefreshLocale() => SetState(CurrentState);
 
         public void SetState(AssistantButtonVisualState state)
         {
@@ -62,7 +67,8 @@ namespace Game.UI.Runtime
 
             if (cueText != null)
             {
-                cueText.text = presentation.CueLabel;
+                cueText.text = UiLocalizedText.MirrorForwardArrows(
+                    presentation.CueLabel, UiShellRuntimeGateway.Localization.IsRightToLeft);
                 cueText.color = presentation.AccentColor;
             }
 

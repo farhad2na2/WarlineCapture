@@ -46,7 +46,7 @@
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "‹   قبلی"
+          "value": "›   قبلی"
         }
       ]
     },
@@ -316,7 +316,7 @@
       "translations": [
         {
           "locale": "fa-IR",
-          "value": "‹       قبلی"
+          "value": "›       قبلی"
         }
       ]
     },

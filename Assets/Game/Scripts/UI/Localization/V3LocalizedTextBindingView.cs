@@ -128,6 +128,10 @@ namespace Game.UI.Runtime
             }
 
             bool rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
+            // A translated label owns its arrow direction (including Previous). Only
+            // English fallbacks and runtime text need automatic forward-arrow mirroring.
+            if (string.Equals(localized, source, System.StringComparison.Ordinal))
+                localized = UiLocalizedText.MirrorForwardArrows(localized, rightToLeft);
             bool containsRightToLeftText = rightToLeft && ContainsArabicScript(localized);
             TMP_FontAsset localeFont = UiShellRuntimeGateway.Localization.CurrentFontAsset as TMP_FontAsset;
             TMP_FontAsset nextFont = localeFont != null && (containsRightToLeftText || !rightToLeft) ? localeFont : sourceFont;

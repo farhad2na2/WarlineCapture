@@ -24,6 +24,7 @@ namespace Game.UI.Runtime
         private int visitAftermath = -1;
         private bool visitActive;
         private bool routeRequested;
+        private bool directionalLabelsBound;
         public string PresentedMissionId { get; private set; }
         public bool CompletionVisible { get; private set; }
         public int AftermathIndex => visitAftermath;
@@ -31,11 +32,24 @@ namespace Game.UI.Runtime
         { title=name; chapter=location; purpose=summary; actionLabel=action; continueButton=button; }
         private void OnEnable()
         {
+            BindDirectionalLabels();
             routeRequested=false;
             if (!visitActive) BeginHomeVisit();
             continueButton?.onClick.AddListener(OpenCampaign);
             UiShellRuntimeGateway.TryEnqueueCampaignMissionAction(UiCampaignMissionActionKind.Refresh, CampaignMissionSequence.IdAt(0));
             Refresh();
+        }
+        private void BindDirectionalLabels()
+        {
+            if (directionalLabelsBound) return;
+            foreach (TMP_Text label in transform.root.GetComponentsInChildren<TMP_Text>(true))
+            {
+                if (label.GetComponent<V3LocalizedTextBindingView>() != null ||
+                    !label.text.Contains('›'))
+                    continue;
+                UiLocalizedText.Set(label, label.text);
+            }
+            directionalLabelsBound = true;
         }
         private void OnDisable()
         {
@@ -46,6 +60,7 @@ namespace Game.UI.Runtime
         private void LateUpdate() => Refresh();
         public void Refresh()
         {
+            BindDirectionalLabels();
             // An overlay can disable content without starting a new home visit.
             // Only a real route departure permits the next rotation.
             if (UiShellRuntimeGateway.TryReadShellState(out var shell) && shell.ActiveRoute != UIRoute.MainMenu)

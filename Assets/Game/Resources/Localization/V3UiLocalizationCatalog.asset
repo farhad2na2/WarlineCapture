@@ -16051,7 +16051,7 @@ MonoBehaviour:
     - key: ui.guidance.open_build
       value: "\u0633\u0627\u062E\u062A \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646"
     - key: ui.guidance.previous
-      value: "\u2039       \u0642\u0628\u0644\u06CC"
+      value: "\u203A       \u0642\u0628\u0644\u06CC"
     - key: ui.guidance.queue_rifle
       value: "\u062A\u0641\u0646\u06AF\u062F\u0627\u0631 \u0631\u0648 \u062F\u0631
         \u0635\u0641 \u0628\u0630\u0627\u0631"
@@ -16109,7 +16109,7 @@ MonoBehaviour:
     - key: ui.home.aria
       value: "\u062F\u0633\u062A\u06CC\u0627\u0631 \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC"
     - key: ui.home.armory
-      value: "\u062A\u0633\u0644\u06CC\u062D\u0627\u062A   \u203A"
+      value: "\u062A\u0633\u0644\u06CC\u062D\u0627\u062A   \u2039"
     - key: ui.home.available_complete
       value: "\u0647\u0645\u0647\u0654 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A\u200C\u0647\u0627\u06CC
         \u0645\u0648\u062C\u0648\u062F \u06A9\u0627\u0645\u0644 \u0634\u062F\u0646\u062F"
@@ -16121,10 +16121,10 @@ MonoBehaviour:
         {1}"
     - key: ui.home.choose
       value: "\u0627\u0646\u062A\u062E\u0627\u0628 \u0645\u0623\u0645\u0648\u0631\u06CC\u062A  
-        \u203A"
+        \u2039"
     - key: ui.home.commander
       value: "\u0645\u0634\u0627\u0647\u062F\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647  
-        \u203A"
+        \u2039"
     - key: ui.home.commander_default
       value: "\u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: ui.home.complete
@@ -16136,7 +16136,7 @@ MonoBehaviour:
         \u0631\u0642\u0645 \u0632\u062F."
     - key: ui.home.continue
       value: "\u0627\u062F\u0627\u0645\u0647\u0654 \u06A9\u0627\u0631\u0632\u0627\u0631  
-        \u203A"
+        \u2039"
     - key: ui.home.download
       value: "\u062F\u0627\u0646\u0644\u0648\u062F \u0645\u062D\u062A\u0648\u0627
         \u0644\u0627\u0632\u0645 \u0627\u0633\u062A."
@@ -16157,7 +16157,7 @@ MonoBehaviour:
       value: "\u0646\u0628\u0631\u062F\u0647\u0627\u06CC \u062A\u0627\u06A9\u062A\u06CC\u06A9\u06CC
         \u0645\u0633\u062A\u0642\u0644"
     - key: ui.home.store
-      value: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647   \u203A"
+      value: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647   \u2039"
     - key: ui.home.story_archive
       value: "\u0628\u0627\u06CC\u06AF\u0627\u0646\u06CC \u062F\u0627\u0633\u062A\u0627\u0646"
     - key: ui.home.unavailable
@@ -16181,7 +16181,7 @@ MonoBehaviour:
       value: "\u0633\u0644\u0627\u0645\u062A -"
     - key: ui.hud.material_fabrication_status
       value: "\u0646\u0641\u062A {0}/{1} | \u0645\u0635\u0627\u0644\u062D {2}/{3}\n{4}
-        \u0646\u0641\u062A > {5} \u0645\u0635\u0627\u0644\u062D / {6} \u062B\u0627\u0646\u06CC\u0647\n{7}\u066A"
+        \u0646\u0641\u062A < {5} \u0645\u0635\u0627\u0644\u062D / {6} \u062B\u0627\u0646\u06CC\u0647\n{7}\u066A"
     - key: ui.hud.materials
       value: "\u0645\u0635\u0627\u0644\u062D"
     - key: ui.hud.no_passengers
@@ -16229,7 +16229,7 @@ MonoBehaviour:
         \u0647\u0648\u06CC\u062A\u0634 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
         \u06A9\u0646."
     - key: ui.identity.previous
-      value: "\u2039   \u0642\u0628\u0644\u06CC"
+      value: "\u203A   \u0642\u0628\u0644\u06CC"
     - key: ui.identity.selected
       value: "\u067E\u0631\u0648\u0641\u0627\u06CC\u0644 \u0627\u0646\u062A\u062E\u0627\u0628\u200C\u0634\u062F\u0647"
     - key: ui.inbox.from
@@ -17199,7 +17199,7 @@ MonoBehaviour:
     - key: ui.v3.challenges.6532ac8d28
       value: "\u0686\u0627\u0644\u0634\u200C\u0647\u0627"
     - key: ui.v3.change.978a656ce4
-      value: "\u062A\u063A\u06CC\u06CC\u0631 \u203A"
+      value: "\u062A\u063A\u06CC\u06CC\u0631 \u2039"
     - key: ui.v3.change_commander.247bcfda6a
       value: "\u062A\u063A\u06CC\u06CC\u0631 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: ui.v3.chapter_01.0efb76eb02
@@ -17413,7 +17413,7 @@ MonoBehaviour:
       value: "\u0627\u062F\u0627\u0645\u0647"
     - key: ui.v3.continue_campaign.40c7949517
       value: "\u0627\u062F\u0627\u0645\u0647 \u06A9\u0627\u0631\u0632\u0627\u0631
-        \u203A"
+        \u2039"
     - key: ui.v3.continue_campaign.7d6ad88b88
       value: "\u0627\u062F\u0627\u0645\u0647 \u06A9\u0627\u0631\u0632\u0627\u0631"
     - key: ui.v3.continue_to_campaign_map.ff3a8c69d2

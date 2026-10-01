@@ -4,7 +4,7 @@ This branch is an isolated Editor review candidate. Human review and real device
 
 ## Open the review
 
-Use the isolated checkout `/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture`. In its Unity Editor choose **Game → Campaign → Prepared Maps → Open Seven Mission Review**. This opens the ordinary Campaign menu using a separate review profile, with all mission nodes available. Existing progress is preserved. Select any mission and use Deploy; ARIA Play / Stop and normal command controls remain available.
+Use the isolated checkout `/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture`. In its Unity Editor choose **Game → Campaign → Prepared Maps → Open Seven Mission Review**. This opens the ordinary Campaign menu using a separate review profile, with all mission nodes available. Existing progress is preserved. Select a mission, press **Start Briefing**, then **Deploy Operation**; ARIA Play / Stop and normal command controls remain available.
 
 | Mission | New map | Review status |
 |---|---|---|
@@ -27,3 +27,12 @@ Use the isolated checkout `/Users/farhad/.codex/worktrees/airlift-airfield/Warli
 - **Split Front:** launcher Attack using existing controls, industrial road clearances, delayed diversion, civilian separation and optional Smoke.
 
 Keep remaining release gates separate: packaged device content/performance, real player/device acceptance, updated voice assets where reported, saved-state compatibility and mission-specific negative journeys not already qualified. See each mission's readiness/workspace document and retained full validation logs. These candidates have not been promoted to `main`.
+
+## Open review session
+
+The isolated Editor was left on Campaign with Airlift selected on 2026-10-01.
+The native read model reported availability mask 262143 (all 18 existing nodes,
+including all seven migrated missions), ARIA inactive and the review driver
+stopped. The initial Campaign capture is retained in
+`HumanReview/20261001-193631/campaign-seven-mission-review.png`. This is setup
+verification; it does not record human or device acceptance.

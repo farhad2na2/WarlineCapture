@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-01",
+  "sourceCommit": "2607c6fe1a70532a31f29b90d039186169eedc2b",
+  "readyMarker": "[CampaignMapMissionReview] ready=True missions=7 selected=Airlift automation=Stopped",
+  "availableMissionMask": 262143,
+  "selectedMission": "saga.ch01.m04.airlift",
+  "ariaActive": false,
+  "reviewDriverActive": false,
+  "wrapperTimeoutSeconds": 0,
+  "editorLeftOpen": true,
+  "humanAcceptance": "Pending",
+  "deviceAcceptance": "Pending",
+  "screenshot": "campaign-seven-mission-review.png",
+  "scope": "Native Campaign review setup and readonly model verification; not a completed human review or a validation process exit."
+}

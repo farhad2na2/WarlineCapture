@@ -1,0 +1,6 @@
+[MissingVoiceEditorState] compiling=False failed=False playing=False
+[M04ComicVoiceInstall] result=Passed clips=14 sequences=3 locales=2
+[SupplyLineComicVoiceInstall] result=Passed clips=14 lines=7 locales=2 preload=0 runtimeNetworkTts=0
+[SplitFrontComicVoiceInstall] result=Passed clips=16 lines=8 locales=2 preload=0 runtimeNetworkTts=0
+[MissingMissionComicVoiceBindings] result=Passed lines=17 clips=34 locales=2 canonicalCaptions=Exact uniqueBindings=1 voiceWindows=Passed audibleAcceptance=Pending
+[AirliftComicVoiceGuard] result=Passed current=4 staleRejected=4

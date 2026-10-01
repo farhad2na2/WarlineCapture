@@ -1,7 +1,7 @@
 {
   "schema": "WarlineCapture.M04BilingualVoice.v1",
   "missionId": "saga.ch01.m04.airlift",
-  "generatedAtUtc": "2026-09-14T10:17:15.870008+00:00",
+  "generatedAtUtc": "2026-10-01T20:52:39.070502+00:00",
   "provider": "ElevenLabs",
   "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
   "model": "eleven_v3",
@@ -17,76 +17,6 @@
     "loudnessLUFS": -18
   },
   "clips": [
-    {
-      "kind": "narrative",
-      "id": "m04-brief-01",
-      "speaker": "LAILA",
-      "locale": "en-US",
-      "text": "Captain Laila Nasser. My helicopter is ready at the eastern landing area. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
-      "voiceId": "EXAVITQu4vr4xnSDxMaL",
-      "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
-      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-01.wav",
-      "durationSeconds": 11.36,
-      "sha256": "13c87a79999457e8fcb1e09a384524b13b435aa473ef3b6c4d4d7e6ad12909b6",
-      "captionSha256": "57553ec02ff55b9687393948656fa3f0035e190b45d9cf4c68033decdaaf11bc"
-    },
-    {
-      "kind": "narrative",
-      "id": "m04-brief-01",
-      "speaker": "LAILA",
-      "locale": "fa-IR",
-      "text": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
-      "voiceId": "EXAVITQu4vr4xnSDxMaL",
-      "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
-      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav",
-      "durationSeconds": 10.16,
-      "sha256": "e35ec619dd2eea50ff8c7525e114989a4d31b07c2f0cace91fbd78cf316dfc0d",
-      "captionSha256": "9ccaf5977371e78984a91011cd33f0a9a22561b3ed0aaa6aaf4d6235f84dfeb1",
-      "spokenText": "من سروان لیلا ناصرم. بالگردم توی محل فرود شرقی آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
-      "deliveryProfile": "fa-conversational-v1",
-      "voiceSettings": {
-        "stability": 0.5,
-        "similarity_boost": 0.75
-      },
-      "performanceDirection": "[conversational tone]",
-      "generationSeed": 3151208,
-      "generatedAtUtc": "2026-09-15T17:52:37.232016+00:00"
-    },
-    {
-      "kind": "narrative",
-      "id": "m04-brief-02",
-      "speaker": "SAMIRA",
-      "locale": "en-US",
-      "text": "Two medics and two engineers are stranded by the western road. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
-      "voiceId": "7uxeJ73HfJL9gOH2mttA",
-      "voiceName": "Warline - Engineer Samira Haddad",
-      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-02.wav",
-      "durationSeconds": 8.96,
-      "sha256": "e0916ad31775309356789665928c4a2fd23b5234bda4104a6a4a1ec328ddfba1",
-      "captionSha256": "45ef9b6f843f0f9c75c5a1e2660ca88c3ebec80c267ac18f92bdc8cf825e0453"
-    },
-    {
-      "kind": "narrative",
-      "id": "m04-brief-02",
-      "speaker": "SAMIRA",
-      "locale": "fa-IR",
-      "text": "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
-      "voiceId": "7uxeJ73HfJL9gOH2mttA",
-      "voiceName": "Warline - Engineer Samira Haddad",
-      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav",
-      "durationSeconds": 10.08,
-      "sha256": "8de3767da05a7df8a6ccbe7560bb7b37fabcbcc538dd1f4b90153d73790543cb",
-      "captionSha256": "171a6c3daaa3a594e20b400fd16550f7700bc68a602a5b37a6a8d199243a065b",
-      "spokenText": "دو امدادگر و دو مهندس کنار جادهٔ غربی گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
-      "deliveryProfile": "fa-conversational-v1",
-      "voiceSettings": {
-        "stability": 0.5,
-        "similarity_boost": 0.75
-      },
-      "performanceDirection": "[conversational tone]",
-      "generationSeed": 3151209,
-      "generatedAtUtc": "2026-09-15T17:52:40.916338+00:00"
-    },
     {
       "kind": "narrative",
       "id": "m04-brief-03",
@@ -526,6 +456,70 @@
       "durationSeconds": 7.36,
       "sha256": "3f40eda2ab8f1a9a152af1ad3078580072dedc230c5b41e8932828bf3d500d7f",
       "captionSha256": "529aa7e333a987908c5686a4f03f7febce0ac9f7f0cfdbc017704791cc7638dd"
+    },
+    {
+      "kind": "narrative",
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Captain Laila Nasser. My helicopter is ready on the airfield's western helipad. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-01.wav",
+      "durationSeconds": 11.6,
+      "sha256": "ebe27369a4affe48d6d8b05d577816f19855a17c503f9054624403ea73bcb9b5",
+      "captionSha256": "4eea15ad2f0594fcddd9e60e48204c4eb0e56b0a467e7385f97c16bb8cdd8df6"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "من سروان لیلا ناصرم. بالگردم روی سکوی غربی فرودگاه آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah - Mature, Reassuring, Confident (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav",
+      "durationSeconds": 12.48,
+      "sha256": "58061cbd8231cb74d5122228ac681beb4202bf7b7e0b0251fd86b28d9e361a80",
+      "captionSha256": "16c1ee8cce4e20937fe5db6ffd5a851ac515a91fb71736eab246d9578db6f8ea"
+    },
+    {
+      "kind": "narrative",
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Two medics and two engineers are stranded beside the airfield clinic. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-02.wav",
+      "durationSeconds": 9.44,
+      "sha256": "e59a78c2346482c6a7427efb89cbc3e609ef2e4ab4858b39e890c57294329ecb",
+      "captionSha256": "c516c73eff3dacb96376d4f7183faefc23024b40cbd4b8022ef2f8de20a1894f"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "دو امدادگر و دو مهندس کنار درمانگاه فرودگاه گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav",
+      "durationSeconds": 10.56,
+      "sha256": "83bb499f541811280cff57c35929bcb584b4c935178b038fbf3bb48f3f481ff9",
+      "captionSha256": "837e16632708479a22e6803d4a89c386fe1eb60370092a79b5245f464fd47fb5"
     }
   ],
   "persianDeliveryProfile": "fa-conversational-v1",

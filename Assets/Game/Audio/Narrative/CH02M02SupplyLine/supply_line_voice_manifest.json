@@ -1,0 +1,245 @@
+{
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "supply_line-brief-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The pump extracts Oil. The tray truck carries it to the refinery. The tanker then delivers refined Fuel to the warehouse. The trucks handle their routes automatically; protect every link.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-01.wav",
+      "durationSeconds": 14.32,
+      "sha256": "87fccfbbf7dad40fd6cc717094ff53239fcf2860c0b4f727b301d8d95efb154a",
+      "captionSha256": "994168c46168108d3b148f5427a595f590fba86dbe29a85e3475d3150c82b954"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-brief-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پمپ، نفت استخراج می‌کنه. کامیون کفی اون رو به پالایشگاه می‌بره. بعد تانکر، سوخت تولیدشده رو به انبار می‌رسونه. کامیون‌ها خودکار کار می‌کنن؛ از همهٔ حلقه‌های زنجیره محافظت کن.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-01.wav",
+      "durationSeconds": 14.24,
+      "sha256": "1b55706609504e591e23110e11ab9dcd5f6f6c6934a550c225c06622338cedfa",
+      "captionSha256": "f67ca139ad8a9f196f5b843c072fdbc2c5a9bc042403368efde5e3a73d094eee"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "This reserve keeps clinic generators and water pumps running. Twenty barrels must stay available for those services. Military transport cannot take everything.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-02.wav",
+      "durationSeconds": 9.6,
+      "sha256": "2ecbba17f275a0fb109a9c3dffbdfbc9407cef4a4ea483619e635a7e6d6e0c36",
+      "captionSha256": "eab4982269a6c4d4e5e6d5dbfab8a03d7df5eb6003e77c95aa6ba3298e9daebd"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "این ذخیره، ژنراتورهای درمانگاه و پمپ‌های آب رو روشن نگه می‌داره. بیست بشکه باید برای این خدمات باقی بمونه. ترابری نظامی نمی‌تونه همه‌اش رو برداره.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-02.wav",
+      "durationSeconds": 11.76,
+      "sha256": "e5bd35647faebe62c30707ff136c9e4991996373da47bc46578c7d772af1d28d",
+      "captionSha256": "6c1ba1782577d052fe3c8ca3fc10095f0ce28069a46ab062f633770bfe8612bf"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Agreed. Forty barrels: twenty for essential services, twenty for relief transport. Protect both trucks and all three sites, defeat the sabotage teams, then hold the reserve for twenty seconds. We have fifteen minutes.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-03.wav",
+      "durationSeconds": 15.92,
+      "sha256": "70acebb4ded02be7fac268eb0c3ed285b8cbe0003e11fe3b46f0b3fb369b0cb8",
+      "captionSha256": "7661a047162fd888f2181d8747af18ca1f8a241c2a0a7918ab83566741bb8053"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "موافقم. چهل بشکه: بیست تا برای خدمات ضروری، بیست تا برای ترابری امداد. از هر دو کامیون و هر سه محل محافظت کن، خرابکارها رو شکست بده و بعد ذخیره رو بیست ثانیه نگه دار. پانزده دقیقه وقت داریم.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-03.wav",
+      "durationSeconds": 16.96,
+      "sha256": "671f0fc23adf2c6eb51a322dacc53625e73354d313459b7ea4a2304ce4845672",
+      "captionSha256": "989deb1099f3b109d94c328aa9a554c113f5eeba6f4761a6ab5f62c8dd9de248"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Fuel has reached the reserve. A captured manifest shows the diverted tankers used the same dormant corridor we found at the hospital road.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-comms-01.wav",
+      "durationSeconds": 9.12,
+      "sha256": "4d81503ce056ec008eb91ffabb313b19b90edc7cfb1210a68c5e964080da4302",
+      "captionSha256": "57307f2ad00662754afc6a0c29fd43e9d626061fca451a28b4390a377344601c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "سوخت به انبار رسیده. بارنامهٔ به‌دست‌اومده نشون می‌ده تانکرهای منحرف‌شده از همون مسیر متروکی رفتن که کنار جادهٔ بیمارستان پیدا کردیم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-comms-01.wav",
+      "durationSeconds": 10.24,
+      "sha256": "7f77d53b2fc241b969b38ebe1c21c7d61a4397718bd3efaca44ea476ef1a01ad",
+      "captionSha256": "b27d747d1ecb15e1e22ba5d771240037cffd74f7b6ed3bc19de6151502510572"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The reserve is secure. Clinic generators, water pumps and relief vehicles can keep working. Protecting their supply is part of protecting the district.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-01.wav",
+      "durationSeconds": 9.2,
+      "sha256": "21de8652d436514b5b6df74f87fcc6fd77c4eb2c00e4c0e10cd57b44629777d2",
+      "captionSha256": "61465ed9c1e1e066b8eff2ad7c2547367343cf81fd046eb8dee008d3e5962b81"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "ذخیره امنه. ژنراتورهای درمانگاه، پمپ‌های آب و خودروهای امداد می‌تونن کار کنن. محافظت از تدارکاتشون بخشی از محافظت از محله‌ست.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-01.wav",
+      "durationSeconds": 11.36,
+      "sha256": "4d048e1bef70ea66d6c8ed6c07f34537e2c2f8503dfb66fbec4b8dec22bcc8d9",
+      "captionSha256": "d25c397b5aba7a2d8efe0ec73048121057a19c3535cbf3d66218986ef7dd8a9c"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The stolen Fuel route matches Gridlock's preserved corridor. Decommissioned Civic Relay maps place dormant systems at its destination. The repeated pattern is now evidence, not coincidence.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-02.wav",
+      "durationSeconds": 12.56,
+      "sha256": "592426b37ffbf57f88dfd87cd6be817c966cccc1504111fbb3b2439254d4f580",
+      "captionSha256": "ea0a0657d9e61f4f3f7eb4b93c558458e57acaf039c7c6af15435803003e08d9"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "مسیر سوخت دزدیده‌شده با مسیر دست‌نخوردهٔ مأموریت قبلی یکیه. نقشه‌های قدیمی شبکهٔ شهری، سامانه‌های خاموشی رو در مقصد نشون می‌دن. این الگوی تکراری دیگه تصادف نیست؛ مدرکه.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-02.wav",
+      "durationSeconds": 15.68,
+      "sha256": "5a4ff67bee11bac3dc77ad928db55a87165d7036168dbfa78dccaf65649a179d",
+      "captionSha256": "8b51946d64ea5d4ba1af84550d80fe3812b614b2b8879101d2a63e98c1574f4a"
+    },
+    {
+      "kind": "narrative",
+      "id": "supply_line-debrief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Samira's reserve kept both services and transport alive. Old Market is reporting another manipulated supply route. We will follow the manifests next.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-03.wav",
+      "durationSeconds": 11.2,
+      "sha256": "6c8607374b1da5714e17d3432d8b310f597952f84384da19e2e9f22f7cffc6d2",
+      "captionSha256": "ccb24de934faefedc10dc2666297fec24c247e5778e4a362d488d4e3eaf75505"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "supply_line-debrief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "ذخیره‌ای که سمیرا خواست، هم خدمات رو سر پا نگه داشت، هم ترابری رو. از بازار قدیمی خبر رسیده که یک مسیر تدارکاتی دیگه هم دستکاری شده. قدم بعدی، دنبال کردن بارنامه‌هاست.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-03.wav",
+      "durationSeconds": 14.32,
+      "sha256": "e0a62970ad0f22fddbe33b2ebf963f6d2ec621bf2c211279b9aebbfd4474a07d",
+      "captionSha256": "69d5cec8b936a47f988ab686590016b7510c1927116bdc2b109a042e5f651140"
+    }
+  ],
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "generatedAtUtc": "2026-10-01T20:54:24.877530+00:00",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "missionId": "saga.ch02.m02.supply_line"
+}

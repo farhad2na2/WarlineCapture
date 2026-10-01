@@ -1,0 +1,92 @@
+[
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH02M01Gridlock/gridlock_voice_manifest.json",
+    "records": 44,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH02M03MarketLifeline/market_lifeline_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH02M04PowerRelay/power_relay_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH02M05RouteReopened/route_reopened_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH03M01SignalTrace/signal_trace_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH03M02SafehouseSweep/safehouse_sweep_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH03M03FalseFront/false_front_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH03M04EvidenceChain/evidence_chain_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH03M05NetworkBreak/network_break_voice_manifest.json",
+    "records": 12,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH04M01AirCorridor/air_corridor_voice_manifest.json",
+    "records": 12,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/CH04M02SteelPush/steel_push_voice_manifest.json",
+    "records": 14,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/FirstLaunch/first_launch_persian_voice_manifest.json",
+    "records": 17,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/FirstLaunch/first_launch_temp_voice_manifest.json",
+    "records": 17,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/M01FirstContact/m01_comic_voice_manifest.json",
+    "records": 18,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/M02EstablishBase/m02_narrative_voice_manifest.json",
+    "records": 18,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/M03RadarWarning/m03_voice_manifest.json",
+    "records": 46,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/M04Airlift/m04_voice_manifest.json",
+    "records": 26,
+    "errors": []
+  },
+  {
+    "manifest": "Assets/Game/Audio/Narrative/M05BreachAssault/m05_voice_manifest.json",
+    "records": 30,
+    "errors": []
+  }
+]

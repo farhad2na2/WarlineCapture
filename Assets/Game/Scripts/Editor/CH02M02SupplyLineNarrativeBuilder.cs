@@ -19,6 +19,57 @@ namespace Game.Editor
     public static class CH02M02SupplyLineNarrativeBuilder
     {
         public const string Path = "Assets/Game/Configs/Narrative/Chapter02/CH02M02_SupplyLine_Narrative.asset";
+        public const string VoiceRoot = "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice";
+
+        [MenuItem("Game/Campaign/Supply Line/Install Comic Voices")]
+        public static void InstallComicVoices()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copies = CH02M02SupplyLineCopy.Brief.Concat(CH02M02SupplyLineCopy.Comms)
+                .Concat(CH02M02SupplyLineCopy.Debrief).ToArray();
+            foreach (var copy in copies) foreach (bool persian in new[] {false, true})
+            {
+                string path = VoicePath(copy.Id, persian);
+                var importer = AssetImporter.GetAtPath(path) as AudioImporter
+                    ?? throw new InvalidOperationException("Missing final Supply Line voice: " + path);
+                var settings = importer.defaultSampleSettings;
+                settings.loadType = AudioClipLoadType.CompressedInMemory;
+                settings.compressionFormat = AudioCompressionFormat.Vorbis;
+                settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
+                settings.quality = .7f; settings.preloadAudioData = false;
+                importer.defaultSampleSettings = settings;
+                importer.forceToMono = true; importer.loadInBackground = true; importer.ambisonic = false;
+                importer.userData = "status=ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE; provider=ElevenLabs; model=eleven_v3; locale="
+                    + (persian ? "fa-IR" : "en-US") + "; manifest=supply_line_voice_manifest.json; runtimeNetworkTts=false";
+                importer.SaveAndReimport();
+                var clip = Voice(copy.Id, persian);
+                if (clip == null || clip.length < .25f || clip.channels != 1)
+                    throw new InvalidOperationException("Invalid Supply Line voice: " + path);
+            }
+            int count = 0;
+            foreach (var sequence in AssetDatabase.LoadAllAssetsAtPath(Path).OfType<NarrativeSequenceConfig>())
+            {
+                var data = new SerializedObject(sequence); var states = data.FindProperty("states");
+                for (int i = 0; i < states.arraySize; i++)
+                {
+                    var state = states.GetArrayElementAtIndex(i); var lines = state.FindPropertyRelative("lines");
+                    float duration = 0;
+                    for (int j = 0; j < lines.arraySize; j++)
+                    {
+                        var line = lines.GetArrayElementAtIndex(j);
+                        var copy = copies.Single(c => c.Id == line.FindPropertyRelative("lineId").stringValue);
+                        line.FindPropertyRelative("voiceClip").objectReferenceValue = Voice(copy.Id, false);
+                        line.FindPropertyRelative("deadlineSeconds").floatValue = Duration(copy);
+                        duration = Mathf.Max(duration, Duration(copy)); count++;
+                    }
+                    if (lines.arraySize > 0) state.FindPropertyRelative("durationSeconds").floatValue = duration;
+                }
+                data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(sequence);
+            }
+            if (count != 7) throw new InvalidOperationException("Expected seven Supply Line narrative bindings, got " + count);
+            AddPersian(); AssetDatabase.SaveAssets();
+            Debug.Log("[SupplyLineComicVoiceInstall] result=Passed clips=14 lines=7 locales=2 preload=0 runtimeNetworkTts=0");
+        }
         [MenuItem("Game/Campaign/Supply Line/Build Captioned Narrative")]
         public static void BuildAndInstall()=>Build(false);
         public static void BuildCaptionedArtAndInstall()=>Build(false);
@@ -85,7 +136,7 @@ namespace Game.Editor
                 SerializedProperty line = authored.GetArrayElementAtIndex(0); SupplyLineNarrativeLine copy = lines[i];
                 S(line,"lineId",copy.Id); S(line,"textKey",copy.Key); S(line,"englishFallback",copy.English);
                 line.FindPropertyRelative("speaker").intValue = (int)copy.Speaker;
-                line.FindPropertyRelative("voiceClip").objectReferenceValue = null;
+                line.FindPropertyRelative("voiceClip").objectReferenceValue = Voice(copy.Id, false);
                 line.FindPropertyRelative("femaleVoiceClip").objectReferenceValue = null;
                 line.FindPropertyRelative("neutralVoiceClip").objectReferenceValue = null;
                 line.FindPropertyRelative("startSeconds").floatValue = 0;
@@ -141,13 +192,17 @@ namespace Game.Editor
                 S(entry,"key",line.Key); S(entry,"value",line.Persian);
                 var voice=voices.GetArrayElementAtIndex(voices.arraySize++);
                 S(voice,"lineId",line.Id);
-                voice.FindPropertyRelative("voiceClip").objectReferenceValue=null;
+                voice.FindPropertyRelative("voiceClip").objectReferenceValue=Voice(line.Id,true);
                 voice.FindPropertyRelative("femaleVoiceClip").objectReferenceValue=null;
                 voice.FindPropertyRelative("neutralVoiceClip").objectReferenceValue=null;
             }
             data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(locale);
         }
-        private static float Duration(in SupplyLineNarrativeLine line)=>Mathf.Max(8,Mathf.Max(line.English.Length,line.Persian.Length)/14f);
+        private static string VoicePath(string id,bool persian)=>VoiceRoot+"/"+(persian?"fa":"en")+"/"+id+".wav";
+        private static AudioClip Voice(string id,bool persian)=>AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
+        private static float Duration(in SupplyLineNarrativeLine line)=>Mathf.Max(8,
+            Mathf.Max(Voice(line.Id,false)?.length??0,Voice(line.Id,true)?.length??0)+.5f,
+            Mathf.Max(line.English.Length,line.Persian.Length)/14f);
         private static void S(SerializedProperty property,string field,string value) => property.FindPropertyRelative(field).stringValue=value;
     }
 }

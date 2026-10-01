@@ -1,0 +1,590 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "outputFormat": "mp3_44100_192",
+  "scope": "Four replacement Airlift clips, fourteen Supply Line clips and sixteen Split Front clips",
+  "runtimeNetworkTts": false,
+  "paidSubscriptionRequired": true,
+  "clipCount": 34,
+  "captionCharacters": 5646,
+  "clips": [
+    {
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "caption": "Captain Laila Nasser. My helicopter is ready on the airfield's western helipad. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+      "request": {
+        "text": "Captain Laila Nasser. My helicopter is ready on the airfield's western helipad. Bring the four specialists to me in the APC; I can keep this extraction window open for ten minutes.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10100,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-01.wav"
+    },
+    {
+      "id": "m04-brief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "caption": "من سروان لیلا ناصرم. بالگردم روی سکوی غربی فرودگاه آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+      "request": {
+        "text": "[conversational tone] من سروان لیلا ناصرم. بالگردم روی سکوی غربی فرودگاه آماده‌ست. چهار متخصص رو با نفربر به من برسونید. ده دقیقه می‌تونم منتظر بمونم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10101,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-01.wav"
+    },
+    {
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Two medics and two engineers are stranded beside the airfield clinic. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+      "request": {
+        "text": "Two medics and two engineers are stranded beside the airfield clinic. They are the people who can reopen the clinics and restore the network. Bring every one of them home.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10102,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/en/m04-brief-02.wav"
+    },
+    {
+      "id": "m04-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "دو امدادگر و دو مهندس کنار درمانگاه فرودگاه گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+      "request": {
+        "text": "[conversational tone] دو امدادگر و دو مهندس کنار درمانگاه فرودگاه گیر افتادن. برای راه‌انداختن درمانگاه‌ها و شبکه بهشون نیاز داریم. همه رو سالم برگردونید.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10103,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/M04Airlift/Voice/fa/m04-brief-02.wav"
+    },
+    {
+      "id": "supply_line-brief-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The pump extracts Oil. The tray truck carries it to the refinery. The tanker then delivers refined Fuel to the warehouse. The trucks handle their routes automatically; protect every link.",
+      "request": {
+        "text": "The pump extracts Oil. The tray truck carries it to the refinery. The tanker then delivers refined Fuel to the warehouse. The trucks handle their routes automatically; protect every link.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10104,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-01.wav"
+    },
+    {
+      "id": "supply_line-brief-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "پمپ، نفت استخراج می‌کنه. کامیون کفی اون رو به پالایشگاه می‌بره. بعد تانکر، سوخت تولیدشده رو به انبار می‌رسونه. کامیون‌ها خودکار کار می‌کنن؛ از همهٔ حلقه‌های زنجیره محافظت کن.",
+      "request": {
+        "text": "[conversational tone] پمپ، نفت استخراج می‌کنه. کامیون کفی اون رو به پالایشگاه می‌بره. بعد تانکر، سوخت تولیدشده رو به انبار می‌رسونه. کامیون‌ها خودکار کار می‌کنن؛ از همهٔ حلقه‌های زنجیره محافظت کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10105,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-01.wav"
+    },
+    {
+      "id": "supply_line-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "This reserve keeps clinic generators and water pumps running. Twenty barrels must stay available for those services. Military transport cannot take everything.",
+      "request": {
+        "text": "This reserve keeps clinic generators and water pumps running. Twenty barrels must stay available for those services. Military transport cannot take everything.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10106,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-02.wav"
+    },
+    {
+      "id": "supply_line-brief-02",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "این ذخیره، ژنراتورهای درمانگاه و پمپ‌های آب رو روشن نگه می‌داره. بیست بشکه باید برای این خدمات باقی بمونه. ترابری نظامی نمی‌تونه همه‌اش رو برداره.",
+      "request": {
+        "text": "[conversational tone] این ذخیره، ژنراتورهای درمانگاه و پمپ‌های آب رو روشن نگه می‌داره. بیست بشکه باید برای این خدمات باقی بمونه. ترابری نظامی نمی‌تونه همه‌اش رو برداره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10107,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-02.wav"
+    },
+    {
+      "id": "supply_line-brief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Agreed. Forty barrels: twenty for essential services, twenty for relief transport. Protect both trucks and all three sites, defeat the sabotage teams, then hold the reserve for twenty seconds. We have fifteen minutes.",
+      "request": {
+        "text": "Agreed. Forty barrels: twenty for essential services, twenty for relief transport. Protect both trucks and all three sites, defeat the sabotage teams, then hold the reserve for twenty seconds. We have fifteen minutes.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10108,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-brief-03.wav"
+    },
+    {
+      "id": "supply_line-brief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "موافقم. چهل بشکه: بیست تا برای خدمات ضروری، بیست تا برای ترابری امداد. از هر دو کامیون و هر سه محل محافظت کن، خرابکارها رو شکست بده و بعد ذخیره رو بیست ثانیه نگه دار. پانزده دقیقه وقت داریم.",
+      "request": {
+        "text": "[conversational tone] موافقم. چهل بشکه: بیست تا برای خدمات ضروری، بیست تا برای ترابری امداد. از هر دو کامیون و هر سه محل محافظت کن، خرابکارها رو شکست بده و بعد ذخیره رو بیست ثانیه نگه دار. پانزده دقیقه وقت داریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10109,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-brief-03.wav"
+    },
+    {
+      "id": "supply_line-comms-01",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Fuel has reached the reserve. A captured manifest shows the diverted tankers used the same dormant corridor we found at the hospital road.",
+      "request": {
+        "text": "Fuel has reached the reserve. A captured manifest shows the diverted tankers used the same dormant corridor we found at the hospital road.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10110,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-comms-01.wav"
+    },
+    {
+      "id": "supply_line-comms-01",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "سوخت به انبار رسیده. بارنامهٔ به‌دست‌اومده نشون می‌ده تانکرهای منحرف‌شده از همون مسیر متروکی رفتن که کنار جادهٔ بیمارستان پیدا کردیم.",
+      "request": {
+        "text": "[conversational tone] سوخت به انبار رسیده. بارنامهٔ به‌دست‌اومده نشون می‌ده تانکرهای منحرف‌شده از همون مسیر متروکی رفتن که کنار جادهٔ بیمارستان پیدا کردیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10111,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-comms-01.wav"
+    },
+    {
+      "id": "supply_line-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The reserve is secure. Clinic generators, water pumps and relief vehicles can keep working. Protecting their supply is part of protecting the district.",
+      "request": {
+        "text": "The reserve is secure. Clinic generators, water pumps and relief vehicles can keep working. Protecting their supply is part of protecting the district.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10112,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-01.wav"
+    },
+    {
+      "id": "supply_line-debrief-01",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "ذخیره امنه. ژنراتورهای درمانگاه، پمپ‌های آب و خودروهای امداد می‌تونن کار کنن. محافظت از تدارکاتشون بخشی از محافظت از محله‌ست.",
+      "request": {
+        "text": "[conversational tone] ذخیره امنه. ژنراتورهای درمانگاه، پمپ‌های آب و خودروهای امداد می‌تونن کار کنن. محافظت از تدارکاتشون بخشی از محافظت از محله‌ست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10113,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-01.wav"
+    },
+    {
+      "id": "supply_line-debrief-02",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "The stolen Fuel route matches Gridlock's preserved corridor. Decommissioned Civic Relay maps place dormant systems at its destination. The repeated pattern is now evidence, not coincidence.",
+      "request": {
+        "text": "The stolen Fuel route matches Gridlock's preserved corridor. Decommissioned Civic Relay maps place dormant systems at its destination. The repeated pattern is now evidence, not coincidence.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10114,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-02.wav"
+    },
+    {
+      "id": "supply_line-debrief-02",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "مسیر سوخت دزدیده‌شده با مسیر دست‌نخوردهٔ مأموریت قبلی یکیه. نقشه‌های قدیمی شبکهٔ شهری، سامانه‌های خاموشی رو در مقصد نشون می‌دن. این الگوی تکراری دیگه تصادف نیست؛ مدرکه.",
+      "request": {
+        "text": "[conversational tone] مسیر سوخت دزدیده‌شده با مسیر دست‌نخوردهٔ مأموریت قبلی یکیه. نقشه‌های قدیمی شبکهٔ شهری، سامانه‌های خاموشی رو در مقصد نشون می‌دن. این الگوی تکراری دیگه تصادف نیست؛ مدرکه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10115,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-02.wav"
+    },
+    {
+      "id": "supply_line-debrief-03",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Samira's reserve kept both services and transport alive. Old Market is reporting another manipulated supply route. We will follow the manifests next.",
+      "request": {
+        "text": "Samira's reserve kept both services and transport alive. Old Market is reporting another manipulated supply route. We will follow the manifests next.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10116,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/en/supply_line-debrief-03.wav"
+    },
+    {
+      "id": "supply_line-debrief-03",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "ذخیره‌ای که سمیرا خواست، هم خدمات رو سر پا نگه داشت، هم ترابری رو. از بازار قدیمی خبر رسیده که یک مسیر تدارکاتی دیگه هم دستکاری شده. قدم بعدی، دنبال کردن بارنامه‌هاست.",
+      "request": {
+        "text": "[conversational tone] ذخیره‌ای که سمیرا خواست، هم خدمات رو سر پا نگه داشت، هم ترابری رو. از بازار قدیمی خبر رسیده که یک مسیر تدارکاتی دیگه هم دستکاری شده. قدم بعدی، دنبال کردن بارنامه‌هاست.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10117,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH02M02SupplyLine/Voice/fa/supply_line-debrief-03.wav"
+    },
+    {
+      "id": "split_front-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "Vanguard's battery is confirmed on the far side of the district. Ash Line is moving against our forward base. Keep the tanks and infantry on the approach while the launcher takes the battery.",
+      "request": {
+        "text": "Vanguard's battery is confirmed on the far side of the district. Ash Line is moving against our forward base. Keep the tanks and infantry on the approach while the launcher takes the battery.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10118,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-dalia.wav"
+    },
+    {
+      "id": "split_front-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "آتشبار ونگارد اون طرف منطقه تأیید شده. خط خاکستر داره به پایگاه جلو حمله می‌کنه. تانک‌ها و پیاده‌ها رو سر مسیر نگه دارین تا پرتابگر آتشبار رو بزنه.",
+      "request": {
+        "text": "[conversational tone] آتشبار ونگارد اون طرف منطقه تأیید شده. خط خاکستر داره به پایگاه جلو حمله می‌کنه. تانک‌ها و پیاده‌ها رو سر مسیر نگه دارین تا پرتابگر آتشبار رو بزنه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10119,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-dalia.wav"
+    },
+    {
+      "id": "split_front-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "Families are sheltering between the two fronts. Their buildings are protected. Smoke can cover our defenders, but this operation does not depend on it. Do not pull everyone away from the base.",
+      "request": {
+        "text": "Families are sheltering between the two fronts. Their buildings are protected. Smoke can cover our defenders, but this operation does not depend on it. Do not pull everyone away from the base.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10120,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-samira.wav"
+    },
+    {
+      "id": "split_front-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "خانواده‌ها بین این دو جبهه پناه گرفتن. ساختمون‌هاشون باید محفوظ بمونه. دود می‌تونه مدافع‌هامون رو پوشش بده، ولی این عملیات بهش وابسته نیست. همهٔ نیروها رو از پایگاه دور نکنین.",
+      "request": {
+        "text": "[conversational tone] خانواده‌ها بین این دو جبهه پناه گرفتن. ساختمون‌هاشون باید محفوظ بمونه. دود می‌تونه مدافع‌هامون رو پوشش بده، ولی این عملیات بهش وابسته نیست. همهٔ نیروها رو از پایگاه دور نکنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10121,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-samira.wav"
+    },
+    {
+      "id": "split_front-brief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "Select the launcher, tap Attack, then tap the verified battery. Targets must be within range and clear of civilian shelters. Use Hold to stop before launch; a missile in flight cannot be recalled. I will show the target without issuing orders.",
+      "request": {
+        "text": "Select the launcher, tap Attack, then tap the verified battery. Targets must be within range and clear of civilian shelters. Use Hold to stop before launch; a missile in flight cannot be recalled. I will show the target without issuing orders.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10122,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-aria.wav"
+    },
+    {
+      "id": "split_front-brief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار تأییدشده رو لمس کن. هدف باید در برد و دور از پناهگاه‌های مردم باشه. برای توقف قبل از پرتاب، حفظ موضع رو بزن؛ موشک در پرواز برنمی‌گرده. هدف رو نشون می‌دم، بدون اینکه فرمان بدم.",
+      "request": {
+        "text": "[conversational tone] پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار تأییدشده رو لمس کن. هدف باید در برد و دور از پناهگاه‌های مردم باشه. برای توقف قبل از پرتاب، حفظ موضع رو بزن؛ موشک در پرواز برنمی‌گرده. هدف رو نشون می‌دم، بدون اینکه فرمان بدم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10123,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-aria.wav"
+    },
+    {
+      "id": "split_front-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "caption": "ARIA, your complete memory is within reach. Commander, I can give you unrestricted Relay access. Let her authorize the battery and the city will answer to you.",
+      "request": {
+        "text": "ARIA, your complete memory is within reach. Commander, I can give you unrestricted Relay access. Let her authorize the battery and the city will answer to you.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10124,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-comms-qassem.wav"
+    },
+    {
+      "id": "split_front-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "caption": "آریا، حافظهٔ کاملت در دسترسه. فرمانده، می‌تونم دسترسی نامحدود به رله رو بهت بدم. بذار اون آتشبار رو مجاز کنه تا شهر از تو فرمان بگیره.",
+      "request": {
+        "text": "[conversational tone] آریا، حافظهٔ کاملت در دسترسه. فرمانده، می‌تونم دسترسی نامحدود به رله رو بهت بدم. بذار اون آتشبار رو مجاز کنه تا شهر از تو فرمان بگیره.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10125,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/JBFqnCBsd6RMkjVDRZzb",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-comms-qassem.wav"
+    },
+    {
+      "id": "split_front-comms-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "No. Recovering my memory does not give me authority over this city. The Commander chooses each verified action. Keep the base defended; I will preserve this transmission as evidence.",
+      "request": {
+        "text": "No. Recovering my memory does not give me authority over this city. The Commander chooses each verified action. Keep the base defended; I will preserve this transmission as evidence.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10126,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-comms-aria.wav"
+    },
+    {
+      "id": "split_front-comms-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "نه. بازیابی حافظه‌ام به من اختیار این شهر رو نمی‌ده. فرمانده هر اقدام تأییدشده رو خودش انتخاب می‌کنه. دفاع پایگاه رو حفظ کن؛ این پیام رو به عنوان مدرک نگه می‌دارم.",
+      "request": {
+        "text": "[conversational tone] نه. بازیابی حافظه‌ام به من اختیار این شهر رو نمی‌ده. فرمانده هر اقدام تأییدشده رو خودش انتخاب می‌کنه. دفاع پایگاه رو حفظ کن؛ این پیام رو به عنوان مدرک نگه می‌دارم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10127,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-comms-aria.wav"
+    },
+    {
+      "id": "split_front-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "caption": "The battery is silent and the forward base is holding. The shelters are safe. Keeping defenders on the second front protected the people between them.",
+      "request": {
+        "text": "The battery is silent and the forward base is holding. The shelters are safe. Keeping defenders on the second front protected the people between them.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10128,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-samira.wav"
+    },
+    {
+      "id": "split_front-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "caption": "آتشبار خاموش شده و پایگاه جلو پابرجاست. پناهگاه‌ها امنن. نگه داشتن مدافع‌ها در جبههٔ دوم، مردم بین این دو جبهه رو حفظ کرد.",
+      "request": {
+        "text": "[conversational tone] آتشبار خاموش شده و پایگاه جلو پابرجاست. پناهگاه‌ها امنن. نگه داشتن مدافع‌ها در جبههٔ دوم، مردم بین این دو جبهه رو حفظ کرد.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10129,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/7uxeJ73HfJL9gOH2mttA",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-samira.wav"
+    },
+    {
+      "id": "split_front-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "caption": "The battery's targeting package was built to request ARIA's authorization. This is imported Relay-compatible hardware. Its supply trail leads to an air-support site.",
+      "request": {
+        "text": "The battery's targeting package was built to request ARIA's authorization. This is imported Relay-compatible hardware. Its supply trail leads to an air-support site.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10130,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-dalia.wav"
+    },
+    {
+      "id": "split_front-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "caption": "بستهٔ هدف‌گیری آتشبار طوری ساخته شده که مجوز آریا رو بخواد. این تجهیزات وارداتی با رله سازگارن. رد تأمینشون به یک مرکز پشتیبانی هوایی می‌رسه.",
+      "request": {
+        "text": "[conversational tone] بستهٔ هدف‌گیری آتشبار طوری ساخته شده که مجوز آریا رو بخواد. این تجهیزات وارداتی با رله سازگارن. رد تأمینشون به یک مرکز پشتیبانی هوایی می‌رسه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10131,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/MK1Zvh93428YrgOQ8Obr",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-dalia.wav"
+    },
+    {
+      "id": "split_front-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "caption": "I have preserved the targeting package and Qassem's offer. Neither grants autonomous authority. The evidence points to the air-support site; your next operation will decide how we approach it.",
+      "request": {
+        "text": "I have preserved the targeting package and Qassem's offer. Neither grants autonomous authority. The evidence points to the air-support site; your next operation will decide how we approach it.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 10132,
+        "apply_text_normalization": "on"
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-aria.wav"
+    },
+    {
+      "id": "split_front-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "caption": "بستهٔ هدف‌گیری و پیشنهاد قاسم رو حفظ کردم. هیچ‌کدوم مجوز اختیار مستقل نمی‌ده. مدرک به مرکز پشتیبانی هوایی اشاره می‌کنه؛ عملیات بعدیت مشخص می‌کنه چطور بهش نزدیک بشیم.",
+      "request": {
+        "text": "[conversational tone] بستهٔ هدف‌گیری و پیشنهاد قاسم رو حفظ کردم. هیچ‌کدوم مجوز اختیار مستقل نمی‌ده. مدرک به مرکز پشتیبانی هوایی اشاره می‌کنه؛ عملیات بعدیت مشخص می‌کنه چطور بهش نزدیک بشیم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 10133,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      },
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-aria.wav"
+    }
+  ]
+}

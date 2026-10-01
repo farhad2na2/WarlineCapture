@@ -17,7 +17,9 @@ namespace Game.Editor
         public static string VoicePath(string id,bool persian)=>$"{VoiceRoot}/{(persian ? "fa" : "en")}/{id}.wav";
         // The airfield briefing changes these directions. Keep captions accurate
         // until replacement recordings are supplied, including on a full rebuild.
-        public static AudioClip Voice(string id,bool persian)=>id is "m04-brief-01" or "m04-brief-02" ? null : AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
+        public static AudioClip Voice(string id,bool persian)=>id is "m04-brief-01" or "m04-brief-02"
+            ? M04AirliftConfigBuilder.CurrentComicVoice(Lines.Single(line=>line.Id==id),persian)
+            : AssetDatabase.LoadAssetAtPath<AudioClip>(VoicePath(id,persian));
         public static Sprite Panel(string id,bool wide)=>AssetDatabase.LoadAllAssetsAtPath($"{ArtRoot}/M04-{id}.png")
             .OfType<Sprite>().Single(s=>s.name==$"M04-{id}-{(wide ? "20x9" : "16x9")}");
         public static Sprite LailaPortrait()=>AssetDatabase.LoadAllAssetsAtPath(ArtRoot+"/M04-B01.png")

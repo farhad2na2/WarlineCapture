@@ -116,6 +116,8 @@ namespace Game.Editor
         private static void RefreshAirfieldCopy()
         {
             M04AirliftPresentationBuilder.ImportCopy();
+            const string manifestPath="Assets/Game/Audio/Narrative/M04Airlift/m04_voice_manifest.json";
+            var manifest=File.Exists(manifestPath)?JsonUtility.FromJson<ComicVoiceManifest>(File.ReadAllText(manifestPath)):null;
             foreach(var asset in AssetDatabase.LoadAllAssetsAtPath(M04AirliftNarrativeBuilder.Path))
             {
                 var data=new SerializedObject(asset);var states=data.FindProperty("states");if(states==null)continue;
@@ -126,7 +128,19 @@ namespace Game.Editor
                     {
                         var line=lines.GetArrayElementAtIndex(j);string id=line.FindPropertyRelative("lineId").stringValue;
                         foreach(var copy in M04AirliftCopyCatalog.Brief)if(copy.Id==id)
-                        {S(line,"englishFallback",copy.English);if(id is "m04-brief-01" or "m04-brief-02")line.FindPropertyRelative("voiceClip").objectReferenceValue=null;}
+                        {
+                            S(line,"englishFallback",copy.English);
+                            if(id is "m04-brief-01" or "m04-brief-02")
+                            {
+                                var english=CurrentComicVoice(manifest,copy,false);var persian=CurrentComicVoice(manifest,copy,true);
+                                line.FindPropertyRelative("voiceClip").objectReferenceValue=english;
+                                float duration=Mathf.Max(line.FindPropertyRelative("deadlineSeconds").floatValue,
+                                    Mathf.Max(english?.length??0,persian?.length??0)+1);
+                                line.FindPropertyRelative("deadlineSeconds").floatValue=duration;
+                                var state=states.GetArrayElementAtIndex(i);
+                                state.FindPropertyRelative("durationSeconds").floatValue=Mathf.Max(state.FindPropertyRelative("durationSeconds").floatValue,duration);
+                            }
+                        }
                     }
                 }
                 data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(asset);
@@ -135,9 +149,35 @@ namespace Game.Editor
             var text=localized.FindProperty("text");for(int i=0;i<text.arraySize;i++)
             {var entry=text.GetArrayElementAtIndex(i);foreach(var copy in M04AirliftCopyCatalog.Brief)if(entry.FindPropertyRelative("key").stringValue==copy.Key)S(entry,"value",copy.Persian);}
             var voices=localized.FindProperty("voices");for(int i=0;i<voices.arraySize;i++)
-            {var entry=voices.GetArrayElementAtIndex(i);if(entry.FindPropertyRelative("lineId").stringValue is "m04-brief-01" or "m04-brief-02")entry.FindPropertyRelative("voiceClip").objectReferenceValue=null;}
+            {
+                var entry=voices.GetArrayElementAtIndex(i);string id=entry.FindPropertyRelative("lineId").stringValue;
+                if(id is "m04-brief-01" or "m04-brief-02")foreach(var copy in M04AirliftCopyCatalog.Brief)
+                    if(copy.Id==id)entry.FindPropertyRelative("voiceClip").objectReferenceValue=CurrentComicVoice(manifest,copy,true);
+            }
             localized.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(locale);AssetDatabase.SaveAssets();
-            Debug.Log("[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached voiceRefresh=Pending");
+            Debug.Log("[AirliftAirfieldCopy] result=Passed locales=2 changedBriefingLines=2 staleGeographicVoice=Detached matchingVoice=Preserved");
+        }
+        [Serializable] private sealed class ComicVoiceManifest {public ComicVoiceRecord[] clips;}
+        [Serializable] private sealed class ComicVoiceRecord {public string id,locale,text,assetPath,sha256;}
+        public static AudioClip CurrentComicVoice(in M04NarrativeLine copy,bool persian)
+        {
+            const string path="Assets/Game/Audio/Narrative/M04Airlift/m04_voice_manifest.json";
+            var manifest=File.Exists(path)?JsonUtility.FromJson<ComicVoiceManifest>(File.ReadAllText(path)):null;
+            return CurrentComicVoice(manifest,copy,persian);
+        }
+        private static AudioClip CurrentComicVoice(ComicVoiceManifest manifest,in M04NarrativeLine copy,bool persian)
+        {
+            string path=M04AirliftMediaImporter.VoicePath(copy.Id,persian);
+            string locale=persian?"fa-IR":"en-US",text=persian?copy.Persian:copy.English;
+            if(manifest?.clips==null||!File.Exists(path))return null;
+            foreach(var record in manifest.clips)
+            {
+                if(record.id!=copy.Id||record.locale!=locale||record.text!=text||record.assetPath!=path)continue;
+                using var hash=SHA256.Create();
+                string digest=BitConverter.ToString(hash.ComputeHash(File.ReadAllBytes(path))).Replace("-",string.Empty).ToLowerInvariant();
+                if(digest==record.sha256)return AssetDatabase.LoadAssetAtPath<AudioClip>(path);
+            }
+            return null;
         }
         private static void BuildScenario()
         {

@@ -1,0 +1,360 @@
+{
+  "status": "Passed",
+  "clips": 34,
+  "totalBytes": 36976092,
+  "checks": [
+    "current canonical text",
+    "approved request payload",
+    "established character voice",
+    "caption and audio SHA-256",
+    "Persian delivery profile",
+    "PCM mono 44.1 kHz 16-bit",
+    "non-silent signal",
+    "sample clipping",
+    "reasonable duration"
+  ],
+  "audibleListeningAcceptance": "Pending",
+  "unityBindingsAndPlayback": "Pending",
+  "records": [
+    {
+      "id": "m04-brief-01",
+      "locale": "en-US",
+      "durationSeconds": 11.6,
+      "peak": 0.783783,
+      "rms": 0.115546,
+      "bytes": 1023198,
+      "sha256": "ebe27369a4affe48d6d8b05d577816f19855a17c503f9054624403ea73bcb9b5",
+      "status": "Passed"
+    },
+    {
+      "id": "m04-brief-01",
+      "locale": "fa-IR",
+      "durationSeconds": 12.48,
+      "peak": 0.65152,
+      "rms": 0.10898,
+      "bytes": 1100814,
+      "sha256": "58061cbd8231cb74d5122228ac681beb4202bf7b7e0b0251fd86b28d9e361a80",
+      "status": "Passed"
+    },
+    {
+      "id": "m04-brief-02",
+      "locale": "en-US",
+      "durationSeconds": 9.44,
+      "peak": 0.663544,
+      "rms": 0.120078,
+      "bytes": 832686,
+      "sha256": "e59a78c2346482c6a7427efb89cbc3e609ef2e4ab4858b39e890c57294329ecb",
+      "status": "Passed"
+    },
+    {
+      "id": "m04-brief-02",
+      "locale": "fa-IR",
+      "durationSeconds": 10.56,
+      "peak": 0.583801,
+      "rms": 0.113505,
+      "bytes": 931470,
+      "sha256": "83bb499f541811280cff57c35929bcb584b4c935178b038fbf3bb48f3f481ff9",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-01",
+      "locale": "en-US",
+      "durationSeconds": 14.32,
+      "peak": 0.74649,
+      "rms": 0.117471,
+      "bytes": 1263102,
+      "sha256": "87fccfbbf7dad40fd6cc717094ff53239fcf2860c0b4f727b301d8d95efb154a",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-01",
+      "locale": "fa-IR",
+      "durationSeconds": 14.24,
+      "peak": 0.682312,
+      "rms": 0.122603,
+      "bytes": 1256046,
+      "sha256": "1b55706609504e591e23110e11ab9dcd5f6f6c6934a550c225c06622338cedfa",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-02",
+      "locale": "en-US",
+      "durationSeconds": 9.6,
+      "peak": 0.644745,
+      "rms": 0.119695,
+      "bytes": 846798,
+      "sha256": "2ecbba17f275a0fb109a9c3dffbdfbc9407cef4a4ea483619e635a7e6d6e0c36",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-02",
+      "locale": "fa-IR",
+      "durationSeconds": 11.76,
+      "peak": 0.606873,
+      "rms": 0.11294,
+      "bytes": 1037310,
+      "sha256": "e5bd35647faebe62c30707ff136c9e4991996373da47bc46578c7d772af1d28d",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-03",
+      "locale": "en-US",
+      "durationSeconds": 15.92,
+      "peak": 0.794373,
+      "rms": 0.116504,
+      "bytes": 1404222,
+      "sha256": "70acebb4ded02be7fac268eb0c3ed285b8cbe0003e11fe3b46f0b3fb369b0cb8",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-brief-03",
+      "locale": "fa-IR",
+      "durationSeconds": 16.96,
+      "peak": 0.794403,
+      "rms": 0.120823,
+      "bytes": 1495950,
+      "sha256": "671f0fc23adf2c6eb51a322dacc53625e73354d313459b7ea4a2304ce4845672",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-comms-01",
+      "locale": "en-US",
+      "durationSeconds": 9.12,
+      "peak": 0.712341,
+      "rms": 0.127416,
+      "bytes": 804462,
+      "sha256": "4d81503ce056ec008eb91ffabb313b19b90edc7cfb1210a68c5e964080da4302",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-comms-01",
+      "locale": "fa-IR",
+      "durationSeconds": 10.24,
+      "peak": 0.650543,
+      "rms": 0.121448,
+      "bytes": 903246,
+      "sha256": "7f77d53b2fc241b969b38ebe1c21c7d61a4397718bd3efaca44ea476ef1a01ad",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-01",
+      "locale": "en-US",
+      "durationSeconds": 9.2,
+      "peak": 0.683289,
+      "rms": 0.107535,
+      "bytes": 811518,
+      "sha256": "21de8652d436514b5b6df74f87fcc6fd77c4eb2c00e4c0e10cd57b44629777d2",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-01",
+      "locale": "fa-IR",
+      "durationSeconds": 11.36,
+      "peak": 0.59314,
+      "rms": 0.108782,
+      "bytes": 1002030,
+      "sha256": "4d048e1bef70ea66d6c8ed6c07f34537e2c2f8503dfb66fbec4b8dec22bcc8d9",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-02",
+      "locale": "en-US",
+      "durationSeconds": 12.56,
+      "peak": 0.731201,
+      "rms": 0.122789,
+      "bytes": 1107870,
+      "sha256": "592426b37ffbf57f88dfd87cd6be817c966cccc1504111fbb3b2439254d4f580",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-02",
+      "locale": "fa-IR",
+      "durationSeconds": 15.68,
+      "peak": 0.744781,
+      "rms": 0.113543,
+      "bytes": 1383054,
+      "sha256": "5a4ff67bee11bac3dc77ad928db55a87165d7036168dbfa78dccaf65649a179d",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-03",
+      "locale": "en-US",
+      "durationSeconds": 11.2,
+      "peak": 0.794342,
+      "rms": 0.122307,
+      "bytes": 987918,
+      "sha256": "6c8607374b1da5714e17d3432d8b310f597952f84384da19e2e9f22f7cffc6d2",
+      "status": "Passed"
+    },
+    {
+      "id": "supply_line-debrief-03",
+      "locale": "fa-IR",
+      "durationSeconds": 14.32,
+      "peak": 0.794373,
+      "rms": 0.116821,
+      "bytes": 1263102,
+      "sha256": "e0a62970ad0f22fddbe33b2ebf963f6d2ec621bf2c211279b9aebbfd4474a07d",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-dalia",
+      "locale": "en-US",
+      "durationSeconds": 11.36,
+      "peak": 0.78476,
+      "rms": 0.114263,
+      "bytes": 1002030,
+      "sha256": "5b935f09aa30e1c4c18dc4548394d0bc6136d3aab95f8af4877613719dd924ad",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-dalia",
+      "locale": "fa-IR",
+      "durationSeconds": 11.76,
+      "peak": 0.794037,
+      "rms": 0.115166,
+      "bytes": 1037310,
+      "sha256": "0e05f976c02e87dc1949d132fa3b7077b321f4b11a56bf2742aea1c58f8a73d9",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-samira",
+      "locale": "en-US",
+      "durationSeconds": 10.8,
+      "peak": 0.716614,
+      "rms": 0.12507,
+      "bytes": 952638,
+      "sha256": "a0dd0de0d58ace2c234016a2ede1d7ced2b4a45465b9820c7b5e06b3c4a5d4a1",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-samira",
+      "locale": "fa-IR",
+      "durationSeconds": 14.48,
+      "peak": 0.714233,
+      "rms": 0.119014,
+      "bytes": 1277214,
+      "sha256": "fde79ea862aca456cfd989bee18972b84a1543fd161a0f8a7b472058f44b4047",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-aria",
+      "locale": "en-US",
+      "durationSeconds": 17.36,
+      "peak": 0.664551,
+      "rms": 0.125427,
+      "bytes": 1531230,
+      "sha256": "d73a93e9af3e4c6f7a45b3f3f747c230b44574d43fc185645b022bf940cb161a",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-brief-aria",
+      "locale": "fa-IR",
+      "durationSeconds": 17.6,
+      "peak": 0.664642,
+      "rms": 0.124016,
+      "bytes": 1552398,
+      "sha256": "1b66828055a605f9e4ac204cdb4f4ead02dbf81d810c46f583f01e40e4c0e31a",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-comms-qassem",
+      "locale": "en-US",
+      "durationSeconds": 10.64,
+      "peak": 0.794373,
+      "rms": 0.124017,
+      "bytes": 938526,
+      "sha256": "624ea966a044a4e77735ca97cea3f874fefb22ddd27b67bbeb09866d3b95044f",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-comms-qassem",
+      "locale": "fa-IR",
+      "durationSeconds": 11.76,
+      "peak": 0.795502,
+      "rms": 0.114857,
+      "bytes": 1037310,
+      "sha256": "b3076ee49ff660ac58f281025b77c5bae5ef6357cca30fbb3436bcc80553b031",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-comms-aria",
+      "locale": "en-US",
+      "durationSeconds": 11.68,
+      "peak": 0.751221,
+      "rms": 0.119656,
+      "bytes": 1030254,
+      "sha256": "cf8a63e4d6867751b74b941eb3f9e614e20bb87c4f874098e5f467840e5c14a5",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-comms-aria",
+      "locale": "fa-IR",
+      "durationSeconds": 12.24,
+      "peak": 0.68335,
+      "rms": 0.123131,
+      "bytes": 1079646,
+      "sha256": "39e557cbce3c2bd1ad90fed59fabd7dff70b36f6403d35c14ccfae1197c439a8",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-samira",
+      "locale": "en-US",
+      "durationSeconds": 7.76,
+      "peak": 0.731842,
+      "rms": 0.117719,
+      "bytes": 684510,
+      "sha256": "a9376a78a2262145adc68738cde70e50c8642c346a0c739089fae8c0cce44171",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-samira",
+      "locale": "fa-IR",
+      "durationSeconds": 10.08,
+      "peak": 0.631714,
+      "rms": 0.113053,
+      "bytes": 889134,
+      "sha256": "fb7d26cf45ea38f421ce898c4852195b8465c9da97b4cc608aca528587eba9ac",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-dalia",
+      "locale": "en-US",
+      "durationSeconds": 10.8,
+      "peak": 0.794159,
+      "rms": 0.11592,
+      "bytes": 952638,
+      "sha256": "cbbe4ae7baf277c1eededbcbd6d7e2835a8582245171faa9b7ea4f846bc7a5fa",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-dalia",
+      "locale": "fa-IR",
+      "durationSeconds": 13.2,
+      "peak": 0.768127,
+      "rms": 0.110731,
+      "bytes": 1164318,
+      "sha256": "fa708642dc1e68af2ed1de6a954d133ecd00c68d8542c849c4417d8a92fd496a",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-aria",
+      "locale": "en-US",
+      "durationSeconds": 12.16,
+      "peak": 0.698792,
+      "rms": 0.119956,
+      "bytes": 1072590,
+      "sha256": "8078a4e964ef69741deaab28c7078ab7ea519ad762c6aa4a13471c7573ec70ae",
+      "status": "Passed"
+    },
+    {
+      "id": "split_front-debrief-aria",
+      "locale": "fa-IR",
+      "durationSeconds": 14.96,
+      "peak": 0.633453,
+      "rms": 0.111539,
+      "bytes": 1319550,
+      "sha256": "6ec90b922af4e1eaedaf0995d7e78c77e3e53406c1c343afc8ea566d2bc8023d",
+      "status": "Passed"
+    }
+  ]
+}

@@ -23,6 +23,55 @@ namespace Game.Editor
         public const string VoiceRoot = "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice";
         private static readonly string[] PanelNames = {"CH04M03_SplitFront", "CH04M03_SplitFront_Comms", "CH04M03_SplitFront_Debrief"};
 
+        [MenuItem("Game/Campaign/Split Front/Install Comic Voices")]
+        public static void InstallComicVoices()
+        {
+            AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+            var copies = Lines();
+            foreach (var copy in copies) foreach (bool persian in new[] {false, true})
+            {
+                string path = VoicePath(copy.Id, persian);
+                var importer = AssetImporter.GetAtPath(path) as AudioImporter
+                    ?? throw new InvalidOperationException("Missing final Split Front voice: " + path);
+                var settings = importer.defaultSampleSettings;
+                settings.loadType = AudioClipLoadType.CompressedInMemory;
+                settings.compressionFormat = AudioCompressionFormat.Vorbis;
+                settings.sampleRateSetting = AudioSampleRateSetting.PreserveSampleRate;
+                settings.quality = .7f; settings.preloadAudioData = false;
+                importer.defaultSampleSettings = settings;
+                importer.forceToMono = true; importer.loadInBackground = true; importer.ambisonic = false;
+                importer.userData = "status=ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE; provider=ElevenLabs; model=eleven_v3; locale="
+                    + (persian ? "fa-IR" : "en-US") + "; manifest=split_front_voice_manifest.json; runtimeNetworkTts=false";
+                importer.SaveAndReimport();
+                var clip = Voice(copy.Id, persian);
+                if (clip == null || clip.length < .25f || clip.channels != 1)
+                    throw new InvalidOperationException("Invalid Split Front voice: " + path);
+            }
+            int count = 0;
+            foreach (var sequence in AssetDatabase.LoadAllAssetsAtPath(Path).OfType<NarrativeSequenceConfig>())
+            {
+                var data = new SerializedObject(sequence); var states = data.FindProperty("states");
+                for (int i = 0; i < states.arraySize; i++)
+                {
+                    var state = states.GetArrayElementAtIndex(i); var lines = state.FindPropertyRelative("lines");
+                    float duration = 0;
+                    for (int j = 0; j < lines.arraySize; j++)
+                    {
+                        var line = lines.GetArrayElementAtIndex(j);
+                        var copy = copies.Single(c => c.Id == line.FindPropertyRelative("lineId").stringValue);
+                        line.FindPropertyRelative("voiceClip").objectReferenceValue = Voice(copy.Id, false);
+                        line.FindPropertyRelative("deadlineSeconds").floatValue = Duration(copy);
+                        duration = Mathf.Max(duration, Duration(copy)); count++;
+                    }
+                    if (lines.arraySize > 0) state.FindPropertyRelative("durationSeconds").floatValue = duration;
+                }
+                data.ApplyModifiedPropertiesWithoutUndo(); EditorUtility.SetDirty(sequence);
+            }
+            if (count != 8) throw new InvalidOperationException("Expected eight Split Front narrative bindings, got " + count);
+            AddPersian(); AssetDatabase.SaveAssets();
+            Debug.Log("[SplitFrontComicVoiceInstall] result=Passed clips=16 lines=8 locales=2 preload=0 runtimeNetworkTts=0");
+        }
+
         [MenuItem("Game/Campaign/Split Front/Build Narrative")]
         public static void BuildAndInstall()
         {

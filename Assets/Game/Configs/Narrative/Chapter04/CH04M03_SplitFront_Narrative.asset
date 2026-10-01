@@ -39,7 +39,7 @@ MonoBehaviour:
         shelters are safe. Keeping defenders on the second front protected the people
         between them.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: a725ead6072c84a78ad7be23c08fcd74, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -85,16 +85,16 @@ MonoBehaviour:
         authorization. This is imported Relay-compatible hardware. Its supply trail
         leads to an air-support site.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 1f45dacfb4a2b49b7a3efb0067396479, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.785714
+      deadlineSeconds: 13.7
       essentialCaption: 1
     continueStateId: SplitFront-debrief-2
     skipStateId: SplitFront-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.785714
+    durationSeconds: 13.7
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -131,16 +131,16 @@ MonoBehaviour:
         Neither grants autonomous authority. The evidence points to the air-support
         site; your next operation will decide how we approach it.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 849c895b8396a4194a12b2742b19f71d, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.714286
+      deadlineSeconds: 15.46
       essentialCaption: 1
     continueStateId: SplitFront-debrief-complete
     skipStateId: SplitFront-debrief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.714286
+    durationSeconds: 15.46
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -227,7 +227,7 @@ MonoBehaviour:
         Ash Line is moving against our forward base. Keep the tanks and infantry
         on the approach while the launcher takes the battery.
       speaker: 1
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 5333be9ef541b4d47aaec7f668c09b5f, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
@@ -273,16 +273,16 @@ MonoBehaviour:
         are protected. Smoke can cover our defenders, but this operation does not
         depend on it. Do not pull everyone away from the base.
       speaker: 2
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e4d50a633cc5e476bbe4a9a7388065eb, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 13.714286
+      deadlineSeconds: 14.98
       essentialCaption: 1
     continueStateId: SplitFront-brief-2
     skipStateId: SplitFront-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 13.714286
+    durationSeconds: 14.98
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -320,16 +320,16 @@ MonoBehaviour:
         stop before launch; a missile in flight cannot be recalled. I will show the
         target without issuing orders.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: d6e202b228054431abdecbb1e6f9d321, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 17.357143
+      deadlineSeconds: 18.1
       essentialCaption: 1
     continueStateId: SplitFront-brief-complete
     skipStateId: SplitFront-brief-complete
     reducedMotionSupported: 1
-    durationSeconds: 17.357143
+    durationSeconds: 18.1
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -416,16 +416,16 @@ MonoBehaviour:
         give you unrestricted Relay access. Let her authorize the battery and the
         city will answer to you.
       speaker: 9
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: 467323a9b96fc4978bd69581d6fef092, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0
-      deadlineSeconds: 11.357142
+      deadlineSeconds: 12.26
       essentialCaption: 1
     continueStateId: SplitFront-comms-1
     skipStateId: SplitFront-comms-complete
     reducedMotionSupported: 1
-    durationSeconds: 11.357142
+    durationSeconds: 12.26
     motionPreset: 0
     locationTitleKey: 
     locationTitleFallback: 
@@ -462,7 +462,7 @@ MonoBehaviour:
         city. The Commander chooses each verified action. Keep the base defended;
         I will preserve this transmission as evidence.
       speaker: 3
-      voiceClip: {fileID: 0}
+      voiceClip: {fileID: 8300000, guid: e44cd792e6c2343a5b12566519ff1441, type: 3}
       femaleVoiceClip: {fileID: 0}
       neutralVoiceClip: {fileID: 0}
       startSeconds: 0

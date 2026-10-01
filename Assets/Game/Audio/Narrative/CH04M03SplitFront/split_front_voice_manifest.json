@@ -1,0 +1,277 @@
+{
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "split_front-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "Vanguard's battery is confirmed on the far side of the district. Ash Line is moving against our forward base. Keep the tanks and infantry on the approach while the launcher takes the battery.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-dalia.wav",
+      "durationSeconds": 11.36,
+      "sha256": "5b935f09aa30e1c4c18dc4548394d0bc6136d3aab95f8af4877613719dd924ad",
+      "captionSha256": "ec742151c61754d250c5e7f386afc84e1a37dae0f102f0d5fb1a8d4422fd7011"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-brief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "آتشبار ونگارد اون طرف منطقه تأیید شده. خط خاکستر داره به پایگاه جلو حمله می‌کنه. تانک‌ها و پیاده‌ها رو سر مسیر نگه دارین تا پرتابگر آتشبار رو بزنه.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-dalia.wav",
+      "durationSeconds": 11.76,
+      "sha256": "0e05f976c02e87dc1949d132fa3b7077b321f4b11a56bf2742aea1c58f8a73d9",
+      "captionSha256": "bb644e15486eccf2683e2b540468e1d2d2a591050203d2738e4b943feb91968a"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "Families are sheltering between the two fronts. Their buildings are protected. Smoke can cover our defenders, but this operation does not depend on it. Do not pull everyone away from the base.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-samira.wav",
+      "durationSeconds": 10.8,
+      "sha256": "a0dd0de0d58ace2c234016a2ede1d7ced2b4a45465b9820c7b5e06b3c4a5d4a1",
+      "captionSha256": "601be04474a5b5ea3a60a174e449a239c9988dcc6b425fe3fcae46845c34ada4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-brief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "خانواده‌ها بین این دو جبهه پناه گرفتن. ساختمون‌هاشون باید محفوظ بمونه. دود می‌تونه مدافع‌هامون رو پوشش بده، ولی این عملیات بهش وابسته نیست. همهٔ نیروها رو از پایگاه دور نکنین.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-samira.wav",
+      "durationSeconds": 14.48,
+      "sha256": "fde79ea862aca456cfd989bee18972b84a1543fd161a0f8a7b472058f44b4047",
+      "captionSha256": "fc2d0219a17ab1cb794014666a28dfb119c4b7ab1e718dcd9985ea03786e657c"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-brief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "Select the launcher, tap Attack, then tap the verified battery. Targets must be within range and clear of civilian shelters. Use Hold to stop before launch; a missile in flight cannot be recalled. I will show the target without issuing orders.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-brief-aria.wav",
+      "durationSeconds": 17.36,
+      "sha256": "d73a93e9af3e4c6f7a45b3f3f747c230b44574d43fc185645b022bf940cb161a",
+      "captionSha256": "24ecbb65b9ef787a739e93f8b657fd5a74111d437b5e3c3c2c13a482fda62234"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-brief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "پرتابگر رو انتخاب کن، حمله رو بزن، بعد آتشبار تأییدشده رو لمس کن. هدف باید در برد و دور از پناهگاه‌های مردم باشه. برای توقف قبل از پرتاب، حفظ موضع رو بزن؛ موشک در پرواز برنمی‌گرده. هدف رو نشون می‌دم، بدون اینکه فرمان بدم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-brief-aria.wav",
+      "durationSeconds": 17.6,
+      "sha256": "1b66828055a605f9e4ac204cdb4f4ead02dbf81d810c46f583f01e40e4c0e31a",
+      "captionSha256": "6e462e824b66fecdf44ae62bd754ca489c843d45b3a3015e71a123e5c10624bc"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "en-US",
+      "text": "ARIA, your complete memory is within reach. Commander, I can give you unrestricted Relay access. Let her authorize the battery and the city will answer to you.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-comms-qassem.wav",
+      "durationSeconds": 10.64,
+      "sha256": "624ea966a044a4e77735ca97cea3f874fefb22ddd27b67bbeb09866d3b95044f",
+      "captionSha256": "04f4198f6cf18542030a5a4dd13ad411cc66a32640772ab83b229c03374296d4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-comms-qassem",
+      "speaker": "QASSEM",
+      "locale": "fa-IR",
+      "text": "آریا، حافظهٔ کاملت در دسترسه. فرمانده، می‌تونم دسترسی نامحدود به رله رو بهت بدم. بذار اون آتشبار رو مجاز کنه تا شهر از تو فرمان بگیره.",
+      "voiceId": "JBFqnCBsd6RMkjVDRZzb",
+      "voiceName": "George - controlled, persuasive antagonist (Nadir Qassem)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-comms-qassem.wav",
+      "durationSeconds": 11.76,
+      "sha256": "b3076ee49ff660ac58f281025b77c5bae5ef6357cca30fbb3436bcc80553b031",
+      "captionSha256": "a2301d993fb7939a22fd9cd9bfba9d4c63809c89069390cfa5804d34f5eea243"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-comms-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "No. Recovering my memory does not give me authority over this city. The Commander chooses each verified action. Keep the base defended; I will preserve this transmission as evidence.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-comms-aria.wav",
+      "durationSeconds": 11.68,
+      "sha256": "cf8a63e4d6867751b74b941eb3f9e614e20bb87c4f874098e5f467840e5c14a5",
+      "captionSha256": "56dd2659ede09ac16f4d3176dbcb105c9a93995068dcb8b4898a4081b9203b17"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-comms-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "نه. بازیابی حافظه‌ام به من اختیار این شهر رو نمی‌ده. فرمانده هر اقدام تأییدشده رو خودش انتخاب می‌کنه. دفاع پایگاه رو حفظ کن؛ این پیام رو به عنوان مدرک نگه می‌دارم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-comms-aria.wav",
+      "durationSeconds": 12.24,
+      "sha256": "39e557cbce3c2bd1ad90fed59fabd7dff70b36f6403d35c14ccfae1197c439a8",
+      "captionSha256": "7de59cc9fd40c233722512488a418b1ed103c666eb37795b1aee5dc5d9491d30"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "en-US",
+      "text": "The battery is silent and the forward base is holding. The shelters are safe. Keeping defenders on the second front protected the people between them.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-samira.wav",
+      "durationSeconds": 7.76,
+      "sha256": "a9376a78a2262145adc68738cde70e50c8642c346a0c739089fae8c0cce44171",
+      "captionSha256": "32c01a7c19877f70b5a7dd7e882cb9e9e3dfcf535556304b99b765ea273bd8b8"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-debrief-samira",
+      "speaker": "SAMIRA",
+      "locale": "fa-IR",
+      "text": "آتشبار خاموش شده و پایگاه جلو پابرجاست. پناهگاه‌ها امنن. نگه داشتن مدافع‌ها در جبههٔ دوم، مردم بین این دو جبهه رو حفظ کرد.",
+      "voiceId": "7uxeJ73HfJL9gOH2mttA",
+      "voiceName": "Warline - Engineer Samira Haddad",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-samira.wav",
+      "durationSeconds": 10.08,
+      "sha256": "fb7d26cf45ea38f421ce898c4852195b8465c9da97b4cc608aca528587eba9ac",
+      "captionSha256": "60d0b9fbb2bd2d565e894b09c12199a473fd11d87e2c4da20ae324c98b948ffb"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "en-US",
+      "text": "The battery's targeting package was built to request ARIA's authorization. This is imported Relay-compatible hardware. Its supply trail leads to an air-support site.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-dalia.wav",
+      "durationSeconds": 10.8,
+      "sha256": "cbbe4ae7baf277c1eededbcbd6d7e2835a8582245171faa9b7ea4f846bc7a5fa",
+      "captionSha256": "482fcb38d71b9d48f9713ef6ac5b5bde67c567c788bd1389d3cd59a18b963315"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-debrief-dalia",
+      "speaker": "DALIA",
+      "locale": "fa-IR",
+      "text": "بستهٔ هدف‌گیری آتشبار طوری ساخته شده که مجوز آریا رو بخواد. این تجهیزات وارداتی با رله سازگارن. رد تأمینشون به یک مرکز پشتیبانی هوایی می‌رسه.",
+      "voiceId": "MK1Zvh93428YrgOQ8Obr",
+      "voiceName": "Warline - Major Dalia Rahim",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-dalia.wav",
+      "durationSeconds": 13.2,
+      "sha256": "fa708642dc1e68af2ed1de6a954d133ecd00c68d8542c849c4417d8a92fd496a",
+      "captionSha256": "aa66d141af602bcfd2783550573e1e96695a10c6fb77e2c1d5512ee1455adcbc"
+    },
+    {
+      "kind": "narrative",
+      "id": "split_front-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "I have preserved the targeting package and Qassem's offer. Neither grants autonomous authority. The evidence points to the air-support site; your next operation will decide how we approach it.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/en/split_front-debrief-aria.wav",
+      "durationSeconds": 12.16,
+      "sha256": "8078a4e964ef69741deaab28c7078ab7ea519ad762c6aa4a13471c7573ec70ae",
+      "captionSha256": "0c3c0116878adcf326337ea00fd8f38e9d703186b88d395a4ed8abb068129643"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "split_front-debrief-aria",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "بستهٔ هدف‌گیری و پیشنهاد قاسم رو حفظ کردم. هیچ‌کدوم مجوز اختیار مستقل نمی‌ده. مدرک به مرکز پشتیبانی هوایی اشاره می‌کنه؛ عملیات بعدیت مشخص می‌کنه چطور بهش نزدیک بشیم.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M03SplitFront/Voice/fa/split_front-debrief-aria.wav",
+      "durationSeconds": 14.96,
+      "sha256": "6ec90b922af4e1eaedaf0995d7e78c77e3e53406c1c343afc8ea566d2bc8023d",
+      "captionSha256": "cae60a9d5193876d5f76263bfa37c582c50d65403eb71cb27f1ec073a0adfe04"
+    }
+  ],
+  "provider": "ElevenLabs",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "model": "eleven_v3",
+  "generatedAtUtc": "2026-10-01T20:56:28.047806+00:00",
+  "runtimeNetworkTts": false,
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "missionId": "saga.ch04.m03.split_front"
+}

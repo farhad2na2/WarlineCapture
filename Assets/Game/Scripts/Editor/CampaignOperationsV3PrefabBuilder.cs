@@ -594,12 +594,12 @@ namespace Game.Editor
             RectTransform row = CreateTopLeft("ChapterCard_" + (index + 1), parent, 0f, index * 126f, 396f, 116f);
             V3GradientGraphic background=CreateGradientPanel(row, index == 0 ? AmberTop : DarkTop, index == 0 ? AmberBottom : DarkBottom, index == 0 ? theme.Amber : Border, 3f);
             Button button=row.gameObject.AddComponent<Button>();button.targetGraphic=background;button.transition=Selectable.Transition.ColorTint;
-            RectTransform clip = CreateTopLeft("ArtClip", row, 4f, 4f, 392f, 108f);
+            RectTransform clip = CreateTopLeft("ArtClip", row, 4f, 4f, 388f, 108f);
             clip.gameObject.AddComponent<RectMask2D>();
             Image image = CreateImage("Art", clip, art, new Color(0.62f, 0.60f, 0.55f, 1f), false);
             Stretch(image.rectTransform);
             AddCover(image, art);
-            CreateSolidTopLeft("Shade", clip, 0f, 0f, 392f, 108f, new Color(0f, 0f, 0f, index == 0 ? 0.30f : 0.68f));
+            CreateSolidTopLeft("Shade", clip, 0f, 0f, 388f, 108f, index == 0 ? new Color32(64, 39, 5, 210) : new Color32(9, 37, 45, 220));
             Image icon = CreateImage("Icon", row, index == 0 ? catalog.AttackIcon : RequireSprite(V3UiFoundationBuilder.CommanderLockIconPath), Color.white, false);
             SetTopLeft(icon.rectTransform, 16f, 22f, 58f, 58f);
             TMP_Text title = CreateText("Title", row, "CHAPTER " + ToRoman(index + 1), 26f, boldFont, TextAlignmentOptions.MidlineLeft, theme.TextPrimary);

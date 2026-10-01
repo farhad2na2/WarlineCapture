@@ -85,7 +85,7 @@ namespace Game.UI.Editor
                     Cover(art, 16f / 9f);
                     art.raycastTarget = false;
                     Image shade = clip.Find("Shade")?.GetComponent<Image>();
-                    if (shade != null) shade.color = new Color(0.005f, 0.012f, 0.018f, i == 0 ? .30f : .53f);
+                    if (shade != null) shade.color = i == 0 ? new Color32(64, 39, 5, 210) : new Color32(9, 37, 45, 220);
                     TMP_Text roman = EnsureText("AtlasRoman", chapter, chapter.Find("Title")?.GetComponent<TMP_Text>());
                     SetTopLeft(roman.rectTransform, 9, 12, 70, 82);
                     roman.text = new[] { "I", "II", "III", "IV", "V" }[i];

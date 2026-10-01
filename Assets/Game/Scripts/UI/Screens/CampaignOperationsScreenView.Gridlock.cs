@@ -79,6 +79,16 @@ namespace Game.UI.Runtime
         private static void ApplyChapterTabAppearance(Button button,bool selected,bool available)
         {
             if(button==null)return;
+            // Keep artwork inside the frame: the former 392px clip at x=4
+            // reached the 396px card edge and painted over its right border.
+            RectTransform artClip=button.transform.Find("ArtClip") as RectTransform;
+            if(artClip!=null)
+            {
+                artClip.anchorMin=Vector2.zero;
+                artClip.anchorMax=Vector2.one;
+                artClip.offsetMin=new Vector2(4f,4f);
+                artClip.offsetMax=new Vector2(-4f,-4f);
+            }
             V3GradientGraphic gradient=button.GetComponent<V3GradientGraphic>();
             if(gradient!=null)
                 gradient.Configure(
@@ -87,7 +97,14 @@ namespace Game.UI.Runtime
                     selected?new Color32(243,174,0,255):new Color32(69,81,85,255),3f);
             Transform shade=button.transform.Find("ArtClip/Shade");
             Image shadeImage=shade!=null?shade.GetComponent<Image>():null;
-            if(shadeImage!=null)shadeImage.color=new Color(0f,0f,0f,selected?0.30f:0.68f);
+            if(shadeImage!=null){
+                shadeImage.rectTransform.anchorMin=Vector2.zero;
+                shadeImage.rectTransform.anchorMax=Vector2.one;
+                shadeImage.rectTransform.offsetMin=Vector2.zero;
+                shadeImage.rectTransform.offsetMax=Vector2.zero;
+                shadeImage.color=selected?new Color32(64,39,5,210):
+                    available?new Color32(9,37,45,220):new Color32(15,26,32,232);
+            }
             Transform subtitle=button.transform.Find("Subtitle");
             TMP_Text subtitleText=subtitle!=null?subtitle.GetComponent<TMP_Text>():null;
             if(subtitleText!=null)subtitleText.color=selected?new Color32(243,174,0,255):available?new Color32(190,202,207,255):new Color32(140,158,164,255);

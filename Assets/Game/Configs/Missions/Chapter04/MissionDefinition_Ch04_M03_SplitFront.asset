@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.split_front.summary
   locationNameKey: mission.split_front.location
   scenarioId: scenario.ch04.m03.split_front
-  operationMapId: opmap.ch04.split_front_01
+  operationMapId: opmap.ch04.split_front_refinery_review
   briefingSequenceId: seq.ch04.m03.brief
   commsSequenceId: seq.ch04.m03.comms
   debriefSequenceId: seq.ch04.m03.debrief

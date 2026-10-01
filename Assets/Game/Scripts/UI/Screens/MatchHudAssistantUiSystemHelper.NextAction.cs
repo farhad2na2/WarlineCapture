@@ -127,6 +127,10 @@ namespace Game.UI.Runtime
                 {
                     _tutorialFocusPendingUntil=Time.unscaledTime+2f;
                     _tutorialFocusPendingStep=_lastPanelModel.TutorialStep;
+                    // Let the protected-route camera finish its pan before another
+                    // request. Reissuing every frame leaves a long route off-screen.
+                    if(UiShellRuntimeGateway.IsPowerRelayGuideContext())
+                        _marketDestinationFocusReadyAt=Time.unscaledTime+3f;
                 }
             }
             else Cue(button,mode==TacticalCommandMode.Attack?"ui.aria.press_attack":"ui.aria.press_move");

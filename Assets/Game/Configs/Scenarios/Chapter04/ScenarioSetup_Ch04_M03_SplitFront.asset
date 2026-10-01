@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch04_M03_SplitFront
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch04.m03.split_front
-  operationMapId: opmap.ch04.split_front_01
+  operationMapId: opmap.ch04.split_front_refinery_review
   requiredAnchors:
   - anchorId: anchor.ch04.m03.forward_post
     kind: 7
@@ -26,6 +26,10 @@ MonoBehaviour:
   - anchorId: anchor.ch04.m03.squad_a
     kind: 3
   - anchorId: anchor.ch04.m03.squad_b
+    kind: 3
+  - anchorId: anchor.ch04.m03.tank_support_b
+    kind: 3
+  - anchorId: anchor.ch04.m03.tank_support_c
     kind: 3
   - anchorId: anchor.ch04.m03.armor_support
     kind: 3
@@ -71,13 +75,13 @@ MonoBehaviour:
     - unitConfigKey: unit.ch04.m03.veh_tank_usa
       runtimePrefabSourceKey: Unit_Veh_Tank_USA
       expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
-      spawnAnchorId: anchor.ch04.m03.squad_b
+      spawnAnchorId: anchor.ch04.m03.tank_support_b
       missionRoleId: role.friendly.command_squad
       count: 1
     - unitConfigKey: unit.ch04.m03.veh_tank_usa
       runtimePrefabSourceKey: Unit_Veh_Tank_USA
       expectedAssetGuid: d08c88d57a5f34f80a264cbfd1e2da4b
-      spawnAnchorId: anchor.ch04.m03.squad_b
+      spawnAnchorId: anchor.ch04.m03.tank_support_c
       missionRoleId: role.friendly.command_squad
       count: 1
   - groupId: group.ch04.m03.infantry

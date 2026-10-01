@@ -18,11 +18,24 @@ namespace Game.Editor
             var config=AssetDatabase.LoadAssetAtPath<SupportMissionContextConfig>(ContextPath);
             if(config==null){config=ScriptableObject.CreateInstance<SupportMissionContextConfig>();AssetDatabase.CreateAsset(config,ContextPath);}
             config.MissionId=CampaignMissionSequence.SplitFront;config.OperationMapId=CH04M03SplitFrontConfigBuilder.MapId;
-            config.MissionSourceVersion=1;config.Revision=1;config.GroundMin=new Vector2(590,410);config.GroundMax=new Vector2(845,490);
+            var map=AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(CH04M03SplitFrontConfigBuilder.MapPath);
+            if(map==null)throw new InvalidOperationException("Split Front map missing for Support bounds");
+            config.MissionSourceVersion=1;config.Revision=2; // Campaign catalog source version, independent of the map content version.
+            config.GroundMin=new Vector2(map.Bounds.PlayableMin.x,map.Bounds.PlayableMin.z);
+            config.GroundMax=new Vector2(map.Bounds.PlayableMax.x,map.Bounds.PlayableMax.z);
+            Vector2 civilian=default;bool civilianFound=false;
+            foreach(var anchor in map.Anchors)
+                if(anchor.AnchorId==CH04M03SplitFrontConfigBuilder.Prefix+"civilians")
+                {civilian=new Vector2(anchor.Position.x,anchor.Position.z);civilianFound=true;break;}
+            if(!civilianFound)throw new InvalidOperationException("Split Front civilian protection anchor missing");
+            // Protect the full original 18 m box inside the mission area. Beyond
+            // the northern edge, the ground-bounds rejection already applies.
+            var protectedMin=Vector2.Max(config.GroundMin,civilian-Vector2.one*18);
+            var protectedMax=Vector2.Min(config.GroundMax,civilian+Vector2.one*18);
             config.RouteAuthored=false;config.PopulationCeiling=0;
             config.Regions=new[]{
                 new SupportAuthoredGroundRegion{Min=config.GroundMin,Max=config.GroundMax,Visible=true},
-                new SupportAuthoredGroundRegion{Min=new Vector2(689,450),Max=new Vector2(725,486),Visible=true,Protected=true}};
+                new SupportAuthoredGroundRegion{Min=protectedMin,Max=protectedMax,Visible=true,Protected=true}};
             if(!config.TryValidate(out var error))throw new InvalidOperationException(error);EditorUtility.SetDirty(config);
             var catalog=AssetDatabase.LoadAssetAtPath<SupportAbilityCatalogConfig>(SupportAbilityCatalogBuilder.CatalogPath);
             for(int i=0;i<catalog.Abilities.Length;i++)if(catalog.Abilities[i].Kind==SupportAbilityKind.Smoke)
@@ -46,7 +59,7 @@ namespace Game.Editor
                 finally{EditorSceneManager.CloseScene(scene,true);}
             }
             finally{EditorSceneManager.CloseScene(match,true);}
-            Debug.Log("[SplitFrontSupportContext] result=Passed scope=mission,map,version protected=civilians route=none optional=Smoke");
+            Debug.Log($"[SplitFrontSupportContext] result=Passed scope=mission,map,version ground={config.GroundMin}:{config.GroundMax} protected={protectedMin}:{protectedMax} route=none optional=Smoke");
         }
     }
 }

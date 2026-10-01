@@ -17,6 +17,7 @@ namespace Game.UI.Shell.Ecs
     {
         private static string cachedAssistantTextLocale;
         private static string cachedObjectiveTextLocale;
+        private static int cachedSupplyDelivery=-1;
         private static partial class UiShellReadModelAdapter
         {
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
@@ -156,10 +157,11 @@ namespace Game.UI.Shell.Ecs
 
             var breachStatusStamp=ReadBreachStatusStamp();
             var gridlockStamp=ReadGridlockStamp();
+            int supplyDelivery=Game.UI.Runtime.UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int currentDelivery)?UnityEngine.Mathf.Min(40,currentDelivery):-1;
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
-                cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp &&
+                cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp && cachedSupplyDelivery==supplyDelivery &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -195,6 +197,8 @@ namespace Game.UI.Shell.Ecs
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
                 recommendationBody=GameText.Get(recommendationBody,recommendationBody);
+                if(topRecommendation.TutorialStepCount==4 && supplyDelivery>=0)
+                    recommendationBody+="\n"+GameText.Format("mission.supply_line.delivery_progress","New Fuel delivered: {0}/40 barrels",supplyDelivery);
                 if(topRecommendation.TutorialStepCount==8) recommendationBody=AppendBreachStatus(recommendationBody);
                 if(topRecommendation.TutorialStepCount==10) recommendationBody=AppendGridlockStatus(recommendationBody);
                 bool evidenceChain=TryGetMissionRoot(out var evidenceManager,out var evidenceRoot) &&
@@ -314,7 +318,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelMessageCount = messages.Length;
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
-            cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;
+            cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;cachedSupplyDelivery=supplyDelivery;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

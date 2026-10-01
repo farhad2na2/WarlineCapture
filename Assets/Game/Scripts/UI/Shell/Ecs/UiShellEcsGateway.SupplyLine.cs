@@ -42,6 +42,15 @@ namespace Game.UI.Shell.Ecs
             canAllocate=s.Ready!=0 && s.Failure==SupplyLineFailure.None && runtime.Phase==MissionPhaseKind.Engage && storedFuel>=20 && civilianReserve==0;
             return true;
         }
+        public bool TryReadSupplyLineDelivery(out int deliveredFuel)
+        {
+            deliveredFuel=0;
+            if(!TryReadSupplyLine(out _,out _,out _)||!TryGetMissionRoot(out var em,out var root))return false;
+            var s=em.GetComponentData<CampaignMissionSupplyLineState>(root);
+            // Legacy rollback retains its original stock-based progress.
+            deliveredFuel=(int)Unity.Mathematics.math.floor(s.BootstrapFuel>10?s.DeliveredFuel:s.StoredFuel);
+            return true;
+        }
         public bool TryAllocateSupplyLineReserve()
         {
             if(!TryReadSupplyLine(out _,out _,out bool canAllocate) || !canAllocate || !TryGetMissionRoot(out var em,out var root))return false;

@@ -52,18 +52,30 @@ pinned physical source hash. Those generated physical artifacts are left at
 the Supply Line baseline; this review branch changes the Power Relay logical
 map and mission binding only.
 
-## Open work and gates
+## Final review preparation — 2026-10-01
 
-- The marked shelter needs a visually identifiable school at the service-road
-  frontage. The prepared physical source does not currently advertise a school
-  landmark in this sector. Inspect the native map, then either bind a suitable
-  existing building or request a deliberate prepared-map addition without
-  adding a duplicate mission building.
-- Inspect the actual hostile formations and convoy movement in the native map
-  with a human reviewer. The automated native run passed, but the capture
-  shows rooftops can obscure the focus cue near the service road.
-- Complete a manual normal-input run and native exposed-route, engineer-loss
-  and missing-Fuel negatives. The focused rule checks passed, but they do not
-  replace those playthroughs. Review EN/FA native screens and target-device
-  performance.
-- Human visual approval and real player/device acceptance remain separate gates.
+Both final native normal-input journeys now pass: English independent manual
+(`Logs/power-relay-review-manual-02.log.gz`) and Persian ARIA
+(`Logs/power-relay-review-watch-01.log.gz`). Each reaches the protected waypoint,
+shelters the families, delivers Fuel, restores power with both engineers, holds
+for 10 seconds, and completes debrief/result/Campaign return. See `READINESS.md`
+for exact timing, visual inspection and separated acceptance gates.
+
+The school shelter at (885,385) now visibly identifies the existing House_07
+frontage at (890,377), size 5×6. Its exact owner is
+`densecity.3c718931b282002708f27070c2c0f14619d641ffc3d200a807b9b566be9faa55`.
+A compact localized label and the approved ground corners/check mark bind to
+that source owner. No physical prepared-map geometry or mission building was
+added. The current Power Relay-only destination-focus throttle allows camera
+arrival before another focus request; it issues no troop order. Mission results
+reuse the existing rows with shelter, restoration and perimeter objectives.
+
+## Remaining release gates
+
+- Human map, camera, minimap and guidance review.
+- Native exposed-route, engineer-loss and missing-Fuel negative journeys;
+  focused rule checks already pass.
+- Real player/device acceptance and packaged content/performance.
+
+Earlier evidence and failed runs remain retained. The final native journeys,
+not the older candidate win, establish this Editor review readiness.

@@ -29,7 +29,7 @@ namespace Game.Runtime
             Entity actor=Entity.Null;float3 destination=new float3(links[linkIndex].Origin.x+lateralOffset,0,links[linkIndex].Origin.y-8);
             var members=em.GetBuffer<CampaignMissionSupplyLineMember>(root,true);
             // Friendly chain facts and public objective locations only. No enemy roster or hidden schedule.
-            bool wait=true;
+            bool wait=true;float nearest=float.MaxValue;
             foreach(var m in members)
             {
                 if(recovery)
@@ -40,8 +40,10 @@ namespace Game.Runtime
                     wait=supply.RerouteOrdered!=0;break;
                 }
                 if(m.Kind!=0 || !GridlockLiveFriendly(em,m.Entity))continue;
-                if(actor==Entity.Null)actor=m.Entity;
-                if(math.distancesq(em.GetComponentData<LocalTransform>(m.Entity).Position.xz,destination.xz)>14*14){actor=m.Entity;wait=false;break;}
+                float distance=math.distancesq(em.GetComponentData<LocalTransform>(m.Entity).Position.xz,destination.xz);
+                // Guide the closest defender at each working link. Hauling does
+                // not require pulling every distant squad away from its guard post.
+                if(distance<nearest){actor=m.Entity;nearest=distance;wait=distance<=14*14;}
             }
             if(actor==Entity.Null){ClearDefenseGuidance(em,root,current);return true;}
             FixedString64Bytes title="mission.supply_line.guide.";title.Append(step);title.Append(ExtractionTitleSuffix);

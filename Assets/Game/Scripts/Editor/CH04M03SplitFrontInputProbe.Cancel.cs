@@ -15,14 +15,14 @@ namespace Game.Editor
         private static int cancelStage;
         private static int observedCancelStage=-1;
         private static double cancelStageStarted;
-        private static bool TickPlayerLauncherCancellation(EntityManager em,Entity root)
+        private static bool AdvancePlayerLauncherCancellation(EntityManager em,Entity root)
         {
             if(cancelStage==13)return true;
             if(observedCancelStage!=cancelStage)
             {observedCancelStage=cancelStage;cancelStageStarted=EditorApplication.timeSinceStartup;Debug.Log("[SplitFrontCancelState] stage="+cancelStage);}
             if(EditorApplication.timeSinceStartup-cancelStageStarted>45)throw new TimeoutException("Native cancellation input stalled at stage "+cancelStage);
             if(UiShellRuntimeGateway.TryReadMissionHudRestrictions(out var restrictions)&&restrictions.CinematicInteractionLocked)return false;
-            if(smokeHand==null){smokeHand=new AriaTouchInputUiSystemHelper();if(!smokeHand.Start())throw new InvalidOperationException("Player launcher touch actuator unavailable");smokeHost=new GameObject("Split Front Player Launcher Input",typeof(SmokeInputHost)){hideFlags=HideFlags.DontSave};}
+            if(smokeHand==null){smokeHand=new AriaTouchInputUiSystemHelper();if(!smokeHand.Start())throw new InvalidOperationException("Player launcher touch actuator unavailable");EnsureSmokeInputHost();}
             if(smokeHand.IsBusy||EditorApplication.timeSinceStartup<nextSmokeAction)return false;
             var mission=em.GetComponentData<CampaignMissionSplitFrontState>(root);var launcher=mission.Launcher;
             var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();

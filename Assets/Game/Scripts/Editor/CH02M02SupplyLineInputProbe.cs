@@ -17,12 +17,12 @@ namespace Game.Editor
 {
     // Test-only profile seeding; all navigation and mission commands use ordinary screen input.
     [InitializeOnLoad]
-    public static class CH02M02SupplyLineInputProbe
+    public static partial class CH02M02SupplyLineInputProbe
     {
         private const string Active="Warline.SupplyLine.InputProbe",Mode="Warline.SupplyLine.InputMode";
-        private static string Output=>System.IO.Path.GetFullPath(System.IO.Path.Combine(Application.dataPath,"../../"))+"/"+new System.IO.DirectoryInfo(System.IO.Path.GetDirectoryName(Application.dataPath)).Name+"-evidence";
+        private static string Output;
         private static bool seeded,finished,watchStarted,won,sawDebrief,checkedMap,checkedSites;
-        private static int winningClock;
+        private static int winningClock,lastDeliveredCapture;
         private static double started,lastInput,lastCapture,lastLog;
         private static AriaTouchInputUiSystemHelper touch;
         private static bool Manual=>SessionState.GetBool(Mode,false);
@@ -35,7 +35,11 @@ namespace Game.Editor
         {
             try{CH02M02SupplyLinePresentationBuilder.BuildCheckpoint();}
             catch(Exception e){Debug.LogException(e);Complete(false,e.Message);return;}
-            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=checkedMap=checkedSites=false;winningClock=0;
+            Output="Design/AgentReports/MapVariantMissionRework/SupplyLine/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-"+SessionState.GetString(Active+".Locale","en")+(Manual?"-manual":"-aria");
+            Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");Application.runInBackground=true;
+            SelectionRuntimeDiagnosticsSystemHelper.EditorMoveCommandTraceEnabled=true;
+            manualActions=lastManualGuidance=0;manualFocused=false;
+            Directory.CreateDirectory(Output);seeded=finished=watchStarted=won=sawDebrief=checkedMap=checkedSites=false;winningClock=0;lastDeliveredCapture=-1;
             SessionState.SetBool(Active,true);started=EditorApplication.timeSinceStartup;
             MainMenuV3PrefabBuilder.SetGameViewResolution(1920,1080);
             EditorSceneManager.OpenScene(M02EstablishBaseNarrativeConfigBuilder.MenuScenePath,OpenSceneMode.Single);
@@ -47,7 +51,7 @@ namespace Game.Editor
             try
             {
                 if(started==0)started=EditorApplication.timeSinceStartup;
-                if(EditorApplication.timeSinceStartup-started>900)throw new TimeoutException("Supply Line public-input probe timed out.");
+                if(EditorApplication.timeSinceStartup-started>1100)throw new TimeoutException("Supply Line public-input probe timed out.");
                 var world=World.DefaultGameObjectInjectionWorld;if(world==null || !world.IsCreated)return;
                 var em=world.EntityManager;using var roots=em.CreateEntityQuery(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent));
                 if(roots.CalculateEntityCount()!=1)return;var root=roots.GetSingletonEntity();
@@ -57,10 +61,16 @@ namespace Game.Editor
                     var store=new CampaignMissionProgressStore(new SaveService(new JsonSaveRepository(Path.Combine(Output,"input-profile-"+Guid.NewGuid().ToString("N")))));
                     store.EnsureAvailable(CampaignMissionSequence.Gridlock);store.EnsureAvailable(CampaignMissionSequence.SupplyLine);
                     em.GetComponentObject<CampaignMissionProgressStoreReferenceComponent>(root).Store=store;
-                    GameLocalization.SetLocale("en",false);seeded=true;
+                    GameLocalization.SetLocale(SessionState.GetString(Active+".Locale","en"),false);
+                    var settings=UnityEngine.InputSystem.InputSystem.settings;
+                    settings.editorInputBehaviorInPlayMode=UnityEngine.InputSystem.InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+                    settings.backgroundBehavior=UnityEngine.InputSystem.InputSettings.BackgroundBehavior.IgnoreFocus;
+                    seeded=true;
                 }
                 var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
                 var state=em.HasComponent<CampaignMissionSupplyLineState>(root)?em.GetComponentData<CampaignMissionSupplyLineState>(root):default;
+                if(state.DeliveredFuel>=8 && (int)state.DeliveredFuel!=lastDeliveredCapture)
+                {lastDeliveredCapture=(int)state.DeliveredFuel;ScreenCapture.CaptureScreenshot(Output+"/delivered-"+lastDeliveredCapture+".png");}
                 if(!checkedSites && state.Ready!=0)
                 {
                     using var boundaries=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag));
@@ -90,10 +100,26 @@ namespace Game.Editor
                 {ScreenCapture.CaptureScreenshot(Output+"/input-current.png");lastCapture=EditorApplication.timeSinceStartup;}
                 if(EditorApplication.timeSinceStartup-lastLog>10)
                 {
+                    if(state.DeliveredFuel>=8 && runtime.Phase==MissionPhaseKind.Engage)
+                    {
+                        var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
+                        string progress=GameText.Format("mission.supply_line.delivery_progress","New Fuel delivered: {0}/40 barrels",Mathf.Min(40,(int)state.DeliveredFuel));
+                        if(view!=null && view.IsPresentationVisible && !(view.CurrentInstructionBody??string.Empty).Contains(progress))
+                            throw new InvalidOperationException("Visible delivery counter is stale: expected '"+progress+"' in '"+view.CurrentInstructionBody+"'.");
+                        Debug.Log("[SupplyLineVisibleDelivery] result=Passed delivered="+(int)state.DeliveredFuel+" localized="+progress);
+                    }
                     bool hasTarget=UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var target);
                     var aria=UiShellRuntimeGateway.ReadAriaPlay();
                     var camera=Camera.main;
-                    Debug.Log($"[SupplyLineInput] mode={(Manual?"Manual":"Watch")} phase={runtime.Phase} ready={state.Ready} clock={state.ElapsedMilliseconds} route={state.RouteRecovered} fuel={state.StoredFuel} allocated={state.AllocatedCivilianBarrels} watch={aria.Phase} actions={aria.Actions} target={hasTarget}:{target.BattleAction}:{target.NeedsSelection}:{target.Moving}:selection={target.Selection}:destination={target.Destination}:selectionScreen={(camera!=null?camera.WorldToScreenPoint(target.Selection):Vector3.zero)}:destinationScreen={(camera!=null?camera.WorldToScreenPoint(target.Destination):Vector3.zero)}:camera={(camera!=null?camera.transform.position:Vector3.zero)}");
+                    Debug.Log($"[SupplyLineInput] mode={(Manual?"Manual":"Watch")} phase={runtime.Phase} ready={state.Ready} clock={state.ElapsedMilliseconds} route={state.RouteRecovered} fuel={state.StoredFuel} allocated={state.AllocatedCivilianBarrels} deliveredFuel={state.DeliveredFuel} watch={aria.Phase} actions={aria.Actions} target={hasTarget}:{target.BattleAction}:{target.NeedsSelection}:{target.Moving}:selection={target.Selection}:destination={target.Destination}:selectionScreen={(camera!=null?camera.WorldToScreenPoint(target.Selection):Vector3.zero)}:destinationScreen={(camera!=null?camera.WorldToScreenPoint(target.Destination):Vector3.zero)}:camera={(camera!=null?camera.transform.position:Vector3.zero)}");
+                    if(em.HasBuffer<CampaignMissionSupplyLineMember>(root))foreach(var member in em.GetBuffer<CampaignMissionSupplyLineMember>(root,true))
+                        if(member.Kind is 1 or 2&&em.Exists(member.Entity))
+                        {
+                            var e=member.Entity;
+                            string longMove=em.HasComponent<UnitLongDistanceMove>(e)?JsonUtility.ToJson(em.GetComponentData<UnitLongDistanceMove>(e)):"none";
+                            string order=em.HasComponent<UnitResourceHaulOrder>(e)?JsonUtility.ToJson(em.GetComponentData<UnitResourceHaulOrder>(e)):"none";
+                            Debug.Log("[SupplyLineHauler] kind="+member.Kind+" position="+em.GetComponentData<Unity.Transforms.LocalTransform>(e).Position+" long="+longMove+" order="+order);
+                        }
                     lastLog=EditorApplication.timeSinceStartup;
                 }
                 if(state.Failure!=SupplyLineFailure.None)
@@ -110,8 +136,8 @@ namespace Game.Editor
                 }
                 if(runtime.Outcome==MissionOutcomeKind.Victory)
                 {
-                    if(state.RouteRecovered==0 || state.AllocatedCivilianBarrels<20 || state.StoredFuel<40 || state.HoldMilliseconds<20000)throw new InvalidOperationException("Victory lacks required facts.");
-                    if(!won){won=true;winningClock=state.ElapsedMilliseconds;Debug.Log("[SupplyLineInput] victory=Passed awaiting=debrief-and-return");}
+                    if(state.OilTransferred==0 || state.FuelTransferred==0 || state.DeliveredFuel<40 || state.RouteRecovered==0 || state.AllocatedCivilianBarrels<20 || state.StoredFuel<40 || state.HoldMilliseconds<20000)throw new InvalidOperationException("Victory lacks required facts.");
+                    if(!won){won=true;winningClock=state.ElapsedMilliseconds;Debug.Log("[SupplyLineInput] victory=Passed deliveredFuel="+state.DeliveredFuel+" awaiting=debrief-and-return");}
                 }
                 var watch=UiShellRuntimeGateway.ReadAriaPlay();
                 if(!Manual && watch.Active)
@@ -137,7 +163,7 @@ namespace Game.Editor
                 if(won)
                 {
                     var result=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
-                    if(result!=null){Tap(typeof(MissionResultPopupView).GetField("primaryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(result) as Button);return;}
+                    if(result!=null){ScreenCapture.CaptureScreenshot(Output+"/result.png");Tap(typeof(MissionResultPopupView).GetField("primaryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(result) as Button);return;}
                     var returned=UnityEngine.Object.FindAnyObjectByType<CampaignOperationsScreenView>();
                     if(returned!=null && Ready(returned.LaunchMissionButton))
                     {
@@ -148,7 +174,7 @@ namespace Game.Editor
                 }
                 if(runtime.MissionId.Equals(CampaignMissionSequence.SupplyLine) && runtime.Phase>=MissionPhaseKind.FindSquad)
                 {
-                    if(Manual)return;
+                    if(Manual){DriveManual(em,root);return;}
                     var buttons=UnityEngine.Object.FindObjectsByType<Button>(FindObjectsInactive.Exclude,FindObjectsSortMode.None);
                     Tap(buttons.FirstOrDefault(b=>b.name=="ConfirmWatchAria" && Ready(b))??buttons.FirstOrDefault(b=>b.name=="WatchAriaPlay" && Ready(b)));return;
                 }

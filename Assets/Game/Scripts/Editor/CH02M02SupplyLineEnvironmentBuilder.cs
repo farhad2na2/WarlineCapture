@@ -56,7 +56,7 @@ namespace Game.Editor
                 data.FindProperty("displayName").stringValue="Emergency Fuel Reserve";
                 data.FindProperty("description").stringValue="Protect 20 barrels for clinics and water pumps, plus 20 for JRC relief vehicles.";
                 data.FindProperty("footprintCells").vector2IntValue=new Vector2Int(Mathf.CeilToInt(b.size.x)+2,Mathf.CeilToInt(b.size.z)+2);
-                data.FindProperty("canRequest").boolValue=true;data.FindProperty("fuelStorageCapacity").intValue=200;
+                data.FindProperty("canRequest").boolValue=true;data.FindProperty("fuelStorageCapacity").intValue=500;
                 data.FindProperty("destroyedVisualPrefab").objectReferenceValue=null;
                 data.ApplyModifiedPropertiesWithoutUndo();
                 var prefab=PrefabUtility.SaveAsPrefabAsset(depot,DepotPath);

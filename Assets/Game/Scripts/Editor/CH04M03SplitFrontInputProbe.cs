@@ -46,7 +46,8 @@ namespace Game.Editor
         }
         private static void Run()
         {
-            Output="Design/AgentReports/CH04M03SplitFront/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-split-front-"+SessionState.GetString(Locale,"en");
+            manualActions=lastManualGuidance=0;manualFocused=refinerySourceChecked=false;
+            Output="Design/AgentReports/MapVariantMissionRework/SplitFront/Evidence/"+DateTime.UtcNow.ToString("yyyyMMdd-HHmmss")+"-split-front-"+SessionState.GetString(Locale,"en");
             if(SessionState.GetBool(Active+".Smoke",false))Output+="-smoke";
             ResetOptionalSmokeProbe();Directory.CreateDirectory(Output);SessionState.SetBool(Active,true);stage=actions=0;started=EditorApplication.timeSinceStartup;due=0;error=null;combatSeen=launcherFired=false;voices.Clear();panels.Clear();comicClip=null;comicProgress=0;
             engageStarted=comicAdvanceAt=0;Environment.SetEnvironmentVariable("WARLINE_ARIA_BACKGROUND_VALIDATION","1");MainMenuV3PrefabBuilder.SetGameViewResolution(SessionState.GetString(Locale,"en")=="fa-IR"?2400:1920,1080);Application.runInBackground=true;
@@ -193,6 +194,8 @@ namespace Game.Editor
                     if(!Click(button))return;stage=4;due=0;return;
                 }
                 if(runtime.Phase!=MissionPhaseKind.Engage)return;
+                ValidateRefinerySource(em);
+                if(ManualInput){DriveRefineryManual(em,root);return;}
                 if(engageStarted==0){ValidateNormalHud();engageStarted=EditorApplication.timeSinceStartup;Shot("hud");}
                 if(SessionState.GetBool(Active+".Smoke",false)&&(!TickOptionalSmoke(em,root)||!TickPlayerLauncherCancellation(em,root)))return;
                 var aria=UiShellRuntimeGateway.ReadAriaPlay();if(aria.Actions>actions){actions=aria.Actions;Shot("hud-aria-"+actions);Diagnose(em,root);}
@@ -272,6 +275,7 @@ namespace Game.Editor
         }
         private static void Complete(bool passed,string detail)
         {
+            touch?.Dispose();touch=null;
             FinishPlayerFrameInput();
             FinishOptionalSmokeProbe();SessionState.SetBool(Active+".Smoke",false);
             if(inputRoutingConfigured){var input=UnityEngine.InputSystem.InputSystem.settings;input.editorInputBehaviorInPlayMode=savedEditorInput;input.backgroundBehavior=savedBackgroundInput;inputRoutingConfigured=false;}

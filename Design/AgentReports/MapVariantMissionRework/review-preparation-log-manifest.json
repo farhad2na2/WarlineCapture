@@ -1,0 +1,170 @@
+[
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-01.log.gz",
+    "classification": "failed:insufficient-fuel",
+    "bytes": 1088913,
+    "sha256": "b0d343d0b690f4407bc94c15f81583b2afc34486d4773b0554610b822761502e"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-02.log.gz",
+    "classification": "failed:dispersed-selection",
+    "bytes": 411439,
+    "sha256": "9daf2308374199bb7e034ec11d9afb01214bee9908285e30b7d77c178072c8ff"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-03.log.gz",
+    "classification": "superseded:first-load-victory;full-delivery-not-qualified",
+    "bytes": 401428,
+    "sha256": "74f2f57826aabf704500096c7fefd1511bb263e3b4733715f3172e7e9a9dcbae"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-04.log.gz",
+    "classification": "failed:chain-stopped-after-first-load",
+    "bytes": 392769,
+    "sha256": "db3bc5e181808d4a3a46dc7b7e41267c53cab378fea86d977810961d2ca5edca"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-refinery-prep-01.log.gz",
+    "classification": "Superseded: draft configuration/rules passed; building footprints replaced and qualified by prep02",
+    "bytes": 183617,
+    "sha256": "ee9bd7d67e66fac4768ecc668dfe155d92a830db1c1b81af5c91fcff524d4011"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-manual-01.log.gz",
+    "classification": "failed:probe-buffer-before-roster",
+    "bytes": 197939,
+    "sha256": "8c5edf79adee7a473fdb74e4b374ee7b2825db009a9e4f7a469c75fd55af3289"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-manual-02.log.gz",
+    "classification": "failed:automatic-return-path-retries",
+    "bytes": 1597293,
+    "sha256": "a0ea1c1f5b9adda6e02afc87c49f2ff0692a0c3b0e3dc0f56946066c2293f36a"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-manual-03.log.gz",
+    "classification": "failed:native-repeat-hauling-passed;180-budget-depleted",
+    "bytes": 1349610,
+    "sha256": "197523e8e8c810b91e04c3f09c4a78e40bdde49bda39a8e1bc1e212904042b76"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-05.log.gz",
+    "classification": "failed:compile-stage;fixed-and-normal-exit",
+    "bytes": 430048,
+    "sha256": "e426869f4cc22c7949a55bbed0bdecc1bfd558ac77ce263e7369b3b69ce98450"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-06.log.gz",
+    "classification": "failed:authored-depot-capacity-200-blocked-dispatch",
+    "bytes": 983320,
+    "sha256": "2ff654addaca537f9685464fb62d725f62e197850b74c1d861d6bf8d29376faf"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-07.log.gz",
+    "classification": "failed:native-deliveries-16;visible-counter-stale;cache-fixed",
+    "bytes": 1285181,
+    "sha256": "13cf4fc283cb59599949762e887c6fbd3a87452f7e12fb5793e66698a7d45742"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-08.log.gz",
+    "classification": "failed:native-player-reroute-fallback-cycle;hauler-identity-fix",
+    "bytes": 1532610,
+    "sha256": "f6e001c145e0dcd305b98ce1f8bc041141c54f66d44cd7d6b7461911946c33c5"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-09.log.gz",
+    "classification": "failed:actual-lane-arrival-passed;stock-delta-underreported-unload;authoritative-counter-fix",
+    "bytes": 1035661,
+    "sha256": "c723fbe5dbf19d0fce7e96eafc6da51d0347b22af1368306ebdff82ae11db228"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/hauler-detour-review-01.log.gz",
+    "classification": "passed:three-native-ECS-hauler-and-skirmish-detours",
+    "bytes": 151271,
+    "sha256": "3744c5afd104c81a5225ec30899c5a4905a28dea4cda87a49ef5ee4f7ae4b6de"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/hauler-delivery-review-01.log.gz",
+    "classification": "passed:31-hauler-rules;completed-unloads-survive-spending-and-rejection",
+    "bytes": 36663,
+    "sha256": "92366e0f90fe24d0cf7d6cba7b0e46612228914d50b757b244a051c548962678"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-10.log.gz",
+    "classification": "failed:full-40-native-deliveries;selection-instruction-hid-visible-counter",
+    "bytes": 1395696,
+    "sha256": "e485eee8480af52e89f5678bc7ae29175515fdb1fe7f3186871df1b4a3df2f4b"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-watch-11.log.gz",
+    "classification": "passed:English-ARIA;40-native-deliveries;visible-command-cue-counter;reserve-hold;debrief-result-return",
+    "bytes": 2151831,
+    "sha256": "10ab766c2cddf43ba3fb1eb2efe8d3be8664f9ffb4009b5ae196d59ea31dcbaa"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-manual-04.log.gz",
+    "classification": "superseded:normal-stop-before-live-play;mission-specific-result-label-fix",
+    "bytes": 294523,
+    "sha256": "e2fa0fe52eedbb552570b3a6c5e0db80080c2d58ade717f4195e6d82500fbeb8"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SupplyLine/Logs/supply-line-review-manual-05.log.gz",
+    "classification": "passed:Persian-manual;ARIA-off;40-native-deliveries;visible-counter;reserve-hold;mission-specific-result-return",
+    "bytes": 2248046,
+    "sha256": "d2537ed41c7dbe2535a79bb7eceb02510175916b4b69e81794fe2237c18c3b25"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/PowerRelay/Logs/power-relay-review-manual-01.log.gz",
+    "classification": "failed:normal-input-selection-passed;repeated-camera-focus-stalled-destination;source-fix",
+    "bytes": 545906,
+    "sha256": "50901723bbf9c62f8f25ea129f29c90187002b3976731628bf9970c56cb4f958"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/PowerRelay/Logs/power-relay-review-manual-02.log.gz",
+    "classification": "passed:English-manual;protected-route;school-owner-and-frontage;Fuel-engineers-repair;10s-hold;7-comics;result-return",
+    "bytes": 558450,
+    "sha256": "0414382ff60322fe19ee17adf314b0920e357fa8767343ec31b8f908215938f1"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/PowerRelay/Logs/power-relay-review-watch-01.log.gz",
+    "classification": "Passed: final Persian ARIA normal-input mission, debrief, result and Campaign return",
+    "bytes": 521680,
+    "sha256": "1c6630b09fde6404be0f1d6132a6b19970b190804a39e1b65aa70d1570db5464"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-refinery-prep-02.log.gz",
+    "classification": "Passed after correcting review-launcher compile error during GUI import; full footprints, road clearance, exact source and rules",
+    "bytes": 383493,
+    "sha256": "7110119baf7f1b34c08b5585996eb1cf2973a361cab8605762dcce43218efdaa"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-review-watch-01.log.gz",
+    "classification": "Passed: English ARIA normal Attack/launcher fire, five actual hostile defeats, intact core, eight panels, result/settlement/Campaign return",
+    "bytes": 492621,
+    "sha256": "4a2f0a89a07681c84b7b8177235293773ec0ea9ac0f4dab6d7e6094f9bc844b2"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-review-manual-01.log.gz",
+    "classification": "Passed: Persian independent normal touch Select/Attack with ARIA off, native combat, eight panels, settlement/result/Campaign return",
+    "bytes": 482723,
+    "sha256": "aed9ee0e9ba7a2da896534140039ce0fb26a376bf80ff61e05cf8c4acd9ba6b0"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-review-smoke-01.log.gz",
+    "classification": "Failed: editor-frame UI raycast dimensions missed Support button; native journey stopped normally and player-frame probe corrected",
+    "bytes": 459077,
+    "sha256": "0cc84548f483346fff128355238f233453e79a3c6934a2f2df05593f52743d04"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-review-smoke-02.log.gz",
+    "classification": "Failed: native Smoke preview rejected refinery coordinate because authored Support context retained legacy ground bounds; context corrected from current map and civilian anchor",
+    "bytes": 526091,
+    "sha256": "b2ed7162c30418cc1a25aa873c5443eacb8ec378541854c09f8188d0c0cbc478"
+  },
+  {
+    "path": "Design/AgentReports/MapVariantMissionRework/SplitFront/Logs/split-front-review-smoke-03.log.gz",
+    "classification": "Passed: production-context optional Smoke exact preview/cast costs, civilian floor/cover/expiry, real pre-launch Hold, then ARIA native victory, settlement and Campaign return",
+    "bytes": 579966,
+    "sha256": "97e76569d9b454cc8d68b90aaaf5e088948c1a0a730076ee6e166f55cffe7e0e"
+  }
+]

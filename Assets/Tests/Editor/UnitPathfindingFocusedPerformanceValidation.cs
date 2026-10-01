@@ -86,6 +86,54 @@ public sealed class UnitPathfindingFocusedPerformanceValidation
         }
     }
 
+    public static void RunHaulerDetourValidation()
+    {
+        try
+        {
+            var tests=new UnitPathfindingFocusedPerformanceValidation();
+            tests.AutomaticHaulerReachesLoadingBayBeyond128Cells();
+            tests.ManualHaulerRerouteDetoursWithoutAutomaticOrder();
+            tests.SkirmishVehicleCanDetourAroundABlockInsteadOfRepeatingNearbyFallbacks();
+            Debug.Log("[HaulerDetourValidation] result=Passed tests=3 automatic=190cells manual=order-removed detour=actual-goal skirmish=retained");
+            ValidationExit.Exit(0);
+        }
+        catch(Exception e){Debug.LogException(e);Debug.LogError("[HaulerDetourValidation] result=Failed");ValidationExit.Exit(1);}
+    }
+
+    [Test] public void AutomaticHaulerReachesLoadingBayBeyond128Cells()=>AssertHaulerDetour(false);
+    [Test] public void ManualHaulerRerouteDetoursWithoutAutomaticOrder()=>AssertHaulerDetour(true);
+    private static void AssertHaulerDetour(bool manual)
+    {
+        var world=new World("ResourceHaulerIndustrialDetour");
+        var em=world.EntityManager;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em,true);
+        var grid=CreateGrid(em,240,240,out var counts,out var blocked,out var occupied,out var friendly,out var pool);
+        var units=new NativeArray<Entity>(1,Allocator.Temp);
+        try
+        {
+            // Both endpoints are legal. The industrial wall forces a detour
+            // beyond the small straight-segment search box, as in Supply Line.
+            for(int y=85;y<=155;y++)for(int x=105;x<=109;x++)blocked.Set(y*240+x,true);
+            var start=new int2(manual?80:20,120);var goal=new int2(manual?150:210,120);
+            units[0]=CreatePathfindingUnit(em,1,start,goal,true,false);
+            em.SetComponentData(units[0],new UnitFootprint{Size=new int2(3,3)});
+            em.AddComponent<UnitResourceHauler>(units[0]);
+            if(!manual){em.RemoveComponent<ManualMoveOrderTag>(units[0]);em.AddComponent<UnitResourceHaulOrder>(units[0]);}
+            var system=world.CreateSystem<UnitPathfindingSystem>();
+            RunPathfindingUntilComplete(world,em,system,units);
+            var range=em.GetComponentData<UnitPathRange>(units[0]);var cells=em.GetComponentData<PathPoolComponent>(grid).Cells;
+            Assert.AreEqual(goal,cells[range.Start+range.Length-1],"Hauler must reach the real loading bay/lane, not an oscillating progress fallback.");
+            Assert.IsFalse(em.HasComponent<UnitLongDistanceMove>(units[0]),"The bounded industrial trip should have a complete route.");
+            bool detoured=false;for(int i=0;i<range.Length;i++)detoured|=cells[range.Start+i].y<85||cells[range.Start+i].y>155;
+            Assert.IsTrue(detoured,"The route must go around the industrial wall.");
+        }
+        finally
+        {
+            world.EntityManager.CompleteAllTrackedJobs();
+            units.Dispose();world.Dispose();pool.Dispose();friendly.Dispose();occupied.Dispose();blocked.Dispose();counts.Dispose();
+        }
+    }
+
     [Test]
     public void ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics()
     {

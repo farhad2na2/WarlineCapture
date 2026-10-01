@@ -1,0 +1,7 @@
+{
+  "baseline": "aeffb64c",
+  "date": "2026-10-01",
+  "assetsChecked": 27,
+  "mismatches": [],
+  "scope": "Retained mission definitions and operation-map assets; native gameplay regression not rerun."
+}

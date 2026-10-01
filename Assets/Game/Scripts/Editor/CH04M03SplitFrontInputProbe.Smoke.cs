@@ -22,16 +22,47 @@ namespace Game.Editor
         private static double nextSmokeAction;
         private static double committedAt;
         private static bool smokeCover,smokeExpiry;
-        private sealed class SmokeInputHost:MonoBehaviour {private void Update()=>smokeHand?.Tick(Time.unscaledTime);}
+        private sealed class SmokeInputHost:MonoBehaviour
+        {
+            private void Update()
+            {
+                smokeHand?.Tick(Time.unscaledTime);
+                if(!SessionState.GetBool(Active+".Smoke",false))return;
+                try
+                {
+                    var world=World.DefaultGameObjectInjectionWorld;
+                    if(world==null||!world.IsCreated)return;
+                    var em=world.EntityManager;
+                    using var roots=em.CreateEntityQuery(typeof(CampaignMissionRootComponent),typeof(CampaignMissionRuntimeComponent));
+                    if(roots.CalculateEntityCount()!=1)return;
+                    var root=roots.GetSingletonEntity();
+                    var runtime=em.GetComponentData<CampaignMissionRuntimeComponent>(root);
+                    if(runtime.Phase!=Game.Missions.Contracts.MissionPhaseKind.Engage||runtime.Outcome!=Game.Missions.Contracts.MissionOutcomeKind.None)return;
+                    // UI raycasts and safeArea must use the real Game View frame,
+                    // not EditorApplication.update's Editor-window dimensions.
+                    if(smokeStage!=6)AdvanceOptionalSmoke(em,root);
+                    else if(cancelStage!=13)AdvancePlayerLauncherCancellation(em,root);
+                }
+                catch(Exception ex){error=ex.Message;Debug.LogException(ex);}
+            }
+        }
+        private static void EnsureSmokeInputHost()
+        {
+            if(smokeHost==null)smokeHost=new GameObject("Split Front Player Input",typeof(SmokeInputHost)){hideFlags=HideFlags.DontSave};
+        }
+        private static bool TickOptionalSmoke(EntityManager em,Entity root)
+        {EnsureSmokeInputHost();return smokeStage==6;}
+        private static bool TickPlayerLauncherCancellation(EntityManager em,Entity root)
+        {EnsureSmokeInputHost();return cancelStage==13;}
         private static void ResetOptionalSmokeProbe(){smokeStage=cancelStage=0;observedCancelStage=-1;nextSmokeAction=0;smokeCover=smokeExpiry=false;}
         private static void FinishOptionalSmokeProbe(){smokeHand?.Dispose();smokeHand=null;if(smokeHost!=null)UnityEngine.Object.Destroy(smokeHost);smokeHost=null;}
-        private static bool TickOptionalSmoke(EntityManager em,Entity root)
+        private static bool AdvanceOptionalSmoke(EntityManager em,Entity root)
         {
             if(smokeStage==6)return true;
             if(!UiShellRuntimeGateway.TryReadSupport(out var model)||!model.Active)return false;
             if(em.GetComponentData<SupportSessionComponent>(root).TestEncounter!=0||em.GetComponentData<SupportMissionPolicyComponent>(root).TestGrantMask!=0)
                 throw new InvalidOperationException("Split Front must use production Smoke ownership and context");
-            if(smokeHand==null){smokeHand=new AriaTouchInputUiSystemHelper();if(!smokeHand.Start())throw new InvalidOperationException("Smoke touch actuator unavailable");smokeHost=new GameObject("Split Front Smoke Input",typeof(SmokeInputHost)){hideFlags=HideFlags.DontSave};}
+            if(smokeHand==null){smokeHand=new AriaTouchInputUiSystemHelper();if(!smokeHand.Start())throw new InvalidOperationException("Smoke touch actuator unavailable");EnsureSmokeInputHost();}
             if(smokeHand.IsBusy||EditorApplication.timeSinceStartup<nextSmokeAction)return false;
             if(smokeStage==0)
             {

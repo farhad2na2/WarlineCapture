@@ -29,6 +29,7 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.Classification_DetectsHaulerSourceAndDestinationRoles();
             tests.StorageTransfer_TryCompleteLoad_UsesComponentStorage();
             tests.StorageTransfer_TryCompleteUnload_UsesComponentStorage();
+            tests.CompletedFuelDeliveryCountSurvivesSpendingAndRejectedUnload();
             tests.HaulerTransferEcs_TryCompleteLoad_UsesComponentStorage();
             tests.HaulerTransferEcs_TryCompleteUnload_UsesComponentStorage();
             tests.LiveEcsStorage_TryCompleteLoad_PrefersCombatEntityStorage();
@@ -45,7 +46,7 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             tests.FuelLogisticsTelemetry_RecordsAssignmentsFailuresAndDeliveries();
             tests.FuelLogisticsTelemetry_SaturatesAndWrapsVersion();
             tests.FuelLogisticsTelemetry_WarmedMutationsDoNotAllocateManagedMemory();
-            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=30");
+            Debug.Log("[ResourceHaulerFocusedValidation] result=Passed tests=31");
             ValidationExit.Exit(0);
         }
         catch (System.Exception exception)
@@ -54,6 +55,23 @@ public sealed class ResourceHaulerUtilitySystemHelperTests
             Debug.LogError("[ResourceHaulerFocusedValidation] result=Failed");
             ValidationExit.Exit(1);
         }
+    }
+
+    [Test]
+    public void CompletedFuelDeliveryCountSurvivesSpendingAndRejectedUnload()
+    {
+        var depot=new BuildingResourceStorageComponent{FuelStorageCapacity=100,StoredFuelBarrels=50};
+        var hauler=new UnitResourceHauler{CargoFuelBarrels=8};
+        Assert.IsTrue(BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(ref depot,BuildingResourceStorageTransferSystemHelper.FuelResourceKind,ref hauler));
+        Assert.AreEqual(8,depot.ReceivedHaulerFuelBarrels);
+        depot.StoredFuelBarrels-=8; // Native travel spending cannot erase delivery credit.
+        hauler.CargoFuelBarrels=8;
+        Assert.IsTrue(BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(ref depot,BuildingResourceStorageTransferSystemHelper.FuelResourceKind,ref hauler));
+        Assert.AreEqual(16,depot.ReceivedHaulerFuelBarrels);
+        depot.StoredFuelBarrels=100;hauler.CargoFuelBarrels=8;
+        Assert.IsFalse(BuildingResourceStorageTransferSystemHelper.TryCompleteUnload(ref depot,BuildingResourceStorageTransferSystemHelper.FuelResourceKind,ref hauler));
+        Assert.AreEqual(16,depot.ReceivedHaulerFuelBarrels,"Rejected unload must not create delivery credit.");
+        Assert.AreEqual(8,hauler.CargoFuelBarrels);
     }
 
     [Test]

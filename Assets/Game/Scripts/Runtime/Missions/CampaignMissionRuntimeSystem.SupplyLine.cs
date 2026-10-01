@@ -35,11 +35,10 @@ namespace Game.Runtime
                     if(em.HasComponent<ManualMoveOrderTag>(m.Entity) && em.HasComponent<UnitTarget>(m.Entity) &&
                         CampaignMissionSupplyLineRuleUtility.IsAlternateLaneOrder(em.GetComponentData<UnitTarget>(m.Entity).Cell,s.AlternateLane))
                     {
-                        // The mission asks the commander to choose the alternate
-                        // lane. Credit that decision when the correct hauler
-                        // accepts the order; path following can legitimately stop
-                        // just outside the exact anchor on a crowded road.
-                        s.RerouteOrdered=1;s.RouteRecovered=1;
+                        // The new refinery lane is recovered only when the truck
+                        // actually arrives. Keep the original accepted-order
+                        // behavior for the legacy rollback map.
+                        s.RerouteOrdered=1;if(s.BootstrapFuel<=10)s.RouteRecovered=1;
                     }
                     if(s.RerouteOrdered!=0 && math.distancesq(em.GetComponentData<UnitGrid>(m.Entity).Cell,s.AlternateLane)<=36)
                         s.RouteRecovered=1;
@@ -72,7 +71,14 @@ namespace Game.Runtime
                     s.ObservedRefinedFuel=math.max(s.ObservedRefinedFuel,storage.StoredFuelBarrels);
                     if(s.ObservedOil>0 && s.ObservedRefinedFuel>0)s.OilTransferred=1;
                 }
-                if(i==2){s.StoredFuel=storage.StoredFuelBarrels;if(s.StoredFuel>10 && s.OilTransferred!=0)s.FuelTransferred=1;}
+                if(i==2)
+                {
+                    s.StoredFuel=storage.StoredFuelBarrels;
+                    // Credit completed native tanker unloads. Spending in the
+                    // same frame must not reduce the delivered-barrel count.
+                    s.DeliveredFuel=storage.ReceivedHaulerFuelBarrels;
+                    if(s.BootstrapFuel>10?s.DeliveredFuel>=rules.ReserveBarrels:s.StoredFuel>10&&s.OilTransferred!=0)s.FuelTransferred=1;
+                }
             }
             // Protect civilian fuel when enough reaches the depot. The player uses
             // existing movement and defense controls to complete the supply chain.
@@ -113,7 +119,7 @@ namespace Game.Runtime
                 s.ElapsedMilliseconds=SaturatingAddMilliseconds(s.ElapsedMilliseconds,SystemAPI.Time.DeltaTime);
                 if(rifles==0)s.Failure=SupplyLineFailure.SquadLost;
                 if(s.ElapsedMilliseconds>=rules.DeadlineMilliseconds)s.Failure=SupplyLineFailure.Deadline;
-                s.HoldMilliseconds=CampaignMissionSupplyLineRuleUtility.AdvanceHold(s.HoldMilliseconds,delta,rules.HoldMilliseconds,true,alive,hostiles==0 && s.RouteRecovered!=0 && s.AllocatedCivilianBarrels>=rules.CivilianReserveBarrels,s.StoredFuel,rules.ReserveBarrels);
+                s.HoldMilliseconds=CampaignMissionSupplyLineRuleUtility.AdvanceHold(s.HoldMilliseconds,delta,rules.HoldMilliseconds,true,alive,hostiles==0 && (s.BootstrapFuel<=10 || s.OilTransferred!=0 && s.FuelTransferred!=0) && s.RouteRecovered!=0 && s.AllocatedCivilianBarrels>=rules.CivilianReserveBarrels,s.StoredFuel,rules.ReserveBarrels);
             }
             if(CampaignMissionSupplyLineRuleUtility.IsVictory(in s,in rules))s.Complete=1;
             facts.ElapsedMilliseconds=s.ElapsedMilliseconds;facts.CommandSquadAlive=rifles>0?(byte)1:(byte)0;
@@ -161,7 +167,10 @@ namespace Game.Runtime
                             // Authored working-chain fallback: finite starting fuel for the two haulers.
                             // This is seeded exactly once, never on a later stock shortage.
                             var storage=em.GetComponentData<BuildingResourceStorageComponent>(entity);
-                            storage.StoredFuelBarrels=10;storage.Version++;em.SetComponentData(entity,storage);
+                            bool refinery=IsSupplyLineRefineryMap(em);
+                            storage.StoredFuelBarrels=refinery?450:10;
+                            s.BootstrapFuel=storage.StoredFuelBarrels;
+                            storage.Version++;em.SetComponentData(entity,storage);
                         }
                         break;
                     }
@@ -169,6 +178,14 @@ namespace Game.Runtime
                 }
                 var updated=em.GetBuffer<CampaignMissionSupplyLineLink>(root);updated[i]=link;
             }
+        }
+        private static bool IsSupplyLineRefineryMap(EntityManager em)
+        {
+            using var query=em.CreateEntityQuery(typeof(OperationMapMetadataComponent));
+            if(query.CalculateEntityCount()!=1)return false;
+            var map=query.GetSingleton<OperationMapMetadataComponent>();
+            return map.Blob.IsCreated && map.Blob.Value.OperationMapId.Equals("opmap.ch02.supply_line_refinery_review") &&
+                map.Blob.Value.SourceContentHash.Equals("2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778");
         }
     }
 }

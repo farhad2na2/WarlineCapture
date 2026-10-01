@@ -13,21 +13,22 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-    public static class CH04M03SplitFrontConfigBuilder
+    public static partial class CH04M03SplitFrontConfigBuilder
     {
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M03_SplitFront.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M03_SplitFront.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SplitFront01.asset";
-        public const string MapId="opmap.ch04.split_front_01",ScenarioId="scenario.ch04.m03.split_front",Prefix="anchor.ch04.m03.";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SplitFront01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter04/OperationMap_Ch04_SplitFrontRefineryReview.asset";
+        public const string MapId="opmap.ch04.split_front_refinery_review",ScenarioId="scenario.ch04.m03.split_front",Prefix="anchor.ch04.m03.";
         public const string ReserveBuildingId="Building_SplitFront_SupportDepot";
         public const string ReservePrefabPath="Assets/Game/Prefabs/Buildings/CH04M03SplitFront/"+ReserveBuildingId+".prefab";
         public static void Build()
         {
             foreach(var pair in new[]{("Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M02_SplitFront.asset",MissionPath),("Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M02_SplitFront.asset",ScenarioPath)})if(AssetDatabase.LoadMainAssetAtPath(pair.Item1)!=null&&AssetDatabase.LoadMainAssetAtPath(pair.Item2)==null)Require(string.IsNullOrEmpty(AssetDatabase.MoveAsset(pair.Item1,pair.Item2)),"Mission asset migration failed");
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"})Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter04");
-            AssetDatabase.Refresh();BuildSupportReservePrefab();BuildMap();BuildScenario();BuildMission();CH04M03SplitFrontSupportBuilder.Build();
+            AssetDatabase.Refresh();BuildSupportReservePrefab();BuildRefineryMap();BuildScenario();BuildMission();CH04M03SplitFrontSupportBuilder.Build();
             M01FirstContactConfigBuilder.RefreshChapterCatalogs();AssetDatabase.SaveAssets();
-            Debug.Log("[SplitFrontConfig] result=Passed chapter=4 mission=3 launcher=1 defenders=7 hostiles=5 protectedCivilians=3 terrain=qualified-urban");
+            Debug.Log("[SplitFrontConfig] result=Passed chapter=4 mission=3 launcher=1 defenders=7 hostiles=5 protectedCivilians=3 terrain=prepared-refinery");
         }
         private static void BuildSupportReservePrefab()
         {
@@ -38,6 +39,7 @@ namespace Game.Editor
             {
                 root.name=ReserveBuildingId;
                 var authoring=new SerializedObject(root.GetComponent<Game.Authoring.BuildingDefinitionAuthoring>());
+                authoring.FindProperty("fuelStorageCapacity").intValue=200;
                 authoring.FindProperty("description").stringValue="Finite Smoke allocation: 4 barrels for optional support; 40 protected for hospital generators and water pumps.";
                 authoring.ApplyModifiedPropertiesWithoutUndo();
                 var prefab=PrefabUtility.SaveAsPrefabAsset(root,ReservePrefabPath);
@@ -47,61 +49,6 @@ namespace Game.Editor
                 if(!found){int index=list.arraySize++;list.GetArrayElementAtIndex(index).objectReferenceValue=prefab;data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(config);}
             }
             finally{UnityEngine.Object.DestroyImmediate(root);}
-        }
-        private static void BuildMap()
-        {
-            var map=Clone<OperationMapDefinition>(CH02M02SupplyLineConfigBuilder.LegacyMapPath,MapPath);
-            var data=new SerializedObject(map);Replace(data,"ch02.m02","ch04.m03");
-            S(data.FindProperty("operationMapId"),MapId);
-            var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(590,0,410);
-            bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(845,100,490);MissionCameraBoundsAuthoring.Apply(bounds);
-            var minimap=data.FindProperty("minimap");S(minimap.FindPropertyRelative("minimapId"),"minimap.ch04.m03.split_front");
-            minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(590,0,410);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(255,80);
-            S(data.FindProperty("planningCameraId"),"camera.ch04.m03.planning");S(data.FindProperty("battleCameraId"),"camera.ch04.m03.battle");
-            var cameras=data.FindProperty("cameras");
-            for(int i=0;i<cameras.arraySize;i++)
-            {
-                var camera=cameras.GetArrayElementAtIndex(i);S(camera.FindPropertyRelative("cameraId"),i==0?"camera.ch04.m03.planning":"camera.ch04.m03.battle");
-                var focus=new Vector3(730,0,435);var position=focus+new Vector3(0,i==0?95:82,-65);
-                camera.FindPropertyRelative("position").vector3Value=position;camera.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;
-            }
-            (string id,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] seeds={
-                ("forward_post",796,450,OperationMapAnchorKind.Base,1,12),
-                ("fuel_reserve",796,450,OperationMapAnchorKind.Build,1,1),
-                ("initial_barracks",738,450,OperationMapAnchorKind.Build,1,1),
-                ("build_zone",775,450,OperationMapAnchorKind.Build,1,38),
-                ("squad_a",782,450,OperationMapAnchorKind.Deployment,1,2),
-                ("squad_b",800,426,OperationMapAnchorKind.Deployment,1,2),
-                ("armor_support",815,426,OperationMapAnchorKind.Deployment,1,2),
-                ("civilians",707,468,OperationMapAnchorKind.Civilian,0,2),
-                ("vanguard_spawn",595,450,OperationMapAnchorKind.Spawn,2,3),
-                ("main_spawn",602,426,OperationMapAnchorKind.Spawn,2,3),
-                ("contact",700,426,OperationMapAnchorKind.Hostile,2,3),
-                ("fork",730,426,OperationMapAnchorKind.Lane,1,3),
-                ("inner_core",825,426,OperationMapAnchorKind.Base,1,5),
-                ("return_rts",766,435,OperationMapAnchorKind.Camera,1,2),
-                ("defense_tower",721,415,OperationMapAnchorKind.Build,1,3),
-                ("defense_barrier",724,427,OperationMapAnchorKind.Build,1,3)};
-            var surface=AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
-            Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Split Front surface missing");
-            using(blob)
-            {
-                var anchors=data.FindProperty("anchors");anchors.arraySize=seeds.Length;
-                for(int i=0;i<seeds.Length;i++)
-                {
-                    var seed=seeds[i];Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,new int2(seed.x,seed.z),out var sample),"Missing surface: "+seed.id);
-                    var anchor=anchors.GetArrayElementAtIndex(i);S(anchor.FindPropertyRelative("anchorId"),Prefix+seed.id);
-                    I(anchor.FindPropertyRelative("kind"),(int)seed.kind);I(anchor.FindPropertyRelative("factionId"),seed.faction);I(anchor.FindPropertyRelative("laneIndex"),0);
-                    anchor.FindPropertyRelative("position").vector3Value=new Vector3(seed.x,sample.Height,seed.z);
-                    anchor.FindPropertyRelative("radius").floatValue=seed.radius;
-                }
-            }
-            using(var sha=SHA256.Create())
-            {
-                string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(map.ContentHash+":split-front-fixed-battery-v2"))).Replace("-","").ToLowerInvariant();
-                S(data.FindProperty("contentHash"),hash);S(data.FindProperty("generatedMetadataHash"),hash);
-            }
-            data.ApplyModifiedPropertiesWithoutUndo();Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);
         }
         private static void BuildScenario()
         {
@@ -122,6 +69,11 @@ namespace Game.Editor
             var groups=data.FindProperty("unitGroups");groups.arraySize=6;
             Group(groups.GetArrayElementAtIndex(0),"launcher",1,"squad_a","role.friendly.command_squad",new[]{"Veh_Missle_Launcher_Ground"});
             Group(groups.GetArrayElementAtIndex(1),"defenders",1,"squad_b","role.friendly.command_squad",new[]{"Veh_Tank_USA","Veh_Tank_USA","Veh_Tank_USA"});
+            // Separate tanks keep the native eleven-cell formation spacing
+            // on the seven-cell clear service corridor.
+            var tanks=groups.GetArrayElementAtIndex(1).FindPropertyRelative("units");
+            S(tanks.GetArrayElementAtIndex(1).FindPropertyRelative("spawnAnchorId"),Prefix+"tank_support_b");
+            S(tanks.GetArrayElementAtIndex(2).FindPropertyRelative("spawnAnchorId"),Prefix+"tank_support_c");
             Group(groups.GetArrayElementAtIndex(2),"infantry",1,"armor_support","role.friendly.command_squad",new[]{"Chr_Soldier_Male_02_Alt_02","Chr_Soldier_Male_02_Alt_04","Chr_Soldier_Female_01_Alt_01","Chr_Soldier_Female_02_Alt_01"});
             Group(groups.GetArrayElementAtIndex(3),"battery",2,"vanguard_spawn","role.hostile.battery",new[]{"Veh_Missle_Launcher_Ground"});
             Group(groups.GetArrayElementAtIndex(4),"diversion",2,"main_spawn","role.hostile.convoy",new[]{"Veh_Light_Armored_Car","Veh_APC_Fast","Chr_Soldier_Male_02_Alt_02","Chr_Soldier_Male_02_Alt_04"});

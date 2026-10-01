@@ -195,6 +195,7 @@ namespace Game.Runtime
                 destination.StoredFuelBarrels += cargo;
                 if (destination.FuelStorageCapacity > 0)
                     destination.StoredFuelBarrels = math.min(destination.FuelStorageCapacity, destination.StoredFuelBarrels);
+                destination.ReceivedHaulerFuelBarrels += cargo;
                 hauler.CargoFuelBarrels = 0f;
             }
             else

@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: CH04M03_SplitFront_SupportContext
   m_EditorClassIdentifier: Game.Configs::Game.Configs.SupportMissionContextConfig
   MissionId: saga.ch04.m03.split_front
-  OperationMapId: opmap.ch04.split_front_01
+  OperationMapId: opmap.ch04.split_front_refinery_review
   MissionSourceVersion: 1
-  Revision: 1
-  GroundMin: {x: 590, y: 410}
-  GroundMax: {x: 845, y: 490}
+  Revision: 2
+  GroundMin: {x: 535, y: 575}
+  GroundMax: {x: 945, y: 685}
   Entry: {x: 0, y: 0, z: 0}
   Release: {x: 0, y: 0, z: 0}
   Exit: {x: 0, y: 0, z: 0}
@@ -25,11 +25,11 @@ MonoBehaviour:
   PopulationCeiling: 0
   RouteAuthored: 0
   Regions:
-  - Min: {x: 590, y: 410}
-    Max: {x: 845, y: 490}
+  - Min: {x: 535, y: 575}
+    Max: {x: 945, y: 685}
     Visible: 1
     Protected: 0
-  - Min: {x: 689, y: 450}
-    Max: {x: 725, y: 486}
+  - Min: {x: 689, y: 650}
+    Max: {x: 725, y: 685}
     Visible: 1
     Protected: 1

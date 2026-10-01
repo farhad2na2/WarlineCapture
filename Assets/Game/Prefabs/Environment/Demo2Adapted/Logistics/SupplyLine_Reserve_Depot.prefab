@@ -97,7 +97,7 @@ MonoBehaviour:
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0
   fuelBarrelsPerDay: 0
-  fuelStorageCapacity: 200
+  fuelStorageCapacity: 500
   materialFabricationEnabled: 0
   materialFabricationOilConsumedPerCycle: 0
   materialFabricationMaterialsOutputPerCycle: 0

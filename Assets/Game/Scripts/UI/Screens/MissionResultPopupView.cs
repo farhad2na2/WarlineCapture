@@ -105,7 +105,7 @@ namespace Game.UI.Runtime
             ApplyV3Outcome(model);
             ApplyConstructionOutcome(in model);
             ApplyDefenseOutcome(in model);
-            ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model); ApplyAirCorridorOutcome(in model); ApplySteelPushOutcome(in model); ApplySplitFrontOutcome(in model); ApplyRouteReopenedOutcome(in model);
+            ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model); ApplyAirCorridorOutcome(in model); ApplySteelPushOutcome(in model); ApplySplitFrontOutcome(in model); ApplyRouteReopenedOutcome(in model); ApplyInfrastructureOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);

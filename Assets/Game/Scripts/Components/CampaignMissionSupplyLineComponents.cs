@@ -24,7 +24,7 @@ namespace Game.Components
         public int AttemptOrdinal;
         public uint SourceVersion;
         public int PreparationMilliseconds, ElapsedMilliseconds, HoldMilliseconds;
-        public float StoredFuel, ObservedOil, ObservedRefinedFuel;
+        public float StoredFuel, ObservedOil, ObservedRefinedFuel, DeliveredFuel, BootstrapFuel;
         public byte Ready, OilTransferred, FuelTransferred, Complete;
         public int AllocatedCivilianBarrels;
         public int2 AlternateLane;

@@ -2331,6 +2331,8 @@ MonoBehaviour:
       value: Power Relay field guide
     - key: mission.power_relay.location
       value: East district substation and school shelter
+    - key: mission.power_relay.marker.shelter
+      value: School shelter
     - key: mission.power_relay.name
       value: Power Relay
     - key: mission.power_relay.objective.restore
@@ -2890,11 +2892,13 @@ MonoBehaviour:
     - key: mission.steel_push.warning.prepare
       value: "PREPARATION \xB7 Position the front tank; military Fuel is finite."
     - key: mission.supply_line.deadline
-      value: 12 minutes
+      value: 15 minutes
+    - key: mission.supply_line.delivery_progress
+      value: 'New Fuel delivered: {0}/40 barrels'
     - key: mission.supply_line.enemy_intel
       value: Ash Line sabotage teams are targeting the supply chain.
     - key: mission.supply_line.failure.deadline
-      value: The reserve was not secured within twelve minutes.
+      value: The reserve was not secured within fifteen minutes.
     - key: mission.supply_line.failure.hauler
       value: A required hauler was destroyed. Both trucks must survive.
     - key: mission.supply_line.failure.integrity
@@ -2918,8 +2922,8 @@ MonoBehaviour:
     - key: mission.supply_line.guide.2.title
       value: Protect refinery output
     - key: mission.supply_line.guide.3.body
-      value: Defend the warehouse while the tanker unloads. Keep 20 civilian barrels
-        and 20 relief barrels in storage.
+      value: Defend the warehouse while the tanker delivers 40 newly refined barrels.
+        Keep 20 civilian barrels and 20 relief barrels protected.
     - key: mission.supply_line.guide.3.title
       value: Secure the reserve depot
     - key: mission.supply_line.guide.4.body
@@ -2951,7 +2955,8 @@ MonoBehaviour:
       value: Deliver refined Fuel to storage
     - key: mission.supply_line.objective.fuel.body
       value: Redirect the Oil truck through the marked southern lane. The tanker
-        automatically carries refinery output to the reserve depot.
+        automatically delivers 40 newly refined barrels to the reserve depot. Starting
+        Fuel funds the longer truck routes.
     - key: mission.supply_line.objective.oil
       value: Supply Oil to the refinery
     - key: mission.supply_line.objective.oil.body
@@ -2984,7 +2989,7 @@ MonoBehaviour:
     - key: mission.supply_line.star.2
       value: Lose no rifle soldiers
     - key: mission.supply_line.star.3
-      value: Finish within 8 minutes
+      value: Finish within 13 minutes
     - key: mission.supply_line.summary
       value: Restore the Oil-to-Fuel chain and protect the reserve for clinics, water
         pumps and JRC relief transport.
@@ -11680,6 +11685,8 @@ MonoBehaviour:
       value: "\u067E\u0633\u062A \u0628\u0631\u0642 \u0645\u0646\u0637\u0642\u0647\u0654
         \u0634\u0631\u0642\u06CC \u0648 \u067E\u0646\u0627\u0647\u06AF\u0627\u0647
         \u0645\u062F\u0631\u0633\u0647"
+    - key: mission.power_relay.marker.shelter
+      value: "\u067E\u0646\u0627\u0647\u06AF\u0627\u0647 \u0645\u062F\u0631\u0633\u0647"
     - key: mission.power_relay.name
       value: "\u0631\u0644\u0647\u0654 \u0628\u0631\u0642"
     - key: mission.power_relay.objective.restore
@@ -12737,7 +12744,10 @@ MonoBehaviour:
         \u0628\u0628\u0631\u061B \u0633\u0648\u062E\u062A \u0646\u0638\u0627\u0645\u06CC
         \u0645\u062D\u062F\u0648\u062F\u0647."
     - key: mission.supply_line.deadline
-      value: "\u06F1\u06F2 \u062F\u0642\u06CC\u0642\u0647"
+      value: "\u06F1\u06F5 \u062F\u0642\u06CC\u0642\u0647"
+    - key: mission.supply_line.delivery_progress
+      value: "\u0633\u0648\u062E\u062A \u062C\u062F\u06CC\u062F \u062A\u062D\u0648\u06CC\u0644\u200C\u0634\u062F\u0647:
+        {0}/\u06F4\u06F0 \u0628\u0634\u06A9\u0647"
     - key: mission.supply_line.enemy_intel
       value: "\u062A\u06CC\u0645\u200C\u0647\u0627\u06CC \u062E\u0631\u0627\u0628\u06A9\u0627\u0631
         \u062E\u0637 \u062E\u0627\u06A9\u0633\u062A\u0631 \u0632\u0646\u062C\u06CC\u0631\u0647\u0654
@@ -12745,7 +12755,7 @@ MonoBehaviour:
         \u06AF\u0631\u0641\u062A\u0646."
     - key: mission.supply_line.failure.deadline
       value: "\u0630\u062E\u06CC\u0631\u0647 \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646
-        \u062F\u0648\u0627\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u0627\u0645\u0646
+        \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647 \u0627\u0645\u0646
         \u0646\u0634\u062F."
     - key: mission.supply_line.failure.hauler
       value: "\u06CC\u06A9\u06CC \u0627\u0632 \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u06CC
@@ -12794,13 +12804,13 @@ MonoBehaviour:
       value: "\u0627\u0632 \u062E\u0631\u0648\u062C\u06CC \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
         \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646"
     - key: mission.supply_line.guide.3.body
-      value: "\u062A\u0627 \u062A\u0627\u0646\u06A9\u0631 \u0628\u0627\u0631\u0634
-        \u0631\u0648 \u062E\u0627\u0644\u06CC \u0645\u06CC\u200C\u06A9\u0646\u0647
-        \u0627\u0632 \u0627\u0646\u0628\u0627\u0631 \u062F\u0641\u0627\u0639 \u06A9\u0646.
-        \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
-        \u0648 \u06F2\u06F0 \u0628\u0634\u06A9\u0647\u0654 \u0627\u0645\u062F\u0627\u062F
-        \u0631\u0648 \u062F\u0631 \u0627\u0646\u0628\u0627\u0631 \u0646\u06AF\u0647
-        \u062F\u0627\u0631."
+      value: "\u062A\u0627 \u062A\u0627\u0646\u06A9\u0631 \u06F4\u06F0 \u0628\u0634\u06A9\u0647\u0654
+        \u0633\u0648\u062E\u062A\u0650 \u062A\u0648\u0644\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647 \u0627\u0632
+        \u0627\u0646\u0628\u0627\u0631 \u062F\u0641\u0627\u0639 \u06A9\u0646. \u06F2\u06F0
+        \u0628\u0634\u06A9\u0647\u0654 \u0645\u0631\u062F\u0645 \u0648 \u06F2\u06F0
+        \u0628\u0634\u06A9\u0647\u0654 \u0627\u0645\u062F\u0627\u062F \u0631\u0648
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
     - key: mission.supply_line.guide.3.title
       value: "\u0627\u0646\u0628\u0627\u0631 \u0630\u062E\u06CC\u0631\u0647 \u0631\u0648
         \u0627\u0645\u0646 \u06A9\u0646"
@@ -12865,9 +12875,12 @@ MonoBehaviour:
       value: "\u06A9\u0627\u0645\u06CC\u0648\u0646 \u0646\u0641\u062A\u0650 \u062E\u0627\u0644\u06CC
         \u0631\u0648 \u0627\u0632 \u0645\u0633\u06CC\u0631 \u062C\u0646\u0648\u0628\u06CC\u0650
         \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0641\u0631\u0633\u062A.
-        \u062A\u0627\u0646\u06A9\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631 \u0633\u0648\u062E\u062A
-        \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0647
-        \u0627\u0646\u0628\u0627\u0631 \u0630\u062E\u06CC\u0631\u0647 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647."
+        \u062A\u0627\u0646\u06A9\u0631 \u062E\u0648\u062F\u06A9\u0627\u0631 \u06F4\u06F0
+        \u0628\u0634\u06A9\u0647\u0654 \u0633\u0648\u062E\u062A \u062A\u0648\u0644\u06CC\u062F\u0634\u062F\u0647
+        \u0631\u0648 \u0628\u0647 \u0627\u0646\u0628\u0627\u0631 \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647.
+        \u0633\u0648\u062E\u062A \u0622\u063A\u0627\u0632\u06CC\u0646 \u0628\u0631\u0627\u06CC
+        \u0645\u0633\u06CC\u0631 \u0637\u0648\u0644\u0627\u0646\u06CC\u200C\u062A\u0631
+        \u06A9\u0627\u0645\u06CC\u0648\u0646\u200C\u0647\u0627\u0633\u062A."
     - key: mission.supply_line.objective.oil
       value: "\u0646\u0641\u062A \u0631\u0648 \u0628\u0647 \u067E\u0627\u0644\u0627\u06CC\u0634\u06AF\u0627\u0647
         \u0628\u0631\u0633\u0648\u0646"
@@ -12925,7 +12938,7 @@ MonoBehaviour:
       value: "\u0647\u06CC\u0686 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631\u06CC
         \u0631\u0648 \u0627\u0632 \u062F\u0633\u062A \u0646\u062F\u0647"
     - key: mission.supply_line.star.3
-      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F8 \u062F\u0642\u06CC\u0642\u0647
+      value: "\u062F\u0631 \u06A9\u0645\u062A\u0631 \u0627\u0632 \u06F1\u06F3 \u062F\u0642\u06CC\u0642\u0647
         \u062A\u0645\u0627\u0645 \u06A9\u0646"
     - key: mission.supply_line.summary
       value: "\u0632\u0646\u062C\u06CC\u0631\u0647\u0654 \u0646\u0641\u062A \u062A\u0627

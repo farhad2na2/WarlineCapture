@@ -202,12 +202,13 @@ namespace Game.Runtime
                     bool detailedSkirmishPath = em.HasComponent<SkirmishCombatTuned>(requestEntities[i]) &&
                         math.distancesq(start, requestedGoal) <=
                         UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells * UnitPathSegmentation.ManualInfantryLongDistanceSegmentCells;
-                    // Automatic haulers need to detour around a whole industrial block.
+                    // Haulers need to detour around a whole industrial block, including
+                    // player reroutes that temporarily remove the automatic haul order.
                     // The default 32-cell straight segment and 12-cell search margin can
                     // repeatedly reject a reachable loading bay on the other side of it.
-                    bool detailedHaulerPath = isVehicle && em.HasComponent<UnitResourceHaulOrder>(requestEntities[i]) &&
+                    bool detailedHaulerPath = isVehicle && em.HasComponent<UnitResourceHauler>(requestEntities[i]) &&
                         math.distancesq(start, requestedGoal) <=
-                        UnitPathSegmentation.ManualVehicleLongDistanceSegmentCells * UnitPathSegmentation.ManualVehicleLongDistanceSegmentCells;
+                        UnitPathSegmentation.ResourceHaulerDetailedSearchCells * UnitPathSegmentation.ResourceHaulerDetailedSearchCells;
                     bool detailedVehiclePath = detailedSkirmishPath || detailedHaulerPath;
                     if (detailedVehiclePath)
                     {
@@ -255,7 +256,7 @@ namespace Game.Runtime
                         assignedGoal = pathGoal;
                     assignedGoals[i] = assignedGoal;
 
-                    if (isManualMove && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)
+                    if ((isManualMove || em.HasComponent<UnitResourceHaulOrder>(requestEntities[i])) && SelectionRuntimeDiagnosticsSystemHelper.EnableMoveCommandTrace && manualTraceCount < 12)
                     {
                         bool startInBounds = startIndex >= 0;
                         bool startWalkable = startInBounds && walkable[startIndex].Value != 0;

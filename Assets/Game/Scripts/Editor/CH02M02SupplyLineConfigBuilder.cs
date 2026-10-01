@@ -153,7 +153,7 @@ namespace Game.Editor
             S(g,"oilAnchorId",Prefix+"oil");S(g,"refineryAnchorId",Prefix+"refinery");S(g,"storageAnchorId",Prefix+"storage");
             S(g,"alternateLaneAnchorId",Prefix+"alternate_lane");
             S(g,"oilBuildingId","SupplyLine_Building_OilPump");S(g,"refineryBuildingId","SupplyLine_Building_Refinery");S(g,"storageBuildingId","SupplyLine_Reserve_Depot");
-            S(g,"reserveBarrels",40);S(g,"civilianReserveBarrels",20);S(g,"holdMilliseconds",20000);S(g,"deadlineMilliseconds",720000);
+            S(g,"reserveBarrels",40);S(g,"civilianReserveBarrels",20);S(g,"holdMilliseconds",20000);S(g,"deadlineMilliseconds",900000);
             data.ApplyModifiedPropertiesWithoutUndo();Require(scenario.TryValidate(out string error),error);EditorUtility.SetDirty(scenario);AssetDatabase.SaveAssets();
         }
         private static void Group(SerializedProperty group,int i)
@@ -178,7 +178,7 @@ namespace Game.Editor
             string[] names={"oil","fuel","reserve"};
             A(data.FindProperty("objectives"),3,(e,i)=>{S(e,"objectiveId","obj.ch02.m02."+names[i]);S(e,"displayTextKey","mission.supply_line.objective."+names[i]);
                 S(e,"rule",(int)MissionObjectiveRuleKind.TransferSupplyOil+i);S(e,"missionRoleId","role.supply."+names[i]);S(e,"targetConfigId",string.Empty);S(e,"requiredCount",i==2?40:1);S(e,"failureOnRuleBreak",true);});
-            A(data.FindProperty("stars"),3,(e,i)=>{S(e,"starIndex",i+1);S(e,"rule",(int)(i==0?MissionStarRuleKind.CompleteMission:i==1?MissionStarRuleKind.NoSquadLoss:MissionStarRuleKind.CompleteUnderMilliseconds));S(e,"displayTextKey","mission.supply_line.star."+(i+1));S(e,"threshold",i==2?480000:0);});
+            A(data.FindProperty("stars"),3,(e,i)=>{S(e,"starIndex",i+1);S(e,"rule",(int)(i==0?MissionStarRuleKind.CompleteMission:i==1?MissionStarRuleKind.NoSquadLoss:MissionStarRuleKind.CompleteUnderMilliseconds));S(e,"displayTextKey","mission.supply_line.star."+(i+1));S(e,"threshold",i==2?780000:0);});
             A(data.FindProperty("firstClearRewards"),2,(e,i)=>{S(e,"kind",i==0?0:1);S(e,"rewardConfigId",i==0?"reward.commander_xp":string.Empty);S(e,"displayTextKey",i==0?"mission.reward.commander_xp":"mission.reward.credits");S(e,"amount",i==0?800:4000);});
             A(data.FindProperty("replayRewards"),1,(e,i)=>{S(e,"kind",1);S(e,"rewardConfigId",string.Empty);S(e,"displayTextKey","mission.reward.credits");S(e,"amount",300);});
             data.ApplyModifiedPropertiesWithoutUndo();Require(MissionDefinitionContractValidation.TryValidateDefinition(mission,out string error),error);EditorUtility.SetDirty(mission);AssetDatabase.SaveAssets();

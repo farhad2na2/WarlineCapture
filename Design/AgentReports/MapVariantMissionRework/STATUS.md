@@ -1,57 +1,56 @@
 # Existing Campaign map migration status
 
-Updated 2026-10-01. This isolated checkout contains the CH02-M02 Supply Line
-pilot, a CH02-M04 Power Relay review candidate, and a CH01-M04 Airlift
-candidate, a CH04-M01 Air Corridor candidate and a CH02-M05 Route Reopened candidate ready for mission review. Steel Push is also ready for mission review following final desktop checks. No map or mission is qualified for release,
-and these review bindings have not been promoted
-to `main`.
+Updated 2026-10-01. Seven migrated candidates have completed final native
+English/Persian normal-input mission journeys. The isolated branch is
+`codex/airlift-airfield-review`; these bindings have not been promoted to `main`.
+See `REVIEW.md` for the ordinary Campaign review entry and priorities. Human
+visual/player review and real device acceptance remain pending.
 
-| Mission | Planned disposition | This checkout |
+| Mission | Map disposition | Editor evidence |
 |---|---|---|
-| CH01-M01 First Contact | Retain urban | No migration; baseline not rerun |
-| CH01-M02 Establish the Base | Retain urban | No migration; baseline not rerun |
-| CH01-M03 Radar Warning | Retain urban | No migration; baseline not rerun |
-| CH01-M04 Airlift | CityEdgeAirfield | ARIA English and manual Persian normal-input extraction/result/return passed on final layout; ready for user review; see `Airlift/WORKSPACE.md` |
-| CH01-M05 Breach Assault | Retain urban | No migration; baseline not rerun |
-| CH02-M01 Gridlock | Retain urban | No migration; baseline not rerun |
-| CH02-M02 Supply Line | RefineryDistrict | Review candidate in progress; see `SupplyLine/WORKSPACE.md` |
-| CH02-M03 Market Lifeline | Retain urban | Generator basis pinned to legacy Supply Line map; regression pending |
-| CH02-M04 Power Relay | RefineryDistrict | ARIA public-input victory and result/return passed; visual and negative gates pending; see `PowerRelay/WORKSPACE.md` |
-| CH02-M05 Route Reopened | AshLinePort | Final English ARIA/Persian manual, native convoy and records losses, fresh Retry and result/return passed; human/device acceptance pending; see `RouteReopened/READINESS.md` |
-| CH03-M01 Signal Trace | Retain urban | No migration; baseline not rerun |
-| CH03-M02 Safehouse Sweep | Retain urban | No migration; baseline not rerun |
-| CH03-M03 False Front | Retain urban | No migration; baseline not rerun |
-| CH03-M04 Evidence Chain | Retain urban | No migration; baseline not rerun |
-| CH03-M05 Network Break | Retain urban | No migration; baseline not rerun |
-| CH04-M01 Air Corridor | CityEdgeAirfield | Final English manual/Retry and Persian ARIA normal-input victory/result/return passed; visible gray Build actions, exact shortage/refund, saved Continue and real radar-loss gates passed; ready for Editor review; see `AirCorridor/WORKSPACE.md` |
-| CH04-M02 Steel Push | RefineryDistrict | Final English ARIA first clear/replay, Persian manual, shortage fixture and native defeat/fresh Retry passed; human/device acceptance pending; see `SteelPush/READINESS.md` |
-| CH04-M03 Split Front | RefineryDistrict | Generator basis pinned to legacy Supply Line map; migration not started |
+| CH01-M01 First Contact | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH01-M02 Establish the Base | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH01-M03 Radar Warning | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH01-M04 Airlift | CityEdgeAirfield | Final English ARIA / Persian manual extraction, result and return passed; `Airlift/WORKSPACE.md` |
+| CH01-M05 Breach Assault | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH02-M01 Gridlock | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH02-M02 Supply Line | RefineryDistrict | English ARIA / Persian manual, all 40 deliveries, real reroute arrival, reserve hold and result/return passed; `SupplyLine/READINESS.md` |
+| CH02-M03 Market Lifeline | Retain urban | Legacy generator basis preserved; native regression not rerun |
+| CH02-M04 Power Relay | RefineryDistrict | English manual / Persian ARIA, existing school frontage, complete protected route/repair/hold and result/return passed; `PowerRelay/READINESS.md` |
+| CH02-M05 Route Reopened | AshLinePort | English ARIA / Persian manual, native convoy/records losses, fresh Retry and result/return passed; `RouteReopened/READINESS.md` |
+| CH03-M01 Signal Trace | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH03-M02 Safehouse Sweep | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH03-M03 False Front | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH03-M04 Evidence Chain | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH03-M05 Network Break | Retain urban | Asset baseline preserved; native regression not rerun |
+| CH04-M01 Air Corridor | CityEdgeAirfield | English manual / Persian ARIA, visible disabled Build actions, shortage/refund, saved Continue, real radar loss/Retry and result/return passed; `AirCorridor/WORKSPACE.md` |
+| CH04-M02 Steel Push | RefineryDistrict | English ARIA first clear/replay, Persian manual, shortage, native defeat/Retry and result/return passed; `SteelPush/READINESS.md` |
+| CH04-M03 Split Front | RefineryDistrict | English ARIA / Persian manual, direct Attack/fire, all five hostile defeats, intact core, settlement/result/return passed; optional production-context Smoke and native pre-launch Hold passed; `SplitFront/READINESS.md` |
 
-Supply Line gates: candidate generation, packed content build, mission
-configuration, exact native spawns, and generated-grid pump truck clearance
-**passed**. Full ARIA normal-input outcome **failed** in the latest run; manual
-mission, result/return, renewed native route suite, human visual review, and
-Android device acceptance remain **pending**. See `SupplyLine/WORKSPACE.md`.
+## Scope of verification
 
-Power Relay gates: static route clearance, packed source hash, focused rules,
-and complete public-input ARIA victory through Campaign return **passed**.
-Manual play, native negative paths, school landmark and camera visual review,
-human approval, and device acceptance remain **pending**. See
-`PowerRelay/WORKSPACE.md`.
+Native mission journeys qualify the exact migrated layouts for Editor review.
+Agent visual inspection, focused automated checks, normal-input journeys and
+human/device acceptance are separate evidence categories in each mission report.
+No new gameplay controls were added. Existing ARIA Play / Stop, colorful commands
+and approved selection/ground marker direction are retained.
 
-Airlift gates: packed source, static route clearance, 15 focused passenger-rule
-cases, two socket cases, 13 Show Me cases and complete final-layout ARIA/manual
-native journeys **passed**. Human map/camera/minimap review, updated briefing
-voices, native negative journeys, saved-state migration and device acceptance
-remain **pending**. See `Airlift/WORKSPACE.md` for preserved failures and evidence.
+The retained asset comparison checked 27 mission definition/operation-map assets
+against baseline `aeffb64c` with zero mismatches. It does not claim native gameplay
+regressions for the eleven retained missions. Shared hauler changes passed three
+native ECS detour cases and all 31 resource-hauler cases; target-device performance
+and other affected native regressions remain separate release gates.
 
-Air Corridor gates: prepared source, full Barracks footprint/service clearance,
-reachable overlapping defense coverage, focused mission/media checks, open
-marker geometry, 22 vehicle and 11 building selection cases, Burst resources,
-28 Build drawer and 31 production checks passed. Native shortage/cancel/refund
-checks passed. Final English manual and Persian ARIA victory/result/settlement/
-latest Campaign return passed. Saved Continue, legacy-map rejection, real radar
-loss with no rewards, and fresh Retry through victory passed. Previous failures
-remain in the evidence. Human map/camera/minimap review, packaged device content,
-device acceptance and other affected mission regressions remain pending; see
-`AirCorridor/WORKSPACE.md`.
+## Remaining release gates
+
+- Human map/camera/minimap, visual direction and real player acceptance.
+- Packaged device content, performance and real device acceptance.
+- Updated/approved voice assets where each report says they are pending;
+  Split Front currently uses captioned content.
+- Saved-state/resume compatibility and dedicated native negative/replay/access
+  journeys not already qualified for each mission.
+- Broader affected/retained mission regression before production integration.
+
+Full failed and superseded runs remain in the evidence and log manifest. Earlier
+wins do not substitute for the final delivery/layout requirements. No candidate
+is described as release-qualified.

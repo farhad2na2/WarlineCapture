@@ -60,7 +60,7 @@ namespace Game.UI.Runtime
         public bool IsPresentationVisible =>
             briefingLayout != null && briefingLayout.gameObject.activeSelf;
 
-        private void Awake() => PrepareActionButtons();
+        private void Awake(){PrepareActionButtons();if(GetComponent<PowerRelayLandmarkView>()==null)gameObject.AddComponent<PowerRelayLandmarkView>();}
 
         private void PrepareActionButtons()
         {
@@ -259,6 +259,14 @@ namespace Game.UI.Runtime
             UiTutorialNarrationPhase narrationPhase)
         {
             _currentInstructionBody = UiLocalizedText.CatalogLabel(body);
+            // Command cues replace the mission body. Keep completed delivery
+            // progress visible while selecting or moving the final defenders.
+            if (_tutorialStepCount == 4 && UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int delivered))
+            {
+                string progress = Game.Configs.GameText.Format("mission.supply_line.delivery_progress",
+                    "New Fuel delivered: {0}/40 barrels", Mathf.Min(40, delivered));
+                if (!_currentInstructionBody.Contains(progress)) _currentInstructionBody += "\n" + progress;
+            }
             _currentNarrationPhase = narrationPhase;
             SetLocalizedText(titleText, title);
             SetLocalizedText(bodyText, _currentInstructionBody);

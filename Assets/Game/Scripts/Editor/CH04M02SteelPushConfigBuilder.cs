@@ -37,6 +37,7 @@ namespace Game.Editor
             {
                 root.name=ReserveBuildingId;
                 var authoring=new SerializedObject(root.GetComponent<Game.Authoring.BuildingDefinitionAuthoring>());
+                authoring.FindProperty("fuelStorageCapacity").intValue=200;
                 authoring.FindProperty("description").stringValue="Finite emergency Fuel: 120 barrels for necessary armor movement; 40 protected for hospital generators and water pumps.";
                 authoring.ApplyModifiedPropertiesWithoutUndo();
                 var prefab=PrefabUtility.SaveAsPrefabAsset(root,ReservePrefabPath);

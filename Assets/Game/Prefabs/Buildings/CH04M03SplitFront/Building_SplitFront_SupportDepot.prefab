@@ -13,6 +13,10 @@ PrefabInstance:
       value: 'Finite Smoke allocation: 4 barrels for optional support; 40 protected
         for hospital generators and water pumps.'
       objectReference: {fileID: 0}
+    - target: {fileID: 1266168351864275634, guid: a7b8238612ceb43c09115182c6e77a05, type: 3}
+      propertyPath: fuelStorageCapacity
+      value: 200
+      objectReference: {fileID: 0}
     - target: {fileID: 4311864927705048132, guid: a7b8238612ceb43c09115182c6e77a05, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -7,6 +7,11 @@ namespace Game.UI.Runtime
             stored=reserve=0;canAllocate=false;
             return current is Game.UI.Contracts.IUiSupplyLineGateway gateway && gateway.TryReadSupplyLine(out stored,out reserve,out canAllocate);
         }
+        public static bool TryReadSupplyLineDelivery(out int delivered)
+        {
+            delivered=0;
+            return current is Game.UI.Contracts.IUiSupplyLineGateway gateway && gateway.TryReadSupplyLineDelivery(out delivered);
+        }
         public static bool IsSupplyLineGuideContext()=>
             TryReadMissionHudRestrictions(out var mission) && mission.MissionId=="saga.ch02.m02.supply_line" ||
             TryReadCampaignOperations(out var campaign) && campaign.SelectedMission.MissionId=="saga.ch02.m02.supply_line";

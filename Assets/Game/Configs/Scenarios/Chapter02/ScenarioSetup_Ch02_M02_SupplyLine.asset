@@ -294,7 +294,7 @@ MonoBehaviour:
     reserveBarrels: 40
     civilianReserveBarrels: 20
     holdMilliseconds: 20000
-    deadlineMilliseconds: 720000
+    deadlineMilliseconds: 900000
   marketLifeline:
     enabled: 0
     deliveryAnchorId: 

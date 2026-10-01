@@ -56,7 +56,7 @@ MonoBehaviour:
   - starIndex: 3
     rule: 3
     displayTextKey: mission.supply_line.star.3
-    threshold: 480000
+    threshold: 780000
   firstClearRewards:
   - kind: 0
     rewardConfigId: reward.commander_xp

@@ -5,6 +5,7 @@ namespace Game.Runtime
     internal struct UnitPathSegmentation
     {
         public const float DefaultLongDistanceSegmentCells = 32f;
+        public const float ResourceHaulerDetailedSearchCells = 256f;
         public const float ManualInfantryLongDistanceSegmentCells = 1024f;
         public const float ManualVehicleLongDistanceSegmentCells = 128f;
 

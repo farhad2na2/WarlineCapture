@@ -182,7 +182,7 @@ namespace Game.UI.Runtime
             int goalId=_lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep;
             // A delivered load is visible reserve progress, even while the same
             // defend-storage instruction remains on screen.
-            if(_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadSupplyLine(out int reserveFuel,out _,out _))
+            if(_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int reserveFuel))
                 goalId=7600+_lastPanelModel.TutorialStep*8+Mathf.Clamp(reserveFuel/8,0,6);
             UiShellRuntimeGateway.PublishAriaObservation(new AriaPlayObservation(kind, target,
                 goalId, position, Time.frameCount, Time.unscaledTime,drag,dragEnd));

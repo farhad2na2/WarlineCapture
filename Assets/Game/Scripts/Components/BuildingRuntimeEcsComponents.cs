@@ -194,6 +194,7 @@ namespace Game.Components
         public float ReservedFuelInboundBarrels;
         public float ReservedFuelOutboundBarrels;
         public float CivilianFuelReserveBarrels;
+        public float ReceivedHaulerFuelBarrels; // Completed unloads; independent of production and spending.
         public uint Version;
     }
 

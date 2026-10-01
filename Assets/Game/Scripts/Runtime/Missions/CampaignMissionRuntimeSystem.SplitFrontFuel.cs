@@ -50,8 +50,11 @@ namespace Game.Runtime
                         foreach(var entity in entities)
                         {
                             var info=em.GetComponentData<RuntimeBuildingCombatInfo>(entity);if(info.RuntimeBuildingId!=request.BuildingRuntimeId||info.OwnerFactionId!=1)continue;
-                            if(request.ActualOrigin.x<590||request.ActualOrigin.y<435||
-                                request.ActualOrigin.x+request.ActualFootprint.x>845||request.ActualOrigin.y+request.ActualFootprint.y>490)
+                            bool refinery=metadata.Blob.Value.OperationMapId.Equals("opmap.ch04.split_front_refinery_review")&&
+                                metadata.Blob.Value.SourceContentHash.Equals("2d4fd91a415a68f0299a4075e37730ecd7b746e94e5a2a1e2a6cd7baca687778");
+                            int2 min=refinery?new int2(535,575):new int2(590,435);
+                            int2 max=refinery?new int2(945,685):new int2(845,490);
+                            if(math.any(request.ActualOrigin<min)||math.any(request.ActualOrigin+request.ActualFootprint>max))
                             {facts.HostileRosterIntegrityFault=1;break;}
                             var storage=em.GetComponentData<BuildingResourceStorageComponent>(entity);
                             if(storage.FuelStorageCapacity<SplitStartingFuel){facts.HostileRosterIntegrityFault=1;break;}

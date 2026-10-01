@@ -241,7 +241,9 @@ namespace Game.Components
         RouteRelief = 69, RouteFuel = 70, RouteRepair = 71, RouteBreach = 72, RouteGarrison = 73, RouteRecords = 74,
         AirCorridorPlan = 75, AirCorridorSelect = 76, AirCorridorMove = 77, AirCorridorDefend = 78,
         SteelPushPlan = 79, SteelPushSelect = 80, SteelPushMove = 81, SteelPushDefend = 82,
-        SplitFrontPlan = 83, SplitFrontSelect = 84, SplitFrontTarget = 85, SplitFrontConfirm = 86
+        SplitFrontPlan = 83, SplitFrontSelect = 84, SplitFrontTarget = 85, SplitFrontConfirm = 86,
+        GroundedSignalUnload = 87, GroundedSignalRelay = 88, GroundedSignalRecover = 89,
+        GroundedSignalBoard = 90, GroundedSignalExtract = 91
     }
 
     public struct CampaignMissionGuidanceProjectionComponent : IComponentData

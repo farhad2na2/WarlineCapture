@@ -13,7 +13,8 @@ namespace Game.Runtime
             TryFindAnchor(ref map, definition.Extraction.LandingAnchorId, out var landing);
             TryFindAnchor(ref map, definition.Extraction.DepartureAnchorId, out var departure);
             bool evidenceChain = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.EvidenceChain));
-            bool armored = evidenceChain && EvidenceChainRouteChoice.Selected == EvidenceChainExtractionRoute.Armored;
+            bool armored = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.GroundedSignal)) ||
+                evidenceChain && EvidenceChainRouteChoice.Selected == EvidenceChainExtractionRoute.Armored;
             var handoff = landing.Position;
             if (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m04.airlift")) &&
                 TryFindAnchor(ref map, new Unity.Collections.FixedString64Bytes("anchor.ch01.m04.transfer"), out var transfer))

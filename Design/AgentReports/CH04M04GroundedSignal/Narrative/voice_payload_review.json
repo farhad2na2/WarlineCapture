@@ -1,0 +1,249 @@
+{
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "missionId": "saga.ch04.m04.grounded_signal",
+  "clipCount": 16,
+  "runtimeNetworkTts": false,
+  "clips": [
+    {
+      "id": "grounded_signal-brief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "The military relay sits beside the civilian airfield. Disable the relay, recover its control hardware, and bring both specialists home. The terminal must stay intact.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14400,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-brief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] رلهٔ نظامی کنار فرودگاه غیرنظامیه. رله رو از کار بنداز، تجهیزات کنترلش رو بردار و هر دو متخصص رو سالم برگردون. ترمینال باید سالم بمونه.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14401,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-brief-02",
+      "speaker": "KARIM",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/onwK4e9ZLuTAKqWW03F9",
+      "request": {
+        "text": "We'll unload at the apron and leave by APC. Keep the runway clear. Use the service gate to reach the compound, and protect our way back.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14402,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-brief-02",
+      "speaker": "KARIM",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/onwK4e9ZLuTAKqWW03F9",
+      "request": {
+        "text": "[conversational tone] توی محوطهٔ توقف پیاده می‌شیم و با نفربر برمی‌گردیم. باند رو باز نگه دار. از درِ خدماتی وارد محوطه شو و مسیر برگشتمون رو حفظ کن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14403,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-brief-03",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "I need the control hardware, not rubble. Once the military relay is disabled, get us to the recovery point. We'll verify and secure the device there.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14404,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-brief-03",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "[conversational tone] تجهیزات کنترل رو می‌خوام، نه آوارش رو. وقتی رلهٔ نظامی از کار افتاد، ما رو به محل بازیابی برسون. همون‌جا دستگاه رو بررسی و تحویل می‌گیریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14405,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-comms-01",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "The interfaces match the Civic Relay specifications. This equipment was prepared for our network. We still need the physical unit to prove it.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14406,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-comms-01",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "[conversational tone] اتصال‌ها با مشخصات رلهٔ شهری یکیه. این تجهیزات رو برای شبکهٔ ما آماده کردن. برای اثباتش هنوز باید خودِ دستگاه رو برداریم.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14407,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-comms-02",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "Vanguard knows you're there. Keep the specialists together and the service road open. Recover the hardware, board the APC, then reach the guarded exit.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14408,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-comms-02",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/EXAVITQu4vr4xnSDxMaL",
+      "request": {
+        "text": "[conversational tone] ونگارد فهمیده اونجایین. متخصص‌ها رو کنار هم نگه دار و جادهٔ خدماتی رو باز بذار. تجهیزات رو بردار، سوار نفربر شو و به خروجی محافظت‌شده برس.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14409,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-01",
+      "speaker": "KARIM",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/onwK4e9ZLuTAKqWW03F9",
+      "request": {
+        "text": "Both specialists and the hardware are back. The civilian terminal is intact. The service route held long enough to get everyone out.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14410,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-01",
+      "speaker": "KARIM",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/onwK4e9ZLuTAKqWW03F9",
+      "request": {
+        "text": "[conversational tone] هر دو متخصص و تجهیزات برگشتن. ترمینال غیرنظامی هم سالمه. مسیر خدماتی تا وقتی همه رو خارج کردیم باز موند.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14411,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-02",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "The connectors and control layout fit our Civic Relay. That compatibility was deliberate. They weren't just borrowing an airfield.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14412,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-02",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/cjVigY5qzO86Huf0OWal",
+      "request": {
+        "text": "[conversational tone] اتصال‌ها و چیدمان کنترل با رلهٔ شهری ما جور درمیاد. این سازگاری عمدی بوده. اونا فقط از یه فرودگاه استفاده نمی‌کردن.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14413,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "The recovered schedule identifies Vanguard's command group and its next link window. I can mark the approach for your review. You decide when we move.",
+        "model_id": "eleven_v3",
+        "language_code": "en",
+        "seed": 14414,
+        "apply_text_normalization": "on"
+      }
+    },
+    {
+      "id": "grounded_signal-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "destination": "https://api.elevenlabs.io/v1/text-to-speech/Fi9tPTnEcbh3of7hOHC8",
+      "request": {
+        "text": "[conversational tone] برنامه‌ای که بازیابی کردیم، گروه فرماندهی ونگارد و زمان اتصال بعدیشون رو مشخص می‌کنه. می‌تونم مسیر نزدیک شدن رو برای بررسی نشون بدم. زمان حرکت رو شما تعیین می‌کنین.",
+        "model_id": "eleven_v3",
+        "language_code": "fa",
+        "seed": 14415,
+        "apply_text_normalization": "on",
+        "voice_settings": {
+          "stability": 0.5,
+          "similarity_boost": 0.75
+        }
+      }
+    }
+  ]
+}

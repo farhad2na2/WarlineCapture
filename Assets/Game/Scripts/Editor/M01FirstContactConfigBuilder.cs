@@ -329,6 +329,11 @@ namespace Game.Editor
                     maps.Add(map);
             }
 
+            // Grounded Signal owns a generated physical derivative outside chapter metadata folders.
+            var groundedSignal = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                CH04M04GroundedSignalConfigBuilder.MapPath);
+            if (groundedSignal != null && !maps.Contains(groundedSignal)) maps.Add(groundedSignal);
+
             maps.Sort((left, right) => string.CompareOrdinal(left.OperationMapId, right.OperationMapId));
             for (int i = 1; i < maps.Count; i++)
                 if (maps[i - 1].OperationMapId == maps[i].OperationMapId)

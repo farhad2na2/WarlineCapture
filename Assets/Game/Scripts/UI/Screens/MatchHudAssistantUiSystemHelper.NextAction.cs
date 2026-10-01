@@ -29,7 +29,8 @@ namespace Game.UI.Runtime
             if(ShowPendingPlacementInstruction(placing)) return;
             if(_lastPanelModel.TutorialStepCount==5)
             {
-                if(UiShellRuntimeGateway.IsMarketLifelineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext()) ShowMarketLifelineNextAction();
+                if(UiShellRuntimeGateway.IsGroundedSignalGuideContext()) ShowGroundedSignalNextAction(step);
+                else if(UiShellRuntimeGateway.IsMarketLifelineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext()) ShowMarketLifelineNextAction();
                 else ShowFirstContactNextAction(step);
                 return;
             }
@@ -98,6 +99,23 @@ namespace Game.UI.Runtime
             else if (step == 2) ShowCommandOrDestination(_commandControlsView?.MoveButton, TacticalCommandMode.Move);
             else if (step is 3 or 4) ShowEarlyMissionThreat();
             else WaitForTutorialArrival(); // The mission finale owns this transition.
+        }
+
+        private void ShowGroundedSignalNextAction(int step)
+        {
+            if(ShowMissingSelection(out var target))return;
+            if(target.Moving || target.ExecutingAttack || target.BattleAction==UiTutorialBattleAction.Watch)
+            {WaitForTutorialArrival();return;}
+            if(step==1)
+            {
+                if(_tutorialSelection==null && _buttonRoot!=null)
+                    _tutorialSelection=_buttonRoot.root.GetComponentInChildren<MatchHudSelectionPanelView>(true);
+                Cue(_tutorialSelection?.ResolvePassengerTutorialButton(),"tutorial.next.unload");
+            }
+            else if(step==2)ShowCommandOrDestination(target.BattleAction==UiTutorialBattleAction.Move?_commandControlsView?.MoveButton:_commandControlsView?.AttackButton,
+                target.BattleAction==UiTutorialBattleAction.Move?TacticalCommandMode.Move:TacticalCommandMode.Attack);
+            else if(step==4)ShowCommandOrDestination(_commandControlsView?.CommandWheelPanel?.NextBoardButton,TacticalCommandMode.Board);
+            else ShowCommandOrDestination(_commandControlsView?.MoveButton,TacticalCommandMode.Move);
         }
 
         private void ShowMarketLifelineNextAction()
@@ -183,7 +201,7 @@ namespace Game.UI.Runtime
             {
                 _highlightPresentationSystem.ShowTutorialSelectionBox(target.SelectionMin,target.SelectionMax);
                 if(_focusNextTutorialWorld && UiShellRuntimeGateway.TryFocusMissionTutorialTarget(true))
-                {_tutorialFocusPendingUntil=Time.unscaledTime+2f;_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
+                {_tutorialFocusPendingUntil=Time.unscaledTime+(UiShellRuntimeGateway.IsGroundedSignalGuideContext()?15f:2f);_tutorialFocusPendingStep=_lastPanelModel.TutorialStep;}
             }
             else ShowTutorialWorld(target.Selection,true);
         }

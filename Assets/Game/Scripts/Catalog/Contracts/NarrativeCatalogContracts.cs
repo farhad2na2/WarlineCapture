@@ -11,7 +11,9 @@ namespace Game.Catalog.Contracts
         Fadi = 6,
         Yasin = 7,
         Lina = 8,
-        Qassem = 9
+        Qassem = 9,
+        Karim = 10,
+        Yusuf = 11
     }
 
     public enum NarrativeSpeakerTreatment

@@ -817,6 +817,167 @@ MonoBehaviour:
       value: Working
     - key: mission.gridlock.worker.name
       value: Road worker
+    - key: mission.grounded_signal.deadline
+      value: Extract within fifteen minutes
+    - key: mission.grounded_signal.enemy_intel
+      value: Vanguard relay and perimeter guards. Civilian facilities are protected.
+    - key: mission.grounded_signal.forces
+      value: "Transport plane \xB7 2 specialists \xB7 APC \xB7 rifle escort"
+    - key: mission.grounded_signal.guide.diagram
+      value: INSERT | RECOVER | EXTRACT
+    - key: mission.grounded_signal.guide.example
+      value: "Unload \u2192 disable relay \u2192 recover hardware \u2192 Board APC
+        \u2192 guarded exit."
+    - key: mission.grounded_signal.guide.mistake
+      value: Do not board before hardware recovery. Keep both specialists alive and
+        protect the terminal staff.
+    - key: mission.grounded_signal.guide.title
+      value: "GROUNDED SIGNAL \xB7 FIELD GUIDE"
+    - key: mission.grounded_signal.hud.exit
+      value: 'Exit secure: {0}/6 s'
+    - key: mission.grounded_signal.hud.recovery
+      value: 'Hardware recovery: {0}/6 s'
+    - key: mission.grounded_signal.hud.stage.1
+      value: "UNLOAD \xB7 Select the plane \u2192 Passengers \u2192 Exit All"
+    - key: mission.grounded_signal.hud.stage.2
+      value: "RELAY \xB7 Escort \u2192 Attack \u2192 military relay"
+    - key: mission.grounded_signal.hud.stage.2.apc
+      value: "RELAY \xB7 APC \u2192 Attack \u2192 military relay"
+    - key: mission.grounded_signal.hud.stage.2.apc_approach
+      value: "RELAY \xB7 APC \u2192 Move \u2192 open service gate"
+    - key: mission.grounded_signal.hud.stage.2.approach
+      value: "RELAY \xB7 Escort \u2192 Move \u2192 open service gate"
+    - key: mission.grounded_signal.hud.stage.3
+      value: "RECOVERY \xB7 Both specialists \u2192 Move \u2192 hardware"
+    - key: mission.grounded_signal.hud.stage.4
+      value: "EXTRACTION \xB7 Both specialists \u2192 Board \u2192 APC"
+    - key: mission.grounded_signal.hud.stage.5
+      value: "EXIT \xB7 APC \u2192 Move \u2192 guarded exit"
+    - key: mission.grounded_signal.intel.air
+      value: AIR THREAT
+    - key: mission.grounded_signal.intel.guards
+      value: PERIMETER GUARDS
+    - key: mission.grounded_signal.intel.none
+      value: NONE
+    - key: mission.grounded_signal.intel.present
+      value: PRESENT
+    - key: mission.grounded_signal.intel.relay
+      value: MILITARY RELAY
+    - key: mission.grounded_signal.label.deadline
+      value: EXTRACTION WINDOW
+    - key: mission.grounded_signal.label.transport
+      value: TRANSPORT
+    - key: mission.grounded_signal.location
+      value: "Sahrin \xB7 civilian airfield and military relay"
+    - key: mission.grounded_signal.marker.apron
+      value: UNLOAD
+    - key: mission.grounded_signal.marker.exit
+      value: EXIT
+    - key: mission.grounded_signal.marker.hardware
+      value: HARDWARE
+    - key: mission.grounded_signal.name
+      value: Grounded Signal
+    - key: mission.grounded_signal.objective.civilian
+      value: Protect the civilian terminal and staff
+    - key: mission.grounded_signal.objective.extract
+      value: Extract both specialists by APC
+    - key: mission.grounded_signal.objective.hardware
+      value: Disable the relay and recover its hardware
+    - key: mission.grounded_signal.objective.relay
+      value: Disable the relay and recover its hardware
+    - key: mission.grounded_signal.objective.terminal
+      value: Protect the civilian terminal and staff
+    - key: mission.grounded_signal.resources
+      value: "Required transport supplied \xB7 support optional"
+    - key: mission.grounded_signal.result.aircraft_lost
+      value: The insertion plane was lost before both specialists unloaded.
+    - key: mission.grounded_signal.result.carrier_lost
+      value: The extraction APC was lost. Protect the carrier and keep the service
+        road open.
+    - key: mission.grounded_signal.result.civilian_losses
+      value: CIVILIAN STAFF LOSSES
+    - key: mission.grounded_signal.result.defeat
+      value: EXTRACTION FAILED
+    - key: mission.grounded_signal.result.escort_losses
+      value: ESCORT LOSSES
+    - key: mission.grounded_signal.result.integrity
+      value: The operation could not confirm the original team and hardware. Retry
+        the mission.
+    - key: mission.grounded_signal.result.passenger_lost
+      value: A specialist was lost. Keep both original specialists alive through
+        recovery and extraction.
+    - key: mission.grounded_signal.result.star.hardware
+      value: Hardware and specialists extracted
+    - key: mission.grounded_signal.result.subtitle
+      value: "GROUNDED SIGNAL \xB7 AIRFIELD RELAY"
+    - key: mission.grounded_signal.result.success
+      value: Both specialists returned with the control hardware. The civilian airfield
+        is intact. The recovered schedule identifies Vanguard's command group.
+    - key: mission.grounded_signal.result.success_short
+      value: Both specialists extracted with the relay hardware. Civilian terminal
+        protected.
+    - key: mission.grounded_signal.result.terminal_lost
+      value: Civilian staff were lost. Keep combat away from the protected terminal.
+    - key: mission.grounded_signal.result.timeout
+      value: The extraction window closed. Recover the hardware and reach the guarded
+        exit within fifteen minutes.
+    - key: mission.grounded_signal.result.victory
+      value: HARDWARE RECOVERED
+    - key: mission.grounded_signal.reward.card
+      value: "Commander XP \xB7 Credits \xB7 Paratroopers unlocked"
+    - key: mission.grounded_signal.star.1
+      value: Complete the mission
+    - key: mission.grounded_signal.star.2
+      value: No escort losses
+    - key: mission.grounded_signal.star.3
+      value: No civilian losses
+    - key: mission.grounded_signal.summary
+      value: Unload Karim and Yusuf at the apron. Disable the military relay, recover
+        its hardware, then extract both specialists by APC. Protect the civilian
+        terminal.
+    - key: mission.grounded_signal.tutorial.1.body
+      value: Select the transport plane, open its passengers, then use Exit All.
+        Karim and Yusuf must unload at the apron. Show Me moves only the camera.
+    - key: mission.grounded_signal.tutorial.1.title
+      value: Unload the specialists
+    - key: mission.grounded_signal.tutorial.2.apc.body
+      value: 'Select the supplied APC and Attack the military relay vehicle. Protect
+        the carrier: both specialists need it for extraction.'
+    - key: mission.grounded_signal.tutorial.2.apc.title
+      value: Disable the military relay
+    - key: mission.grounded_signal.tutorial.2.apc_approach.body
+      value: The escort is lost. Select the supplied APC and Move through the open
+        service gate, then Attack the relay. Keep the carrier safe for extraction.
+    - key: mission.grounded_signal.tutorial.2.apc_approach.title
+      value: Reach the relay gate
+    - key: mission.grounded_signal.tutorial.2.approach.body
+      value: Select the rifle escort and Move through the open service gate. Once
+        close to the relay, use Attack on its vehicle. Protect the specialists and
+        civilian terminal.
+    - key: mission.grounded_signal.tutorial.2.approach.title
+      value: Reach the relay gate
+    - key: mission.grounded_signal.tutorial.2.body
+      value: Select the rifle escort, tap Attack, then target the military relay
+        vehicle. Protect the specialists and keep fighting away from the civilian
+        terminal.
+    - key: mission.grounded_signal.tutorial.2.title
+      value: Disable the military relay
+    - key: mission.grounded_signal.tutorial.3.body
+      value: Select both specialists and Move them to the marked hardware point.
+        Keep them dismounted together for six seconds. Leaving or boarding cancels
+        recovery.
+    - key: mission.grounded_signal.tutorial.3.title
+      value: Recover the control hardware
+    - key: mission.grounded_signal.tutorial.4.body
+      value: Select both specialists, open the existing Commands wheel, choose Board,
+        then tap the APC. The recovered hardware travels with the team.
+    - key: mission.grounded_signal.tutorial.4.title
+      value: Board the extraction APC
+    - key: mission.grounded_signal.tutorial.5.body
+      value: Select the APC and Move it to the marked exit. Keep both specialists
+        aboard and the exit uncontested for six seconds.
+    - key: mission.grounded_signal.tutorial.5.title
+      value: Reach the guarded exit
     - key: mission.guide.lesson_count
       value: '{0} lessons'
     - key: mission.m01.goal.civilians
@@ -2374,6 +2535,8 @@ MonoBehaviour:
       value: COMMANDER XP
     - key: mission.reward.credits
       value: CREDITS
+    - key: mission.reward.paratroopers
+      value: PARATROOPERS UNLOCK
     - key: mission.reward.precision_strike
       value: PRECISION STRIKE UNLOCK
     - key: mission.reward.smoke_screen
@@ -3191,6 +3354,33 @@ MonoBehaviour:
     - key: narrative.gridlock.comms.01
       value: Fadi's service lane is usable. It was missing from my map. I have updated
         the route; local knowledge matters here.
+    - key: narrative.grounded_signal.brief-01
+      value: The military relay sits beside the civilian airfield. Disable the relay,
+        recover its control hardware, and bring both specialists home. The terminal
+        must stay intact.
+    - key: narrative.grounded_signal.brief-02
+      value: We'll unload at the apron and leave by APC. Keep the runway clear. Use
+        the service gate to reach the compound, and protect our way back.
+    - key: narrative.grounded_signal.brief-03
+      value: I need the control hardware, not rubble. Once the military relay is
+        disabled, get us to the recovery point. We'll verify and secure the device
+        there.
+    - key: narrative.grounded_signal.comms-01
+      value: The interfaces match the Civic Relay specifications. This equipment
+        was prepared for our network. We still need the physical unit to prove it.
+    - key: narrative.grounded_signal.comms-02
+      value: Vanguard knows you're there. Keep the specialists together and the service
+        road open. Recover the hardware, board the APC, then reach the guarded exit.
+    - key: narrative.grounded_signal.debrief-01
+      value: Both specialists and the hardware are back. The civilian terminal is
+        intact. The service route held long enough to get everyone out.
+    - key: narrative.grounded_signal.debrief-02
+      value: The connectors and control layout fit our Civic Relay. That compatibility
+        was deliberate. They weren't just borrowing an airfield.
+    - key: narrative.grounded_signal.debrief-03
+      value: The recovered schedule identifies Vanguard's command group and its next
+        link window. I can mark the approach for your review. You decide when we
+        move.
     - key: narrative.m01.brief.aria
       value: 'Threat profiles: Courier carries orders, Warden controls the crossing,
         and Broker coordinates supplies.'
@@ -9016,6 +9206,297 @@ MonoBehaviour:
       value: "\u062F\u0631 \u062D\u0627\u0644 \u06A9\u0627\u0631"
     - key: mission.gridlock.worker.name
       value: "\u06A9\u0627\u0631\u06AF\u0631 \u0631\u0627\u0647\u200C\u0633\u0627\u0632\u06CC"
+    - key: mission.grounded_signal.deadline
+      value: "\u062A\u0627 \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u062E\u0627\u0631\u062C \u0634\u0648"
+    - key: mission.grounded_signal.enemy_intel
+      value: "\u0631\u0644\u0647\u0654 \u0648\u0646\u06AF\u0627\u0631\u062F \u0648
+        \u0646\u06AF\u0647\u0628\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u062D\u0648\u0637\u0647.
+        \u062A\u0623\u0633\u06CC\u0633\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u0645\u06CC\u200C\u0634\u0646."
+    - key: mission.grounded_signal.forces
+      value: "\u0647\u0648\u0627\u067E\u06CC\u0645\u0627\u06CC \u062A\u0631\u0627\u0628\u0631\u06CC
+        \xB7 \u06F2 \u0645\u062A\u062E\u0635\u0635 \xB7 \u0646\u0641\u0631\u0628\u0631
+        \xB7 \u0645\u062D\u0627\u0641\u0638 \u062A\u0641\u0646\u06AF\u062F\u0627\u0631"
+    - key: mission.grounded_signal.guide.diagram
+      value: "\u0648\u0631\u0648\u062F | \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        | \u062E\u0631\u0648\u062C"
+    - key: mission.grounded_signal.guide.example
+      value: "\u067E\u06CC\u0627\u062F\u0647 \u0634\u062F\u0646 \u2190 \u0627\u0632
+        \u06A9\u0627\u0631 \u0627\u0646\u062F\u0627\u062E\u062A\u0646 \u0631\u0644\u0647
+        \u2190 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u2190 \u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u2190 \u062E\u0631\u0648\u062C\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647."
+    - key: mission.grounded_signal.guide.mistake
+      value: "\u0642\u0628\u0644 \u0627\u0632 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0633\u0648\u0627\u0631 \u0646\u0634\u0648.
+        \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648 \u0632\u0646\u062F\u0647
+        \u0646\u06AF\u0647 \u062F\u0627\u0631 \u0648 \u0627\u0632 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646."
+    - key: mission.grounded_signal.guide.title
+      value: "\u0633\u06CC\u06AF\u0646\u0627\u0644 \u0632\u0645\u06CC\u0646\u06CC
+        \xB7 \u0631\u0627\u0647\u0646\u0645\u0627\u06CC \u0645\u06CC\u062F\u0627\u0646"
+    - key: mission.grounded_signal.hud.exit
+      value: "\u0627\u0645\u0646 \u0628\u0648\u062F\u0646 \u062E\u0631\u0648\u062C\u06CC:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.grounded_signal.hud.recovery
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u062A\u062C\u0647\u06CC\u0632\u0627\u062A:
+        {0} \u0627\u0632 \u06F6 \u062B\u0627\u0646\u06CC\u0647"
+    - key: mission.grounded_signal.hud.stage.1
+      value: "\u067E\u06CC\u0627\u062F\u0647 \u0634\u062F\u0646 \xB7 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u0647\u0648\u0627\u067E\u06CC\u0645\u0627 \u2190 \u0645\u0633\u0627\u0641\u0631\u0627\u0646
+        \u2190 \u062E\u0631\u0648\u062C \u0647\u0645\u0647"
+    - key: mission.grounded_signal.hud.stage.2
+      value: "\u0631\u0644\u0647 \xB7 \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627
+        \u2190 \u062D\u0645\u0644\u0647 \u2190 \u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.hud.stage.2.apc
+      value: "\u0631\u0644\u0647 \xB7 \u0646\u0641\u0631\u0628\u0631 \u2190 \u062D\u0645\u0644\u0647
+        \u2190 \u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.hud.stage.2.apc_approach
+      value: "\u0631\u0644\u0647 \xB7 \u0646\u0641\u0631\u0628\u0631 \u2190 \u062D\u0631\u06A9\u062A
+        \u2190 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u0628\u0627\u0632"
+    - key: mission.grounded_signal.hud.stage.2.approach
+      value: "\u0631\u0644\u0647 \xB7 \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627
+        \u2190 \u062D\u0631\u06A9\u062A \u2190 \u062F\u0631\u0648\u0627\u0632\u0647\u0654
+        \u062E\u062F\u0645\u0627\u062A\u06CC \u0628\u0627\u0632"
+    - key: mission.grounded_signal.hud.stage.3
+      value: "\u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \xB7 \u0647\u0631 \u062F\u0648
+        \u0645\u062A\u062E\u0635\u0635 \u2190 \u062D\u0631\u06A9\u062A \u2190 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A"
+    - key: mission.grounded_signal.hud.stage.4
+      value: "\u062E\u0631\u0648\u062C \xB7 \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635
+        \u2190 \u0633\u0648\u0627\u0631 \u0634\u062F\u0646 \u2190 \u0646\u0641\u0631\u0628\u0631"
+    - key: mission.grounded_signal.hud.stage.5
+      value: "\u062E\u0631\u0648\u062C\u06CC \xB7 \u0646\u0641\u0631\u0628\u0631
+        \u2190 \u062D\u0631\u06A9\u062A \u2190 \u062E\u0631\u0648\u062C\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647"
+    - key: mission.grounded_signal.intel.air
+      value: "\u062A\u0647\u062F\u06CC\u062F \u0647\u0648\u0627\u06CC\u06CC"
+    - key: mission.grounded_signal.intel.guards
+      value: "\u0646\u06AF\u0647\u0628\u0627\u0646\u0627\u0646 \u0645\u062D\u0648\u0637\u0647"
+    - key: mission.grounded_signal.intel.none
+      value: "\u0647\u06CC\u0686"
+    - key: mission.grounded_signal.intel.present
+      value: "\u0645\u0648\u062C\u0648\u062F"
+    - key: mission.grounded_signal.intel.relay
+      value: "\u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.label.deadline
+      value: "\u0641\u0631\u0635\u062A \u062E\u0631\u0648\u062C"
+    - key: mission.grounded_signal.label.transport
+      value: "\u062A\u0631\u0627\u0628\u0631\u06CC"
+    - key: mission.grounded_signal.location
+      value: "\u0633\u0627\u0631\u06CC\u0646 \xB7 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0648 \u0631\u0644\u0647\u0654
+        \u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.marker.apron
+      value: "\u067E\u06CC\u0627\u062F\u0647 \u0634\u062F\u0646"
+    - key: mission.grounded_signal.marker.exit
+      value: "\u062E\u0631\u0648\u062C"
+    - key: mission.grounded_signal.marker.hardware
+      value: "\u062A\u062C\u0647\u06CC\u0632\u0627\u062A"
+    - key: mission.grounded_signal.name
+      value: "\u0633\u06CC\u06AF\u0646\u0627\u0644 \u0632\u0645\u06CC\u0646\u06CC"
+    - key: mission.grounded_signal.objective.civilian
+      value: "\u0627\u0632 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u0634 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646"
+    - key: mission.grounded_signal.objective.extract
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u062E\u0627\u0631\u062C \u06A9\u0646"
+    - key: mission.grounded_signal.objective.hardware
+      value: "\u0631\u0644\u0647 \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632
+        \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A\u0634 \u0631\u0648 \u0628\u0631\u062F\u0627\u0631"
+    - key: mission.grounded_signal.objective.relay
+      value: "\u0631\u0644\u0647 \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632
+        \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A\u0634 \u0631\u0648 \u0628\u0631\u062F\u0627\u0631"
+    - key: mission.grounded_signal.objective.terminal
+      value: "\u0627\u0632 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0648 \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646\u0634 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646"
+    - key: mission.grounded_signal.resources
+      value: "\u0648\u0633\u06CC\u0644\u0647\u0654 \u0644\u0627\u0632\u0645 \u0622\u0645\u0627\u062F\u0647\u200C\u0633\u062A
+        \xB7 \u067E\u0634\u062A\u06CC\u0628\u0627\u0646\u06CC \u0627\u062E\u062A\u06CC\u0627\u0631\u06CC\u0647"
+    - key: mission.grounded_signal.result.aircraft_lost
+      value: "\u0642\u0628\u0644 \u0627\u0632 \u067E\u06CC\u0627\u062F\u0647 \u0634\u062F\u0646
+        \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635\u060C \u0647\u0648\u0627\u067E\u06CC\u0645\u0627\u06CC
+        \u0648\u0631\u0648\u062F \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A."
+    - key: mission.grounded_signal.result.carrier_lost
+      value: "\u0646\u0641\u0631\u0628\u0631 \u062E\u0631\u0648\u062C \u0627\u0632
+        \u062F\u0633\u062A \u0631\u0641\u062A. \u0627\u0632 \u0646\u0641\u0631\u0628\u0631
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646 \u0648 \u062C\u0627\u062F\u0647\u0654
+        \u062E\u062F\u0645\u0627\u062A\u06CC \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631."
+    - key: mission.grounded_signal.result.civilian_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u06A9\u0627\u0631\u06A9\u0646\u0627\u0646
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.result.defeat
+      value: "\u062E\u0631\u0648\u062C \u0634\u06A9\u0633\u062A \u062E\u0648\u0631\u062F"
+    - key: mission.grounded_signal.result.escort_losses
+      value: "\u062A\u0644\u0641\u0627\u062A \u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627"
+    - key: mission.grounded_signal.result.integrity
+      value: "\u062A\u06CC\u0645 \u0627\u0635\u0644\u06CC \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0628\u0631\u0627\u06CC \u067E\u0627\u06CC\u0627\u0646 \u0639\u0645\u0644\u06CC\u0627\u062A
+        \u062A\u0623\u06CC\u06CC\u062F \u0646\u0634\u062F\u0646. \u0645\u0623\u0645\u0648\u0631\u06CC\u062A
+        \u0631\u0648 \u062F\u0648\u0628\u0627\u0631\u0647 \u0627\u062C\u0631\u0627
+        \u06A9\u0646."
+    - key: mission.grounded_signal.result.passenger_lost
+      value: "\u06CC\u06A9\u06CC \u0627\u0632 \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A. \u0647\u0631 \u062F\u0648
+        \u0645\u062A\u062E\u0635\u0635 \u0627\u0635\u0644\u06CC \u0628\u0627\u06CC\u062F
+        \u062A\u0627 \u067E\u0627\u06CC\u0627\u0646 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0648 \u062E\u0631\u0648\u062C \u0632\u0646\u062F\u0647 \u0628\u0645\u0648\u0646\u0646."
+    - key: mission.grounded_signal.result.star.hardware
+      value: "\u062E\u0631\u0648\u062C \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0628\u0627 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A"
+    - key: mission.grounded_signal.result.subtitle
+      value: "\u0633\u06CC\u06AF\u0646\u0627\u0644 \u0632\u0645\u06CC\u0646\u06CC
+        \xB7 \u0631\u0644\u0647\u0654 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647"
+    - key: mission.grounded_signal.result.success
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0628\u0627
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u06A9\u0646\u062A\u0631\u0644
+        \u0628\u0631\u06AF\u0634\u062A\u0646. \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0633\u0627\u0644\u0645\u0647.
+        \u0628\u0631\u0646\u0627\u0645\u0647\u0654 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647
+        \u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0631\u0648 \u0645\u0634\u062E\u0635
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.grounded_signal.result.success_short
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0628\u0627
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0631\u0644\u0647 \u062E\u0627\u0631\u062C
+        \u0634\u062F\u0646. \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0633\u0627\u0644\u0645 \u0645\u0648\u0646\u062F."
+    - key: mission.grounded_signal.result.terminal_lost
+      value: "\u06A9\u0627\u0631\u06A9\u0646\u0627\u0646 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0627\u0632 \u062F\u0633\u062A \u0631\u0641\u062A\u0646. \u0646\u0628\u0631\u062F
+        \u0631\u0648 \u0627\u0632 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u062F\u0648\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.grounded_signal.result.timeout
+      value: "\u0641\u0631\u0635\u062A \u062E\u0631\u0648\u062C \u062A\u0645\u0648\u0645
+        \u0634\u062F. \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0631\u0648 \u0628\u0631\u062F\u0627\u0631
+        \u0648 \u062A\u0627 \u067E\u0627\u0646\u0632\u062F\u0647 \u062F\u0642\u06CC\u0642\u0647
+        \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0633."
+    - key: mission.grounded_signal.result.victory
+      value: "\u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0634\u062F"
+    - key: mission.grounded_signal.reward.card
+      value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647
+        \xB7 \u0627\u0639\u062A\u0628\u0627\u0631 \xB7 \u0628\u0627\u0632 \u0634\u062F\u0646
+        \u0686\u062A\u0631\u0628\u0627\u0632\u0647\u0627"
+    - key: mission.grounded_signal.star.1
+      value: "\u0645\u0623\u0645\u0648\u0631\u06CC\u062A \u0631\u0648 \u06A9\u0627\u0645\u0644
+        \u06A9\u0646"
+    - key: mission.grounded_signal.star.2
+      value: "\u0645\u062D\u0627\u0641\u0638\u06CC \u0627\u0632 \u062F\u0633\u062A
+        \u0646\u062F\u0647"
+    - key: mission.grounded_signal.star.3
+      value: "\u0628\u062F\u0648\u0646 \u062A\u0644\u0641\u0627\u062A \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC"
+    - key: mission.grounded_signal.summary
+      value: "\u06A9\u0631\u06CC\u0645 \u0648 \u06CC\u0648\u0633\u0641 \u0631\u0648
+        \u062A\u0648\u06CC \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u0648\u0642\u0641
+        \u067E\u06CC\u0627\u062F\u0647 \u06A9\u0646. \u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC
+        \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632\u060C
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A\u0634 \u0631\u0648 \u0628\u0631\u062F\u0627\u0631\u060C
+        \u0628\u0639\u062F \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635
+        \u0631\u0648 \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u062E\u0627\u0631\u062C
+        \u06A9\u0646. \u0627\u0632 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.grounded_signal.tutorial.1.body
+      value: "\u0647\u0648\u0627\u067E\u06CC\u0645\u0627\u06CC \u062A\u0631\u0627\u0628\u0631\u06CC
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \u0645\u0633\u0627\u0641\u0631\u0647\u0627\u0634
+        \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646 \u0648 \xAB\u062E\u0631\u0648\u062C
+        \u0647\u0645\u0647\xBB \u0631\u0648 \u0628\u0632\u0646. \u06A9\u0631\u06CC\u0645
+        \u0648 \u06CC\u0648\u0633\u0641 \u0628\u0627\u06CC\u062F \u062A\u0648\u06CC
+        \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u0648\u0642\u0641 \u067E\u06CC\u0627\u062F\u0647
+        \u0628\u0634\u0646. \xAB\u0646\u0634\u0627\u0646 \u0628\u062F\u0647\xBB \u0641\u0642\u0637
+        \u062F\u0648\u0631\u0628\u06CC\u0646 \u0631\u0648 \u062C\u0627\u0628\u0647\u200C\u062C\u0627
+        \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.grounded_signal.tutorial.1.title
+      value: "\u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627 \u0631\u0648 \u067E\u06CC\u0627\u062F\u0647
+        \u06A9\u0646"
+    - key: mission.grounded_signal.tutorial.2.apc.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0622\u0645\u0627\u062F\u0647 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0647 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0627\u0632 \u0646\u0641\u0631\u0628\u0631 \u0645\u062D\u0627\u0641\u0638\u062A
+        \u06A9\u0646\u061B \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635
+        \u0628\u0631\u0627\u06CC \u062E\u0631\u0648\u062C \u0628\u0647\u0634 \u0646\u06CC\u0627\u0632
+        \u062F\u0627\u0631\u0646."
+    - key: mission.grounded_signal.tutorial.2.apc.title
+      value: "\u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648
+        \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.grounded_signal.tutorial.2.apc_approach.body
+      value: "\u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627 \u0627\u0632 \u062F\u0633\u062A
+        \u0631\u0641\u062A\u0646. \u0646\u0641\u0631\u0628\u0631 \u0622\u0645\u0627\u062F\u0647
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627
+        \u062D\u0631\u06A9\u062A \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654
+        \u062E\u062F\u0645\u0627\u062A\u06CC \u0628\u0627\u0632 \u0639\u0628\u0648\u0631
+        \u06A9\u0646\u060C \u0628\u0639\u062F \u0628\u0647 \u0631\u0644\u0647 \u062D\u0645\u0644\u0647
+        \u06A9\u0646. \u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u0628\u0631\u0627\u06CC
+        \u062E\u0631\u0648\u062C \u0633\u0627\u0644\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.grounded_signal.tutorial.2.apc_approach.title
+      value: "\u0628\u0647 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0631\u0644\u0647
+        \u0628\u0631\u0633"
+    - key: mission.grounded_signal.tutorial.2.approach.body
+      value: "\u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627\u06CC \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627
+        \u062D\u0631\u06A9\u062A \u0627\u0632 \u062F\u0631\u0648\u0627\u0632\u0647\u0654
+        \u062E\u062F\u0645\u0627\u062A\u06CC \u0628\u0627\u0632 \u0639\u0628\u0648\u0631
+        \u06A9\u0646. \u0648\u0642\u062A\u06CC \u0628\u0647 \u0631\u0644\u0647 \u0646\u0632\u062F\u06CC\u06A9
+        \u0634\u062F\u0646\u060C \u0628\u0627 \u062D\u0645\u0644\u0647 \u062E\u0648\u062F\u0631\u0648\u0634
+        \u0631\u0648 \u0647\u062F\u0641 \u0628\u06AF\u06CC\u0631. \u0627\u0632 \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0648 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646."
+    - key: mission.grounded_signal.tutorial.2.approach.title
+      value: "\u0628\u0647 \u062F\u0631\u0648\u0627\u0632\u0647\u0654 \u0631\u0644\u0647
+        \u0628\u0631\u0633"
+    - key: mission.grounded_signal.tutorial.2.body
+      value: "\u0645\u062D\u0627\u0641\u0638\u200C\u0647\u0627\u06CC \u062A\u0641\u0646\u06AF\u062F\u0627\u0631
+        \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \u062D\u0645\u0644\u0647
+        \u0631\u0648 \u0628\u0632\u0646 \u0648 \u062E\u0648\u062F\u0631\u0648\u06CC
+        \u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648 \u0647\u062F\u0641
+        \u0628\u06AF\u06CC\u0631. \u0627\u0632 \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0645\u062D\u0627\u0641\u0638\u062A \u06A9\u0646 \u0648 \u0646\u0628\u0631\u062F
+        \u0631\u0648 \u0627\u0632 \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC
+        \u062F\u0648\u0631 \u0646\u06AF\u0647 \u062F\u0627\u0631."
+    - key: mission.grounded_signal.tutorial.2.title
+      value: "\u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u0631\u0648
+        \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632"
+    - key: mission.grounded_signal.tutorial.3.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646 \u0648 \u0628\u0627 \u062D\u0631\u06A9\u062A
+        \u0628\u0647 \u0645\u062D\u0644 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0628\u0631\u0633\u0648\u0646. \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647
+        \u06A9\u0646\u0627\u0631 \u0647\u0645 \u0648 \u067E\u06CC\u0627\u062F\u0647
+        \u0628\u0645\u0648\u0646\u0646. \u062F\u0648\u0631 \u0634\u062F\u0646 \u06CC\u0627
+        \u0633\u0648\u0627\u0631 \u0634\u062F\u0646\u060C \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0631\u0648 \u0642\u0637\u0639 \u0645\u06CC\u200C\u06A9\u0646\u0647."
+    - key: mission.grounded_signal.tutorial.3.title
+      value: "\u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u06A9\u0646\u062A\u0631\u0644
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631"
+    - key: mission.grounded_signal.tutorial.4.body
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0631\u0648
+        \u0627\u0646\u062A\u062E\u0627\u0628 \u06A9\u0646\u060C \u0686\u0631\u062E
+        \u0641\u0631\u0645\u0627\u0646\u200C\u0647\u0627\u06CC \u0645\u0639\u0645\u0648\u0644\u06CC
+        \u0631\u0648 \u0628\u0627\u0632 \u06A9\u0646\u060C \u0633\u0648\u0627\u0631
+        \u0634\u062F\u0646 \u0631\u0648 \u0628\u0632\u0646 \u0648 \u0646\u0641\u0631\u0628\u0631
+        \u0631\u0648 \u0644\u0645\u0633 \u06A9\u0646. \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC\u200C\u0634\u062F\u0647 \u0647\u0645\u0631\u0627\u0647
+        \u062A\u06CC\u0645 \u0645\u06CC\u200C\u0631\u0646."
+    - key: mission.grounded_signal.tutorial.4.title
+      value: "\u0633\u0648\u0627\u0631 \u0646\u0641\u0631\u0628\u0631 \u062E\u0631\u0648\u062C
+        \u0634\u0648"
+    - key: mission.grounded_signal.tutorial.5.body
+      value: "\u0646\u0641\u0631\u0628\u0631 \u0631\u0648 \u0627\u0646\u062A\u062E\u0627\u0628
+        \u06A9\u0646 \u0648 \u0628\u0627 \u062D\u0631\u06A9\u062A \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC
+        \u0645\u0634\u062E\u0635\u200C\u0634\u062F\u0647 \u0628\u0631\u0633\u0648\u0646.
+        \u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0628\u0627\u06CC\u062F
+        \u0633\u0648\u0627\u0631 \u0628\u0645\u0648\u0646\u0646 \u0648 \u062E\u0631\u0648\u062C\u06CC
+        \u0634\u0634 \u062B\u0627\u0646\u06CC\u0647 \u0628\u062F\u0648\u0646 \u062F\u0634\u0645\u0646
+        \u0628\u0627\u0634\u0647."
+    - key: mission.grounded_signal.tutorial.5.title
+      value: "\u0628\u0647 \u062E\u0631\u0648\u062C\u06CC \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647
+        \u0628\u0631\u0633"
     - key: mission.guide.lesson_count
       value: "{0} \u062F\u0631\u0633"
     - key: mission.m01.goal.civilians
@@ -11762,6 +12243,8 @@ MonoBehaviour:
       value: "\u062A\u062C\u0631\u0628\u0647\u0654 \u0641\u0631\u0645\u0627\u0646\u062F\u0647"
     - key: mission.reward.credits
       value: "\u0627\u0639\u062A\u0628\u0627\u0631"
+    - key: mission.reward.paratroopers
+      value: "\u0686\u062A\u0631\u0628\u0627\u0632\u0647\u0627"
     - key: mission.reward.precision_strike
       value: "\u062D\u0645\u0644\u0647\u0654 \u062F\u0642\u06CC\u0642"
     - key: mission.reward.smoke_screen
@@ -13337,6 +13820,75 @@ MonoBehaviour:
         \u0645\u0633\u06CC\u0631 \u0631\u0648 \u0628\u0647\u200C\u0631\u0648\u0632
         \u06A9\u0631\u062F\u0645\u061B \u0627\u06CC\u0646\u062C\u0627 \u0634\u0646\u0627\u062E\u062A
         \u0645\u062D\u0644\u06CC \u0645\u0647\u0645\u0647."
+    - key: narrative.grounded_signal.brief-01
+      value: "\u0631\u0644\u0647\u0654 \u0646\u0638\u0627\u0645\u06CC \u06A9\u0646\u0627\u0631
+        \u0641\u0631\u0648\u062F\u06AF\u0627\u0647 \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC\u0647.
+        \u0631\u0644\u0647 \u0631\u0648 \u0627\u0632 \u06A9\u0627\u0631 \u0628\u0646\u062F\u0627\u0632\u060C
+        \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u06A9\u0646\u062A\u0631\u0644\u0634
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631 \u0648 \u0647\u0631 \u062F\u0648
+        \u0645\u062A\u062E\u0635\u0635 \u0631\u0648 \u0633\u0627\u0644\u0645 \u0628\u0631\u06AF\u0631\u062F\u0648\u0646.
+        \u062A\u0631\u0645\u06CC\u0646\u0627\u0644 \u0628\u0627\u06CC\u062F \u0633\u0627\u0644\u0645
+        \u0628\u0645\u0648\u0646\u0647."
+    - key: narrative.grounded_signal.brief-02
+      value: "\u062A\u0648\u06CC \u0645\u062D\u0648\u0637\u0647\u0654 \u062A\u0648\u0642\u0641
+        \u067E\u06CC\u0627\u062F\u0647 \u0645\u06CC\u200C\u0634\u06CC\u0645 \u0648
+        \u0628\u0627 \u0646\u0641\u0631\u0628\u0631 \u0628\u0631\u0645\u06CC\u200C\u06AF\u0631\u062F\u06CC\u0645.
+        \u0628\u0627\u0646\u062F \u0631\u0648 \u0628\u0627\u0632 \u0646\u06AF\u0647
+        \u062F\u0627\u0631. \u0627\u0632 \u062F\u0631\u0650 \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u0648\u0627\u0631\u062F \u0645\u062D\u0648\u0637\u0647 \u0634\u0648 \u0648
+        \u0645\u0633\u06CC\u0631 \u0628\u0631\u06AF\u0634\u062A\u0645\u0648\u0646
+        \u0631\u0648 \u062D\u0641\u0638 \u06A9\u0646."
+    - key: narrative.grounded_signal.brief-03
+      value: "\u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u06A9\u0646\u062A\u0631\u0644
+        \u0631\u0648 \u0645\u06CC\u200C\u062E\u0648\u0627\u0645\u060C \u0646\u0647
+        \u0622\u0648\u0627\u0631\u0634 \u0631\u0648. \u0648\u0642\u062A\u06CC \u0631\u0644\u0647\u0654
+        \u0646\u0638\u0627\u0645\u06CC \u0627\u0632 \u06A9\u0627\u0631 \u0627\u0641\u062A\u0627\u062F\u060C
+        \u0645\u0627 \u0631\u0648 \u0628\u0647 \u0645\u062D\u0644 \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC
+        \u0628\u0631\u0633\u0648\u0646. \u0647\u0645\u0648\u0646\u200C\u062C\u0627
+        \u062F\u0633\u062A\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0631\u0631\u0633\u06CC
+        \u0648 \u062A\u062D\u0648\u06CC\u0644 \u0645\u06CC\u200C\u06AF\u06CC\u0631\u06CC\u0645."
+    - key: narrative.grounded_signal.comms-01
+      value: "\u0627\u062A\u0635\u0627\u0644\u200C\u0647\u0627 \u0628\u0627 \u0645\u0634\u062E\u0635\u0627\u062A
+        \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC \u06CC\u06A9\u06CC\u0647.
+        \u0627\u06CC\u0646 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A \u0631\u0648
+        \u0628\u0631\u0627\u06CC \u0634\u0628\u06A9\u0647\u0654 \u0645\u0627 \u0622\u0645\u0627\u062F\u0647
+        \u06A9\u0631\u062F\u0646. \u0628\u0631\u0627\u06CC \u0627\u062B\u0628\u0627\u062A\u0634
+        \u0647\u0646\u0648\u0632 \u0628\u0627\u06CC\u062F \u062E\u0648\u062F\u0650
+        \u062F\u0633\u062A\u06AF\u0627\u0647 \u0631\u0648 \u0628\u0631\u062F\u0627\u0631\u06CC\u0645."
+    - key: narrative.grounded_signal.comms-02
+      value: "\u0648\u0646\u06AF\u0627\u0631\u062F \u0641\u0647\u0645\u06CC\u062F\u0647
+        \u0627\u0648\u0646\u062C\u0627\u06CC\u06CC\u0646. \u0645\u062A\u062E\u0635\u0635\u200C\u0647\u0627
+        \u0631\u0648 \u06A9\u0646\u0627\u0631 \u0647\u0645 \u0646\u06AF\u0647 \u062F\u0627\u0631
+        \u0648 \u062C\u0627\u062F\u0647\u0654 \u062E\u062F\u0645\u0627\u062A\u06CC
+        \u0631\u0648 \u0628\u0627\u0632 \u0628\u0630\u0627\u0631. \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0631\u0648 \u0628\u0631\u062F\u0627\u0631\u060C \u0633\u0648\u0627\u0631
+        \u0646\u0641\u0631\u0628\u0631 \u0634\u0648 \u0648 \u0628\u0647 \u062E\u0631\u0648\u062C\u06CC
+        \u0645\u062D\u0627\u0641\u0638\u062A\u200C\u0634\u062F\u0647 \u0628\u0631\u0633."
+    - key: narrative.grounded_signal.debrief-01
+      value: "\u0647\u0631 \u062F\u0648 \u0645\u062A\u062E\u0635\u0635 \u0648 \u062A\u062C\u0647\u06CC\u0632\u0627\u062A
+        \u0628\u0631\u06AF\u0634\u062A\u0646. \u062A\u0631\u0645\u06CC\u0646\u0627\u0644
+        \u063A\u06CC\u0631\u0646\u0638\u0627\u0645\u06CC \u0647\u0645 \u0633\u0627\u0644\u0645\u0647.
+        \u0645\u0633\u06CC\u0631 \u062E\u062F\u0645\u0627\u062A\u06CC \u062A\u0627
+        \u0648\u0642\u062A\u06CC \u0647\u0645\u0647 \u0631\u0648 \u062E\u0627\u0631\u062C
+        \u06A9\u0631\u062F\u06CC\u0645 \u0628\u0627\u0632 \u0645\u0648\u0646\u062F."
+    - key: narrative.grounded_signal.debrief-02
+      value: "\u0627\u062A\u0635\u0627\u0644\u200C\u0647\u0627 \u0648 \u0686\u06CC\u062F\u0645\u0627\u0646
+        \u06A9\u0646\u062A\u0631\u0644 \u0628\u0627 \u0631\u0644\u0647\u0654 \u0634\u0647\u0631\u06CC
+        \u0645\u0627 \u062C\u0648\u0631 \u062F\u0631\u0645\u06CC\u0627\u062F. \u0627\u06CC\u0646
+        \u0633\u0627\u0632\u06AF\u0627\u0631\u06CC \u0639\u0645\u062F\u06CC \u0628\u0648\u062F\u0647.
+        \u0627\u0648\u0646\u0627 \u0641\u0642\u0637 \u0627\u0632 \u06CC\u0647 \u0641\u0631\u0648\u062F\u06AF\u0627\u0647
+        \u0627\u0633\u062A\u0641\u0627\u062F\u0647 \u0646\u0645\u06CC\u200C\u06A9\u0631\u062F\u0646."
+    - key: narrative.grounded_signal.debrief-03
+      value: "\u0628\u0631\u0646\u0627\u0645\u0647\u200C\u0627\u06CC \u06A9\u0647
+        \u0628\u0627\u0632\u06CC\u0627\u0628\u06CC \u06A9\u0631\u062F\u06CC\u0645\u060C
+        \u06AF\u0631\u0648\u0647 \u0641\u0631\u0645\u0627\u0646\u062F\u0647\u06CC
+        \u0648\u0646\u06AF\u0627\u0631\u062F \u0648 \u0632\u0645\u0627\u0646 \u0627\u062A\u0635\u0627\u0644
+        \u0628\u0639\u062F\u06CC\u0634\u0648\u0646 \u0631\u0648 \u0645\u0634\u062E\u0635
+        \u0645\u06CC\u200C\u06A9\u0646\u0647. \u0645\u06CC\u200C\u062A\u0648\u0646\u0645
+        \u0645\u0633\u06CC\u0631 \u0646\u0632\u062F\u06CC\u06A9 \u0634\u062F\u0646
+        \u0631\u0648 \u0628\u0631\u0627\u06CC \u0628\u0631\u0631\u0633\u06CC \u0646\u0634\u0648\u0646
+        \u0628\u062F\u0645. \u0632\u0645\u0627\u0646 \u062D\u0631\u06A9\u062A \u0631\u0648
+        \u0634\u0645\u0627 \u062A\u0639\u06CC\u06CC\u0646 \u0645\u06CC\u200C\u06A9\u0646\u06CC\u0646."
     - key: narrative.m01.brief.aria
       value: "\u067E\u06CC\u06A9 \u062F\u0633\u062A\u0648\u0631\u0647\u0627 \u0631\u0648
         \u0645\u06CC\u200C\u0631\u0633\u0648\u0646\u0647\u060C \u0646\u06AF\u0647\u0628\u0627\u0646

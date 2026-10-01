@@ -1,0 +1,1 @@
+[GroundedSignalInput] result=Failed ARIA stopped before victory: Blocked

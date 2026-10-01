@@ -1,0 +1,1 @@
+[GroundedSignalInput] result=Failed Native HUD assistant absent: missing generic objective projection for standalone mission; healthy guidance66001

@@ -52,10 +52,34 @@ namespace Game.Editor
                     $"The operation-map EntityScene build input must resolve to a valid asset GUID: {scenePath}");
             }
 
-            return new HashSet<Hash128>
+            var scenes = new HashSet<Hash128> { sceneGuid };
+            // Normal player builds must ship generated campaign EntityScenes even
+            // when their renderer-free binding uses an unbound SubScene placeholder.
+            // Explicit candidate overrides retain their deliberately isolated content set.
+            if (string.IsNullOrEmpty(currentProcessSceneOverride))
             {
-                sceneGuid
-            };
+                var grounded = AssetDatabase.LoadAssetAtPath<OperationMapDefinition>(
+                    CH04M04GroundedSignalConfigBuilder.MapPath);
+                if (grounded != null)
+                {
+                    string groundedError = "Logical source binding is not permitted for this independent physical map.";
+                    if (grounded.SourceBinding.IsConfigured ||
+                        !grounded.TryValidateMetadata(out groundedError) ||
+                        !grounded.TryValidateLocalContentReferences(out groundedError))
+                        throw new InvalidOperationException("Grounded Signal production entity delivery requires a valid independent map: " + groundedError);
+                    string mapPath = CH04M04GroundedSignalConfigBuilder.EntityScenePath;
+                    string mapGuid = AssetDatabase.AssetPathToGUID(mapPath);
+                    if (!new Hash128(mapGuid).IsValid ||
+                        !string.Equals(mapGuid, grounded.NavigationMetadata.AuthoredSubSceneGuid, StringComparison.Ordinal))
+                        throw new InvalidOperationException("Grounded Signal production map EntityScene GUID does not match its definition.");
+                    string fixtureGuid = AssetDatabase.AssetPathToGUID(CH04M04GroundedSignalContentBuilder.FixturePath);
+                    if (!new Hash128(fixtureGuid).IsValid)
+                        throw new InvalidOperationException("Grounded Signal production unit fixture missing; run CH04M04GroundedSignalContentBuilder.BuildPackedContent before building a player.");
+                    scenes.Add(new Hash128(mapGuid));
+                    scenes.Add(new Hash128(fixtureGuid));
+                }
+            }
+            return scenes;
         }
 
         private sealed class SceneOverrideScope : IDisposable

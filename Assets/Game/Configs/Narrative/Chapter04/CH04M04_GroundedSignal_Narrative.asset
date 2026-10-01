@@ -1,0 +1,517 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-6749086226441090108
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M04_GroundedSignal_comms
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m04.comms
+  entryStateId: GroundedSignal-comms-0
+  defaultSkipDestinationId: GroundedSignal-comms-complete
+  states:
+  - stateId: GroundedSignal-comms-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: c2c0b3841ba9431d834885707e52139d
+      m_SubObjectName: CH04M04_GroundedSignal_Comms-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: c2c0b3841ba9431d834885707e52139d
+      m_SubObjectName: CH04M04_GroundedSignal_Comms-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-comms-01
+      textKey: narrative.grounded_signal.comms-01
+      englishFallback: The interfaces match the Civic Relay specifications. This
+        equipment was prepared for our network. We still need the physical unit to
+        prove it.
+      speaker: 11
+      voiceClip: {fileID: 8300000, guid: 797c979e3059c47c7860301a33b9bd39, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.142858
+      essentialCaption: 1
+    continueStateId: GroundedSignal-comms-1
+    skipStateId: GroundedSignal-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.142858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-comms-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: c2c0b3841ba9431d834885707e52139d
+      m_SubObjectName: CH04M04_GroundedSignal_Comms-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: c2c0b3841ba9431d834885707e52139d
+      m_SubObjectName: CH04M04_GroundedSignal_Comms-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-comms-02
+      textKey: narrative.grounded_signal.comms-02
+      englishFallback: Vanguard knows you're there. Keep the specialists together
+        and the service road open. Recover the hardware, board the APC, then reach
+        the guarded exit.
+      speaker: 5
+      voiceClip: {fileID: 8300000, guid: aefc019430a5845409ca89289f464979, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.46
+      essentialCaption: 1
+    continueStateId: GroundedSignal-comms-complete
+    skipStateId: GroundedSignal-comms-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.46
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-comms-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.grounded_signal.comms.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &-5044440906897963577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M04_GroundedSignal_debrief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m04.debrief
+  entryStateId: GroundedSignal-debrief-0
+  defaultSkipDestinationId: GroundedSignal-debrief-complete
+  states:
+  - stateId: GroundedSignal-debrief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-debrief-01
+      textKey: narrative.grounded_signal.debrief-01
+      englishFallback: Both specialists and the hardware are back. The civilian terminal
+        is intact. The service route held long enough to get everyone out.
+      speaker: 10
+      voiceClip: {fileID: 8300000, guid: b2cb7b6ecb0c244f4806a5372ff4bf3e, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.82
+      essentialCaption: 1
+    continueStateId: GroundedSignal-debrief-1
+    skipStateId: GroundedSignal-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.82
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-debrief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-debrief-02
+      textKey: narrative.grounded_signal.debrief-02
+      englishFallback: The connectors and control layout fit our Civic Relay. That
+        compatibility was deliberate. They weren't just borrowing an airfield.
+      speaker: 11
+      voiceClip: {fileID: 8300000, guid: 860893b9059444c64bc509bc5d2f8181, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 9.285714
+      essentialCaption: 1
+    continueStateId: GroundedSignal-debrief-2
+    skipStateId: GroundedSignal-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 9.285714
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-debrief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 48d8a6e55e614b37831a4de5a89e8570
+      m_SubObjectName: CH04M04_GroundedSignal_Debrief-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-debrief-03
+      textKey: narrative.grounded_signal.debrief-03
+      englishFallback: The recovered schedule identifies Vanguard's command group
+        and its next link window. I can mark the approach for your review. You decide
+        when we move.
+      speaker: 3
+      voiceClip: {fileID: 8300000, guid: e3259ba3ba8874f198b19d72b4111caa, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 13.3
+      essentialCaption: 1
+    continueStateId: GroundedSignal-debrief-complete
+    skipStateId: GroundedSignal-debrief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 13.3
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-debrief-complete
+    kind: 5
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 4
+    completionPayloadId: request.grounded_signal.debrief.complete
+    evidenceIds: []
+    missionContextFlags: []
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20e5e009672574912bfa24f3c91ec02a, type: 3}
+  m_Name: CH04M04_GroundedSignal_brief
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.NarrativeSequenceConfig
+  sequenceId: seq.ch04.m04.brief
+  entryStateId: GroundedSignal-brief-0
+  defaultSkipDestinationId: GroundedSignal-brief-complete
+  states:
+  - stateId: GroundedSignal-brief-0
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-a-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-a-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-brief-01
+      textKey: narrative.grounded_signal.brief-01
+      englishFallback: The military relay sits beside the civilian airfield. Disable
+        the relay, recover its control hardware, and bring both specialists home.
+        The terminal must stay intact.
+      speaker: 5
+      voiceClip: {fileID: 8300000, guid: 32c8bb05a20c148b2bd7023dc2a6ebff, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.9
+      essentialCaption: 1
+    continueStateId: GroundedSignal-brief-1
+    skipStateId: GroundedSignal-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.9
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-brief-1
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-b-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-b-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-brief-02
+      textKey: narrative.grounded_signal.brief-02
+      englishFallback: We'll unload at the apron and leave by APC. Keep the runway
+        clear. Use the service gate to reach the compound, and protect our way back.
+      speaker: 10
+      voiceClip: {fileID: 8300000, guid: 021835b5317f046a8821ef4faae914a1, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 12.58
+      essentialCaption: 1
+    continueStateId: GroundedSignal-brief-2
+    skipStateId: GroundedSignal-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 12.58
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-brief-2
+    kind: 0
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-c-16x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: f60f6dc8b88e408a8871f005d8d0075e
+      m_SubObjectName: CH04M04_GroundedSignal-c-20x9
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines:
+    - lineId: grounded_signal-brief-03
+      textKey: narrative.grounded_signal.brief-03
+      englishFallback: I need the control hardware, not rubble. Once the military
+        relay is disabled, get us to the recovery point. We'll verify and secure
+        the device there.
+      speaker: 11
+      voiceClip: {fileID: 8300000, guid: 062b99ad47e1b4935b129c26f85b38c6, type: 3}
+      femaleVoiceClip: {fileID: 0}
+      neutralVoiceClip: {fileID: 0}
+      startSeconds: 0
+      deadlineSeconds: 10.642858
+      essentialCaption: 1
+    continueStateId: GroundedSignal-brief-complete
+    skipStateId: GroundedSignal-brief-complete
+    reducedMotionSupported: 1
+    durationSeconds: 10.642858
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: 
+    evidenceIds: []
+    missionContextFlags: []
+  - stateId: GroundedSignal-brief-complete
+    kind: 3
+    panel16x9: {fileID: 0}
+    panel20x9: {fileID: 0}
+    panel16x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    panel20x9Reference:
+      m_AssetGUID: 
+      m_SubObjectName: 
+      m_SubObjectType: 
+      m_SubObjectGUID: 
+      m_EditorAssetChanged: 0
+    lines: []
+    continueStateId: 
+    skipStateId: 
+    reducedMotionSupported: 1
+    durationSeconds: 0
+    motionPreset: 0
+    locationTitleKey: 
+    locationTitleFallback: 
+    locationSubtitleKey: 
+    locationSubtitleFallback: 
+    musicCue: 0
+    ambienceCue: 0
+    vehicleCue: 0
+    eventCue: 3
+    routeRole: 0
+    completionPayloadId: request.grounded_signal.brief.complete
+    evidenceIds: []
+    missionContextFlags: []

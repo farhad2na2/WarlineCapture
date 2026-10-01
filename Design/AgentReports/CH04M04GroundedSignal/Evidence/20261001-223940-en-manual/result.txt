@@ -1,0 +1,1 @@
+[GroundedSignalInput] result=Failed Relay prefab behaved as a mobile armed radar tank and killed all escorts. Qualify the relay as stationary support equipment for this mission before rerunning.

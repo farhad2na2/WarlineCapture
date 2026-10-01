@@ -9,7 +9,7 @@ namespace Game.Runtime
         {
             "reward.ch04.m02.smoke_screen_unlock"=>"ability.smoke_screen",
             "reward.ch04.m03.precision_strike_unlock"=>"ability.precision_strike",
-            "reward.ch04.m04.paratrooper_reinforcements_unlock"=>"ability.paratrooper_reinforcements",
+            "reward.ch04.m04.paratrooper_reinforcements_unlock" or "reward.ch04.m04.paratroopers_unlock"=>"ability.paratrooper_reinforcements",
             "reward.ch05.m02.supply_drop_unlock"=>"ability.supply_drop",
             _=>string.Empty
         };
@@ -21,7 +21,9 @@ namespace Game.Runtime
             "saga.ch05.m02.trust_under_fire"=>"reward.ch05.m02.supply_drop_unlock",
             _=>string.Empty
         };
-        public static string AbilityForGrant(string mission,string reward) => RewardForMission(mission)==reward?AbilityForReward(reward):string.Empty;
+        public static string AbilityForGrant(string mission,string reward) =>
+            RewardForMission(mission)==reward || mission=="saga.ch04.m04.grounded_signal" && reward=="reward.ch04.m04.paratroopers_unlock"
+                ? AbilityForReward(reward) : string.Empty;
         public static void Normalize(PlayerProfileSaveData profile)
         {
             if(profile==null)return;

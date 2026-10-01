@@ -1,0 +1,1 @@
+[GroundedSignalInput] result=Failed [OperationMapSourceScene] code=MetadataBindFailed error=Operation-map generation must increase monotonically.

@@ -110,6 +110,7 @@ namespace Game.UI.Runtime
         }
 
         private bool usesExpandedBriefingLayout;
+        private bool groundedSignalTutorial;
 
         public void Apply(UiAssistantPanelModel model)
         {
@@ -117,8 +118,9 @@ namespace Game.UI.Runtime
                 _defaultBody != (model.RecommendationBody ?? string.Empty)) continueConsumed = false;
             _tutorialStep = model.TutorialStep;
             _tutorialStepCount = model.TutorialStepCount;
+            groundedSignalTutorial = UiShellRuntimeGateway.IsGroundedSignalGuideContext();
             _defenseTutorial = _tutorialStepCount==12 && UiShellRuntimeGateway.TryReadMissionDefense(out _);
-            usesExpandedBriefingLayout = _tutorialStepCount is 4 or 8 or 9 or 10 or 12 || UiShellRuntimeGateway.TryReadSkirmish(out _);
+            usesExpandedBriefingLayout = groundedSignalTutorial || _tutorialStepCount is 4 or 8 or 9 or 10 or 12 || UiShellRuntimeGateway.TryReadSkirmish(out _);
             ApplyMissionLayout(usesExpandedBriefingLayout,model.LargeTextEnabled);
             _recommendationKind = model.RecommendationKind;
             _rightToLeft = UiShellRuntimeGateway.Localization.IsRightToLeft;
@@ -136,7 +138,7 @@ namespace Game.UI.Runtime
             if (closeButton != null)
                 closeButton.gameObject.SetActive(true);
             if (firstStepGuideRoot != null)
-                firstStepGuideRoot.gameObject.SetActive(_tutorialStep == 1 && _tutorialStepCount is not (4 or 8 or 10 or 12));
+                firstStepGuideRoot.gameObject.SetActive(!groundedSignalTutorial && _tutorialStep == 1 && _tutorialStepCount is not (4 or 8 or 10 or 12));
         }
 
         public void SetPresentationVisible(bool visible)
@@ -150,7 +152,7 @@ namespace Game.UI.Runtime
             TacticalCommandMode mode,
             bool worldTargetCompleted)
         {
-            if (_tutorialStepCount is not (4 or 8 or 10 or 12) && _tutorialStep == 2 && _recommendationKind == 2)
+            if (!groundedSignalTutorial && _tutorialStepCount is not (4 or 8 or 10 or 12) && _tutorialStep == 2 && _recommendationKind == 2)
             {
                 if (worldTargetCompleted)
                 {
@@ -173,7 +175,7 @@ namespace Game.UI.Runtime
                 return;
             }
 
-            if (_tutorialStepCount is not (4 or 8 or 10 or 12) && _tutorialStep is 3 or 4 && _recommendationKind == 3)
+            if (!groundedSignalTutorial && _tutorialStepCount is not (4 or 8 or 10 or 12) && _tutorialStep is 3 or 4 && _recommendationKind == 3)
             {
                 if (worldTargetCompleted)
                 {

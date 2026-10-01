@@ -1,6 +1,6 @@
 # CH04-M04 — Grounded Signal
 
-Status: preparation started; visual direction awaiting review. Not registered or playable yet.
+Status: implemented and ready for user review. English manual and Persian ARIA normal-input Editor playthroughs passed, including all sixteen installed comic voices. Human/device acceptance and a full ordinary production player build remain separate pending gates.
 
 ## Authoritative contract
 
@@ -13,7 +13,7 @@ Status: preparation started; visual direction awaiting review. Not registered or
 
 [Gameplay direction v01](Mockups/gameplay-direction-v01.png) uses the actual Air Corridor HUD and prepared CityEdgeAirfield overview as references. It retains the existing command bar, portraits, typography, Field Guide and ARIA Play/Stop controls. No new command buttons. Ground markers use corner brackets, small objective pins and extraction chevrons without large circles or painted text.
 
-The mockup illustrates a clear runway, sheltered unloading apron, separate fenced military relay and protected civilian terminal. It is a proposed composition, not evidence of implemented map geometry or native readiness. AGENTS.md requires visual-direction approval before implementing the mission screen; approval is pending.
+The mockup illustrates a clear runway, sheltered unloading apron, separate fenced military relay and protected civilian terminal. It is a proposed composition, not evidence of implemented map geometry or native readiness. The user confirmed that the planned maps and existing UI direction are approved and explicitly requested implementation without another mockup approval. This remains visual direction, not native readiness evidence.
 
 ## Initial gameplay scope
 
@@ -22,7 +22,7 @@ Implement the documented fallback first: **runway unload → relay recovery → 
 Normal player flow:
 
 1. Select the supplied transport plane and use its existing passenger drawer **Exit All** command at the apron.
-2. Escort the dismounted specialists through the open service gate.
+2. Move the rifle escort through the open service gate with the normal Move command, then escort the dismounted specialists along that route.
 3. Use the existing Attack command against the military relay equipment, away from the civilian terminal.
 4. Move both living original specialists to the recovery point. A visible interaction hold confirms hardware custody; leaving, boarding or dying cancels the hold.
 5. Board the supplied APC with existing transport controls.
@@ -76,13 +76,18 @@ English and conversational Persian copy, portrait/art references and voices must
 
 | Gate | Current status |
 |---|---|
-| Visual direction | Mockup generated; user review pending |
-| Native implemented screens | Not implemented |
-| Compilation / focused rules checks | Pending implementation |
-| Physical runway and route qualification | Pending derivative authoring |
-| Full normal-input mission | Pending; include unloading, recovery, boarding, secure exit, ARIA, result and return |
-| English / Persian comics and voice binding | Pending final mission copy |
+| Visual direction | Existing map/UI direction approved; user waived another approval |
+| Native implemented screens | Own map loads; English HUD/briefing and Persian briefing/comics/HUD/corrected result/return inspected |
+| Compilation / focused rules checks | Passed; insertion, relay, recovery cancellation/overflow, failures, retry/source identity, idempotency and reward unlock |
+| Physical runway and route qualification | Passed: runway 451×27 cells, specialist route 262 cells, APC route 325 cells with 3-cell margins, 20-cell gate, original source preserved |
+| Packed production content | Passed final repository wrapper export, 14-prefab fixture and production delivery hook audit; normal production player build/device loading pending |
+| Full normal-input mission | Passed English manual and Persian ARIA: unloading, relay attack, real recovery hold, boarding, secure exit, result, settlement and return |
+| English / Persian comics and voice binding | 8 comic lines, 16 EN/FA clips installed; all eight clips per locale sampled through their natural ends in native normal-input runs |
 | Airborne personnel / vehicle cargo option | Unqualified; excluded from initial selectable path |
 | Real player / device acceptance | Pending user review |
 
 Keep failed evidence. Automated pointer dispatch, injected victory or Scenario Lab success cannot substitute for a complete normal-input mission.
+
+Native integration found and corrected independent-map identity reuse, duplicate asynchronous surface loading, duplicate fence identities, a missing role-specific objective projection, Play mode validation timing, a camera retry loop, and missing normal Move approach guidance. Failed attempts remain in `Evidence/`; they do not count as completed mission playthroughs.
+
+Final successful evidence: `Evidence/20261001-224822-en-manual` and `Evidence/20261001-232658-fa-IR-aria`. Final wrapper logs: `Evidence/persian-aria-wrapper-02.log` and `Evidence/packed-wrapper.log`, both with zero exit receipts and explicit pass markers. ARIA pair selection and its camera wait were corrected after retained failed attempts; relay approach and attack now expose distinct real progress goals.

@@ -1,0 +1,1 @@
+[GroundedSignalVoiceFiles] result=Passed clips=16 canonicalCaptionHashes=16 audioChecksums=16 mono44100HzPcm16=16 shortest=7.04s longest=12.96s runtimeNetworkTts=0

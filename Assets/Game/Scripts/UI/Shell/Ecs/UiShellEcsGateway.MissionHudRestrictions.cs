@@ -69,6 +69,7 @@ namespace Game.UI.Shell.Ecs
                 if (!definition.MissionId.Equals(runtime.MissionId))
                     continue;
 
+                bool grounded = runtime.MissionId.Equals(CampaignMissionSequence.GroundedSignal);
                 bool radar = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m03.radar_warning"));
                 bool introductory = runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes("saga.ch01.m02.establish_base"));
                 bool steelPush = (runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)));
@@ -81,8 +82,8 @@ namespace Game.UI.Shell.Ecs
                     definition.TransportDisabled != 0,
                     definition.AirDisabled != 0,
                     cinematicInteractionLocked,
-                    definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush,
-                    definition.MissionRuntimeEnabled != 0 && !defensePreparation,
+                    grounded || definition.MissionRuntimeEnabled != 0 && !radar && !introductory && !steelPush,
+                    grounded || definition.MissionRuntimeEnabled != 0 && !defensePreparation,
                     false,
                     defensePreparation ? 3 : ReadExtractionSquadMask(entityManager,root),
                     IsOpeningCinematicActive(entityManager,root,in runtime));
@@ -100,11 +101,12 @@ namespace Game.UI.Shell.Ecs
         private static int ReadExtractionSquadMask(EntityManager em,Entity root)
         {
             if(!em.HasBuffer<CampaignMissionExtractionMember>(root) || !em.HasComponent<CampaignMissionExtractionState>(root) || em.GetComponentData<CampaignMissionExtractionState>(root).Initialized==0) return -1;
+            bool grounded=em.GetComponentData<CampaignMissionRuntimeComponent>(root).MissionId.Equals(CampaignMissionSequence.GroundedSignal);
             int mask=0;
             foreach(var member in em.GetBuffer<CampaignMissionExtractionMember>(root,true))
             {
                 if(!em.HasComponent<UnitHealth>(member.Entity) || em.GetComponentData<UnitHealth>(member.Entity).Current<=0) continue;
-                mask|=member.Kind switch {0=>1,2=>2|16,3=>4|16,_=>0};
+                mask|=member.Kind switch {0=>1,2=>2|16,3=>grounded?16:4|16,_=>0};
             }
             return mask;
         }

@@ -1,0 +1,281 @@
+{
+  "clips": [
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-brief-01",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "The military relay sits beside the civilian airfield. Disable the relay, recover its control hardware, and bring both specialists home. The terminal must stay intact.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-brief-01.wav",
+      "durationSeconds": 11.2,
+      "sha256": "8ba5c6113a870addc57060678dc8cfb2a4d8cec6f0b3040981b56dca6b9cdddf",
+      "captionSha256": "981f7532628edbe40ca2179cea55b38f0e871ecdd94f3ac5a8a878033ceb3660"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-brief-01",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "رلهٔ نظامی کنار فرودگاه غیرنظامیه. رله رو از کار بنداز، تجهیزات کنترلش رو بردار و هر دو متخصص رو سالم برگردون. ترمینال باید سالم بمونه.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-brief-01.wav",
+      "durationSeconds": 12.4,
+      "sha256": "001f273aeb6acf109258845064f9fb41fe03cacadfc9063ff77d3bc6b386efc6",
+      "captionSha256": "704e9c887eb538970d8408c4d385c0e7123b265b06302f507a0cedc0dfa008b6"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-brief-02",
+      "speaker": "KARIM",
+      "locale": "en-US",
+      "text": "We'll unload at the apron and leave by APC. Keep the runway clear. Use the service gate to reach the compound, and protect our way back.",
+      "voiceId": "onwK4e9ZLuTAKqWW03F9",
+      "voiceName": "Daniel - Steady Broadcaster (Warrant Officer Karim Daher)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-brief-02.wav",
+      "durationSeconds": 9.84,
+      "sha256": "e7cff278552800ca413100f413da60351aec39c1f247a5dd8e651dbd59420ce0",
+      "captionSha256": "0b7765b027157d673cf8b0ba22c7a3ba194405d9a0c834db1d52308d240762da"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-brief-02",
+      "speaker": "KARIM",
+      "locale": "fa-IR",
+      "text": "توی محوطهٔ توقف پیاده می‌شیم و با نفربر برمی‌گردیم. باند رو باز نگه دار. از درِ خدماتی وارد محوطه شو و مسیر برگشتمون رو حفظ کن.",
+      "voiceId": "onwK4e9ZLuTAKqWW03F9",
+      "voiceName": "Daniel - Steady Broadcaster (Warrant Officer Karim Daher)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-brief-02.wav",
+      "durationSeconds": 12.08,
+      "sha256": "282ea140634925cd2da5e51e10f828d61371826c4712ee2e1217ee91a888bdbc",
+      "captionSha256": "ab460c8a6d412eedd2a6ba49e6b538017d3d12515d1074d8140a87ca76528019"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-brief-03",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "text": "I need the control hardware, not rubble. Once the military relay is disabled, get us to the recovery point. We'll verify and secure the device there.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-brief-03.wav",
+      "durationSeconds": 8.88,
+      "sha256": "dcc94839f70c98a9db524b9c6666c393165712e8c622c2d95e900090b902cff7",
+      "captionSha256": "7e73db236f34eb1c83f32b45e975a2342ade051ec7cd004b3c915ff262f81569"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-brief-03",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "text": "تجهیزات کنترل رو می‌خوام، نه آوارش رو. وقتی رلهٔ نظامی از کار افتاد، ما رو به محل بازیابی برسون. همون‌جا دستگاه رو بررسی و تحویل می‌گیریم.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-brief-03.wav",
+      "durationSeconds": 9.76,
+      "sha256": "a4b8285cfb505db6d1d767b06238c4f6b186cdfd8f1eb18ee1381e0e9f374185",
+      "captionSha256": "6b6a847f0afda4705c8ff37227f65d0621180e660e7a25f1c5e060a9df8e5f92"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-comms-01",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "text": "The interfaces match the Civic Relay specifications. This equipment was prepared for our network. We still need the physical unit to prove it.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-comms-01.wav",
+      "durationSeconds": 7.68,
+      "sha256": "2edf780b146e041b87a281ebed71947b0e9cd9510c0580b4b1c455fd0cc82742",
+      "captionSha256": "60ca1bf29ac406e4e48d91a6e5aadeb7d91f42a2dfdee70d41fafba54da5c3b4"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-comms-01",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "text": "اتصال‌ها با مشخصات رلهٔ شهری یکیه. این تجهیزات رو برای شبکهٔ ما آماده کردن. برای اثباتش هنوز باید خودِ دستگاه رو برداریم.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-comms-01.wav",
+      "durationSeconds": 8.64,
+      "sha256": "d4cac17e1bd2ae39d7e6cf4c1e7a10b5bce21c6719e5dc1763a164042021c704",
+      "captionSha256": "8455f941c47cf3043ccef651b4808d4d566577b8ab707ee5954f03ee6a904d07"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-comms-02",
+      "speaker": "LAILA",
+      "locale": "en-US",
+      "text": "Vanguard knows you're there. Keep the specialists together and the service road open. Recover the hardware, board the APC, then reach the guarded exit.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-comms-02.wav",
+      "durationSeconds": 10.0,
+      "sha256": "3e21792c37ff961b04c0cfcc2dfe4626b0c0f22144187b9496ed4afb48136864",
+      "captionSha256": "111a966221917bfbaad170ee53066c26f955d4e05060fd6599a4d16224853f89"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-comms-02",
+      "speaker": "LAILA",
+      "locale": "fa-IR",
+      "text": "ونگارد فهمیده اونجایین. متخصص‌ها رو کنار هم نگه دار و جادهٔ خدماتی رو باز بذار. تجهیزات رو بردار، سوار نفربر شو و به خروجی محافظت‌شده برس.",
+      "voiceId": "EXAVITQu4vr4xnSDxMaL",
+      "voiceName": "Sarah (Captain Laila Nasser)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-comms-02.wav",
+      "durationSeconds": 12.96,
+      "sha256": "f723e83b33b6b7084af4822829461b7952f7e801f16c5043ab4427014247a6fa",
+      "captionSha256": "877e73848bcf28281bf8725df829a586c9832b75e04ada420d513db454577278"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-01",
+      "speaker": "KARIM",
+      "locale": "en-US",
+      "text": "Both specialists and the hardware are back. The civilian terminal is intact. The service route held long enough to get everyone out.",
+      "voiceId": "onwK4e9ZLuTAKqWW03F9",
+      "voiceName": "Daniel - Steady Broadcaster (Warrant Officer Karim Daher)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-debrief-01.wav",
+      "durationSeconds": 8.8,
+      "sha256": "571c9a7325d4c44842c891989a7e3e1e556c7b076136a8a94f7bae86fe9891c5",
+      "captionSha256": "592dc16e372a725c0fafa0e22e94451d9f872e516c1b5b7d3bddcbd03ccb200c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-01",
+      "speaker": "KARIM",
+      "locale": "fa-IR",
+      "text": "هر دو متخصص و تجهیزات برگشتن. ترمینال غیرنظامی هم سالمه. مسیر خدماتی تا وقتی همه رو خارج کردیم باز موند.",
+      "voiceId": "onwK4e9ZLuTAKqWW03F9",
+      "voiceName": "Daniel - Steady Broadcaster (Warrant Officer Karim Daher)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-debrief-01.wav",
+      "durationSeconds": 10.32,
+      "sha256": "4178be839860cf9803a2d1acf7f6c21315995614a7893887a37cdda41702fff4",
+      "captionSha256": "aaaffc7ff87a0027f0dd8d5c086fa496078fbe39dddf8d84f49b2452044b4411"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-02",
+      "speaker": "YUSUF",
+      "locale": "en-US",
+      "text": "The connectors and control layout fit our Civic Relay. That compatibility was deliberate. They weren't just borrowing an airfield.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-debrief-02.wav",
+      "durationSeconds": 7.04,
+      "sha256": "c71c244d9052ea27c14d390053c5202701f2ea7cd69230a64cc2e06e482d1f26",
+      "captionSha256": "d5517db9c2e1d01b2807e7c5f1623c401ba7490ff7c22d77947aa275e8a05f7c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-02",
+      "speaker": "YUSUF",
+      "locale": "fa-IR",
+      "text": "اتصال‌ها و چیدمان کنترل با رلهٔ شهری ما جور درمیاد. این سازگاری عمدی بوده. اونا فقط از یه فرودگاه استفاده نمی‌کردن.",
+      "voiceId": "cjVigY5qzO86Huf0OWal",
+      "voiceName": "Eric - Smooth, Trustworthy (Chief Yusuf Darzi)",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-debrief-02.wav",
+      "durationSeconds": 8.72,
+      "sha256": "cf3f4cb36aa45bdb4087d0069b74f37b3e46a87a125e9174b5dc2a92480eca67",
+      "captionSha256": "0d6ec49c2acfc0b88b47a22f9b2cdf0fe1ea9e66ecf2975cb39e3546c46f8920"
+    },
+    {
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-03",
+      "speaker": "ARIA",
+      "locale": "en-US",
+      "text": "The recovered schedule identifies Vanguard's command group and its next link window. I can mark the approach for your review. You decide when we move.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/en/grounded_signal-debrief-03.wav",
+      "durationSeconds": 9.52,
+      "sha256": "158585c9dde3905e956e39c254d3f8541ecb645c96c2717dc99db6519eadc427",
+      "captionSha256": "5090666a7732bc67b2e1811b597ed52fd21b9b335af472dfbabb0bcb0c2ae12c"
+    },
+    {
+      "deliveryProfile": "fa-conversational-v1",
+      "voiceSettings": {
+        "stability": 0.5,
+        "similarity_boost": 0.75
+      },
+      "performanceDirection": "[conversational tone]",
+      "kind": "narrative",
+      "id": "grounded_signal-debrief-03",
+      "speaker": "ARIA",
+      "locale": "fa-IR",
+      "text": "برنامه‌ای که بازیابی کردیم، گروه فرماندهی ونگارد و زمان اتصال بعدیشون رو مشخص می‌کنه. می‌تونم مسیر نزدیک شدن رو برای بررسی نشون بدم. زمان حرکت رو شما تعیین می‌کنین.",
+      "voiceId": "Fi9tPTnEcbh3of7hOHC8",
+      "voiceName": "Warline - ARIA Civic Relay",
+      "assetPath": "Assets/Game/Audio/Narrative/CH04M04GroundedSignal/Voice/fa/grounded_signal-debrief-03.wav",
+      "durationSeconds": 12.8,
+      "sha256": "1996a77148d5d41f74dbe3622e16527e1212ee22d04750095470afd459acf1bf",
+      "captionSha256": "0c9ce1dad1f916c51387039915b57a8d04f02e74e75c62c981eee4c0b0a646fd"
+    }
+  ],
+  "schema": "WarlineCapture.CampaignBilingualVoice.v1",
+  "missionId": "saga.ch04.m04.grounded_signal",
+  "provider": "ElevenLabs",
+  "model": "eleven_v3",
+  "license": "ELEVENLABS_PAID_CREATOR_COMMERCIAL_LICENSE",
+  "runtimeNetworkTts": false,
+  "generatedAtUtc": "2026-10-01T21:22:21.506257+00:00",
+  "subscription": {
+    "tier": "creator",
+    "status": "active"
+  },
+  "processing": {
+    "sampleRateHz": 44100,
+    "channels": 1,
+    "sourceEncoding": "PCM_S16LE",
+    "loudnessLUFS": -18
+  },
+  "castAssignment": {
+    "Karim": "Existing stock Daniel; new stable campaign role",
+    "Yusuf": "Existing stock Eric; new stable campaign role"
+  }
+}

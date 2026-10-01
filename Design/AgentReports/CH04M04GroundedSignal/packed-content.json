@@ -1,0 +1,18 @@
+{
+    "schema": "warline.grounded-signal.packed-content.v1",
+    "result": "Passed",
+    "mapId": "opmap.ch04.grounded_signal",
+    "contentHash": "70188ed3b2fd8c2819bd927810d084363615fe2795079620febdd42b4c28c810",
+    "target": "StandaloneOSX",
+    "entitySceneGuid": "436aa193ca6964810ac18c51cf428952",
+    "unitFixtureSceneGuid": "15afd4ca691294d2babaf59732227abb",
+    "entityContentPath": "Library/GroundedSignalPreparedContent/Entities",
+    "entityCatalogPath": "Library/GroundedSignalPreparedContent/Entities/ContentArchives/archive_dependencies.bin",
+    "addressablesCatalogPath": "/Users/farhad/Projects/WarlineCapture/Library/GroundedSignalPreparedContent/Addressables/catalog.bin",
+    "definitionGuid": "24436ea782a07423ba0de9f14915ade7",
+    "bindingGuid": "1df7b83e8dbcb483fb195a45fa9403c7",
+    "entityCatalogHash": "6028485d969ec276f7f353ff8ce5f5e4f30e8a7e9bd63d79346a5219e748a54e",
+    "addressablesCatalogHash": "0d30b13ae0bd9cf09ed194a0c570f1cb41ab2fdf81e0cc554e09cd4ab7afad24",
+    "status": "Native packed content built. Normal-input mission and real device acceptance are separate gates.",
+    "entityContentBytes": 168630435
+}

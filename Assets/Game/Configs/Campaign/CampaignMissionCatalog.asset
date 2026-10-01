@@ -67,3 +67,6 @@ MonoBehaviour:
   - missionId: saga.ch04.m03.split_front
     definition: {fileID: 11400000, guid: 2e0182dca982d4e408fbcec11a400f17, type: 2}
     scenario: {fileID: 11400000, guid: 8f339e708360040948278aab5f4f736f, type: 2}
+  - missionId: saga.ch04.m04.grounded_signal
+    definition: {fileID: 11400000, guid: 5e62253daa8d54a5bb902cbfab61ce97, type: 2}
+    scenario: {fileID: 11400000, guid: 9462db31f350e4f50b5afc101db706fa, type: 2}

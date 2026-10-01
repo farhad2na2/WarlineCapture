@@ -92,6 +92,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsPowerRelayGuideContext() &&
                        !UiShellRuntimeGateway.IsRouteReopenedGuideContext() &&
                        !UiShellRuntimeGateway.IsExtractionGuideContext() &&
+                       !UiShellRuntimeGateway.IsGroundedSignalGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
                        !UiShellRuntimeGateway.IsDefensePreparationGuideContext())
@@ -164,7 +165,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.IsGroundedSignalGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)
@@ -180,6 +181,16 @@ namespace Game.UI.Runtime
             else extractionWatchPointSet = false;
             if (!skirmish && _finalTutorialSuppressed) kind = AriaPlayObservationKind.Finished;
             int goalId=_lastPanelModel.TutorialStepCount * 100 + _lastPanelModel.TutorialStep;
+            // Grounded Signal's public relay step includes reaching the service
+            // gate and then disabling the relay. Reaching attack range is real
+            // progress; give that visible sub-objective its own watchdog goal.
+            if(UiShellRuntimeGateway.IsGroundedSignalGuideContext())
+            {
+                int stage=_lastPanelModel.TutorialStep;
+                goalId=6600+stage+(stage>=3?1:0);
+                if(stage==2 && UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var groundedTarget) &&
+                    groundedTarget.BattleAction==UiTutorialBattleAction.Attack)goalId=6603;
+            }
             // A delivered load is visible reserve progress, even while the same
             // defend-storage instruction remains on screen.
             if(_lastPanelModel.TutorialStepCount==4 && UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int reserveFuel))

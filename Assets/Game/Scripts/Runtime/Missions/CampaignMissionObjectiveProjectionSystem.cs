@@ -108,7 +108,10 @@ namespace Game.Runtime
                 {
                     case MissionObjectiveRuleKind.DestroyMissionRole:
                         if (objective.MissionRoleId.IsEmpty || !objective.TargetConfigId.IsEmpty ||
-                            facts.HostileTotalCount != objective.RequiredCount)
+                            facts.HostileTotalCount != objective.RequiredCount &&
+                            !(definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal)) &&
+                              definition.Extraction.Enabled != 0 && objective.RequiredCount == 1 &&
+                              objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay"))))
                             return false;
                         break;
                     case MissionObjectiveRuleKind.ProtectMissionRole:
@@ -267,6 +270,13 @@ namespace Game.Runtime
             if (runtime.Outcome == MissionOutcomeKind.Victory)
                 return MatchObjectiveState.Complete;
 
+            if (runtime.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal)))
+            {
+                if (objective.Rule == MissionObjectiveRuleKind.DestroyMissionRole && objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay")))
+                    return facts.GroundedSignalRelayDisabled != 0 ? MatchObjectiveState.Complete : MatchObjectiveState.Active;
+                if (objective.Rule == MissionObjectiveRuleKind.ProtectMissionRole && objective.MissionRoleId.Equals(new FixedString64Bytes("role.protected.terminal")))
+                    return facts.GroundedSignalTerminalLost != 0 ? MatchObjectiveState.Failed : MatchObjectiveState.Active;
+            }
             return objective.Rule switch
             {
                 MissionObjectiveRuleKind.DestroyMissionRole =>
@@ -320,6 +330,11 @@ namespace Game.Runtime
             ref CampaignMissionDefinitionBlob definition,
             in CampaignMissionObjectiveBlob objective)
         {
+            if (definition.MissionId.Equals(new FixedString64Bytes(CampaignMissionSequence.GroundedSignal)))
+            {
+                if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.hostile.relay"))) return new FixedString64Bytes("anchor.ch04.m04.relay");
+                if (objective.MissionRoleId.Equals(new FixedString64Bytes("role.protected.terminal"))) return new FixedString64Bytes("anchor.ch04.m04.civilian_terminal");
+            }
             return objective.Rule switch
             {
                 MissionObjectiveRuleKind.TransferSupplyOil => definition.SupplyLine.OilAnchorId,
@@ -371,6 +386,11 @@ namespace Game.Runtime
             in CampaignMissionAttemptFactsComponent facts)
         {
             string objectiveId=objective.ObjectiveId.ToString();
+            if (objectiveId.StartsWith("obj.ch04.m04.", System.StringComparison.Ordinal))
+                return new FixedString128Bytes(objective.Rule == MissionObjectiveRuleKind.ExtractPassengers
+                    ? "mission.grounded_signal.tutorial.5.body"
+                    : objective.Rule == MissionObjectiveRuleKind.DestroyMissionRole
+                    ? "mission.grounded_signal.tutorial.2.body" : "mission.grounded_signal.objective.terminal");
             bool signalTrace=objectiveId.StartsWith("obj.ch03.m01",System.StringComparison.Ordinal);
             bool safehouseSweep=objectiveId.StartsWith("obj.ch03.m02",System.StringComparison.Ordinal);
             bool falseFront=objectiveId.StartsWith("obj.ch03.m03",System.StringComparison.Ordinal);

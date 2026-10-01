@@ -1,0 +1,1 @@
+[GroundedSignalInput] result=Failed Normal relay attack order accepted for four escorts, but direct combat chase did not move them through the route. Add an explicit normal Move approach before Attack guidance.

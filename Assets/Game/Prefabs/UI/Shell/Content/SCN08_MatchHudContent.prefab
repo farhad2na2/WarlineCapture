@@ -43116,6 +43116,7 @@ GameObject:
   - component: {fileID: 2059321160435119349}
   - component: {fileID: 1532477996017576482}
   - component: {fileID: 6756076206336854039}
+  - component: {fileID: 877527400155316760}
   m_Layer: 0
   m_Name: SCN08_MatchHudContent
   m_TagString: Untagged
@@ -43176,6 +43177,18 @@ MonoBehaviour:
     sectionRoot: {fileID: 3556355957693677946}
   - sectionId: 5
     sectionRoot: {fileID: 8399705092529502062}
+--- !u!114 &877527400155316760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032040054424849745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1c30b53cf4db4d37b9c82fdec21854d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Game.UI.Runtime::Game.UI.Runtime.GroundedSignalMarkersView
 --- !u!1 &8060166736726619568
 GameObject:
   m_ObjectHideFlags: 0

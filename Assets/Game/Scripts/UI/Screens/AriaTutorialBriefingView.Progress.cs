@@ -10,9 +10,9 @@ namespace Game.UI.Runtime
         {
             if (progressText != null) progressText.gameObject.SetActive(_tutorialStepCount > 0);
             int step = Mathf.Max(1, _tutorialStep);
-            if (_tutorialStepCount == 5 && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
+            if (!groundedSignalTutorial && _tutorialStepCount == 5 && _tutorialStep == 2 && narrationPhase == UiTutorialNarrationPhase.WorldTarget)
                 step = 3;
-            else if (_tutorialStepCount == 5 && _tutorialStep is 3 or 4)
+            else if (!groundedSignalTutorial && _tutorialStepCount == 5 && _tutorialStep is 3 or 4)
                 step = narrationPhase == UiTutorialNarrationPhase.WorldTarget ? 5 : 4;
 
             int count = Mathf.Max(step, _tutorialStepCount);

@@ -6,6 +6,23 @@ namespace Game.Composition
 {
     internal static class CampaignMissionOperationMapReuseUtility
     {
+        // Called only after the source scene loader has validated its physical SceneView.
+        public static bool TryValidateStandalonePhysicalSource(EntityManager entityManager,
+            OperationMapDefinition loadedDefinition, Entity expectedRoot, out string error)
+        {
+            error = null;
+            if (loadedDefinition == null || loadedDefinition.SourceBinding.IsConfigured ||
+                !TryReuse(entityManager, loadedDefinition, out Entity root, out error) || root != expectedRoot)
+            {
+                error = string.IsNullOrEmpty(error) ? "Loaded standalone operation-map content does not match the campaign metadata." : error;
+                return false;
+            }
+            var metadata = entityManager.GetComponentData<OperationMapMetadataComponent>(root);
+            metadata.PhysicalSourceValidated = 1;
+            entityManager.SetComponentData(root, metadata);
+            return true;
+        }
+
         public static bool TryReuse(
             EntityManager entityManager,
             OperationMapDefinition definition,
@@ -85,7 +102,16 @@ namespace Game.Composition
 
             bool isLogicalDefinition = request.OperationMapId.Equals(
                 new Unity.Collections.FixedString64Bytes(definition.OperationMapId));
-            bool exactIdentity = isLogicalDefinition
+            bool standaloneDefinition = isLogicalDefinition && !definition.SourceBinding.IsConfigured;
+            bool exactIdentity = standaloneDefinition
+                ? metadata.Blob.Value.SourceOperationMapId.Equals(new Unity.Collections.FixedString64Bytes(definition.OperationMapId)) &&
+                  metadata.Blob.Value.SourceIdentityHash.Equals(new Unity.Collections.FixedString128Bytes(definition.SourceIdentityHash)) &&
+                  metadata.Blob.Value.SourceContentHash.Equals(new Unity.Collections.FixedString128Bytes(definition.ContentHash)) &&
+                  metadata.Blob.Value.ContentHash.Equals(new Unity.Collections.FixedString128Bytes(definition.ContentHash)) &&
+                  metadata.Blob.Value.GeneratedMetadataHash.Equals(new Unity.Collections.FixedString128Bytes(definition.GeneratedMetadataHash)) &&
+                  metadata.Blob.Value.SchemaVersion == definition.SchemaVersion &&
+                  metadata.Blob.Value.ContentVersion == definition.ContentVersion
+                : isLogicalDefinition
                 ? metadata.Blob.Value.SourceOperationMapId.Equals(
                       new Unity.Collections.FixedString64Bytes(
                           definition.SourceBinding.SourceOperationMapId)) &&

@@ -14,7 +14,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
   m_GUID: 5f2bb383e5f6d46a6835e133d0864f20
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 1df7b83e8dbcb483fb195a45fa9403c7
+    m_Address: campaign/grounded-signal/source-scene
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 24436ea782a07423ba0de9f14915ade7
+    m_Address: campaign/grounded-signal/definition
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5e62253daa8d54a5bb902cbfab61ce97
+    m_Address: campaign/grounded-signal/mission
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8915f0ba1b35648f0a5a859ae8a9f6f7
+    m_Address: campaign/grounded-signal/surface
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9462db31f350e4f50b5afc101db706fa
+    m_Address: campaign/grounded-signal/scenario
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a678ffe9103f34b5099564bf1a3aa294
+    m_Address: campaign/grounded-signal/minimap
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ffff4e6877b49449c867e56dc0bb2fc8
+    m_Address: campaign/grounded-signal/grid
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: d6786f5b1e1b3491ab7f1f020f1abc0a, type: 2}
   m_SchemaSet:

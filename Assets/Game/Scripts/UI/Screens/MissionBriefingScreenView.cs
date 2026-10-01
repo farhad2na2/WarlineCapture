@@ -79,6 +79,7 @@ namespace Game.UI.Runtime
             }
 
             bool m02 = model.MissionId == UiCampaignMissionProjectionIds.M02;
+            RestoreGroundedBriefingLayout();
             Set(screenTitle, _gameTextResolver.Get("mission.briefing.title", "MISSION BRIEFING"));
             Set(screenSubtitle, v3TargetLayout
                 ? m02 ? "CHAPTER I - FIRST RESPONSE" : "CHAPTER I - FIRST RESPONSE"
@@ -175,6 +176,7 @@ namespace Game.UI.Runtime
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.AirCorridor) ApplyAirCorridor(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SteelPush) ApplySteelPush(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.SplitFront) ApplySplitFront(in model);
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal) ApplyGroundedSignal(in model);
             if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.NetworkBreak) ApplyNetworkBreak(in model);
             bool evidenceChain = model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.EvidenceChain;
             if (evidenceChainRoutePanel != null) evidenceChainRoutePanel.gameObject.SetActive(evidenceChain);
@@ -199,6 +201,7 @@ namespace Game.UI.Runtime
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.PowerRelay) ApplyPowerRelay(in model);
             else if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.MarketLifeline) ApplyMarketLifeline(in model);
             ApplyReadingOrder();
+            if (model.MissionId == Game.Missions.Contracts.CampaignMissionSequence.GroundedSignal) FitGroundedBriefingObjectives();
         }
 
         public void ApplyUnavailable()

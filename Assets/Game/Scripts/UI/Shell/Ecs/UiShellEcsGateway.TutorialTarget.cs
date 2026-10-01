@@ -26,6 +26,8 @@ namespace Game.UI.Shell.Ecs
             if(guidance.Active==0) return false;
             if (TryResolveEarlyMissionTutorialTarget(em, root, runtime, guidance, out target)) return true;
             if (runtime.Phase != MissionPhaseKind.Engage) return false;
+            if(runtime.MissionId.Equals(CampaignMissionSequence.GroundedSignal))
+                return ResolveGroundedSignalTarget(em,root,guidance,out target);
             if((runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.AirCorridor))||(runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SteelPush))||runtime.MissionId.Equals(new Unity.Collections.FixedString64Bytes(CampaignMissionSequence.SplitFront)))) &&
                 em.Exists(guidance.SourceEntity) && em.HasComponent<LocalTransform>(guidance.SourceEntity))
             {

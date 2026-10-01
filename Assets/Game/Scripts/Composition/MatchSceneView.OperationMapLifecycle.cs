@@ -168,7 +168,12 @@ namespace Game.Composition
                     out error))
             {
                 if (!resolvedOperationMapDefinition.SourceBinding.IsConfigured)
-                    return true;
+                {
+                    // Compatibility maps without a source-scene load retain their existing path.
+                    if (activeOperationMapSceneView == null) return true;
+                    return CampaignMissionOperationMapReuseUtility.TryValidateStandalonePhysicalSource(
+                        world.EntityManager, activeOperationMapSceneView.Definition, mapRoot, out error);
+                }
                 if (activeOperationMapSceneView == null ||
                     !CampaignMissionOperationMapReuseUtility.TryReuse(
                         world.EntityManager,

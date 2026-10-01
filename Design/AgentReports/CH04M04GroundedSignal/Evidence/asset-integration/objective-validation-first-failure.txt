@@ -1,0 +1,3 @@
+Game.Editor.CH04M04GroundedSignalObjectiveValidation.Run(): Failed
+CLI Runtime Error: Disabled relay waited for unrelated guards
+Focused regression fixture and writer version semantics under investigation.

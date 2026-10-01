@@ -23,6 +23,19 @@ namespace Game.UI.Shell.Ecs
         public static bool TryReadMatchHudStatusSurfaces(out UiMatchHudStatusSurfacesModel statusSurfaces)
         {
             statusSurfaces = UiMatchHudStatusSurfacesModel.Default;
+            if(TryGroundedSignal(out var groundedEm,out var groundedRoot,out var grounded))
+            {
+                var facts=groundedEm.GetComponentData<CampaignMissionAttemptFactsComponent>(groundedRoot);
+                var checkedIcon=UiMatchHudObjectiveIconKind.Checked;
+                var uncheckedIcon=UiMatchHudObjectiveIconKind.Unchecked;
+                statusSurfaces=new UiMatchHudStatusSurfacesModel(GameText.Get("mission.grounded_signal.name"),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.grounded_signal.objective.hardware"),grounded.HardwareRecovered!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.grounded_signal.objective.extract"),facts.ExtractionDeparted!=0?checkedIcon:uncheckedIcon),
+                    new UiMatchHudObjectiveRowModel(GameText.Get("mission.grounded_signal.objective.terminal"),uncheckedIcon),
+                    $"{grounded.ElapsedMilliseconds/60000:00}:{grounded.ElapsedMilliseconds/1000%60:00}",true,
+                    GameText.Get("mission.grounded_signal.name"),GroundedSignalStatus(groundedEm,groundedRoot),false,false,"",false,false,false,false);
+                return true;
+            }
             if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
                 return false;
 
@@ -157,11 +170,13 @@ namespace Game.UI.Shell.Ecs
 
             var breachStatusStamp=ReadBreachStatusStamp();
             var gridlockStamp=ReadGridlockStamp();
+            var groundedSignalStatusStamp=ReadGroundedSignalStatusStamp();
             int supplyDelivery=Game.UI.Runtime.UiShellRuntimeGateway.TryReadSupplyLineDelivery(out int currentDelivery)?UnityEngine.Mathf.Min(40,currentDelivery):-1;
             int extractionSelectionCount=ReadExtractionSelectionCount(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             int extractionHoldStatus=ReadExtractionHoldStatus(recommendations.Length>0?recommendations[0].TutorialStep:(byte)0);
             if (hasCachedAssistantPanel && cachedAssistantTextLocale==GameLocalization.CurrentLocaleCode &&
                 cachedBreachStatusStamp==breachStatusStamp && cachedGridlockStamp==gridlockStamp && cachedSupplyDelivery==supplyDelivery &&
+                cachedGroundedSignalStatusStamp==groundedSignalStatusStamp &&
                 cachedExtractionSelectionCount==extractionSelectionCount && cachedExtractionHoldStatus==extractionHoldStatus &&
                 cachedAssistantPanelWorld == entityManager.World &&
                 cachedAssistantPanelBoundary == boundary &&
@@ -192,7 +207,7 @@ namespace Game.UI.Shell.Ecs
                 ? topRecommendation.Reason.ToString()
                 : string.Empty;
             bool tutorialRightToLeft = false;
-            if (topRecommendation.TutorialStepCount is 4 or 6 or 8 or 10 or 12 ||
+            if (topRecommendation.TutorialStepCount is 4 or 6 or 8 or 10 or 12 || topRecommendation.RecommendationId is >=66001 and <=66005 ||
                 topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005 or >= 79001 and <= 79206)
             {
                 recommendationTitle=GameText.Get(recommendationTitle,recommendationTitle);
@@ -209,6 +224,7 @@ namespace Game.UI.Shell.Ecs
                         ? GameText.Format("mission.evidence_chain.tutorial.selection_progress", "Protected people selected: {0}/2", extractionSelectionCount)
                         : GameText.Format("mission.m04.tutorial.selection_progress", "Specialists selected: {0}/4", extractionSelectionCount);
                 if(extractionHoldStatus!=int.MinValue) recommendationBody=ExtractionHoldCopy(extractionHoldStatus);
+                if(topRecommendation.RecommendationId is >=66001 and <=66005) recommendationBody=AppendGroundedSignalStatus(recommendationBody);
                 tutorialRightToLeft=GameLocalization.CurrentLocaleCode=="fa-IR";
             }
             if (topRecommendation.RecommendationId != 0 &&
@@ -230,7 +246,7 @@ namespace Game.UI.Shell.Ecs
                 topRecommendation.TutorialStep > 0 &&
                 topRecommendation.TutorialStepCount == 5 &&
                 topRecommendation.TargetKind != AssistantTargetKind.UiSurface &&
-                !(topRecommendation.RecommendationId is >= 77001 and <= 77005 or >= 78001 and <= 78005))
+                !(topRecommendation.RecommendationId is >=66001 and <=66005 or >= 77001 and <= 77005 or >= 78001 and <= 78005))
             {
                 TryResolveTutorialPresentationText(
                     topRecommendation.TutorialStep,
@@ -319,6 +335,7 @@ namespace Game.UI.Shell.Ecs
             cachedAssistantPanelRecommendationCount = recommendations.Length;
             cachedAssistantPanelControlState = assistantState.ControlState;
             cachedBreachStatusStamp=breachStatusStamp;cachedGridlockStamp=gridlockStamp;cachedSupplyDelivery=supplyDelivery;
+            cachedGroundedSignalStatusStamp=groundedSignalStatusStamp;
             cachedExtractionSelectionCount=extractionSelectionCount;
             cachedExtractionHoldStatus=extractionHoldStatus;
             cachedAssistantPanel = assistantPanel;

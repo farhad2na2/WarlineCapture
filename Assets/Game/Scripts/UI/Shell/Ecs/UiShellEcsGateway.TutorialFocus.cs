@@ -11,9 +11,21 @@ namespace Game.UI.Shell.Ecs
 
         public bool TryFocusMissionTutorialTarget(bool selection)
         {
-            if (!TryReadMissionTutorialTarget(out var lesson) || !TryGetMissionRoot(out var em,out _)) return false;
+            if (!TryReadMissionTutorialTarget(out var lesson) || !TryGetMissionRoot(out var em,out var root)) return false;
             float3 target = selection ? lesson.Selection : lesson.Destination;
             float height = 40f;
+            if(!selection&&em.HasComponent<CampaignMissionRouteReopenedState>(root)&&
+               em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root).Prompt==CampaignMissionGuidancePromptKind.RouteRecords)
+            {
+                var records=em.GetComponentData<CampaignMissionRouteReopenedState>(root).RecordsBuilding;
+                if(em.Exists(records)&&em.HasComponent<Unity.Transforms.LocalTransform>(records))
+                {
+                    // Keep the office and its entrance in the open space between
+                    // the selected-unit card and ARIA, so preservation is visible.
+                    target=(target+em.GetComponentData<Unity.Transforms.LocalTransform>(records).Position)*.5f;
+                    height=50f;
+                }
+            }
             if (selection && lesson.DragSelection)
             {
                 target = ((float3)lesson.SelectionMin + (float3)lesson.SelectionMax) * .5f;

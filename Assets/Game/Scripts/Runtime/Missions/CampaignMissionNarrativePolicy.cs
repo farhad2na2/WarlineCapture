@@ -45,6 +45,7 @@ namespace Game.Runtime
             missionId.Equals(SafehouseSweep) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(FalseFront) && facts.MarketManifestVerified!=0 && facts.MarketOpen==0 ||
             missionId.Equals(EvidenceChain) && facts.ExtractionCarrierLegCount>=2 && facts.ExtractionDeparted==0 ||
+            missionId.Equals(RouteReopened) && facts.RouteRelayNodeActivated!=0 && facts.RouteRecordsPreserved==0 ||
             missionId.Equals(PowerRelay) && facts.PowerSafeRouteConfirmed==0;
         internal static bool UsesMissionSequences(in FixedString64Bytes missionId) =>
             missionId.Equals(SplitFront) || missionId.Equals(SteelPush) || missionId.Equals(AirCorridor) || missionId.Equals(NetworkBreak) || missionId.Equals(EvidenceChain) || missionId.Equals(FalseFront) || missionId.Equals(SafehouseSweep) || missionId.Equals(SignalTrace) || missionId.Equals(RouteReopened) || missionId.Equals(PowerRelay) || missionId.Equals(MarketLifeline) || missionId.Equals(SupplyLine) || missionId.Equals(Gridlock) || missionId.Equals(M02) || missionId.Equals(M03) || missionId.Equals(M04) || missionId.Equals(M05);

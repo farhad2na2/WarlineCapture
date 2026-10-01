@@ -120,7 +120,8 @@ namespace Game.UI.Runtime
                 // These mission routes can place the next inspection point beyond the
                 // current camera after squad selection. Center it once so Watch ARIA and
                 // the player receive a visible target; camera focus never submits an order.
-                if(!_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
+                if(!UiShellRuntimeGateway.IsRouteReopenedGuideContext() &&
+                   !_highlightPresentationSystem.HasVisibleDirectTutorialTarget &&
                    Time.unscaledTime>=_marketDestinationFocusReadyAt &&
                    UiShellRuntimeGateway.TryFocusMissionTutorialTarget(false))
                 {

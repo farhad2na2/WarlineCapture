@@ -354,15 +354,9 @@ namespace Game.Composition
 
             for (int y = minY; y <= maxY; y += sampleStride)
             {
-                int rowOffset = y * surface.Dimensions.x;
                 for (int x = minX; x <= maxX; x += sampleStride)
                 {
-                    int index = rowOffset + x;
-                    if ((uint)index >= (uint)blob.Cells.Length)
-                        continue;
-
-                    MapSurfaceCell cell = blob.Cells[index];
-                    if (cell.SurfaceCount == 0 ||
+                    if (!MapSurfaceBlobAccess.TryGetSurfaceRange(ref blob, new int2(x,y), out var cell) ||
                         !TryResolveRasterSurfaceSample(ref blob, cell, out MapSurfaceSample sample) ||
                         !TryResolveSurfaceFeatureKind(sample.SurfaceType, sample.Flags, out MatchHudMinimapSurfaceFeatureKind kind))
                     {
@@ -382,16 +376,13 @@ namespace Game.Composition
             }
         }
 
-        private static bool TryResolveRasterSurfaceSample(ref MapSurfaceBlob blob, MapSurfaceCell cell, out MapSurfaceSample sample)
+        private static bool TryResolveRasterSurfaceSample(ref MapSurfaceBlob blob, MapSurfaceCellSurfaceRange cell, out MapSurfaceSample sample)
         {
             sample = default;
             for (int i = 0; i < cell.SurfaceCount; i++)
             {
-                int sampleIndex = cell.FirstSurfaceIndex + i;
-                if ((uint)sampleIndex >= (uint)blob.Samples.Length)
+                if (!MapSurfaceBlobAccess.TryGetSurface(ref blob, cell, i, out MapSurfaceSample candidate))
                     continue;
-
-                MapSurfaceSample candidate = blob.Samples[sampleIndex];
                 if (!TryResolveSurfaceFeatureKind(candidate.SurfaceType, candidate.Flags, out _))
                     continue;
 

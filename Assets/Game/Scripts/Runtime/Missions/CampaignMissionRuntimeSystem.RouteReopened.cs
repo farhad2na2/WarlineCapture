@@ -11,6 +11,7 @@ namespace Game.Runtime
         private static readonly FixedString64Bytes RouteEngineerRoleId="role.route.engineer";
         private static readonly FixedString64Bytes RouteReliefConvoyRoleId="role.route.relief_convoy";
         private static readonly FixedString64Bytes RouteFuelConvoyRoleId="role.route.fuel_convoy";
+        private static readonly FixedString64Bytes RouteRecordsOfficeKey="RouteReopened_RecordsOffice";
         private bool TryAdvanceRouteReopened(ref SystemState system,Entity root,in CampaignMissionRuntimeComponent runtime)
         {
             if(!SystemAPI.TryGetSingleton(out CampaignMissionCatalogComponent catalog) || !CampaignMissionSpawnSystem.TryFindDefinition(in catalog,in runtime,out int index))return false;
@@ -19,15 +20,42 @@ namespace Game.Runtime
             var state=em.GetComponentData<CampaignMissionRouteReopenedState>(root);
             if(!state.SessionToken.Equals(runtime.SessionToken)||state.AttemptOrdinal!=runtime.AttemptOrdinal||state.SourceVersion!=runtime.SourceVersion)return true;
             var facts=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root);
+            // Bind the authored office once for this attempt. A removed owner is a lost
+            // archive, never a reason to bind a replacement and forgive destruction.
+            if(state.RecordsBuildingInitialized==0)
+            {
+                using var offices=new EntityQueryBuilder(Allocator.Temp).WithAll<RuntimeBuildingCombatInfo,UnitSourcePrefabKey,UnitHealth,UnitGrid>().Build(em);
+                using var owners=offices.ToEntityArray(Allocator.Temp);
+                foreach(var owner in owners)
+                {
+                    if(!em.GetComponentData<UnitSourcePrefabKey>(owner).Value.Equals(RouteRecordsOfficeKey))continue;
+                    var identity=em.GetComponentData<RuntimeBuildingCombatInfo>(owner);
+                    if(identity.OwnerFactionId!=2||math.distancesq(em.GetComponentData<UnitGrid>(owner).Cell,state.RecordsCell)>900)continue;
+                    if(state.RecordsBuilding!=Entity.Null){state.Failure=RouteReopenedFailure.Integrity;break;}
+                    state.RecordsBuilding=owner;
+                }
+                if(state.RecordsBuilding!=Entity.Null)
+                {
+                    state.RecordsBuildingInitialized=1;
+                    if(!em.HasComponent<CampaignMissionProtectedRecordsTag>(state.RecordsBuilding))em.AddComponent<CampaignMissionProtectedRecordsTag>(state.RecordsBuilding);
+                }
+                else
+                {
+                    state.RecordsPreparationMilliseconds=SaturatingAddMilliseconds(state.RecordsPreparationMilliseconds,SystemAPI.Time.DeltaTime);
+                    if(state.RecordsPreparationMilliseconds>30000)state.Failure=RouteReopenedFailure.Integrity;
+                }
+            }
+            if(state.RecordsBuildingInitialized!=0&&(!em.Exists(state.RecordsBuilding)||!em.HasComponent<UnitHealth>(state.RecordsBuilding)||em.GetComponentData<UnitHealth>(state.RecordsBuilding).Current<=0))
+                state.Failure=RouteReopenedFailure.RecordsLost;
             bool opening=em.HasComponent<CampaignMissionOpeningPresentationComponent>(root)&&em.GetComponentData<CampaignMissionOpeningPresentationComponent>(root).Stage>=6;
-            int delta=(int)math.round(math.max(0,SystemAPI.Time.DeltaTime)*1000);int rifles=0,engineers=0,hostiles=0,hostileRoster=0,deadRifles=0,deadCivilians=0,deadHostiles=0,initialized=0;
+            int delta=(int)math.round(math.max(0,SystemAPI.Time.DeltaTime)*1000);int rifles=0,engineers=0,hostiles=0,hostileRoster=0,deadRifles=0,deadCivilians=0,deadHostiles=0,initialized=0,civilianRoster=0;
             bool reliefAtGoal=false,fuelAtGoal=false,riflesAtGate=false,riflesAtRecords=false;int engineersAtLink=0;
             var members=em.GetBuffer<CampaignMissionRouteReopenedMember>(root);
             if(runtime.Phase<MissionPhaseKind.Engage)RefreshRouteReopenedRosterBeforeEngage(em,in runtime,ref members);
             for(int i=0;i<members.Length;i++)
             {
                 var member=members[i];
-                if(member.Kind==4)hostileRoster++;
+                if(member.Kind==4)hostileRoster++;else if(member.Kind is 1 or 2 or 3)civilianRoster++;
                 if(member.Dead==0)
                 {
                     if(!em.Exists(member.Entity)||!em.HasComponent<UnitHealth>(member.Entity)){if(member.Initialized!=0)state.Failure=RouteReopenedFailure.Integrity;continue;}
@@ -50,7 +78,7 @@ namespace Game.Runtime
                 }
                 members[i]=member;
             }
-            state.Ready=(byte)(initialized==members.Length&&members.Length>0?1:0);bool active=state.Ready!=0&&opening&&runtime.Phase==MissionPhaseKind.Engage;
+            state.Ready=(byte)(initialized==members.Length&&members.Length>0&&state.RecordsBuildingInitialized!=0?1:0);bool active=state.Ready!=0&&opening&&runtime.Phase==MissionPhaseKind.Engage;
             if(active)
             {
                 state.ElapsedMilliseconds=SaturatingAddMilliseconds(state.ElapsedMilliseconds,SystemAPI.Time.DeltaTime);
@@ -65,7 +93,7 @@ namespace Game.Runtime
                 if(state.RecordsHoldMilliseconds>=rules.RecordsHoldMilliseconds)state.RecordsPreserved=1;
             }
             if(CampaignMissionRouteReopenedRuleUtility.IsVictory(in state,in rules))state.Complete=1;
-            facts.ElapsedMilliseconds=state.ElapsedMilliseconds;facts.CommandSquadAlive=rifles>0?(byte)1:(byte)0;facts.SquadLossCount=deadRifles;facts.CivilianLossCount=deadCivilians;facts.HostileTotalCount=hostiles+deadHostiles;facts.HostileDefeatedCount=deadHostiles;
+            facts.ElapsedMilliseconds=state.ElapsedMilliseconds;facts.CommandSquadAlive=rifles>0?(byte)1:(byte)0;facts.SquadLossCount=deadRifles;facts.CivilianLossCount=deadCivilians;facts.CivilianTotalCount=civilianRoster;facts.HostileTotalCount=hostiles+deadHostiles;facts.HostileDefeatedCount=deadHostiles;
             facts.RouteReliefDelivered=state.ReliefDelivered;facts.RouteFuelDelivered=state.FuelDelivered;facts.RouteLinkRestored=state.LinkRestored;facts.RouteHubEntered=state.HubEntered;facts.RouteGarrisonCleared=state.GarrisonCleared;facts.RouteRecordsPreserved=state.RecordsPreserved;facts.RouteRelayNodeActivated=state.RelayNodeActivated;facts.RouteReopenedFailure=state.Failure;
             em.SetComponentData(root,state);em.SetComponentData(root,facts);if(state.Failure==RouteReopenedFailure.Integrity)return true;
             var phase=runtime.Phase;var outcome=MissionOutcomeKind.None;

@@ -1,0 +1,96 @@
+{
+  "source": "/Users/farhad/Projects/WarlineCapture/Library/MapVariantPreparedContent/AshLinePort",
+  "semanticHash": "3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+  "files": [
+    {
+      "path": "Addressables/AddressablesLink/link.xml",
+      "bytes": 6062,
+      "sha256": "0904cd4ec61d986a8e14d5ad24509215ef7c17db7e750b28819a74ff75cad1b6"
+    },
+    {
+      "path": "Addressables/Bundles/059ad5323b1112826e7d3560ced80254.bundle",
+      "bytes": 150392,
+      "sha256": "3df75be66684d2bf4264eff831c8573d78004df180144f7d43c8f80e74d17a78"
+    },
+    {
+      "path": "Addressables/Bundles/4a05efd64e5dab86bd8c1a22318d9eec.bundle",
+      "bytes": 181646,
+      "sha256": "599ba3ee30e42b3334523df5789a692ed0a2329fa43b40cef397214bd576fcd3"
+    },
+    {
+      "path": "Addressables/Bundles/75f74c4c7242c70433ad0085129ef6bc.bundle",
+      "bytes": 3760267,
+      "sha256": "88dcf1e2f7425b09e82e86c3dc1ce7ec16440d62ee2766d3b8f862130a2ca52f"
+    },
+    {
+      "path": "Addressables/Bundles/c2059c47c5fbfa12fb10b95f9419f34c.bundle",
+      "bytes": 2430,
+      "sha256": "a6c9313ed1ed1ac106f33c34e0679cfd32a33e2019d1540a63f2d60b4812a188"
+    },
+    {
+      "path": "Addressables/buildlayout.json",
+      "bytes": 20805,
+      "sha256": "2bb9813096eafb6bb43c86d1cc30eaa430de443deced343c951017740fcbc296"
+    },
+    {
+      "path": "Addressables/catalog.bin",
+      "bytes": 3309,
+      "sha256": "0a5d34de8c99e985b9287521e03f79106fa0720f8d33e2dc7de59f22ccf14d31"
+    },
+    {
+      "path": "Addressables/catalog.hash",
+      "bytes": 32,
+      "sha256": "5ca376ef05bc4db135436a23ddb86f84a44a3fcc0cbc12be4d67348889d3c969"
+    },
+    {
+      "path": "Addressables/settings.json",
+      "bytes": 857,
+      "sha256": "b999e7060221b372fe6bc7032790059be610c26457d7c209bcd7b9c5c574de95"
+    },
+    {
+      "path": "Entities/ContentArchives/9c10c136ec67b7cf5cf68295d805b0da.archive",
+      "bytes": 7223001,
+      "sha256": "4e6d3f201552d3e306511b85a43c4e0515d265664b82359c3c8bce0749b6c802"
+    },
+    {
+      "path": "Entities/ContentArchives/archive_dependencies.bin",
+      "bytes": 404,
+      "sha256": "6e2796c1cbab8d364747fa2d07a1a4872d2ebcb56b0e007e5d7e328146b716bb"
+    },
+    {
+      "path": "Entities/ContentArchives/archive_dependencies.txt",
+      "bytes": 606,
+      "sha256": "2203e2481a2c2879f9cd4a5b7b6bc2688421a8198a6bfcfe67794d192b45770a"
+    },
+    {
+      "path": "Entities/ContentArchives/bd9c51c0664a7741470323ff4bbf7bc1.archive",
+      "bytes": 38230002,
+      "sha256": "50db1b08ebf15a7e05543babcdcdb5378215b96c7f6268048ce13100abe17e33"
+    },
+    {
+      "path": "Entities/ContentArchives/f787a4c34282a1e03ab57d752d8cc17c.archive",
+      "bytes": 30454940,
+      "sha256": "5d5c16a94145f46ee17b87f24e37f57364b5156982e426063f7b0d017ff31bc9"
+    },
+    {
+      "path": "Entities/EntityScenes/1035720b7b9c8426999ddbdf7cd40bce.0.entities",
+      "bytes": 344356,
+      "sha256": "6aade9c271af5d00c4e8fc18d40d791cbabec9823ee295c78a9c38250d4ea07e"
+    },
+    {
+      "path": "Entities/EntityScenes/1035720b7b9c8426999ddbdf7cd40bce.entityheader",
+      "bytes": 1044,
+      "sha256": "b25c817248125fc5a3db2d1b1d7ef045ac699a0060ea420d9f5bae39ea5ee2e7"
+    },
+    {
+      "path": "Entities/EntityScenes/1561a8788c3144347bccd1bbe76eb4a7.0.entities",
+      "bytes": 39822200,
+      "sha256": "7ad961d922155dbab0d5e0aa666476bfd953147dbf479b1e5a1b5073909c0d1e"
+    },
+    {
+      "path": "Entities/EntityScenes/1561a8788c3144347bccd1bbe76eb4a7.entityheader",
+      "bytes": 1044,
+      "sha256": "35df717421f1d8271dd83acd03179800b696dd5c9e193db729b6e7811a32245c"
+    }
+  ]
+}

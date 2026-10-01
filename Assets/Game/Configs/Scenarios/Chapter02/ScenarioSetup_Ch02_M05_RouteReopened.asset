@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ScenarioSetup_Ch02_M05_RouteReopened
   m_EditorClassIdentifier: Game.Configs::Game.Configs.ScenarioSetupConfig
   scenarioId: scenario.ch02.m05.route_reopened
-  operationMapId: opmap.ch02.route_reopened_01
+  operationMapId: opmap.ch02.route_reopened_port_review
   requiredAnchors:
   - anchorId: anchor.ch02.m05.relief_goal
     kind: 2

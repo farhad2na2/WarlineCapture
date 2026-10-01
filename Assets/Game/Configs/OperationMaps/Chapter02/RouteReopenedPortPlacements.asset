@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a870bee3db08143e5a68159c7496a096, type: 3}
+  m_Name: RouteReopenedPortPlacements
+  m_EditorClassIdentifier: Game.Configs::Game.Configs.MapBuildingPlacementConfig
+  spawnOnMatchStart: 1
+  hideAuthoringVisualsAfterSpawn: 1
+  useExistingStaticPresentationWhenAuthoringVisualMissing: 0
+  placements:
+  - sourcePath: RouteReopened/RecordsOffice
+    category: ProtectedRecords
+    buildingPrefab: {fileID: 359013508023671617, guid: a75da6c309697441a91cd227cca425b5, type: 3}
+    factionId: 2
+    worldCenter: {x: 588, y: 0.02999991, z: 595}
+    worldPosition: {x: 588, y: 0.02999991, z: 595}
+    worldEulerAngles: {x: 0, y: 0, z: 0}
+    worldScale: {x: 1, y: 1, z: 1}
+    yawDegrees: 0
+    rotateVertical: 0
+    instantiateVisualWhenSourceMissing: 1
+    useGeometricFootprintCenter: 1

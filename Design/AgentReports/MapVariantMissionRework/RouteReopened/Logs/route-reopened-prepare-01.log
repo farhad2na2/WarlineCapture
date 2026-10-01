@@ -1,0 +1,1067 @@
+Unity Editor version:    6000.5.2f1 (eb73d3b415a1)
+Branch:                  6000.5/staging
+Build type:              Release
+Batch mode:              NO
+macOS version:           Version 26.6.2 (Build 25G83)
+Darwin version:          25.6.0
+Architecture:            arm64
+Running under Rosetta:   NO
+Available memory:        16384 MB
+Date:                    2026-10-01T04:44:17Z
+[Licensing::Module] Trying to connect to existing licensing client channel...
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad" at "2026-10-01T04:44:17.734521Z"
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/PackageManager/Server/UnityPackageManager
+
+COMMAND LINE ARGUMENTS:
+/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/MacOS/Unity
+-projectPath
+/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+-logFile
+/private/tmp/route-reopened-prepare-01.log
+-executeMethod
+Game.Editor.CH02M05RouteReopenedConfigBuilder.PreparePortReview
+Successfully changed project path to: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+[UnityMemory] Configuration Parameters - Can be set up in boot.config
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-gi-baking-worker=262144"
+    "memorysetup-temp-allocator-size-nav-mesh-worker=65536"
+    "memorysetup-temp-allocator-size-audio-worker=65536"
+    "memorysetup-temp-allocator-size-cloud-worker=32768"
+    "memorysetup-allocator-temp-initial-block-size-main=262144"
+    "memorysetup-allocator-temp-initial-block-size-worker=262144"
+    "memorysetup-temp-allocator-size-preload-manager=33554432"
+    "memorysetup-temp-allocator-size-gfx=262144"
+    "memorysetup-temp-allocator-size-background-worker=32768"
+    "memorysetup-temp-allocator-size-job-worker=262144"
+    "memorysetup-bucket-allocator-granularity=16"
+    "memorysetup-bucket-allocator-bucket-count=8"
+    "memorysetup-bucket-allocator-block-size=33554432"
+    "memorysetup-bucket-allocator-block-count=8"
+    "memorysetup-main-allocator-block-size=16777216"
+    "memorysetup-thread-allocator-block-size=16777216"
+    "memorysetup-main-allocator-mimalloc-enabled=0"
+    "memorysetup-gfx-main-allocator-block-size=16777216"
+    "memorysetup-gfx-thread-allocator-block-size=16777216"
+    "memorysetup-cache-allocator-block-size=4194304"
+    "memorysetup-typetree-allocator-block-size=2097152"
+    "memorysetup-profiler-bucket-allocator-granularity=16"
+    "memorysetup-profiler-bucket-allocator-bucket-count=8"
+    "memorysetup-profiler-bucket-allocator-block-size=33554432"
+    "memorysetup-profiler-bucket-allocator-block-count=8"
+    "memorysetup-profiler-allocator-block-size=16777216"
+    "memorysetup-profiler-editor-allocator-block-size=1048576"
+    "memorysetup-temp-allocator-size-main=16777216"
+    "memorysetup-job-temp-allocator-block-size=2097152"
+    "memorysetup-job-temp-allocator-block-size-background=1048576"
+    "memorysetup-job-temp-allocator-reduction-small-platforms=262144"
+Logging is directed to a specific file, skipping project log.Player connection [8466637184]  Target information:
+
+Player connection [8466637184]  * "[IP] 192.168.2.175 [Port] 55505 [Flags] 2 [Guid] 3145050337 [EditorId] 3145050337 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184]  * "[IP] 10.137.14.201 [Port] 55505 [Flags] 2 [Guid] 3145050337 [EditorId] 3145050337 [Version] 1048832 [Id] OSXEditor(0,Farhads-MacBook-Air-2.local) [Debug] 1 [PackageName] OSXEditor [ProjectName] Editor" 
+
+Player connection [8466637184] Host joined multi-casting on [225.0.0.222:54997]...
+Player connection [8466637184] Host joined alternative multi-casting on [225.0.0.222:34997]...
+Input System module state changed to: Initialized.
+[Physics::Module] Initialized fallback backend.
+[Physics::Module] Id: 0xdecafbad
+[Licensing::Client] Handshaking with LicensingClient:
+  Version:                 1.18.3+d7ffd15
+  Session Id:              3cd6062d2e8940588840abbbaeabec19
+  Correlation Id:          a12e24994cdf1129b78ddeb885cfe210
+  External correlation Id: 6824807186722170710
+  Machine Id:              10T5sSSYWiUOOlqtQecUz0BYTYA=
+[Licensing::Module] Successfully connected to LicensingClient on channel: "LicenseClient-farhad" (connect: 0.00s, validation: 0.00s, handshake: 0.26s)
+[Licensing::IpcConnector] Successfully connected to: "LicenseClient-farhad-notifications" at "2026-10-01T04:44:17.999596Z"
+[Licensing::Module] Error: Access token is unavailable; failed to update
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] License group:
+  Id: 2197950-UnityPersXXXX
+  Product: Unity Personal
+  Type: Assigned
+  Expiration: Unlimited
+[Licensing::Client] Successfully updated license, isAsync: True, time: 0.00
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Module] Licensing Background thread has ended after 0.27s
+[Package Manager] Connected to IPC stream "Upm-52900" after 0.1 seconds.
+[Licensing::Client] Successfully resolved entitlement details
+Library Redirect Path: Library/
+[Physics::Module] Selected backend.
+[Physics::Module] Name: PhysX
+[Physics::Module] Id: 0xf2b8ea05
+[Physics::Module] SDK Version: 4.1.2
+[Physics::Module] Integration Version: 1.0.0
+[Physics::Module] Threading Mode: Multi-Threaded
+Initialize engine version: 6000.5.2f1 (eb73d3b415a1)
+[Subsystems] Discovering subsystems at path /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/UnitySubsystems
+[Subsystems] Discovering subsystems at path /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Assets
+GfxDevice: creating device client; kGfxThreadingModeThreaded
+ preferred device: Apple M5 (high power)
+Metal devices available: 1
+0: Apple M5 (high power)
+Using device Apple M5 (high power)
+Initializing Metal device caps: Apple M5
+Mac GPU Family: 2
+Apple GPU Family: 9
+MSL Version: 3.0
+Has Float MSAA: 1
+Has Float Filtering: 1
+ReadWrite Texture Tier: 2
+Initialize mono
+Mono path[0] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/Managed'
+Mono path[1] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/BCLExtensions/runtime/netstandard2.1'
+Mono path[2] = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/lib/mono/unityjit-macos'
+Mono config path = '/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/MonoBleedingEdge/etc'
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56900
+CodeReloadManager initialized
+ImportWorker Server TCP listen port: 0
+AcceleratorClientConnectionCallback - disconnected - :0
+Begin MonoManager ReloadAssembly
+Registering precompiled unity dll's ...
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/MacStandaloneSupport/UnityEditor.OSXStandalone.Extensions.dll
+[Licensing::Client] Successfully resolved entitlement details
+Register platform support module: /Applications/Unity/Hub/Editor/6000.5.2f1/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
+Registered in 0.002729 seconds.
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+Package Manager log level set to [2]
+ScheduleIndexationOnStartup MainProcess:False IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  0.214 seconds
+Domain Reload Profiling: 486ms
+	BeginReloadAssembly (83ms)
+		CreateAndSetChildDomain (17ms)
+	RebuildNativeTypeToScriptingClass (11ms)
+	initialDomainReloadingComplete (30ms)
+	LoadAllAssembliesAndSetupDomain (145ms)
+		LoadAssemblies (66ms)
+		AnalyzeDomain (112ms)
+			TypeCache.Refresh (112ms)
+				TypeCache.ScanAssembly (103ms)
+	FinalizeReload (215ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (45ms)
+			BeforeProcessingInitializeOnLoad (36ms)
+			ProcessInitializeOnLoadAttributes (44ms)
+			ProcessInitializeOnLoadMethodAttributes (50ms)
+[Licensing::Client] Successfully resolved entitlement details
+Application.AssetDatabase Initial Refresh Start
+[Package Manager] Restoring resolved packages state from cache
+[Licensing::Client] Successfully resolved entitlement details
+[Package Manager] Registered 70 packages:
+  Packages from [https://packages.unity.com]:
+    com.unity.addressables@3.1.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.addressables@9bffe1a216ce)
+    com.unity.ai.assistant@2.13.0-pre.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ai.assistant@6fee27370e6a)
+    com.unity.collab-proxy@2.12.4 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.collab-proxy@0b1559bcd34e)
+    com.unity.ide.rider@3.0.40 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ide.rider@e4950c6d131b)
+    com.unity.ide.visualstudio@2.0.27 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ide.visualstudio@dc1ddd4f09b6)
+    com.unity.inputsystem@1.19.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.inputsystem@21a28c3a6c83)
+    com.unity.probuilder@6.1.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.probuilder@8be9724b2335)
+    com.unity.timeline@1.8.12 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.timeline@8cd8509afae5)
+    com.unity.visualscripting@1.9.11 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.visualscripting@8bed5ad90189)
+    com.unity.pipeline@0.6.0-exp.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.pipeline@9bb4172c603c)
+    com.unity.burst@1.8.29 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.burst@6bb9aca3ef38)
+    com.unity.nuget.mono-cecil@1.11.6 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff)
+    com.unity.nuget.newtonsoft-json@3.2.2 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.nuget.newtonsoft-json@4dfd81071c64)
+    com.unity.searcher@4.9.4 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.searcher@d45a78918735)
+    com.unity.settings-manager@2.1.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.settings-manager@0b8638c5ce86)
+    com.unity.profiling.core@1.0.3 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.profiling.core@8a49f7027d06)
+    com.unity.test-framework.performance@3.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.test-framework.performance@8b56083ec0f0)
+    com.unity.scriptablebuildpipeline@3.1.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.scriptablebuildpipeline@ea93f1084040)
+  Built-in packages:
+    com.unity.2d.sprite@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.2d.sprite@053a968eab56)
+    com.unity.entities@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.entities@bab66ffaba49)
+    com.unity.entities.graphics@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.entities.graphics@66588da3a112)
+    com.unity.multiplayer.center@1.0.1 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.multiplayer.center@b860850997d0)
+    com.unity.render-pipelines.universal@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal@748d7458cc62)
+    com.unity.serialization@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.serialization@b2610f80ff18)
+    com.unity.shadergraph@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.shadergraph@2df19e8719bc)
+    com.unity.test-framework@1.7.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.test-framework@1405238725ab)
+    com.unity.ugui@2.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ugui@3d1ea40b73ef)
+    com.unity.modules.accessibility@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.accessibility)
+    com.unity.modules.adaptiveperformance@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.adaptiveperformance)
+    com.unity.modules.ai@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.ai)
+    com.unity.modules.androidjni@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.androidjni)
+    com.unity.modules.animation@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.animation)
+    com.unity.modules.assetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.assetbundle)
+    com.unity.modules.audio@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.audio)
+    com.unity.modules.cloth@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.cloth)
+    com.unity.modules.director@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.director)
+    com.unity.modules.imageconversion@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.imageconversion)
+    com.unity.modules.imgui@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.imgui)
+    com.unity.modules.jsonserialize@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.jsonserialize)
+    com.unity.modules.physicscore2d@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physicscore2d)
+    com.unity.modules.screencapture@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.screencapture)
+    com.unity.modules.tilemap@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.tilemap)
+    com.unity.modules.ui@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.ui)
+    com.unity.modules.uielements@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.uielements)
+    com.unity.modules.umbra@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.umbra)
+    com.unity.modules.unityanalytics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unityanalytics)
+    com.unity.modules.unitywebrequest@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequest)
+    com.unity.modules.unitywebrequestassetbundle@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestassetbundle)
+    com.unity.modules.unitywebrequestaudio@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestaudio)
+    com.unity.modules.unitywebrequesttexture@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequesttexture)
+    com.unity.modules.unitywebrequestwww@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.unitywebrequestwww)
+    com.unity.modules.vectorgraphics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.vectorgraphics)
+    com.unity.modules.vehicles@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.vehicles)
+    com.unity.modules.video@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.video)
+    com.unity.modules.wind@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.wind)
+    com.unity.modules.xr@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.xr)
+    com.unity.modules.physics@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physics)
+    com.unity.modules.subsystems@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.subsystems)
+    com.unity.modules.hierarchycore@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchycore)
+    com.unity.modules.physics2d@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.physics2d)
+    com.unity.modules.particlesystem@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.particlesystem)
+    com.unity.ext.nunit@2.1.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.ext.nunit@44f7d31723bd)
+    com.unity.render-pipelines.core@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.core@9fe9377312a8)
+    com.unity.collections@6.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.collections@a43cabe808ca)
+    com.unity.render-pipelines.universal-config@17.5.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.render-pipelines.universal-config@fdda01c80fe3)
+    com.unity.modules.hierarchy@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.hierarchy)
+    com.unity.mathematics@1.4.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.mathematics@981956d94fb6)
+    com.unity.modules.terrain@1.0.0 (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.unity.modules.terrain)
+  Embedded packages:
+    com.sniveler-code.gpu-animation@file:/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Packages/com.sniveler-code.gpu-animation (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Packages/com.sniveler-code.gpu-animation)
+  Git packages:
+    com.nosuchstudio.rtltmpro@https://github.com/hk1ll3r/RTLTMPro.git?path=/UPMPackage#69c9193fc27218f17679cc57382a61ac4a717b2b (location: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Library/PackageCache/com.nosuchstudio.rtltmpro@44858274f18a)
+[Subsystems] No new subsystems found in resolved package list.
+[Package Manager] Done registering packages in 0.01 seconds
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://unix:/tmp/ilpp.sock-b9b41bb666d9b434679641e7e0b1a1cb
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/Ping'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/Ping - 200 - application/grpc 18.8088ms
+Starting: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/BuildPipeline/bee_backend --ipc --defer-dag-verification --dagfile="Library/Bee/200b0aE.dag" --continue-on-failure --profile="Library/Bee/backend1.traceevents" ScriptAssemblies
+WorkingDir: /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - application/grpc -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.runtime.interopservices.windowsruntime has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/Facades/System.Runtime.InteropServices.WindowsRuntime.dll"
+warn: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Assembly system.componentmodel.composition has duplicate hint path. Ignoring "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/NetStandard/compat/2.1.0/shims/netfx/System.ComponentModel.Composition.dll" in favor of "/Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Resources/Scripting/UnityReferenceAssemblies/unity-4.8-api/System.ComponentModel.Composition.dll"
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.nuget.mono-cecil@ecb9724e46ff/Mono.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Burst.Cecil, Version=0.11.6.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e with Library/PackageCache/com.unity.burst@6bb9aca3ef38/Unity.Burst.CodeGen/Unity.Burst.Cecil.dll
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      Resolved Unity.Entities, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null with Library/Bee/artifacts/200b0aE.dag/Unity.Entities.dll
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'gRPC - /UnityILPP.PostProcessing/ConfigurePostProcessors'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/2 POST http://ilpp/UnityILPP.PostProcessing/ConfigurePostProcessors - 200 - application/grpc 17.9300ms
+ExitCode: 0 Duration: 0s459ms
+[1363/2004  0s] ILPP-Configuration Library/ilpp-configuration.nevergeneratedoutput
+*** Tundra build success (0.44 seconds), 1 items updated, 2004 evaluated
+AssetDatabase: script compilation time: 0.962860s
+Begin MonoManager ReloadAssembly
+Total cache size 268044014
+Total cache size after purge 268044014, took 00:00:00.2503907
+Symbol file LoadedFromMemory is not a mono symbol file
+Assembly reference Packages/com.unity.entities/Unity.Scenes.Editor/Internals/Properties/Unity.Properties.Internals.asmref has no target assembly definition
+Native extension for Android target not found
+Native extension for OSXStandalone target not found
+TypeManager.Initialize took: 147ms
+The assembly Game.Authoring is using the BakingVersion attribute. But the following Baker/Baking systems/EntitySceneOptimizations systems are missing the attribute:
+Game.Authoring.SupportAbilityCatalogAuthoring+SupportBaker.
+
+Updating these bakers/systems won't trigger a scene import automatically. Please add a BakingVersion attribute on them and update their version number everytime you want them to be rerun before an import. 
+Or don't use the attribute at all in their assembly to trigger scene import automatically after each changes in the assembly.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:LogWarning (object)
+Unity.Debug:LogWarning (object) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs:13)
+Unity.Scenes.Editor.TypeDependencyCache:PrintMissingBakingVersionAttributesWarning (System.Collections.Generic.Dictionary`2<string, System.Collections.Generic.List`1<System.Type>>) (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:305)
+Unity.Scenes.Editor.TypeDependencyCache:RegisterBakingAssemblies () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:284)
+Unity.Scenes.Editor.TypeDependencyCache:.cctor () (at ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Scenes.Editor/TypeDependencyCache.cs:61)
+System.Runtime.CompilerServices.RuntimeHelpers:RunClassConstructor (System.RuntimeTypeHandle)
+UnityEditor.EditorAssemblies:ProcessInitializeOnLoadAttributes (System.ReadOnlySpan`1<intptr>) (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorAssemblies.cs:155)
+
+(Filename: ./Library/PackageCache/com.unity.entities@bab66ffaba49/Unity.Entities/Stubs/Unity/Debug.cs Line: 13)
+
+Start HTTP server: port:7800
+[MODES] ModeService[none].Initialize
+[MODES] ModeService[none].LoadModes
+[MODES] Loading mode Default (0) for mode-current-id-WarlineCapture
+[Licensing::Client] Error: Code 404 while processing request (status: Found 0 entitlement groups and 0 free entitlements matching requested entitlement ids)
+ScheduleIndexationOnStartup MainProcess:True IndexOnStartup:True
+Mono: successfully reloaded assembly
+- Finished resetting the current domain, in  5.670 seconds
+Domain Reload Profiling: 6408ms
+	BeginReloadAssembly (124ms)
+		DisableScriptedObjects (50ms)
+		CreateAndSetChildDomain (19ms)
+	RebuildCommonClasses (4ms)
+	RebuildNativeTypeToScriptingClass (7ms)
+	initialDomainReloadingComplete (35ms)
+	LoadAllAssembliesAndSetupDomain (568ms)
+		LoadAssemblies (218ms)
+		AnalyzeDomain (309ms)
+			TypeCache.Refresh (252ms)
+				TypeCache.ScanAssembly (231ms)
+			BuildScriptInfoCaches (53ms)
+			ResolveRequiredComponents (4ms)
+	FinalizeReload (5670ms)
+		SetupLoadedEditorAssemblies (0ms)
+			InitializePlatformSupportModulesInManaged (5ms)
+			BeforeProcessingInitializeOnLoad (44ms)
+			ProcessInitializeOnLoadAttributes (3256ms)
+			ProcessInitializeOnLoadMethodAttributes (2152ms)
+		AwakeInstancesAfterBackupRestoration (6ms)
+Importing 'GUID: 3c22555caaf4498491135970b9c8971e - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor_Comms.png' with importer (TextureImporter)
+Imported 'GUID: 3c22555caaf4498491135970b9c8971e' -> (Import Result ID: 'bd7d133cfc8c5e0b7a35d870468545c4') in 0.144 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=84b29d8fb484760d3b06656884195efc DependenciesID=2f846fefa931659300651c03b94174c2 StaticDependenciesID=83e864a1dd7691d5000a20db09686fbe 
+Importing 'GUID: edd02684dae74207a6745011ea1135c7 - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor_Debrief.png' with importer (TextureImporter)
+Imported 'GUID: edd02684dae74207a6745011ea1135c7' -> (Import Result ID: '21849982fe0a30f0f6a92e1a45909160') in 0.130 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4d55ebca4c59a7292501af098bf3a496 DependenciesID=e6c7e5eee928d31df3087502fe8c4648 StaticDependenciesID=7d199aef14b005566289a0400dfbd746 
+Importing 'GUID: 1e8883d6038a4ba98356b5ad0e2d5184 - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor.png' with importer (TextureImporter)
+Imported 'GUID: 1e8883d6038a4ba98356b5ad0e2d5184' -> (Import Result ID: '8242443f765b788ac462ac9a47cc7bf3') in 0.124 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=4e0c072d14c7698246b203b44f5a4670 DependenciesID=45494eeb14d253c9e3d6e211af862c64 StaticDependenciesID=214d636a6cc253266220d60ef51e5dc8 
+Importing 'GUID: 541c70b8bdcc23846af0755636417ebf - Path: Assets/Game/Art/MapPrototypes/M01/Materials/M01_Concrete.mat' with importer (NativeFormatImporter)
+Imported 'GUID: 541c70b8bdcc23846af0755636417ebf' -> (Import Result ID: '9b0ed2cf36f48550124b9d95cfc917f8') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=68efd27146fbf4b90de43425970e262e DependenciesID=3cd718573d7226947da194936d3d4e7a StaticDependenciesID=1c133af7a2e0a62cc9dd4ddac38b865f 
+Importing 'GUID: d449e15c908e00844a2f151c52e14384 - Path: Assets/Synty/PolygonGeneric/Materials/Generic_Mountains.mat' with importer (NativeFormatImporter)
+Imported 'GUID: d449e15c908e00844a2f151c52e14384' -> (Import Result ID: '051dda96f62c380e295e61f3d00780f8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=2cd847a8ee0cd8e10d777a231efb4613 DependenciesID=e7d68266966a0e3b2e2615d7da2704fb StaticDependenciesID=c6addcc7a9abb47b1f99aec157f454f5 
+Importing 'GUID: c41b2c608e05f4b37a3f917afa1a759b - Path: Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M01_AirCorridor.asset' with importer (NativeFormatImporter)
+Imported 'GUID: c41b2c608e05f4b37a3f917afa1a759b' -> (Import Result ID: '8b8f1f39e5908fb4ea7df9819ed6e6b4') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=8b67fda96448206ca9169ee16203a055 DependenciesID=70e8d19a84423ceb3a34e7136ab4b3e0 StaticDependenciesID=308986a7a101b9eefffa68689976cc16 
+Importing 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a - Path: Assets/AddressableAssetsData/AddressableAssetSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a' -> (Import Result ID: 'a42ddfbe5ca4e08a21d64ce846cee2f1') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=03e1ac9578e9f5a0dcb1fc28a175ee06 DependenciesID=a27f73d4a19d75bbeb2cd7ad39bdd153 StaticDependenciesID=b865233f0b7c9def67cff57491ef9026 
+Importing 'GUID: d89c65c9468d548609b5d2de338f4ba1 - Path: Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M01_AirCorridor.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d89c65c9468d548609b5d2de338f4ba1' -> (Import Result ID: 'cffd9deb771182d5a884e56b405c743d') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=70ce406dbc5f7dc17f93f85a6ae4da15 DependenciesID=09b06a4b48ffa8337678f18146d25431 StaticDependenciesID=3c30def0d8dfadca1dc0ee5fcd11a2e4 
+Importing 'GUID: 2e498d1c8094910479dc3e1b768306a4 - Path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2e498d1c8094910479dc3e1b768306a4' -> (Import Result ID: 'b98d495c4235343077d8a08fa6261ac9') in 0.005 seconds [static dependencies only]. Details - ImportResultOutputID=94ce4dace069634644df4d315a8acf11 DependenciesID=ce8c429ffb529ca38c153608946fd73f StaticDependenciesID=488372cd1b8d42917d12dc8e30d92152 
+Importing 'GUID: 5e317e6e45b444a10affe72acd94d116 - Path: Assets/Game/Configs/Missions/Chapter04/CH04M01_AirCorridor_FieldGuide.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 5e317e6e45b444a10affe72acd94d116' -> (Import Result ID: 'a5f74c9d9bf58caccad0c2c6bbe3acf3') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4f99e05b51fae8ae7a2079bd8d18bcb6 DependenciesID=e25bc9261b1f24857f4c9fec84e85e76 StaticDependenciesID=3f8da3a06216fd24e5e96b01f680a8bf 
+Importing 'GUID: 8ecf8a7f44dd34c2d9c4edd1392825f5 - Path: Assets/Game/Configs/Narrative/Chapter04/CH04M01_AirCorridor_Narrative.asset' with importer (NativeFormatImporter)
+Main Object Name 'CH04M01_AirCorridor_brief' does not match filename 'CH04M01_AirCorridor_Narrative'
+Imported 'GUID: 8ecf8a7f44dd34c2d9c4edd1392825f5' -> (Import Result ID: '89a42e0a2fda463dad487931ec59f5f9') in 0.003 seconds [static dependencies only]. Details - ImportResultOutputID=0c350028a2adb291069d152cc16b9faa DependenciesID=83a0d6666cd17e4a3fbef4eaf28d0614 StaticDependenciesID=b4275a78fb23e46eb066d7a061c19bc7 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: '50ac614c831b7d26e605d8a0758e7121') in 0.020 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=d677fa93c269fb4a492b63b93c5ee3ae StaticDependenciesID=bf22f5df97ba3c7633445fe45af0ba1a 
+Importing 'GUID: 6094647eaf04b4cac8b154ca88bff2ae - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-laila.wav' with importer (AudioImporter)
+Imported 'GUID: 6094647eaf04b4cac8b154ca88bff2ae' -> (Import Result ID: '3010ec703082c34fb04ef10884df6abb') in 0.060 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ced9ed1ecd1449724d4312a52e73716b DependenciesID=d50b49d0020cdb751fe7a1fa230e4120 StaticDependenciesID=38eacdbc6ceefeabd97c3a69645e680f 
+Importing 'GUID: f042dd8c90abf479d846cb8022ff4e48 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-laila.wav' with importer (AudioImporter)
+Imported 'GUID: f042dd8c90abf479d846cb8022ff4e48' -> (Import Result ID: 'f63dccc5cd761f7a58f50ddff71060af') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5bd315c7e2ce1a22f7a59ce984174d40 DependenciesID=c94ff6a5d7f87439103cbc89a12a4088 StaticDependenciesID=fe4703ddcccb78808991bae4e875dca0 
+Importing 'GUID: b1d527991d1a84926be90dd03e08bbb7 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: b1d527991d1a84926be90dd03e08bbb7' -> (Import Result ID: '16fb2df6d4b7f8f91f0fffe747ea98c8') in 0.052 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2765942f6d81b11a37b996ba72094e6d DependenciesID=71e388b2b94970b7de13cbcb84905efe StaticDependenciesID=9ea70f090698f9d97243c313384561ef 
+Importing 'GUID: c5089607f3136487eb86a1da53e027e7 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: c5089607f3136487eb86a1da53e027e7' -> (Import Result ID: 'fe2f8c56cfca3b8ff1cef6dc3195cb76') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=269772b32ae3b867e0df96146646c458 DependenciesID=ee480fb993c8f0fa9bb100af619a1b35 StaticDependenciesID=54ca09e8fcc3d7e9813b691c1a1551a8 
+Importing 'GUID: 57abf38b6803044b6967160df1a872b6 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-laila.wav' with importer (AudioImporter)
+Imported 'GUID: 57abf38b6803044b6967160df1a872b6' -> (Import Result ID: 'e9ca13cf0edd75fd4a4057912048309e') in 0.042 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=e018600a49b134935c7e20ad4cad2e45 DependenciesID=50c85a89150a75c9fdbdeb1ffd183d24 StaticDependenciesID=4bb3037320376e09198413f76db3288b 
+Importing 'GUID: 8952ab1e8c66e445c849ff46896a839b - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-aria.wav' with importer (AudioImporter)
+Imported 'GUID: 8952ab1e8c66e445c849ff46896a839b' -> (Import Result ID: 'a29f758b61b985f91621203e7549d306') in 0.056 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=cea33443e0b28be81c4e83712bad50ee DependenciesID=374374972b1f902b0a05b4be2aa6bec0 StaticDependenciesID=c7ca614ae50d73d3499088c2e938c331 
+Importing 'GUID: 1a71bf96840ec4e7b9e2000d90eecfa8 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-laila.wav' with importer (AudioImporter)
+Imported 'GUID: 1a71bf96840ec4e7b9e2000d90eecfa8' -> (Import Result ID: 'cdc1ac6a788fcb3a07ae28bc1069a1af') in 0.039 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2a3f7699fdac585d5445663763d46759 DependenciesID=7f25e943f1958dcffc1cefa90f0fe7b3 StaticDependenciesID=eaea5cf9bc774048c5c0f93be52e3730 
+Importing 'GUID: ab4e3eec44bd64d1693ed59bc93f4277 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-laila.wav' with importer (AudioImporter)
+Imported 'GUID: ab4e3eec44bd64d1693ed59bc93f4277' -> (Import Result ID: '78b00f59674cc3b45df1a25b81d31531') in 0.042 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=df967a408ce10c65328b09cd5a846911 DependenciesID=d7d2a3112a97cb6a598bb9a7155416c1 StaticDependenciesID=4bafa03b180674a9cd1d5cbb7cefba91 
+Importing 'GUID: dca65048f297d476ca9814c94f86eae0 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-laila.wav' with importer (AudioImporter)
+Imported 'GUID: dca65048f297d476ca9814c94f86eae0' -> (Import Result ID: 'c5080309cf3f7822e6eb40e553908b88') in 0.045 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=467e97bb222c4bfd212f60f18953cc49 DependenciesID=d527e7dc28a97f238fdc852e489720a2 StaticDependenciesID=fea7351a4359b0641773a34ed8d89fab 
+Importing 'GUID: 9d69261c23bad443ea2adf0f45a0546a - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: 9d69261c23bad443ea2adf0f45a0546a' -> (Import Result ID: '2f4aed7d1cb67f87911c84f69b882184') in 0.043 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=136ebcac9c74a8d29d5eb3546b89d74d DependenciesID=db82c8fef6ca709ed904212db97557df StaticDependenciesID=3bcfe287df1f62eb96f7a2167b983eaf 
+Importing 'GUID: 4e6477a948160489bbe8acf93a800dca - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-aria.wav' with importer (AudioImporter)
+Imported 'GUID: 4e6477a948160489bbe8acf93a800dca' -> (Import Result ID: '7eafa48bbbb78011a1b72bb79b538ea6') in 0.048 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2cf0dfee40b4b37026ce3dd7ba9c3285 DependenciesID=7a092db58fdc67f237de4bd6f69bdf1d StaticDependenciesID=5bf7e5b6fa26333d1cdd88ad8aae76eb 
+Importing 'GUID: 2f31ef939922d43c0ada306b7dc37f68 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-aria.wav' with importer (AudioImporter)
+Imported 'GUID: 2f31ef939922d43c0ada306b7dc37f68' -> (Import Result ID: 'c23f4ca6ac1deb99a1dd0fca20e6f85e') in 0.046 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ad0fbbbcc7dd606dc6af4d068eba2c56 DependenciesID=264b71b1d04db126f5f9991318c049ca StaticDependenciesID=22d487a7029a7aca09c3e1a1ace34976 
+Starting new worker id: 0 with log in /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs/AssetImportWorkerHW0.log
+
+Asset Pipeline Refresh (id=0c1050a38d9af4048b1df9efb6ac0c6d): Total: 10.509 seconds - Initiated by InitialRefreshV2(ForceSynchronousImport)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=24 (actual=24, local cache=0, cache server=0)
+		Asset DB Process Time: managed=3 ms, native=8357 ms
+		Asset DB Callback time: managed=335 ms, native=10 ms
+		Scripting: domain reloads=1, domain reload time=768 ms, compile time=964 ms, other=70 ms
+		Project Asset Count: scripts=3420, non-scripts=20775
+		Asset File Changes: new=0, changed=24, moved=0, deleted=0
+		Scan Filter Count: 1
+	InvokePackagesCallback: 7.776ms
+	ApplyChangesToAssetFolders: 0.204ms
+	Scan: 1025.094ms
+	Collect global state as custom dependencies: 3.753ms
+	OnSourceAssetsModified: 0.420ms
+	CategorizeScriptCompilationAssets: 61.526ms
+	ProcessAssetsWithTransientArtifactChanges: 72.850ms
+	CategorizeAssets: 168.647ms
+	CompileScripts: 963.788ms
+	ImportOutOfDateAssets: 6864.114ms (5693.281ms without children)
+		ImportManagerImport: 1030.795ms (12.872ms without children)
+			UpdateCategorizedAssets: 0.167ms
+		ReloadNativeAssets: 0.264ms
+		UnloadImportedAssets: 3.962ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.986ms
+		ImportSchedulerStart: 133.821ms
+	PostProcessAllAssets: 336.615ms
+		VCAutoAddAssetPostprocess 0.845ms
+		XRBuildSystem.XRAssetImported 0.109ms
+		PostProcessCallbackCreateDeferredMaterials 0.053ms
+		MonoPostProcessAllAssets: 335.036ms
+			AssetPostprocessor.OnPostprocessAllAssets 185.389ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 23.821ms
+			StyleCatalogPostProcessor.OnPostprocessAllAssets 17.035ms
+			AssetReferenceReimportMonitor.OnPostprocessAllAssets 9.695ms
+			SpriteSlicePostprocessor.OnPostprocessAllAssets 6.512ms
+			UniversalRenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 4.412ms
+			SyncVS.PostprocessSyncProject 3.723ms
+			BuilderAssetPostprocessor.OnPostprocessAllAssets 2.821ms
+			AssetChangedListener.OnPostprocessAllAssets 1.769ms
+			SceneAssetPostProcessor.OnPostprocessAllAssets 1.342ms
+			ShaderGraphAssetPostProcessor.OnPostprocessAllAssets 1.157ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.861ms
+			TextAssetPostProcessor.OnPostprocessAllAssets 0.770ms
+			WindowAssetPostprocessingWatcher.OnPostprocessAllAssets 0.736ms
+			SpeedTree9Postprocessor.OnPostprocessAllAssets 0.661ms
+			MaterialPostprocessor.OnPostprocessAllAssets 0.651ms
+			RetainedModeAssetPostprocessor.OnPostprocessAllAssets 0.510ms
+			AssetChangeDetector.OnPostprocessAllAssets 0.348ms
+			RenderPipelineGlobalSettingsPostprocessor.OnPostprocessAllAssets 0.257ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 0.220ms
+			InputActionAssetPostprocessor.OnPostprocessAllAssets 0.203ms
+			PostProcessor.OnPostprocessAllAssets 0.201ms
+			SampleDependencyImporterPostProcessor.OnPostprocessAllAssets 0.192ms
+			ArtifactBrowserPostProcessor.OnPostprocessAllAssets 0.184ms
+			SkillsProjectAssetPostprocessor.OnPostprocessAllAssets 0.175ms
+			InputActionJsonNameModifierAssetProcessor.OnPostprocessAllAssets 0.155ms
+			ReferencedClipsPostProcessor.OnPostprocessAllAssets 0.153ms
+			AssetPathToTypes.OnPostprocessAllAssets 0.139ms
+			UVCSAssetPostprocessor.OnPostprocessAllAssets 0.131ms
+			TMPro_TexturePostProcessor.OnPostprocessAllAssets 0.126ms
+			ShaderReflectionAssetPostProcessor.OnPostprocessAllAssets 0.126ms
+			AudioMixerPostprocessor.OnPostprocessAllAssets 0.123ms
+			AssetEvents.OnPostprocessAllAssets 0.111ms
+			TerrainToolbarOverlayPostProcessor.OnPostprocessAllAssets 0.075ms
+			ProjectSettingsPostprocessor.OnPostprocessAllAssets 0.068ms
+			SamplePostprocessor.OnPostprocessAllAssets 0.058ms
+			AssetDatabaseCallbacks.OnPostprocessAllAssets 0.055ms
+	PostAssetChangesProfiler: 1.618ms
+	UnloadStreamsBegin: 0.871ms
+	PersistCurrentRevisions: 0.727ms
+	GenerateScriptTypeHashes: 2.808ms
+	GenerateScriptTypeSerializationHashes: 3.941ms
+	Untracked: 999.374ms
+
+Application.AssetDatabase Initial Refresh End
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Launching external process: /Applications/Unity/Hub/Editor/6000.5.2f1/Unity.app/Contents/Helpers/UnityShaderCompiler
+Launched and connected shader compiler UnityShaderCompiler after 0.05 seconds
+Shader Hidden/ChartRasterizerHardware is not supported: GPU does not support conservative rasterization
+Scanning for USB devices : 0.089ms
+Initializing Unity extensions:
+Worker ready: AssetImportWorkerHW0 0
+2026-10-01 06:44:30.885 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb3d6c4960 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:30.885 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb3d6c4aa0 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:30.885 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb3d6c4b40 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:30.888 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb3d738780 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+Unloading 1875 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            831.804 ms
+	Integration:            538.366 ms
+	Integration of assets:  532.361 ms
+	Thread Wait Time:       -0.012 ms
+	Total Operation Time:   1902.518 ms
+Unloading 15151 unused Assets / (51.1 MB). Loaded Objects now: 45673.
+Memory consumption went from 1.26 GB to 1.21 GB.
+Total: 79.018250 ms (FindLiveObjects: 12.428000 ms CreateObjectMapping: 11.224958 ms MarkObjects: 36.627083 ms  DeleteObjects: 18.736542 ms)
+
+[LAYOUT] About to load UserSettings/Layouts/default-6000.dwlt, keepMainWindow=False
+[LAYOUT] About to save layout /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+[MODES] ModeService[default].InitializeCurrentMode
+[MODES] ModeService[default].RaiseModeChanged(default, default)
+2026-10-01 06:44:34.221 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb49a3f840 Capture Live Owner Feedback, ke='Command-F10'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:34.221 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb49a3f980 Log Live Owner Feedback State, ke='Command-F9'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:34.221 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb49a3fa20 Validate Owner Feedback Fixes, ke='Command-F8'>, but is only supported for system-provided menu items; will not be used
+2026-10-01 06:44:34.225 Unity[52900:40698567] NSEventModifierFlagFunction specified to -setKeyEquivalentModifierMask: for item <NSMenuItem: 0xb3d732440 SDF, ke='Command-F12'>, but is only supported for system-provided menu items; will not be used
+[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedRulesValidation:Run () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedRulesValidation.cs:14)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedRulesValidation.cs Line: 14)
+
+
+Asset Pipeline Refresh (id=78c80b12da4e848d1b21a9165ef51838): Total: 0.687 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=0 (actual=0, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=687 ms
+		Asset DB Callback time: managed=0 ms, native=0 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3420, non-scripts=20775
+		Asset File Changes: new=0, changed=0, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.146ms
+	Scan: 426.206ms
+	Collect global state as custom dependencies: 0.620ms
+	ProcessAssetsWithTransientArtifactChanges: 0.743ms
+	CategorizeAssets: 101.895ms
+	ImportOutOfDateAssets: 122.272ms (18.112ms without children)
+		ReloadNativeAssets: 0.440ms
+		UnloadImportedAssets: 0.077ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.457ms
+		ImportSchedulerStart: 102.185ms
+	GatherAllCurrentPrimaryImportResultRevisions: 2.992ms
+	UnloadStreamsBegin: 5.532ms
+	PersistCurrentRevisions: 0.446ms
+	Untracked: 25.485ms
+
+[RouteReopenedPortRoutes] result=Passed bridges=2 corridor=5x5 formations=7x7 sourceHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:ValidateGroundRoutes () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:74)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:BuildPortMap () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:23)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs:28)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs Line: 74)
+
+Importing 'GUID: 843709a8d0bd14c9cb8c9c6de98ab3de - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M05_PortReview.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 843709a8d0bd14c9cb8c9c6de98ab3de' -> (Import Result ID: 'cf569569a828d14a87602217638e040a') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=4437516388c97b2dc870cb0584d73586 DependenciesID=b18fe6ea27788c3bf4690a9f63624f31 StaticDependenciesID=4ae06f4e507cdeae17cb5f87712f9b25 
+Loaded 1 ExamplePackConfig assets
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+SyntyPackageHelper:LoadSyntyPackageHelperConfigs () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:46)
+SyntyPackageHelper:OnProjectChanged () (at Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs:55)
+UnityEditor.EditorApplication:Internal_CallProjectHasChanged () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:461)
+UnityEditor.AssetDatabase:CreateAsset (UnityEngine.Object,string)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:Clone<Game.Configs.OperationMapDefinition> (string,string) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs:58)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:BuildPortMap () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:24)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs:28)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Synty/SyntyPackageHelper/Editor/SyntyPackageHelper.cs Line: 46)
+
+
+Asset Pipeline Refresh (id=bd2cf324cba1248388b67cab9bb42b49): Total: 0.476 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+	(Values over 0.05ms)
+	Summary:
+		Imports: total=1 (actual=1, local cache=0, cache server=0)
+		Asset DB Process Time: managed=0 ms, native=330 ms
+		Asset DB Callback time: managed=141 ms, native=4 ms
+		Scripting: domain reloads=0, domain reload time=0 ms, compile time=0 ms, other=0 ms
+		Project Asset Count: scripts=3420, non-scripts=20776
+		Asset File Changes: new=1, changed=1, moved=0, deleted=0
+		Scan Filter Count: 1
+	ApplyChangesToAssetFolders: 0.122ms
+	Scan: 191.551ms
+	Collect global state as custom dependencies: 0.051ms
+	OnSourceAssetsModified: 0.599ms
+	CategorizeAssets: 20.403ms
+	ImportOutOfDateAssets: 110.214ms (14.870ms without children)
+		ImportManagerImport: 3.408ms (0.695ms without children)
+		ReloadNativeAssets: 0.413ms
+		UnloadImportedAssets: 0.079ms
+		EnsureUptoDateAssetsAreRegisteredWithGuidPM: 1.393ms
+		InitializingProgressBar: 0.199ms
+		ImportSchedulerStart: 89.852ms
+	PostProcessAllAssets: 6.382ms
+		XRBuildSystem.XRAssetImported 0.906ms
+		MonoPostProcessAllAssets: 4.801ms
+			AddressablesAssetPostProcessor.OnPostprocessAllAssets 1.626ms
+			SpriteEditorTexturePostprocessor.OnPostprocessAllAssets 1.038ms
+			AssetPostprocessor.OnPostprocessAllAssets 0.899ms
+			SyncVS.PostprocessSyncProject 0.695ms
+			AssetChangedListener.OnPostprocessAllAssets 0.076ms
+			GraphRefreshPostprocessor.OnPostprocessAllAssets 0.059ms
+	PostAssetChangesProfiler: 327.211ms
+	GatherAllCurrentPrimaryImportResultRevisions: 0.788ms
+	UnloadStreamsBegin: 0.580ms
+	PersistCurrentRevisions: 0.473ms
+	UnloadStreamsEnd: 0.070ms
+	Untracked: 5.592ms
+
+Importing 'GUID: 843709a8d0bd14c9cb8c9c6de98ab3de - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M05_PortReview.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 843709a8d0bd14c9cb8c9c6de98ab3de' -> (Import Result ID: 'db62bc41456e1a11151d1d3460b032fd') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4437516388c97b2dc870cb0584d73586 DependenciesID=5fbe785c6739cdb61e5f7cce235eff7a StaticDependenciesID=e912fde7be8341cdc9a1a1bda74f5aae 
+Asset Pipeline Refresh (id=f4ccce206ca4e40868d1b76651425f7a): Total: 0.154 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 86aa349dc493645cb91dc5cdc758c046 - Path: Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M05_RouteReopened.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 86aa349dc493645cb91dc5cdc758c046' -> (Import Result ID: '2dda1afd86b45ca49d2b530cdbeb2e98') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=cb0071dba12d3e0615824e67d70c9587 DependenciesID=ccaa9d6c8bd901626dd1702e3a575942 StaticDependenciesID=2651eeb5fe8802df41af865b00acd7ca 
+Asset Pipeline Refresh (id=51993b37f2bb2451883db15093af579d): Total: 0.143 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ab9f4adf4978d4e6c8236a26dd64422c - Path: Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M05_RouteReopened.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ab9f4adf4978d4e6c8236a26dd64422c' -> (Import Result ID: '21ae9c2c05b532763a9e7356c8307fa4') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=71f4964c08304f6134aba6b5b02a202c DependenciesID=f3b522e8b6a58c64220b82189f5c49a1 StaticDependenciesID=b9ab4cc635109f6217c4b20ce2e9e97d 
+Asset Pipeline Refresh (id=a3b57296a9f374ef8abadbb804e6c67c): Total: 0.138 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: f5eb5c2d2e932c548a01876109d52b46 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset' with importer (NativeFormatImporter)
+Imported 'GUID: f5eb5c2d2e932c548a01876109d52b46' -> (Import Result ID: '50555ca2c55d03a995b15bac5b539089') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=a208e1f320389ca7eb6a0eb9964aacf7 DependenciesID=a3115985fe766fcb0db08d3dfee6beb1 StaticDependenciesID=4e3aae2b5d0a12078fbafe940ef432ca 
+Importing 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0 - Path: Assets/Game/Configs/Campaign/CampaignMissionCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: cb1a7fecce22b2f4b9182d8feebcaed0' -> (Import Result ID: '2a1092250bd152cfac6c70c407441169') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=b13a4c76d4d28e874607acc5b7e5a933 DependenciesID=1abec5566432fde144a268aa20320e44 StaticDependenciesID=db7280134245c256051d256aaf8de3a9 
+Asset Pipeline Refresh (id=949077ad342344d8d829f5201cd5eb71): Total: 0.144 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=0f19072f1d48c4d77a77c686e79299a0): Total: 0.169 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[M01FirstContactConfigBuilder] result=Passed scope=ChapterCatalogs missions=18 maps=23
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.M01FirstContactConfigBuilder:RefreshChapterCatalogs () (at Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs:75)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs:28)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/M01FirstContactConfigBuilder.cs Line: 75)
+
+[RouteReopenedConfig] result=Passed chapter=2 mission=5 controls=Select,Move,Attack,Hold
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs:30)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.cs Line: 30)
+
+Asset Pipeline Refresh (id=dafc6cb065e8f4ac09f02d851b04d05b): Total: 0.174 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: 792505e6234af43259937f02a627051f - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefTwinLifelines.png' with importer (TextureImporter)
+Imported 'GUID: 792505e6234af43259937f02a627051f' -> (Import Result ID: 'ace2afe5554356c31c3d6ea1696995aa') in 0.089 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=82e42ffa27169b0d0691d3529982e7cf DependenciesID=eac057c2cfc6d3cc6f62b151f5e39117 StaticDependenciesID=52c8b5d657b040f672e8c0728aca7251 
+Asset Pipeline Refresh (id=e6b0184869fad46edbbcf1c777de3e00): Total: 0.221 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: b7a7db659cb514a6a81291d10356a97f - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefControlledCapture.png' with importer (TextureImporter)
+Imported 'GUID: b7a7db659cb514a6a81291d10356a97f' -> (Import Result ID: 'daa7a7453ee1fce56935f2115932b727') in 0.086 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7cbfdb7bc0c6c95934a802adc80b40fa DependenciesID=4f0a06a30b86758c96dca20322203d4f StaticDependenciesID=e1660fbf023b219cbeff26f98f1b9bf5 
+Asset Pipeline Refresh (id=a3545d3f6f6c74cb0813653ee73d546f): Total: 0.251 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 320e88b595450441286514c1b0d23696 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefRoutingArchive.png' with importer (TextureImporter)
+Imported 'GUID: 320e88b595450441286514c1b0d23696' -> (Import Result ID: 'c3472883eff9aa68e0b57928c42bcf9d') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f828f07e033ef42080c8b82891b85579 DependenciesID=340b7d14e8b506efe4b4baf327977c8d StaticDependenciesID=1a7742dd65e4d12db4ec478606c3928a 
+Asset Pipeline Refresh (id=f80a124777daa47d090abe0e38b17d2a): Total: 0.215 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d21b24e4ac3ca4ac3912095449e98c73 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/CommsDormantRelay.png' with importer (TextureImporter)
+Imported 'GUID: d21b24e4ac3ca4ac3912095449e98c73' -> (Import Result ID: '2757cc6ea2a53f283d39232493d0b225') in 0.083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0ae97781923daac67f9a4e391f22d085 DependenciesID=6d204ff092486fe1c6fd5405788901ca StaticDependenciesID=45cd3831e2a0cc01d0e986ea3754e096 
+Asset Pipeline Refresh (id=84905fe5865ef4fa28f7b1c938eb5e30): Total: 0.212 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: df42a2ee178eb427fb4f0de3771b3ad7 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefHubSecured.png' with importer (TextureImporter)
+Imported 'GUID: df42a2ee178eb427fb4f0de3771b3ad7' -> (Import Result ID: '80e5dc563eb616247f2eb42c11f599ef') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2805c08feef038ce9cb87f99cb7f6dc4 DependenciesID=d78095cf8296894239e2c5d1c241400c StaticDependenciesID=1ab4873a60b0cc855ea550f92f8f152a 
+Asset Pipeline Refresh (id=db90c91e115b94c76898e4d0e8929fa5): Total: 0.209 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6223b3293a7924b11b250fbf7bbec757 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefProtocolFragment.png' with importer (TextureImporter)
+Imported 'GUID: 6223b3293a7924b11b250fbf7bbec757' -> (Import Result ID: 'f41a52a66c8f7a70cb80cedbfb5395eb') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=764b92a057e25c7ce810dd97e3a58219 DependenciesID=465dad6de76f4af85bd0eee96b4b79fb StaticDependenciesID=f3054b83bd069146242ef7e113204090 
+Asset Pipeline Refresh (id=ea39247f57f1d4a4fa47375b3b1cf828): Total: 0.214 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6195b0b8caef54920a1c3c132e481f6a - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefQassemSignal.png' with importer (TextureImporter)
+Imported 'GUID: 6195b0b8caef54920a1c3c132e481f6a' -> (Import Result ID: 'a9b27651f6fbaab329c98d09ef9ef777') in 0.086 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=01d44ac1a62f036b828e1c3505e19dc9 DependenciesID=93b2fd26965672991412cd5595c4001d StaticDependenciesID=39f5e5261b3775978015a7b16aa4ee3d 
+Asset Pipeline Refresh (id=a8b6ce8bc09fb42f795d51a7378087e2): Total: 0.215 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 950ac7cfec1a4470d918e66910e391e3 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/PreviewRouteReopened.png' with importer (TextureImporter)
+Imported 'GUID: 950ac7cfec1a4470d918e66910e391e3' -> (Import Result ID: '60e77c722ff8c4d4bd11d88a0ba58bcc') in 0.106 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d70c18fef60dde3a8a89dee8102121a6 DependenciesID=f12621105b6f4b2bb116cb8174163f4e StaticDependenciesID=5c91a14796b052793477de466ae33667 
+Asset Pipeline Refresh (id=241d3a314047645ff87efe23ceea5a1a): Total: 0.245 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 950ac7cfec1a4470d918e66910e391e3 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/PreviewRouteReopened.png' with importer (TextureImporter)
+Imported 'GUID: 950ac7cfec1a4470d918e66910e391e3' -> (Import Result ID: '60e77c722ff8c4d4bd11d88a0ba58bcc') in 0.098 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d70c18fef60dde3a8a89dee8102121a6 DependenciesID=f12621105b6f4b2bb116cb8174163f4e StaticDependenciesID=5c91a14796b052793477de466ae33667 
+Asset Pipeline Refresh (id=a00077223a15745c69ede5b8c11b05d4): Total: 0.224 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[RouteReopenedVisual] result=Passed comicSources=7 authoredCrops=14 cleanPreview=1 playerFacing=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedMediaImporter:ConfigureArt () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs:41)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:15)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs Line: 41)
+
+Loaded scene 'Library/Unused/2cc65811f5c34429a9b4a8bda8170ea1'
+	Deserialize:            2.738 ms
+	Integration:            3.282 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.004 ms
+	Total Operation Time:   6.026 ms
+Asset Pipeline Refresh (id=5ac1b996623b244ccbd2d7a7e0ae2c92): Total: 0.005 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/dc0f414c17e2c4b2890c203d0183deb8'
+	Deserialize:            8.701 ms
+	Integration:            8.758 ms
+	Integration of assets:  0.002 ms
+	Thread Wait Time:       0.003 ms
+	Total Operation Time:   17.464 ms
+Asset Pipeline Refresh (id=f9ee69229349441979a4d6a74a4943fa): Total: 0.005 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Loaded scene 'Library/Unused/d6aa773b9796244878044d5f17b0ec93'
+	Deserialize:            4.068 ms
+	Integration:            5.171 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.006 ms
+	Total Operation Time:   9.246 ms
+Asset Pipeline Refresh (id=96f0bedea135c4d4f844ab3dba8bcc0a): Total: 0.005 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 70067d88a5488400b93a22944c9340f3 - Path: Assets/Game/Configs/Missions/Chapter02/CH02M05_RouteReopened_FieldGuide.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 70067d88a5488400b93a22944c9340f3' -> (Import Result ID: 'da43d9a0f2db65cf5d059011ea7ae263') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=c03b9428d37593c01b1a1613123d75d0 DependenciesID=fa95e0cadc28826096e419e0fb847363 StaticDependenciesID=a4cf6bd1bc89f5ae19602b42dae8bc17 
+Importing 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc - Path: Assets/Game/Resources/Localization/V3UiLocalizationCatalog.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 99b510d9ac8a64bebbef50457f6ce4fc' -> (Import Result ID: '71fab981b281c04779c6b0934ea0f315') in 0.002 seconds [static dependencies only]. Details - ImportResultOutputID=62d630281ea5878bf5aa058de937a29c DependenciesID=b5f0f917a6e19bde51092a99aa6df02c StaticDependenciesID=b4d7b4d86e0ba739887d036a2d64620c 
+Asset Pipeline Refresh (id=ac53a839151534e82ac4b488d2c7105f): Total: 0.127 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[RouteReopenedPresentation] result=Passed locales=en,fa-IR controls=existing-only visual=approved
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:Build () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:15)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs Line: 15)
+
+Asset Pipeline Refresh (id=e612f4bb8b81c4c2fa6d6839f2089467): Total: 0.176 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: 792505e6234af43259937f02a627051f - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefTwinLifelines.png' with importer (TextureImporter)
+Imported 'GUID: 792505e6234af43259937f02a627051f' -> (Import Result ID: 'ace2afe5554356c31c3d6ea1696995aa') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=82e42ffa27169b0d0691d3529982e7cf DependenciesID=eac057c2cfc6d3cc6f62b151f5e39117 StaticDependenciesID=52c8b5d657b040f672e8c0728aca7251 
+Asset Pipeline Refresh (id=48ea0256591254efb8cb9ac47ba98597): Total: 0.223 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: b7a7db659cb514a6a81291d10356a97f - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefControlledCapture.png' with importer (TextureImporter)
+Imported 'GUID: b7a7db659cb514a6a81291d10356a97f' -> (Import Result ID: 'daa7a7453ee1fce56935f2115932b727') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=7cbfdb7bc0c6c95934a802adc80b40fa DependenciesID=4f0a06a30b86758c96dca20322203d4f StaticDependenciesID=e1660fbf023b219cbeff26f98f1b9bf5 
+Asset Pipeline Refresh (id=1c904ca7a24a14e2faf72526bdafa642): Total: 0.232 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 320e88b595450441286514c1b0d23696 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefRoutingArchive.png' with importer (TextureImporter)
+Imported 'GUID: 320e88b595450441286514c1b0d23696' -> (Import Result ID: 'c3472883eff9aa68e0b57928c42bcf9d') in 0.084 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=f828f07e033ef42080c8b82891b85579 DependenciesID=340b7d14e8b506efe4b4baf327977c8d StaticDependenciesID=1a7742dd65e4d12db4ec478606c3928a 
+Asset Pipeline Refresh (id=1b9f98a0a32254f87a22e25d4516f8ef): Total: 0.214 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d21b24e4ac3ca4ac3912095449e98c73 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/CommsDormantRelay.png' with importer (TextureImporter)
+Imported 'GUID: d21b24e4ac3ca4ac3912095449e98c73' -> (Import Result ID: '2757cc6ea2a53f283d39232493d0b225') in 0.082 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=0ae97781923daac67f9a4e391f22d085 DependenciesID=6d204ff092486fe1c6fd5405788901ca StaticDependenciesID=45cd3831e2a0cc01d0e986ea3754e096 
+Asset Pipeline Refresh (id=1f51f41741a0b4c1780381f04ecb8585): Total: 0.209 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: df42a2ee178eb427fb4f0de3771b3ad7 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefHubSecured.png' with importer (TextureImporter)
+Imported 'GUID: df42a2ee178eb427fb4f0de3771b3ad7' -> (Import Result ID: '80e5dc563eb616247f2eb42c11f599ef') in 0.083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=2805c08feef038ce9cb87f99cb7f6dc4 DependenciesID=d78095cf8296894239e2c5d1c241400c StaticDependenciesID=1ab4873a60b0cc855ea550f92f8f152a 
+Asset Pipeline Refresh (id=b7c41cb1d0a054e65a98c5aab50dfbd3): Total: 0.209 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6223b3293a7924b11b250fbf7bbec757 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefProtocolFragment.png' with importer (TextureImporter)
+Imported 'GUID: 6223b3293a7924b11b250fbf7bbec757' -> (Import Result ID: 'f41a52a66c8f7a70cb80cedbfb5395eb') in 0.083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=764b92a057e25c7ce810dd97e3a58219 DependenciesID=465dad6de76f4af85bd0eee96b4b79fb StaticDependenciesID=f3054b83bd069146242ef7e113204090 
+Asset Pipeline Refresh (id=530de348b1e564e2d90f80aa7799036a): Total: 0.209 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 6195b0b8caef54920a1c3c132e481f6a - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/DebriefQassemSignal.png' with importer (TextureImporter)
+Imported 'GUID: 6195b0b8caef54920a1c3c132e481f6a' -> (Import Result ID: 'a9b27651f6fbaab329c98d09ef9ef777') in 0.083 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=01d44ac1a62f036b828e1c3505e19dc9 DependenciesID=93b2fd26965672991412cd5595c4001d StaticDependenciesID=39f5e5261b3775978015a7b16aa4ee3d 
+Asset Pipeline Refresh (id=4baeeea06454a4c4e9de42a5fe6f5571): Total: 0.212 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 950ac7cfec1a4470d918e66910e391e3 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/PreviewRouteReopened.png' with importer (TextureImporter)
+Imported 'GUID: 950ac7cfec1a4470d918e66910e391e3' -> (Import Result ID: '60e77c722ff8c4d4bd11d88a0ba58bcc') in 0.103 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d70c18fef60dde3a8a89dee8102121a6 DependenciesID=f12621105b6f4b2bb116cb8174163f4e StaticDependenciesID=5c91a14796b052793477de466ae33667 
+Asset Pipeline Refresh (id=41f2f3a287e6e47d58ad133f0b0e46f2): Total: 0.236 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 950ac7cfec1a4470d918e66910e391e3 - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/PreviewRouteReopened.png' with importer (TextureImporter)
+Imported 'GUID: 950ac7cfec1a4470d918e66910e391e3' -> (Import Result ID: '60e77c722ff8c4d4bd11d88a0ba58bcc') in 0.099 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d70c18fef60dde3a8a89dee8102121a6 DependenciesID=f12621105b6f4b2bb116cb8174163f4e StaticDependenciesID=5c91a14796b052793477de466ae33667 
+Asset Pipeline Refresh (id=7817844ef2d7f4d97b29818c5b2e18c3): Total: 0.225 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[RouteReopenedVisual] result=Passed comicSources=7 authoredCrops=14 cleanPreview=1 playerFacing=1
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedMediaImporter:ConfigureArt () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs:41)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:27)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs Line: 41)
+
+Asset Pipeline Refresh (id=6198f7589410a49dda1319018aeda5e2): Total: 0.172 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: b246bf6bcd56f4fcc82eaa559d71cd66 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-01.wav' with importer (AudioImporter)
+Imported 'GUID: b246bf6bcd56f4fcc82eaa559d71cd66' -> (Import Result ID: 'a45e00c614358d98590fdcd119425b0a') in 0.054 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=5da751cd98563e159facb9893d4685a7 DependenciesID=05afbfe0468a9381d37df73e3bc45842 StaticDependenciesID=31aea939eaee3ec3ca2ec8a5a549bf78 
+Asset Pipeline Refresh (id=66d3fcdd41d9d4aefbc78bfa48060b37): Total: 0.180 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: fe0635811506c410f95d26a7393c51b8 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-01.wav' with importer (AudioImporter)
+Imported 'GUID: fe0635811506c410f95d26a7393c51b8' -> (Import Result ID: '137b62b0a2a987efecbd15f9d3a31e36') in 0.060 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=750098ffe78b2c7172466a8060728872 DependenciesID=c7ff8f9683ab8f90985c32fef2097db9 StaticDependenciesID=e8b4506bb582b6b579db746618ee2a4e 
+Asset Pipeline Refresh (id=3f75492a05115413fadd6aba0f55b255): Total: 0.185 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 19044161a54084deab5a77c1cbab90a2 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-02.wav' with importer (AudioImporter)
+Imported 'GUID: 19044161a54084deab5a77c1cbab90a2' -> (Import Result ID: '18121b2265048e377ceb49671bd7b077') in 0.050 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=36b3b01d4d778d1a55e79a53acde3376 DependenciesID=d7fb9558043cd0ffedcec495f1a878ba StaticDependenciesID=f457e4e3795b3690b8561f752578c691 
+Asset Pipeline Refresh (id=7f37db7cd6b404399a8ab10aefcca2d7): Total: 0.179 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: c6384408b1200462e801fc865d0b0df3 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-02.wav' with importer (AudioImporter)
+Imported 'GUID: c6384408b1200462e801fc865d0b0df3' -> (Import Result ID: '151c6b83a5808b5a13e36f802f18eb4b') in 0.059 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=ec0ea2945c223bd7d443b0f43a844044 DependenciesID=44ce93ea42395e7a6ac5546208179736 StaticDependenciesID=cf5decd4c575733859af9b96831b0eda 
+Asset Pipeline Refresh (id=fed2f58d0054e4352933d53a0ea84041): Total: 0.185 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 14dd3e45e214d4ab281f366c72713cf6 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-brief-03.wav' with importer (AudioImporter)
+Imported 'GUID: 14dd3e45e214d4ab281f366c72713cf6' -> (Import Result ID: 'cfac736d4f4a7fccd6654e82fda8a2ed') in 0.051 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=9386ec761d61ddc868301dbbc6cc25c0 DependenciesID=fba5d3751cd9a24ce4e3d9d3cca05233 StaticDependenciesID=7cd49620ca3b1631373bba5956284c9b 
+Asset Pipeline Refresh (id=be1ccb4bfd4444c2388b69cf9b4bb980): Total: 0.175 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: ed22e319788ef4293a7247f54f54b1e9 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-brief-03.wav' with importer (AudioImporter)
+Imported 'GUID: ed22e319788ef4293a7247f54f54b1e9' -> (Import Result ID: '4e9a1b87c1db5f19d64c7129385c582f') in 0.064 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=694d1ef4b767ebf69126493ba9cc7dd5 DependenciesID=2db26e35296b72614040f67da03f2c1f StaticDependenciesID=b231de3ace183a7a28e512175e1889a7 
+Asset Pipeline Refresh (id=4a6c7a255a9ab4bb08e625cf70acb52f): Total: 0.192 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 97ac08f72244a4747bb8a47f9df5ba01 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-comms-01.wav' with importer (AudioImporter)
+Imported 'GUID: 97ac08f72244a4747bb8a47f9df5ba01' -> (Import Result ID: 'e1fb242651e84e5874641a2890313d86') in 0.064 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=d5f2c3a73c84a72ac5acc85188fe3df5 DependenciesID=3cdf57c581cd968a95522a6421a29567 StaticDependenciesID=e83cd51477fb064ad860d38150d08d51 
+Asset Pipeline Refresh (id=06dc1ad70259b4da89a803d964b16cc0): Total: 0.188 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 150e7769d4f114092ad0a869c60fd06b - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-comms-01.wav' with importer (AudioImporter)
+Imported 'GUID: 150e7769d4f114092ad0a869c60fd06b' -> (Import Result ID: 'eb79cb89a3727206c99ae90a2fc6da86') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=6e0157e45934fd36d210400a2872b708 DependenciesID=2bc3697bd060fe83d61c987eec90920c StaticDependenciesID=a31c7c6fae239c2f119bafba384abb28 
+Asset Pipeline Refresh (id=d5be7012a5ddf4a4a9d840f1d55635ad): Total: 0.181 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 8065c5b7fdb0847b395c1ebb97b90201 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-01.wav' with importer (AudioImporter)
+Imported 'GUID: 8065c5b7fdb0847b395c1ebb97b90201' -> (Import Result ID: 'f814caa5f0c0682f0bb47cc13cd8810f') in 0.064 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=349c5b06934da3a17c8c227140c56970 DependenciesID=e6228dfe631ea0c4174b0ce35535a9dc StaticDependenciesID=35737b5a6cfc893bc6c73759144c951a 
+Asset Pipeline Refresh (id=db5e71fd8608c42238025323d994cde5): Total: 0.188 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 2ed8f43bc7d414a08b515d1ad7555963 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-01.wav' with importer (AudioImporter)
+Imported 'GUID: 2ed8f43bc7d414a08b515d1ad7555963' -> (Import Result ID: '6c2f42810001266579e20e8ddeab3975') in 0.060 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=56359829692342548570759d934b0a95 DependenciesID=8baa983f1f67a80cfeb83808701cd484 StaticDependenciesID=32f8795964d18d21738597647b40e744 
+Asset Pipeline Refresh (id=ba71d4229a1674b5bb5d7995ba0bd761): Total: 0.191 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 33f4abff4123145bfa9141d690ed0d18 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-02.wav' with importer (AudioImporter)
+Imported 'GUID: 33f4abff4123145bfa9141d690ed0d18' -> (Import Result ID: '5cab316bfb21c7d9bf4bcfa12f17e163') in 0.057 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a81813fef569845cd03534a6150f9878 DependenciesID=b4b6275d8caa1b88880b84b4627ad3d6 StaticDependenciesID=9386b9377a6b1c3543e5f6a2bf7f2e3d 
+Asset Pipeline Refresh (id=f5db30c1079e04304a67deef96c8cd65): Total: 0.188 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 64fe4c7e61e68459a9abf76d3d815c64 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-02.wav' with importer (AudioImporter)
+Imported 'GUID: 64fe4c7e61e68459a9abf76d3d815c64' -> (Import Result ID: 'b20dd4f057fd000c8f8798708159f276') in 0.062 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=cdec9492d1f52719b52079f766dd84ba DependenciesID=c15ed53695c684ccb9ef1dd8b5ed56fe StaticDependenciesID=350b1980d9a7a8c57646aee54ece3596 
+Asset Pipeline Refresh (id=7d875452a07cc4324bbe77fc904e4df9): Total: 0.194 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 95b04ae4c1ff1477d943b0579e193850 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/en/route_reopened-debrief-03.wav' with importer (AudioImporter)
+Imported 'GUID: 95b04ae4c1ff1477d943b0579e193850' -> (Import Result ID: 'ea47857854a941e0cf61998fe4553f3b') in 0.109 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=1d407bbdb827b8e6e55dba7d1773434a DependenciesID=5ef1a3acb281c64bec19bfd884907434 StaticDependenciesID=3fb0a914b1abd82ebed5d78b2e00312b 
+Asset Pipeline Refresh (id=11b75944b2da544d1af843d4b355a5bc): Total: 0.237 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: 3965b2b6f5c0d48c281dfbe4eca20e90 - Path: Assets/Game/Audio/Narrative/CH02M05RouteReopened/Voice/fa/route_reopened-debrief-03.wav' with importer (AudioImporter)
+Imported 'GUID: 3965b2b6f5c0d48c281dfbe4eca20e90' -> (Import Result ID: '4a75df4f976afd10626eabfd45bc4f5b') in 0.064 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=a1c619bd3ee6902d4583c316653dc8a7 DependenciesID=e52d6e7755db08b63dbe51ef996f6b85 StaticDependenciesID=3bbef2e27bbd09c5a391b95f1a37a917 
+Asset Pipeline Refresh (id=b475fd80a94d34eea92f6a625893b291): Total: 0.190 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: dc1f27aae7c03472a81feb4b7cc5931b - Path: Assets/Game/Audio/Events/AudioEventCatalogConfig.asset' with importer (NativeFormatImporter)
+Imported 'GUID: dc1f27aae7c03472a81feb4b7cc5931b' -> (Import Result ID: 'd2d6cbcdad216bf1cbc92036f442ffb5') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=617e8bb61ac9f3d75f225ed31600d502 DependenciesID=2d42228c2d33d9926854ede9d067bc02 StaticDependenciesID=c0d5b3a9c6482b7735f3edee74ae25b2 
+Importing 'GUID: edaa44fa96c9542ddbfe741b20222c58 - Path: Assets/Game/Audio/Mixers/AudioMixerBusConfig.asset' with importer (NativeFormatImporter)
+Imported 'GUID: edaa44fa96c9542ddbfe741b20222c58' -> (Import Result ID: '67294aeec4be8981e3beac432ff774e7') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=dd9b830afbaf5bee097ff8f15011e48f DependenciesID=aad622c66fb1a8c41287fdf4ca9aff08 StaticDependenciesID=9c7714986e09c18f1f7d490c200f1327 
+Asset Pipeline Refresh (id=f3ac1e93ca8cf428eb1155b37db4a77a): Total: 0.127 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Asset Pipeline Refresh (id=d225f76abd0fe4beea31a4d356d2932a): Total: 0.171 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+[RouteReopenedVoiceImports] result=Passed clips=14 locales=2 preload=0 runtimeNetworkTts=0
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedMediaImporter:ConfigureVoices () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs:54)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:27)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedMediaImporter.cs Line: 54)
+
+Asset Pipeline Refresh (id=51c664f6b857347b289e8675f59feb60): Total: 0.173 seconds - Initiated by RefreshV2(NoUpdateAssetOptions)
+Importing 'GUID: 790b5a063ac549fdad9c80fbbd1447a2 - Path: Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Insurgent_Male_02_MachineGun_Card_512.png' with importer (TextureImporter)
+Imported 'GUID: 790b5a063ac549fdad9c80fbbd1447a2' -> (Import Result ID: 'be4d9b1bde4402f028e92c6f0bb65a20') in 0.012 seconds [static and dynamic dependencies]. Details - ImportResultOutputID=66f82503d0a24c89546ab794f47cffb4 DependenciesID=90db4daaa66bc30fd879eb48d783ac9b StaticDependenciesID=91a9ec3f6ef4ff03013ec17471b5843a 
+Asset Pipeline Refresh (id=9d9a9e73dd05d4b2a83175ca7319fc2a): Total: 0.145 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Importing 'GUID: d031a049b57ec48be9a1d1e42619232f - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchSpeakers.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d031a049b57ec48be9a1d1e42619232f' -> (Import Result ID: '44f0d152ff60c6bc864e20c28c1e2c48') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=7110020d65f07ac2bee55096bf118c57 DependenciesID=e9838a25d87685489510bdc9253f6e51 StaticDependenciesID=61eb8831ac50bdf30ae15e7aeecdfde5 
+Importing 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a - Path: Assets/AddressableAssetsData/AddressableAssetSettings.asset' with importer (NativeFormatImporter)
+Imported 'GUID: d6786f5b1e1b3491ab7f1f020f1abc0a' -> (Import Result ID: '30daf186fcd0b2e038755729aadd6455') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=03e1ac9578e9f5a0dcb1fc28a175ee06 DependenciesID=e56a6154ab6f035c9e36ec86f7be3256 StaticDependenciesID=08a02df1845cc1da3f26f76c5b7f7841 
+Importing 'GUID: 3e854ecc9cba84d70bd37eb37b70a201 - Path: Assets/Game/Configs/Narrative/Chapter02/CH02M05_RouteReopened_Narrative.asset' with importer (NativeFormatImporter)
+Main Object Name 'CH02M05_RouteReopened_brief' does not match filename 'CH02M05_RouteReopened_Narrative'
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:29)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+[Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs line 29]
+
+Imported 'GUID: 3e854ecc9cba84d70bd37eb37b70a201' -> (Import Result ID: 'd69bb6408394d9555d2f6fc8f15bff1a') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=00195b0f572b8f9627322d9697fd4e4d DependenciesID=7b53ae87222c421daf09591443c73f1c StaticDependenciesID=025459cf56f60fb77080f5f1309aaacc 
+Importing 'GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ce5d2d1e7043e9b4a9af776495d80673' -> (Import Result ID: '296848b416af3cca4380773345a88151') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=4e59dcc25bf15ac51c911c248b8fb640 DependenciesID=010cfd647a08580f69e9e37596a976ab StaticDependenciesID=67df30206a31053eb6c805d40cb2e0a8 
+Importing 'GUID: ff865b1c100bc41cf8f6c79c8b1384fa - Path: Assets/AddressableAssetsData/AssetGroups/Route Reopened Narrative.asset' with importer (NativeFormatImporter)
+Imported 'GUID: ff865b1c100bc41cf8f6c79c8b1384fa' -> (Import Result ID: '1f3551aa0c055c3d483a36cacb73f5d2') in 0.000 seconds [static dependencies only]. Details - ImportResultOutputID=370c76fbe0414482e4735f49103dc4f4 DependenciesID=744327ba04d0fd73522ef3abbc86a4a5 StaticDependenciesID=07f0e8f5807fbbacd743a73474cac990 
+Asset Pipeline Refresh (id=dadfacbbdbe784bbda314f9d4b3c36d6): Total: 0.155 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[CampaignComicCoverage] result=Passed mission=seq.ch02.m05. dialogueStates=7 aspects=2
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMission (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:55)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:60)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:29)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 55)
+
+[CampaignComicDistinctness] result=Passed mission=seq.ch02.m05. dialogueStates=7 distinct16x9=7 distinct20x9=7
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CampaignMissionComicCoverageValidation:ValidateMissionDistinct (string,string) (at Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs:64)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:29)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CampaignMissionComicCoverageValidation.cs Line: 64)
+
+Opening scene 'Assets/Game/Scenes/Menu.unity'
+Unloading 9 Unused Serialized files (Serialized files now loaded: 0)
+Loaded scene 'Assets/Game/Scenes/Menu.unity'
+	Deserialize:            3.228 ms
+	Integration:            286.628 ms
+	Integration of assets:  0.001 ms
+	Thread Wait Time:       0.006 ms
+	Total Operation Time:   289.863 ms
+Unloading 70 unused Assets / (6.4 MB). Loaded Objects now: 52444.
+Memory consumption went from 1.33 GB to 1.32 GB.
+Total: 46.146542 ms (FindLiveObjects: 0.966959 ms CreateObjectMapping: 7.878958 ms MarkObjects: 36.697333 ms  DeleteObjects: 0.603000 ms)
+
+Importing 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e - Path: Assets/Game/Scenes/Menu.unity' with importer (DefaultImporter)
+Imported 'GUID: 6bd1597ba56b84eff9ecd88570df3e0e' -> (Import Result ID: '52773ff349842ec2ead28eb7a568d9e8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=400b224708e4470bb8f670c7ab291fe5 DependenciesID=34bcf059de88941e104d9a6f2cb704e1 StaticDependenciesID=4dc6483a1b812b40d0172b63018d6fbf 
+Asset Pipeline Refresh (id=af374056b02a0497da82eb827686b61a): Total: 0.133 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+[CH02M05RouteReopenedNarrativeBuilder] result=Passed sequences=3 presentation=CaptionedCheckpoint locales=en,fa-IR voices=True
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:Build (bool) (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:30)
+Game.Editor.CH02M05RouteReopenedNarrativeBuilder:BuildCaptionedArtAndInstall () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs:23)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedNarrativeBuilder.cs Line: 30)
+
+[RouteReopenedCheckpoint] result=Passed scope=CaptionedConfiguration controls=existing-only
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedPresentationBuilder:BuildCheckpoint () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs:41)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedPresentationBuilder.cs Line: 41)
+
+[RouteReopenedPortPreparation] result=Passed
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+Game.Editor.CH02M05RouteReopenedConfigBuilder:PreparePortReview () (at Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs:78)
+
+(Filename: Assets/Game/Scripts/Editor/CH02M05RouteReopenedConfigBuilder.Port.cs Line: 78)
+
+[Project] Loading completed in 29.615 seconds
+	Project init time: 				0.000 seconds
+		Template init time: 		0.000 seconds
+		Package Manager init time: 		0.000 seconds
+		Asset Database init time: 		0.000 seconds
+		Global illumination init time: 	0.000 seconds
+		Assemblies load time: 			0.000 seconds
+		Unity extensions init time: 	0.000 seconds
+		Asset Database refresh time: 	0.000 seconds
+	Scene opening time: 			0.000 seconds
+##utp:{"type":"ProjectInfo","version":2,"phase":"Immediate","time":1790829887347,"processId":52900,"projectLoad":29.614522250000005,"projectInit":0.0,"templateInit":0.0,"packageManagerInit":0.0,"assetDatabaseInit":0.0,"globalIlluminationInit":0.0,"assembliesLoad":0.0,"unityExtensionsInit":0.0,"assetDatabaseRefresh":0.0,"sceneOpening":0.0}
+##utp:{"type":"EditorInfo","version":2,"phase":"Immediate","time":1790829887347,"processId":52900,"editorVersion":"6000.5.2f1 (eb73d3b415a1)","branch":"6000.5/staging","buildType":"Release","platform":"OSX"}
+Subscribe to USB device events
+Scanning for USB devices : 0.108ms
+Start Indexing on Editor startup
+[Indexing] Starting Initial Indexing for Assets
+GPU Resident Drawer created.
+Created GICache directory at /Users/farhad/Library/Caches/com.unity3d.UnityEditor/GiCache. Took: 0.007s, timestamps: [29.624 - 29.631]
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[Licensing::Client] Successfully resolved entitlement details
+[INFO ] [relay] relay.startup port=9001 mcpClientPort=9002 editorPid=52900
+[INFO ] [relay] log === RELAY SERVER STARTED === (unity-ai-relay v1.0.12-build.96)
+[INFO ] [relay] log Starting relay server...
+[INFO ] [relay] log Command line arguments: ["bun","/$bunfs/root/relay_mac_arm64","--relay","--port","9001","--mcp-client-port","9002","--editor-pid","52900","--shutdown-delay","180","--log-dir","/Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs"]
+[INFO ] [relay] log Parsed config: {"port":9001,"mcpClientPort":9002,"editorPid":"52900","shutdownDelaySeconds":180}
+[INFO ] [relay] log Initializing relay components...
+[INFO ] [relay] log Creating RelayEditor...
+[INFO ] [relay] log WebSocket server started
+[INFO ] [relay] log Relay server initialization completed
+[INFO ] [relay] log MCP Client initialized at port: 9002
+[INFO ] [relay] log Unity MCP Relay server started | Port: 9002 | Endpoints: /mcp/start-server, /mcp/stop-server, /mcp/server-status, /mcp/call-tool
+[INFO ] [relay] log [shell-env] PATH augmented with shell environment (22 entries)
+[INFO ] [relay] log Unity client connected with ID: editor-52900-b1qkzj (relay 1.0.12-build.96)
+[INFO ] [relay] connection.established clientId=editor-52900-b1qkzj port=9001
+Starting new worker id: 1 with log in /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/Logs/AssetImportWorkerHW1.log
+[Worker0] Imported GUID: dca65048f297d476ca9814c94f86eae0 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'cc25c49948842f06688369dd3b10fda9') in 0.046419542 seconds
+[Worker0] Imported GUID: 8ecf8a7f44dd34c2d9c4edd1392825f5 - Path: Assets/Game/Configs/Narrative/Chapter04/CH04M01_AirCorridor_Narrative.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '1f79ef6becd1af96977ff3fe2d03f35d') in 0.019461209 seconds
+[Worker0] Imported GUID: 2f31ef939922d43c0ada306b7dc37f68 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'ad22089af2452a8398e3522e72006e35') in 0.008567959 seconds
+[Worker0] Imported GUID: d89c65c9468d548609b5d2de338f4ba1 - Path: Assets/Game/Configs/Scenarios/Chapter04/ScenarioSetup_Ch04_M01_AirCorridor.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5ab0e07815711b7055235e65cdc9044c') in 0.018574625 seconds
+[Worker0] Imported GUID: 843709a8d0bd14c9cb8c9c6de98ab3de - Path: Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M05_PortReview.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '057a03fcdc02c52567df55e6b056389c') in 0.016150917 seconds
+[Worker0] Imported GUID: ce5d2d1e7043e9b4a9af776495d80673 - Path: Assets/Game/Configs/Narrative/FirstLaunch/FirstLaunchPersianLocale.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '45c814a063f0a2e18caa03668fd04e66') in 0.033383417 seconds
+[Worker0] Imported GUID: 1a71bf96840ec4e7b9e2000d90eecfa8 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-comms-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '9181d05d9994ef1904386d8f40a72069') in 0.007845125 seconds
+[Worker0] Imported GUID: 4e6477a948160489bbe8acf93a800dca - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'b9416da82efe7134ba0729a6a1fb6af8') in 0.007900042 seconds
+[Worker0] Imported GUID: ab4e3eec44bd64d1693ed59bc93f4277 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-brief-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'bd533db8f8c3176e83a89bfb6ac71425') in 0.008324417 seconds
+[Worker0] Imported GUID: ab9f4adf4978d4e6c8236a26dd64422c - Path: Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M05_RouteReopened.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '53de54f098813c906fccaea0c9f61149') in 0.008923625 seconds
+[Worker0] Imported GUID: edd02684dae74207a6745011ea1135c7 - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor_Debrief.png - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0221e47f2759ef2a08a7b160a89af15a') in 0.029823959 seconds
+[Worker0] Imported GUID: 86aa349dc493645cb91dc5cdc758c046 - Path: Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M05_RouteReopened.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '0422186ca2f44c2da1f97f7b96033fae') in 0.010617417 seconds
+[Worker0] Imported GUID: b7a7db659cb514a6a81291d10356a97f - Path: Assets/Game/Art/Narrative/CH02M05RouteReopened/BriefControlledCapture.png - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '14b0e0fc29f37bccb7b67143731b9491') in 0.011709166 seconds
+[Worker0] Imported GUID: f042dd8c90abf479d846cb8022ff4e48 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '81870eeb49f566c67a8d97864d905402') in 0.008280208 seconds
+[Worker0] Imported GUID: 2e498d1c8094910479dc3e1b768306a4 - Path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2d75f925e604f14d3940d9d8b8a6a188') in 0.022918542 seconds
+[Worker0] Imported GUID: 8952ab1e8c66e445c849ff46896a839b - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2d8c3a8666199c84edc99d5dafc4ee13') in 0.008333584 seconds
+[Worker0] Imported GUID: c41b2c608e05f4b37a3f917afa1a759b - Path: Assets/Game/Configs/Missions/Chapter04/MissionDefinition_Ch04_M01_AirCorridor.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2d354f481ea0807922b56cb07d21892d') in 0.009035542 seconds
+[Worker0] Imported GUID: 9d69261c23bad443ea2adf0f45a0546a - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/en/air_corridor-debrief-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '154c7230cba77e80d9adaedd1273f5a5') in 0.008454583 seconds
+[Worker0] Imported GUID: 57abf38b6803044b6967160df1a872b6 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-comms-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '5f05d5cb4d906c169d1dec7ffd237cd5') in 0.00875425 seconds
+[Worker0] Imported GUID: b1d527991d1a84926be90dd03e08bbb7 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '93eb5230ff9715e4cf3fe37ba0099e82') in 0.00832925 seconds
+[Worker0] Imported GUID: 1e8883d6038a4ba98356b5ad0e2d5184 - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor.png - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '3c5290db103ea5d38337d5f00cb9685c') in 0.012678875 seconds
+[Worker0] Imported GUID: 3c22555caaf4498491135970b9c8971e - Path: Assets/Game/Resources/FutureMissionComics/CH04M01_AirCorridor_Comms.png - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '379fec0f0aacc7e4dd6d6372b41f99c2') in 0.012195709 seconds
+[Worker0] Imported GUID: 6094647eaf04b4cac8b154ca88bff2ae - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-brief-laila.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'fda82e0cbbe5931430221661bd779b0b') in 0.008301417 seconds
+[Worker0] Imported GUID: 5e317e6e45b444a10affe72acd94d116 - Path: Assets/Game/Configs/Missions/Chapter04/CH04M01_AirCorridor_FieldGuide.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: '2d6a4f16e48c540b0650b4004b3406e3') in 0.009331 seconds
+[Worker0] Imported GUID: f5eb5c2d2e932c548a01876109d52b46 - Path: Assets/Game/Configs/OperationMaps/Chapter01/OperationMapCatalog_Chapter01.asset - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'f8f7407084754489a1bd0937a348bf63') in 0.020808708 seconds
+[Worker0] Imported GUID: c5089607f3136487eb86a1da53e027e7 - Path: Assets/Game/Audio/Narrative/CH04M01AirCorridor/Voice/fa/air_corridor-debrief-aria.wav - Importer: ScriptedImporter/UnityEditor.QuickSearchModule:UnityEditor.Search:ASIAI0B -> (ImportResultId: 'af8eb8d2e3d867c8cb6445caab69ad72') in 0.00893025 seconds
+MonoPathRemapper: Attempts to remap: 160828; Successful remaps: 33762
+Thread 0x392dc7000 may have been prematurely finalized
+Serialized file version minimum: 22, current 23
+[LAYOUT] About to save layout /Users/farhad/.codex/worktrees/airlift-airfield/WarlineCapture/UserSettings/Layouts/default-6000.dwlt
+[LAYOUT] About to save layout /Users/farhad/Library/Preferences/Unity/Editor-5.x/Layouts/current/default-6000.dwlt
+Worker ready: AssetImportWorkerHW1 1
+Pipeline Server stopped
+Clearing [LiberationSans SDF - Fallback] dynamic font asset data.
+UnityEngine.Debug:ExtractStackTraceNoAlloc (byte*,int,string)
+UnityEngine.StackTraceUtility:ExtractStackTrace () (at /Users/bokken/build/output/unity/unity/Runtime/Export/Scripting/StackTrace.cs:35)
+UnityEngine.DebugLogHandler:Internal_Log (UnityEngine.LogType,UnityEngine.LogOption,string,UnityEngine.Object)
+UnityEngine.DebugLogHandler:LogFormat (UnityEngine.LogType,UnityEngine.Object,string,object[])
+UnityEngine.Logger:Log (UnityEngine.LogType,object)
+UnityEngine.Debug:Log (object)
+TMPro.EditorEventCallbacks/<>c:<InitializeFontAssetResourceChangeCallBacks>b__0_0 () (at ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Editor/TMP/TMP_EditorResourceManager.cs:36)
+UnityEditor.EditorApplication:Internal_EditorApplicationQuit () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:128)
+Game.Editor.MissionEditorValidationExit:Tick () (at Assets/Game/Scripts/Editor/MissionEditorValidationExit.cs:48)
+UnityEditor.EditorApplication:Internal_CallUpdateFunctions () (at /Users/bokken/build/output/unity/unity/Editor/Mono/EditorApplication.cs:403)
+
+(Filename: ./Library/PackageCache/com.unity.ugui@3d1ea40b73ef/Editor/TMP/TMP_EditorResourceManager.cs Line: 36)
+
+Unloading 52 Unused Serialized files (Serialized files now loaded: 0)
+[INFO ] [relay] log Shutdown request received from client editor-52900-b1qkzj
+[INFO ] [relay] log Unity client requested immediate shutdown - shutting down now, reason: Shutdown requested by client
+Android Extension - Scanning For ADB Devices 3183 ms
+Killing ADB server in 0.042031 seconds.
+Importing 'GUID: 2e498d1c8094910479dc3e1b768306a4 - Path: Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset' with importer (NativeFormatImporter)
+Imported 'GUID: 2e498d1c8094910479dc3e1b768306a4' -> (Import Result ID: '2bb8e9ce2b314bda2bd0703802d1cdb8') in 0.001 seconds [static dependencies only]. Details - ImportResultOutputID=94ce4dace069634644df4d315a8acf11 DependenciesID=57c4f50a4a2694e82789a692afb02c97 StaticDependenciesID=b9bd57100191ac21f3d00c9b44cee932 
+Shutting down MSBuild server...
+Shutting down VB/C# compiler server...
+Asset Pipeline Refresh (id=17d5d617a9b6d4bdca42f961fc77927e): Total: 0.184 seconds - Initiated by StopAssetImportingV2(NoUpdateAssetOptions)
+Unloading 193 unused Assets / (134.1 KB). Loaded Objects now: 53125.
+Memory consumption went from 1.32 GB to 1.32 GB.
+Total: 68.869709 ms (FindLiveObjects: 0.998541 ms CreateObjectMapping: 9.349000 ms MarkObjects: 57.389459 ms  DeleteObjects: 1.132459 ms)
+
+Thread 0x3467a7000 may have been prematurely finalized
+VB/C# compiler server shut down successfully.
+Input System module state changed to: ShutdownInProgress.
+Input Polling Thread exited.
+Input System module state changed to: Shutdown.
+MSBuild server shut down successfully.
+[Physics::Module] Cleanup current backend.
+[Physics::Module] Id: 0xf2b8ea05
+[Licensing::IpcConnector] LicenseClient-farhad-notifications channel disconnected successfully.
+[Licensing::IpcConnector] LicenseClient-farhad channel disconnected successfully.
+Thread 0x16bfeb000 may have been prematurely finalized
+Thread 0x16c21b000 may have been prematurely finalized
+Thread 0x16c103000 may have been prematurely finalized
+Thread 0x16c077000 may have been prematurely finalized
+Thread 0x16c18f000 may have been prematurely finalized
+Thread 0x16c3bf000 may have been prematurely finalized
+Thread 0x16c44b000 may have been prematurely finalized
+Thread 0x16c2a7000 may have been prematurely finalized
+Thread 0x16c333000 may have been prematurely finalized
+AcceleratorClientConnectionCallback - disconnected - :0
+Thread 0x304f13000 may have been prematurely finalized
+Cleanup mono
+CodeReloadManager destroyed
+info: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+info: Unity.ILPP.Runner.PostProcessingAssemblyLoadContext[0]
+      ALC ILPP context 1 is unloading
+Leak Detected : Persistent allocates 401 individual allocations. To find out more please enable 'Settings > Jobs > Leak Detection Level > Enabled With Stack Trace' and reproduce the leak again.
+debugger-agent: Unable to listen on 43

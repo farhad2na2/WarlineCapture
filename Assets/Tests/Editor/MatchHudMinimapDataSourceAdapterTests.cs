@@ -9,6 +9,46 @@ using Unity.Mathematics;
 public sealed class MatchHudMinimapDataSourceAdapterTests
 {
     [Test]
+    public void CompactPreparedSurfacesShowRoadsAndBridges() => AssertSurfaceFeatures(true);
+
+    [Test]
+    public void LayeredLegacySurfacesShowRoadsAndBridges() => AssertSurfaceFeatures(false);
+
+    private static void AssertSurfaceFeatures(bool compact)
+    {
+        using var world=new World("MinimapSurfaceEncodingTests");
+        World previous=World.DefaultGameObjectInjectionWorld;
+        using var builder=new BlobBuilder(Allocator.Temp);
+        ref var blob=ref builder.ConstructRoot<MapSurfaceBlob>();
+        blob.Dimensions=new int2(3,1);blob.CellSize=10;blob.GridOrigin=new float3(5,2,7);
+        blob.RuntimeEncoding=compact?MapSurfaceRuntimeEncoding.SingleLayerCompact:default;
+        var cells=builder.Allocate(ref blob.Cells,compact?0:3);
+        var samples=builder.Allocate(ref blob.Samples,compact?0:3);
+        var packed=builder.Allocate(ref blob.CompactSamples,compact?3:0);
+        builder.Allocate(ref blob.Connections,0);
+        var types=new[]{MapSurfaceType.BridgeDeck,MapSurfaceType.Road,MapSurfaceType.Terrain};
+        for(int i=0;i<3;i++)
+        {
+            if(compact)packed[i]=new MapSurfaceCompactSample{SurfaceType=types[i],MovementMask=MapSurfaceMovementMask.AllGroundUnits,NormalY=127};
+            else {cells[i]=new MapSurfaceCell{FirstSurfaceIndex=i,SurfaceCount=1};samples[i]=new MapSurfaceSample{Cell=new int2(i,0),SurfaceType=types[i],MovementMask=MapSurfaceMovementMask.AllGroundUnits};}
+        }
+        var reference=builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
+        try
+        {
+            World.DefaultGameObjectInjectionWorld=world;CreateGrid(world.EntityManager);
+            var root=world.EntityManager.CreateEntity(typeof(MapSurfaceComponent));
+            world.EntityManager.SetComponentData(root,new MapSurfaceComponent{HasSurfaceData=1,SurfaceBlob=reference,Dimensions=new int2(3,1),CellSize=10,GridOrigin=new float3(5,2,7)});
+            var features=new System.Collections.Generic.List<MatchHudMinimapSurfaceFeatureModel>();
+            new MatchHudMinimapDataSourceAdapter().GetSurfaceFeatures(new MatchHudMinimapAreaModel(new UnityEngine.Vector3(5,2,7),30,10),features);
+            Assert.That(features.Count,Is.EqualTo(2));
+            Assert.That(features[0].Kind,Is.EqualTo(MatchHudMinimapSurfaceFeatureKind.Bridge));
+            Assert.That(features[1].Kind,Is.EqualTo(MatchHudMinimapSurfaceFeatureKind.Road));
+            Assert.That(features[0].Center,Is.EqualTo(new UnityEngine.Vector3(10,2,12)));
+        }
+        finally {World.DefaultGameObjectInjectionWorld=previous;reference.Dispose();}
+    }
+
+    [Test]
     public void ActiveMapProjectionOverridesLegacyGridExtents()
     {
         using var world = new World("MinimapActiveMapProjectionTests");

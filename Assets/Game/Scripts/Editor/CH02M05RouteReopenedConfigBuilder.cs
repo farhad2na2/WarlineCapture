@@ -14,38 +14,20 @@ using UnityEngine;
 
 namespace Game.Editor
 {
-    public static class CH02M05RouteReopenedConfigBuilder
+    public static partial class CH02M05RouteReopenedConfigBuilder
     {
-        public const string MissionId=CampaignMissionSequence.RouteReopened,ScenarioId="scenario.ch02.m05.route_reopened",MapId="opmap.ch02.route_reopened_01",Prefix="anchor.ch02.m05.";
+        public const string MissionId=CampaignMissionSequence.RouteReopened,ScenarioId="scenario.ch02.m05.route_reopened",MapId="opmap.ch02.route_reopened_port_review",Prefix="anchor.ch02.m05.";
         public const string MissionPath="Assets/Game/Configs/Missions/Chapter02/MissionDefinition_Ch02_M05_RouteReopened.asset";
         public const string ScenarioPath="Assets/Game/Configs/Scenarios/Chapter02/ScenarioSetup_Ch02_M05_RouteReopened.asset";
-        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_RouteReopened01.asset";
+        public const string LegacyMapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02_RouteReopened01.asset";
+        public const string MapPath="Assets/Game/Configs/OperationMaps/Chapter02/OperationMap_Ch02M05_PortReview.asset";
         [MenuItem("Game/Campaign/Route Reopened/Build Configuration")]
         public static void Build()
         {
             foreach(string category in new[]{"Missions","Scenarios","OperationMaps"})Directory.CreateDirectory("Assets/Game/Configs/"+category+"/Chapter02");
-            AssetDatabase.Refresh();BuildMap();BuildScenario();BuildMission();M01FirstContactConfigBuilder.RefreshChapterCatalogs();
+            AssetDatabase.Refresh();BuildPortMap();BuildScenario();BuildMission();M01FirstContactConfigBuilder.RefreshChapterCatalogs();
             Require(MissionDefinitionContractValidation.TryValidateCatalog(Load<MissionDefinitionCatalogConfig>(M01FirstContactConfigBuilder.CatalogPath),out string error),error);
             AssetDatabase.SaveAssets();Debug.Log("[RouteReopenedConfig] result=Passed chapter=2 mission=5 controls=Select,Move,Attack,Hold");
-        }
-        private static void BuildMap()
-        {
-            var map=Clone<OperationMapDefinition>(CH02M03MarketLifelineConfigBuilder.MapPath,MapPath);var surface=Load<MapSurfaceDataAsset>(AssetDatabase.GUIDToAssetPath(map.MapSurfaceDataReference.AssetGUID));
-            Require(surface.TryCreateRuntimeBlobAsset(Allocator.Temp,out BlobAssetReference<MapSurfaceBlob> blob),"Route Reopened surface unavailable");
-            using(blob)
-            {
-                (string name,int x,int z,OperationMapAnchorKind kind,int faction,float radius)[] anchors={
-                    ("relief_goal",682,452,OperationMapAnchorKind.Objective,1,8),("fuel_goal",746,440,OperationMapAnchorKind.Objective,1,8),("disrupted_link",700,466,OperationMapAnchorKind.Objective,1,7),("hub_gate",790,446,OperationMapAnchorKind.Objective,1,8),("records",805,442,OperationMapAnchorKind.Objective,1,7),
-                    ("squad_a",700,442,OperationMapAnchorKind.Deployment,1,3),("squad_b",710,438,OperationMapAnchorKind.Deployment,1,3),("engineers",711,455,OperationMapAnchorKind.Deployment,1,3),("relief",724,449,OperationMapAnchorKind.Deployment,1,.35f),("fuel",746,420,OperationMapAnchorKind.Deployment,1,.35f),
-                    ("hostile_a",783,474,OperationMapAnchorKind.Spawn,2,3),("hostile_b",805,442,OperationMapAnchorKind.Spawn,2,3),("return_rts",746,440,OperationMapAnchorKind.Camera,1,2)};
-                var data=new SerializedObject(map);S(data,"operationMapId",MapId);data.FindProperty("additionalBuildingPlacements").objectReferenceValue=null;S(data,"planningCameraId","camera.ch02.m05.overview");S(data,"battleCameraId","camera.ch02.m05.battle");
-                var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(665,0,410);bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(830,100,495);MissionCameraBoundsAuthoring.Apply(bounds);
-                var minimap=data.FindProperty("minimap");S(minimap,"minimapId","minimap.ch02.m05.route_reopened");minimap.FindPropertyRelative("projectionOrigin").vector3Value=new Vector3(665,0,410);minimap.FindPropertyRelative("projectionSize").vector2Value=new Vector2(165,85);
-                A(data.FindProperty("anchors"),anchors.Length,(entry,i)=>{var seed=anchors[i];int2 cell=RequiresVehicleFootprint(seed.name)?ResolveVehicleCell(ref blob,new int2(seed.x,seed.z),24):new int2(seed.x,seed.z);Require(MapSurfaceBlobAccess.TryGetPrimarySurface(ref blob.Value,cell,out var sample),seed.name);S(entry,"anchorId",Prefix+seed.name);S(entry,"kind",(int)seed.kind);S(entry,"factionId",seed.faction);S(entry,"laneIndex",0);entry.FindPropertyRelative("position").vector3Value=new Vector3(cell.x,sample.Height,cell.y);entry.FindPropertyRelative("eulerAngles").vector3Value=Vector3.zero;entry.FindPropertyRelative("radius").floatValue=seed.radius;Debug.Log($"[RouteReopenedConfig] anchor={seed.name} requested=({seed.x},{seed.z}) resolved={cell} vehicleFootprint={(RequiresVehicleFootprint(seed.name)?"3x3":"none")}");});
-                A(data.FindProperty("cameras"),3,(entry,i)=>{S(entry,"cameraId",i==0?"camera.ch02.m05.overview":i==1?"camera.ch02.m05.battle":"camera.ch02.m05.relay");Vector3 focus=i==0?new Vector3(744,0,447):i==1?new Vector3(790,0,454):new Vector3(790,0,446);Vector3 position=focus+new Vector3(0,i==0?78:54,-42);entry.FindPropertyRelative("position").vector3Value=position;entry.FindPropertyRelative("eulerAngles").vector3Value=Quaternion.LookRotation(focus-position).eulerAngles;entry.FindPropertyRelative("fieldOfView").floatValue=i==0?58:51;});
-                S(data,"contentHash",string.Empty);S(data,"generatedMetadataHash",string.Empty);data.ApplyModifiedPropertiesWithoutUndo();using var sha=SHA256.Create();string hash=BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(EditorJsonUtility.ToJson(map)))).Replace("-","").ToLowerInvariant();data.Update();S(data,"contentHash",hash);S(data,"generatedMetadataHash",hash);data.ApplyModifiedPropertiesWithoutUndo();
-                Require(map.TryValidateMetadata(out string error)&&map.TryValidateLocalContentReferences(out error),error);EditorUtility.SetDirty(map);AssetDatabase.SaveAssets();
-            }
         }
         private static void BuildScenario()
         {
@@ -71,29 +53,6 @@ namespace Game.Editor
             A(data.FindProperty("stars"),3,(e,i)=>{S(e,"starIndex",i+1);S(e,"rule",(int)(i==0?MissionStarRuleKind.CompleteMission:i==1?MissionStarRuleKind.NoCivilianLoss:MissionStarRuleKind.BreachSupportSurvives));S(e,"displayTextKey","mission.route_reopened.star."+(i+1));S(e,"threshold",0);});
             A(data.FindProperty("firstClearRewards"),2,(e,i)=>{S(e,"kind",i==0?0:1);S(e,"rewardConfigId",i==0?"reward.commander_xp":string.Empty);S(e,"displayTextKey",i==0?"mission.reward.commander_xp":"mission.reward.credits");S(e,"amount",i==0?1200:6000);});A(data.FindProperty("replayRewards"),1,(e,i)=>{S(e,"kind",1);S(e,"rewardConfigId",string.Empty);S(e,"displayTextKey","mission.reward.credits");S(e,"amount",500);});
             data.ApplyModifiedPropertiesWithoutUndo();Require(MissionDefinitionContractValidation.TryValidateDefinition(mission,out string error),error);EditorUtility.SetDirty(mission);AssetDatabase.SaveAssets();
-        }
-        private static bool RequiresVehicleFootprint(string anchorName)=>anchorName is "relief_goal" or "fuel_goal" or "relief" or "fuel";
-        private static int2 ResolveVehicleCell(ref BlobAssetReference<MapSurfaceBlob> blob,int2 desired,int maxRadius)
-        {
-            ref MapSurfaceBlob value=ref blob.Value;
-            var surface=new MapSurfaceComponent {SurfaceBlob=blob,GridOrigin=value.GridOrigin,CellSize=value.CellSize,Dimensions=value.Dimensions,HasSurfaceData=1};
-            var grid=new GridConfig {Width=value.Dimensions.x,Height=value.Dimensions.y,CellSize=value.CellSize,Origin=value.GridOrigin};
-            var validation=new MapSurfaceTraversalValidation();
-            if(validation.CanTraverseFootprint(surface,1,grid,desired,new int2(3,3),true))return desired;
-            for(int radius=1;radius<=maxRadius;radius++)
-            {
-                for(int x=-radius;x<=radius;x++)
-                {
-                    int2 top=desired+new int2(x,radius);if(validation.CanTraverseFootprint(surface,1,grid,top,new int2(3,3),true))return top;
-                    int2 bottom=desired+new int2(x,-radius);if(validation.CanTraverseFootprint(surface,1,grid,bottom,new int2(3,3),true))return bottom;
-                }
-                for(int z=-radius+1;z<radius;z++)
-                {
-                    int2 right=desired+new int2(radius,z);if(validation.CanTraverseFootprint(surface,1,grid,right,new int2(3,3),true))return right;
-                    int2 left=desired+new int2(-radius,z);if(validation.CanTraverseFootprint(surface,1,grid,left,new int2(3,3),true))return left;
-                }
-            }
-            throw new InvalidOperationException($"No traversable 3x3 vehicle surface within {maxRadius} cells of {desired}.");
         }
         private static T Load<T>(string path) where T:UnityEngine.Object=>AssetDatabase.LoadAssetAtPath<T>(path)??throw new InvalidOperationException(path);
         private static T Clone<T>(string source,string target) where T:ScriptableObject{var asset=AssetDatabase.LoadAssetAtPath<T>(target);if(asset==null){asset=ScriptableObject.CreateInstance<T>();AssetDatabase.CreateAsset(asset,target);}EditorUtility.CopySerialized(Load<T>(source),asset);asset.name=Path.GetFileNameWithoutExtension(target);return asset;}

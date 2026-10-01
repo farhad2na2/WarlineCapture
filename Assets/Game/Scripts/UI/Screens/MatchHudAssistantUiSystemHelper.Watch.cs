@@ -85,6 +85,7 @@ namespace Game.UI.Runtime
                        !UiShellRuntimeGateway.IsEvidenceChainGuideContext() &&
                        !UiShellRuntimeGateway.IsSupplyLineGuideContext() &&
                        !UiShellRuntimeGateway.IsPowerRelayGuideContext() &&
+                       !UiShellRuntimeGateway.IsRouteReopenedGuideContext() &&
                        !UiShellRuntimeGateway.IsExtractionGuideContext() &&
                        // Air Corridor observes and taps the existing Show Me control.
                        // Do not give Watch a hidden camera shortcut around that input.
@@ -110,7 +111,7 @@ namespace Game.UI.Runtime
                 // a side panel while Show Me is still panning. Wait for a usable
                 // center-screen cue instead of spending Watch retries on that panel.
                 if (!_tutorialCinematicSuspended &&
-                    (UiShellRuntimeGateway.IsSupplyLineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext()) &&
+                    (UiShellRuntimeGateway.IsSupplyLineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext()) &&
                     UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyFocus) && Camera.main != null)
                 {
                     Vector3 worldPoint=supplyFocus.NeedsSelection?supplyFocus.Selection:supplyFocus.Destination;
@@ -157,7 +158,7 @@ namespace Game.UI.Runtime
             // Show Me pans the extraction camera. A touch held at yesterday's
             // screen position becomes a different ground order while that camera
             // moves. Observe the presented cue until it settles before touching it.
-            if (UiShellRuntimeGateway.IsExtractionGuideContext() && kind == AriaPlayObservationKind.WorldTarget)
+            if ((UiShellRuntimeGateway.IsExtractionGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext()) && kind == AriaPlayObservationKind.WorldTarget)
             {
                 if (!extractionWatchPointSet || Vector2.Distance(position, extractionWatchPoint) > 1f ||
                     drag && Vector2.Distance(dragEnd, extractionWatchDragEnd) > 1f)

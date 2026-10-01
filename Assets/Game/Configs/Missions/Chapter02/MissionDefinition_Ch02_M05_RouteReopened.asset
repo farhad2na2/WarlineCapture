@@ -18,7 +18,7 @@ MonoBehaviour:
   displaySummaryKey: mission.route_reopened.summary
   locationNameKey: mission.route_reopened.location
   scenarioId: scenario.ch02.m05.route_reopened
-  operationMapId: opmap.ch02.route_reopened_01
+  operationMapId: opmap.ch02.route_reopened_port_review
   briefingSequenceId: seq.ch02.m05.brief
   commsSequenceId: seq.ch02.m05.comms
   debriefSequenceId: seq.ch02.m05.debrief

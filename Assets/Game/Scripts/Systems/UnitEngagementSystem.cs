@@ -154,6 +154,7 @@ namespace Game.Runtime
                 ScanOrderLookup = scanOrderLookup,
                 TargetPolicyLookup = SystemAPI.GetComponentLookup<CombatTargetPolicy>(true),
                 TargetBuildingLookup = SystemAPI.GetComponentLookup<RuntimeBuildingCombatInfo>(true),
+                ProtectedRecordsLookup = SystemAPI.GetComponentLookup<CampaignMissionProtectedRecordsTag>(true),
                 TargetBlockerLookup = SystemAPI.GetComponentLookup<StaticGridBlocker>(true),
                 TargetAirLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true),
                 TargetMovementLookup = SystemAPI.GetComponentLookup<UnitMovementBehavior>(true),
@@ -206,6 +207,7 @@ namespace Game.Runtime
             [ReadOnly] public ComponentLookup<UnitScanOrder> ScanOrderLookup;
             [ReadOnly] public ComponentLookup<CombatTargetPolicy> TargetPolicyLookup;
             [ReadOnly] public ComponentLookup<RuntimeBuildingCombatInfo> TargetBuildingLookup;
+            [ReadOnly] public ComponentLookup<CampaignMissionProtectedRecordsTag> ProtectedRecordsLookup;
             [ReadOnly] public ComponentLookup<StaticGridBlocker> TargetBlockerLookup;
             [ReadOnly] public ComponentLookup<UnitAirMovement> TargetAirLookup;
             [ReadOnly] public ComponentLookup<UnitMovementBehavior> TargetMovementLookup;
@@ -366,6 +368,7 @@ namespace Game.Runtime
                 ref float bestScore,
                 ref Entity best)
             {
+                if (ProtectedRecordsLookup.HasComponent(candidate)) return;
                 if (!AllowsPolicy(source, candidate)) return;
                 if (!FactionLookup.HasComponent(candidate) || !TransformLookup.HasComponent(candidate))
                     return;

@@ -5,6 +5,9 @@ using Unity.Mathematics;
 namespace Game.Components
 {
     public enum RouteReopenedFailure : byte { None, SquadLost, EngineerLost, ReliefConvoyLost, FuelConvoyLost, RecordsLost, Deadline, Integrity }
+    // Protected mission records may be damaged by an explicit order, but idle
+    // troops and Attack Move must never acquire them automatically.
+    public struct CampaignMissionProtectedRecordsTag : IComponentData { }
     public struct CampaignMissionRouteReopenedDefinitionBlob
     {
         public byte Enabled;
@@ -18,6 +21,9 @@ namespace Game.Components
         public FixedString64Bytes SessionToken;
         public int AttemptOrdinal,ElapsedMilliseconds,LinkRepairHoldMilliseconds,RecordsHoldMilliseconds;
         public uint SourceVersion;
+        public Entity RecordsBuilding;
+        public int RecordsPreparationMilliseconds;
+        public byte RecordsBuildingInitialized;
         public int2 ReliefGoalCell,FuelGoalCell,DisruptedLinkCell,HubGateCell,RecordsCell;
         public byte Ready,ReliefDelivered,FuelDelivered,LinkRestored,HubEntered,GarrisonCleared,RecordsPreserved,Complete,RelayNodeActivated;
         public RouteReopenedFailure Failure;

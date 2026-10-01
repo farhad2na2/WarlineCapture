@@ -1,0 +1,153 @@
+[
+  {
+    "file": "route-reopened-en-aria-01.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedInput] result=Failed Current main menu entry requires Continue Campaign"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-02.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedInput] result=Failed Isolated save must unlock Chapter 2 entry before normal mission selection"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-03.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Mission failed: RecordsLost"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-04.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Mission failed: RecordsLost"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-05.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedInput] result=Failed Comic voice was cut off: route_reopened-brief-01"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-06.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Watch stopped before outcome: Blocked"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-07.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortRoutes] result=Passed bridges=2 corridor=5x5 formations=7x7 sourceHash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedPortSurfaces] result=Passed crossingSamples=810 masks=Infantry,Wheeled,Tracked water=blocked deckAboveCanal=Passed",
+      "[RouteReopenedConfig] result=Passed chapter=2 mission=5 controls=Select,Move,Attack,Hold",
+      "[RouteReopenedVisual] result=Passed comicSources=7 authoredCrops=14 cleanPreview=1 playerFacing=1",
+      "[RouteReopenedPresentation] result=Passed locales=en,fa-IR controls=existing-only visual=approved",
+      "[RouteReopenedVisual] result=Passed comicSources=7 authoredCrops=14 cleanPreview=1 playerFacing=1",
+      "[RouteReopenedVoiceImports] result=Passed clips=14 locales=2 preload=0 runtimeNetworkTts=0",
+      "[RouteReopenedCheckpoint] result=Passed scope=CaptionedConfiguration controls=existing-only",
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Watch stopped before outcome: Blocked"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-08.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Destination focus was being reissued every frame, resetting camera glide velocity"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-09.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Passed source=AshLinePort publicEntry=Passed normalInput=Passed controls=ARIA input-actions=0 locale=en protectedRoute=Passed exposedRoute=Avoided clock=183481 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "file": "route-reopened-en-aria-10.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedJourney] result=Passed bridgeSamples=349/383 voices=7 panels=7 Credits=6000 XP=1200",
+      "[RouteReopenedInput] result=Passed source=AshLinePort publicEntry=Passed normalInput=Passed controls=ARIA input-actions=0 locale=en bridgeRoutes=Passed canal=Avoided clock=184829 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
+    "file": "route-reopened-fa-manual-01.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedInput] result=Failed Manual probe compared Game View pixels against Editor window safeArea; mid-mission comms trigger also missing"
+    ]
+  },
+  {
+    "file": "route-reopened-fa-manual-02.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed Required native story panels or voice playback missing."
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-01.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed Real relief convoy loss produced inconsistent civilian totals (1/0), so the result projection correctly rejected the defeat popup"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-02.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed negative driver camera target did not issue movement; rerun with stable input"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-03.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed manual map focus overwritten by repeat guidance camera; fix once-per-selection focus"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-04.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed initial automatic guidance focus after closing map overrides manual navigation; Route must use explicit Show Me"
+    ]
+  },
+  {
+    "file": "route-reopened-records-loss-01.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=records cause=RecordsLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Failed A component with type:Game.Components.UnitHealth has not been added to the entity. Entities Journaling may be able to help determine more information. Please enable Entities Journaling for a more helpful error message."
+    ]
+  }
+]

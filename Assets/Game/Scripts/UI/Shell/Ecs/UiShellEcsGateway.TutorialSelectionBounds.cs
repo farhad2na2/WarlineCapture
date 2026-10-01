@@ -13,6 +13,7 @@ namespace Game.UI.Shell.Ecs
 
         private static UiMissionTutorialTarget WithTutorialSelectionBounds(in UiMissionTutorialTarget target)
         {
+            if(target.DragSelection)return target;
             if(!TryGetMissionRoot(out var em,out var root))return target;
             var guidance=em.GetComponentData<CampaignMissionGuidanceProjectionComponent>(root);
             var actor=ResolveTutorialSelectionActor(em,root,guidance,target.Selection);

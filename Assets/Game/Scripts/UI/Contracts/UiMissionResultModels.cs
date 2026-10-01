@@ -52,6 +52,7 @@ namespace Game.UI.Contracts
         public readonly string ElapsedText;
         public readonly string SquadLossText;
         public readonly string EnemiesDefeatedText;
+        public readonly int CivilianLossCount;
         public readonly string RewardsText;
         public readonly string PrimaryActionLabel;
         public readonly bool PrimaryActionEnabled;
@@ -82,6 +83,7 @@ namespace Game.UI.Contracts
             ElapsedText = string.Empty;
             SquadLossText = string.Empty;
             EnemiesDefeatedText = string.Empty;
+            CivilianLossCount = 0;
             RewardsText = string.Empty;
             PrimaryActionLabel = string.Empty;
             PrimaryActionEnabled = false;
@@ -100,7 +102,7 @@ namespace Game.UI.Contracts
             string subtitle, string summaryBody, byte stars, string elapsedText,
             string squadLossText, string enemiesDefeatedText, string rewardsText,
             string primaryActionLabel, bool primaryActionEnabled, bool retryVisible,
-            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default, UiMissionConstructionResultDetails construction = default)
+            bool firstClear = false, bool debriefRequired = false, UiMissionDefenseResultDetails defense = default, bool settlementFailed = false, UiMissionExtractionResultDetails extraction = default, UiMissionBreachResultDetails breach = default, UiMissionConstructionResultDetails construction = default, int civilianLossCount = 0)
         {
             Version = version;
             MissionId = missionId ?? string.Empty;
@@ -113,6 +115,7 @@ namespace Game.UI.Contracts
             ElapsedText = elapsedText ?? string.Empty;
             SquadLossText = squadLossText ?? string.Empty;
             EnemiesDefeatedText = enemiesDefeatedText ?? string.Empty;
+            CivilianLossCount = civilianLossCount;
             RewardsText = rewardsText ?? string.Empty;
             PrimaryActionLabel = primaryActionLabel ?? string.Empty;
             PrimaryActionEnabled = primaryActionEnabled;

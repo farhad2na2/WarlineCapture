@@ -47,7 +47,8 @@ namespace Game.Editor
                     ("return_rts",620,505,OperationMapAnchorKind.Camera,1,2,false)};
                 var data=new SerializedObject(map);S(data,"operationMapId",MapId);
                 var binding=data.FindProperty("sourceBinding");S(binding.FindPropertyRelative("sourceOperationMapId"),physical.OperationMapId);S(binding.FindPropertyRelative("sourceIdentityHash"),physical.SourceIdentityHash);S(binding.FindPropertyRelative("sourceContentHash"),physical.ContentHash);
-                data.FindProperty("additionalBuildingPlacements").objectReferenceValue=BuildRecordsOffice(ref blob.Value);
+                BuildRecordsOffice(ref blob.Value);
+                data.FindProperty("additionalBuildingPlacements").objectReferenceValue=null;
                 S(data.FindProperty("planningCameraId"),"camera.ch02.m05.planning");S(data.FindProperty("battleCameraId"),"camera.ch02.m05.battle");
                 var bounds=data.FindProperty("bounds");bounds.FindPropertyRelative("playableMin").vector3Value=new Vector3(540,-20,365);bounds.FindPropertyRelative("playableMax").vector3Value=new Vector3(770,980,640);bounds.FindPropertyRelative("cameraMin").vector3Value=new Vector3(510,-20,345);bounds.FindPropertyRelative("cameraMax").vector3Value=new Vector3(770,980,640);
                 S(data.FindProperty("minimap").FindPropertyRelative("minimapId"),"minimap.ch02.m05.route_reopened");
@@ -106,7 +107,12 @@ namespace Game.Editor
             var placements=AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(PlacementsPath);
             if(placements==null){placements=ScriptableObject.CreateInstance<MapBuildingPlacementConfig>();AssetDatabase.CreateAsset(placements,PlacementsPath);}
             placements.EditorSetPlacements(new List<MapBuildingPlacementConfigEntry>{new("RouteReopened/RecordsOffice","ProtectedRecords",office,2,position,position,Vector3.zero,Vector3.one,0,false,true,true)});
-            placements.EditorSetUseExistingStaticPresentationWhenAuthoringVisualMissing(false);return placements;
+            placements.EditorSetUseExistingStaticPresentationWhenAuthoringVisualMissing(false);
+            var config=AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>("Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset");
+            var data=new SerializedObject(config);var spawnables=data.FindProperty("spawnables");bool found=false;
+            for(int i=0;i<spawnables.arraySize;i++)found|=spawnables.GetArrayElementAtIndex(i).objectReferenceValue==office;
+            if(!found){int index=spawnables.arraySize++;spawnables.GetArrayElementAtIndex(index).objectReferenceValue=office;data.ApplyModifiedPropertiesWithoutUndo();EditorUtility.SetDirty(config);}
+            return placements;
         }
         private static void ValidateGroundRoutes()
         {

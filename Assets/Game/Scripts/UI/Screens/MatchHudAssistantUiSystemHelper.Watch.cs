@@ -111,6 +111,7 @@ namespace Game.UI.Runtime
                 // a side panel while Show Me is still panning. Wait for a usable
                 // center-screen cue instead of spending Watch retries on that panel.
                 if (!_tutorialCinematicSuspended &&
+                    (!UiShellRuntimeGateway.IsRouteReopenedGuideContext() || UiShellRuntimeGateway.ReadAriaPlay().Active) &&
                     (UiShellRuntimeGateway.IsSupplyLineGuideContext() || UiShellRuntimeGateway.IsPowerRelayGuideContext() || UiShellRuntimeGateway.IsRouteReopenedGuideContext()) &&
                     UiShellRuntimeGateway.TryReadMissionTutorialTarget(out var supplyFocus) && Camera.main != null)
                 {

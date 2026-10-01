@@ -8,6 +8,8 @@ namespace Game.Runtime
     {
         private static void ResetDefenseAttemptState(EntityManager em, Entity root)
         {
+            ClearBufferIfPresent<CampaignMissionRouteReopenedMember>(em,root);
+            ResetComponentIfPresent<CampaignMissionRouteReopenedState>(em,root);
             ClearBufferIfPresent<CampaignMissionPowerRelayMember>(em, root);
             ResetComponentIfPresent<CampaignMissionPowerRelayState>(em, root);
             ClearBufferIfPresent<CampaignMissionSupplyLineMember>(em, root);
@@ -41,6 +43,7 @@ namespace Game.Runtime
         private static bool TryQueueDefenseAttemptCleanup(EntityManager em,ref EntityCommandBuffer cleanup,Entity root,
             in CampaignMissionCatalogComponent catalog,in CampaignMissionRuntimeComponent runtime)
         {
+            if(TryQueueRouteOfficeCleanup(em,root,in runtime))return true;
             if(em.HasComponent<CampaignMissionPowerRelayState>(root))
             {
                 var power=em.GetComponentData<CampaignMissionPowerRelayState>(root);

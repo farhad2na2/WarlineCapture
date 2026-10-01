@@ -24,6 +24,8 @@ namespace Game.Editor
         private static int negativeAttempt;
         private static Entity[] retiredRouteMembers;
         private static bool negativeOrderIssued;
+        private static bool negativeDefeatCaptured;
+        private static float negativeDefeatShownAt;
         private static Vector2 negativePoint;
         private static float negativePointStableAt;
         public static void RunRecordsLossEnglish()=>RunNegative("records");
@@ -33,7 +35,7 @@ namespace Game.Editor
             ResetSpecialRuns();
             SessionState.SetString(Active+".Negative",kind);SessionState.SetBool(Manual,false);
             SessionState.SetBool(Active+".ManualInput",true);SessionState.SetString(Active+".Locale","en");
-            negativeFocused=negativeOrderIssued=false;negativeMapPhase=0;negativeRetry=false;retiredRouteMembers=null;negativePoint=default;Run();
+            negativeFocused=negativeOrderIssued=negativeDefeatCaptured=false;negativeDefeatShownAt=-1;negativeMapPhase=0;negativeRetry=false;retiredRouteMembers=null;negativePoint=default;Run();
         }
         private static bool CompleteExpectedFailure(EntityManager em,Entity root,in CampaignMissionRuntimeComponent runtime,in CampaignMissionRouteReopenedState route)
         {
@@ -47,15 +49,26 @@ namespace Game.Editor
             if(profile.credits!=startingCredits||profile.commanderXp!=startingXp)throw new InvalidOperationException("Defeat changed Campaign rewards.");
             if(Negative=="records"&&em.Exists(route.RecordsBuilding)&&em.HasComponent<UnitHealth>(route.RecordsBuilding)&&em.GetComponentData<UnitHealth>(route.RecordsBuilding).Current>0)
                 throw new InvalidOperationException("Records defeat lacks a destroyed office.");
-            ScreenCapture.CaptureScreenshot(Output+"/"+Negative+"-defeat.png");
-            Debug.Log("[RouteReopenedNegative] result=Passed kind="+Negative+" cause="+expected+" input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible");
+            var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
+            var retry=view==null?null:typeof(MissionResultPopupView).GetField("retryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as Button;
+            if(!negativeRetry&&(!Ready(retry)||view.GetComponentsInParent<CanvasGroup>().Any(x=>x.alpha<.9f)))return true;
+            var civilianText=typeof(MissionResultPopupView).GetField("civilianLostText",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as TMPro.TMP_Text;
+            int expectedLosses=em.GetComponentData<CampaignMissionAttemptFactsComponent>(root).CivilianLossCount;
+            if(!negativeRetry&&(result.CivilianLossCount!=expectedLosses||civilianText==null||civilianText.text!=expectedLosses.ToString()))
+                throw new InvalidOperationException("Native result civilian-loss statistic differs from mission facts.");
+            if(!negativeDefeatCaptured)
+            {
+                if(negativeDefeatShownAt<0)negativeDefeatShownAt=Time.unscaledTime;
+                if(Time.unscaledTime-negativeDefeatShownAt<.5f)return true;
+                negativeDefeatCaptured=true;ScreenCapture.CaptureScreenshot(Output+"/"+Negative+"-defeat.png");
+                Debug.Log("[RouteReopenedNegative] result=Passed kind="+Negative+" cause="+expected+" input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible");
+                return true; // Render the result before the next pointer presses Retry.
+            }
             if(!negativeRetry)
             {
                 var members=em.GetBuffer<CampaignMissionRouteReopenedMember>(root,true);retiredRouteMembers=new Entity[members.Length];
                 for(int i=0;i<members.Length;i++)retiredRouteMembers[i]=members[i].Entity;
                 negativeAttempt=runtime.AttemptOrdinal;
-                var view=UnityEngine.Object.FindAnyObjectByType<MissionResultPopupView>();
-                var retry=view==null?null:typeof(MissionResultPopupView).GetField("retryButton",BindingFlags.Instance|BindingFlags.NonPublic)?.GetValue(view) as Button;
                 if(Ready(retry)){Tap(retry);negativeRetry=true;}
             }
             return true;
@@ -73,18 +86,25 @@ namespace Game.Editor
                 Complete(true,"negative="+Negative+" real-combat=Passed rewards=unchanged Retry=fresh-actors-and-objectives");return true;
             }
             if(Negative=="records"&&route.GarrisonCleared==0)return false;
-            if(negativeOrderIssued)return true;
             var controls=UnityEngine.Object.FindAnyObjectByType<MatchOverlayCommandControlsView>();if(controls==null)return true;
             Entity actor=Entity.Null;
             foreach(var member in em.GetBuffer<CampaignMissionRouteReopenedMember>(root,true))
                 if(member.Kind==(Negative=="records"?0:2)&&em.Exists(member.Entity)&&em.HasComponent<UnitHealth>(member.Entity)&&em.GetComponentData<UnitHealth>(member.Entity).Current>0){actor=member.Entity;break;}
             if(actor==Entity.Null)return true;
+            if(negativeOrderIssued)
+            {
+                // Map navigation suppresses its following release. Confirm the
+                // native order before waiting for combat; otherwise tap again.
+                if(Negative=="lifeline"&&em.HasComponent<ManualMoveOrderTag>(actor))return true;
+                if(Negative=="records"&&Time.unscaledTime-negativePointStableAt<3f)return true;
+                negativeOrderIssued=false;
+            }
             if(!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state))return true;
             if(!em.HasComponent<SelectedUnitTag>(actor))
             {
                 var view=UnityEngine.Object.FindAnyObjectByType<AriaTutorialBriefingView>();
-                if(!negativeFocused){Tap(view?.ShowMeButton);negativeFocused=true;return true;}
                 if(state.ActiveCommandMode!=Game.Tactical.Contracts.TacticalCommandMode.Select){Tap(controls.SelectButton);return true;}
+                if(!negativeFocused&&Ready(view?.ShowMeButton)){Tap(view.ShowMeButton);negativeFocused=true;return true;}
                 TouchWorld(em.GetComponentData<LocalTransform>(actor).Position+new Unity.Mathematics.float3(0,1,0));return true;
             }
             var destination=Negative=="records"?(Vector3)em.GetComponentData<LocalTransform>(route.RecordsBuilding).Position+Vector3.up:new Vector3(610,0,620);
@@ -97,7 +117,14 @@ namespace Game.Editor
         {
             var camera=Camera.main;if(camera==null)return false;var point=camera.WorldToScreenPoint(position);
             var hits=new System.Collections.Generic.List<RaycastResult>();EventSystem.current?.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
-            if(point.z<=0||!camera.pixelRect.Contains(point)||hits.Count>0)return false;
+            if(point.z<=0||!camera.pixelRect.Contains(point))
+            {
+                // A guidance change can finish its smooth pan after the map
+                // gesture. Retry native map navigation once the pan settles.
+                if(EditorApplication.timeSinceStartup-lastInput>4)negativeMapPhase=0;
+                return false;
+            }
+            if(hits.Count>0)return false;
             if(Vector2.Distance(negativePoint,point)>1f){negativePoint=point;negativePointStableAt=Time.unscaledTime;return false;}
             if(Time.unscaledTime-negativePointStableAt<.5f)return false;
             if(!touch.TryGesture(point,point,.18f,0,Time.unscaledTime))return false;

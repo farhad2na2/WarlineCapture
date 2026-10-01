@@ -50,6 +50,11 @@
     "sha256": "7123877b30b82241718507613d6bada1fed74ae438105f01a0de84adc9b8b3b6"
   },
   {
+    "file": "route-reopened-en-aria-11.log",
+    "bytes": 252894,
+    "sha256": "55679f564cacc136434ba4f488efa89fb82126d483bf888bc1e7b29e056cf98a"
+  },
+  {
     "file": "route-reopened-fa-manual-01.log",
     "bytes": 286429,
     "sha256": "fc9bfd053698ecd936f6313a8397fd7d54a145e35cbeb98e1a98c9c8f9b6fe2d"
@@ -58,6 +63,11 @@
     "file": "route-reopened-fa-manual-02.log",
     "bytes": 418172,
     "sha256": "52112b60d955b7ca782d8af35e33bd86249486f0676fb00c7ddeb4c6c8003cbc"
+  },
+  {
+    "file": "route-reopened-fa-manual-03.log",
+    "bytes": 320739,
+    "sha256": "722906c6eeab7025c631e45d5e6433466dbe47d333f5ed34fea5e876ecaca3eb"
   },
   {
     "file": "route-reopened-lifeline-loss-01.log",
@@ -85,6 +95,36 @@
     "sha256": "2c199e6fe7116a6eb762914e7a6b27964e9450fb60d184a9ab2220ffd52d9e94"
   },
   {
+    "file": "route-reopened-lifeline-loss-06.log",
+    "bytes": 259856,
+    "sha256": "fc1a35b2f7827f95648c40fc717817acb42814520ed576628ea105b70a02be37"
+  },
+  {
+    "file": "route-reopened-lifeline-loss-07.log",
+    "bytes": 673146,
+    "sha256": "6a2bd3d8a022dee523076c6b809d0a25bfd14ca2dc9e1c01b960c2bb744398fa"
+  },
+  {
+    "file": "route-reopened-lifeline-loss-08.log",
+    "bytes": 377957,
+    "sha256": "52cbefce2bc43eb6e91350c4b5586a0931df740b197040d870391615da91f15e"
+  },
+  {
+    "file": "route-reopened-lifeline-loss-09.log",
+    "bytes": 258841,
+    "sha256": "81cf0506e372be0fad620c3883ce8f4ac949095acfd4f0430d67ad2e8a80f45d"
+  },
+  {
+    "file": "route-reopened-lifeline-loss-10.log",
+    "bytes": 361603,
+    "sha256": "e236181e94d4b0d12797fe38eb038df2136e85fcfc6b436727a99df01c3325a8"
+  },
+  {
+    "file": "route-reopened-prep-05.log",
+    "bytes": 211528,
+    "sha256": "eb5702d1f07dce1aa617ca61f5d3d2a5be6457592ed5aadd6299d323412b7291"
+  },
+  {
     "file": "route-reopened-prepare-01.log",
     "bytes": 118125,
     "sha256": "ca231491ae58072ad42a2fa33fad04cbe37527f59e5ac4835149361fe5114abe"
@@ -108,5 +148,25 @@
     "file": "route-reopened-records-loss-01.log",
     "bytes": 402924,
     "sha256": "3dd24ed6c00f28f27f6fbafb97a832089b2a5a55ee4df89fa74aa35e6f684908"
+  },
+  {
+    "file": "route-reopened-records-loss-02.log",
+    "bytes": 395574,
+    "sha256": "ec47a0bb8a91490500da743a601e8ab21ab83ced30b7b9d2521c49324004da4d"
+  },
+  {
+    "file": "route-reopened-records-loss-04.log",
+    "bytes": 427310,
+    "sha256": "c6d9b5e77473db30acb87373815c533dbff638032bf40d86b11e674ba5905de3"
+  },
+  {
+    "file": "route-reopened-records-loss-06.log",
+    "bytes": 398004,
+    "sha256": "ca4d1c70230f3b2bc524b1a99cda4ba15c29879cb91d5c0f3cf38bc0f396727c"
+  },
+  {
+    "file": "route-reopened-traffic-01.log",
+    "bytes": 234864,
+    "sha256": "3a4aaa39f4e5343eb09d27a4b2b887ba2079f4b42d76b90681fffb8e6d1198d6"
   }
 ]

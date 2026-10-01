@@ -105,7 +105,7 @@ namespace Game.UI.Runtime
             ApplyV3Outcome(model);
             ApplyConstructionOutcome(in model);
             ApplyDefenseOutcome(in model);
-            ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model); ApplyAirCorridorOutcome(in model); ApplySteelPushOutcome(in model); ApplySplitFrontOutcome(in model);
+            ApplyExtractionOutcome(in model); ApplyBreachOutcome(in model); ApplyAirCorridorOutcome(in model); ApplySteelPushOutcome(in model); ApplySplitFrontOutcome(in model); ApplyRouteReopenedOutcome(in model);
             if (hiddenLegacyRoots != null)
                 for (int index = 0; index < hiddenLegacyRoots.Length; index++)
                     if (hiddenLegacyRoots[index] != null) hiddenLegacyRoots[index].SetActive(false);
@@ -197,7 +197,7 @@ namespace Game.UI.Runtime
                 titleText.color = accent;
             SetText(missionStatusText, victory ? "MISSION COMPLETE" : "COMMAND SQUAD LOST");
             SetText(starCountText, $"{model.Stars} / 3 STARS");
-            SetText(civilianLostText, "0");
+            SetText(civilianLostText, model.CivilianLossCount.ToString());
             SetText(objectivePatrolStatusText, victory ? "COMPLETE" : "FAILED");
             SetText(objectiveSquadStatusText, victory ? "COMPLETE" : "FAILED");
             SetText(objectiveCivilianStatusText, victory ? "STABLE" : "AT RISK");

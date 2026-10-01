@@ -25,6 +25,15 @@ namespace Game.Runtime
             // The force-split briefing is blocking. Keep both factions inert until control passes to the player.
             if(!em.HasComponent<CampaignMissionCombatSuppressedTag>(instance))
                 em.AddComponent<CampaignMissionCombatSuppressedTag>(instance);
+            // Keep the garrison at its authored defenses and the waiting assault
+            // squads at deployment. Player Move/Attack orders release their Hold.
+            if(kind==0||kind==4)
+                if(!em.HasComponent<HoldPositionOrderTag>(instance))em.AddComponent<HoldPositionOrderTag>(instance);
+            if(em.HasComponent<UnitMovementBehavior>(instance))
+            {
+                var movement=em.GetComponentData<UnitMovementBehavior>(instance);
+                movement.AllowIdleWander=0;em.SetComponentData(instance,movement);
+            }
             if((kind==2||kind==3)&&em.HasComponent<UnitFuelConsumption>(instance)){var fuel=em.GetComponentData<UnitFuelConsumption>(instance);fuel.Enabled=0;em.SetComponentData(instance,fuel);}
             em.GetBuffer<CampaignMissionRouteReopenedMember>(root).Add(new CampaignMissionRouteReopenedMember {Entity=instance,Kind=kind});
         }

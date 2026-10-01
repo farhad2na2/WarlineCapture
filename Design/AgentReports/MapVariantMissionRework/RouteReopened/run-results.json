@@ -88,6 +88,16 @@
     ]
   },
   {
+    "file": "route-reopened-en-aria-11.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedJourney] result=Passed bridgeSamples=401/263 voices=7 panels=7 Credits=6000 XP=1200",
+      "[RouteReopenedInput] result=Passed source=AshLinePort publicEntry=Passed normalInput=Passed controls=ARIA input-actions=18 locale=en bridgeRoutes=Passed canal=Avoided clock=186691 debrief=Passed resultReturn=Passed"
+    ]
+  },
+  {
     "file": "route-reopened-fa-manual-01.log",
     "verdicts": [
       "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
@@ -102,6 +112,16 @@
       "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
       "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
       "[RouteReopenedInput] result=Failed Required native story panels or voice playback missing."
+    ]
+  },
+  {
+    "file": "route-reopened-fa-manual-03.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedJourney] result=Passed bridgeSamples=341/281 voices=7 panels=7 Credits=6000 XP=1200",
+      "[RouteReopenedInput] result=Passed source=AshLinePort publicEntry=Passed normalInput=Passed controls=Manual input-actions=9 locale=fa-IR bridgeRoutes=Passed canal=Avoided clock=174560 debrief=Passed resultReturn=Passed"
     ]
   },
   {
@@ -141,6 +161,56 @@
     ]
   },
   {
+    "file": "route-reopened-lifeline-loss-06.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed Watch observation path was moving camera while ARIA inactive; gate Route focus on active ARIA"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-07.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed garrison left hub and died before convoy arrived; author fixed defensive Hold positions and rerun native combat"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-08.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=lifeline cause=ReliefConvoyLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedNegative] result=Passed kind=lifeline cause=ReliefConvoyLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedNegative] result=Passed kind=lifeline cause=ReliefConvoyLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Passed negative=lifeline real-combat=Passed rewards=unchanged Retry=fresh-actors-and-objectives"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-09.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=lifeline cause=ReliefConvoyLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Passed negative=lifeline real-combat=Passed rewards=unchanged Retry=fresh-actors-and-objectives"
+    ]
+  },
+  {
+    "file": "route-reopened-lifeline-loss-10.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=lifeline cause=ReliefConvoyLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Passed negative=lifeline real-combat=Passed rewards=unchanged Retry=fresh-actors-and-objectives"
+    ]
+  },
+  {
     "file": "route-reopened-records-loss-01.log",
     "verdicts": [
       "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
@@ -148,6 +218,47 @@
       "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
       "[RouteReopenedNegative] result=Passed kind=records cause=RecordsLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
       "[RouteReopenedInput] result=Failed A component with type:Game.Components.UnitHealth has not been added to the entity. Entities Journaling may be able to help determine more information. Please enable Entities Journaling for a more helpful error message."
+    ]
+  },
+  {
+    "file": "route-reopened-records-loss-02.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedInput] result=Failed Manual engineer drag did not retain both engineers; inspecting selection bounds."
+    ]
+  },
+  {
+    "file": "route-reopened-records-loss-04.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=records cause=RecordsLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Failed Records-loss Retry restarted with the destroyed authored office; fixing attempt ownership."
+    ]
+  },
+  {
+    "file": "route-reopened-records-loss-06.log",
+    "verdicts": [
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedNegative] result=Passed kind=records cause=RecordsLost input=UI-pointer-and-world-touch defeat=visible rewards=unsettled Retry=visible",
+      "[RouteReopenedInput] result=Passed negative=records real-combat=Passed rewards=unchanged Retry=fresh-actors-and-objectives"
+    ]
+  },
+  {
+    "file": "route-reopened-traffic-01.log",
+    "verdicts": [
+      "[RouteReopenedSharedMinimap] result=Passed tests=7 compact-and-layered=Passed legacy-projection=Passed",
+      "[RouteReopenedRules] result=Passed groups=7 lifelines=2 records=required buttons=existing-only",
+      "[RouteReopenedPortSource] result=Passed logical=opmap.ch02.route_reopened_port_review physical=opmap.skirmish.ashlineport_prepared hash=3f8bceea706372ba2a6b0584d6e7820c73ce3e40c30c53acdd937d9998cae8d5",
+      "[RouteReopenedMinimap] result=Passed features=13875 bridges=200 roads=2235",
+      "[RouteReopenedTraffic] result=Passed bridge=505 armor=actual-prefab haulers=3 blocked-goal=excluded recovery=normal-move-orders turn=Passed staging=Passed deckSamples=1465",
+      "[RouteReopenedTraffic] result=Passed bridge=385 armor=actual-prefab haulers=3 blocked-goal=excluded recovery=normal-move-orders turn=Passed staging=Passed deckSamples=2599",
+      "[RouteReopenedInput] result=Passed fixture=bridge-traffic armor=2-bridges blocked-recovery=Passed turns-and-staging=Passed mission-outcome=not-injected"
     ]
   }
 ]

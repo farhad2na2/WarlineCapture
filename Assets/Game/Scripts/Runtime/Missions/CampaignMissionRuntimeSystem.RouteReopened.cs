@@ -24,13 +24,31 @@ namespace Game.Runtime
             // archive, never a reason to bind a replacement and forgive destruction.
             if(state.RecordsBuildingInitialized==0)
             {
+                using var boundaryQuery=em.CreateEntityQuery(typeof(BuildingRuntimeStateTag),typeof(BuildingRuntimeSpawnRequest));
+                if(boundaryQuery.CalculateEntityCount()!=1)return true;
+                var requests=em.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryQuery.GetSingletonEntity());
+                if(state.RecordsSpawnRequestId==0)
+                {
+                    int id=1;foreach(var request in requests)id=math.max(id,request.RequestId+1);
+                    state.RecordsSpawnRequestId=id;
+                    requests.Add(new BuildingRuntimeSpawnRequest {RequestId=id,RequestKind=BuildingRuntimeSpawnRequest.KindBuilding,
+                        HasOwnerFaction=1,FactionId=2,AllowNonBuildableEnemy=1,RequirePreferredOrigin=1,
+                        BuildingId=new FixedString128Bytes("RouteReopened_RecordsOffice"),PreferredOrigin=state.RecordsCell-new int2(24,4)});
+                }
+                int runtimeId=0;
+                foreach(var request in requests)
+                    if(request.RequestId==state.RecordsSpawnRequestId)
+                    {
+                        if(request.Status==BuildingRuntimeSpawnRequest.Failed)state.Failure=RouteReopenedFailure.Integrity;
+                        if(request.Status==BuildingRuntimeSpawnRequest.Succeeded)runtimeId=request.BuildingRuntimeId;
+                    }
                 using var offices=new EntityQueryBuilder(Allocator.Temp).WithAll<RuntimeBuildingCombatInfo,UnitSourcePrefabKey,UnitHealth,UnitGrid>().Build(em);
                 using var owners=offices.ToEntityArray(Allocator.Temp);
                 foreach(var owner in owners)
                 {
                     if(!em.GetComponentData<UnitSourcePrefabKey>(owner).Value.Equals(RouteRecordsOfficeKey))continue;
                     var identity=em.GetComponentData<RuntimeBuildingCombatInfo>(owner);
-                    if(identity.OwnerFactionId!=2||math.distancesq(em.GetComponentData<UnitGrid>(owner).Cell,state.RecordsCell)>900)continue;
+                    if(runtimeId==0||identity.RuntimeBuildingId!=runtimeId||identity.OwnerFactionId!=2||math.distancesq(em.GetComponentData<UnitGrid>(owner).Cell,state.RecordsCell)>900)continue;
                     if(state.RecordsBuilding!=Entity.Null){state.Failure=RouteReopenedFailure.Integrity;break;}
                     state.RecordsBuilding=owner;
                 }

@@ -11,7 +11,7 @@ namespace Game.UI.Shell.Ecs
             string reason=facts.RouteReopenedFailure switch {RouteReopenedFailure.SquadLost=>"squad",RouteReopenedFailure.EngineerLost=>"engineer",RouteReopenedFailure.ReliefConvoyLost=>"relief",RouteReopenedFailure.FuelConvoyLost=>"fuel",RouteReopenedFailure.RecordsLost=>"records",RouteReopenedFailure.Deadline=>"deadline",_=>"integrity"};
             return new UiMissionResultPopupModel(model.Version,model.MissionId,model.Outcome,GameText.Get("mission.route_reopened.result."+(victory?"victory":"defeat")),GameText.Get("mission.route_reopened.name"),
                 GameText.Get(victory?"mission.route_reopened.result.success":"mission.route_reopened.failure."+reason),model.Stars,model.ElapsedText,model.SquadLossText,model.EnemiesDefeatedText,
-                victory?model.RewardsText:GameText.Get("mission.m03.result.no_reward"),GameText.Get(victory?"mission.m03.action.continue":"mission.m03.result.retry"),model.PrimaryActionEnabled,model.RetryVisible,model.FirstClear,model.DebriefRequired);
+                victory?model.RewardsText:GameText.Get("mission.m03.result.no_reward"),GameText.Get(victory?"mission.m03.action.continue":"mission.m03.result.retry"),model.PrimaryActionEnabled,model.RetryVisible,model.FirstClear,model.DebriefRequired,civilianLossCount:facts.CivilianLossCount);
         }
     }
 }

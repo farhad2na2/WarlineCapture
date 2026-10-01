@@ -22,7 +22,7 @@ namespace Game.Components
         public int AttemptOrdinal,ElapsedMilliseconds,LinkRepairHoldMilliseconds,RecordsHoldMilliseconds;
         public uint SourceVersion;
         public Entity RecordsBuilding;
-        public int RecordsPreparationMilliseconds;
+        public int RecordsPreparationMilliseconds,RecordsSpawnRequestId;
         public byte RecordsBuildingInitialized;
         public int2 ReliefGoalCell,FuelGoalCell,DisruptedLinkCell,HubGateCell,RecordsCell;
         public byte Ready,ReliefDelivered,FuelDelivered,LinkRestored,HubEntered,GarrisonCleared,RecordsPreserved,Complete,RelayNodeActivated;

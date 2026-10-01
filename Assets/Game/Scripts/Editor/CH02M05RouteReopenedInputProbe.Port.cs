@@ -139,6 +139,32 @@ namespace Game.Editor
             if(controls==null||camera==null||!UiShellRuntimeGateway.TryReadMatchHudCommandState(out var state))return;
             var mode=target.NeedsSelection?TacticalCommandMode.Select:target.BattleAction==UiTutorialBattleAction.Attack?TacticalCommandMode.Attack:TacticalCommandMode.Move;
             if(state.ActiveCommandMode!=mode){Tap(mode==TacticalCommandMode.Select?controls.SelectButton:mode==TacticalCommandMode.Attack?controls.AttackButton:controls.MoveButton);return;}
+            if(target.NeedsSelection&&target.DragSelection)
+            {
+                var from=new Vector2(float.MaxValue,float.MaxValue);
+                var to=new Vector2(float.MinValue,float.MinValue);
+                for(int i=0;i<8;i++)
+                {
+                    var worldCorner=new Vector3((i&1)==0?target.SelectionMin.x:target.SelectionMax.x,
+                        (i&2)==0?target.SelectionMin.y:target.SelectionMax.y,
+                        (i&4)==0?target.SelectionMin.z:target.SelectionMax.z);
+                    var screen=camera.WorldToScreenPoint(worldCorner);
+                    if(screen.z<=0)return;
+                    from=Vector2.Min(from,screen);to=Vector2.Max(to,screen);
+                }
+                from-=Vector2.one*8;to+=Vector2.one*8;
+                var selectionHits=new List<RaycastResult>();
+                foreach(Vector2 p in new[]{(Vector2)from,(Vector2)to,((Vector2)from+(Vector2)to)*.5f})
+                {
+                    selectionHits.Clear();EventSystem.current?.RaycastAll(new PointerEventData(EventSystem.current){position=p},selectionHits);
+                    if(!camera.pixelRect.Contains(p)||selectionHits.Count>0){Tap(view.ShowMeButton);return;}
+                }
+                if(Vector2.Distance(manualPoint,from)>1f){manualPoint=from;manualPointStableAt=Time.unscaledTime;return;}
+                if(Time.unscaledTime-manualPointStableAt<.5f)return;
+                if(touch.TryGesture(from,to,.5f,.9f,Time.unscaledTime))
+                {manualActions++;lastInput=EditorApplication.timeSinceStartup;Debug.Log("[RouteReopenedManual] normalTouch=selection-drag rifles="+target.RequiredSelectionCount);}
+                return;
+            }
             var world=target.NeedsSelection?target.Selection+Vector3.up:target.Destination;
             var point=camera.WorldToScreenPoint(world);var hits=new List<RaycastResult>();EventSystem.current?.RaycastAll(new PointerEventData(EventSystem.current){position=point},hits);
             // Editor update callbacks report the window size, while the camera

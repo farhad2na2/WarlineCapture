@@ -16,8 +16,8 @@ MonoBehaviour:
   schemaVersion: 1
   contentVersion: 1
   sourceIdentityHash: a29ec522a52167ecf02089e32bf64e6e821d290975cc2a20b97437fb9ae4d113
-  contentHash: cb4ec7727e459e719325d1bfdc7d681ef6b5a856f127892eb38565f4c6f0da63
-  generatedMetadataHash: cb4ec7727e459e719325d1bfdc7d681ef6b5a856f127892eb38565f4c6f0da63
+  contentHash: 8a6dfb27294e25b30e45421bf0151aef3a6f3bb43f485e622ac8e11901966864
+  generatedMetadataHash: 8a6dfb27294e25b30e45421bf0151aef3a6f3bb43f485e622ac8e11901966864
   sourceBinding:
     sourceOperationMapId: opmap.skirmish.ashlineport_prepared
     sourceIdentityHash: a29ec522a52167ecf02089e32bf64e6e821d290975cc2a20b97437fb9ae4d113
@@ -210,4 +210,4 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  additionalBuildingPlacements: {fileID: 11400000, guid: 746421d2d17bb4c6fa223c0e3152c164, type: 2}
+  additionalBuildingPlacements: {fileID: 0}

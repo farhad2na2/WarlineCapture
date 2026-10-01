@@ -107,7 +107,7 @@ namespace Game.UI.Runtime
             rootGroup.interactable = visible;
             rootGroup.blocksRaycasts = visible;
             if (visible)
-                UiChromeStack.RaiseAboveTutorial(gameObject);
+                UiChromeStack.RaiseAboveTutorial(gameObject, UiChromeStack.NarrativeChrome);
         }
 
         public void SetSkipState(bool visible, bool interactable, string accessibleLabel)

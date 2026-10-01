@@ -1,0 +1,6 @@
+before=Revealing visible=1
+raycast=InputSurface
+first=AdvanceReady fullCaption=true sameLine=true
+raycast=InputSurface
+second=nextLine true
+result=Passed

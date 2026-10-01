@@ -14,9 +14,10 @@ namespace Game.UI.Runtime
         public const int AriaHand = 32760;
         // Unity stores overlay sorting in a signed 16-bit value. 32768 and above wrap
         // negative and draw behind the HUD. Stay just above the ARIA hand.
+        public const int NarrativeChrome = 32764;
         public const int ModalChrome = 32766;
 
-        public static void RaiseAboveTutorial(GameObject root)
+        public static void RaiseAboveTutorial(GameObject root, int sortingOrder = ModalChrome)
         {
             if (root == null)
                 return;
@@ -25,7 +26,11 @@ namespace Game.UI.Runtime
             if (canvas == null)
                 canvas = root.AddComponent<Canvas>();
             canvas.overrideSorting = true;
-            canvas.sortingOrder = ModalChrome;
+            canvas.sortingOrder = sortingOrder;
+            // Graphics move to this nested canvas when sorting is overridden.
+            // The parent canvas's raycaster cannot hit those graphics.
+            if (root.GetComponent<GraphicRaycaster>() == null)
+                root.AddComponent<GraphicRaycaster>();
         }
     }
 }
